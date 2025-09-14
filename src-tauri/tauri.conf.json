@@ -1,0 +1,90 @@
+{
+  "$schema": "https://tauri.app/schemas/2/tauri.conf.json",
+  "productName": "Adrata",
+  "version": "1.0.2",
+  "identifier": "com.adrata.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run tauri:build",
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3000"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Adrata",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1200,
+        "minHeight": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "skipTaskbar": false,
+        "transparent": false,
+        "shadow": true,
+        "focus": true,
+        "visible": true,
+        "closable": true,
+        "maximizable": true,
+        "minimizable": true
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "connect-src": [
+          "'self'",
+          "ipc:",
+          "http://ipc.localhost",
+          "https://api.pusher.com",
+          "wss://ws-us3.pusher.com",
+          "https://stats.pusher.com",
+          "https://adrata.vercel.app",
+          "wss://chunder.twilio.com",
+          "https://sdk.twilio.com",
+          "https://eventgw.twilio.com"
+        ],
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "blob:", "asset:", "https:"],
+        "media-src": ["'self'", "data:", "blob:", "https:"],
+        "font-src": ["'self'", "data:"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Business",
+    "shortDescription": "Your new operating system",
+    "longDescription": "Enterprise business intelligence platform with AOS, FOS, HOS and AI capabilities",
+    "macOS": {
+      "signingIdentity": null,
+      "entitlements": "app.entitlements",
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "hardenedRuntime": true
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false,
+      "endpoints": [
+        "https://api.github.com/repos/adrata/adrata-production/releases/latest"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEYzQUUwOEJEQjA2QkQ1NjQKUldSazFXdXd2UWl1ODJEa2srU0lueS9ObEE3N2pxeURkdzhxZ0ZsMU9FVWsyUCthb1lJR2ZFL2cK"
+    }
+  }
+}

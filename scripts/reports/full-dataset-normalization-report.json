@@ -1,0 +1,89 @@
+{
+  "timestamp": "2025-09-01T03:38:11.331Z",
+  "normalization": {
+    "totalCompanies": 3736,
+    "successfullyNormalized": 3450,
+    "normalizationRate": "92.3%",
+    "topStates": [
+      {
+        "state": "Florida",
+        "count": 593
+      },
+      {
+        "state": "California",
+        "count": 431
+      },
+      {
+        "state": "Texas",
+        "count": 349
+      },
+      {
+        "state": "Pennsylvania",
+        "count": 156
+      },
+      {
+        "state": "New York",
+        "count": 149
+      },
+      {
+        "state": "Ohio",
+        "count": 132
+      },
+      {
+        "state": "Maryland",
+        "count": 127
+      },
+      {
+        "state": "Virginia",
+        "count": 118
+      },
+      {
+        "state": "Michigan",
+        "count": 116
+      },
+      {
+        "state": "New Jersey",
+        "count": 105
+      },
+      {
+        "state": "Illinois",
+        "count": 89
+      },
+      {
+        "state": "Tennessee",
+        "count": 88
+      },
+      {
+        "state": "Arizona",
+        "count": 76
+      },
+      {
+        "state": "Minnesota",
+        "count": 76
+      },
+      {
+        "state": "Colorado",
+        "count": 71
+      }
+    ]
+  },
+  "upload": {
+    "newAccountsUploaded": 3058,
+    "totalAccountsInWorkspace": 3732,
+    "assignedAccounts": 150,
+    "unassignedAccounts": 3582
+  },
+  "managerVisibility": {
+    "ryanUserId": "cmf0kew2z0000pcsexylorpxp",
+    "workspaceId": "cmezxb1ez0001pc94yry3ntjk",
+    "role": "manager",
+    "hasFullVisibility": true,
+    "implementation": "Role-based access control with manager permissions"
+  },
+  "recommendations": [
+    "Ryan can view all accounts without ownership assignment",
+    "Use role-based permissions for scalable access control",
+    "Maintain clean separation between visibility and ownership",
+    "Consider implementing team-based sharing for future scaling"
+  ]
+}

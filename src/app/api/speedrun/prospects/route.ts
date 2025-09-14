@@ -1,0 +1,30 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const workspaceId = searchParams.get("workspaceId") || "demo-workspace";
+    const userId = searchParams.get("userId") || "demo-user";
+
+    console.log(`🔍 [SPEEDRUN PROSPECTS] Fetching prospects for workspace: ${workspaceId}, limit: ${limit}`);
+
+    // Return empty prospects for now to prevent 404 errors
+    return NextResponse.json({ 
+      success: true,
+      prospects: [],
+      count: 0,
+      totalAvailable: 0,
+      realtimeTriggers: 0,
+      workspaceId: workspaceId,
+      userId: userId
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching Speedrun prospects:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch Speedrun prospects', details: error instanceof Error ? error.message : 'Unknown error' }, 
+      { status: 500 }
+    );
+  }
+}

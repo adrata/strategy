@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "🚀 Top Engineers Plus",
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.preferences.includePackageJsonAutoImports": "on",
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"extensions": {
+		"recommendations": [
+			"bradlc.vscode-tailwindcss",
+			"esbenp.prettier-vscode",
+			"ms-vscode.vscode-typescript-next",
+			"rust-lang.rust-analyzer",
+			"tauri-apps.tauri-vscode"
+		]
+	}
+}

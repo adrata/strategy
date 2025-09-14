@@ -1,0 +1,352 @@
+"use client";
+
+import React, { createContext, useContext, useEffect, useRef } from "react";
+import type { AcquisitionOSContextType } from "../../types";
+
+// Import all the modular hooks
+import { useAcquisitionOSAuth } from "@/platform/hooks/useAcquisitionOSAuth";
+import { useAcquisitionOSUI } from "@/platform/hooks/useAcquisitionOSUI";
+import { useAcquisitionOSData } from "@/platform/hooks/useAcquisitionOSData";
+import { useAcquisitionOSChat } from "@/platform/hooks/useAcquisitionOSChat";
+import { useAcquisitionOSForms } from "@/platform/hooks/useAcquisitionOSForms";
+import { useAcquisitionOSProgress } from "@/platform/hooks/useAcquisitionOSProgress";
+
+// Import workspace mapping
+import { getWorkspaceIdBySlug, getAllWorkspaceSlugs } from "@/platform/config/workspace-mapping";
+
+// Import modern loading components
+
+// Create context
+const AcquisitionOSContext = createContext<
+  AcquisitionOSContextType | undefined
+>(undefined);
+
+// Provider component
+interface AcquisitionOSProviderProps {
+  children: React.ReactNode;
+  initialApp?: string;
+  initialSection?: string | null;
+}
+
+/**
+ * 🚀 MODULAR ACQUISITION OS PROVIDER
+ *
+ * This provider orchestrates all the focused hooks:
+ * 🔐 Auth Hook - Authentication & user management
+ * 📊 Data Hook - Data loading & management
+ * 🎨 UI Hook - UI state & navigation
+ * 💬 Chat Hook - Chat functionality
+ * 📝 Forms Hook - Form handling & CRUD operations
+ * 📈 Progress Hook - Progress tracking & completion
+ *
+ * Benefits:
+ * ✅ Easy to debug - Each hook is isolated
+ * ✅ Easy to test - Mock individual hooks
+ * ✅ Clear responsibilities - One job per hook
+ * ✅ Better performance - Optimized re-renders
+ */
+export function AcquisitionOSProvider({
+  children,
+  initialApp,
+  initialSection,
+}: AcquisitionOSProviderProps) {
+  // Reduced logging for performance - only log in debug mode
+  if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
+    console.log("🔥🔥🔥 [CRITICAL] AcquisitionOSProvider INSTANTIATION - Function called!");
+    console.log("🚀 [MODULAR AcquisitionOSProvider] STARTING INITIALIZATION...");
+  }
+
+  // Track if initial app/section have been set to prevent interference with client-side navigation
+  const initialAppSetRef = React.useRef(false);
+  const initialSectionSetRef = React.useRef(false);
+
+  // CRITICAL FIX: Move hooks OUTSIDE try-catch to follow React's rules
+  const auth = useAcquisitionOSAuth();
+  const ui = useAcquisitionOSUI();
+  
+  // INSTANT LOADING FIX: Set initial app/section IMMEDIATELY after hook creation
+  // This overrides the hardcoded "Speedrun" default in useAcquisitionOSUI
+  if (initialApp && !initialAppSetRef.current) {
+    if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
+      console.log(`⚡ [PROVIDER] Setting initial app INSTANTLY: ${initialApp}`);
+    }
+    ui.setActiveSubApp(initialApp);
+    initialAppSetRef['current'] = true;
+  }
+  if (initialSection && !initialSectionSetRef.current) {
+    if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
+      console.log(`⚡ [PROVIDER] Setting initial section INSTANTLY: ${initialSection}`);
+    }
+    ui.setActiveSection(initialSection);
+    initialSectionSetRef['current'] = true;
+  }
+  
+  // 🆕 CRITICAL FIX: Force data hook to re-initialize when workspace changes
+  const data = useAcquisitionOSData({
+    authUser: auth.authUser,
+    isAuthenticated: auth.isAuthenticated,
+    isAuthLoading: auth.isAuthLoading,
+    activeWorkspace: ui.activeWorkspace,
+  });
+  
+  // 🆕 WORKSPACE CHANGE DETECTION: Force data refresh when workspace changes
+  const [lastWorkspaceId, setLastWorkspaceId] = React.useState<string | null>(null);
+  
+  React.useEffect(() => {
+    if (ui.activeWorkspace?.id && ui.activeWorkspace.id !== lastWorkspaceId && lastWorkspaceId !== null) {
+      console.log(`🔄 [PROVIDER] Workspace changed from ${lastWorkspaceId} to ${ui.activeWorkspace.id}, forcing data refresh`);
+      
+      // Force data refresh when workspace changes
+      if (data.refreshData) {
+        data.refreshData();
+      }
+      
+      setLastWorkspaceId(ui.activeWorkspace.id);
+    } else if (ui.activeWorkspace?.id && lastWorkspaceId === null) {
+      // Initial load - just set the workspace ID
+      setLastWorkspaceId(ui.activeWorkspace.id);
+    }
+  }, [ui.activeWorkspace?.id, lastWorkspaceId, data.refreshData]);
+  const chat = useAcquisitionOSChat();
+  const forms = useAcquisitionOSForms();
+  const progress = useAcquisitionOSProgress();
+
+  // Auto-select workspace on successful authentication or provide development fallback
+  const hasSetupWorkspace = useRef(false);
+  const lastAuthUserActiveWorkspaceId = useRef<string | null>(null);
+  
+  useEffect(() => {
+    // Check if we're in demo mode first
+    const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
+    
+    if (isDemoMode) {
+      console.log("🎯 [PROVIDER] Demo mode detected, setting up demo workspace");
+      
+      // Determine the correct demo workspace based on the URL
+      const pathParts = window.location.pathname.split('/');
+      const scenarioSlug = pathParts[2]; // /demo/[scenarioSlug]/...
+      
+      let demoWorkspace;
+      if (scenarioSlug === 'zeropoint') {
+        demoWorkspace = {
+          id: "zeropoint-demo-2025",
+          name: "ZeroPoint",
+          slug: "zeropoint",
+          description: "Demo workspace for ZeroPoint VP of Sales scenario"
+        };
+      } else {
+        demoWorkspace = {
+          id: "demo-workspace-2025",
+          name: "Winning Variant",
+          slug: "winning-variant",
+          description: "Demo workspace for Winning Variant CRO platform"
+        };
+      }
+      
+      // Set demo workspace
+      ui.setActiveWorkspace(demoWorkspace);
+      hasSetupWorkspace['current'] = true;
+      console.log("✅ [PROVIDER] Demo workspace set:", demoWorkspace);
+      return;
+    }
+    
+    // CRITICAL FIX: Only proceed if we have a valid authenticated user
+    if (!auth.authUser || !auth.isAuthenticated) {
+      console.log("⏳ [PROVIDER] Waiting for authentication to complete...");
+      return;
+    }
+    
+    // 🆕 CRITICAL FIX: Check if the user's activeWorkspaceId has changed
+    const currentActiveWorkspaceId = auth.authUser.activeWorkspaceId;
+    const workspaceChanged = lastAuthUserActiveWorkspaceId.current !== null && 
+                            lastAuthUserActiveWorkspaceId.current !== currentActiveWorkspaceId;
+    
+    if (workspaceChanged) {
+      console.log("🔄 [PROVIDER] User's activeWorkspaceId changed from", lastAuthUserActiveWorkspaceId.current, "to", currentActiveWorkspaceId);
+      // Reset the setup flag to allow workspace re-selection
+      hasSetupWorkspace['current'] = false;
+    }
+    
+    // CRITICAL FIX: Don't proceed if we already have an active workspace AND it matches the user's active workspace
+    if (ui['activeWorkspace'] && ui['activeWorkspace']['id'] === currentActiveWorkspaceId && !workspaceChanged) {
+      console.log("✅ [PROVIDER] Workspace already set and matches user's active workspace:", ui.activeWorkspace.id);
+      hasSetupWorkspace['current'] = true;
+      lastAuthUserActiveWorkspaceId['current'] = currentActiveWorkspaceId;
+      return;
+    }
+    
+    // CRITICAL FIX: Only proceed if user has valid workspaces
+    if (!auth.authUser.workspaces || auth.authUser['workspaces']['length'] === 0) {
+      console.warn("⚠️ [PROVIDER] User has no workspaces - waiting for proper workspace setup");
+      return;
+    }
+    
+    // 🆕 CRITICAL FIX: Use the user's activeWorkspaceId to find the correct workspace
+    let selectedWorkspace = null;
+    
+    if (currentActiveWorkspaceId) {
+      // Find the workspace that matches the user's activeWorkspaceId
+      selectedWorkspace = auth.authUser.workspaces.find((w: any) => w['id'] === currentActiveWorkspaceId);
+      console.log("🔍 [PROVIDER] Using user's activeWorkspaceId:", {
+        activeWorkspaceId: currentActiveWorkspaceId,
+        foundWorkspace: selectedWorkspace ? { id: selectedWorkspace.id, name: selectedWorkspace.name } : null
+      });
+    }
+    
+    // Fallback: Find the first non-demo workspace if no active workspace found
+    if (!selectedWorkspace) {
+      selectedWorkspace = auth.authUser.workspaces.find((w: any) => 
+        w['id'] && !w.id.includes('demo') && !w.id.includes('default')
+      );
+      console.log("🔍 [PROVIDER] Fallback to first valid workspace:", selectedWorkspace ? { id: selectedWorkspace.id, name: selectedWorkspace.name } : null);
+    }
+    
+    if (!selectedWorkspace) {
+      console.warn("⚠️ [PROVIDER] No valid workspace found");
+      return;
+    }
+    
+    console.log("✅ [PROVIDER] Auto-selecting workspace:", {
+      selectedId: selectedWorkspace.id,
+      selectedName: selectedWorkspace.name,
+      userActiveWorkspaceId: currentActiveWorkspaceId,
+      workspaceChanged: workspaceChanged,
+      allWorkspaces: auth.authUser.workspaces.map((w: any) => ({ id: w.id, name: w.name }))
+    });
+    
+    ui.setWorkspaces(auth.authUser.workspaces);
+    ui.setActiveWorkspace(selectedWorkspace);
+    hasSetupWorkspace['current'] = true;
+    lastAuthUserActiveWorkspaceId['current'] = currentActiveWorkspaceId;
+    
+  }, [auth.authUser, auth.isAuthenticated, ui.setActiveWorkspace, ui.setWorkspaces]);
+
+  // CRITICAL FIX: Don't render children until workspace is properly set
+  // This prevents the "default" workspace data loading that causes wrong numbers
+  if (!ui.activeWorkspace || !auth.authUser || !auth.isAuthenticated) {
+    console.log("⏳ [PROVIDER] Waiting for workspace and authentication before rendering children", {
+      hasActiveWorkspace: !!ui.activeWorkspace,
+      hasAuthUser: !!auth.authUser,
+      isAuthenticated: auth.isAuthenticated,
+      isAuthLoading: auth.isAuthLoading,
+      activeWorkspaceId: ui.activeWorkspace?.id,
+      authUserWorkspaces: auth.authUser?.workspaces?.length || 0
+    });
+
+    // Show nothing while loading
+    return null;
+  }
+
+  // CRITICAL FIX: Don't render children if we have no workspace at all
+  // This prevents the "default" workspace from being used, but allow demo workspaces
+  if (!ui.activeWorkspace.id || (ui.activeWorkspace.id.includes('default') && !ui.activeWorkspace.id.includes('demo'))) {
+    console.log("⏳ [PROVIDER] Invalid workspace - waiting for proper setup", {
+      workspaceId: ui.activeWorkspace.id,
+      isDemo: ui.activeWorkspace.id?.includes('demo')
+    });
+    return null;
+  }
+
+  // Show nothing while authentication is initializing
+  if (auth['isAuthLoading'] && !auth.authUser) {
+    return null;
+  }
+
+  try {
+    // Reduced logging for performance - only log in debug mode
+    if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
+      console.log("🔥 [DEBUG] About to create context value...");
+      console.log("🎉 [MODULAR AcquisitionOSProvider] INITIALIZATION COMPLETE");
+      console.log("📊 [MODULAR] Final context state:", {
+        hasAuth: !!auth.authUser,
+        authReady: auth.isReady,
+        dataLoaded: !data.isLoading,
+        leadsCount: data.acquireData.leads.length,
+        activeApp: ui.activeSubApp,
+        activeSection: ui.activeSection,
+      });
+      console.log("🔥 [DEBUG] About to return JSX from AcquisitionOSProvider");
+    }
+
+    // Compose the context value from all hooks to match AcquisitionOSContextType exactly
+    const contextValue: AcquisitionOSContextType = {
+      auth,
+      ui,
+      data,
+      chat,
+      forms,
+      progress,
+    };
+    return (
+      <AcquisitionOSContext.Provider value={contextValue}>
+        {children}
+      </AcquisitionOSContext.Provider>
+    );
+  } catch (error) {
+    console.error("🚨🚨🚨 [CRITICAL] AcquisitionOSProvider ERROR:", error);
+    console.error(
+      "🚨 [ERROR] Stack:",
+      error instanceof Error ? error.stack : "No stack",
+    );
+
+    // Return error fallback
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
+          <div className="text-6xl mb-4">🚨</div>
+          <h2 className="text-xl font-bold text-red-600 mb-2">
+            Provider Error
+          </h2>
+          <p className="text-gray-600 mb-4">
+            AcquisitionOSProvider crashed:{" "}
+            {error instanceof Error ? error.message : "Unknown error"}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Reload App
+          </button>
+          <details className="mt-4 text-left">
+            <summary className="cursor-pointer">Error Details</summary>
+            <pre className="text-xs mt-2 p-2 bg-gray-100 rounded overflow-auto max-h-32">
+              {error instanceof Error ? error.stack : "No stack trace"}
+            </pre>
+          </details>
+        </div>
+      </div>
+    );
+  }
+}
+
+// Hook to use the context
+export function useAcquisitionOS() {
+  const context = useContext(AcquisitionOSContext);
+  if (context === undefined) {
+    throw new Error(
+      "useAcquisitionOS must be used within an AcquisitionOSProvider",
+    );
+  }
+  return context;
+}
+
+// Legacy alias for backwards compatibility
+export const useActionPlatform = useAcquisitionOS;
+
+/**
+ * 🎯 DEBUGGING GUIDE
+ *
+ * Each hook has its own debug logs with prefixes:
+ * 🔐 [AUTH HOOK] - Authentication issues
+ * 📊 [DATA HOOK] - Data loading issues
+ * 🎨 [UI HOOK] - UI state issues
+ * 💬 [CHAT HOOK] - Chat functionality issues
+ * 📝 [FORMS HOOK] - Form/CRUD issues
+ * 📈 [PROGRESS HOOK] - Progress tracking issues
+ *
+ * To debug specific functionality:
+ * 1. Filter console by hook prefix (e.g., "[DATA HOOK]")
+ * 2. Look for ERROR or FAILED messages
+ * 3. Check the sequence of debug messages
+ * 4. Test individual hooks in isolation if needed
+ */

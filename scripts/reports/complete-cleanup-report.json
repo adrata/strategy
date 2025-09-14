@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-09-02T22:14:42.331Z",
+  "cleanup": {
+    "externalLeadsRemoved": 0,
+    "externalContactsRemoved": 92,
+    "remainingExternalLeads": 0,
+    "remainingExternalContacts": 0
+  },
+  "notaryEveryday": {
+    "accounts": 3732,
+    "leads": 817,
+    "contacts": 1165,
+    "danoAccounts": 150,
+    "danoLeads": 0,
+    "danoContacts": 0
+  },
+  "retailProductSolutions": {
+    "accounts": 251,
+    "leads": 865,
+    "contacts": 1038,
+    "danoAccounts": 251,
+    "danoLeads": 865,
+    "danoContacts": 1038
+  }
+}

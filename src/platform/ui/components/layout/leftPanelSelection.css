@@ -1,0 +1,32 @@
+/* Remove ::selection and ::-moz-selection rules */
+
+.badge-insight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.3em;
+  height: 1.5em;
+  font-size: 0.95em;
+  font-weight: 600;
+  background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%);
+  color: #fff;
+  border-radius: 9999px;
+  box-shadow: 0 1px 4px rgba(33, 147, 176, 0.1);
+  padding: 0 0.5em;
+  margin-left: 0.5em;
+  transition: box-shadow 0.2s;
+}
+
+.badge-insight[title]:hover {
+  box-shadow: 0 2px 8px rgba(33, 147, 176, 0.18);
+}
+
+.highlight-gray {
+  background: #e0e0e0;
+  color: #222;
+}
+
+.highlight-persistent {
+  background: #bdbdbd;
+  color: #111;
+}

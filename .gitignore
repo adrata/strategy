@@ -1,0 +1,95 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+.nuxt/
+dist/
+build/
+out/
+
+# Tauri build files
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# Cache directories
+.cache/
+.temp/
+.tmp/
+.jest-cache/
+.swc/
+tsconfig.tsbuildinfo
+
+# Data files (should be in data/ directory)
+*.csv
+!data/**/*.csv
+
+# Temporary files
+*.backup
+*.bak
+*~
+temp-*
+*.tmp
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env.staging
+.env*.backup*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# macOS system files
+**/.DS_Store
+
+# IDE files
+.vscode-test/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+.cargo/
+target/
+.vercel
+# Build artifacts should not be in git
+.next/
+src-tauri/target/
+src-tauri/gen/
+
+# Backup files
+*.bak*
+*.backup
+*~
+.vercel/
+tsconfig.tsbuildinfo

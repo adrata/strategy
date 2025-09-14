@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Production API Test</title>
+</head>
+<body>
+    <h1>Production API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            const workspaceId = '01K1VBYV8ETM2RCQA4GNN9EG72'; // RPS workspace
+            const userId = '01K1VBYYV7TRPY04NW4TW4XWRB'; // Dan's user ID
+            
+            results.innerHTML = '<p>Testing APIs...</p>';
+            
+            // Test unified API
+            try {
+                console.log('Testing unified API...');
+                const unifiedResponse = await fetch(`/api/data/unified?workspaceId=${workspaceId}&userId=${userId}&includeSpeedrun=false&includeDashboard=true`);
+                console.log('Unified API response:', unifiedResponse.status, unifiedResponse.statusText);
+                
+                if (unifiedResponse.ok) {
+                    const data = await unifiedResponse.json();
+                    results.innerHTML += `<p>✅ Unified API: ${unifiedResponse.status} - Success</p>`;
+                    console.log('Unified API data:', data);
+                } else {
+                    const errorText = await unifiedResponse.text();
+                    results.innerHTML += `<p>❌ Unified API: ${unifiedResponse.status} - ${errorText.substring(0, 200)}</p>`;
+                    console.error('Unified API error:', errorText);
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Unified API: Network error - ${error.message}</p>`;
+                console.error('Unified API network error:', error);
+            }
+            
+            // Test opportunities API
+            try {
+                console.log('Testing opportunities API...');
+                const oppResponse = await fetch(`/api/data/opportunities?workspaceId=${workspaceId}&userId=${userId}`);
+                console.log('Opportunities API response:', oppResponse.status, oppResponse.statusText);
+                
+                if (oppResponse.ok) {
+                    const data = await oppResponse.json();
+                    results.innerHTML += `<p>✅ Opportunities API: ${oppResponse.status} - Success (${data.opportunities?.length || 0} items)</p>`;
+                } else {
+                    const errorText = await oppResponse.text();
+                    results.innerHTML += `<p>❌ Opportunities API: ${oppResponse.status} - ${errorText.substring(0, 200)}</p>`;
+                    console.error('Opportunities API error:', errorText);
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Opportunities API: Network error - ${error.message}</p>`;
+                console.error('Opportunities API network error:', error);
+            }
+            
+            // Test contacts API
+            try {
+                console.log('Testing contacts API...');
+                const contactsResponse = await fetch(`/api/data/contacts?workspaceId=${workspaceId}&userId=${userId}`);
+                console.log('Contacts API response:', contactsResponse.status, contactsResponse.statusText);
+                
+                if (contactsResponse.ok) {
+                    const data = await contactsResponse.json();
+                    results.innerHTML += `<p>✅ Contacts API: ${contactsResponse.status} - Success (${data.contacts?.length || 0} items)</p>`;
+                } else {
+                    const errorText = await contactsResponse.text();
+                    results.innerHTML += `<p>❌ Contacts API: ${contactsResponse.status} - ${errorText.substring(0, 200)}</p>`;
+                    console.error('Contacts API error:', errorText);
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ Contacts API: Network error - ${error.message}</p>`;
+                console.error('Contacts API network error:', error);
+            }
+        }
+        
+        // Run test when page loads
+        testAPI();
+    </script>
+</body>
+</html>

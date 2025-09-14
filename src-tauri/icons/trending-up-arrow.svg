@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="120" fill="#3B82F6" stroke="#1D4ED8" stroke-width="4"/>
+  
+  <!-- Trending up arrow -->
+  <path d="M80 160 L120 120 L160 140 L200 100" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Arrow head -->
+  <path d="M185 100 L200 100 L200 115" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Data points -->
+  <circle cx="80" cy="160" r="4" fill="white"/>
+  <circle cx="120" cy="120" r="4" fill="white"/>
+  <circle cx="160" cy="140" r="4" fill="white"/>
+  <circle cx="200" cy="100" r="4" fill="white"/>
+</svg> 

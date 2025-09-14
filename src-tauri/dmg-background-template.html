@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adrata DMG Background</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .dmg-container {
+        width: 1320px;
+        height: 840px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        font-family:
+          "SF Pro Display",
+          -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          sans-serif;
+        overflow: hidden;
+      }
+
+      .header {
+        position: absolute;
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 48px;
+        font-weight: 600;
+        color: #0066cc;
+        margin-bottom: 10px;
+        letter-spacing: -1px;
+      }
+
+      .welcome-text {
+        font-size: 24px;
+        font-weight: 400;
+        color: #212529;
+        opacity: 0.8;
+      }
+
+      .app-icon-placeholder {
+        position: absolute;
+        left: 360px;
+        top: 540px;
+        width: 240px;
+        height: 240px;
+        border-radius: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: translate(-50%, -50%);
+      }
+
+      .app-icon-text {
+        color: white;
+        font-size: 36px;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .applications-folder {
+        position: absolute;
+        left: 960px;
+        top: 540px;
+        width: 240px;
+        height: 240px;
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: translate(-50%, -50%);
+      }
+
+      .folder-icon {
+        color: white;
+        font-size: 48px;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .instruction-text {
+        position: absolute;
+        top: 720px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 22px;
+        font-weight: 500;
+        color: #495057;
+        text-align: center;
+      }
+
+      .arrow {
+        position: absolute;
+        top: 540px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 4px;
+        background: linear-gradient(90deg, #0066cc, #667eea);
+        border-radius: 2px;
+        opacity: 0.6;
+      }
+
+      .arrow::after {
+        content: "";
+        position: absolute;
+        right: -10px;
+        top: -8px;
+        width: 0;
+        height: 0;
+        border-left: 20px solid #667eea;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+      }
+
+      .footer {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+
+      .version {
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .copyright {
+        opacity: 0.7;
+      }
+
+      /* Subtle pattern overlay */
+      .dmg-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+          radial-gradient(
+            circle at 25% 25%,
+            rgba(255, 255, 255, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(0, 102, 204, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dmg-container">
+      <div class="header">
+        <div class="logo">Adrata</div>
+        <div class="welcome-text">Welcome to Adrata</div>
+      </div>
+
+      <div class="app-icon-placeholder">
+        <div class="app-icon-text">A</div>
+      </div>
+
+      <div class="applications-folder">
+        <div class="folder-icon">📁</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="instruction-text">Drag Adrata to Applications to install</div>
+
+      <div class="footer">
+        <div class="version">Adrata v0.1.0</div>
+        <div class="copyright">© 2025 Adrata. All rights reserved.</div>
+      </div>
+    </div>
+  </body>
+</html>

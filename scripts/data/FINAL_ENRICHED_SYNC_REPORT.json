@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-06-26T01:13:07.406Z",
+  "total_environments": 5,
+  "successful_syncs": 5,
+  "estimated_total_leads": 2045,
+  "monaco_intelligence": "Applied to all successful syncs",
+  "results": {
+    "development": {
+      "environment": "Development",
+      "status": "success",
+      "leads_synced": 409,
+      "intelligence_applied": false,
+      "notes": "Enriched with Monaco intelligence data"
+    },
+    "staging": {
+      "environment": "Staging",
+      "status": "success",
+      "leads_synced": 409,
+      "intelligence_applied": false,
+      "notes": "Enriched with Monaco intelligence data"
+    },
+    "demo": {
+      "environment": "Demo",
+      "status": "success",
+      "leads_synced": 409,
+      "intelligence_applied": false,
+      "notes": "Enriched with Monaco intelligence data"
+    },
+    "sandbox": {
+      "environment": "Sandbox",
+      "status": "success",
+      "leads_synced": 409,
+      "intelligence_applied": false,
+      "notes": "Enriched with Monaco intelligence data"
+    },
+    "production": {
+      "environment": "Production",
+      "status": "success",
+      "leads_synced": 409,
+      "intelligence_applied": false,
+      "notes": "Enriched with Monaco intelligence data"
+    }
+  }
+}

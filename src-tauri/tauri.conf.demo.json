@@ -1,0 +1,45 @@
+{
+  "$schema": "https://tauri.app/schemas/2/tauri.conf.json",
+  "productName": "Adrata Demo",
+  "version": "1.0.0",
+  "identifier": "com.adrata.demo",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3000"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Adrata Demo",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1200,
+        "minHeight": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "skipTaskbar": false,
+        "transparent": false,
+        "shadow": true,
+        "focus": true,
+        "visible": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self';"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/demo-icon.png", "icons/demo-icon.icns"],
+    "category": "Business",
+    "shortDescription": "AI-Powered Sales Intelligence Demo",
+    "longDescription": "Global sales intelligence platform with AI capabilities - Demo Version"
+  },
+  "plugins": {}
+}

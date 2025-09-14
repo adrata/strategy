@@ -1,0 +1,29 @@
+{
+  "name": "adrata-lead-import",
+  "version": "1.0.0",
+  "description": "Lead data import script for Adrata workspace",
+  "type": "module",
+  "main": "import-lead-data.js",
+  "scripts": {
+    "import": "node import-lead-data.js",
+    "test": "node test-connection.js",
+    "test:dev": "node test-connection.js dev",
+    "test:prod": "node test-connection.js prod",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "csv-parser": "^3.2.0",
+    "prisma": "^6.10.1",
+    "uuid": "^9.0.0"
+  },
+  "keywords": [
+    "lead",
+    "import",
+    "csv",
+    "database",
+    "crm"
+  ],
+  "author": "Adrata",
+  "license": "PROPRIETARY"
+}

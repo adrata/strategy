@@ -1,0 +1,112 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      // Simulate API call for password reset
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsSubmitted(true);
+    } catch (error) {
+      setError("Failed to send reset email. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Check Your Email
+          </h1>
+          
+          <div className="text-center">
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded">
+              We've sent a password reset link to {email}
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-6">
+              If you don't see the email, check your spam folder or try again.
+            </p>
+            
+            <Link
+              href="/sign-in"
+              className="inline-flex items-center gap-2 text-black font-medium hover:text-gray-800 transition-colors"
+            >
+              ← Back to Sign In
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Reset Your Password
+        </h1>
+
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <div>
+            <label className="block font-medium mb-1" htmlFor="email">
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none"
+              placeholder="Enter your email address"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading || !email}
+            className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Sending..." : "Send Reset Link"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/sign-in"
+            className="text-sm text-gray-600 hover:text-black transition-colors"
+          >
+            ← Back to Sign In
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+} 

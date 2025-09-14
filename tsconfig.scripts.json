@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist-scripts",
+    "rootDir": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "resolveJsonModule": false,
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": [
+    "scripts/run-buyer-group.ts",
+    "src/platform/services/buyer-group/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-scripts"
+  ]
+}
+
+

@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-09-01T03:33:55.035Z",
+  "user": {
+    "id": "cmf0kew2z0000pcsexylorpxp",
+    "name": "Ryan Serrato",
+    "email": "ryan@notaryeveryday.com"
+  },
+  "workspace": {
+    "id": "cmezxb1ez0001pc94yry3ntjk",
+    "name": "Notary Everyday"
+  },
+  "access": {
+    "totalAccounts": 674,
+    "danoAccounts": 150,
+    "ryanRole": "manager",
+    "hasAccess": true
+  },
+  "credentials": {
+    "email": "ryan@notaryeveryday.com",
+    "password": "RyanIsGreat01!"
+  }
+}

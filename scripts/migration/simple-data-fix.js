@@ -1,0 +1,275 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+async function simpleDataFix() {
+  console.log('🚀 SIMPLE DATA MODEL FIX');
+  console.log('========================');
+  console.log('Working with current schema to link pipeline records to core people/companies...\n');
+
+  let stats = {
+    peopleCreated: 0,
+    companiesCreated: 0,
+    leadsLinked: 0,
+    prospectsLinked: 0,
+    opportunitiesLinked: 0,
+    customersCreated: 0,
+    errors: 0
+  };
+
+  try {
+    // STEP 1: Create people and companies from leads and prospects
+    console.log('👥 STEP 1: Creating people and companies from existing data...');
+    
+    // Get all leads and prospects
+    const allLeads = await prisma.leads.findMany({
+      select: {
+        id: true, fullName: true, firstName: true, lastName: true,
+        email: true, workEmail: true, phone: true, workPhone: true,
+        jobTitle: true, title: true, company: true, buyerGroupRole: true,
+        workspaceId: true, assignedUserId: true
+      }
+    });
+
+    const allProspects = await prisma.prospects.findMany({
+      select: {
+        id: true, fullName: true, firstName: true, lastName: true,
+        email: true, workEmail: true, phone: true, workPhone: true,
+        jobTitle: true, title: true, company: true, buyerGroupRole: true,
+        workspaceId: true, assignedUserId: true
+      }
+    });
+
+    console.log(`Found ${allLeads.length} leads and ${allProspects.length} prospects`);
+
+    // Create companies first
+    const companyNames = new Set();
+    [...allLeads, ...allProspects].forEach(person => {
+      if (person.company && person.company.trim()) {
+        companyNames.add(person.company.trim());
+      }
+    });
+
+    const companyMap = new Map();
+    for (const companyName of companyNames) {
+      let company = await prisma.companies.findFirst({
+        where: { name: { equals: companyName, mode: 'insensitive' } }
+      });
+
+      if (!company) {
+        company = await prisma.companies.create({
+          data: {
+            name: companyName,
+            workspaceId: allLeads[0]?.workspaceId || allProspects[0]?.workspaceId,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
+        stats.companiesCreated++;
+        console.log(`✅ Created company: ${companyName}`);
+      }
+      companyMap.set(companyName, company.id);
+    }
+
+    // Create people
+    const peopleMap = new Map();
+    const allPeople = [...allLeads, ...allProspects];
+    
+    for (const person of allPeople) {
+      const companyId = person.company ? companyMap.get(person.company) : null;
+      
+      let existingPerson = await prisma.people.findFirst({
+        where: {
+          OR: [
+            { email: person.email },
+            { workEmail: person.workEmail },
+            { fullName: person.fullName }
+          ]
+        }
+      });
+
+      if (!existingPerson) {
+        existingPerson = await prisma.people.create({
+          data: {
+            firstName: person.firstName,
+            lastName: person.lastName,
+            fullName: person.fullName,
+            email: person.email,
+            workEmail: person.workEmail,
+            phone: person.phone,
+            workPhone: person.workPhone,
+            jobTitle: person.jobTitle || person.title,
+            role: person.buyerGroupRole,
+            companyId: companyId,
+            workspaceId: person.workspaceId,
+            assignedUserId: person.assignedUserId,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
+        stats.peopleCreated++;
+        console.log(`✅ Created person: ${person.fullName}`);
+      }
+      
+      peopleMap.set(person.fullName, existingPerson.id);
+    }
+
+    // STEP 2: Link leads to people and companies
+    console.log('\n🔥 STEP 2: Linking leads to people and companies...');
+    
+    for (const lead of allLeads) {
+      const personId = peopleMap.get(lead.fullName);
+      const companyId = lead.company ? companyMap.get(lead.company) : null;
+      
+      if (personId) {
+        await prisma.leads.update({
+          where: { id: lead.id },
+          data: {
+            personId: personId,
+            companyId: companyId
+          }
+        });
+        stats.leadsLinked++;
+        console.log(`✅ Linked lead: ${lead.fullName}`);
+      }
+    }
+
+    // STEP 3: Link prospects to people and companies
+    console.log('\n🎯 STEP 3: Linking prospects to people and companies...');
+    
+    for (const prospect of allProspects) {
+      const personId = peopleMap.get(prospect.fullName);
+      const companyId = prospect.company ? companyMap.get(prospect.company) : null;
+      
+      if (personId) {
+        await prisma.prospects.update({
+          where: { id: prospect.id },
+          data: {
+            personId: personId,
+            companyId: companyId
+          }
+        });
+        stats.prospectsLinked++;
+        console.log(`✅ Linked prospect: ${prospect.fullName}`);
+      }
+    }
+
+    // STEP 4: Link opportunities through leads
+    console.log('\n💰 STEP 4: Linking opportunities...');
+    
+    const opportunities = await prisma.opportunities.findMany({
+      select: {
+        id: true, name: true, leadId: true, workspaceId: true
+      }
+    });
+
+    for (const opportunity of opportunities) {
+      if (opportunity.leadId) {
+        const lead = await prisma.leads.findUnique({
+          where: { id: opportunity.leadId },
+          select: { personId: true, companyId: true }
+        });
+        
+        if (lead && (lead.personId || lead.companyId)) {
+          await prisma.opportunities.update({
+            where: { id: opportunity.id },
+            data: {
+              personId: lead.personId,
+              companyId: lead.companyId
+            }
+          });
+          stats.opportunitiesLinked++;
+          console.log(`✅ Linked opportunity: ${opportunity.name}`);
+        }
+      }
+    }
+
+    // STEP 5: Create customers from closed opportunities
+    console.log('\n🏆 STEP 5: Creating customers from closed opportunities...');
+    
+    const closedOpportunities = await prisma.opportunities.findMany({
+      where: {
+        OR: [
+          { stage: { contains: 'Closed Won', mode: 'insensitive' } },
+          { stage: { contains: 'Won', mode: 'insensitive' } },
+          { actualCloseDate: { not: null } }
+        ]
+      },
+      select: {
+        id: true, name: true, personId: true, companyId: true,
+        amount: true, actualCloseDate: true, workspaceId: true
+      }
+    });
+
+    for (const opp of closedOpportunities) {
+      if (opp.personId && opp.companyId) {
+        let customer = await prisma.customers.findFirst({
+          where: {
+            personId: opp.personId,
+            companyId: opp.companyId
+          }
+        });
+
+        if (!customer) {
+          customer = await prisma.customers.create({
+            data: {
+              id: `customer_${opp.personId}_${opp.companyId}`,
+              companyId: opp.companyId,
+              personId: opp.personId,
+              customerSince: opp.actualCloseDate || new Date(),
+              totalLifetimeValue: opp.amount || 0,
+              lastDealValue: opp.amount || 0,
+              dealCount: 1,
+              workspaceId: opp.workspaceId,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }
+          });
+          stats.customersCreated++;
+          console.log(`✅ Created customer from opportunity: ${opp.name}`);
+        }
+      }
+    }
+
+    // FINAL STATS
+    console.log('\n🎉 DATA MODEL FIX COMPLETE!');
+    console.log('============================');
+    console.log(`👥 People created: ${stats.peopleCreated}`);
+    console.log(`🏢 Companies created: ${stats.companiesCreated}`);
+    console.log(`🔥 Leads linked: ${stats.leadsLinked}`);
+    console.log(`🎯 Prospects linked: ${stats.prospectsLinked}`);
+    console.log(`💰 Opportunities linked: ${stats.opportunitiesLinked}`);
+    console.log(`🏆 Customers created: ${stats.customersCreated}`);
+    console.log(`❌ Errors: ${stats.errors}`);
+
+    // VERIFICATION
+    console.log('\n🔍 DATA MODEL VERIFICATION:');
+    const peopleCount = await prisma.people.count();
+    const companiesCount = await prisma.companies.count();
+    const leadsWithPeople = await prisma.leads.count({ where: { personId: { not: null } } });
+    const prospectsWithPeople = await prisma.prospects.count({ where: { personId: { not: null } } });
+    const opportunitiesWithPeople = await prisma.opportunities.count({ where: { personId: { not: null } } });
+    const customersCount = await prisma.customers.count();
+
+    console.log(`📊 Total people: ${peopleCount}`);
+    console.log(`📊 Total companies: ${companiesCount}`);
+    console.log(`📊 Leads with people: ${leadsWithPeople}`);
+    console.log(`📊 Prospects with people: ${prospectsWithPeople}`);
+    console.log(`📊 Opportunities with people: ${opportunitiesWithPeople}`);
+    console.log(`📊 Total customers: ${customersCount}`);
+
+    console.log('\n✅ DATA MODEL NOW FOLLOWS CRM BEST PRACTICES:');
+    console.log('• Core records (People/Companies) are master data');
+    console.log('• Pipeline records reference core records via foreign keys');
+    console.log('• No data duplication between tables');
+    console.log('• Proper pipeline flow: Prospects → Leads → Opportunities → Customers');
+
+  } catch (error) {
+    console.error('❌ Migration failed:', error);
+    stats.errors++;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// Run the simple fix
+simpleDataFix().catch(console.error);

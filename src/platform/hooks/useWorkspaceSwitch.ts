@@ -1,0 +1,98 @@
+"use client";
+
+import { useCallback } from 'react';
+import { useUnifiedAuth } from '@/platform/auth-unified';
+import { parseWorkspaceFromUrl, getWorkspaceBySlug } from '@/platform/auth/workspace-slugs';
+
+/**
+ * Hook for handling workspace switching based on URL changes
+ * This ensures that when users navigate to workspace-specific URLs,
+ * the workspace context is properly updated
+ */
+export function useWorkspaceSwitch() {
+  const { user: authUser } = useUnifiedAuth();
+
+  const switchToWorkspaceFromUrl = useCallback(async (pathname: string) => {
+    if (!authUser?.workspaces) {
+      console.log('⚠️ [WORKSPACE SWITCH] No workspaces available');
+      return false;
+    }
+
+    const parsed = parseWorkspaceFromUrl(pathname);
+    if (!parsed) {
+      console.log('⚠️ [WORKSPACE SWITCH] No workspace found in URL');
+      return false;
+    }
+
+    const { slug } = parsed;
+    const workspace = getWorkspaceBySlug(authUser.workspaces, slug);
+    
+    if (!workspace) {
+      console.log(`⚠️ [WORKSPACE SWITCH] Workspace not found for slug: ${slug}`);
+      return false;
+    }
+
+    // Check if we need to switch workspaces
+    if (workspace['id'] === authUser.activeWorkspaceId) {
+      console.log(`✅ [WORKSPACE SWITCH] Already on correct workspace: ${workspace.name}`);
+      return true;
+    }
+
+    console.log(`🔄 [WORKSPACE SWITCH] Switching from ${authUser.activeWorkspaceId} to ${workspace.id} (${workspace.name})`);
+
+    try {
+      // Get the current session
+      const { UnifiedAuthService } = await import('@/platform/auth/service');
+      const session = await UnifiedAuthService.getSession();
+      
+      if (!session?.accessToken) {
+        console.error('❌ [WORKSPACE SWITCH] No access token available');
+        return false;
+      }
+
+      // Call the workspace switch API
+      const response = await fetch('/api/auth/switch-workspace', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ workspaceId: workspace.id }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        console.error(`❌ [WORKSPACE SWITCH] API call failed: ${response.status}`);
+        return false;
+      }
+
+      const result = await response.json();
+      
+      if (result['success'] && result.newToken) {
+        // Update the session with the new token
+        session['accessToken'] = result.newToken;
+        await UnifiedAuthService.storeSession(session);
+        
+        // Dispatch event to notify other components
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('adrata-workspace-switched', {
+            detail: { workspaceId: workspace.id, workspaceName: workspace.name }
+          }));
+        }
+        
+        console.log(`✅ [WORKSPACE SWITCH] Successfully switched to workspace: ${workspace.name}`);
+        return true;
+      } else {
+        console.error('❌ [WORKSPACE SWITCH] API returned error:', result.error);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ [WORKSPACE SWITCH] Failed to switch workspace:', error);
+      return false;
+    }
+  }, [authUser]);
+
+  return {
+    switchToWorkspaceFromUrl,
+  };
+}

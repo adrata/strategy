@@ -1,0 +1,98 @@
+[package]
+name = "adrata"
+version = "1.0.2"
+description = "Adrata Desktop Application"
+authors = ["Adrata Team"]
+license = "MIT"
+repository = "https://github.com/adrata/desktop"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+dotenvy = "0.15"
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# 🚀 PERFORMANCE: Removed compression feature for smaller binary size
+tauri = { version = "2", features = [ "rustls-tls", "devtools", "wry"], default-features = false }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+reqwest = { version = "0.12", features = ["json", "stream", "multipart"] }
+async-std = "1.12"
+futures = "0.3"
+log = "0.4"
+env_logger = "0.11"
+dirs = "5.0"
+zip = "0.6"
+sha2 = "0.10"
+hex = "0.4"
+bcrypt = "0.15"
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "postgres", "chrono", "uuid"] }
+dotenvy = "0.15"
+tauri-plugin-notification = "2.3.0"
+
+# Native audio capture for speech recognition (optional)
+rodio = { version = "0.17", optional = true }
+cpal = { version = "0.15", optional = true }
+hound = { version = "3.5", optional = true }
+
+# macOS-specific dependencies for platform module
+cocoa = "0.24"
+objc = "0.2"
+
+# 🚀 ULTRA-FAST PERFORMANCE: Advanced caching and optimization
+dashmap = "5.5"  # Ultra-fast concurrent HashMap
+once_cell = "1.19"  # Global static initialization
+rayon = "1.8"  # Data parallelism for batch operations
+lru = "0.12"  # LRU cache for intelligent data caching
+
+# Random number generation for message IDs
+rand = "0.8"
+tauri-plugin-websocket = "2.4.0"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
+# Optional audio features for speech recognition
+audio = ["rodio", "cpal", "hound"]
+# Notification feature for desktop notifications
+notification = []
+# Enable audio by default for microphone access
+default = ["audio", "notification"]
+
+# 🚀 WORLD-CLASS PERFORMANCE PROFILES
+[profile.release]
+# Strip debug symbols for smaller binary
+strip = true
+# Optimize for binary size (can also try "z" for even smaller)
+opt-level = "s"
+# Enable link-time optimization for better performance
+lto = true
+# Optimize across crates
+codegen-units = 1
+# Remove panic unwinding for smaller binary
+panic = "abort"
+
+[profile.dev]
+# Fast incremental compilation for development
+incremental = true
+opt-level = 0
+debug = true
+
+# 🚀 OPTIMIZED DEPENDENCIES: Apply optimizations to dependencies but keep our code debuggable
+[profile.dev.package."*"]
+opt-level = 1
+debug = false

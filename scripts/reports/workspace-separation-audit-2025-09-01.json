@@ -1,0 +1,188 @@
+{
+  "separationScore": 100,
+  "totalAccountsVerified": 3989,
+  "auditResults": {
+    "workspaces": {
+      "01K1VBYTB7ENETW2PRY05T97JY": {
+        "name": "Thrive",
+        "slug": "thrive",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYXAKT4HCTYT05WM6AXJ5": {
+        "name": "CloudCaddie",
+        "slug": "cloudcaddie",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYXCYC5TYDFCADWTBYJ99": {
+        "name": "Virtuous Software",
+        "slug": "virtuous-software",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYV8ETM2RCQA4GNN9EG72": {
+        "name": "Retail Product Solutions",
+        "slug": "retailproductsolutions",
+        "members": 2,
+        "accounts": 234,
+        "contacts": 1130,
+        "leads": 867,
+        "prospects": 277,
+        "opportunities": 56
+      },
+      "01K1VBYWN8DDS7ZHPGE0EVFYDQ": {
+        "name": "The Zigg",
+        "slug": "the-zigg",
+        "members": 3,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYWQGYA5C2A47YR6F5QTC": {
+        "name": "Vanta",
+        "slug": "vanta",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYXF5HJFY3G3MKDG979V3": {
+        "name": "Plush Cash Rides",
+        "slug": "plush-cash-rides",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYXHD0J895XAN0HGFBKJP": {
+        "name": "Adrata",
+        "slug": "adrata",
+        "members": 4,
+        "accounts": 23,
+        "contacts": 11,
+        "leads": 0,
+        "prospects": 2,
+        "opportunities": 0
+      },
+      "01K1VBYXQ0B77H8PTT6N1TSTPX": {
+        "name": "Cottonwood",
+        "slug": "cottonwood",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYWSVNMYSWP8FSQWJVH1E": {
+        "name": "Cramer",
+        "slug": "cramer",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYWW355ZF05PH0XS6J2A9": {
+        "name": "Future Industries",
+        "slug": "future-industries",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYX2YERMXBFJ60RC6J194": {
+        "name": "Demo Workspace",
+        "slug": "demo",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 69,
+        "prospects": 0,
+        "opportunities": 1
+      },
+      "01K1VBYWYD11G18BR8M7F4T8D8": {
+        "name": "Stellar Cyber",
+        "slug": "stellar-cyber",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYX0NM5B6C9H49P5M2VBK": {
+        "name": "Wiz",
+        "slug": "wiz",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYX64H1Q40SXF3GN2SH1D": {
+        "name": "Dell",
+        "slug": "dell",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "01K1VBYX8CBVPP50NYBXSMT8GK": {
+        "name": "WOOLVS",
+        "slug": "woolvs",
+        "members": 1,
+        "accounts": 0,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      },
+      "cmezxb1ez0001pc94yry3ntjk": {
+        "name": "Notary Everyday",
+        "slug": "notary-everyday",
+        "members": 2,
+        "accounts": 3732,
+        "contacts": 0,
+        "leads": 0,
+        "prospects": 0,
+        "opportunities": 0
+      }
+    },
+    "totalAccounts": 3989,
+    "accountsWithoutWorkspace": 0,
+    "duplicateAccounts": 20,
+    "issues": [
+      {
+        "type": "duplicate_account_names",
+        "count": 20,
+        "message": "20 account names appear in multiple workspaces"
+      }
+    ]
+  }
+}

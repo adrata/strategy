@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-09-02T22:33:31.784Z",
+  "assignments": {
+    "leadsUpdated": 817,
+    "contactsUpdated": 1165
+  },
+  "duplicates": {
+    "leadsRemoved": 427,
+    "contactsRemoved": 774
+  },
+  "finalState": {
+    "notaryEveryday": {
+      "accounts": 150,
+      "leads": 390,
+      "contacts": 391
+    },
+    "retailProductSolutions": {
+      "accounts": 251,
+      "leads": 865,
+      "contacts": 1038
+    }
+  }
+}

@@ -1,0 +1,460 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from '@/platform/database/prisma-client';
+
+// Required for static export compatibility
+export const dynamic = "force-static";
+
+// GET: Retrieve partnerships or other related data
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get("workspaceId") || "adrata";
+    const userId = searchParams.get("userId") || "dan";
+    const type = searchParams.get("type") || "partnerships";
+
+    console.log(
+      `🔄 [CONVERSIONS API] Getting ${type} for workspace: ${workspaceId}, user: ${userId}`,
+    );
+
+    await prisma.$connect();
+
+    if (type === "partnerships") {
+      // Get partnerships from accounts table since partnerships table doesn't exist
+      const partnerships = await prisma.companies.findMany({
+        where: {
+          workspaceId: workspaceId,
+          OR: [
+            { accountType: 'partner', deletedAt: null },
+            { accountType: 'channel_partner' },
+            { accountType: 'strategic_partner' }
+          ]
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        take: 50 // Limit to 50 most recent
+      });
+
+      // Transform accounts to partnership format
+      const partnershipData = partnerships.map(account => ({
+        id: account.id,
+        name: account.name,
+        partnerType: account.accountType || 'Strategic Partner',
+        contactName: account.primaryContact,
+        contactTitle: null,
+        contactEmail: account.email,
+        contactPhone: account.phone,
+        relationshipStatus: 'Active',
+        relationshipStrength: 'Medium',
+        commissionStructure: null,
+        notes: account.notes,
+        website: account.website,
+        lastContactDate: null,
+        nextContactDate: null,
+        nextAction: null,
+        workspaceId: account.workspaceId,
+        createdBy: null,
+        assignedTo: account.assignedUserId,
+        createdAt: account.createdAt,
+        updatedAt: account.updatedAt
+      }));
+
+      await prisma.$disconnect();
+
+      return NextResponse.json({
+        success: true,
+        partnerships: partnershipData,
+        count: partnershipData.length,
+      });
+    }
+
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "Invalid type parameter" },
+      { status: 400 },
+    );
+  } catch (error) {
+    console.error("❌ [CONVERSIONS API] Error getting data:", error);
+    await prisma.$disconnect();
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to get data",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+// POST: Handle lead conversions (simplified)
+export async function POST(request: NextRequest) {
+  try {
+    const { workspaceId, userId, action, data } = await request.json();
+
+    console.log(
+      `🔄 [CONVERSIONS API] Processing ${action} for workspace: ${workspaceId}, user: ${userId}`,
+    );
+
+    await prisma.$connect();
+
+    switch (action) {
+      case "convert_to_opportunity":
+        return await convertLeadToOpportunity(workspaceId, userId, data);
+
+      case "convert_prospect_to_lead":
+        return await convertProspectToLead(workspaceId, userId, data);
+
+      case "create_account_from_lead":
+        return await createAccountFromLead(workspaceId, userId, data);
+
+      case "create_contact_from_lead":
+        return await createContactFromLead(workspaceId, userId, data);
+
+      default:
+        await prisma.$disconnect();
+        return NextResponse.json(
+          { success: false, error: "Invalid action" },
+          { status: 400 },
+        );
+    }
+  } catch (error) {
+    console.error("❌ [CONVERSIONS API] Error processing conversion:", error);
+    await prisma.$disconnect();
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to process conversion",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+// Simplified helper functions
+async function convertLeadToOpportunity(
+  workspaceId: string,
+  userId: string,
+  data: any,
+) {
+  const { leadId, opportunityName } = data;
+
+  if (!leadId) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "leadId is required" },
+      { status: 400 },
+    );
+  }
+
+  // Get the lead first
+  const lead = await prisma.leads.findFirst({
+    where: {
+      id: leadId,
+      workspaceId: workspaceId,
+      deletedAt: null
+    },
+  });
+
+  if (!lead) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "Lead not found" },
+      { status: 404 },
+    );
+  }
+
+  // Create simplified opportunity
+  const opportunity = await prisma.opportunities.create({
+    data: {
+      id: `opp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: opportunityName || `Opportunity from ${lead.fullName}`,
+      currency: "USD",
+      description: `Converted from lead: ${lead.fullName}`,
+      workspaceId: workspaceId,
+      updatedAt: new Date()
+    },
+  });
+
+  // Update lead status
+  await prisma.leads.update({
+    where: { id: leadId },
+    data: {
+      status: "converted",
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log(
+    `✅ [CONVERSIONS API] Converted lead to opportunity: ${opportunity.id}`,
+  );
+
+  await prisma.$disconnect();
+
+  return NextResponse.json({
+    success: true,
+    opportunity: {
+      id: opportunity.id,
+      name: opportunity.name,
+      currency: opportunity.currency,
+      lead_id: leadId,
+      converted_at: opportunity.createdAt.toISOString(),
+    },
+    message: "Lead successfully converted to opportunity",
+  });
+}
+
+async function createAccountFromLead(
+  workspaceId: string,
+  userId: string,
+  data: any,
+) {
+  const { leadId, accountName } = data;
+
+  if (!leadId) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "leadId is required" },
+      { status: 400 },
+    );
+  }
+
+  // Get the lead
+  const lead = await prisma.leads.findFirst({
+    where: {
+      id: leadId,
+      workspaceId: workspaceId,
+      deletedAt: null
+    },
+  });
+
+  if (!lead) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "Lead not found" },
+      { status: 404 },
+    );
+  }
+
+  // Create simplified account
+  const account = await prisma.companies.create({
+    data: {
+      id: `account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: accountName || `Company for ${lead.fullName}`,
+      currency: "USD",
+      description: `Account created from lead: ${lead.fullName}`,
+      workspaceId: workspaceId,
+      updatedAt: new Date()
+    },
+  });
+
+  console.log(`✅ [CONVERSIONS API] Created account from lead: ${account.id}`);
+
+  await prisma.$disconnect();
+
+  return NextResponse.json({
+    success: true,
+    account: {
+      id: account.id,
+      name: account.name,
+      currency: account.currency,
+      lead_id: leadId,
+      created_at: account.createdAt?.toISOString() || new Date().toISOString(),
+    },
+    message: "Account successfully created from lead",
+  });
+}
+
+async function createContactFromLead(
+  workspaceId: string,
+  userId: string,
+  data: any,
+) {
+  const { leadId, accountId } = data;
+
+  if (!leadId) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "leadId is required" },
+      { status: 400 },
+    );
+  }
+
+  // Get the lead
+  const lead = await prisma.leads.findFirst({
+    where: {
+      id: leadId,
+      workspaceId: workspaceId,
+      deletedAt: null
+    },
+  });
+
+  if (!lead) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "Lead not found" },
+      { status: 404 },
+    );
+  }
+
+  // Create simplified contact (split fullName into firstName/lastName)
+  const nameParts = lead.fullName.split(" ");
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
+
+  const contact = await prisma.people.create({
+    data: {
+      id: `contact-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      fullName: lead.fullName,
+      firstName: firstName,
+      lastName: lastName,
+      email: lead.workEmail || lead.personalEmail || "",
+      phone: lead.phone || "",
+      jobTitle: lead.jobTitle || "",
+      companyId: accountId || null,
+      workspaceId: workspaceId,
+      updatedAt: new Date()
+    },
+  });
+
+  // Update lead status
+  await prisma.leads.update({
+    where: { id: leadId },
+    data: {
+      status: "converted",
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log(`✅ [CONVERSIONS API] Created contact from lead: ${contact.id}`);
+
+  await prisma.$disconnect();
+
+  return NextResponse.json({
+    success: true,
+    contact: {
+      id: contact.id,
+      full_name: contact.fullName,
+      email: contact.email,
+      phone: contact.phone,
+      job_title: contact.jobTitle,
+      account_id: contact.companyId,
+      lead_id: leadId,
+      created_at: contact.createdAt?.toISOString() || new Date().toISOString(),
+    },
+    message: "Contact successfully created from lead",
+  });
+}
+
+async function convertProspectToLead(
+  workspaceId: string,
+  userId: string,
+  data: any,
+) {
+  const { prospectId } = data;
+
+  if (!prospectId) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "prospectId is required" },
+      { status: 400 },
+    );
+  }
+
+  // Get the prospect first
+  const prospect = await prisma.prospects.findFirst({
+    where: {
+      id: prospectId,
+      workspaceId: workspaceId,
+      deletedAt: null
+    },
+  });
+
+  if (!prospect) {
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { success: false, error: "Prospect not found" },
+      { status: 404 },
+    );
+  }
+
+  // Create lead from prospect
+  const lead = await prisma.leads.create({
+    data: {
+      id: `lead-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      firstName: prospect.firstName,
+      lastName: prospect.lastName,
+      fullName: prospect.fullName,
+      displayName: prospect.displayName,
+      email: prospect.email,
+      workEmail: prospect.workEmail,
+      personalEmail: prospect.personalEmail,
+      phone: prospect.phone,
+      mobilePhone: prospect.mobilePhone,
+      workPhone: prospect.workPhone,
+      company: prospect.company,
+      companyDomain: prospect.companyDomain,
+      industry: prospect.industry,
+      vertical: prospect.vertical,
+      companySize: prospect.companySize,
+      jobTitle: prospect.jobTitle,
+      title: prospect.title,
+      department: prospect.department,
+      linkedinUrl: prospect.linkedinUrl,
+      address: prospect.address,
+      city: prospect.city,
+      state: prospect.state,
+      country: prospect.country,
+      postalCode: prospect.postalCode,
+      status: "new",
+      priority: prospect.priority,
+      source: prospect.source,
+      estimatedValue: prospect.estimatedValue,
+      currency: prospect.currency,
+      notes: prospect.notes,
+      description: prospect.description,
+      tags: prospect.tags,
+      customFields: prospect.customFields,
+      preferredLanguage: prospect.preferredLanguage,
+      timezone: prospect.timezone,
+      workspaceId: workspaceId,
+      assignedUserId: prospect.assignedUserId,
+      createdBy: userId,
+      updatedBy: userId,
+      updatedAt: new Date()
+    },
+  });
+
+  // Update prospect status
+  await prisma.prospects.update({
+    where: { id: prospectId },
+    data: {
+      status: "converted_to_lead",
+      updatedAt: new Date(),
+    },
+  });
+
+  console.log(
+    `✅ [CONVERSIONS API] Converted prospect to lead: ${lead.id}`,
+  );
+
+  await prisma.$disconnect();
+
+  return NextResponse.json({
+    success: true,
+    lead: {
+      id: lead.id,
+      name: lead.fullName,
+      company: lead.company,
+      email: lead.email,
+      phone: lead.phone,
+      job_title: lead.jobTitle,
+      prospect_id: prospectId,
+      converted_at: lead.createdAt.toISOString(),
+    },
+    message: "Prospect successfully converted to lead",
+  });
+}

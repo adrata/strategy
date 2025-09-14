@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"name": "🚀 Adrata (Production)",
+			"path": "."
+		},
+		{
+			"name": "🎯 Demo (Safe Testing)",
+			"path": "../Demo"
+		},
+		{
+			"name": "👨‍💻 TOPS",
+			"path": "../TOPS"
+		}
+	],
+	"settings": {
+		"typescript.preferences.includePackageJsonAutoImports": "on",
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/.next": true,
+			"**/.vercel": true,
+			"**/dist": true,
+			"**/build": true
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"bradlc.vscode-tailwindcss",
+			"esbenp.prettier-vscode",
+			"ms-vscode.vscode-typescript-next",
+			"rust-lang.rust-analyzer",
+			"tauri-apps.tauri-vscode"
+		]
+	},
+	"description": "Multi-workspace configuration for Adrata - Production + Demo + TOPS access for dano"
+}

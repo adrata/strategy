@@ -1,0 +1,31 @@
+{
+  "name": "top100-executive-pipeline",
+  "version": "1.0.0",
+  "description": "Production-ready executive intelligence pipeline with CoreSignal people data and PE/VC research",
+  "main": "executive-intelligence-pipeline.js",
+  "scripts": {
+    "start": "node executive-intelligence-pipeline.js",
+    "test": "node --test",
+    "setup": "node scripts/setup-api-keys.js",
+    "core": "node scripts/run-core-pipeline.js",
+    "advanced": "node scripts/run-advanced-pipeline.js", 
+    "powerhouse": "node scripts/run-powerhouse-pipeline.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^2.6.7",
+    "pdfkit": "^0.17.1"
+  },
+  "keywords": [
+    "executive-detection",
+    "ceo-finder",
+    "cfo-finder",
+    "contact-enrichment",
+    "modular-pipeline"
+  ],
+  "author": "Adrata Intelligence",
+  "license": "MIT"
+}

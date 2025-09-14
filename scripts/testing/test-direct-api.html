@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct API Test - Data Flow Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+        .data-display { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .loading { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Direct API Test - Data Flow Verification</h1>
+    <p>This page tests the API directly to verify data flow works without authentication issues.</p>
+
+    <div class="test-section">
+        <h2>🔍 Test 1: Unified API with RPS Workspace</h2>
+        <p>Testing: <code>/api/data/unified?workspaceId=rps&userId=dan</code></p>
+        <button onclick="testUnifiedAPI()">Test Unified API</button>
+        <div id="unified-result" class="data-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Test 2: Speedrun API with RPS Workspace</h2>
+        <p>Testing: <code>/api/data/speedrun?workspaceId=rps</code></p>
+        <button onclick="testSpeedrunAPI()">Test Speedrun API</button>
+        <div id="speedrun-result" class="data-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Test 3: Health Check</h2>
+        <p>Testing: <code>/api/health</code></p>
+        <button onclick="testHealth()">Test Health</button>
+        <div id="health-result" class="data-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Test 4: Pipeline Page Content</h2>
+        <p>Testing: <code>/rps/pipeline/opportunities</code></p>
+        <button onclick="testPipelinePage()">Test Pipeline Page</button>
+        <div id="pipeline-result" class="data-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Summary</h2>
+        <div id="summary" class="data-display"></div>
+    </div>
+
+    <script>
+        const results = {
+            unified: null,
+            speedrun: null,
+            health: null,
+            pipeline: null
+        };
+
+        async function testUnifiedAPI() {
+            const resultDiv = document.getElementById('unified-result');
+            resultDiv.innerHTML = '<div class="loading">Testing unified API...</div>';
+            
+            try {
+                const response = await fetch('/api/data/unified?workspaceId=rps&userId=dan&includeSpeedrun=true&includeDashboard=true');
+                const data = await response.json();
+                
+                results.unified = { success: response.ok, data, status: response.status };
+                
+                if (response.ok && data.success) {
+                    const counts = data.data.counts;
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ API Call Successful (${response.status})</div>
+                        <div><strong>Data Counts:</strong></div>
+                        <div>Leads: ${counts.leads}</div>
+                        <div>Prospects: ${counts.prospects}</div>
+                        <div>Opportunities: ${counts.opportunities}</div>
+                        <div>Accounts: ${counts.accounts}</div>
+                        <div>Contacts: ${counts.contacts}</div>
+                        <div>Speedrun: ${counts.speedrun}</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ API Call Failed (${response.status})</div>
+                        <div><strong>Error:</strong> ${data.error || 'Unknown error'}</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                results.unified = { success: false, error: error.message };
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error</div>
+                    <div><strong>Error:</strong> ${error.message}</div>
+                `;
+            }
+            
+            updateSummary();
+        }
+
+        async function testSpeedrunAPI() {
+            const resultDiv = document.getElementById('speedrun-result');
+            resultDiv.innerHTML = '<div class="loading">Testing speedrun API...</div>';
+            
+            try {
+                const response = await fetch('/api/data/speedrun?workspaceId=rps');
+                const data = await response.json();
+                
+                results.speedrun = { success: response.ok, data, status: response.status };
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ API Call Successful (${response.status})</div>
+                        <div><strong>Data:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ API Call Failed (${response.status})</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                results.speedrun = { success: false, error: error.message };
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error</div>
+                    <div><strong>Error:</strong> ${error.message}</div>
+                `;
+            }
+            
+            updateSummary();
+        }
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.innerHTML = '<div class="loading">Testing health API...</div>';
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                results.health = { success: response.ok, data, status: response.status };
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Health Check Successful (${response.status})</div>
+                        <div><strong>Status:</strong> ${data.status}</div>
+                        <div><strong>Environment:</strong> ${data.environment}</div>
+                        <div><strong>Database:</strong> ${data.services.database}</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Health Check Failed (${response.status})</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                results.health = { success: false, error: error.message };
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error</div>
+                    <div><strong>Error:</strong> ${error.message}</div>
+                `;
+            }
+            
+            updateSummary();
+        }
+
+        async function testPipelinePage() {
+            const resultDiv = document.getElementById('pipeline-result');
+            resultDiv.innerHTML = '<div class="loading">Testing pipeline page...</div>';
+            
+            try {
+                const response = await fetch('/rps/pipeline/opportunities');
+                const html = await response.text();
+                
+                results.pipeline = { success: response.ok, status: response.status, hasData: html.length > 0 };
+                
+                if (response.ok) {
+                    const hasLoadingState = html.includes('Loading workspace');
+                    const hasAuthContent = html.includes('AcquisitionOSProvider');
+                    const hasWorkspaceContent = html.includes('Retail Product Solutions');
+                    const hasDataContent = html.includes('leads') || html.includes('prospects');
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Page Load Successful (${response.status})</div>
+                        <div><strong>Content Length:</strong> ${html.length} bytes</div>
+                        <div><strong>Loading State:</strong> ${hasLoadingState ? '❌ YES (STUCK)' : '✅ NO'}</div>
+                        <div><strong>Auth Provider:</strong> ${hasAuthContent ? '✅ YES' : '❌ NO'}</div>
+                        <div><strong>Workspace Content:</strong> ${hasWorkspaceContent ? '✅ YES' : '❌ NO'}</div>
+                        <div><strong>Data Content:</strong> ${hasDataContent ? '✅ YES' : '❌ NO'}</div>
+                        <div><strong>First 500 chars:</strong></div>
+                        <pre>${html.substring(0, 500)}...</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Page Load Failed (${response.status})</div>
+                        <div><strong>Raw Response:</strong></div>
+                        <pre>${html.substring(0, 500)}...</pre>
+                    `;
+                }
+            } catch (error) {
+                results.pipeline = { success: false, error: error.message };
+                resultDiv.innerHTML = `
+                    <div class="error">❌ Network Error</div>
+                    <div><strong>Error:</strong> ${error.message}</div>
+                `;
+            }
+            
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summaryDiv = document.getElementById('summary');
+            const totalTests = Object.keys(results).length;
+            const completedTests = Object.values(results).filter(r => r !== null).length;
+            const successfulTests = Object.values(results).filter(r => r && r.success).length;
+            
+            let summaryHTML = `
+                <div><strong>Test Progress:</strong> ${completedTests}/${totalTests} tests completed</div>
+                <div><strong>Success Rate:</strong> ${completedTests > 0 ? Math.round((successfulTests/completedTests)*100) : 0}%</div>
+                <div><strong>Detailed Results:</strong></div>
+            `;
+            
+            Object.entries(results).forEach(([testName, result]) => {
+                if (result) {
+                    const status = result.success ? '✅' : '❌';
+                    const details = result.error ? ` - ${result.error}` : '';
+                    summaryHTML += `<div>${status} ${testName}: ${result.success ? 'SUCCESS' : 'FAILED'}${details}</div>`;
+                } else {
+                    summaryHTML += `<div>⏳ ${testName}: Not tested yet</div>`;
+                }
+            });
+            
+            summaryDiv.innerHTML = summaryHTML;
+        }
+
+        // Auto-run health check on page load
+        window.addEventListener('load', () => {
+            testHealth();
+        });
+    </script>
+</body>
+</html>

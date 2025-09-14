@@ -1,0 +1,703 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FIRST PRINCIPLES: Minimal loading animations */
+
+/* Safari Compatibility Fixes */
+/* Targeted browser default reset for html and body only */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  /* Allow vertical scrolling for website, hide horizontal overflow */
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Safari-specific fixes */
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Safari font rendering improvements */
+html {
+  font-feature-settings: "kern" 1;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Safari flexbox fixes */
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Ensure main app container doesn't cause page scrollbars */
+#__next,
+[data-nextjs-scroll-focus-boundary] {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Safari viewport units fix */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+/* Safari navigation and button enhancements */
+.safari {
+  /* Improve button appearance in Safari */
+  button,
+  .button,
+  a[class*="bg-black"],
+  a[class*="bg-"] {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: inherit;
+  }
+  
+  /* Fix flexbox gaps in older Safari versions */
+  .flex.space-x-6 > * + * {
+    margin-left: 1.5rem;
+  }
+  
+  /* Ensure proper text rendering in Safari */
+  a, button {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Fix hover states in Safari */
+  a:hover, button:hover {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Enhanced header navigation support for Safari */
+  header .flex.justify-between {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  
+  /* Ensure Schedule Call button renders properly */
+  a[href="/find-buyer-group"] {
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --border: #e3e4e8;
+  --muted: #888888;
+  --muted-light: #bbbbbb;
+  --accent: #000000;
+  --accent-hover: #333333;
+  --button-text: #ffffff;
+  --hover-bg: #f3f4f6;
+  --badge-new-bg: #f3f4f6;
+  --badge-new-text: #171717;
+  --badge-contacted-bg: #e5e7eb;
+  --badge-contacted-text: #374151;
+  --badge-qualified-bg: #f9fafb;
+  --badge-qualified-text: #111827;
+  --badge-lost-bg: #f3f4f6;
+  --badge-lost-text: #4b5563;
+  --active-app-border: #000;
+  /* --panel-background: #f7f7f9; */
+  --scrollbar-thumb: #e0e0e0;
+
+  /* ENHANCED ACCESSIBILITY COLORS */
+  --focus-ring: #000000;
+  --focus-ring-width: 3px;
+  --high-contrast-bg: #ffffff;
+  --high-contrast-fg: #000000;
+  --high-contrast-border: #000000;
+  --high-contrast-accent: #000000;
+}
+
+/* Use data-theme attribute instead of media query */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --border: #2d2e36;
+  --muted: #bbbbbb;
+  --muted-light: #444444;
+  --accent: #ffffff;
+  --accent-hover: #cccccc;
+  --button-text: #171717;
+  --hover-bg: #232326;
+  --badge-new-bg: #374151;
+  --badge-new-text: #e5e7eb;
+  --badge-contacted-bg: #4b5563;
+  --badge-contacted-text: #f9fafb;
+  --badge-qualified-bg: #6b7280;
+  --badge-qualified-text: #ffffff;
+  --badge-lost-bg: #374151;
+  --badge-lost-text: #d1d5db;
+  --active-app-border: #fff;
+  /* --panel-background: #18181b; */
+  --scrollbar-thumb: #444444;
+
+  /* ENHANCED DARK MODE ACCESSIBILITY */
+  --focus-ring: #ffffff;
+  --high-contrast-bg: #000000;
+  --high-contrast-fg: #ffffff;
+  --high-contrast-border: #ffffff;
+  --high-contrast-accent: #ffffff;
+}
+
+/* HIGH CONTRAST MODE - Activated via prefers-contrast: high */
+@media (prefers-contrast: high) {
+  :root {
+    --background: var(--high-contrast-bg);
+    --foreground: var(--high-contrast-fg);
+    --border: var(--high-contrast-border);
+    --muted: var(--high-contrast-fg);
+    --accent: var(--high-contrast-accent);
+    --hover-bg: var(--high-contrast-fg);
+    --button-text: var(--high-contrast-bg);
+  }
+
+  /* Enhanced borders for high contrast */
+  * {
+    border-color: var(--high-contrast-border) !important;
+  }
+}
+
+/* REDUCED MOTION - Respects prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* REMOVE ALL FOCUS OUTLINES - No blue blur anywhere */
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Remove default focus styles completely */
+*:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+/* Remove focus from all interactive elements */
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Custom class to completely remove focus styling */
+.no-focus-outline:focus,
+.no-focus-outline:focus-visible,
+.no-focus-outline:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Remove custom placeholder CSS - using normal flow */
+
+/* SCREEN READER ENHANCEMENTS */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: initial;
+  margin: initial;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* SKIP LINKS FOR KEYBOARD NAVIGATION */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--accent);
+  color: var(--button-text);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* ENHANCED BUTTON STATES FOR ACCESSIBILITY */
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* BETTER LINK CONTRAST */
+a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* ENHANCED TABLE ACCESSIBILITY */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  font-weight: bold;
+  text-align: left;
+  background-color: var(--hover-bg);
+}
+
+/* FORM ACCESSIBILITY ENHANCEMENTS */
+label {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Only apply invalid styles to forms that have validation enabled */
+form:not([novalidate]) input:invalid {
+  border-color: #374151;
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+}
+
+/* ERROR MESSAGE STYLING */
+.error-message {
+  color: #374151;
+  font-size: 14px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-message::before {
+  content: "⚠️";
+  font-size: 16px;
+}
+
+/* SUCCESS MESSAGE STYLING */
+.success-message {
+  color: #111827;
+  font-size: 14px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.success-message::before {
+  content: "✅";
+  font-size: 16px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    var(--font-inter),
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  /* Enhanced line height for readability */
+  line-height: 1.6;
+  /* Improved text size for accessibility */
+  font-size: 16px;
+  /* Optimized letter spacing for enterprise applications */
+  letter-spacing: -0.015em; /* -1.5% for improved readability */
+}
+
+/* RESPONSIVE TEXT SCALING */
+@media (min-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+.inter-font {
+  font-family:
+    var(--font-inter),
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif !important;
+  letter-spacing: -0.015em; /* -1.5% for professional look */
+}
+
+/* Global invisible scrollbar - visible on hover */
+.invisible-scrollbar {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+.invisible-scrollbar::-webkit-scrollbar {
+  display: none !important; /* Safari and Chrome */
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+.invisible-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+
+.invisible-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Ensure all overflow elements can have invisible scrollbars */
+.overflow-y-auto.invisible-scrollbar,
+.overflow-x-auto.invisible-scrollbar,
+.overflow-auto.invisible-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.overflow-y-auto.invisible-scrollbar::-webkit-scrollbar,
+.overflow-x-auto.invisible-scrollbar::-webkit-scrollbar,
+.overflow-auto.invisible-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+/* Completely hidden scrollbar utility */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Webkit browsers */
+  width: 0px;
+  height: 0px;
+  background: transparent;
+}
+
+/* Desktop scrollbar hiding */
+.desktop-app ::-webkit-scrollbar,
+[data-environment="desktop"] ::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  display: none !important;
+}
+
+.desktop-app *,
+[data-environment="desktop"] * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* ENHANCED SPARKLE ANIMATION with reduced motion support */
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+/* Only apply animations if user hasn't requested reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .sparkle-animation {
+    animation: sparkle 1.5s ease-in-out infinite;
+  }
+}
+
+/* LOADING STATE ACCESSIBILITY */
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--muted);
+  border-top: 2px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide spinner animation if reduced motion requested */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    border: 2px solid var(--accent);
+  }
+}
+
+/* ENHANCED TOOLTIPS */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--foreground);
+  color: var(--background);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 4px;
+}
+
+/* PRINT STYLES */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+}
+
+/* Sparkle animation for Outbox count changes */
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+/* LIVE REGION FOR SCREEN READERS */
+.live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* KEYBOARD NAVIGATION HELPERS */
+.keyboard-only-focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* DARK MODE MEDIA QUERY SUPPORT */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --border: #2d2e36;
+    --muted: #bbbbbb;
+    --hover-bg: #232326;
+  }
+}
+
+/* Remove blue focus borders globally and make them transparent */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: none !important;
+  ring: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Override any specific focus ring styles */
+.focus\:ring-blue-500:focus,
+.focus\:ring-2:focus,
+.focus\:ring-blue-500\/20:focus,
+.focus\:ring-blue-500\/60:focus,
+.focus\:ring-\[\#2563EB\]:focus,
+.focus\:ring-red-500:focus,
+.focus\:ring-green-500:focus,
+.focus\:ring-\[\#10B981\]:focus,
+.focus\:ring-\[\#DC2626\]:focus,
+.focus\:ring-\[\#9B59B6\]:focus {
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+}
+
+/* Override default link colors globally */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* Fix button text colors to ensure proper contrast */
+a.bg-black,
+button.bg-black {
+  color: white !important;
+}
+
+.bg-black .text-white {
+  color: white !important;
+}
+
+.bg-black .text-black {
+  color: black !important;
+}
+
+/* Ensure no-override class prevents color overrides */
+.no-override,
+.no-override * {
+  color: inherit !important;
+}
+
+a[href*="linkedin.com"],
+a[href*="linkedin.com"]:visited {
+  color: inherit;
+}
+
+a[href*="linkedin"]:not(.no-override),
+button[class*="linkedin"]:not(.no-override) {
+  color: inherit !important;
+}
+
+a[href*="linkedin"]:hover:not(.no-override),
+button[class*="linkedin"]:hover:not(.no-override) {
+  color: inherit !important;
+}
+
+/* Custom scrollbar styling for pipeline table */
+.pipeline-table-scroll::-webkit-scrollbar:horizontal {
+  height: 8px; /* Thinner horizontal scroll bar */
+}
+
+.pipeline-table-scroll::-webkit-scrollbar-track:horizontal {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+.pipeline-table-scroll::-webkit-scrollbar-thumb:horizontal {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+.pipeline-table-scroll::-webkit-scrollbar-thumb:hover:horizontal {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+

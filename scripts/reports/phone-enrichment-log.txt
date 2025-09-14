@@ -1,0 +1,2505 @@
+📞 ENRICHING CONTACTS WITH LINKEDIN PHONE NUMBERS
+=================================================
+
+📋 Found 274 high-priority contacts with LinkedIn URLs to enrich
+
+📞 [1/274] Harold Jaramillo
+   💼 Director De Operaciones (Director)
+   🎯 champion - Priority: 78
+   🔗 https://www.linkedin.com/in/harold-jaramillo-90a22895
+   🔗 LinkedIn enrichment: harold-jaramillo-90a22895...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [2/274] Deanna Heminger
+   💼 Director Of Sales And Business Development (Director)
+   🎯 champion - Priority: 78
+   🔗 https://www.linkedin.com/in/deanna-heminger-7a6122247
+   🔗 LinkedIn enrichment: deanna-heminger-7a6122247...
+   ✅ LinkedIn Phone: Found 2 phones for Deanna Heminger
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [3/274] Ryan Thompson
+   💼 Marketing Director (Director)
+   🎯 champion - Priority: 78
+   🔗 https://www.linkedin.com/in/ryan-thompson-22825a11a
+   🔗 LinkedIn enrichment: ryan-thompson-22825a11a...
+   ✅ LinkedIn Phone: Found 2 phones for Ryan Thompson
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [4/274] Joan T Wilber
+   💼 Compliance Director (Director)
+   🎯 champion - Priority: 78
+   🔗 https://www.linkedin.com/in/joan-t-wilber-b09b9b133
+   🔗 LinkedIn enrichment: joan-t-wilber-b09b9b133...
+   ✅ LinkedIn Phone: Found 2 phones for Joan T Wilber
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [5/274] Tami Sturdevant
+   💼 Director Of Operations (Director)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/tami-sturdevant-a37b43a5
+   🔗 LinkedIn enrichment: tami-sturdevant-a37b43a5...
+   ✅ LinkedIn Phone: Found 2 phones for Tami Sturdevant
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [6/274] Sharon Bartlett
+   💼 Executive Director Of Operations (Director)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/shbartlett
+   🔗 LinkedIn enrichment: shbartlett...
+   ✅ LinkedIn Phone: Found 2 phones for Sharon Bartlett
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 214-914-9272 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [7/274] Marylou Lora
+   💼 Director Of Operations (Director)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/marylou-lora-09924855
+   🔗 LinkedIn enrichment: marylou-lora-09924855...
+   ✅ LinkedIn Phone: Found 1 phones for Marylou Lora
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [8/274] Kayla Swinford
+   💼 Director Of Operations (Director)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/kayla-swinford-0023a3204
+   🔗 LinkedIn enrichment: kayla-swinford-0023a3204...
+   ✅ LinkedIn Phone: Found 1 phones for Kayla Swinford
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 727-247-9882 (mobile)
+      📊 Quality Score: 50/100
+
+📞 [9/274] Ashley Bowen
+   💼 Director Of Operations (Director)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/ashley-bowen-43400a77
+   🔗 LinkedIn enrichment: ashley-bowen-43400a77...
+   ✅ LinkedIn Phone: Found 2 phones for Ashley Bowen
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [10/274] Kaylee Kurtz
+   💼 Title Department Manager (Manager)
+   🎯 champion - Priority: 75
+   🔗 https://www.linkedin.com/in/kaylee-kurtz-a802b861
+   🔗 LinkedIn enrichment: kaylee-kurtz-a802b861...
+   ✅ LinkedIn Phone: Found 2 phones for Kaylee Kurtz
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [11/274] Shawna Ernst
+   💼 Branch Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/shawna-ernst-31965532
+   🔗 LinkedIn enrichment: shawna-ernst-31965532...
+   ✅ LinkedIn Phone: Found 2 phones for Shawna Ernst
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [12/274] Arlene Bejarano
+   💼 Branch Manager Senior Escrow Officer (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/arlenebejarano
+   🔗 LinkedIn enrichment: arlenebejarano...
+   ✅ LinkedIn Phone: Found 2 phones for Arlene Bejarano
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [13/274] Sue-Ann Joiner
+   💼 Branch Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/sue-ann-joiner-70a21b66
+   🔗 LinkedIn enrichment: sue-ann-joiner-70a21b66...
+   ✅ LinkedIn Phone: Found 2 phones for Sue Ann Joiner
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [14/274] Lori Roberts
+   💼 Branch Manager Sales (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/lori-roberts-85526678
+   🔗 LinkedIn enrichment: lori-roberts-85526678...
+   ✅ LinkedIn Phone: Found 2 phones for Lori Roberts
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [15/274] Sandy Baker
+   💼 Branch Manager Escrow Officer (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/sandy-baker-21a21815
+   🔗 LinkedIn enrichment: sandy-baker-21a21815...
+   ✅ LinkedIn Phone: Found 2 phones for Sandy Baker
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [16/274] Janet R. Moe
+   💼 Unit Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/janet-r-moe-3b390419
+   🔗 LinkedIn enrichment: janet-r-moe-3b390419...
+   ✅ LinkedIn Phone: Found 2 phones for Janet R Moe
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [17/274] Alycia Crook
+   💼 Branch Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/alycia-crook-21531664
+   🔗 LinkedIn enrichment: alycia-crook-21531664...
+   ✅ LinkedIn Phone: Found 1 phones for Alycia Crook
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [18/274] Angela Rank
+   💼 Branch Manager Sr Escrow Officer (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/angela-rank-09bb5680
+   🔗 LinkedIn enrichment: angela-rank-09bb5680...
+   ✅ LinkedIn Phone: Found 2 phones for Angela Rank
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [19/274] Israel Navarro
+   💼 Branch Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/israel-navarro-33836611
+   🔗 LinkedIn enrichment: israel-navarro-33836611...
+   ✅ LinkedIn Phone: Found 2 phones for Israel Navarro
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [20/274] Michelle Wilkison
+   💼 Escrow Area Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/michelle-wilkison-9b9aa741
+   🔗 LinkedIn enrichment: michelle-wilkison-9b9aa741...
+   ✅ LinkedIn Phone: Found 2 phones for Michelle Wilkison
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 620-295-0238 (mobile)
+      📊 Quality Score: 60/100
+
+📞 [21/274] John Hammer
+   💼 Regional Manager (Manager)
+   🎯 champion - Priority: 70
+   🔗 https://www.linkedin.com/in/john-hammer-798148102
+   🔗 LinkedIn enrichment: john-hammer-798148102...
+   ✅ LinkedIn Phone: Found 2 phones for John Hammer
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [22/274] Jamie Keeton
+   💼 Regional Operations Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/jamiekeeton
+   🔗 LinkedIn enrichment: jamiekeeton...
+   ✅ LinkedIn Phone: Found 2 phones for Jamie Keeton
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [23/274] Diana Keller
+   💼 Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/diana-keller-62984119a
+   🔗 LinkedIn enrichment: diana-keller-62984119a...
+   ✅ LinkedIn Phone: Found 2 phones for Diana Keller
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 561-436-7931 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [24/274] Robert Atkins
+   💼 Operations Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/robert-atkins-204163128
+   🔗 LinkedIn enrichment: robert-atkins-204163128...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [25/274] Stephanie Zalai
+   💼 Operations Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/stephanie-zalai-680ba745
+   🔗 LinkedIn enrichment: stephanie-zalai-680ba745...
+   ✅ LinkedIn Phone: Found 2 phones for Stephanie Zalai
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 754-900-6780 (direct)
+      🎯 Direct Dial: +1 754-900-6780
+      📊 Quality Score: 75/100
+
+📞 [26/274] Julie Larraza
+   💼 Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/julie-larraza-b942457
+   🔗 LinkedIn enrichment: julie-larraza-b942457...
+   ✅ LinkedIn Phone: Found 2 phones for Julie Larraza
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [27/274] Jennifer Pereira
+   💼 Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/jennifer-pereira-86175a34
+   🔗 LinkedIn enrichment: jennifer-pereira-86175a34...
+   ✅ LinkedIn Phone: Found 2 phones for Jennifer Pereira
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [28/274] Markie Paquin
+   💼 Assistant Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/markielepino
+   🔗 LinkedIn enrichment: markielepino...
+   ✅ LinkedIn Phone: Found 1 phones for Markie Paquin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [29/274] Samuel Henao Vélez
+   💼 Operations Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/samuel-henao-vélez-0a8a14233
+   🔗 LinkedIn enrichment: samuel-henao-vélez-0a8a14233...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [30/274] Stephanie Strohl
+   💼 Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/stephanie-strohl-0b57ba55
+   🔗 LinkedIn enrichment: stephanie-strohl-0b57ba55...
+   ✅ LinkedIn Phone: Found 2 phones for Stephanie Strohl
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [31/274] Kristy Tatum
+   💼 Business Development Manager (Manager)
+   🎯 champion - Priority: 65
+   🔗 https://www.linkedin.com/in/kristytatum
+   🔗 LinkedIn enrichment: kristytatum...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [32/274] Shanda Gray
+   💼 Office Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/shanda-gray-b9745aa
+   🔗 LinkedIn enrichment: shanda-gray-b9745aa...
+   ✅ LinkedIn Phone: Found 2 phones for Shanda Gray
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [33/274] Carolee Baker
+   💼 Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/carolee-baker-26bb87b8
+   🔗 LinkedIn enrichment: carolee-baker-26bb87b8...
+   ✅ LinkedIn Phone: Found 2 phones for Carolee Baker
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [34/274] John Sturno
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/john-sturno-b1a2aa138
+   🔗 LinkedIn enrichment: john-sturno-b1a2aa138...
+   ✅ LinkedIn Phone: Found 2 phones for John Sturno
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [35/274] She'rri McClellan-Doyle
+   💼 Realtor Property Manager Real Estate Investor (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/she-rri-mcclellan-doyle-mba-03265826
+   🔗 LinkedIn enrichment: she-rri-mcclellan-doyle-mba-03265826...
+   ✅ LinkedIn Phone: Found 1 phones for She'Rri Mcclellan-Doyle
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [36/274] Karla Fischer
+   💼 Office Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/karla-fischer-82201b16
+   🔗 LinkedIn enrichment: karla-fischer-82201b16...
+   ✅ LinkedIn Phone: Found 1 phones for Karla Fischer
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [37/274] Michelle Depaul
+   💼 Events Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michelledepaul
+   🔗 LinkedIn enrichment: michelledepaul...
+   ✅ LinkedIn Phone: Found 1 phones for Michelle Depaul
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [38/274] Wendy Northey
+   💼 Marketing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/wendy-northey-7aaa367
+   🔗 LinkedIn enrichment: wendy-northey-7aaa367...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [39/274] Kristin Huber
+   💼 Marketing Manager Buyer Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/huber-kristin-a685685
+   🔗 LinkedIn enrichment: huber-kristin-a685685...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [40/274] Brock Muench
+   💼 Sr Software Engineering Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brock-muench
+   🔗 LinkedIn enrichment: brock-muench...
+   ✅ LinkedIn Phone: Found 2 phones for Brock Muench
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [41/274] Camille Lang
+   💼 Executive Account Manager Title Representative (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/camille-lang
+   🔗 LinkedIn enrichment: camille-lang...
+   ✅ LinkedIn Phone: Found 1 phones for Camille Lang Baeten
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [42/274] Brooke Purowitz
+   💼 Marketing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/bpurowitz
+   🔗 LinkedIn enrichment: bpurowitz...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [43/274] Zack Goldberg
+   💼 Business Relationship Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/zack-goldberg-a0bb6748
+   🔗 LinkedIn enrichment: zack-goldberg-a0bb6748...
+   ✅ LinkedIn Phone: Found 2 phones for Zack Goldberg
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 401-368-9071 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [44/274] Brian Hopkins
+   💼 Title Examiner Vendor Manager Business Development ResWare Admin (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brian-hopkins-b8431118
+   🔗 LinkedIn enrichment: brian-hopkins-b8431118...
+   ✅ LinkedIn Phone: Found 1 phones for Brian Hopkins
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [45/274] Leeanne Dempsey Sterling
+   💼 Account Manager, Licensed Title Agent (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/leeanne-dempsey-sterling-92222824
+   🔗 LinkedIn enrichment: leeanne-dempsey-sterling-92222824...
+   ✅ LinkedIn Phone: Found 2 phones for Leeanne Dempsey Sterling
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [46/274] Michelle Humphrey
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michelle-humphrey-89362836
+   🔗 LinkedIn enrichment: michelle-humphrey-89362836...
+   ✅ LinkedIn Phone: Found 2 phones for Michelle Humphrey
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [47/274] Jarod Wiczen
+   💼 Licensed ISA Team Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jarod-wiczen-847b91174
+   🔗 LinkedIn enrichment: jarod-wiczen-847b91174...
+   ✅ LinkedIn Phone: Found 1 phones for Jarod Wiczen
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [48/274] Ryan C. Raymond
+   💼 Team Lead Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ryan-c-raymond-624478ba
+   🔗 LinkedIn enrichment: ryan-c-raymond-624478ba...
+   ✅ LinkedIn Phone: Found 2 phones for Ryan C Raymond
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [49/274] Ryan Ramsey
+   💼 Warehouse Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ryan-ramsey-760072210
+   🔗 LinkedIn enrichment: ryan-ramsey-760072210...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [50/274] Julie Merida
+   💼 Project Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/julie-merida-153aa923b
+   🔗 LinkedIn enrichment: julie-merida-153aa923b...
+   ✅ LinkedIn Phone: Found 1 phones for Julie Merida
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [51/274] Cynthia Kuhn
+   💼 Post Closing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cynthia-kuhn-701882152
+   🔗 LinkedIn enrichment: cynthia-kuhn-701882152...
+   ✅ LinkedIn Phone: Found 1 phones for Cynthia Kuhn
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [52/274] Stacy Wilson
+   💼 PMO Technology Support Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/stacy-wilson-844911a
+   🔗 LinkedIn enrichment: stacy-wilson-844911a...
+   ✅ LinkedIn Phone: Found 2 phones for Stacy Crews Wilson
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [53/274] Samiul Islam
+   💼 Project Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/md-samiul-islam-025776310
+   🔗 LinkedIn enrichment: md-samiul-islam-025776310...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [54/274] Rick Golubeff
+   💼 Marketing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/rick-golubeff-2769b8110
+   🔗 LinkedIn enrichment: rick-golubeff-2769b8110...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [55/274] Denise Lazzaruolo
+   💼 Office Manager Licensed Realtor Notary (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/denise-lazzaruolo-128a5266
+   🔗 LinkedIn enrichment: denise-lazzaruolo-128a5266...
+   ✅ LinkedIn Phone: Found 2 phones for Denise Lazzaruolo
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [56/274] Ellen Kadar
+   💼 Vendor Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ellen-kadar-245166161
+   🔗 LinkedIn enrichment: ellen-kadar-245166161...
+   ✅ LinkedIn Phone: Found 1 phones for Ellen Kadar
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [57/274] Sara Luff
+   💼 Sales Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sara-luff-b06a7762
+   🔗 LinkedIn enrichment: sara-luff-b06a7762...
+   ✅ LinkedIn Phone: Found 2 phones for Sara Luff
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 407-720-2550 (mobile)
+      📊 Quality Score: 70/100
+
+📞 [58/274] Paul Friedlander
+   💼 Account Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/paul-friedlander-52b470238
+   🔗 LinkedIn enrichment: paul-friedlander-52b470238...
+   ✅ LinkedIn Phone: Found 2 phones for Paul Friedlander
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 727-641-0575 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [59/274] Kim Creasy
+   💼 Licened Title Agent Manager Of Our Spring Hill Office (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kim-creasy-12630181
+   🔗 LinkedIn enrichment: kim-creasy-12630181...
+   ✅ LinkedIn Phone: Found 1 phones for Kim Creasy
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [60/274] Lauren Howell
+   💼 Funding Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lauren-howell-2099b2b0
+   🔗 LinkedIn enrichment: lauren-howell-2099b2b0...
+   ✅ LinkedIn Phone: Found 2 phones for Lauren Howell
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [61/274] Sabrina Liguori
+   💼 LICENSED REALTOR, PROPERTY MANAGER (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sabrina-liguori-039433152
+   🔗 LinkedIn enrichment: sabrina-liguori-039433152...
+   ✅ LinkedIn Phone: Found 2 phones for Sabrina Liguori
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [62/274] Michelle Elkins
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michelle-elkins-mba-b4606915
+   🔗 LinkedIn enrichment: michelle-elkins-mba-b4606915...
+   ✅ LinkedIn Phone: Found 2 phones for Michelle Elkins
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [63/274] Leslie Reed
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/leslie-reed-533a7877
+   🔗 LinkedIn enrichment: leslie-reed-533a7877...
+   ✅ LinkedIn Phone: Found 2 phones for Leslie Reed
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [64/274] Cristian Caicedo
+   💼 General Manager Of BPO Operations (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cristian-caicedo-03a239138
+   🔗 LinkedIn enrichment: cristian-caicedo-03a239138...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [65/274] Elias Leverett
+   💼 Customer Success Web3 Engagement Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/eliasleverett
+   🔗 LinkedIn enrichment: eliasleverett...
+   ✅ LinkedIn Phone: Found 2 phones for Elias Juan Leverett
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [66/274] Tosha Brock
+   💼 Account Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tosha-brock-40850825
+   🔗 LinkedIn enrichment: tosha-brock-40850825...
+   ✅ LinkedIn Phone: Found 2 phones for Tosha Brock
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [67/274] Jack Taylor
+   💼 Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jack-taylor-ba97a2191
+   🔗 LinkedIn enrichment: jack-taylor-ba97a2191...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [68/274] Kelli Wood
+   💼 Assistant Accounting Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kelli-wood-26475874
+   🔗 LinkedIn enrichment: kelli-wood-26475874...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [69/274] Tim Koenitzer
+   💼 Software Development Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/koenitzer
+   🔗 LinkedIn enrichment: koenitzer...
+   ✅ LinkedIn Phone: Found 2 phones for Tim Koenitzer
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [70/274] Taujhae Oladejo
+   💼 Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/taujhaew
+   🔗 LinkedIn enrichment: taujhaew...
+   ✅ LinkedIn Phone: Found 1 phones for Taujhae Oladejo
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [71/274] . Gonzalez Isabel
+   💼 Broker Associate Sales Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/gonzalez-isabel-5a168186
+   🔗 LinkedIn enrichment: gonzalez-isabel-5a168186...
+   ✅ LinkedIn Phone: Found 2 phones for Gonzalez Isabel
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +57 305 3385650 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [72/274] Daniel Perets
+   💼 Onboarding Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/daniel-perets-a4ab86150
+   🔗 LinkedIn enrichment: daniel-perets-a4ab86150...
+   ✅ LinkedIn Phone: Found 2 phones for Daniel Perets
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [73/274] Patricia Telford
+   💼 Manager Of Developer Services (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/patricia-telford-0a2babb
+   🔗 LinkedIn enrichment: patricia-telford-0a2babb...
+   ✅ LinkedIn Phone: Found 1 phones for Patricia Telford
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [74/274] Carrie Damera
+   💼 Closing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/carrie-damera-41503857
+   🔗 LinkedIn enrichment: carrie-damera-41503857...
+   ✅ LinkedIn Phone: Found 2 phones for Carrie Damera
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [75/274] Susana Grant
+   💼 Relationship Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/suzygrantre
+   🔗 LinkedIn enrichment: suzygrantre...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [76/274] Karen Peterson
+   💼 Closing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/karen-peterson-63348110a
+   🔗 LinkedIn enrichment: karen-peterson-63348110a...
+   ✅ LinkedIn Phone: Found 2 phones for Karen Peterson
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 713-594-4256 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [77/274] Michelle Borecky
+   💼 Title Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michelle-borecky-ab4ab52b4
+   🔗 LinkedIn enrichment: michelle-borecky-ab4ab52b4...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [78/274] Kim Zepp
+   💼 Real Estate Agent Property Manager Leasing Agent (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kim-zepp-5027aa58
+   🔗 LinkedIn enrichment: kim-zepp-5027aa58...
+   ✅ LinkedIn Phone: Found 2 phones for Kim Zepp
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [79/274] Linda Kenney
+   💼 Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/linda-kenney-b2ba519b
+   🔗 LinkedIn enrichment: linda-kenney-b2ba519b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [80/274] Robert Kane
+   💼 Realtor Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/robert-kane-b2b08784
+   🔗 LinkedIn enrichment: robert-kane-b2b08784...
+   ✅ LinkedIn Phone: Found 1 phones for Robert Kane
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [81/274] Brittaney Badger
+   💼 Partner Development Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brittaneybadger
+   🔗 LinkedIn enrichment: brittaneybadger...
+   ✅ LinkedIn Phone: Found 1 phones for Brittaney Badger
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [82/274] Asya LeBeau
+   💼 Community Sales Manager Certified Sales Coach 2021 2023 (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/asya-lebeau-09102a19
+   🔗 LinkedIn enrichment: asya-lebeau-09102a19...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [83/274] Erin Draves
+   💼 Office Manager TM Ambassador (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/erin-draves-41930043
+   🔗 LinkedIn enrichment: erin-draves-41930043...
+   ✅ LinkedIn Phone: Found 1 phones for Erin Draves
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 407-637-7353 (mobile)
+      📊 Quality Score: 55/100
+
+📞 [84/274] Matthew Chapman
+   💼 Sales Recruiting Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/matthew-chapman-b10688101
+   🔗 LinkedIn enrichment: matthew-chapman-b10688101...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [85/274] Jeff Hallam
+   💼 National Account Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jeff-hallam-148616233
+   🔗 LinkedIn enrichment: jeff-hallam-148616233...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [86/274] Pamela Potenza
+   💼 Closing Agent, Business Development, Office Assistant Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/pamela-potenza-3a568a70
+   🔗 LinkedIn enrichment: pamela-potenza-3a568a70...
+   ✅ LinkedIn Phone: Found 2 phones for Pamela Potenza
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +39 320 316 2874 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [87/274] Kevin Casillas
+   💼 Customer Service Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kevin-casillas-3832a6121
+   🔗 LinkedIn enrichment: kevin-casillas-3832a6121...
+   ✅ LinkedIn Phone: Found 1 phones for Kevin Casillas
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [88/274] Eunice Espolon
+   💼 Social Media Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/eunice-joy-espolon
+   🔗 LinkedIn enrichment: eunice-joy-espolon...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [89/274] Nina Khani
+   💼 Acquisition Specialist And Construction Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nina-khani-44a434170
+   🔗 LinkedIn enrichment: nina-khani-44a434170...
+   ✅ LinkedIn Phone: Found 2 phones for Nina Khani
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [90/274] Crystal lashbrook
+   💼 Office Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/crystal-lashbrook-54756015b
+   🔗 LinkedIn enrichment: crystal-lashbrook-54756015b...
+   ✅ LinkedIn Phone: Found 1 phones for Crystal Lashbrook
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [91/274] Sheri Cameron
+   💼 Bookkeeper Office Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sheri-cameron-041236119
+   🔗 LinkedIn enrichment: sheri-cameron-041236119...
+   ✅ LinkedIn Phone: Found 2 phones for Sheri Cameron
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 714-788-6651 (mobile)
+      📊 Quality Score: 70/100
+
+📞 [92/274] Ravi R Persad
+   💼 Purchasing Manager Real Estate Agent Investor (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ravi-r-persad-1a340316b
+   🔗 LinkedIn enrichment: ravi-r-persad-1a340316b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [93/274] Ann Loewe
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ann-loewe-41873147
+   🔗 LinkedIn enrichment: ann-loewe-41873147...
+   ✅ LinkedIn Phone: Found 2 phones for Ann Loewe
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [94/274] Christopher LaChance
+   💼 Sales Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/christopher-lachance-42039a177
+   🔗 LinkedIn enrichment: christopher-lachance-42039a177...
+   ✅ LinkedIn Phone: Found 2 phones for Christopher Lachance
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [95/274] Patricia Lawrimore
+   💼 Processing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/patricia-lawrimore-0715259
+   🔗 LinkedIn enrichment: patricia-lawrimore-0715259...
+   ✅ LinkedIn Phone: Found 1 phones for Patricia Lawrimore
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [96/274] Jamayal Douglas
+   💼 Post Closing Title Supervisor (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jamayal-douglas-a8346415
+   🔗 LinkedIn enrichment: jamayal-douglas-a8346415...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [97/274] Debbie Whittaker
+   💼 Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/debbie-whittaker-89627113
+   🔗 LinkedIn enrichment: debbie-whittaker-89627113...
+   ✅ LinkedIn Phone: Found 2 phones for Debbie Whittaker
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [98/274] Holly Stidham Wilson
+   💼 Business Developement Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/holly-stidham-wilson-39b00a119
+   🔗 LinkedIn enrichment: holly-stidham-wilson-39b00a119...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [99/274] Stephanie Grosso
+   💼 Closing Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/stephanie-grosso-b81875107
+   🔗 LinkedIn enrichment: stephanie-grosso-b81875107...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [100/274] Jen Davidson
+   💼 Marketing Department Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jinbins
+   🔗 LinkedIn enrichment: jinbins...
+   ✅ LinkedIn Phone: Found 2 phones for Jennifer Davidson
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +66 81 732 3802 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [101/274] Patty Durant
+   💼 Account Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tsvazcom
+   🔗 LinkedIn enrichment: tsvazcom...
+   ✅ LinkedIn Phone: Found 2 phones for Patty Durant
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [102/274] Ruben Pereira
+   💼 Land Development Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ruben-pereira-787890106
+   🔗 LinkedIn enrichment: ruben-pereira-787890106...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [103/274] Cindy Struthers
+   💼 Property Manager Annual Rentals (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cindy-struthers-86757096
+   🔗 LinkedIn enrichment: cindy-struthers-86757096...
+   ✅ LinkedIn Phone: Found 2 phones for Cindy Struthers
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [104/274] Michael Phi Vu
+   💼 Lead Escrow Officer Funding Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michael-phi-vu-a077b31b
+   🔗 LinkedIn enrichment: michael-phi-vu-a077b31b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [105/274] Gene Matthews
+   💼 Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/gene-matthews-960a1b34
+   🔗 LinkedIn enrichment: gene-matthews-960a1b34...
+   ✅ LinkedIn Phone: Found 2 phones for Gene Matthews
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [106/274] Joe Stripland
+   💼 Area Construction Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/joe-stripland-b6238a2a
+   🔗 LinkedIn enrichment: joe-stripland-b6238a2a...
+   ✅ LinkedIn Phone: Found 1 phones for Joe Stripland
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 770-616-7282 (mobile)
+      📊 Quality Score: 55/100
+
+📞 [107/274] Sarah Hutchins
+   💼 Special Project Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sarah-hutchins-53141491
+   🔗 LinkedIn enrichment: sarah-hutchins-53141491...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [108/274] Julie Sanders
+   💼 Seasonal Property Manager (Manager)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/julie-sanders-a48039120
+   🔗 LinkedIn enrichment: julie-sanders-a48039120...
+   ✅ LinkedIn Phone: Found 1 phones for Julie Sanders
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [109/274] Monsef Rachid
+   💼 Cofounder And CTO (Executive)
+   🎯 decision_maker - Priority: 100
+   🔗 https://www.linkedin.com/in/monsef-rachid-92720a41
+   🔗 LinkedIn enrichment: monsef-rachid-92720a41...
+   ✅ LinkedIn Phone: Found 1 phones for Monsef Rachid
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [110/274] Shannon Egan
+   💼 Founder (Executive)
+   🎯 decision_maker - Priority: 100
+   🔗 https://www.linkedin.com/in/shannon-egan-684501101
+   🔗 LinkedIn enrichment: shannon-egan-684501101...
+   ✅ LinkedIn Phone: Found 1 phones for Shannon Egan
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [111/274] Theodore Sprink
+   💼 Founder (Executive)
+   🎯 decision_maker - Priority: 100
+   🔗 https://www.linkedin.com/in/theodoresprink
+   🔗 LinkedIn enrichment: theodoresprink...
+   ✅ LinkedIn Phone: Found 2 phones for Theodore Sprink
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [112/274] Eldin Nizam
+   💼 Real Estate Title Abstractor (Individual Contributor)
+   🎯 champion - Priority: 78
+   🔗 https://www.linkedin.com/in/enizam
+   🔗 LinkedIn enrichment: enizam...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [113/274] Shannon Atcheson
+   💼 Quality Control Specialist (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/shannon-atcheson-b4107048
+   🔗 LinkedIn enrichment: shannon-atcheson-b4107048...
+   ✅ LinkedIn Phone: Found 2 phones for Shannon Atcheson
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [114/274] Mike DiOrio
+   💼 Compliance Consultant (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/mike-diorio-8680542b8
+   🔗 LinkedIn enrichment: mike-diorio-8680542b8...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [115/274] Jyoti Halankar
+   💼 Compliance Specialist (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/jyoti-halankar-183b9920a
+   🔗 LinkedIn enrichment: jyoti-halankar-183b9920a...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [116/274] Prabhu Kiren
+   💼 Compliance Lead (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/prabhu-kiren-487a26162
+   🔗 LinkedIn enrichment: prabhu-kiren-487a26162...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [117/274] Robert Figueroa
+   💼 Funding Compliance Officer (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/robert-figueroa-mba-368430194
+   🔗 LinkedIn enrichment: robert-figueroa-mba-368430194...
+   ✅ LinkedIn Phone: Found 2 phones for Robert Figueroa
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [118/274] Prithviraj Desai
+   💼 AGM - Audit And Compliance Excellence Lead - HSE (Country Lead) (Individual Contributor)
+   🎯 blocker - Priority: 60
+   🔗 https://www.linkedin.com/in/prithviraj-desai-542b3424
+   🔗 LinkedIn enrichment: prithviraj-desai-542b3424...
+   ✅ LinkedIn Phone: Found 2 phones for Prithviraj Desai
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +971 50 149 2424 (mobile)
+      📊 Quality Score: 70/100
+
+📞 [119/274] Simone clacher
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/simone-clacher-67008b154
+   🔗 LinkedIn enrichment: simone-clacher-67008b154...
+   ✅ LinkedIn Phone: Found 2 phones for Simone Clacher
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [120/274] Shelby Stapleton
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/shelby-stapleton-979778199
+   🔗 LinkedIn enrichment: shelby-stapleton-979778199...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [121/274] Amanda B.
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/amanda-b-28ba31143
+   🔗 LinkedIn enrichment: amanda-b-28ba31143...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [122/274] Paula LeBere
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/paula-lebere-894781a3
+   🔗 LinkedIn enrichment: paula-lebere-894781a3...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [123/274] Matt Aston
+   💼 National Training Partner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/matt-aston-a5099048
+   🔗 LinkedIn enrichment: matt-aston-a5099048...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [124/274] Jonathon Geiger
+   💼 Team Leader Of Geiger Realty Group (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jonathon-geiger-aa01b134
+   🔗 LinkedIn enrichment: jonathon-geiger-aa01b134...
+   ✅ LinkedIn Phone: Found 2 phones for Jonathon Geiger
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 904-732-5867 (mobile)
+      📊 Quality Score: 60/100
+
+📞 [125/274] Sandy Radzak
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sandy-radzak-254a2329
+   🔗 LinkedIn enrichment: sandy-radzak-254a2329...
+   ✅ LinkedIn Phone: Found 2 phones for Sandy Radzak
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [126/274] Nicolas Robelto
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nicolas-robelto-bb7436283
+   🔗 LinkedIn enrichment: nicolas-robelto-bb7436283...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [127/274] Nina The Closing Team
+   💼 Title Admin (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nina-the-closing-team-4a6988285
+   🔗 LinkedIn enrichment: nina-the-closing-team-4a6988285...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [128/274] Julio Robles
+   💼 Business Development Analyst (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/julio-robles-089937311
+   🔗 LinkedIn enrichment: julio-robles-089937311...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [129/274] Kris Koener
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kris-koener-0b6764187
+   🔗 LinkedIn enrichment: kris-koener-0b6764187...
+   ✅ LinkedIn Phone: Found 1 phones for Kris Koener
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [130/274] Vladimir Larivaud
+   💼 Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/vladimir-larivaud-3a206b137
+   🔗 LinkedIn enrichment: vladimir-larivaud-3a206b137...
+   ✅ LinkedIn Phone: Found 1 phones for Vladimir Larivaud
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [131/274] Mary Warren
+   💼 Executive Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/mary-warren-49b36b88
+   🔗 LinkedIn enrichment: mary-warren-49b36b88...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [132/274] Suzy Levenda
+   💼 Business Development (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/suzy-levenda-37b79829
+   🔗 LinkedIn enrichment: suzy-levenda-37b79829...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [133/274] Tina Bradley
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/bradleytina
+   🔗 LinkedIn enrichment: bradleytina...
+   ✅ LinkedIn Phone: Found 2 phones for Tina Bradley
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [134/274] Joyce Brickous
+   💼 Senior Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/joycebrickous
+   🔗 LinkedIn enrichment: joycebrickous...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [135/274] Emily Dixon
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/emily-dixon-1267631a1
+   🔗 LinkedIn enrichment: emily-dixon-1267631a1...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [136/274] Pam Cramer
+   💼 Commercial Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/pam-cramer-38a806168
+   🔗 LinkedIn enrichment: pam-cramer-38a806168...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [137/274] Tina Townsend
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tina-townsend-4ba747a
+   🔗 LinkedIn enrichment: tina-townsend-4ba747a...
+   ✅ LinkedIn Phone: Found 2 phones for Tina Townsend
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 904-655-7391 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [138/274] David Ward
+   💼 Real Estate Title Insurance - Northern PB County, FL (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/david-ward-02403a11
+   🔗 LinkedIn enrichment: david-ward-02403a11...
+   ✅ LinkedIn Phone: Found 2 phones for David Ward
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [139/274] Gabrielle Bryce
+   💼 Business Development Representative (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/gabriellebryce
+   🔗 LinkedIn enrichment: gabriellebryce...
+   ✅ LinkedIn Phone: Found 2 phones for Gabrielle Bryce
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [140/274] Milissa Thomas Kidwell
+   💼 Business Development Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/milissa-thomas-kidwell-4b37a535
+   🔗 LinkedIn enrichment: milissa-thomas-kidwell-4b37a535...
+   ✅ LinkedIn Phone: Found 2 phones for Milissa Thomas Kidwell
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [141/274] Christina Robaldo-Hernandez
+   💼 Licensed Title Agent Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/christina-robaldo-hernandez-29a93a21
+   🔗 LinkedIn enrichment: christina-robaldo-hernandez-29a93a21...
+   ✅ LinkedIn Phone: Found 2 phones for Christina Robaldo Hernandez
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [142/274] Tiffany Zimmerman
+   💼 Title Curative Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tiffany-zimmerman-52636728
+   🔗 LinkedIn enrichment: tiffany-zimmerman-52636728...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [143/274] Alex Cabrera
+   💼 Senior Sales Marketing Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/alex-cabrera-971821231
+   🔗 LinkedIn enrichment: alex-cabrera-971821231...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [144/274] Taylor Sosna
+   💼 National Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/taylor-sosna-866275126
+   🔗 LinkedIn enrichment: taylor-sosna-866275126...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [145/274] Rebecca Raras
+   💼 Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/rebecca-raras-9b1305b8
+   🔗 LinkedIn enrichment: rebecca-raras-9b1305b8...
+   ✅ LinkedIn Phone: Found 2 phones for Rebecca Raras
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [146/274] Noemi Vergara
+   💼 Title Curator (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/noemi-vergara-1382271b7
+   🔗 LinkedIn enrichment: noemi-vergara-1382271b7...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [147/274] Kelly W.
+   💼 Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kelly-w-904055142
+   🔗 LinkedIn enrichment: kelly-w-904055142...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [148/274] Laura Leon
+   💼 Sr. Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/laura-leon-276a6122b
+   🔗 LinkedIn enrichment: laura-leon-276a6122b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [149/274] Salene Levin
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/salene-levin-7252b929
+   🔗 LinkedIn enrichment: salene-levin-7252b929...
+   ✅ LinkedIn Phone: Found 1 phones for Salene Levin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [150/274] Carmen Diaz Tojeiro
+   💼 Business Development Advisor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/carmen-diaz-tojeiro-484a1b1b
+   🔗 LinkedIn enrichment: carmen-diaz-tojeiro-484a1b1b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [151/274] Natalie Benjamin
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nabenjamin
+   🔗 LinkedIn enrichment: nabenjamin...
+   ✅ LinkedIn Phone: Found 2 phones for Natalie Benjamin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [152/274] Tom Buscemi
+   💼 Sales Executive REALTOR (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tombuscemi
+   🔗 LinkedIn enrichment: tombuscemi...
+   ✅ LinkedIn Phone: Found 2 phones for Tom Buscemi
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 813-426-6758 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [153/274] Dore Ann Baratta
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/dore-ann-baratta-gri-303bb610
+   🔗 LinkedIn enrichment: dore-ann-baratta-gri-303bb610...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [154/274] Jennifer Billingsley
+   💼 Title And Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jennifer-billingsley-8489b3328
+   🔗 LinkedIn enrichment: jennifer-billingsley-8489b3328...
+   ✅ LinkedIn Phone: Found 2 phones for Jennifer Billingsley
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [155/274] Brooklyn Bello
+   💼 Senior Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brooklyn-bello-72520932a
+   🔗 LinkedIn enrichment: brooklyn-bello-72520932a...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [156/274] Caoilinn Smyth
+   💼 Escrow Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/caoilinn-smyth-22b8471b3
+   🔗 LinkedIn enrichment: caoilinn-smyth-22b8471b3...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [157/274] Anna McKenzie
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/anna-mckenzie-b890727
+   🔗 LinkedIn enrichment: anna-mckenzie-b890727...
+   ✅ LinkedIn Phone: Found 2 phones for Anna Mckenzie
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [158/274] Val Tarsa
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/val-tarsa-3227302b
+   🔗 LinkedIn enrichment: val-tarsa-3227302b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [159/274] Deidre Krystek
+   💼 Sales Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/deidre-krystek-b8a7685
+   🔗 LinkedIn enrichment: deidre-krystek-b8a7685...
+   ✅ LinkedIn Phone: Found 2 phones for Deidre Krystek
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [160/274] Tina Erwin
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tina-erwin-3553469
+   🔗 LinkedIn enrichment: tina-erwin-3553469...
+   ✅ LinkedIn Phone: Found 2 phones for Tina Erwin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [161/274] Charles Nichols
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/charles-nichols-44a07219
+   🔗 LinkedIn enrichment: charles-nichols-44a07219...
+   ✅ LinkedIn Phone: Found 2 phones for Charles Nichols
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [162/274] Jane Barr
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jane-barr-503b781a5
+   🔗 LinkedIn enrichment: jane-barr-503b781a5...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [163/274] Sherri Bright
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sherri-bright-6147a341
+   🔗 LinkedIn enrichment: sherri-bright-6147a341...
+   ✅ LinkedIn Phone: Found 1 phones for Sherri Bright
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [164/274] Christopher Pelly
+   💼 Partner Realtor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/christopher-pelly-a35914104
+   🔗 LinkedIn enrichment: christopher-pelly-a35914104...
+   ✅ LinkedIn Phone: Found 1 phones for Christopher Pelly
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [165/274] Bob Thomas
+   💼 Realtor Partner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/bob-thomas-4a47715
+   🔗 LinkedIn enrichment: bob-thomas-4a47715...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [166/274] Barbara Mitchell
+   💼 Sales Partner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/barbara-mitchell-13a85020
+   🔗 LinkedIn enrichment: barbara-mitchell-13a85020...
+   ✅ LinkedIn Phone: Found 2 phones for Barbara Mitchell
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 850-814-9414 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [167/274] Leticia Gracia
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/leticia-gracia-22b81559
+   🔗 LinkedIn enrichment: leticia-gracia-22b81559...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [168/274] Paige Tashik
+   💼 Escrow Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/paige-tashik-1545aa255
+   🔗 LinkedIn enrichment: paige-tashik-1545aa255...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [169/274] Patti Ballmann
+   💼 Branch Manger (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/patti-ballmann-bbb6854b
+   🔗 LinkedIn enrichment: patti-ballmann-bbb6854b...
+   ✅ LinkedIn Phone: Found 2 phones for Patti Ballmann
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [170/274] Rodriguez Maria
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/rodriguez-maria-3296914a
+   🔗 LinkedIn enrichment: rodriguez-maria-3296914a...
+   ✅ LinkedIn Phone: Found 2 phones for Rodriguez Maria
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [171/274] Michelle Rodgers
+   💼 Senior Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/michelle-rodgers-88ba17144
+   🔗 LinkedIn enrichment: michelle-rodgers-88ba17144...
+   ✅ LinkedIn Phone: Found 2 phones for Michelle Rodgers
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [172/274] Palmer Debbie
+   💼 Developer Services Assistant Escrow (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/palmer-debbie-756077122
+   🔗 LinkedIn enrichment: palmer-debbie-756077122...
+   ✅ LinkedIn Phone: Found 2 phones for Palmer Debbie
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [173/274] Lauren LePage
+   💼 ESCROW (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lauren-lepage-30993762
+   🔗 LinkedIn enrichment: lauren-lepage-30993762...
+   ✅ LinkedIn Phone: Found 2 phones for Lauren Lepage
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 407-450-5937 (mobile)
+      📊 Quality Score: 65/100
+
+📞 [174/274] Tricia Watkins
+   💼 Licensed Real Estate Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tricia-watkins-0b956134
+   🔗 LinkedIn enrichment: tricia-watkins-0b956134...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [175/274] Darla H.
+   💼 Senior Sales Support (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/darla-h-a77616238
+   🔗 LinkedIn enrichment: darla-h-a77616238...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [176/274] Kirenia Navarro
+   💼 Closer Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kirenia-navarro-939b51183
+   🔗 LinkedIn enrichment: kirenia-navarro-939b51183...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [177/274] Adrianne Vidangos
+   💼 Title Processor Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/adrianne-vidangos-aa00aa117
+   🔗 LinkedIn enrichment: adrianne-vidangos-aa00aa117...
+   ✅ LinkedIn Phone: Found 1 phones for Adrianne Vidangos
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [178/274] Karen Franco
+   💼 Business Administrator (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/karen-franco-026a36285
+   🔗 LinkedIn enrichment: karen-franco-026a36285...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [179/274] Ashleigh Caldera
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ashleigh-caldera-a2362629
+   🔗 LinkedIn enrichment: ashleigh-caldera-a2362629...
+   ✅ LinkedIn Phone: Found 1 phones for Ashleigh Caldera
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [180/274] Brianna Barteky
+   💼 Commerical Title Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brianna-barteky-34691577
+   🔗 LinkedIn enrichment: brianna-barteky-34691577...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [181/274] Marcela Navarro
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/marcela-navarro-59552894
+   🔗 LinkedIn enrichment: marcela-navarro-59552894...
+   ✅ LinkedIn Phone: Found 2 phones for Marcela Navarro
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [182/274] Gloria Armstrong
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/gloria-armstrong-2437b9ba
+   🔗 LinkedIn enrichment: gloria-armstrong-2437b9ba...
+   ✅ LinkedIn Phone: Found 2 phones for Gloria Armstrong
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 623-435-4280 (direct)
+      🎯 Direct Dial: +1 623-435-4280
+      📊 Quality Score: 75/100
+
+📞 [183/274] Cindy Fikel
+   💼 Assistant Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cindy-fikel-94585136
+   🔗 LinkedIn enrichment: cindy-fikel-94585136...
+   ✅ LinkedIn Phone: Found 1 phones for Cindy Fikel
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [184/274] Daniel Riddell
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/daniel-riddell-51809a108
+   🔗 LinkedIn enrichment: daniel-riddell-51809a108...
+   ✅ LinkedIn Phone: Found 1 phones for Daniel Riddell
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [185/274] Tom Konkel
+   💼 Partner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tom-konkel-13205311
+   🔗 LinkedIn enrichment: tom-konkel-13205311...
+   ✅ LinkedIn Phone: Found 2 phones for Tom Konkel
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 303-780-4032 (direct)
+      📞 Phone 2: +1 303-358-3319 (mobile)
+      🎯 Direct Dial: +1 303-780-4032
+      📊 Quality Score: 95/100
+
+📞 [186/274] Kelly Newell
+   💼 Licensed Escrow Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kelly-newell-b493142b
+   🔗 LinkedIn enrichment: kelly-newell-b493142b...
+   ✅ LinkedIn Phone: Found 2 phones for Kelly Newell
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [187/274] Alfred Younan
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/alfred-younan-602a7625
+   🔗 LinkedIn enrichment: alfred-younan-602a7625...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [188/274] Faith Castro
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/faith-castro-88443b154
+   🔗 LinkedIn enrichment: faith-castro-88443b154...
+   ✅ LinkedIn Phone: Found 1 phones for Faith Castro
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [189/274] Nikki Marie
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nikki-marie-0a1a69288
+   🔗 LinkedIn enrichment: nikki-marie-0a1a69288...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [190/274] Laura Bowers
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/laura-bowers-412b6910a
+   🔗 LinkedIn enrichment: laura-bowers-412b6910a...
+   ✅ LinkedIn Phone: Found 2 phones for Laura Bowers
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [191/274] Eric Egeland
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ericegeland
+   🔗 LinkedIn enrichment: ericegeland...
+   ✅ LinkedIn Phone: Found 2 phones for Eric Egeland
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 847-337-7090 (mobile)
+      📊 Quality Score: 60/100
+
+📞 [192/274] Lisa Rojas
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lisa-rojas-066ab360
+   🔗 LinkedIn enrichment: lisa-rojas-066ab360...
+   ✅ LinkedIn Phone: Found 2 phones for Lisa Rojas
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [193/274] Silvja Qirjako
+   💼 Title Solutions Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/silvja-qirjako-a962981b1
+   🔗 LinkedIn enrichment: silvja-qirjako-a962981b1...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [194/274] Beatrice Decker
+   💼 Licensed Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/beatrice-decker-a3b510227
+   🔗 LinkedIn enrichment: beatrice-decker-a3b510227...
+   ✅ LinkedIn Phone: Found 1 phones for Beatrice Decker
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [195/274] Stacia Walker
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/stacia-walker-52b3a710b
+   🔗 LinkedIn enrichment: stacia-walker-52b3a710b...
+   ✅ LinkedIn Phone: Found 1 phones for Stacia Walker
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [196/274] Becky Bradford
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/becky-bradford-ab062a19
+   🔗 LinkedIn enrichment: becky-bradford-ab062a19...
+   ✅ LinkedIn Phone: Found 1 phones for Becky Bradford
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [197/274] LETICIA GRACIA
+   💼 Escrow Officer Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/leticia-gracia-ab28b23b
+   🔗 LinkedIn enrichment: leticia-gracia-ab28b23b...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [198/274] Sherry Long
+   💼 Managing Member Hilliard, Ohio (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sherry-long-ba04811b
+   🔗 LinkedIn enrichment: sherry-long-ba04811b...
+   ✅ LinkedIn Phone: Found 2 phones for Sherry Long
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [199/274] Jodi Castoro
+   💼 Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jodi-castoro-091b72a5
+   🔗 LinkedIn enrichment: jodi-castoro-091b72a5...
+   ✅ LinkedIn Phone: Found 2 phones for Jodi Castoro
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [200/274] Josh Smith
+   💼 Title Currative (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/josh-smith-4b3ab218a
+   🔗 LinkedIn enrichment: josh-smith-4b3ab218a...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [201/274] Viviana Figueroa
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/viviana-figueroa-448bb960
+   🔗 LinkedIn enrichment: viviana-figueroa-448bb960...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [202/274] Cindy Giardinelli
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cindy-giardinelli-718b01a9
+   🔗 LinkedIn enrichment: cindy-giardinelli-718b01a9...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [203/274] Matt Fendell
+   💼 Title Manger (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/matt-fendell-32853429
+   🔗 LinkedIn enrichment: matt-fendell-32853429...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [204/274] Leslie Steinlage
+   💼 Escrow Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/leslie-steinlage-33132417
+   🔗 LinkedIn enrichment: leslie-steinlage-33132417...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [205/274] Jose Ruben Arenas
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jose-ruben-arenas-82724022b
+   🔗 LinkedIn enrichment: jose-ruben-arenas-82724022b...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [206/274] Susan Knecht
+   💼 Senior Real Estate Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/susan-knecht-47b359280
+   🔗 LinkedIn enrichment: susan-knecht-47b359280...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [207/274] Lisa Cheryl Tingen
+   💼 Business Development Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lisatingen
+   🔗 LinkedIn enrichment: lisatingen...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [208/274] Josh Aman
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/josh-aman-14a6a4214
+   🔗 LinkedIn enrichment: josh-aman-14a6a4214...
+   ✅ LinkedIn Phone: Found 2 phones for Josh Aman
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [209/274] Joshua Aman
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/joshua-aman-b2b6a4132
+   🔗 LinkedIn enrichment: joshua-aman-b2b6a4132...
+   ✅ LinkedIn Phone: Found 2 phones for Joshua Aman
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [210/274] Natasha Jaglall
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/natasha-jaglall-b45556106
+   🔗 LinkedIn enrichment: natasha-jaglall-b45556106...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [211/274] Nydia Villafane
+   💼 Licence Title Agent Notary (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/nydia-villafane-725436176
+   🔗 LinkedIn enrichment: nydia-villafane-725436176...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [212/274] Brittany Smith
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/brittany-smith-09a45b19b
+   🔗 LinkedIn enrichment: brittany-smith-09a45b19b...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [213/274] Cheyenne Hancock
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/hancockcheyenne02
+   🔗 LinkedIn enrichment: hancockcheyenne02...
+   ✅ LinkedIn Phone: Found 1 phones for Cheyenne Hancock
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [214/274] Cookie Slingbaum
+   💼 New Business Development (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/cookie-slingbaum-9969b523
+   🔗 LinkedIn enrichment: cookie-slingbaum-9969b523...
+   ✅ LinkedIn Phone: Found 2 phones for Cookie Slingbaum
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [215/274] Jamie DeBella
+   💼 Title Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jamie-debella-b5013993
+   🔗 LinkedIn enrichment: jamie-debella-b5013993...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [216/274] Allison Purcell
+   💼 Senior Copywriter Communications Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/allison-purcell-88b18011
+   🔗 LinkedIn enrichment: allison-purcell-88b18011...
+   ✅ LinkedIn Phone: Found 1 phones for Allison Purcell
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [217/274] Tina Borges-Druth
+   💼 Sales Executive At The Residences At 400 Central (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tinaborgesdruth
+   🔗 LinkedIn enrichment: tinaborgesdruth...
+   ✅ LinkedIn Phone: Found 2 phones for Tina Borges Druth
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [218/274] Jay Patterson
+   💼 Executive Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jay-patterson-913126b
+   🔗 LinkedIn enrichment: jay-patterson-913126b...
+   ✅ LinkedIn Phone: Found 2 phones for Jay Patterson
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [219/274] Kimberly Leal
+   💼 Executive Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kimberly-leal-30b038206
+   🔗 LinkedIn enrichment: kimberly-leal-30b038206...
+   ✅ LinkedIn Phone: Found 2 phones for Kimberly Leal
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 480-551-7081 (direct)
+      🎯 Direct Dial: +1 480-551-7081
+      📊 Quality Score: 70/100
+
+📞 [220/274] Jacqueline Jarquin
+   💼 Sales Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jacqueline-jarquin-b295b113a
+   🔗 LinkedIn enrichment: jacqueline-jarquin-b295b113a...
+   ✅ LinkedIn Phone: Found 2 phones for Jacqueline Jarquin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [221/274] Carmelita Collins
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/carmelita-collins-4b1230307
+   🔗 LinkedIn enrichment: carmelita-collins-4b1230307...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [222/274] Tracy N.
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tracy-n-30ab321a
+   🔗 LinkedIn enrichment: tracy-n-30ab321a...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [223/274] Aishwarya Ramesh
+   💼 Senior Process Associate (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/aishwarya-ramesh-271059117
+   🔗 LinkedIn enrichment: aishwarya-ramesh-271059117...
+   ✅ LinkedIn Phone: Found 2 phones for Aishwarya Ramesh
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +91 44 3391 5621 (direct)
+      📞 Phone 2: +91 99940 33221 (mobile)
+      🎯 Direct Dial: +91 44 3391 5621
+      📊 Quality Score: 100/100
+
+📞 [224/274] Meghala Robinson
+   💼 Senior Process Associate (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/meghala-robinson-70b12a226
+   🔗 LinkedIn enrichment: meghala-robinson-70b12a226...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [225/274] karamath ullah khan khan
+   💼 Process Associate (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/karamath-ullah-khan-khan-b58443202
+   🔗 LinkedIn enrichment: karamath-ullah-khan-khan-b58443202...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [226/274] Arogya Chethan
+   💼 Process Associate (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/arogya-chethan-88519a203
+   🔗 LinkedIn enrichment: arogya-chethan-88519a203...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [227/274] Trung Nguyen
+   💼 Title Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/trung-nguyen-1670b3a2
+   🔗 LinkedIn enrichment: trung-nguyen-1670b3a2...
+   ✅ LinkedIn Phone: Found 1 phones for Trung Nguyen
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [228/274] Skyanne Dinnigan
+   💼 Escrow Administrator (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/skyannedinnigan
+   🔗 LinkedIn enrichment: skyannedinnigan...
+   ✅ LinkedIn Phone: Found 2 phones for Skyanne Dinnigan
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [229/274] Stephanie Amperse'
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/stephanie-amperse-37765850
+   🔗 LinkedIn enrichment: stephanie-amperse-37765850...
+   ✅ LinkedIn Phone: Found 1 phones for Stephanie Amperse
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [230/274] Erica Cornelius
+   💼 Executive Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/erica-cornelius-77b5b3106
+   🔗 LinkedIn enrichment: erica-cornelius-77b5b3106...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [231/274] Lori Anderson
+   💼 Sales Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lori-anderson-6aa66453
+   🔗 LinkedIn enrichment: lori-anderson-6aa66453...
+   ✅ LinkedIn Phone: Found 2 phones for Lori Anderson
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [232/274] MARCELINO ARCA
+   💼 Title Examiner (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/marcelino-arca-a8430b208
+   🔗 LinkedIn enrichment: marcelino-arca-a8430b208...
+   ✅ LinkedIn Phone: Found 1 phones for Marcelino Arca
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [233/274] Trica Butzer
+   💼 Senior Escrow Processor (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/trica-butzer-550634253
+   🔗 LinkedIn enrichment: trica-butzer-550634253...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [234/274] Ashley Cooler
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/ashley-cooler-bb176a236
+   🔗 LinkedIn enrichment: ashley-cooler-bb176a236...
+   ✅ LinkedIn Phone: Found 1 phones for Ashley Cooler
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [235/274] Tanya Tuttle
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/tanya-tuttle-71828979
+   🔗 LinkedIn enrichment: tanya-tuttle-71828979...
+   ✅ LinkedIn Phone: Found 1 phones for Tanya Tuttle
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [236/274] Weinberg Cindy
+   💼 Sales Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/weinberg-cindy-823b0910
+   🔗 LinkedIn enrichment: weinberg-cindy-823b0910...
+   ✅ LinkedIn Phone: Found 2 phones for Weinberg Cindy
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [237/274] Stacey Walton
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/stacey-walton-2a7ab1246
+   🔗 LinkedIn enrichment: stacey-walton-2a7ab1246...
+   ✅ LinkedIn Phone: Found 1 phones for Stacey Walton
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [238/274] Amber Loftin
+   💼 Closing Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/amber-loftin-27536b177
+   🔗 LinkedIn enrichment: amber-loftin-27536b177...
+   ✅ LinkedIn Phone: Found 1 phones for Amber Loftin
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [239/274] Judi Carter
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/judi-carter-1634ab91
+   🔗 LinkedIn enrichment: judi-carter-1634ab91...
+   ✅ LinkedIn Phone: Found 2 phones for Judi Carter
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [240/274] Britaney Dziedzic
+   💼 Senior Property Analyst (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/britaney-dziedzic-919795a9
+   🔗 LinkedIn enrichment: britaney-dziedzic-919795a9...
+   ✅ LinkedIn Phone: Found 1 phones for Britaney Dziedzic
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [241/274] Javante Vasquez
+   💼 Sr. Luxury Crypto Real Estate Sales Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/javante-joinreal
+   🔗 LinkedIn enrichment: javante-joinreal...
+   ✅ LinkedIn Phone: Found 1 phones for Javante Vasquez
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [242/274] Shadd Boucher
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/shaddboucher
+   🔗 LinkedIn enrichment: shaddboucher...
+   ✅ LinkedIn Phone: Found 2 phones for Shadd Boucher
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [243/274] Roger Piro
+   💼 Managing Broker (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/roger-piro-14a81312
+   🔗 LinkedIn enrichment: roger-piro-14a81312...
+   ✅ LinkedIn Phone: Found 2 phones for Roger Piro
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [244/274] Serena Orgin
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/serena-orgin-31a10729
+   🔗 LinkedIn enrichment: serena-orgin-31a10729...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [245/274] Jessica Zogg Jones
+   💼 National Account Executive (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jessicazogg
+   🔗 LinkedIn enrichment: jessicazogg...
+   ✅ LinkedIn Phone: Found 1 phones for Jessica Zogg Jones
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [246/274] Jeffrey B. Miller
+   💼 ACCOUNT EXECUTIVE (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jeffrey-b-miller-b5533b1a
+   🔗 LinkedIn enrichment: jeffrey-b-miller-b5533b1a...
+   ✅ LinkedIn Phone: Found 2 phones for Jeffrey B Miller
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [247/274] Dean Palombi
+   💼 When You BUY Or SELL . . . Make It A PAL-OM-BUY (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/dean-palombi-7030218
+   🔗 LinkedIn enrichment: dean-palombi-7030218...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [248/274] Denise Wood
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/denise-wood-19abb1197
+   🔗 LinkedIn enrichment: denise-wood-19abb1197...
+   ⚠️ LinkedIn Phone: No phone numbers in response
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [249/274] Caitlin Crowder
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/caitlin-crowder-7481ba148
+   🔗 LinkedIn enrichment: caitlin-crowder-7481ba148...
+   ✅ LinkedIn Phone: Found 2 phones for Caitlin Crowder
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [250/274] Mary Riddle
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/mary-riddle-64703480
+   🔗 LinkedIn enrichment: mary-riddle-64703480...
+   ✅ LinkedIn Phone: Found 2 phones for Mary Riddle
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [251/274] Annette Calcamuggi
+   💼 Senior Administrator (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/annette-calcamuggi-69653b27
+   🔗 LinkedIn enrichment: annette-calcamuggi-69653b27...
+   ✅ LinkedIn Phone: Found 2 phones for Annette Calcamuggi
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [252/274] Heidi Willson
+   💼 Executive Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/heidi-willson-56304842
+   🔗 LinkedIn enrichment: heidi-willson-56304842...
+   ✅ LinkedIn Phone: Found 2 phones for Heidi Willson
+   💳 Credit charged: true
+   ✅ LinkedIn phone enrichment successful!
+      📞 Phone 1: +1 561-303-2280 (direct)
+      🎯 Direct Dial: +1 561-303-2280
+      📊 Quality Score: 75/100
+
+📞 [253/274] Jennifer Bornick
+   💼 Escrow Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jennifer-bornick-492772105
+   🔗 LinkedIn enrichment: jennifer-bornick-492772105...
+   ✅ LinkedIn Phone: Found 2 phones for Jennifer Bornick
+   💳 Credit charged: true
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [254/274] Melissa Hunt
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/melissa-hunt-204b18105
+   🔗 LinkedIn enrichment: melissa-hunt-204b18105...
+   ⚠️ LinkedIn Phone: You've reached your credit limit. Upgrade your account for more credits (OUT_OF_CREDIT)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [255/274] Somers Title
+   💼 Title Insurance (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/somerstitle
+   🔗 LinkedIn enrichment: somerstitle...
+   ⚠️ LinkedIn Phone: Could not find requested data (EMPTY_DATA)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [256/274] Gwendolyn Brown
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/gwendolyn-brown-1960207
+   🔗 LinkedIn enrichment: gwendolyn-brown-1960207...
+   ⚠️ LinkedIn Phone: You've reached your credit limit. Upgrade your account for more credits (OUT_OF_CREDIT)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [257/274] Lee Bozenhard
+   💼 Escrow Assistant (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/lee-bozenhard-47257610
+   🔗 LinkedIn enrichment: lee-bozenhard-47257610...
+   ⚠️ LinkedIn Phone: You've reached your credit limit. Upgrade your account for more credits (OUT_OF_CREDIT)
+   💳 Credit charged: false
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [258/274] Kaitlin Larywon
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/kaitlin-larywon-5b643b284
+   🔗 LinkedIn enrichment: kaitlin-larywon-5b643b284...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:48.596Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [259/274] Sun National Title Company
+   💼 Title Company (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/sun-national-title-company-897428aa
+   🔗 LinkedIn enrichment: sun-national-title-company-897428aa...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:49.205Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [260/274] Jessica Lynn Pioli
+   💼 Title Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/jessica-lynn-jeslyn-pioli-22571357
+   🔗 LinkedIn enrichment: jessica-lynn-jeslyn-pioli-22571357...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:50.391Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [261/274] Christy Sexton
+   💼 Escrow Officer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/christy-sexton-b46231323
+   🔗 LinkedIn enrichment: christy-sexton-b46231323...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:51.268Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [262/274] Melissa Milliron
+   💼 Business Analyst (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/melissa-milliron-67454b1a6
+   🔗 LinkedIn enrichment: melissa-milliron-67454b1a6...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:54.275Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [263/274] Alex Atashi
+   💼 Sr. Sales Executive At Anow (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/alex-atashi-15b46139
+   🔗 LinkedIn enrichment: alex-atashi-15b46139...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:54.951Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [264/274] Helene Brown
+   💼 Senior Title Curative Specialis (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/helene-brown-56068116b
+   🔗 LinkedIn enrichment: helene-brown-56068116b...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:55.574Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [265/274] Josefina Zuniga-Velazquez
+   💼 Sr. Title Curative Specialist (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/josefina-zuniga-velazquez-677231171
+   🔗 LinkedIn enrichment: josefina-zuniga-velazquez-677231171...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:56.132Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [266/274] melanie greene
+   💼 Business Relations Agent (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/melanie-greene-8b74b067
+   🔗 LinkedIn enrichment: melanie-greene-8b74b067...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:56.702Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [267/274] Carol L.
+   💼 Escrow Closer (Individual Contributor)
+   🎯 influencer - Priority: 50
+   🔗 https://www.linkedin.com/in/carol-lam-detrick-b1625b50
+   🔗 LinkedIn enrichment: carol-lam-detrick-b1625b50...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:57.371Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [268/274] Bill Cope
+   💼 CFO Controller (Executive)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/bill-cope-162608175
+   🔗 LinkedIn enrichment: bill-cope-162608175...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:57.930Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [269/274] Ronald Quain
+   💼 CEO (Executive)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/ronald-quain-24485184
+   🔗 LinkedIn enrichment: ronald-quain-24485184...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:58.496Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [270/274] Rochelle Reynolds
+   💼 Unit Manager Escrow Officer - Residential Commercial (Manager)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/rochelle-reynolds-12565735
+   🔗 LinkedIn enrichment: rochelle-reynolds-12565735...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:59.044Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [271/274] Scott Scholtz
+   💼 Director Of Client Experience (Director)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/scott-scholtz-03048759
+   🔗 LinkedIn enrichment: scott-scholtz-03048759...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:02:59.909Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [272/274] chris hyman
+   💼 Executive Vice President (Executive)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/chris-hyman-73a76613
+   🔗 LinkedIn enrichment: chris-hyman-73a76613...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:03:00.605Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [273/274] Helena Sutherland
+   💼 Account Manager (Manager)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/helena-sutherland-80065324
+   🔗 LinkedIn enrichment: helena-sutherland-80065324...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:03:01.314Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📞 [274/274] AbstractorPro Software
+   💼 Chief Executive Officer (Executive)
+   🎯 null - Priority: 50
+   🔗 https://www.linkedin.com/in/pattybaber
+   🔗 LinkedIn enrichment: pattybaber...
+   ⚠️ LinkedIn Phone API error: 402 - {"statusCode":402,"timestamp":"2025-09-02T05:03:02.075Z","name":"OUT_OF_CREDIT","code":2}
+   ⚠️ No phone numbers found via LinkedIn
+
+📊 LINKEDIN PHONE ENRICHMENT COMPLETE!
+======================================
+📋 Contacts processed: 274
+✅ Contacts enriched: 27
+📞 Total phones found: 29
+📈 Success rate: 9.9%
+
+🎯 NEXT STEPS:
+1. Scale to more contacts (increase 'take' limit)
+2. Process all 389 contacts with LinkedIn URLs
+3. Integrate phone data into sales outreach

@@ -1,0 +1,921 @@
+{
+  "timestamp": "2025-09-02T22:13:18.024Z",
+  "summary": {
+    "totalExternalRecords": 50,
+    "accounts": 0,
+    "leads": 0,
+    "contacts": 50
+  },
+  "externalAccounts": [],
+  "externalLeads": [],
+  "externalContacts": [
+    {
+      "id": "01K1V9C3BCJX580WSTTB7B7743",
+      "fullName": "Joey kopp",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_joey_kopp_at_retail-products.com"
+    },
+    {
+      "id": "01K1V9C2T1SADDTS4SCCT704Q7",
+      "fullName": "Dano Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_dano_at_retail-products_com"
+    },
+    {
+      "id": "01K1V9C2W4H1BHWM06RJS0CTRS",
+      "fullName": "Logan willoughby",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_logan_willoughby_at_retail-products.com"
+    },
+    {
+      "id": "01K1V9C42PXSZNB34VYJHJQ2P0",
+      "fullName": "Derek cummings",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_derek_cummings_at_retail-products.com"
+    },
+    {
+      "id": "01K1V9C3J0NK9Z6ATCQEZ8P27K",
+      "fullName": "T keiffer",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_t_keiffer_at_giantoil.com"
+    },
+    {
+      "id": "01K1V9C4H857Y7DD6TSMTSTWBK",
+      "fullName": "Lauri turek",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_lauri_turek_at_laurenint.com"
+    },
+    {
+      "id": "01K1V9C4VXM79K9SM0VBVT04T3",
+      "fullName": "Payments Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_payments_at_zohocorp_com"
+    },
+    {
+      "id": "01K1V9C3XPGD8RKVY6Y904TCR2",
+      "fullName": "Amy mcknight",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_amy_mcknight_at_aldi.us"
+    },
+    {
+      "id": "01K1V9C4F7RDZHDQK0N836TZGM",
+      "fullName": "Training Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_training_at_zohocorp_com"
+    },
+    {
+      "id": "01K1V9C4SQJ3YTMB4H24HD4489",
+      "fullName": "Tina kite",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_tina_kite_at_good2gostores.com"
+    },
+    {
+      "id": "01K1V9C30PPG6909B2ZPFWDV9J",
+      "fullName": "Elisa Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_elisa_at_flexecutioninc_com"
+    },
+    {
+      "id": "01K1V9C3DPTG3ZXY7F72D15449",
+      "fullName": "No-reply Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_no-reply_at_mytitan_net"
+    },
+    {
+      "id": "01K1V9C2YH5EXYVFCQNB994BBM",
+      "fullName": "Microsoftexchange329e71ec88ae4615bbc36ab6ce41109e Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_microsoftexchange329e71ec88ae4615bbc36ab6ce41109e_at_laurenintl_onmicrosoft.com"
+    },
+    {
+      "id": "01K1V9C39930PEAE25MTB1FRW4",
+      "fullName": "Gene robertson",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_gene_robertson_at_caseys.com"
+    },
+    {
+      "id": "01K1V9C47QC6Z5Y6NTD2TG39F4",
+      "fullName": "Telnemr Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_telnemr_at_nouria_com"
+    },
+    {
+      "id": "01K1V9C5082R8B6A7GAX039CPC",
+      "fullName": "Jamie daugherty",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_jamie_daugherty_at_good2gostores.com"
+    },
+    {
+      "id": "01K1V9C3R42DQ5Y6NBFF4225M3",
+      "fullName": "Brooklyn page",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_brooklyn_page_at_good2gostores.com"
+    },
+    {
+      "id": "01K1V9C4CP8MQX4N161P7JRGBX",
+      "fullName": "Support bonfire",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_support_bonfire_at_eunasolutions.com"
+    },
+    {
+      "id": "01K1V9C458Q9RXTR9ZH6TPCZY6",
+      "fullName": "Stone Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_stone_at_stewartsshops_com"
+    },
+    {
+      "id": "01K1V9C4A8KD8Y3F7Y9Y1W2FZX",
+      "fullName": "5156ef49 laurenint",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_5156ef49_laurenint.com_at_amer.teams.ms"
+    },
+    {
+      "id": "01K1V9C4QKT821NJ702PZE6AEN",
+      "fullName": "Payables Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_payables_at_good2gostores_com"
+    },
+    {
+      "id": "01K1V9C52A24GP35A17W9J2R7K",
+      "fullName": "721e50fa laurenint",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_721e50fa_laurenint.com_at_amer.teams.ms"
+    },
+    {
+      "id": "01K1V9C56FKX0E0QACCFYV88WS",
+      "fullName": "B89a9edd laurenint",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_b89a9edd_laurenint.com_at_amer.teams.ms"
+    },
+    {
+      "id": "01K1V9C58KK51MZXJN24A28ZM8",
+      "fullName": "Ken Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_ken_at_tristartn_com"
+    },
+    {
+      "id": "01K1V9C2NPPSG33TPWHWXG2Z0P",
+      "fullName": "C oktavec",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_c_oktavec_at_giantoil.com"
+    },
+    {
+      "id": "01K1V9C32TDDC7S9RRV53X9NG8",
+      "fullName": "Scott Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_scott_at_flexecutioninc_com"
+    },
+    {
+      "id": "01K1V9C3FWYY27D9CJEK1PDKYX",
+      "fullName": "Interlinksourcing Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_interlinksourcing_at_gmail_com"
+    },
+    {
+      "id": "01K1V9C4NFQZ1DF2Q0GTY32AEY",
+      "fullName": "48cb2afa laurenint",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_48cb2afa_laurenint.com_at_amer.teams.ms"
+    },
+    {
+      "id": "01K1V9C4Y4CCQ6P94XTPWY2P8F",
+      "fullName": "Store705 Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_store705_at_good2gostores_com"
+    },
+    {
+      "id": "01K1V9C5H7FYRX4AC6B87FVK8R",
+      "fullName": "Circlekapreview Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_circlekapreview_at_outreach_prgx.com"
+    },
+    {
+      "id": "01K1V9C5KD1WVFA145D26A91H0",
+      "fullName": "Info Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_info_at_retail-products_com"
+    },
+    {
+      "id": "01K1V9C5NHGVEE58CE4TW1RKC0",
+      "fullName": "Anitechps Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_anitechps_at_gmail_com"
+    },
+    {
+      "id": "01K1V9C3MZQ5HHMCT33VDXC2GF",
+      "fullName": "Fc81f723 laurenint",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_fc81f723_laurenint.com_at_amer.teams.ms"
+    },
+    {
+      "id": "01K1V9C3VATCNCW1KVBVEPWDK3",
+      "fullName": "Rob Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_rob_at_dirsconstruction_com"
+    },
+    {
+      "id": "01K1V9C408MF1V603METCEHF4A",
+      "fullName": "Jason cole",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_jason_cole_at_eg-america.com"
+    },
+    {
+      "id": "01K1V9C5QMK39CF13WSDYEDRSY",
+      "fullName": "Orders Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_orders_at_laurenagrisystems_com"
+    },
+    {
+      "id": "01K1V9C5SSHB426FJYC841M77V",
+      "fullName": "Ailjphillips Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_ailjphillips_at_racetrac_com"
+    },
+    {
+      "id": "01K1V9C5VXXHJM3F6GTJ0Z5R9V",
+      "fullName": "Monica Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_monica_at_yiree_com"
+    },
+    {
+      "id": "01K1V9C5Y295ES9DWXX9RMPA9R",
+      "fullName": "Gregory guidotti",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_gregory_guidotti_at_ferrarausa.com"
+    },
+    {
+      "id": "01K1V9C605Y9Y8GM34QFZ2PGQY",
+      "fullName": "Robert ferguson",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_robert_ferguson_at_circlek.com"
+    },
+    {
+      "id": "01K1V9C629YJGKYSR7NXHPTKND",
+      "fullName": "Orders Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_orders_at_retail-products_com"
+    },
+    {
+      "id": "01K1V9C35035YZZ1GJ5PG0AP40",
+      "fullName": "Caleb Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_caleb_at_foremostind_com"
+    },
+    {
+      "id": "01K1V9C5AP6XRM404RHARZZY64",
+      "fullName": "Sam dearden",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_sam_dearden_at_good2gostores.com"
+    },
+    {
+      "id": "01K1V9C5CZ8EFVFJQPH33G0KC4",
+      "fullName": "Shannon rodriguez",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_shannon_rodriguez_at_good2gostores.com"
+    },
+    {
+      "id": "01K1V9C5F2FWVHJ3GVE6SY39SE",
+      "fullName": "Ithelpdesk Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_ithelpdesk_at_rutters_com"
+    },
+    {
+      "id": "01K1V9C64BEFX3EKFHTBAV69DB",
+      "fullName": "Darla hagnauer",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_darla_hagnauer_at_circlek.com"
+    },
+    {
+      "id": "01K1V9C66HSWZR0JXKQQHP135H",
+      "fullName": "Str45038 Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_str45038_at_circlek_com"
+    },
+    {
+      "id": "01K1V9C2QVYRPVJVGA0E659ARH",
+      "fullName": "Brady cotsmire",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_brady_cotsmire_at_retail-products.com"
+    },
+    {
+      "id": "01K1V9C3753SJ9P2070B5NYAXJ",
+      "fullName": "Nicholas smith",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_nicholas_smith_at_caseys.com"
+    },
+    {
+      "id": "01K1V9C4KBBJK6B50Y9GZJS5KW",
+      "fullName": "Support Prospect",
+      "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+      "externalId": "discovered_support_at_gobonfire_com"
+    }
+  ],
+  "idPatterns": {
+    "01K1V9C3BC...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3BCJX580WSTTB7B7743",
+          "fullName": "Joey kopp",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_joey_kopp_at_retail-products.com"
+        }
+      ]
+    },
+    "01K1V9C2T1...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C2T1SADDTS4SCCT704Q7",
+          "fullName": "Dano Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_dano_at_retail-products_com"
+        }
+      ]
+    },
+    "01K1V9C2W4...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C2W4H1BHWM06RJS0CTRS",
+          "fullName": "Logan willoughby",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_logan_willoughby_at_retail-products.com"
+        }
+      ]
+    },
+    "01K1V9C42P...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C42PXSZNB34VYJHJQ2P0",
+          "fullName": "Derek cummings",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_derek_cummings_at_retail-products.com"
+        }
+      ]
+    },
+    "01K1V9C3J0...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3J0NK9Z6ATCQEZ8P27K",
+          "fullName": "T keiffer",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_t_keiffer_at_giantoil.com"
+        }
+      ]
+    },
+    "01K1V9C4H8...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4H857Y7DD6TSMTSTWBK",
+          "fullName": "Lauri turek",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_lauri_turek_at_laurenint.com"
+        }
+      ]
+    },
+    "01K1V9C4VX...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4VXM79K9SM0VBVT04T3",
+          "fullName": "Payments Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_payments_at_zohocorp_com"
+        }
+      ]
+    },
+    "01K1V9C3XP...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3XPGD8RKVY6Y904TCR2",
+          "fullName": "Amy mcknight",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_amy_mcknight_at_aldi.us"
+        }
+      ]
+    },
+    "01K1V9C4F7...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4F7RDZHDQK0N836TZGM",
+          "fullName": "Training Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_training_at_zohocorp_com"
+        }
+      ]
+    },
+    "01K1V9C4SQ...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4SQJ3YTMB4H24HD4489",
+          "fullName": "Tina kite",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_tina_kite_at_good2gostores.com"
+        }
+      ]
+    },
+    "01K1V9C30P...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C30PPG6909B2ZPFWDV9J",
+          "fullName": "Elisa Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_elisa_at_flexecutioninc_com"
+        }
+      ]
+    },
+    "01K1V9C3DP...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3DPTG3ZXY7F72D15449",
+          "fullName": "No-reply Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_no-reply_at_mytitan_net"
+        }
+      ]
+    },
+    "01K1V9C2YH...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C2YH5EXYVFCQNB994BBM",
+          "fullName": "Microsoftexchange329e71ec88ae4615bbc36ab6ce41109e Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_microsoftexchange329e71ec88ae4615bbc36ab6ce41109e_at_laurenintl_onmicrosoft.com"
+        }
+      ]
+    },
+    "01K1V9C399...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C39930PEAE25MTB1FRW4",
+          "fullName": "Gene robertson",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_gene_robertson_at_caseys.com"
+        }
+      ]
+    },
+    "01K1V9C47Q...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C47QC6Z5Y6NTD2TG39F4",
+          "fullName": "Telnemr Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_telnemr_at_nouria_com"
+        }
+      ]
+    },
+    "01K1V9C508...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5082R8B6A7GAX039CPC",
+          "fullName": "Jamie daugherty",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_jamie_daugherty_at_good2gostores.com"
+        }
+      ]
+    },
+    "01K1V9C3R4...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3R42DQ5Y6NBFF4225M3",
+          "fullName": "Brooklyn page",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_brooklyn_page_at_good2gostores.com"
+        }
+      ]
+    },
+    "01K1V9C4CP...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4CP8MQX4N161P7JRGBX",
+          "fullName": "Support bonfire",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_support_bonfire_at_eunasolutions.com"
+        }
+      ]
+    },
+    "01K1V9C458...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C458Q9RXTR9ZH6TPCZY6",
+          "fullName": "Stone Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_stone_at_stewartsshops_com"
+        }
+      ]
+    },
+    "01K1V9C4A8...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4A8KD8Y3F7Y9Y1W2FZX",
+          "fullName": "5156ef49 laurenint",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_5156ef49_laurenint.com_at_amer.teams.ms"
+        }
+      ]
+    },
+    "01K1V9C4QK...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4QKT821NJ702PZE6AEN",
+          "fullName": "Payables Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_payables_at_good2gostores_com"
+        }
+      ]
+    },
+    "01K1V9C52A...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C52A24GP35A17W9J2R7K",
+          "fullName": "721e50fa laurenint",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_721e50fa_laurenint.com_at_amer.teams.ms"
+        }
+      ]
+    },
+    "01K1V9C56F...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C56FKX0E0QACCFYV88WS",
+          "fullName": "B89a9edd laurenint",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_b89a9edd_laurenint.com_at_amer.teams.ms"
+        }
+      ]
+    },
+    "01K1V9C58K...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C58KK51MZXJN24A28ZM8",
+          "fullName": "Ken Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_ken_at_tristartn_com"
+        }
+      ]
+    },
+    "01K1V9C2NP...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C2NPPSG33TPWHWXG2Z0P",
+          "fullName": "C oktavec",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_c_oktavec_at_giantoil.com"
+        }
+      ]
+    },
+    "01K1V9C32T...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C32TDDC7S9RRV53X9NG8",
+          "fullName": "Scott Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_scott_at_flexecutioninc_com"
+        }
+      ]
+    },
+    "01K1V9C3FW...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3FWYY27D9CJEK1PDKYX",
+          "fullName": "Interlinksourcing Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_interlinksourcing_at_gmail_com"
+        }
+      ]
+    },
+    "01K1V9C4NF...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4NFQZ1DF2Q0GTY32AEY",
+          "fullName": "48cb2afa laurenint",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_48cb2afa_laurenint.com_at_amer.teams.ms"
+        }
+      ]
+    },
+    "01K1V9C4Y4...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4Y4CCQ6P94XTPWY2P8F",
+          "fullName": "Store705 Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_store705_at_good2gostores_com"
+        }
+      ]
+    },
+    "01K1V9C5H7...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5H7FYRX4AC6B87FVK8R",
+          "fullName": "Circlekapreview Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_circlekapreview_at_outreach_prgx.com"
+        }
+      ]
+    },
+    "01K1V9C5KD...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5KD1WVFA145D26A91H0",
+          "fullName": "Info Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_info_at_retail-products_com"
+        }
+      ]
+    },
+    "01K1V9C5NH...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5NHGVEE58CE4TW1RKC0",
+          "fullName": "Anitechps Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_anitechps_at_gmail_com"
+        }
+      ]
+    },
+    "01K1V9C3MZ...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3MZQ5HHMCT33VDXC2GF",
+          "fullName": "Fc81f723 laurenint",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_fc81f723_laurenint.com_at_amer.teams.ms"
+        }
+      ]
+    },
+    "01K1V9C3VA...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3VATCNCW1KVBVEPWDK3",
+          "fullName": "Rob Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_rob_at_dirsconstruction_com"
+        }
+      ]
+    },
+    "01K1V9C408...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C408MF1V603METCEHF4A",
+          "fullName": "Jason cole",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_jason_cole_at_eg-america.com"
+        }
+      ]
+    },
+    "01K1V9C5QM...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5QMK39CF13WSDYEDRSY",
+          "fullName": "Orders Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_orders_at_laurenagrisystems_com"
+        }
+      ]
+    },
+    "01K1V9C5SS...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5SSHB426FJYC841M77V",
+          "fullName": "Ailjphillips Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_ailjphillips_at_racetrac_com"
+        }
+      ]
+    },
+    "01K1V9C5VX...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5VXXHJM3F6GTJ0Z5R9V",
+          "fullName": "Monica Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_monica_at_yiree_com"
+        }
+      ]
+    },
+    "01K1V9C5Y2...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5Y295ES9DWXX9RMPA9R",
+          "fullName": "Gregory guidotti",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_gregory_guidotti_at_ferrarausa.com"
+        }
+      ]
+    },
+    "01K1V9C605...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C605Y9Y8GM34QFZ2PGQY",
+          "fullName": "Robert ferguson",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_robert_ferguson_at_circlek.com"
+        }
+      ]
+    },
+    "01K1V9C629...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C629YJGKYSR7NXHPTKND",
+          "fullName": "Orders Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_orders_at_retail-products_com"
+        }
+      ]
+    },
+    "01K1V9C350...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C35035YZZ1GJ5PG0AP40",
+          "fullName": "Caleb Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_caleb_at_foremostind_com"
+        }
+      ]
+    },
+    "01K1V9C5AP...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5AP6XRM404RHARZZY64",
+          "fullName": "Sam dearden",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_sam_dearden_at_good2gostores.com"
+        }
+      ]
+    },
+    "01K1V9C5CZ...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5CZ8EFVFJQPH33G0KC4",
+          "fullName": "Shannon rodriguez",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_shannon_rodriguez_at_good2gostores.com"
+        }
+      ]
+    },
+    "01K1V9C5F2...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C5F2FWVHJ3GVE6SY39SE",
+          "fullName": "Ithelpdesk Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_ithelpdesk_at_rutters_com"
+        }
+      ]
+    },
+    "01K1V9C64B...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C64BEFX3EKFHTBAV69DB",
+          "fullName": "Darla hagnauer",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_darla_hagnauer_at_circlek.com"
+        }
+      ]
+    },
+    "01K1V9C66H...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C66HSWZR0JXKQQHP135H",
+          "fullName": "Str45038 Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_str45038_at_circlek_com"
+        }
+      ]
+    },
+    "01K1V9C2QV...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C2QVYRPVJVGA0E659ARH",
+          "fullName": "Brady cotsmire",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_brady_cotsmire_at_retail-products.com"
+        }
+      ]
+    },
+    "01K1V9C375...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C3753SJ9P2070B5NYAXJ",
+          "fullName": "Nicholas smith",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_nicholas_smith_at_caseys.com"
+        }
+      ]
+    },
+    "01K1V9C4KB...": {
+      "count": 1,
+      "examples": [
+        {
+          "type": "contact",
+          "id": "01K1V9C4KBBJK6B50Y9GZJS5KW",
+          "fullName": "Support Prospect",
+          "workspaceId": "01K1VBYV8ETM2RCQA4GNN9EG72",
+          "externalId": "discovered_support_at_gobonfire_com"
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    "Convert external Coresignal IDs to internal database IDs",
+    "Remove duplicate external records",
+    "Ensure all new imports use internal IDs only",
+    "Update frontend to handle external ID conversion"
+  ]
+}

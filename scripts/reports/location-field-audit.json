@@ -1,0 +1,4488 @@
+{
+  "timestamp": "2025-09-01T03:05:35.694Z",
+  "summary": {
+    "totalCompanies": 3736,
+    "arizona": {
+      "total": 76,
+      "percentage": "2.0"
+    },
+    "florida": {
+      "total": 597,
+      "percentage": "16.0"
+    },
+    "dataQuality": {
+      "empty": 218,
+      "problematic": 4,
+      "unusual": 40,
+      "totalIssues": 262
+    },
+    "uniquePatterns": 1823
+  },
+  "arizonaCompanies": [
+    {
+      "account": "Pioneer Title Agency",
+      "location": "Sierra Vista, AZ",
+      "original": "Sierra Vista, AZ"
+    },
+    {
+      "account": "Great American Title Agency",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Magnus Title Agency",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Empire West Title",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Navi Title Agency",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Driggs Title Agency",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "Title Services of the Valley Agency",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Title Services of the Valley Agency",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "TEEMA Title & Escrow",
+      "location": "Litchfield Park, Arizona",
+      "original": "Litchfield Park, Arizona"
+    },
+    {
+      "account": "First Arizona Title Agency",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Realty Executives Phoenix",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Lofty",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Niksi",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Chicago Title Arizona",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Fidelity National Title Agency, Arizona",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Active Title Agency",
+      "location": "Glendale, AZ",
+      "original": "Glendale, AZ"
+    },
+    {
+      "account": "iTitleTransfer, LLC",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Signature Xcel / Sign X",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Equity Title Agency AZ",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Clear Title Agency of Arizona",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "EscrowTab",
+      "location": "Tempe, Arizona",
+      "original": "Tempe, Arizona"
+    },
+    {
+      "account": "Empire Title Agency",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Arizona Title & Escrow Company",
+      "location": "Chandler, Arizona",
+      "original": "Chandler, Arizona"
+    },
+    {
+      "account": "Title Alliance Professionals",
+      "location": "Glendale, Arizona",
+      "original": "Glendale, Arizona"
+    },
+    {
+      "account": "Premier Title Agency",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Arizona Research & Retrieval Services, Inc.",
+      "location": "Tucson, AZ",
+      "original": "Tucson, AZ"
+    },
+    {
+      "account": "Arizona Premier Title",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "American Title Service Agency",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Orchestrate Mortgage and Title Solutions, LLC",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "Grand Canyon Title Agency",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "REVINRE",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "Fidelity National Title Agency Southern Arizona",
+      "location": "Tucson, Arizona",
+      "original": "Tucson, Arizona"
+    },
+    {
+      "account": "Equitable Title Agency",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Title Security Agency, A Joint Venture with First American Title",
+      "location": "Tucson, AZ",
+      "original": "Tucson, AZ"
+    },
+    {
+      "account": "Taylor Morrison",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "First Integrity Title Agency of Arizona",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "The Lindsay Fricks Group",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Diamante Properties AZ",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Lawyers Title Northern Arizona",
+      "location": "Show Low, Arizona",
+      "original": "Show Low, Arizona"
+    },
+    {
+      "account": "The Goodman Taylor Team",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Notary Assurance, Inc",
+      "location": "Chandler, Arizona",
+      "original": "Chandler, Arizona"
+    },
+    {
+      "account": "Accelerated Appraisal Management Company",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Prestige Title & Escrow Agency, LLC",
+      "location": "Tempe, Arizona",
+      "original": "Tempe, Arizona"
+    },
+    {
+      "account": "Title Alliance of Arizona",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "OnPoint Appraisals",
+      "location": "Chandler, Arizona",
+      "original": "Chandler, Arizona"
+    },
+    {
+      "account": "ListerAssister",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Canyon Title Agency of Arizona",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "American Title Service Agency - Commercial Division",
+      "location": "Phoenix, Arizona",
+      "original": "Phoenix, Arizona"
+    },
+    {
+      "account": "Doc Signers Inc.",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Wendy Walker Fine Properties",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "Title Alliance Elite Agency",
+      "location": "Litchfield Park, AZ",
+      "original": "Litchfield Park, AZ"
+    },
+    {
+      "account": "Vibe • Arizona",
+      "location": "Scottsdale, Arizona",
+      "original": "Scottsdale, Arizona"
+    },
+    {
+      "account": "EZ Homes Inc",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Blueink Title Agency",
+      "location": "Yuma, Arizona",
+      "original": "Yuma, Arizona"
+    },
+    {
+      "account": "Title Agency Pros LLC",
+      "location": "Glendale, Arizona",
+      "original": "Glendale, Arizona"
+    },
+    {
+      "account": "Priority Appraisal, LLC",
+      "location": "Peoria, Arizona",
+      "original": "Peoria, Arizona"
+    },
+    {
+      "account": "LAND TITLE ASSOCIATION OF ARIZONA",
+      "location": "Gilbert, Arizona",
+      "original": "Gilbert, Arizona"
+    },
+    {
+      "account": "West End Realty",
+      "location": "Sierra Vista, Arizona",
+      "original": "Sierra Vista, Arizona"
+    },
+    {
+      "account": "JSSmith, LLC",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "ROC Title Agency West",
+      "location": "Lake Havasu City, Arizona",
+      "original": "Lake Havasu City, Arizona"
+    },
+    {
+      "account": "Bid Prestige",
+      "location": "Chandler, Arizona",
+      "original": "Chandler, Arizona"
+    },
+    {
+      "account": "AzTex Consulting LLC",
+      "location": "Sun City West, Arizona",
+      "original": "Sun City West, Arizona"
+    },
+    {
+      "account": "Benson Appraisals Arizona",
+      "location": "Gilbert, AZ",
+      "original": "Gilbert, AZ"
+    },
+    {
+      "account": "Snap Title Agency",
+      "location": "Gilbert, Arizona",
+      "original": "Gilbert, Arizona"
+    },
+    {
+      "account": "The Realty Agency",
+      "location": "Yuma, Arizona",
+      "original": "Yuma, Arizona"
+    },
+    {
+      "account": "Notary Everyday Inc.",
+      "location": "Glendale, Arizona",
+      "original": "Glendale, Arizona"
+    },
+    {
+      "account": "Jokake Real Estate Services",
+      "location": "Phoenix, AZ",
+      "original": "Phoenix, AZ"
+    },
+    {
+      "account": "Catalina Title Agency",
+      "location": "Tucson, AZ",
+      "original": "Tucson, AZ"
+    },
+    {
+      "account": "DHI Title Arrowhead",
+      "location": "Glendale, Arizona",
+      "original": "Glendale, Arizona"
+    },
+    {
+      "account": "Fast Deed",
+      "location": "Tempe, Arizona",
+      "original": "Tempe, Arizona"
+    },
+    {
+      "account": "Bemo Homes",
+      "location": "Scottsdale, AZ",
+      "original": "Scottsdale, AZ"
+    },
+    {
+      "account": "Sedona Realty",
+      "location": "Sedona, AZ",
+      "original": "Sedona, AZ"
+    },
+    {
+      "account": "Rio Salado Realty, LLC",
+      "location": "Gilbert, Arizona",
+      "original": "Gilbert, Arizona"
+    },
+    {
+      "account": "PressPlay Realty Network",
+      "location": "Tempe, AZ",
+      "original": "Tempe, AZ"
+    },
+    {
+      "account": "Premier Real Estate Network at Barrett Real Estate",
+      "location": "Prescott, Arizona",
+      "original": "Prescott, Arizona"
+    },
+    {
+      "account": "Alliance Land Surveying, LLC",
+      "location": "Glendale, AZ",
+      "original": "Glendale, AZ"
+    }
+  ],
+  "floridaCompanies": [
+    {
+      "account": "ClearEdge Title",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "New Dawn Title Group",
+      "location": "Doral, Florida",
+      "original": "Doral, Florida"
+    },
+    {
+      "account": "CalAtlantic Title",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Lennar Title",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Chicago Title Insurance Company",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "US REO Partners",
+      "location": "Sunrise, Florida",
+      "original": "Sunrise, Florida"
+    },
+    {
+      "account": "Savio Title",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Keller Williams Realty New Tampa",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Counts Real Estate Group, Inc.",
+      "location": "Panama City Beach, Florida",
+      "original": "Panama City Beach, Florida"
+    },
+    {
+      "account": "REAL RES",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "Coast To Coast Title & Escrow Services",
+      "location": "Seminole, Florida",
+      "original": "Seminole, Florida"
+    },
+    {
+      "account": "The K Company Realty, LLC",
+      "location": "Pompano Beach, FL",
+      "original": "Pompano Beach, FL"
+    },
+    {
+      "account": "WEICHERT REALTORS BEST BEACH REAL ESTATE",
+      "location": "Miami, Fl",
+      "original": "Miami, Fl"
+    },
+    {
+      "account": "Berkshire Hathaway Home Services Florida Realty",
+      "location": "Vero Beach, Florida",
+      "original": "Vero Beach, Florida"
+    },
+    {
+      "account": "Park Square Homes",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Realty Partners LLC",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "Atlas Title & Escrow Services",
+      "location": "Gainesville, Florida",
+      "original": "Gainesville, Florida"
+    },
+    {
+      "account": "Prestige National Title Services, LLC",
+      "location": "North Miami Beach, Florida",
+      "original": "North Miami Beach, Florida"
+    },
+    {
+      "account": "NU World Title, LLC",
+      "location": "Sunny Isles, FL",
+      "original": "Sunny Isles, FL"
+    },
+    {
+      "account": "Assurity Title",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Sapphire Title & Escrow Company",
+      "location": "Tampa, FL.",
+      "original": "Tampa, FL."
+    },
+    {
+      "account": "One Real Title",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "SETCO SERVICES LLC",
+      "location": "Destin, Florida",
+      "original": "Destin, Florida"
+    },
+    {
+      "account": "Emerald Coast Title Services, LLC",
+      "location": "Destin, Florida",
+      "original": "Destin, Florida"
+    },
+    {
+      "account": "Florida Agency Network",
+      "location": "Plant City, Florida",
+      "original": "Plant City, Florida"
+    },
+    {
+      "account": "TrustPro Title and Escrow, Inc.",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Golden Dog Title & Trust",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Turner Title",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Trident Title LLC",
+      "location": "West Palm Beach, Florida",
+      "original": "West Palm Beach, Florida"
+    },
+    {
+      "account": "Independence Title, Inc.",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "FOLIO Title",
+      "location": "Doral, FL",
+      "original": "Doral, FL"
+    },
+    {
+      "account": "First Title Group Inc.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Southern Capital Title - South Florida",
+      "location": "Weston, Florida",
+      "original": "Weston, Florida"
+    },
+    {
+      "account": "Sky Title, LLC",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Total Title Solutions",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "Cottrell Title",
+      "location": "Naples, FL",
+      "original": "Naples, FL"
+    },
+    {
+      "account": "Crimmins Title",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Florida Title, LLC",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Premier Title Company, Ltd",
+      "location": "Palm Beach, Fla",
+      "original": "Palm Beach, Fla"
+    },
+    {
+      "account": "True Blue Title",
+      "location": "Largo, Florida",
+      "original": "Largo, Florida"
+    },
+    {
+      "account": "Cadence Title Services",
+      "location": "Lakewood Ranch, Florida",
+      "original": "Lakewood Ranch, Florida"
+    },
+    {
+      "account": "Elite Property Research, LLC",
+      "location": "Bradenton, Florida",
+      "original": "Bradenton, Florida"
+    },
+    {
+      "account": "Atlas Title & Escrow Services",
+      "location": "Gainesville, Florida",
+      "original": "Gainesville, Florida"
+    },
+    {
+      "account": "Richr",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Butler Title",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "Armour Title Company",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Brightline Title",
+      "location": "Santa Rosa Beach, Florida",
+      "original": "Santa Rosa Beach, Florida"
+    },
+    {
+      "account": "First International Title",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "The Closing Agent, Inc.",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Hillsborough Title",
+      "location": "Plant City, FL",
+      "original": "Plant City, FL"
+    },
+    {
+      "account": "Title Junction, LLC",
+      "location": "Ft Myers, FL",
+      "original": "Ft Myers, FL"
+    },
+    {
+      "account": "Link Title & Closing",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "PropLogix",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "Coastal Living Title, LLC",
+      "location": "Ponte Vedra Beach, Florida",
+      "original": "Ponte Vedra Beach, Florida"
+    },
+    {
+      "account": "The Closing Signing Service",
+      "location": "PEMBROKE PINES, FL",
+      "original": "PEMBROKE PINES, FL"
+    },
+    {
+      "account": "TitleWave Real Estate Solutions",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Title & Abstract Agency of America, Inc.",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Chicago Title",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "The TRES Group",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "The Closing Team",
+      "location": "Pompano Beach, Florida",
+      "original": "Pompano Beach, Florida"
+    },
+    {
+      "account": "Notary Direct Nationwide, LLC",
+      "location": "St. Augustine, Florida",
+      "original": "St. Augustine, Florida"
+    },
+    {
+      "account": "Lennar",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "US Tax Deed Solutions",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Propy Inc.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Vacation Ownership Title Agency, Inc",
+      "location": "Boca Raton , Florida",
+      "original": "Boca Raton , Florida"
+    },
+    {
+      "account": "Title Partners of South Florida, Inc.",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "Lennar Homes.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Sunshine Signing",
+      "location": "Hudson, Florida",
+      "original": "Hudson, Florida"
+    },
+    {
+      "account": "Michael Saunders & Company",
+      "location": "Sarasota, FL",
+      "original": "Sarasota, FL"
+    },
+    {
+      "account": "Berkshire Hathaway HomeServices Florida Realty",
+      "location": "Sunrise, Florida",
+      "original": "Sunrise, Florida"
+    },
+    {
+      "account": "Signature International Real Estate",
+      "location": "Delray Beach, FL",
+      "original": "Delray Beach, FL"
+    },
+    {
+      "account": "Comfortable Closings",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Yaffe International Realty",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "VizionX",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Coldwell Banker Sunstar Realty Coldwell Banker Morris Realty",
+      "location": "Port Charlotte, FL",
+      "original": "Port Charlotte, FL"
+    },
+    {
+      "account": "On Chain Listings",
+      "location": "Coral Gables, Florida",
+      "original": "Coral Gables, Florida"
+    },
+    {
+      "account": "Flagship Title",
+      "location": "Land O'Lakes, Florida",
+      "original": "Land O'Lakes, Florida"
+    },
+    {
+      "account": "HomePro Title, Inc",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "MIAMIGO TITLE",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Monarch Title Agency",
+      "location": "Doral, FLORIDA",
+      "original": "Doral, FLORIDA"
+    },
+    {
+      "account": "Insured Title Agency",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Fairwater Title Company, LLC",
+      "location": "Port St Lucie, Florida",
+      "original": "Port St Lucie, Florida"
+    },
+    {
+      "account": "New Path Title",
+      "location": "West Palm Beach, Florida",
+      "original": "West Palm Beach, Florida"
+    },
+    {
+      "account": "US Real Estate Advisors, Inc",
+      "location": "Riviera Beach, Florida",
+      "original": "Riviera Beach, Florida"
+    },
+    {
+      "account": "Lutz Title and Escrow",
+      "location": "Lutz, Florida",
+      "original": "Lutz, Florida"
+    },
+    {
+      "account": "First Priority Title Services",
+      "location": "Boynton Beach, Florida",
+      "original": "Boynton Beach, Florida"
+    },
+    {
+      "account": "Somers Title Company",
+      "location": "Clearwater, Fl",
+      "original": "Clearwater, Fl"
+    },
+    {
+      "account": "Sun National Title Company",
+      "location": "Fort Myers, Florida",
+      "original": "Fort Myers, Florida"
+    },
+    {
+      "account": "Butler Title",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "WEICHERT, REALTORS - NuStar Associates",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Upward Title & Closing Agency - Florida",
+      "location": "Miramar Beach, Florida",
+      "original": "Miramar Beach, Florida"
+    },
+    {
+      "account": "Express Title Services, LLC",
+      "location": "Hollywood, Florida",
+      "original": "Hollywood, Florida"
+    },
+    {
+      "account": "Galaxy Title and Escrow",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "HomePartners Title Services",
+      "location": "Weston, FL",
+      "original": "Weston, FL"
+    },
+    {
+      "account": "Majesty Title Services",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "ALF For Sale",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "JM Title Services, Inc.",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "TitleTeam",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Right Coast Title Agency LLC",
+      "location": "Pompano Beach, Florida",
+      "original": "Pompano Beach, Florida"
+    },
+    {
+      "account": "Members Title Agency, LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Magnolia Title - Florida",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "WORLD PROPERTY VENTURES",
+      "location": "Miami, Fl",
+      "original": "Miami, Fl"
+    },
+    {
+      "account": "FL Title & Escrow Co",
+      "location": "Hallandale Beach, Florida",
+      "original": "Hallandale Beach, Florida"
+    },
+    {
+      "account": "My Land Trustee",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "LUXE Title Services",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Cherry Title LLC",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "Attorneys' Title Services, LLC",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "Access Title Agency FL",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "First American Title (formerly Real Estate Closing Solutions)",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Equitable Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Landtec Surveying and Lien, LLC",
+      "location": "Deerfield Beach, Florida",
+      "original": "Deerfield Beach, Florida"
+    },
+    {
+      "account": "Blue Streak Docs, LLC",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "Bell Land Title",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Title Xperts LLC",
+      "location": "West Palm Beach, Florida",
+      "original": "West Palm Beach, Florida"
+    },
+    {
+      "account": "Globalty Investment",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "All American Title",
+      "location": "Brandon, Fl",
+      "original": "Brandon, Fl"
+    },
+    {
+      "account": "Professional Title Agency",
+      "location": "Daytona Beach, FL",
+      "original": "Daytona Beach, FL"
+    },
+    {
+      "account": "Gold Star Title and Escrow",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Title Guaranty of South Florida",
+      "location": "Weston, Florida",
+      "original": "Weston, Florida"
+    },
+    {
+      "account": "Marlene Benner - Licensed Title Agent",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Gilvan Realty Corp",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "Gregory B. Taylor - Professional Association",
+      "location": "Wilton Manors, Florida",
+      "original": "Wilton Manors, Florida"
+    },
+    {
+      "account": "Tier 1 Title LLC",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Peninsula Title Corp.",
+      "location": "Doral, FL",
+      "original": "Doral, FL"
+    },
+    {
+      "account": "REO Title Company of Florida, LLC",
+      "location": "Aventura, FL",
+      "original": "Aventura, FL"
+    },
+    {
+      "account": "Citadel Title & Escrow Company, LLC",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "Starfish Title Agency, LLC",
+      "location": "Stuart, Florida",
+      "original": "Stuart, Florida"
+    },
+    {
+      "account": "Metes & Bounds Title Company",
+      "location": "Clermont, FL",
+      "original": "Clermont, FL"
+    },
+    {
+      "account": "Genstone Property Management",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Blue Ocean Home Buyers",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "RMS Elite Properties",
+      "location": "Saint Petersburg, FL",
+      "original": "Saint Petersburg, FL"
+    },
+    {
+      "account": "C & C TITLE AGENCY INC.",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Liberty Title Company of America, Inc.",
+      "location": "Port St Lucie, Florida",
+      "original": "Port St Lucie, Florida"
+    },
+    {
+      "account": "International Title Partners",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Clear Title Group",
+      "location": "Miami Beach, Florida",
+      "original": "Miami Beach, Florida"
+    },
+    {
+      "account": "Properties Title LLC",
+      "location": "Lakewood Ranch, Florida",
+      "original": "Lakewood Ranch, Florida"
+    },
+    {
+      "account": "Action Title Company",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Real Estate of Florida",
+      "location": "Stuart, Florida",
+      "original": "Stuart, Florida"
+    },
+    {
+      "account": "Mobile Home Title Resolutions",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Florida Title Center",
+      "location": "Davie, Florida",
+      "original": "Davie, Florida"
+    },
+    {
+      "account": "Blade Title Company",
+      "location": "Deerfield Beach, FL",
+      "original": "Deerfield Beach, FL"
+    },
+    {
+      "account": "Professional Closings Title & Escrow",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "NextDeal",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "North Florida Title Company",
+      "location": "Tallahassee, Florida",
+      "original": "Tallahassee, Florida"
+    },
+    {
+      "account": "Attorneys' Title Fund Services, Inc.",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "ProTitleUSA",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "RE/MAX Alliance Group",
+      "location": "Sarasota, FL",
+      "original": "Sarasota, FL"
+    },
+    {
+      "account": "Precedent Management",
+      "location": "Doral, Florida",
+      "original": "Doral, Florida"
+    },
+    {
+      "account": "Bosshardt Realty Services, LLC",
+      "location": "Gainesville, FL",
+      "original": "Gainesville, FL"
+    },
+    {
+      "account": "Genstone Realty",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "CLOSED Title",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "RE/MAX Advance Realty",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "reQuire Real Estate Solutions, LLC",
+      "location": "Palm Harbor, Florida",
+      "original": "Palm Harbor, Florida"
+    },
+    {
+      "account": "Florida Title & Guarantee Agency",
+      "location": "Sunrise, Florida",
+      "original": "Sunrise, Florida"
+    },
+    {
+      "account": "Artesian Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Skyline Property Insight",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Milestone Title Services, LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Weston Title",
+      "location": "Weston, FL",
+      "original": "Weston, FL"
+    },
+    {
+      "account": "Suncoast One Title & Closings",
+      "location": "Punta Gorda, Florida",
+      "original": "Punta Gorda, Florida"
+    },
+    {
+      "account": "Schlegel Livingston LLC",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Attorneys Key Title LLC",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Consumer Title & Escrow Services, Inc.",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Southern Capital Title Company, LLc",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Trademark Title Services",
+      "location": "Fleming Island, Florida",
+      "original": "Fleming Island, Florida"
+    },
+    {
+      "account": "Consumers First Title Company, Inc.",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "Clear Title America, LLC",
+      "location": "Tampa, Fl",
+      "original": "Tampa, Fl"
+    },
+    {
+      "account": "Blue Title, LLC",
+      "location": "Inlet Beach, FLORIDA (FL)",
+      "original": "Inlet Beach, FLORIDA (FL)"
+    },
+    {
+      "account": "New Market Title Agency LLC",
+      "location": "Cape Coral, Florida",
+      "original": "Cape Coral, Florida"
+    },
+    {
+      "account": "BrokerNation Real Estate",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Apollo Title Company",
+      "location": "Winter Park, FL",
+      "original": "Winter Park, FL"
+    },
+    {
+      "account": "Baxter Title Corporation",
+      "location": "Largo, Florida",
+      "original": "Largo, Florida"
+    },
+    {
+      "account": "Florida Real Estate Title & Closings, Inc.",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "Harborview Title",
+      "location": "Ponte Vedra Beach, Florida",
+      "original": "Ponte Vedra Beach, Florida"
+    },
+    {
+      "account": "The Title Team LLC",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "Voxtur",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "BHHS Florida Realty",
+      "location": "Sunrise, Fl",
+      "original": "Sunrise, Fl"
+    },
+    {
+      "account": "DueDiligence Connect",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Robert Slack LLC",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Aegis Title & Escrow",
+      "location": "Saint Petersburg, Florida",
+      "original": "Saint Petersburg, Florida"
+    },
+    {
+      "account": "Comfortable Closings",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Premium Properties Real Estate Services",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "DENNIS REALTY & INVESTMENT CORPORATION",
+      "location": "Lutz, FL",
+      "original": "Lutz, FL"
+    },
+    {
+      "account": "TitleCapture",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Skyline Title Support",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Native Realty",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Quaker Title & Escrow",
+      "location": "Boca Raton, FL",
+      "original": "Boca Raton, FL"
+    },
+    {
+      "account": "Watersound Closings & Escrow",
+      "location": "Inlet Beach, Florida",
+      "original": "Inlet Beach, Florida"
+    },
+    {
+      "account": "ASSAL - LOPEZ & ASSOCIATES LLC.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Miami Title Group, Inc.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Pure Title & Escrow, LLC",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Alligator Title & Escrow",
+      "location": "Coral Gables, Florida",
+      "original": "Coral Gables, Florida"
+    },
+    {
+      "account": "Blue Ocean Title",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Spears Group",
+      "location": "Santa Rosa Beach, Florida",
+      "original": "Santa Rosa Beach, Florida"
+    },
+    {
+      "account": "Elite Signing Agency, LLC",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "BluEdge Professional Real Estate",
+      "location": "Palm Beach Gardens, Florida",
+      "original": "Palm Beach Gardens, Florida"
+    },
+    {
+      "account": "Key Title & Escrow",
+      "location": "Cutler Bay, Florida",
+      "original": "Cutler Bay, Florida"
+    },
+    {
+      "account": "Sweetwater Title & Closing Services, LLC",
+      "location": "Bartow, Florida",
+      "original": "Bartow, Florida"
+    },
+    {
+      "account": "Action Title of St. Johns County",
+      "location": "St Augustine, Florida",
+      "original": "St Augustine, Florida"
+    },
+    {
+      "account": "Wollinka-Wikle Title Insurance Agency",
+      "location": "Palm Harbor, Florida",
+      "original": "Palm Harbor, Florida"
+    },
+    {
+      "account": "House & Haven Real Estate",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Suncoast Realty Solutions, LLC",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Watson Title Services of North Florida, Inc.",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "ORION TITLE & ESCROW LLC",
+      "location": "Weston, Florida",
+      "original": "Weston, Florida"
+    },
+    {
+      "account": "Venture Title Services",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Performance Title",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "Preferred Settlement Services",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "Simply Title",
+      "location": "Kissimmee, Florida",
+      "original": "Kissimmee, Florida"
+    },
+    {
+      "account": "Treasure Coast Title & Settlement of Vero, LLC",
+      "location": "Vero Beach, Florida",
+      "original": "Vero Beach, Florida"
+    },
+    {
+      "account": "PEER TITLE INC",
+      "location": "TAMPA, Florida",
+      "original": "TAMPA, Florida"
+    },
+    {
+      "account": "Title-Write Solutions, Inc.",
+      "location": "Deerfield Beach, FL",
+      "original": "Deerfield Beach, FL"
+    },
+    {
+      "account": "Primera Title",
+      "location": "Lake Mary, Florida",
+      "original": "Lake Mary, Florida"
+    },
+    {
+      "account": "Paradise Land Title Agency LLC.",
+      "location": "Cape Coral, Florida",
+      "original": "Cape Coral, Florida"
+    },
+    {
+      "account": "Notary Priority",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "One-Step Lien Search, LLC",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Fox Run Title, LLC",
+      "location": "Coral Gables, Florida",
+      "original": "Coral Gables, Florida"
+    },
+    {
+      "account": "Covenant Closing & Title Services",
+      "location": "Palm Coast, Florida",
+      "original": "Palm Coast, Florida"
+    },
+    {
+      "account": "Cosmopolitan Title Agency Inc",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "GSS Title LLC",
+      "location": "Sarasota, FL",
+      "original": "Sarasota, FL"
+    },
+    {
+      "account": "360 Realty Tampa",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "A1 Title Services",
+      "location": "MIAMI, FL",
+      "original": "MIAMI, FL"
+    },
+    {
+      "account": "K Title",
+      "location": "Palm Beach Gardens, Florida",
+      "original": "Palm Beach Gardens, Florida"
+    },
+    {
+      "account": "Sun National Title & Escrow",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "AKW Title Group",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Title Partners of Florida",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Gibraltar Title, Inc",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "Burnt Store Title & Escrow",
+      "location": "Punta Gorda, Florida",
+      "original": "Punta Gorda, Florida"
+    },
+    {
+      "account": "Abstract Trust Title, LLC",
+      "location": "Lake City, Florida",
+      "original": "Lake City, Florida"
+    },
+    {
+      "account": "All Property Title & Escrow, LLC",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "Safe Harbor Title Company",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "Dominion Title Corporation Jacksonville",
+      "location": "Jacksonville, FL",
+      "original": "Jacksonville, FL"
+    },
+    {
+      "account": "Magnolia Title - Sarasota",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "ATR Title, LLC",
+      "location": "Crystal River, Florida",
+      "original": "Crystal River, Florida"
+    },
+    {
+      "account": "AppleTower Title & Escrow",
+      "location": "Weston, FL",
+      "original": "Weston, FL"
+    },
+    {
+      "account": "PCS Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Ross Law | Ross Title",
+      "location": "Naples, FL",
+      "original": "Naples, FL"
+    },
+    {
+      "account": "Old Florida Title",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "MAR Properties Investment Group",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Unik Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Realty Executives South Florida",
+      "location": "Fort Lauderdale, Flórida",
+      "original": "Fort Lauderdale, Flórida"
+    },
+    {
+      "account": "Blue Coast Title",
+      "location": "kendall, Florida",
+      "original": "kendall, Florida"
+    },
+    {
+      "account": "Liberty Title & Escrow",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Title Services of Collier County",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "RE/MAX InterAction Realty",
+      "location": "Tamarac, Florida",
+      "original": "Tamarac, Florida"
+    },
+    {
+      "account": "Simply Close Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Insight Title & Escrow, LLC",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "South Ridge Abstract & Title Co.",
+      "location": "Sebring, FL",
+      "original": "Sebring, FL"
+    },
+    {
+      "account": "Albatross Title Services",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Oasis Title Company",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Pinnacle Realty of Florida",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Gator Title",
+      "location": "Gainesville, FL",
+      "original": "Gainesville, FL"
+    },
+    {
+      "account": "Veritas-Title St. Petersburg, FL",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "FLORIDA FIRST TITLE & TRANSACTION SERVICES, LLC",
+      "location": "Ocala, Florida",
+      "original": "Ocala, Florida"
+    },
+    {
+      "account": "Spirit Title & Escrow, Inc",
+      "location": "Pembroke Pines, FL",
+      "original": "Pembroke Pines, FL"
+    },
+    {
+      "account": "Evoke Title Services LLC",
+      "location": "Weston, Florida",
+      "original": "Weston, Florida"
+    },
+    {
+      "account": "LandCastle, LLC-Florida",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Siesta Title & Escrow Services LLC",
+      "location": "Port Charlotte, FL",
+      "original": "Port Charlotte, FL"
+    },
+    {
+      "account": "1031 Exchange Connection, Inc.",
+      "location": "Bonita Springs, Florida",
+      "original": "Bonita Springs, Florida"
+    },
+    {
+      "account": "Dominion Title Company",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "JGE Realty Group",
+      "location": "Ft. Lauderdale, FL",
+      "original": "Ft. Lauderdale, FL"
+    },
+    {
+      "account": "Alachua Title Services, LLC",
+      "location": "Alachua , FL",
+      "original": "Alachua , FL"
+    },
+    {
+      "account": "CMP TITLE & ESCROW SERVICES INC.",
+      "location": "Doral, Florida",
+      "original": "Doral, Florida"
+    },
+    {
+      "account": "Clear Ocean Title, LLC",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Edge Title Company",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Clear Choice Title, Inc.",
+      "location": "Dunnellon, Florida",
+      "original": "Dunnellon, Florida"
+    },
+    {
+      "account": "Contract to Close Solutions LLC",
+      "location": "Delray Beach, Fl",
+      "original": "Delray Beach, Fl"
+    },
+    {
+      "account": "Heartland Title",
+      "location": "Bradenton, FL",
+      "original": "Bradenton, FL"
+    },
+    {
+      "account": "HEMISPHERE TITLE COMPANY",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Alliance Title & Escrow Group",
+      "location": "Aventura, Florida",
+      "original": "Aventura, Florida"
+    },
+    {
+      "account": "Lebron Group Surveying and Mapping",
+      "location": "Winter Park, Florida",
+      "original": "Winter Park, Florida"
+    },
+    {
+      "account": "Infinity Abstract & Title",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "All American Title & Abstract",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Peak Title Professionals, LLC",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Abi Road Land & Title, LLC",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Zing Title Agency",
+      "location": "Delray Beach, Florida",
+      "original": "Delray Beach, Florida"
+    },
+    {
+      "account": "First Choice Title & Escrow LLC",
+      "location": "Tamarac, Florida",
+      "original": "Tamarac, Florida"
+    },
+    {
+      "account": "Adams, Cameron Title Services",
+      "location": "Daytona Beach, Florida",
+      "original": "Daytona Beach, Florida"
+    },
+    {
+      "account": "Realtor With Wings ,Florida",
+      "location": "Realtor with Wings, LLC 623 Pelican Dr., Fort Walton Beach, FL 32548 205-965-3600 DRE#: E31972",
+      "original": "Realtor with Wings, LLC 623 Pelican Dr., Fort Walton Beach, FL 32548 205-965-3600 DRE#: E31972"
+    },
+    {
+      "account": "Premier Partners Title, Inc.",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Burnt Store Title of SWFL",
+      "location": "Punta Gorda, Florida",
+      "original": "Punta Gorda, Florida"
+    },
+    {
+      "account": "C4 Real Estate Services, LLC",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Mortgagee Title Services, Inc.",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "RE/MAX Services Boca Raton",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "A-Z Team Title",
+      "location": "Kissimmee, Florida",
+      "original": "Kissimmee, Florida"
+    },
+    {
+      "account": "ACES Title Agency",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "New Frontier Title",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Freedom Title and Escrow",
+      "location": "Lady Lake, Florida",
+      "original": "Lady Lake, Florida"
+    },
+    {
+      "account": "Southern Security Title of the Nature Coast, Inc.",
+      "location": "Spring Hill, Florida",
+      "original": "Spring Hill, Florida"
+    },
+    {
+      "account": "Market Title LLC",
+      "location": "Aventura, FL",
+      "original": "Aventura, FL"
+    },
+    {
+      "account": "Bay to Bay Title",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Mainstay Title Agency",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "Southeast Title",
+      "location": "Spring Hill, Florida",
+      "original": "Spring Hill, Florida"
+    },
+    {
+      "account": "Coastline Title of Pinellas",
+      "location": "Seminole, Florida",
+      "original": "Seminole, Florida"
+    },
+    {
+      "account": "Lyons Law Group",
+      "location": "Trinity , Florida",
+      "original": "Trinity , Florida"
+    },
+    {
+      "account": "Capital Abstract & Title",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "FLORIDA TITLE & TRUST LLC",
+      "location": "Pinecrest, Florida",
+      "original": "Pinecrest, Florida"
+    },
+    {
+      "account": "Clear Title of Northwest Florida LLC",
+      "location": "Pace, FL",
+      "original": "Pace, FL"
+    },
+    {
+      "account": "All World Title, Corp.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "SignatureRealEstateCompanies",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Benefit Title Services, LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Springs Title",
+      "location": "Alachua, FLORIDA",
+      "original": "Alachua, FLORIDA"
+    },
+    {
+      "account": "Watersound Title Agency",
+      "location": "Inlet Beach, Florida",
+      "original": "Inlet Beach, Florida"
+    },
+    {
+      "account": "Boulevard Title Company",
+      "location": "Royal Palm Beach, Florida",
+      "original": "Royal Palm Beach, Florida"
+    },
+    {
+      "account": "Express Title & Escrow, LLC",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Entreken Associates, Inc.",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Gulf Water Title",
+      "location": "St Petersburg, FL",
+      "original": "St Petersburg, FL"
+    },
+    {
+      "account": "Genesis Land & Title",
+      "location": "Pensacola, Florida",
+      "original": "Pensacola, Florida"
+    },
+    {
+      "account": "Vital Title & Escrow",
+      "location": "Ft. Lauderdale, FL",
+      "original": "Ft. Lauderdale, FL"
+    },
+    {
+      "account": "American Government Services",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Magic Vacation Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "South Tampa Title Company",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Cambridge Title Corp.",
+      "location": "Coral Gables, Florida",
+      "original": "Coral Gables, Florida"
+    },
+    {
+      "account": "Next Wave Title",
+      "location": "Jupiter, Florida",
+      "original": "Jupiter, Florida"
+    },
+    {
+      "account": "Enterprise Title Of Tampa Bay",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Closing Bear",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Ticon Title Company",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Prestige Title of Brevard",
+      "location": "Palm Shores, FL",
+      "original": "Palm Shores, FL"
+    },
+    {
+      "account": "Smart Title",
+      "location": "Lakeland, FL",
+      "original": "Lakeland, FL"
+    },
+    {
+      "account": "Premier Reputation Title Agency",
+      "location": "Bonita Springs, Florida",
+      "original": "Bonita Springs, Florida"
+    },
+    {
+      "account": "Lakeland Title, LLC",
+      "location": "Lakeland, Florida",
+      "original": "Lakeland, Florida"
+    },
+    {
+      "account": "Bay to Bay Transaction Coordinators, LLC",
+      "location": "Lakeland, FL",
+      "original": "Lakeland, FL"
+    },
+    {
+      "account": "Anchor Title Services",
+      "location": "Cape Coral, Florida",
+      "original": "Cape Coral, Florida"
+    },
+    {
+      "account": "Axis Title LLC",
+      "location": "Sunrise, FL",
+      "original": "Sunrise, FL"
+    },
+    {
+      "account": "Certified Inspectors, LLC",
+      "location": "Boca Raton, FL",
+      "original": "Boca Raton, FL"
+    },
+    {
+      "account": "American Home Title of Land O'Lakes, Inc.",
+      "location": "Lutz, FL",
+      "original": "Lutz, FL"
+    },
+    {
+      "account": "Bridge Title & Escrow Services",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Bonita Title, Inc.",
+      "location": "Bonita Springs, FL",
+      "original": "Bonita Springs, FL"
+    },
+    {
+      "account": "PRONTO TITLES - Title & Escrow",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "IRG Corporation",
+      "location": "FORT LAUDERDALE, FL",
+      "original": "FORT LAUDERDALE, FL"
+    },
+    {
+      "account": "TITLE QUEST INVESTMENTS, LLC",
+      "location": "Pembroke Pines, Florida",
+      "original": "Pembroke Pines, Florida"
+    },
+    {
+      "account": "TitleHost",
+      "location": "Boynton Beach, Florida",
+      "original": "Boynton Beach, Florida"
+    },
+    {
+      "account": "Arrow Title, LLC",
+      "location": "Lutz, Florida",
+      "original": "Lutz, Florida"
+    },
+    {
+      "account": "Aloma Title Co",
+      "location": "Oviedo, Florida",
+      "original": "Oviedo, Florida"
+    },
+    {
+      "account": "Sunshine Title Corporation",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Capital Title Solutions",
+      "location": "Trinity, Florida",
+      "original": "Trinity, Florida"
+    },
+    {
+      "account": "Brokers Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Arcadia Title",
+      "location": "Winter Park, FL",
+      "original": "Winter Park, FL"
+    },
+    {
+      "account": "Douglas Elliman",
+      "location": "Miami Beach, Florida",
+      "original": "Miami Beach, Florida"
+    },
+    {
+      "account": "Spectrum Title Services, LLC",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Vision Title, LLC",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "TitlePilot",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Camson Crown",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "JK Closing Attorneys",
+      "location": "Coconut Creek, Florida",
+      "original": "Coconut Creek, Florida"
+    },
+    {
+      "account": "Aaccurate Title Services of SW FL, LLC",
+      "location": "Lehigh Acres, Florida",
+      "original": "Lehigh Acres, Florida"
+    },
+    {
+      "account": "Title of America, LLC",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "Seminole Title Company",
+      "location": "Seminole, Florida",
+      "original": "Seminole, Florida"
+    },
+    {
+      "account": "Peak Title Co",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "Clear to Sell",
+      "location": "West Palm Beach, Florida",
+      "original": "West Palm Beach, Florida"
+    },
+    {
+      "account": "Home Solution Title",
+      "location": "Lakeland, Florida",
+      "original": "Lakeland, Florida"
+    },
+    {
+      "account": "Best International Realty",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "Excel Title",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Westminster Title Agency Inc",
+      "location": "Bonita Springs, Florida",
+      "original": "Bonita Springs, Florida"
+    },
+    {
+      "account": "Your Title Group",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Reliant Title Group",
+      "location": "Deland, FL",
+      "original": "Deland, FL"
+    },
+    {
+      "account": "Omega Title Group",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Old Tampa Bay Title, LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Masterpiece Title Company",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Estevez Law Group P.A.",
+      "location": "Hollywood, Florida",
+      "original": "Hollywood, Florida"
+    },
+    {
+      "account": "Local Title Group",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Empire Title Services, LLC",
+      "location": "Hollywood, FL",
+      "original": "Hollywood, FL"
+    },
+    {
+      "account": "FOUNDATION TITLE & TRUST",
+      "location": "Riverview, FL",
+      "original": "Riverview, FL"
+    },
+    {
+      "account": "Berkshire Hathaway HomeServices Florida Realty Miami Beach",
+      "location": "Miami Beach, FL",
+      "original": "Miami Beach, FL"
+    },
+    {
+      "account": "Lien One",
+      "location": "Deerfield Beach, Florida",
+      "original": "Deerfield Beach, Florida"
+    },
+    {
+      "account": "TITLE EXCHANGE",
+      "location": "Seminole, FL",
+      "original": "Seminole, FL"
+    },
+    {
+      "account": "All American Title Services",
+      "location": "Cape Coral, Florida",
+      "original": "Cape Coral, Florida"
+    },
+    {
+      "account": "Direct Closers",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Square 1 Title, LLC",
+      "location": "Tarpon Springs, Florida",
+      "original": "Tarpon Springs, Florida"
+    },
+    {
+      "account": "US Patriot Title LLC",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Winged Foot Title",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "Trinity Title",
+      "location": "Marco, Florida",
+      "original": "Marco, Florida"
+    },
+    {
+      "account": "Optima Real Estate",
+      "location": "Oviedo, Florida",
+      "original": "Oviedo, Florida"
+    },
+    {
+      "account": "Smart International Title",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Supreme Title Closings",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "Cornerstone National Title",
+      "location": "DeLand, Florida",
+      "original": "DeLand, Florida"
+    },
+    {
+      "account": "Titles Unlimited Inc.",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "TITLE PARTNERS OF FLORIDA, INC.",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Platinum Key Title, LLC",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "G&G Title Agency Inc.",
+      "location": "Tallahassee, Florida",
+      "original": "Tallahassee, Florida"
+    },
+    {
+      "account": "PIONEER TITLE SERVICES, LLC",
+      "location": "Palm Coast, Florida",
+      "original": "Palm Coast, Florida"
+    },
+    {
+      "account": "Digital Title Solutions",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Beacon Community Management",
+      "location": "Windermere, Florida",
+      "original": "Windermere, Florida"
+    },
+    {
+      "account": "Coastal Abstract and Title",
+      "location": "Delray Beach, Florida",
+      "original": "Delray Beach, Florida"
+    },
+    {
+      "account": "OWEN TITLE COMPANY, INC",
+      "location": "Tallahassee, Florida",
+      "original": "Tallahassee, Florida"
+    },
+    {
+      "account": "Green Tree Realty",
+      "location": "Gainesville, Florida",
+      "original": "Gainesville, Florida"
+    },
+    {
+      "account": "Atlantic Coast Title & Escrow",
+      "location": "Jacksonville Beach, Florida",
+      "original": "Jacksonville Beach, Florida"
+    },
+    {
+      "account": "LandCastle Title Group",
+      "location": "Lake Mary, Florida",
+      "original": "Lake Mary, Florida"
+    },
+    {
+      "account": "Viking Title, LLC",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Swan City Title Company",
+      "location": "Lakeland, Florida",
+      "original": "Lakeland, Florida"
+    },
+    {
+      "account": "Heritage Title & Escrow, LLC",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "RTR TITLE",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "A Clear Choice Title & Escrow of Osceola",
+      "location": "St. Cloud, FL",
+      "original": "St. Cloud, FL"
+    },
+    {
+      "account": "Baldwin Park Title",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Equity Land Title",
+      "location": "West Palm Beach, FL",
+      "original": "West Palm Beach, FL"
+    },
+    {
+      "account": "Century 21 Carioti",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Alliant Title & Escrow",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Paramount Title",
+      "location": "Apollo Beach, FL",
+      "original": "Apollo Beach, FL"
+    },
+    {
+      "account": "TitleMark LLC",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Nationwide Title",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "Scarab Title & Escrow Services, LLC.",
+      "location": "New Port Richey, Florida",
+      "original": "New Port Richey, Florida"
+    },
+    {
+      "account": "Watson Title Services, Inc",
+      "location": "Longwood, Florida",
+      "original": "Longwood, Florida"
+    },
+    {
+      "account": "Reliable Land Title Corporation",
+      "location": "Navarre, Florida",
+      "original": "Navarre, Florida"
+    },
+    {
+      "account": "RE/MAX CHAMPIONS  FLORIDA",
+      "location": "Trinity, Florida",
+      "original": "Trinity, Florida"
+    },
+    {
+      "account": "Title Houz, Inc.",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Advantage Title Services, Inc.",
+      "location": "Lakeland, FL",
+      "original": "Lakeland, FL"
+    },
+    {
+      "account": "Land Title of America",
+      "location": "St Augustine, Florida",
+      "original": "St Augustine, Florida"
+    },
+    {
+      "account": "Trilogy Title & Closing",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Concierge Title Services",
+      "location": "Clermont, Florida",
+      "original": "Clermont, Florida"
+    },
+    {
+      "account": "Tampa Bay Title",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "The Forseti Group",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Achieva Title Services",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Probity Title Search Services",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "Nationwide Title Group",
+      "location": "Coral Gables, Fl",
+      "original": "Coral Gables, Fl"
+    },
+    {
+      "account": "All Real Estate Title Solutions, Inc.",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Legacy Title and Escrow",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "Iconic Title",
+      "location": "Coral Gables, Florida",
+      "original": "Coral Gables, Florida"
+    },
+    {
+      "account": "Coral Gables Title + Escrow, LLC.",
+      "location": "Coral Gables, FL",
+      "original": "Coral Gables, FL"
+    },
+    {
+      "account": "Fidelity National Title - Tampa Division",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "American Prime International Realty LLC",
+      "location": "Miami, Fl",
+      "original": "Miami, Fl"
+    },
+    {
+      "account": "BC Title Inc.",
+      "location": "Stuart, Florida",
+      "original": "Stuart, Florida"
+    },
+    {
+      "account": "Wilkinson Title Agency Inc",
+      "location": "Fort Myers, FL Florida",
+      "original": "Fort Myers, FL Florida"
+    },
+    {
+      "account": "Magnolia Closing Co.",
+      "location": "Tavares, Florida",
+      "original": "Tavares, Florida"
+    },
+    {
+      "account": "Tarpon Title",
+      "location": "Tarpon Springs, Florida",
+      "original": "Tarpon Springs, Florida"
+    },
+    {
+      "account": "Biltmore Title Corp.",
+      "location": "CORAL GABLES, Florida",
+      "original": "CORAL GABLES, Florida"
+    },
+    {
+      "account": "Century 21 World Connection",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Provident Title",
+      "location": "Seacrest Beach, Fl",
+      "original": "Seacrest Beach, Fl"
+    },
+    {
+      "account": "Aurora Title",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "SafeKey Title & Closings LLC",
+      "location": "Weston, FL",
+      "original": "Weston, FL"
+    },
+    {
+      "account": "Bailey Woodruff Title Co.",
+      "location": "Deerfield Beach, Florida",
+      "original": "Deerfield Beach, Florida"
+    },
+    {
+      "account": "BEST TITLE SOLUTIONS, INC.",
+      "location": "CAPE CORAL, Florida",
+      "original": "CAPE CORAL, Florida"
+    },
+    {
+      "account": "Weichert Realters",
+      "location": "Pensacola, Florida",
+      "original": "Pensacola, Florida"
+    },
+    {
+      "account": "Masterpiece Title Company",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Florida Pros",
+      "location": "Ormond Beach, FL",
+      "original": "Ormond Beach, FL"
+    },
+    {
+      "account": "New House Title LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Century 21 Nature Coast",
+      "location": "Crystal River, FL",
+      "original": "Crystal River, FL"
+    },
+    {
+      "account": "The Closing Table, Inc..",
+      "location": "Longwood, FL",
+      "original": "Longwood, FL"
+    },
+    {
+      "account": "Windsor Title Services Inc",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Global Point Closing Services, Inc.",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Santa Fe Title Company",
+      "location": "Melrose, Florida",
+      "original": "Melrose, Florida"
+    },
+    {
+      "account": "Naumann Title & Naumann Law, P.A.",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "Kennedy & Kennedy Title and Abstract",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Olde Towne Title Group",
+      "location": "St. Augustine, Florida",
+      "original": "St. Augustine, Florida"
+    },
+    {
+      "account": "In Downtown Title",
+      "location": "Delray Beach, FLorida",
+      "original": "Delray Beach, FLorida"
+    },
+    {
+      "account": "Esquire Title Services, Inc.",
+      "location": "Orange City, Florida",
+      "original": "Orange City, Florida"
+    },
+    {
+      "account": "Buyers Title",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "Monarch Law & Title",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "TitleTown Closing Group",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Rapid Title Services Company",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Black Dock Realty, LLC",
+      "location": "Cape Coral, Florida",
+      "original": "Cape Coral, Florida"
+    },
+    {
+      "account": "Optimal Title Solutions, LLC",
+      "location": "Clearwater, Florida",
+      "original": "Clearwater, Florida"
+    },
+    {
+      "account": "Next Deal",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Anclote Title Services, Inc",
+      "location": "Tarpon Springs, Florida",
+      "original": "Tarpon Springs, Florida"
+    },
+    {
+      "account": "Attorneys Preferred Title",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "United Title Solutions",
+      "location": "Carrollwood Village, Florida",
+      "original": "Carrollwood Village, Florida"
+    },
+    {
+      "account": "The Title Station, Inc.",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "First Title Group Inc.",
+      "location": "Doral, Fl",
+      "original": "Doral, Fl"
+    },
+    {
+      "account": "Bayshore Title Company",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Benchmark Title & Escrow",
+      "location": "Jupiter, FL",
+      "original": "Jupiter, FL"
+    },
+    {
+      "account": "SOFLA Real Estate Group, Inc.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Tortuga Title, LLC",
+      "location": "Jupiter, Florida",
+      "original": "Jupiter, Florida"
+    },
+    {
+      "account": "Nexstar Title and Escrow, LLC.",
+      "location": "Plantation, Florida",
+      "original": "Plantation, Florida"
+    },
+    {
+      "account": "Paradise Coast Title & Escrow, LLC",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Premier Florida Title, LLC",
+      "location": "Altamonte Springs, Florida",
+      "original": "Altamonte Springs, Florida"
+    },
+    {
+      "account": "Sandbar Title",
+      "location": "Fort Myers, Fl",
+      "original": "Fort Myers, Fl"
+    },
+    {
+      "account": "HOLDEN TITLE & ESCROW, LLC",
+      "location": "Delray Beach, Florida",
+      "original": "Delray Beach, Florida"
+    },
+    {
+      "account": "Precise Title",
+      "location": "Indialantic, FL",
+      "original": "Indialantic, FL"
+    },
+    {
+      "account": "AMS Title Agency & Escrow LLC",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Closings.Com",
+      "location": "Bay Harbor Islands, Florida",
+      "original": "Bay Harbor Islands, Florida"
+    },
+    {
+      "account": "Peninsula Title & Escrow Services",
+      "location": "Palm Bay, Florida",
+      "original": "Palm Bay, Florida"
+    },
+    {
+      "account": "Weichert, Realtors Hallmark Properties Mount Dora",
+      "location": "Mount Dora, Florida",
+      "original": "Mount Dora, Florida"
+    },
+    {
+      "account": "The Title Team",
+      "location": "Coral Springs, FL",
+      "original": "Coral Springs, FL"
+    },
+    {
+      "account": "NEW DOOR TITLE",
+      "location": "Weston, Florida",
+      "original": "Weston, Florida"
+    },
+    {
+      "account": "Access Title & Closing Group, LLC",
+      "location": "Merritt Island, Florida",
+      "original": "Merritt Island, Florida"
+    },
+    {
+      "account": "Premier Title Partners of Florida LLC",
+      "location": "St Augustine, Florida",
+      "original": "St Augustine, Florida"
+    },
+    {
+      "account": "SEAVIEW TITLE COMPANY, LLC",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Peninsula Title Agency, LLC",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Montas Homes Team",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Online Certified Property Inspections",
+      "location": "Miami Lakes, FL",
+      "original": "Miami Lakes, FL"
+    },
+    {
+      "account": "Esquire Title, Inc.",
+      "location": "Oakland Park, Florida",
+      "original": "Oakland Park, Florida"
+    },
+    {
+      "account": "Blue Water Clear Title",
+      "location": "St Cloud, Florida",
+      "original": "St Cloud, Florida"
+    },
+    {
+      "account": "Team BSRG with Dalton Wade Realty Group",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Crimmins Title",
+      "location": "St Petersburg, Florida",
+      "original": "St Petersburg, Florida"
+    },
+    {
+      "account": "Olde Towne Title Group",
+      "location": "St Augustine, Florida",
+      "original": "St Augustine, Florida"
+    },
+    {
+      "account": "Park Ave Title",
+      "location": "Winter Park, Florida",
+      "original": "Winter Park, Florida"
+    },
+    {
+      "account": "Bay Shores Mortgage Group",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Mowitz Law, LLC",
+      "location": "Gainesville, Florida",
+      "original": "Gainesville, Florida"
+    },
+    {
+      "account": "Mango Title Research Group",
+      "location": "Mango, FL",
+      "original": "Mango, FL"
+    },
+    {
+      "account": "Commercial, Homes & Land, Inc.",
+      "location": "Oviedo, Fl.",
+      "original": "Oviedo, Fl."
+    },
+    {
+      "account": "Leeder Legacy",
+      "location": "Plantation, FL",
+      "original": "Plantation, FL"
+    },
+    {
+      "account": "Sutton Land Title Agency LLC",
+      "location": "Stuart, Florida",
+      "original": "Stuart, Florida"
+    },
+    {
+      "account": "Brevard Title, LLC",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "Nirit Realty Inc",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Orion International Realty",
+      "location": "Medley, FLORIDA",
+      "original": "Medley, FLORIDA"
+    },
+    {
+      "account": "SkyConsultants Realty and Property Management",
+      "location": "Lake Mary, FL",
+      "original": "Lake Mary, FL"
+    },
+    {
+      "account": "Classic Title Services Inc",
+      "location": "Bonita Springs, Florida",
+      "original": "Bonita Springs, Florida"
+    },
+    {
+      "account": "Red Reef Realty Inc",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "The Title Firm",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "RE/MAX Sunshine",
+      "location": "Matlacha, Florida",
+      "original": "Matlacha, Florida"
+    },
+    {
+      "account": "Mobile Sunshine Notary Services",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "Marketing Mama",
+      "location": "DeLand, Florida",
+      "original": "DeLand, Florida"
+    },
+    {
+      "account": "Zitelli Realty Network",
+      "location": "Sarasota, Florida",
+      "original": "Sarasota, Florida"
+    },
+    {
+      "account": "The Brian Liscio Team at Lokation Real Estate",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "Chrysalis Realty Consultants",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Town Residential",
+      "location": "Plantation, FL",
+      "original": "Plantation, FL"
+    },
+    {
+      "account": "Heritage Title & Escrow",
+      "location": "Jupiter, Florida",
+      "original": "Jupiter, Florida"
+    },
+    {
+      "account": "Xpress Property Resource, Inc",
+      "location": "Brandon, FLORIDA",
+      "original": "Brandon, FLORIDA"
+    },
+    {
+      "account": "Buzz Buys Inc.",
+      "location": "Dade City , Fl",
+      "original": "Dade City , Fl"
+    },
+    {
+      "account": "BiggerEquity",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Andes Inv. Inc.",
+      "location": "Greenacres, Fl",
+      "original": "Greenacres, Fl"
+    },
+    {
+      "account": "Caballero International Realty, Inc.",
+      "location": "Coral Gables, Fl",
+      "original": "Coral Gables, Fl"
+    },
+    {
+      "account": "The Marketing Mama",
+      "location": "DeLand, Florida",
+      "original": "DeLand, Florida"
+    },
+    {
+      "account": "Avalar Realty Group INC.",
+      "location": "West Palm Beach, FL",
+      "original": "West Palm Beach, FL"
+    },
+    {
+      "account": "Magic City Title",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "The Waites Group",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Realty Executives Oceanside",
+      "location": "Palm Coast, Florida",
+      "original": "Palm Coast, Florida"
+    },
+    {
+      "account": "Community Appraisal Services",
+      "location": "Fort Myers, FL",
+      "original": "Fort Myers, FL"
+    },
+    {
+      "account": "Weichert Realtors-Hallmark Properties Lake Mary",
+      "location": "Lake Mary, Florida",
+      "original": "Lake Mary, Florida"
+    },
+    {
+      "account": "Pena Appraisal Services Inc.",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Tropics Title Services",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Cityside Realty Group",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Harlequin Title Corp.",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Timeshare Title, LLC",
+      "location": "Saint Augustine, FL",
+      "original": "Saint Augustine, FL"
+    },
+    {
+      "account": "Closing Express, Inc",
+      "location": "Pompano Beach, Florida",
+      "original": "Pompano Beach, Florida"
+    },
+    {
+      "account": "Capital Developers Group",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Diamond Title Group",
+      "location": "Key Biscayne, Florida",
+      "original": "Key Biscayne, Florida"
+    },
+    {
+      "account": "MG American Title",
+      "location": "Deerfield Beach, FL",
+      "original": "Deerfield Beach, FL"
+    },
+    {
+      "account": "A & A TITLE SERVICES, LLC",
+      "location": "MIAMI, Florida",
+      "original": "MIAMI, Florida"
+    },
+    {
+      "account": "Hensley Law & Title",
+      "location": "Palm Harbor, FL",
+      "original": "Palm Harbor, FL"
+    },
+    {
+      "account": "CCI Properties, Inc.",
+      "location": "New Smyrna Beach, FL",
+      "original": "New Smyrna Beach, FL"
+    },
+    {
+      "account": "Title ClearingHouse of Jacksonville",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "YourTitleBFF | YTB",
+      "location": "Maitland, Florida",
+      "original": "Maitland, Florida"
+    },
+    {
+      "account": "FLORIDA REO SERVICES TEAM",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "RE/MAX Heritage Professionals",
+      "location": "Winter Haven, Florida",
+      "original": "Winter Haven, Florida"
+    },
+    {
+      "account": "Selco Title & Escrow Corp",
+      "location": "Hallandale Beach , Florida",
+      "original": "Hallandale Beach , Florida"
+    },
+    {
+      "account": "Miami Red Square Realty",
+      "location": "Sunny Isles Beach, Florida",
+      "original": "Sunny Isles Beach, Florida"
+    },
+    {
+      "account": "Realty Executives Gallery Properties",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Fairwater Title of Brevard, Inc",
+      "location": "Melbourne, Florida",
+      "original": "Melbourne, Florida"
+    },
+    {
+      "account": "Hallmark Title Agency LLC",
+      "location": "Tampa, FL",
+      "original": "Tampa, FL"
+    },
+    {
+      "account": "MVP Title Agency",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Wall Street Title Group",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "LGI Title",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "True Title of Central Florida",
+      "location": "Ocala, Florida",
+      "original": "Ocala, Florida"
+    },
+    {
+      "account": "Lien Search Pro",
+      "location": "Sarasota, FL",
+      "original": "Sarasota, FL"
+    },
+    {
+      "account": "C. Pena & Associates, Inc.",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Gallery Properties International - Orlando",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "United Title Affiliates, Inc.",
+      "location": "Apollo Beach, FL",
+      "original": "Apollo Beach, FL"
+    },
+    {
+      "account": "VidClose",
+      "location": "Naples, Florida",
+      "original": "Naples, Florida"
+    },
+    {
+      "account": "Jarvis Group Real Estate",
+      "location": "Delray Beach, FL",
+      "original": "Delray Beach, FL"
+    },
+    {
+      "account": "Scrutiny Property Management",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "North Port Title",
+      "location": "North Port, FL",
+      "original": "North Port, FL"
+    },
+    {
+      "account": "Doc Hunters",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "Write On Title, LLC",
+      "location": "Live Oak, Florida",
+      "original": "Live Oak, Florida"
+    },
+    {
+      "account": "All Florida Title",
+      "location": "Sanford, FL",
+      "original": "Sanford, FL"
+    },
+    {
+      "account": "Prosperity Land Title",
+      "location": "Palm Beach Gardens, Fl",
+      "original": "Palm Beach Gardens, Fl"
+    },
+    {
+      "account": "Coventry Title Inc",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Title Trust Services LLC",
+      "location": "Boynton Beach, Florida",
+      "original": "Boynton Beach, Florida"
+    },
+    {
+      "account": "Lien Searches Plus, Inc.",
+      "location": "South Miami, FL",
+      "original": "South Miami, FL"
+    },
+    {
+      "account": "EXIT Destiny Realty",
+      "location": "Brandon, FL",
+      "original": "Brandon, FL"
+    },
+    {
+      "account": "Home Close USA",
+      "location": "Vero Beach, Florida",
+      "original": "Vero Beach, Florida"
+    },
+    {
+      "account": "Title Union",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Bay City Title Partners",
+      "location": "Lutz, Florida",
+      "original": "Lutz, Florida"
+    },
+    {
+      "account": "Sole Law, PLLC",
+      "location": "St. Petersburg, Florida",
+      "original": "St. Petersburg, Florida"
+    },
+    {
+      "account": "RFH Capital Advisors",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "MREG",
+      "location": "Fort Lauderdale, FL",
+      "original": "Fort Lauderdale, FL"
+    },
+    {
+      "account": "The Title Connection of South Florida",
+      "location": "Miami Lakes, Florida",
+      "original": "Miami Lakes, Florida"
+    },
+    {
+      "account": "Momentum Title & Settlement Services LLC",
+      "location": "Naples, FL",
+      "original": "Naples, FL"
+    },
+    {
+      "account": "KC Properties & Loan Originator",
+      "location": "Clewiston, Fl",
+      "original": "Clewiston, Fl"
+    },
+    {
+      "account": "Signature Pros",
+      "location": "Melbourne, FL",
+      "original": "Melbourne, FL"
+    },
+    {
+      "account": "Affordable Title",
+      "location": "Miami Beach, Florida",
+      "original": "Miami Beach, Florida"
+    },
+    {
+      "account": "El Elyon Team",
+      "location": "Orlando, Florida",
+      "original": "Orlando, Florida"
+    },
+    {
+      "account": "Posh Estates",
+      "location": "Fort Lauderdale, Florida",
+      "original": "Fort Lauderdale, Florida"
+    },
+    {
+      "account": "Dolan Home Group of Future Home Realty",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Champion Claims USA",
+      "location": "Davenport, Florida",
+      "original": "Davenport, Florida"
+    },
+    {
+      "account": "Shefa Global - Real Estate",
+      "location": "Miami, Florida",
+      "original": "Miami, Florida"
+    },
+    {
+      "account": "Holmes Appraisal Services, Inc.",
+      "location": "Altamonte Springs, FL",
+      "original": "Altamonte Springs, FL"
+    },
+    {
+      "account": "Town Center Title",
+      "location": "Boca Raton, Florida",
+      "original": "Boca Raton, Florida"
+    },
+    {
+      "account": "Encore Title Services, LLC",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "ST Title, LLC",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Cornerstone Title Agency, Inc.",
+      "location": "Panama City, Florida",
+      "original": "Panama City, Florida"
+    },
+    {
+      "account": "Pineywoods Title",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "RE/MAX Prestige Realty",
+      "location": "West Palm Beach, Florida",
+      "original": "West Palm Beach, Florida"
+    },
+    {
+      "account": "First Choice Title of Florida",
+      "location": "DeLand, Florida",
+      "original": "DeLand, Florida"
+    },
+    {
+      "account": "GIT Florida Title Services",
+      "location": "Sarasota, FL",
+      "original": "Sarasota, FL"
+    },
+    {
+      "account": "Trust Title Group",
+      "location": "Orlando, FL",
+      "original": "Orlando, FL"
+    },
+    {
+      "account": "Bayit Title",
+      "location": "Coral Springs, Florida",
+      "original": "Coral Springs, Florida"
+    },
+    {
+      "account": "Full Circle Title",
+      "location": "Lake Mary, Florida",
+      "original": "Lake Mary, Florida"
+    },
+    {
+      "account": "DESTINATION TITLE, LLC",
+      "location": "Winter Park, Florida",
+      "original": "Winter Park, Florida"
+    },
+    {
+      "account": "ATR Title, LLC",
+      "location": "Crystal River, Florida",
+      "original": "Crystal River, Florida"
+    },
+    {
+      "account": "Albertgarciateam",
+      "location": "Miami Lakes, FL",
+      "original": "Miami Lakes, FL"
+    },
+    {
+      "account": "Abramowitz Tax & Lien Service, Inc.",
+      "location": "Deerfield Beach, FL",
+      "original": "Deerfield Beach, FL"
+    },
+    {
+      "account": "Camelot Inc., Realtors",
+      "location": "Clearwater, FL",
+      "original": "Clearwater, FL"
+    },
+    {
+      "account": "5 Star Realty Inc.",
+      "location": "COCONUT CREEK , FL",
+      "original": "COCONUT CREEK , FL"
+    },
+    {
+      "account": "Blair Realty Group, Inc.",
+      "location": "Orlando, Fl",
+      "original": "Orlando, Fl"
+    },
+    {
+      "account": "AbstractorPro",
+      "location": "Largo, Florida",
+      "original": "Largo, Florida"
+    },
+    {
+      "account": "True Guidance Realty",
+      "location": "Jacksonville, Florida",
+      "original": "Jacksonville, Florida"
+    },
+    {
+      "account": "Write On Time, LLC",
+      "location": "West Palm Beach, FL",
+      "original": "West Palm Beach, FL"
+    },
+    {
+      "account": "Holsell Real Estate Group, LLC",
+      "location": "Miami, FL",
+      "original": "Miami, FL"
+    },
+    {
+      "account": "American Dream Properties",
+      "location": "Tampa, Florida",
+      "original": "Tampa, Florida"
+    },
+    {
+      "account": "Home Selling Group of Florida",
+      "location": "Wesley Chapel, FL",
+      "original": "Wesley Chapel, FL"
+    }
+  ],
+  "problematicEntries": [
+    {
+      "account": "Homesaver Real Estate LLC",
+      "location": "Stuart, Homesaver Real Estate LLC",
+      "issue": "Complex/unusual format"
+    },
+    {
+      "account": "Windrose Title",
+      "location": "New York / New Jersey, NY / NJ",
+      "issue": "Complex/unusual format"
+    },
+    {
+      "account": "Lawyers Title Company Bay Area",
+      "location": "San Mateo Co., San Francisco Co., Santa Clara Co., CA",
+      "issue": "Complex/unusual format"
+    },
+    {
+      "account": "Baja California Real Estate",
+      "location": "Real del Mar, Rosarito, Mission Viejo, Rosarito",
+      "issue": "Complex/unusual format"
+    }
+  ],
+  "unusualEntries": [
+    {
+      "account": "World Wide Land Transfer, Inc.",
+      "location": "New York",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Settlor",
+      "location": "Denver",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Akrivis Real Estate Valuation Services",
+      "location": "Nationwide",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Klaviss",
+      "location": "San Francisco",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Pierremont Title",
+      "location": "Shreveport",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "BBS Notary Services",
+      "location": "Newport Beach",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Ambassador Title Services (ATS)",
+      "location": "Omaha",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Sun Life Title, LLC",
+      "location": "Miami Lakes",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "LoKation Real Estate",
+      "location": "Pompano Beach",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Endpoint",
+      "location": "Remote",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Property Landing",
+      "location": "Salt Lake City",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Title Assistants",
+      "location": "United States",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Accurate Lien Search LLC",
+      "location": "Miami",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "La Maison Title, LLC",
+      "location": "St Petersburg",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Fidelity Land Title Agency of Cincinnati, Inc.",
+      "location": "Cincinnati",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Southern California Escrow Inc.",
+      "location": "Murrieta",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "MRF Financial, Inc.",
+      "location": "Wabash",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "IH Closing Services",
+      "location": "san francisco",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Doc Signers Mobile Notary Settlement Solutions",
+      "location": "Phoenix",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Capital Title",
+      "location": "Littleton",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Brendan Abstract (Title Insurance)",
+      "location": "Wayne",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Glen Kelly Real Estate LLC and Glen Kelly, Realtors",
+      "location": "Toms River",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "North Vernon Abstract Company",
+      "location": "North Vernon",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Chicago Title Insurance Company - Troy D. Phillips, P.C.",
+      "location": "Dallas",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Lawyers Advantage Title Group",
+      "location": "Ellicott City",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Creekside Title, LLC",
+      "location": "Frederick",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Rangpur BD LLC",
+      "location": "Bronx",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Texas Transaction Services, LLC",
+      "location": "Anywhere",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Ron Evans and associates Keller William Realty",
+      "location": "Palo Alto",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Poppy Realty",
+      "location": "San Ramon",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Notary Matters",
+      "location": "Northern California",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "JDR Realty Group",
+      "location": "Arlington",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Smart City Title Services, LLC",
+      "location": "St Petersburg",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "DMSmart Technologies Pvt Ltd.",
+      "location": "delaware",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Balanced Processing Solutions",
+      "location": "El Cajon",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "CPJ Ultimate Choice",
+      "location": "Dayton",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Iss Realty LLC",
+      "location": "6044 Castor Ave. #201 Philadelphia PA 19149",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Elpis Debt Solutions LLC",
+      "location": "New York",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Lawyers Settlement & Abstract",
+      "location": "Pittsburgh",
+      "issue": "Missing state/single word"
+    },
+    {
+      "account": "Jonathan Darden Reed Realtor",
+      "location": "Arlington",
+      "issue": "Missing state/single word"
+    }
+  ],
+  "emptyEntries": [
+    {
+      "account": "Empire Title",
+      "location": ""
+    },
+    {
+      "account": "WFG National Title Insurance Company",
+      "location": ""
+    },
+    {
+      "account": "Old Republic Title",
+      "location": ""
+    },
+    {
+      "account": "PCN Network",
+      "location": ""
+    },
+    {
+      "account": "Max Broock/Real Estate One",
+      "location": ""
+    },
+    {
+      "account": "TranStar National Title",
+      "location": ""
+    },
+    {
+      "account": "Platinum Title Partners",
+      "location": ""
+    },
+    {
+      "account": "Sutton Land Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Hexter-Fair Title Company",
+      "location": ""
+    },
+    {
+      "account": "The Talon Group",
+      "location": ""
+    },
+    {
+      "account": "Sunbelt Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Fidelity National Title Ins. Co.",
+      "location": ""
+    },
+    {
+      "account": "RGS Title, LLC",
+      "location": ""
+    },
+    {
+      "account": "Land Services USA, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Rattikin Title Company",
+      "location": ""
+    },
+    {
+      "account": "Pickford Escrow Company",
+      "location": ""
+    },
+    {
+      "account": "Pinnacle Estate Properties, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Atlas Nationwide, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Forsite Development",
+      "location": ""
+    },
+    {
+      "account": "Rudy Title & Escrow",
+      "location": ""
+    },
+    {
+      "account": "Atlantic Coast Title Company, LLC",
+      "location": ""
+    },
+    {
+      "account": "Charter Title Company",
+      "location": ""
+    },
+    {
+      "account": "Coldwell Banker Burnet, Apple Valley",
+      "location": ""
+    },
+    {
+      "account": "The Herman Group Companies",
+      "location": ""
+    },
+    {
+      "account": "Title One Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "INI Realty Investments, Inc",
+      "location": ""
+    },
+    {
+      "account": "Title America",
+      "location": ""
+    },
+    {
+      "account": "Beiler-Campbell Realtors & Appraisers",
+      "location": ""
+    },
+    {
+      "account": "Title Solutions Agency LLC",
+      "location": ""
+    },
+    {
+      "account": "Chicago Title-Hennessey Law Firm",
+      "location": ""
+    },
+    {
+      "account": "Real Living Realty Services",
+      "location": ""
+    },
+    {
+      "account": "ASAP Pro Notary Services, LLC",
+      "location": ""
+    },
+    {
+      "account": "Liberty Title, Inc.",
+      "location": ""
+    },
+    {
+      "account": "WFG Title Company of California",
+      "location": ""
+    },
+    {
+      "account": "CloseSimple",
+      "location": ""
+    },
+    {
+      "account": "USA National Title",
+      "location": ""
+    },
+    {
+      "account": "Veritas Title Partners",
+      "location": ""
+    },
+    {
+      "account": "Mitchell & Associates",
+      "location": ""
+    },
+    {
+      "account": "Midstate Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Altisource Technology",
+      "location": ""
+    },
+    {
+      "account": "Century 21 Beggins Enterprises",
+      "location": ""
+    },
+    {
+      "account": "Closing USA",
+      "location": ""
+    },
+    {
+      "account": "Nothnagle Realtors",
+      "location": ""
+    },
+    {
+      "account": "Real Estate Title & Escrow",
+      "location": ""
+    },
+    {
+      "account": "Lender's Title & Escrow, LLC",
+      "location": ""
+    },
+    {
+      "account": "Guardian Title Services, LLC",
+      "location": ""
+    },
+    {
+      "account": "Commercial Due Diligence Services (CDS)",
+      "location": ""
+    },
+    {
+      "account": "Tradition Title Company, LLC",
+      "location": ""
+    },
+    {
+      "account": "First Title Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Naples Title, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Regal Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Hot Springs Title Company",
+      "location": ""
+    },
+    {
+      "account": "American Coast Title",
+      "location": ""
+    },
+    {
+      "account": "The South Mountain Group Inc.",
+      "location": ""
+    },
+    {
+      "account": "Frontier Title Company, LLC",
+      "location": ""
+    },
+    {
+      "account": "Boomerang Title",
+      "location": ""
+    },
+    {
+      "account": "Blowing Rock Investment Properties",
+      "location": ""
+    },
+    {
+      "account": "Albritton Title, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Stellar Development Company",
+      "location": ""
+    },
+    {
+      "account": "Smith.Sholar.Milliken.PLLC",
+      "location": ""
+    },
+    {
+      "account": "Grandview Builders Teas",
+      "location": ""
+    },
+    {
+      "account": "United Title Services of Southern Utah",
+      "location": ""
+    },
+    {
+      "account": "Ad Valorem Title, LLC",
+      "location": ""
+    },
+    {
+      "account": "Village Square REALTORS",
+      "location": ""
+    },
+    {
+      "account": "Universal Title Services, LLC",
+      "location": ""
+    },
+    {
+      "account": "Boulevard Title Agency Inc.",
+      "location": ""
+    },
+    {
+      "account": "Neighborhood Settlements LLC",
+      "location": ""
+    },
+    {
+      "account": "Cocoa Settlement",
+      "location": ""
+    },
+    {
+      "account": "Smith.Sholar.Milliken.Matthews.PLLC",
+      "location": ""
+    },
+    {
+      "account": "Chambers County Abstract Co., Inc.",
+      "location": ""
+    },
+    {
+      "account": "CBS Title Agency",
+      "location": ""
+    },
+    {
+      "account": "All Real Estate Solutions, LLC.",
+      "location": ""
+    },
+    {
+      "account": "Lincoln Title Company",
+      "location": ""
+    },
+    {
+      "account": "Title America Land Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Northern Title Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Joda Abstract LLC",
+      "location": ""
+    },
+    {
+      "account": "On-Site Title",
+      "location": ""
+    },
+    {
+      "account": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "location": ""
+    },
+    {
+      "account": "Freedom Title & Abstract Co., Inc",
+      "location": ""
+    },
+    {
+      "account": "First California Escrow",
+      "location": ""
+    },
+    {
+      "account": "Escrow Institue of California",
+      "location": ""
+    },
+    {
+      "account": "Preferred Title",
+      "location": ""
+    },
+    {
+      "account": "Liberty Title & Abstract, Inc",
+      "location": ""
+    },
+    {
+      "account": "Integrated Title Services",
+      "location": ""
+    },
+    {
+      "account": "Coldwell Banker Heart of America",
+      "location": ""
+    },
+    {
+      "account": "Aubuchon Homes, Inc",
+      "location": ""
+    },
+    {
+      "account": "Homeland  Title and Escrow",
+      "location": ""
+    },
+    {
+      "account": "Keller Williams Real Estate Bucks County South",
+      "location": ""
+    },
+    {
+      "account": "Preferred Title of Missouri, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Home Security Abstract & Title Co.",
+      "location": ""
+    },
+    {
+      "account": "Guaranty Abstract Company",
+      "location": ""
+    },
+    {
+      "account": "Appomattox Title Company, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Better Homes and Gardens Real Estate/The Masiello Group",
+      "location": ""
+    },
+    {
+      "account": "Prime Texas Surveys LLC",
+      "location": ""
+    },
+    {
+      "account": "Gateway Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Coldwell Banker Westlake Village",
+      "location": ""
+    },
+    {
+      "account": "Banker's Title, LLC",
+      "location": ""
+    },
+    {
+      "account": "Land Title of Walla Walla County",
+      "location": ""
+    },
+    {
+      "account": "Advantage Settlement, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Weichert Realtors-Tower Properties",
+      "location": ""
+    },
+    {
+      "account": "Portfolio Properties",
+      "location": ""
+    },
+    {
+      "account": "Maryland Title Works Unlimited, Inc.",
+      "location": ""
+    },
+    {
+      "account": "State Title Partners",
+      "location": ""
+    },
+    {
+      "account": "GMAC Real Estate The Kee Group",
+      "location": ""
+    },
+    {
+      "account": "Law Office Of Michael C Lima",
+      "location": ""
+    },
+    {
+      "account": "Notary Near You",
+      "location": ""
+    },
+    {
+      "account": "West Title, LLC",
+      "location": ""
+    },
+    {
+      "account": "Devonshire Group",
+      "location": ""
+    },
+    {
+      "account": "ASAP Title Agency, LLC",
+      "location": ""
+    },
+    {
+      "account": "Vista Title Company",
+      "location": ""
+    },
+    {
+      "account": "Las Flores Escrow",
+      "location": ""
+    },
+    {
+      "account": "Choice National",
+      "location": ""
+    },
+    {
+      "account": "Excalibur Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Palisades Title Company",
+      "location": ""
+    },
+    {
+      "account": "Private Label Realty/Pearson Properties",
+      "location": ""
+    },
+    {
+      "account": "American Universal Insurance",
+      "location": ""
+    },
+    {
+      "account": "Escrows For You, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Homeowner Solution Services",
+      "location": ""
+    },
+    {
+      "account": "Exacta Land Surveys",
+      "location": ""
+    },
+    {
+      "account": "Aegis Title Associates, LLC",
+      "location": ""
+    },
+    {
+      "account": "DC Financial Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "The Title Partners of Central Florida",
+      "location": ""
+    },
+    {
+      "account": "Easy Realty and Loans",
+      "location": ""
+    },
+    {
+      "account": "Sky Title Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Avenue Commercial Title Company, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Edgewater Title Company",
+      "location": ""
+    },
+    {
+      "account": "Majestic Title Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Union County Title, Ltd.",
+      "location": ""
+    },
+    {
+      "account": "Buckeye Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Elkhorn Title Company",
+      "location": ""
+    },
+    {
+      "account": "American Title Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Finish Line Signing Company Inc",
+      "location": ""
+    },
+    {
+      "account": "Sunblet Title Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Posted Properties",
+      "location": ""
+    },
+    {
+      "account": "Garber Surveying Service, P.A.",
+      "location": ""
+    },
+    {
+      "account": "Excalibur land service",
+      "location": ""
+    },
+    {
+      "account": "Metropolitan Title & Abstract, LLC",
+      "location": ""
+    },
+    {
+      "account": "Omni Capital Investments, LLC",
+      "location": ""
+    },
+    {
+      "account": "Burton Real Estate",
+      "location": ""
+    },
+    {
+      "account": "ERA Castle Properties",
+      "location": ""
+    },
+    {
+      "account": "Roddy.com",
+      "location": ""
+    },
+    {
+      "account": "Agave Premier Properties & Investments",
+      "location": ""
+    },
+    {
+      "account": "Bare Search LLC",
+      "location": ""
+    },
+    {
+      "account": "CARDINAL TITLE",
+      "location": ""
+    },
+    {
+      "account": "The Real Estate Analyst and American Real Estate Servicing",
+      "location": ""
+    },
+    {
+      "account": "CII Title, LLC",
+      "location": ""
+    },
+    {
+      "account": "Tina Leigh Realty",
+      "location": ""
+    },
+    {
+      "account": "Universal Title Clearing, LLC",
+      "location": ""
+    },
+    {
+      "account": "Appraisal Compliance Review, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Hudson Land Company, LLC",
+      "location": ""
+    },
+    {
+      "account": "Deluxe Appraisal Services",
+      "location": ""
+    },
+    {
+      "account": "MLOA and Pierce, Taylor & Budrow",
+      "location": ""
+    },
+    {
+      "account": "Orange Community Escrow",
+      "location": ""
+    },
+    {
+      "account": "Bear Real Estate Services",
+      "location": ""
+    },
+    {
+      "account": "Hot Homes Realty, LLC",
+      "location": ""
+    },
+    {
+      "account": "Sound Counsel Realty",
+      "location": ""
+    },
+    {
+      "account": "Underwood Drafting & Surveying, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Rock Realty, LLC",
+      "location": ""
+    },
+    {
+      "account": "Get You Moved Realty",
+      "location": ""
+    },
+    {
+      "account": "Argent Title Research & Abstracts, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Remax Professional Realty Inc",
+      "location": ""
+    },
+    {
+      "account": "Montebello Escrow Inc.",
+      "location": ""
+    },
+    {
+      "account": "Rizzotti & Co",
+      "location": ""
+    },
+    {
+      "account": "Asbury Settlement/First Choice Title Inc.",
+      "location": ""
+    },
+    {
+      "account": "Santa Barbara Living Real Estate Brokerage",
+      "location": ""
+    },
+    {
+      "account": "Financial Services Cooperative",
+      "location": ""
+    },
+    {
+      "account": "Wingate and associates",
+      "location": ""
+    },
+    {
+      "account": "afusion Real Estate",
+      "location": ""
+    },
+    {
+      "account": "McKinley Title Agency, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Walsh Title/Cornerstone Title",
+      "location": ""
+    },
+    {
+      "account": "Midland Title Agency of Union County",
+      "location": ""
+    },
+    {
+      "account": "Stillwell Appraisal",
+      "location": ""
+    },
+    {
+      "account": "Bosse Title Corp",
+      "location": ""
+    },
+    {
+      "account": "Metro Title and Escrow, LLC",
+      "location": ""
+    },
+    {
+      "account": "Freedom Title Co., Inc.",
+      "location": ""
+    },
+    {
+      "account": "Quest Title Agency",
+      "location": ""
+    },
+    {
+      "account": "Tri Coast Title",
+      "location": ""
+    },
+    {
+      "account": "Tim Davis Group Central Oregon Realty",
+      "location": ""
+    },
+    {
+      "account": "Wabash Valley Abstract Co., Inc. of Wabash",
+      "location": ""
+    },
+    {
+      "account": "RE/MAX Big Bear",
+      "location": ""
+    },
+    {
+      "account": "Columbia Title Agency of Washington",
+      "location": ""
+    },
+    {
+      "account": "ASAP Appraisals",
+      "location": ""
+    },
+    {
+      "account": "cfacts",
+      "location": ""
+    },
+    {
+      "account": "Liberty Bell Real Estate, Mortgage, and Settlement Services",
+      "location": ""
+    },
+    {
+      "account": "Monroe County Real Estate",
+      "location": ""
+    },
+    {
+      "account": "Escrowpoint, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Phoenix Settlement Services Inc.",
+      "location": ""
+    },
+    {
+      "account": "Bayside Real Estate",
+      "location": ""
+    },
+    {
+      "account": "ERA Neil Fischer Realty and Investments, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Platinum Signing Services (New Mill Title)",
+      "location": ""
+    },
+    {
+      "account": "One Stop Advantage",
+      "location": ""
+    },
+    {
+      "account": "Allied Appraisers LLC",
+      "location": ""
+    },
+    {
+      "account": "Home Cash Direct",
+      "location": ""
+    },
+    {
+      "account": "Ron Calhoun & Associates Real Estate",
+      "location": ""
+    },
+    {
+      "account": "Reliable Property Solutions",
+      "location": ""
+    },
+    {
+      "account": "The Appraisal House, Inc",
+      "location": ""
+    },
+    {
+      "account": "de&CO properties & Modern dwelling Real Estate",
+      "location": ""
+    },
+    {
+      "account": "United Title Insurance Company, LLC",
+      "location": ""
+    },
+    {
+      "account": "Title Village Title Agency LLC",
+      "location": ""
+    },
+    {
+      "account": "EMPIRE GENERAL ABSTRACT",
+      "location": ""
+    },
+    {
+      "account": "Title America & Closing Services, LLC",
+      "location": ""
+    },
+    {
+      "account": "Global Valuation Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Real Title Agency Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Texas Notary Solutions",
+      "location": ""
+    },
+    {
+      "account": "Paramount Appraisal Management",
+      "location": ""
+    },
+    {
+      "account": "SYNRGO, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Gary Smith Title Services",
+      "location": ""
+    },
+    {
+      "account": "Wise Choice Properties, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Plunkett & Graver, P.C.",
+      "location": ""
+    },
+    {
+      "account": "Bella Vista Real Estate Finance",
+      "location": ""
+    },
+    {
+      "account": "Worth Every Dollar Appraisals",
+      "location": ""
+    },
+    {
+      "account": "Golden Path Family, L.P.",
+      "location": ""
+    },
+    {
+      "account": "Globe Appraisal Group",
+      "location": ""
+    },
+    {
+      "account": "Closing Professionals LLC",
+      "location": ""
+    },
+    {
+      "account": "Land Home Title",
+      "location": ""
+    },
+    {
+      "account": "Langdon Real Estate Services, Inc.",
+      "location": ""
+    },
+    {
+      "account": "Reliable Source Appraisals",
+      "location": ""
+    },
+    {
+      "account": "US Asset Management",
+      "location": ""
+    }
+  ]
+}
