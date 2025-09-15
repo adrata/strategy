@@ -206,7 +206,6 @@ async function processLeadData(leadData: any) {
     
     // FIRST: Save the lead to our database
     try {
-      const { prisma } = await import('@/platform/database/prisma-client');
       
       const leadRecord = await prisma.leads.upsert({
         where: {
