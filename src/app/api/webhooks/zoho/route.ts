@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { PusherServerService } from '@/platform/services/pusher-real-time-service';
 import { storeSignal } from '@/platform/services/signal-storage';
-import { zohoNotificationService } from '@/platform/services/zoho-notification-service';
+// import { zohoNotificationService } from '@/platform/services/zoho-notification-service';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -377,22 +377,22 @@ async function processLeadWebhook(operation: string, data: any) {
         console.log(`✅ [ZOHO WEBHOOK] Lead created/updated: ${createFullName}`);
         
         // Send Zoho update notification
-        await zohoNotificationService.sendZohoUpdateNotification(
-          workspaceId,
-          'leads',
-          operation.toLowerCase(),
-          {
-            id: leadData.id || 'unknown',
-            First_Name: leadData.First_Name || '',
-            Last_Name: leadData.Last_Name || '',
-            fullName: createFullName,
-            Email: leadData.Email || '',
-            Company: leadData.Company || '',
-            Title: leadData.Title || leadData.Designation || '',
-            Lead_Status: leadData.Lead_Status || 'New',
-            Description: leadData.Description || ''
-          }
-        );
+        // await zohoNotificationService.sendZohoUpdateNotification(
+        //   workspaceId,
+        //   'leads',
+        //   operation.toLowerCase(),
+        //   {
+        //     id: leadData.id || 'unknown',
+        //     First_Name: leadData.First_Name || '',
+        //     Last_Name: leadData.Last_Name || '',
+        //     fullName: createFullName,
+        //     Email: leadData.Email || '',
+        //     Company: leadData.Company || '',
+        //     Title: leadData.Title || leadData.Designation || '',
+        //     Lead_Status: leadData.Lead_Status || 'New',
+        //     Description: leadData.Description || ''
+        //   }
+        // );
         
         // Check for buying signals in description and trigger Monaco popup
         await checkForBuyingSignalsAndNotify(workspaceId, {
@@ -457,22 +457,22 @@ async function processLeadWebhook(operation: string, data: any) {
         console.log(`✅ [ZOHO WEBHOOK] Lead upserted: ${fullName}`);
         
         // Send Zoho update notification
-        await zohoNotificationService.sendZohoUpdateNotification(
-          workspaceId,
-          'leads',
-          operation.toLowerCase(),
-          {
-            id: leadData.id || 'unknown',
-            First_Name: leadData.First_Name || '',
-            Last_Name: leadData.Last_Name || '',
-            fullName: fullName,
-            Email: leadData.Email || '',
-            Company: leadData.Company || '',
-            Title: leadData.Title || leadData.Designation || '',
-            Lead_Status: leadData.Lead_Status || 'New',
-            Description: leadData.Description || ''
-          }
-        );
+        // await zohoNotificationService.sendZohoUpdateNotification(
+        //   workspaceId,
+        //   'leads',
+        //   operation.toLowerCase(),
+        //   {
+        //     id: leadData.id || 'unknown',
+        //     First_Name: leadData.First_Name || '',
+        //     Last_Name: leadData.Last_Name || '',
+        //     fullName: fullName,
+        //     Email: leadData.Email || '',
+        //     Company: leadData.Company || '',
+        //     Title: leadData.Title || leadData.Designation || '',
+        //     Lead_Status: leadData.Lead_Status || 'New',
+        //     Description: leadData.Description || ''
+        //   }
+        // );
         
         // Check for buying signals in description and trigger Monaco popup
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in description: "${leadData.Description || ''}"`);
@@ -586,7 +586,7 @@ async function processContactWebhook(operation: string, data: any) {
         }
         
         // Send Zoho update notification
-        await zohoNotificationService.sendZohoUpdateNotification(
+        // await zohoNotificationService.sendZohoUpdateNotification(
           workspaceId,
           'contacts',
           operation.toLowerCase(),
@@ -602,7 +602,7 @@ async function processContactWebhook(operation: string, data: any) {
             Description: contactData.Description || '',
             Account_Name: contactData.Account_Name || ''
           }
-        );
+        // );
         
         // Check for buying signals in contact description/notes
         const fullName = `${contactData.First_Name || ''} ${contactData.Last_Name || ''}`.trim();
@@ -683,7 +683,7 @@ async function processDealWebhook(operation: string, data: any) {
         console.log(`✅ [ZOHO WEBHOOK] Deal created/updated: ${dealData.Deal_Name}`);
         
         // Send Zoho update notification
-        await zohoNotificationService.sendZohoUpdateNotification(
+        // await zohoNotificationService.sendZohoUpdateNotification(
           workspaceId,
           'deals',
           operation.toLowerCase(),
@@ -698,7 +698,7 @@ async function processDealWebhook(operation: string, data: any) {
             Contact_Name: dealData.Contact_Name || '',
             Account_Name: dealData.Account_Name || ''
           }
-        );
+        // );
         
         // Check for buying signals in deal description - HIGH PRIORITY for deals!
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in deal: "${dealData.Description || ''}"`);
@@ -788,7 +788,7 @@ async function processAccountWebhook(operation: string, data: any) {
         console.log(`✅ [ZOHO WEBHOOK] Account created/updated: ${accountData.Account_Name}`);
         
         // Send Zoho update notification
-        await zohoNotificationService.sendZohoUpdateNotification(
+        // await zohoNotificationService.sendZohoUpdateNotification(
           workspaceId,
           'accounts',
           operation.toLowerCase(),
@@ -803,7 +803,7 @@ async function processAccountWebhook(operation: string, data: any) {
             Employees: accountData.Employees || '',
             Annual_Revenue: accountData.Annual_Revenue || ''
           }
-        );
+        // );
         
         // Check for buying signals in account description
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in account: "${accountData.Description || ''}"`);
