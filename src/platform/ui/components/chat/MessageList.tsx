@@ -122,12 +122,26 @@ export function MessageList({
 
   // Memoized callback to prevent infinite re-renders
   const handleTypewriterComplete = useCallback((messageId: string) => {
-    onUpdateChatSessions(prev => ({
-      ...prev,
-      [activeSubApp]: prev[activeSubApp]?.map((msg: ChatMessage) => 
+    onUpdateChatSessions(prev => {
+      const currentMessages = prev[activeSubApp] || [];
+      const updatedMessages = currentMessages.map((msg: ChatMessage) => 
         msg['id'] === messageId ? { ...msg, isTypewriter: false } : msg
-      ) || []
-    }));
+      );
+      
+      // Only update if there's actually a change
+      const hasChange = currentMessages.some((msg, index) => 
+        msg['id'] === messageId && msg.isTypewriter !== updatedMessages[index]?.isTypewriter
+      );
+      
+      if (!hasChange) {
+        return prev; // Return same reference to prevent re-render
+      }
+      
+      return {
+        ...prev,
+        [activeSubApp]: updatedMessages
+      };
+    });
   }, [onUpdateChatSessions, activeSubApp]);
   return (
     <div style={{ 

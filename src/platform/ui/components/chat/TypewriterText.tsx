@@ -17,6 +17,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const hasCalledComplete = React.useRef(false);
 
   useEffect(() => {
     if (currentIndex < text.length) {
@@ -26,7 +27,8 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
       }, speed);
 
       return () => clearTimeout(timer);
-    } else if (onComplete && currentIndex === text.length) {
+    } else if (onComplete && currentIndex === text.length && !hasCalledComplete.current) {
+      hasCalledComplete.current = true;
       onComplete();
     }
   }, [currentIndex, text, speed, onComplete]);
@@ -35,6 +37,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
   useEffect(() => {
     setDisplayedText('');
     setCurrentIndex(0);
+    hasCalledComplete.current = false; // Reset the completion flag
   }, [text]);
 
   return (
