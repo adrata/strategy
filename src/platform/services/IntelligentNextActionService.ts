@@ -184,7 +184,8 @@ export class IntelligentNextActionService {
         },
         body: JSON.stringify({
           model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 1000,
+          max_tokens: 2000, // Increased for more comprehensive responses
+          temperature: 0.3, // Lower temperature for more consistent business recommendations
           messages: [
             {
               role: 'user',
@@ -221,7 +222,7 @@ export class IntelligentNextActionService {
       ? Math.floor((Date.now() - context.entityInfo.lastContactDate.getTime()) / (1000 * 60 * 60 * 24))
       : 'unknown';
 
-    return `You are an expert sales strategist. Analyze this contact's engagement history and recommend the next best action.
+    return `You are an expert B2B sales strategist specializing in notary and real estate services. Analyze this contact's engagement history and recommend the most strategic next action.
 
 CONTACT INFORMATION:
 - Name: ${context.entityInfo.name}
@@ -233,31 +234,47 @@ CONTACT INFORMATION:
 RECENT ACTIONS (most recent first):
 ${recentActionsText}
 
+SALES CONTEXT & STRATEGY:
+You're selling notary services to real estate professionals. Consider:
+- Real estate closing cycles and timing
+- Title company relationships and decision-making processes
+- Industry pain points (closing delays, compliance, efficiency)
+- Relationship building in a relationship-driven industry
+- Seasonal patterns in real estate transactions
+
 AVAILABLE ACTION TYPES:
 1. linkedin_connection_request - Send LinkedIn connection request
 2. email_conversation - Send follow-up email
 3. phone_call - Make phone call
 4. linkedin_inmail - Send LinkedIn InMail
 5. meeting_scheduled - Schedule a meeting
+6. proposal_sent - Send proposal or pricing information
+7. demo_scheduled - Schedule product demonstration
+8. reference_request - Request case study or testimonial
 
-SALES STRATEGY RULES:
-- Cycle between LinkedIn, email, and phone calls
-- LinkedIn connection requests should come first for new contacts
-- Wait 2-3 days between actions of the same type
-- Phone calls are for warmer leads (after email/LinkedIn engagement)
-- LinkedIn InMails are for high-value prospects
-- Meetings are for qualified leads showing strong interest
+ADVANCED SALES STRATEGY RULES:
+- For title companies: Focus on efficiency, compliance, and closing speed
+- For real estate agents: Emphasize convenience, reliability, and client satisfaction
+- For lenders: Highlight accuracy, speed, and regulatory compliance
+- Consider the sales cycle stage: awareness → interest → consideration → decision
+- Match communication method to prospect's role and industry norms
+- Time actions based on real estate market cycles and closing schedules
+- Use social proof and industry-specific case studies
+- Build relationships before pushing for meetings or proposals
 
+RESPONSE FORMAT:
 Respond in this exact JSON format:
 {
-  "action": "Specific action description",
+  "action": "Specific, actionable description (e.g., 'Send proposal for title company notary services')",
   "type": "action_type",
-  "reasoning": "Why this is the best next action",
+  "reasoning": "Detailed explanation of why this action will advance the relationship and close the deal",
   "priority": "high|medium|low",
-  "daysFromNow": 2
+  "daysFromNow": 2,
+  "expectedOutcome": "What you expect to achieve with this action",
+  "followUpStrategy": "How to follow up if this action doesn't get a response"
 }
 
-Focus on the most strategic next move that will advance the relationship.`;
+Focus on the most strategic next move that will advance the relationship toward a closed deal. Consider the prospect's role, industry, and current engagement level.`;
   }
 
   /**
@@ -276,13 +293,16 @@ Focus on the most strategic next move that will advance the relationship.`;
       const daysFromNow = parsed.daysFromNow || 2;
       const nextDate = new Date(Date.now() + (daysFromNow * 24 * 60 * 60 * 1000));
 
+      // Enhanced reasoning with expected outcome and follow-up strategy
+      const enhancedReasoning = `${parsed.reasoning}${parsed.expectedOutcome ? ` Expected outcome: ${parsed.expectedOutcome}.` : ''}${parsed.followUpStrategy ? ` Follow-up strategy: ${parsed.followUpStrategy}.` : ''}`;
+
       return {
         action: parsed.action,
         date: nextDate,
-        reasoning: parsed.reasoning,
+        reasoning: enhancedReasoning,
         priority: parsed.priority || 'medium',
         type: parsed.type,
-        context: `AI-generated recommendation for ${context.entityInfo.name}`,
+        context: `AI-generated recommendation for ${context.entityInfo.name} - ${context.entityInfo.company || 'Unknown Company'}`,
         updatedAt: new Date()
       };
 

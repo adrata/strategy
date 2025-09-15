@@ -2024,3 +2024,50 @@ model industry_vertical_intelligence {
   @@index([publishedDate])
   @@index([workspaceId])
 }
+
+model competitors {
+  id                String   @id @default(ulid())
+  workspaceId       String   @db.VarChar(30)
+  name              String   @unique @db.VarChar(255)
+  description       String?  @db.VarChar(1000)
+  website           String?  @db.VarChar(500)
+  services          String[] @default([])
+  strengths         String[] @default([])
+  weaknesses        String[] @default([])
+  marketShare       String?  @db.VarChar(20)
+  founded           Int?
+  employees         String?  @db.VarChar(50)
+  funding           String?  @db.VarChar(100)
+  headquarters      String?  @db.VarChar(255)
+  revenue           String?  @db.VarChar(100)
+  keyProducts       String[] @default([])
+  targetMarkets     String[] @default([])
+  pricingModel      String?  @db.VarChar(100)
+  competitiveAdvantage String? @db.VarChar(500)
+  threatLevel       String?  @default("medium") @db.VarChar(20)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([threatLevel])
+  @@index([isActive])
+}
+
+model marketIntelligence {
+  id                 String   @id @default(ulid())
+  workspaceId        String   @db.VarChar(30)
+  title              String   @db.VarChar(255)
+  description        String?  @db.VarChar(1000)
+  insights           String[] @default([])
+  source             String?  @db.VarChar(100)
+  relevance          String?  @default("medium") @db.VarChar(20)
+  tags               String[] @default([])
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([relevance])
+  @@index([isActive])
+}

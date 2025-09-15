@@ -183,66 +183,36 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     );
   }
 
-  // Parse notes for company data
-  const notes = record.notes ? JSON.parse(record.notes) : {};
-  const company = notes.company || record.company || 'ADP';
-
-  // Mock company data for demo
+  // Use real company data from record
   const companyData = {
-    name: company,
-    industry: 'Human Resources & Payroll',
-    size: '5000+ employees',
-    revenue: '$15.4B',
-    location: 'Roseland, NJ',
-    website: 'adp.com',
-    founded: '1949',
-    ceo: 'Maria Black',
-    description: 'Automatic Data Processing, Inc. is a global provider of cloud-based human capital management solutions.',
-    marketCap: '$95.2B',
-    employees: '58,000',
-    headquarters: 'Roseland, New Jersey',
-    businessModel: 'B2B Software & Services',
-    keyProducts: [
-      'ADP Workforce Now',
-      'ADP Vantage HCM',
-      'ADP Comprehensive Services',
-      'ADP GlobalView'
-    ],
-    competitors: [
-      'Workday',
-      'Oracle HCM',
-      'SAP SuccessFactors',
-      'BambooHR'
-    ],
-    recentNews: [
-      {
-        title: 'ADP Reports Strong Q4 Earnings',
-        date: '2024-01-15',
-        summary: 'Revenue up 8% year-over-year with strong growth in cloud services'
-      },
-      {
-        title: 'ADP Acquires AI-Powered Analytics Company',
-        date: '2024-01-10',
-        summary: 'Strategic acquisition to enhance predictive analytics capabilities'
-      },
-      {
-        title: 'ADP Expands European Operations',
-        date: '2024-01-05',
-        summary: 'New data center in Frankfurt to serve growing European market'
-      }
-    ],
+    name: record.name || record.company || 'Unknown Company',
+    industry: record.industry || 'Unknown Industry',
+    size: record.size || record.employeeCount || 'Unknown Size',
+    revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown Revenue',
+    location: record.city && record.state ? `${record.city}, ${record.state}` : record.address || 'Unknown Location',
+    website: record.website || 'No website',
+    founded: record.founded || 'Unknown',
+    ceo: record.ceo || 'Unknown',
+    description: record.description || 'No description available',
+    marketCap: record.marketCap || 'Unknown',
+    employees: record.employeeCount || record.size || 'Unknown',
+    headquarters: record.address || record.city || 'Unknown',
+    businessModel: record.businessModel || 'Unknown',
+    keyProducts: record.keyProducts || [],
+    competitors: record.competitors || [],
+    recentNews: record.recentNews || [],
     financials: {
-      revenue: '$15.4B',
-      growth: '+8.2%',
-      profitMargin: '18.5%',
-      debtToEquity: '0.3',
-      peRatio: '28.5'
+      revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown',
+      growth: record.growth || 'Unknown',
+      profitMargin: record.profitMargin || 'Unknown',
+      debtToEquity: record.debtToEquity || 'Unknown',
+      peRatio: record.peRatio || 'Unknown'
     },
     technology: {
-      cloudAdoption: '95%',
-      aiUsage: 'High',
-      securityRating: 'A+',
-      compliance: ['SOC 2', 'ISO 27001', 'GDPR', 'HIPAA']
+      cloudAdoption: record.cloudAdoption || 'Unknown',
+      aiUsage: record.aiUsage || 'Unknown',
+      securityRating: record.securityRating || 'Unknown',
+      compliance: record.compliance || []
     }
   };
 

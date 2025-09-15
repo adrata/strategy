@@ -77,13 +77,6 @@ const FILE_OPTIONS: FileOption[] = [
     icon: ClockIcon,
     action: 'recent',
     description: 'Access recently used files'
-  },
-  {
-    id: 'cloud',
-    label: 'Cloud Storage',
-    icon: CloudIcon,
-    action: 'cloud',
-    description: 'Connect to Google Drive, Dropbox'
   }
 ];
 
@@ -119,46 +112,6 @@ const DATA_CATEGORIES: DataCategory[] = [
     color: 'indigo',
     description: 'Include company profiles and intelligence',
     searchPlaceholder: 'Search companies by name or industry...'
-  },
-  {
-    id: 'accounts',
-    label: 'Accounts',
-    icon: BriefcaseIcon,
-    color: 'cyan',
-    description: 'Add account information and history',
-    searchPlaceholder: 'Search accounts by name or type...'
-  },
-  {
-    id: 'contacts',
-    label: 'Contacts',
-    icon: PhoneIcon,
-    color: 'pink',
-    description: 'Include contact details and interactions',
-    searchPlaceholder: 'Search contacts by name or email...'
-  },
-  {
-    id: 'competitors',
-    label: 'Competitors',
-    icon: ShieldCheckIcon,
-    color: 'red',
-    description: 'Add competitive intelligence data',
-    searchPlaceholder: 'Search competitors by name or industry...'
-  },
-  {
-    id: 'activities',
-    label: 'Activities',
-    icon: ChartBarIcon,
-    color: 'orange',
-    description: 'Include recent activities and interactions',
-    searchPlaceholder: 'Search activities by type or date...'
-  },
-  {
-    id: 'emails',
-    label: 'Emails',
-    icon: EnvelopeIcon,
-    color: 'teal',
-    description: 'Add email conversations for context',
-    searchPlaceholder: 'Search emails by subject or sender...'
   }
 ];
 
@@ -473,9 +426,6 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                     handleBrowseFiles();
                   } else if (option['action'] === 'recent') {
                     // Show recent files
-                  } else if (option['action'] === 'cloud') {
-                    console.log('Cloud storage coming soon');
-                    onClose();
                   }
                 }}
                 className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 transition-colors"
@@ -518,7 +468,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
 
         {/* Data category buttons */}
         <div className="space-y-1">
-          {DATA_CATEGORIES.slice(0, showDataOptions ? DATA_CATEGORIES.length : 4).map((category) => {
+          {DATA_CATEGORIES.map((category) => {
             const IconComponent = category.icon;
             const isActive = activeDataCategory === category.id;
             return (
@@ -542,19 +492,6 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
               </button>
             );
           })}
-          
-          {!showDataOptions && DATA_CATEGORIES.length > 4 && (
-            <button
-              onClick={() => setShowDataOptions(true)}
-              className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 transition-colors"
-            >
-              <SparklesIcon className="w-4 h-4 text-gray-500" />
-              <div className="flex-1">
-                <div className="font-medium">More data types...</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">View all available context</div>
-              </div>
-            </button>
-          )}
         </div>
 
         {/* Search results */}

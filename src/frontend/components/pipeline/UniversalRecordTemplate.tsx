@@ -6,6 +6,7 @@ import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { UpdateModal } from './UpdateModal';
 import { AddActionModal } from './AddActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from './InlineEditField';
 import { TabErrorBoundary } from './TabErrorBoundary';
@@ -1100,13 +1101,12 @@ export function UniversalRecordTemplate({
 
     // Add Action button - WHITE BUTTON THAT OPENS MODAL
     buttons.push(
-      <button
+      <UnifiedAddActionButton
         key="add-action"
-        onClick={() => setIsAddActionModalOpen(true)}
-        className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-      >
-        Add Action
-      </button>
+        onAddAction={() => setIsAddActionModalOpen(true)}
+        variant="simple"
+        size="sm"
+      />
     );
 
     // Context-aware advance button

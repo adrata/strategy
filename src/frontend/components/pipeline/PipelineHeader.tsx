@@ -14,6 +14,7 @@ import { isWeekend, isHoliday } from '@/platform/utils/workday-utils';
 import { AddNoteModal } from './AddNoteModal';
 import { AddActionModal, ActionLogData } from './AddActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
@@ -865,80 +866,16 @@ export function PipelineHeader({
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  {/* Unified Add Action Experience - Use dropdown for speedrun, standalone for others */}
-                  {section === 'speedrun' ? (
-                    <div className="relative add-action-dropdown-container">
-                      <button 
-                        onClick={() => setShowAddActionDropdown(!showAddActionDropdown)}
-                        className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-                      >
-                        <PlusIcon className="w-4 h-4" />
-                        Add Action
-                        <ChevronDownIcon className="w-4 h-4" />
-                      </button>
-
-                      {showAddActionDropdown && (
-                        <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-                          <button
-                            onClick={() => {
-                              setSelectedRecord(null);
-                              setShowAddActionModal(true);
-                              setShowAddActionDropdown(false);
-                            }}
-                            className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 flex items-center gap-3"
-                          >
-                            <BoltIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">Add Action</div>
-                              <div className="text-sm text-gray-500">Record activity with contact</div>
-                            </div>
-                          </button>
-                          
-                          <button
-                            onClick={() => {
-                              // TODO: Implement Add Task functionality
-                              console.log('Add Task clicked');
-                              setShowAddActionDropdown(false);
-                            }}
-                            className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 flex items-center gap-3"
-                          >
-                            <CheckCircleIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">Add Task</div>
-                              <div className="text-sm text-gray-500">Create a new task</div>
-                            </div>
-                          </button>
-                          
-                          <button
-                            onClick={() => {
-                              setShowAddNoteModal(true);
-                              setShowAddActionDropdown(false);
-                            }}
-                            className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
-                          >
-                            <PlusIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">Add Note</div>
-                              <div className="text-sm text-gray-500">Quick note for any contact</div>
-                            </div>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <button 
-                      onClick={() => {
-                        // For non-speedrun sections, we don't have a specific record, so we'll handle this differently
-                        // For now, just show the modal without a selected record
-                        setSelectedRecord(null);
-                        setShowAddActionModal(true);
-                      }}
-                      disabled={loading}
-                      className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      Add Action
-                    </button>
-                  )}
+                  {/* Unified Add Action Experience */}
+                  <UnifiedAddActionButton
+                    onAddAction={() => {
+                      setSelectedRecord(null);
+                      setShowAddActionModal(true);
+                    }}
+                    onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
+                    variant={section === 'speedrun' ? 'dropdown' : 'simple'}
+                    size="md"
+                  />
                   
                   {sectionInfo['actionButton'] && (
                     <button 

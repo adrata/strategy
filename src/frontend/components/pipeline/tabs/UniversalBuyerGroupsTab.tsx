@@ -25,7 +25,7 @@ interface BuyerGroupMember {
 
 export function UniversalBuyerGroupsTab({ record, recordType, onSave }: UniversalBuyerGroupsTabProps) {
   const [buyerGroups, setBuyerGroups] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const router = useRouter();
 
@@ -37,7 +37,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       }
       
       try {
-        setLoading(true);
+        // Instant loading - no spinner needed
         
         // Get the company name from the record
         const companyName = record.company || record.companyName;
@@ -181,14 +181,38 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             company: companyName
           };
         });
+
+        // Rank buyer groups: Decision Makers > Champions > Stakeholders > Introducers
+        const rolePriority = {
+          'Decision Maker': 1,
+          'Champion': 2,
+          'Influencer': 3,
+          'Stakeholder': 4,
+          'Introducer': 5,
+          'Gatekeeper': 6,
+          'Blocker': 7,
+          'Team Member': 8
+        };
+
+        const sortedBuyerGroups = buyerGroupMembers.sort((a, b) => {
+          const aPriority = rolePriority[a.role] || 8;
+          const bPriority = rolePriority[b.role] || 8;
+          
+          // If same priority, sort by name
+          if (aPriority === bPriority) {
+            return a.name.localeCompare(b.name);
+          }
+          
+          return aPriority - bPriority;
+        });
         
-        setBuyerGroups(buyerGroupMembers);
-        console.log(`Found ${buyerGroupMembers.length} people from ${companyName}:`, buyerGroupMembers);
+        setBuyerGroups(sortedBuyerGroups);
+        console.log(`Found ${sortedBuyerGroups.length} people from ${companyName}:`, sortedBuyerGroups);
       } catch (error) {
         console.error('Error fetching buyer groups:', error);
         setBuyerGroups([]);
       } finally {
-        setLoading(false);
+        // Loading complete
       }
     };
 
@@ -249,13 +273,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   };
 
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  // No loading spinner - instant display
 
   return (
     <div className="space-y-0">

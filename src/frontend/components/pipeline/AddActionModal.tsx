@@ -107,6 +107,10 @@ export function AddActionModal({
     actionPerformedBy: '' // Start empty, will be set when users load
   });
 
+  // State for time category selection
+  const [timeCategory, setTimeCategory] = useState<'now' | 'future' | 'past'>('now');
+  const [showCustomDate, setShowCustomDate] = useState(false);
+
   // Search contacts
   const searchContacts = async (query: string) => {
     if (query.length < 2) {
@@ -374,26 +378,18 @@ export function AddActionModal({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Action Date *
             </label>
-            <div className="flex gap-2">
+            
+            {/* Primary Time Selection */}
+            <div className="flex gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => {
-                  // Custom - clear the field to allow manual input
-                  setFormData(prev => ({ ...prev, actionDate: '' }));
+                  setFormData(prev => ({ ...prev, actionDate: new Date().toISOString().slice(0, 16) }));
+                  setTimeCategory('now');
+                  setShowCustomDate(false);
                 }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData['actionDate'] === '' 
-                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Custom
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, actionDate: new Date().toISOString().slice(0, 16) }))}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData['actionDate'] === new Date().toISOString().slice(0, 16) 
+                className={`px-4 py-2 text-sm rounded-md border ${
+                  timeCategory === 'now'
                     ? 'bg-blue-100 border-blue-300 text-blue-700' 
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
@@ -403,44 +399,114 @@ export function AddActionModal({
               <button
                 type="button"
                 onClick={() => {
-                  const today = new Date();
-                  today.setHours(9, 0, 0, 0); // Set to 9 AM today
-                  setFormData(prev => ({ ...prev, actionDate: today.toISOString().slice(0, 16) }));
+                  setTimeCategory('future');
+                  setShowCustomDate(false);
                 }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData.actionDate.startsWith(new Date().toISOString().slice(0, 10)) && formData.actionDate !== new Date().toISOString().slice(0, 16)
+                className={`px-4 py-2 text-sm rounded-md border ${
+                  timeCategory === 'future'
                     ? 'bg-blue-100 border-blue-300 text-blue-700' 
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Today
+                Future
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  const yesterday = new Date();
-                  yesterday.setDate(yesterday.getDate() - 1);
-                  yesterday.setHours(9, 0, 0, 0); // Set to 9 AM yesterday
-                  setFormData(prev => ({ ...prev, actionDate: yesterday.toISOString().slice(0, 16) }));
+                  setTimeCategory('past');
+                  setShowCustomDate(false);
                 }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData.actionDate.startsWith(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
+                className={`px-4 py-2 text-sm rounded-md border ${
+                  timeCategory === 'past'
                     ? 'bg-blue-100 border-blue-300 text-blue-700' 
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                Yesterday
+                Past
               </button>
             </div>
-            <div className="relative mt-2">
+
+            {/* Secondary Time Selection */}
+            {timeCategory === 'future' && (
+              <div className="flex gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const laterToday = new Date();
+                    laterToday.setHours(17, 0, 0, 0); // 5 PM today
+                    setFormData(prev => ({ ...prev, actionDate: laterToday.toISOString().slice(0, 16) }));
+                  }}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Later Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(9, 0, 0, 0); // 9 AM tomorrow
+                    setFormData(prev => ({ ...prev, actionDate: tomorrow.toISOString().slice(0, 16) }));
+                  }}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Tomorrow
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomDate(true)}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Custom
+                </button>
+              </div>
+            )}
+
+            {timeCategory === 'past' && (
+              <div className="flex gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const earlierToday = new Date();
+                    earlierToday.setHours(9, 0, 0, 0); // 9 AM today
+                    setFormData(prev => ({ ...prev, actionDate: earlierToday.toISOString().slice(0, 16) }));
+                  }}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Earlier Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    yesterday.setHours(14, 0, 0, 0); // 2 PM yesterday
+                    setFormData(prev => ({ ...prev, actionDate: yesterday.toISOString().slice(0, 16) }));
+                  }}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Yesterday
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomDate(true)}
+                  className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Custom
+                </button>
+              </div>
+            )}
+
+            {/* Custom Date Input */}
+            {(showCustomDate || timeCategory === 'now') && (
               <input
                 type="datetime-local"
                 value={formData.actionDate}
                 onChange={(e) => handleChange('actionDate', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
-            </div>
+            )}
           </div>
 
           {/* Action Performed By */}
@@ -466,7 +532,7 @@ export function AddActionModal({
                   <option value="">Select a user</option>
                   {users.map(user => (
                     <option key={user.id} value={user.id}>
-                      {user.name || user.email || 'Unknown User'} {user['id'] === currentUser?.id ? '(Me)' : ''}
+                      {user['id'] === currentUser?.id ? 'Me (John Dano)' : (user.name || user.email || 'Unknown User')}
                     </option>
                   ))}
                 </>
