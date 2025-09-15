@@ -2345,17 +2345,14 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         deletedAt: null,
         status: 'active'
       },
-      select: {
-        id: true,
-        fullName: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        jobTitle: true,
-        city: true,
-        createdAt: true,
-        updatedAt: true
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true
+          }
+        }
       },
       orderBy: { createdAt: 'desc' },
       take: 50
@@ -2377,7 +2374,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       email: person.email,
       phone: person.phone,
       title: person.jobTitle || 'Unknown Title',
-      company: 'Unknown Company', // People table doesn't have company
+      company: person.company?.name || 'Unknown Company',
       location: person.city,
       status: 'new', // Start as new for speedrun
       priority: 'high', // High priority for speedrun items
