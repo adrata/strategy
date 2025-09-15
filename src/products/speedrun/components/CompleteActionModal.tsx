@@ -180,20 +180,7 @@ export function CompleteActionModal({
               />
             </div>
 
-            {/* Next Action Date */}
-            <div>
-              <label htmlFor="nextActionDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Next Action Date
-              </label>
-              <input
-                type="date"
-                id="nextActionDate"
-                value={formData.nextActionDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, nextActionDate: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                disabled={isLoading}
-              />
-            </div>
+            {/* Next Action Date removed - populated automatically per user request */}
 
             {/* Submit Button */}
             <div className="flex gap-3 pt-4">

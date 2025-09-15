@@ -12,6 +12,7 @@ import { authFetch } from "@/platform/auth-fetch";
 import { useSpeedrunContext, type SpeedrunPerson } from "@/products/speedrun/context/SpeedrunProvider";
 import { UniversalRankingEngine, type RankedSpeedrunPerson } from "@/products/speedrun/UniversalRankingEngine";
 import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engine-settings-service';
+import { useAdrataData } from '@/platform/hooks/useAdrataData';
 
 // Helper function to determine vertical from prospect/lead data
 function determineVerticalFromData(data: any): string {
@@ -78,7 +79,6 @@ export function useSpeedrunDataLoader() {
   } = useSpeedrunContext();
 
   const dataLoadPromiseRef = useRef<Promise<void> | null>(null);
-  const settingsService = new SpeedrunEngineSettingsService();
 
   // Cache key for unified data fetching
   const cacheKey = `speedrun:data:${Date.now()}`; // You might want to make this more specific
@@ -93,7 +93,7 @@ export function useSpeedrunDataLoader() {
       console.log("🖥️ [DESKTOP ENV]", desktopEnv);
 
       // Load settings
-      const settings = await settingsService.loadSettings();
+      const settings = SpeedrunEngineSettingsService.getUserSettings();
       console.log("⚙️ [SETTINGS]", settings);
 
       // Fetch data from unified API (best practice - consistent with platform)
@@ -139,10 +139,9 @@ export function useSpeedrunDataLoader() {
       console.log(`🔄 [TRANSFORMED] ${transformedData.length} speedrun people`);
 
       // Rank the data using UniversalRankingEngine
-      const rankingEngine = new UniversalRankingEngine();
-      const rankedData: RankedSpeedrunPerson[] = await rankingEngine.rankSpeedrunPeople(
+      const rankedData: RankedSpeedrunPerson[] = UniversalRankingEngine.rankProspectsForWinning(
         transformedData,
-        settings
+        workspaceName
       );
 
       console.log(`🏆 [RANKED] ${rankedData.length} ranked speedrun people`);
@@ -159,16 +158,16 @@ export function useSpeedrunDataLoader() {
       setIsDataLoaded(false);
       throw error;
     }
-  }, [setReadyPeople, setSelectedPerson, setIsDataLoaded, settingsService]);
+  }, [setReadyPeople, setSelectedPerson, setIsDataLoaded]);
 
-  // Use unified data hook
+  // Use AdrataData hook (the correct unified data hook)
   const { 
     data, 
     isLoading, 
     error, 
     refresh,
     clearCache 
-  } = useUnifiedData(cacheKey, fetchSpeedrunData, {
+  } = useAdrataData(cacheKey, fetchSpeedrunData, {
     ttl: 30000, // 30 seconds cache for speedrun data
     priority: 'high',
     tags: ['speedrun', 'data'],

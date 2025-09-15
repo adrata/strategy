@@ -130,19 +130,7 @@ export function ActionMenu({
       });
     }
 
-    // Skip Update for speedrun records (handled in speedrun-specific section for custom ordering)
-    if (onEdit && recordType !== 'speedrun') {
-      actions.push({
-        id: 'edit',
-        label: 'Update',
-        icon: PencilIcon,
-        action: () => {
-          onEdit(record);
-          setIsOpen(false);
-        },
-        shortcut: undefined
-      });
-    }
+    // Edit functionality removed per user request
 
     // Communication actions for people
     if (['lead', 'prospect', 'speedrun', 'person'].includes(recordType)) {

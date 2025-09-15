@@ -195,10 +195,10 @@ export function useAdrataData<T>(
   }, [enhancedKey, swrMutate]);
 
   // Clear cache function
-  const clearCache = useCallback(() => {
+  const clearCache = useCallback(async () => {
     if (!enhancedKey) return;
     
-    cache.delete(enhancedKey);
+    await cache.invalidate(enhancedKey);
     swrMutate(undefined, false);
   }, [enhancedKey, swrMutate]);
 

@@ -5,7 +5,7 @@ import { PipelineDataService, type OpportunityWithDetails } from "@/platform/ser
 import { getPlatformConfig } from "@/platform/platform-detection";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
-import { InlineEditField } from "@/platform/ui/components/InlineEditField";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
 import { useInlineEdit } from "@/platform/hooks/useInlineEdit";
 
@@ -326,34 +326,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
               </h1>
             </div>
             <div className="flex gap-2">
-              <button
-                style={{
-                  background: "white",
-                  color: "black",
-                  border: "1.5px solid #2563EB",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-                  fontWeight: 600,
-                  fontSize: "0.95rem",
-                  borderRadius: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  transition: "background 0.15s, color 0.15s, border 0.15s",
-                  cursor: "pointer",
-                  marginRight: "0.5rem",
-                }}
-                onClick={() =>
-                  typeof onEditOpportunity === "function"
-                    ? onEditOpportunity(opportunity)
-                    : null
-                }
-                onMouseOver={(e) => {
-                  e.currentTarget['style']['background'] = "#f5f5f5";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget['style']['background'] = "white";
-                }}
-              >
-                Edit
-              </button>
+              {/* Edit button removed per user request */}
               {currentOpportunity['stage'] === "Closed Won" ? (
                 <span
                   style={{

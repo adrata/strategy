@@ -235,7 +235,7 @@ function PipelineSections({
   };
   
   // 🚀 CONSISTENT LOADING: Use the same loading state as the middle panel
-  const loading = acquisitionData?.data?.loading?.isLoading || false;
+  const loading = acquisitionData?.loading?.isLoading || false;
   
   // Debug logging to understand glitch
   console.log('🔍 [LEFT PANEL] Loading states:', {
@@ -752,7 +752,7 @@ function PipelineSections({
       workspaceId,
       userId,
       acquisitionDataExists: !!acquisitionData,
-      acquisitionDataLoading: acquisitionData?.data?.loading?.isLoading,
+      acquisitionDataLoading: acquisitionData?.loading?.isLoading,
       authUserActiveWorkspaceId: authUser?.activeWorkspaceId,
       authUserId: authUser?.id
     });

@@ -380,7 +380,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
   // Listen for timeframe changes and sync with URL
   useEffect(() => {
-    // Set initial timeframe from URL and redirect to default if needed
+    // Set initial timeframe from URL - no automatic redirect for speedrun
     if (section === 'speedrun') {
       const urlParams = new URLSearchParams(window.location.search);
       const urlView = urlParams.get('view');
@@ -388,11 +388,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       if (urlView === 'week' || urlView === 'month' || urlView === 'quarter' || urlView === 'now') {
         setTimeframeFilter(urlView);
       } else {
-        // No view parameter or invalid parameter - redirect to default 'now'
+        // No view parameter - use default 'now' without redirecting
         setTimeframeFilter('now');
-        const newSearchParams = new URLSearchParams(window.location.search);
-        newSearchParams.set('view', 'now');
-        router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
       }
     }
 

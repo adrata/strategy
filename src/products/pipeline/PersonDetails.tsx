@@ -3,7 +3,7 @@ import { formatRelativeDate } from "@/platform/utils";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
-import { InlineEditField } from "@/platform/ui/components/InlineEditField";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
 import { useInlineEdit } from "@/platform/hooks/useInlineEdit";
 

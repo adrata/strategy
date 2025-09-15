@@ -7,7 +7,7 @@ import {
 } from "../utils/monacoExtractors";
 import { IntelligentStageProgression } from "../IntelligentStageProgression";
 import { useAcquisitionOSAuth } from "@/platform/hooks/useAcquisitionOSAuth";
-import { InlineEditField } from "@/platform/ui/components/InlineEditField";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 interface OverviewTabProps {
   person: SpeedrunPerson;

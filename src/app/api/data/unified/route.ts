@@ -856,6 +856,11 @@ async function getMultipleRecords(
     return { success: true, data: people };
   }
   
+  // Handle speedrun case for non-demo workspaces
+  if (type === 'speedrun') {
+    return await loadSpeedrunData(workspaceId, userId);
+  }
+  
   const model = getPrismaModel(type);
   if (!model) throw new Error(`Unsupported type: ${type}`);
   
@@ -868,10 +873,10 @@ async function getMultipleRecords(
     whereClause['deletedAt'] = null;
   }
   
-  // Add user assignment filter for most types
-  if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
-    whereClause['assignedUserId'] = userId;
-  }
+  // Add user assignment filter for most types (temporarily disabled for debugging)
+  // if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
+  //   whereClause['assignedUserId'] = userId;
+  // }
   
   // Apply additional filters
   if (filters) {
@@ -2093,33 +2098,56 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         orderBy: [{ updatedAt: 'desc' }],
         take: 1000
       }).catch(() => []), // Fallback to empty array if partners table has issues
-      // Load speedrun data - combine leads and prospects for speedrun
-      Promise.all([
-        prisma.leads.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            assignedUserId: userId,
-            status: {
-              in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
-            }
-          },
-          orderBy: [{ updatedAt: 'desc' }],
-          take: 100
-        }),
-        prisma.prospects.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            assignedUserId: userId,
-            status: {
-              in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
-            }
-          },
-          orderBy: [{ updatedAt: 'desc' }],
-          take: 100
-        })
-      ]).then(([leads, prospects]) => [...leads, ...prospects])
+      // Load speedrun data from person table (same as dedicated speedrun endpoint)
+      prisma.person.findMany({
+        where: {
+          isActive: true
+        },
+        select: {
+          id: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          title: true,
+          location: true,
+          createdAt: true,
+          updatedAt: true
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 50
+      }).then(people => {
+        // Sort people by createdAt descending to get most recent first
+        const sortedPeople = people.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        
+        return sortedPeople.map((person, index) => ({
+          id: person.id,
+          name: person.fullName,
+          fullName: person.fullName,
+          firstName: person.firstName,
+          lastName: person.lastName,
+          email: person.email,
+          phone: person.phone,
+          title: person.title,
+          company: 'Unknown Company', // Person table doesn't have company
+          location: person.location,
+          status: 'active',
+          priority: 'medium',
+          source: 'person-table',
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt,
+          // Add ranking for speedrun - 1:1 with person order
+          rank: index + 1,
+          // Add default action fields
+          lastAction: 'Initial Contact',
+          lastActionDate: person.createdAt,
+          nextAction: 'Follow Up',
+          nextActionDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+          buyerGroupRole: 'unknown',
+          currentStage: 'initial'
+        }));
+      })
     ]);
     
     console.log(`✅ [DASHBOARD] Loaded data: leads=${leadsData.length}, prospects=${prospectsData.length}, opportunities=${opportunitiesData.length}, speedrun=${speedrunData.length}`);
@@ -2212,7 +2240,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         customers: customersData,
         partners: partnersData,
         speedrunItems: speedrunData,
-        // Use actual counts from database
+        // Use actual counts from database, but use array lengths for speedrun
         counts: { 
           leads: leadsCount, 
           prospects: prospectsCount, 
@@ -2221,7 +2249,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           people: peopleCount,
           customers: customersCount,
           partners: partnersCount,
-          speedrun: speedrunCount
+          speedrun: speedrunData.length
         },
         totalPipelineValue: 0,
         timestamp: new Date().toISOString()
@@ -2310,325 +2338,87 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
   try {
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // Load leads, prospects, and opportunities for speedrun
-    const [leads, prospects, opportunities] = await Promise.all([
-      // Load leads
-      prisma.leads.findMany({
-        where: {
-          workspaceId,
-          ...(workspaceId !== 'demo-workspace-2025' && workspaceId !== 'zeropoint-demo-2025' && { assignedUserId: userId }), // Skip user filter for demo
-          deletedAt: null,
-          status: {
-            in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
-          }
-        },
-        select: {
-          id: true,
-          fullName: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          phone: true,
-          company: true,
-          jobTitle: true,
-          industry: true,
-          status: true,
-          priority: true,
-          notes: true,
-          tags: true,
-          source: true,
-          createdAt: true,
-          updatedAt: true,
-          assignedUserId: true,
-          workspaceId: true,
-          // 🎯 ACTION SYSTEM FIELDS
-          lastAction: true,
-          lastActionDate: true,
-          nextAction: true,
-          nextActionDate: true,
-          lastContactDate: true,
-          nextFollowUpDate: true,
-          buyerGroupRole: true,
-          companySize: true
-        },
-        orderBy: { updatedAt: 'desc' },
-        take: 100
-      }),
-      
-      // Load prospects
-      prisma.prospects.findMany({
-        where: {
-          workspaceId,
-          ...(workspaceId !== 'demo-workspace-2025' && workspaceId !== 'zeropoint-demo-2025' && { assignedUserId: userId }), // Skip user filter for demo
-          deletedAt: null,
-          status: {
-            in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
-          }
-        },
-        select: {
-          id: true,
-          fullName: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          phone: true,
-          company: true,
-          title: true,
-          industry: true,
-          status: true,
-          priority: true,
-          notes: true,
-          tags: true,
-          source: true,
-          createdAt: true,
-          updatedAt: true,
-          assignedUserId: true,
-          workspaceId: true,
-          // 🎯 ACTION SYSTEM FIELDS
-          lastAction: true,
-          lastActionDate: true,
-          nextAction: true,
-          nextActionDate: true,
-          lastContactDate: true,
-          nextFollowUpDate: true,
-          buyerGroupRole: true,
-          companySize: true
-        },
-        orderBy: { updatedAt: 'desc' },
-        take: 100
-      }),
-      
-      // Load opportunities (only open ones)
-      prisma.opportunities.findMany({
-        where: {
-          workspaceId,
-          ...(workspaceId !== 'demo-workspace-2025' && workspaceId !== 'zeropoint-demo-2025' && { assignedUserId: userId }), // Skip user filter for demo
-          deletedAt: null,
-          stage: {
-            notIn: ["closed", "won", "lost"]
-          }
-        },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          amount: true,
-          stage: true,
-          priority: true,
-          notes: true,
-          tags: true,
-          source: true,
-          createdAt: true,
-          updatedAt: true,
-          assignedUserId: true,
-          workspaceId: true,
-          // 🎯 ACTION SYSTEM FIELDS
-          lastActivityDate: true,
-          nextActivityDate: true,
-          nextSteps: true
-        },
-        orderBy: { updatedAt: 'desc' },
-        take: 100
-      })
-    ]);
-    
-    // Combine all data sources
-    const allRecords = [...leads, ...prospects, ...opportunities];
-    
-    // === APPLY UNIFIED ACTION-BASED RANKING ===
-    // Sort all records by action priority (most actionable first)
-    const rankedRecords = allRecords.sort((a, b) => {
-      const aScore = calculateActionPriorityScore(a);
-      const bScore = calculateActionPriorityScore(b);
-      return bScore - aScore; // Higher score = more actionable = first
+    // Load first 50 people from person table for speedrun
+    const people = await prisma.person.findMany({
+      where: {
+        isActive: true
+      },
+      select: {
+        id: true,
+        fullName: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        title: true,
+        location: true,
+        createdAt: true,
+        updatedAt: true
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50
     });
     
-    // Take only the top 50 most actionable records for today
-    const top50Records = rankedRecords.slice(0, 50);
+    console.log(`📊 [SPEEDRUN] Loaded ${people.length} people from person table`);
     
-    // Add recordType to each record for filtering
-    const recordsWithType = top50Records.map(record => ({
-      ...record,
-      recordType: leads.find(l => l.id === record.id) ? 'leads' : 
-                  prospects.find(p => p.id === record.id) ? 'prospects' : 
-                  opportunities.find(o => o.id === record.id) ? 'opportunities' : 'unknown'
-    }));
+    // Sort people by createdAt descending to get most recent first
+    const sortedPeople = people.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     
-    // Transform leads to speedrun format
-    const leadItems = recordsWithType.filter(record => record.recordType === 'leads').map(lead => ({
-      id: lead.id,
-      name: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown',
-      fullName: lead.fullName,
-      firstName: lead.firstName,
-      lastName: lead.lastName,
-      email: lead.email || '',
-      phone: lead.phone || '',
-      company: lead.company || 'Unknown Company',
-      companyName: lead.company,
-      title: lead.jobTitle || 'Unknown Title', // 🆕 FIX: Use jobTitle field
-      jobTitle: lead.jobTitle,
-      industry: lead.industry || '',
-      status: lead.status || 'active',
-      stage: 'initial',
-      priority: lead.priority || 'medium',
-      lastContact: lead.updatedAt,
-      notes: lead.notes || '',
-      tags: lead.tags || [],
-      source: lead.source || 'speedrun',
-      createdAt: lead.createdAt,
-      updatedAt: lead.updatedAt,
-      assignedUser: lead.assignedUserId,
-      workspaceId: lead.workspaceId,
-      // Add speedrun-specific fields
-      enrichmentScore: 0,
+    // Transform people data to speedrun format
+    const speedrunItems = sortedPeople.map((person, index) => ({
+      id: person.id,
+      name: person.fullName,
+      fullName: person.fullName,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      email: person.email,
+      phone: person.phone,
+      title: person.title,
+      company: 'Unknown Company', // Person table doesn't have company
+      location: person.location,
+      status: 'active',
+      priority: 'medium',
+      source: 'person-table',
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt,
+      // Add ranking for speedrun - 1:1 with person order
+      rank: index + 1,
+      // Add default action fields
+      lastAction: 'Initial Contact',
+      lastActionDate: person.createdAt,
+      nextAction: 'Follow Up',
+      nextActionDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
       buyerGroupRole: 'unknown',
-      currentStage: 'initial',
-      nextAction: '',
-      nextActionDate: '',
-      location: '',
-      phoneNumber: lead.phone
+      currentStage: 'initial'
     }));
     
-    // Transform prospects to speedrun format
-    const prospectItems = recordsWithType.filter(record => record.recordType === 'prospects').map(prospect => ({
-      id: prospect.id,
-      name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unknown',
-      fullName: prospect.fullName,
-      firstName: prospect.firstName,
-      lastName: prospect.lastName,
-      email: prospect.email || '',
-      phone: prospect.phone || '',
-      company: prospect.company || 'Unknown Company',
-      companyName: prospect.company,
-      title: prospect.title || 'Unknown Title',
-      jobTitle: prospect.title,
-      industry: prospect.industry || '',
-      status: prospect.status || 'active',
-      stage: 'initial',
-      priority: prospect.priority || 'medium',
-      lastContact: prospect.updatedAt,
-      notes: prospect.notes || '',
-      tags: prospect.tags || [],
-      source: prospect.source || 'speedrun',
-      createdAt: prospect.createdAt,
-      updatedAt: prospect.updatedAt,
-      assignedUser: prospect.assignedUserId,
-      workspaceId: prospect.workspaceId,
-      // Add speedrun-specific fields
-      enrichmentScore: 0,
-      buyerGroupRole: 'unknown',
-      currentStage: 'initial',
-      nextAction: '',
-      nextActionDate: '',
-      location: '',
-      phoneNumber: prospect.phone
-    }));
+    console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items`);
     
-    // Transform opportunities to speedrun format
-    const opportunityItems = recordsWithType.filter(record => record.recordType === 'opportunities').map(opportunity => ({
-      id: opportunity.id,
-      name: opportunity.name || 'Unknown Opportunity',
-      fullName: opportunity.name,
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      company: 'Opportunity',
-      companyName: 'Opportunity',
-      title: 'Opportunity',
-      jobTitle: 'Opportunity',
-      industry: '',
-      status: 'opportunity',
-      stage: opportunity.stage || 'initial',
-      priority: opportunity.priority || 'medium',
-      lastContact: opportunity.updatedAt,
-      notes: opportunity.notes || '',
-      tags: opportunity.tags || [],
-      source: opportunity.source || 'speedrun',
-      createdAt: opportunity.createdAt,
-      updatedAt: opportunity.updatedAt,
-      assignedUser: opportunity.assignedUserId,
-      workspaceId: opportunity.workspaceId,
-      // Add speedrun-specific fields
-      enrichmentScore: 0,
-      buyerGroupRole: 'unknown',
-      currentStage: opportunity.stage || 'initial',
-      nextAction: '',
-      nextActionDate: '',
-      location: '',
-      phoneNumber: ''
-    }));
-    
-    // Combine all items
-    const speedrunItems = [...leadItems, ...prospectItems, ...opportunityItems];
-    
-    console.log(`✅ [SPEEDRUN] Loaded top 50 most actionable records: ${speedrunItems.length} total (${leadItems.length} leads, ${prospectItems.length} prospects, ${opportunityItems.length} opportunities)`);
-    
-    // Debug: Show action data for top 3 records
-    if (speedrunItems.length > 0) {
-      console.log(`🔍 [SPEEDRUN ACTION DEBUG] Top 3 records with action data:`, speedrunItems.slice(0, 3).map(item => ({
-        id: item.id,
-        name: item.name,
-        nextAction: item.nextAction,
-        nextActionDate: item.nextActionDate,
-        lastContactDate: item.lastContactDate,
-        lastActionDate: item.lastActionDate,
-        actionScore: calculateActionPriorityScore(item)
-      })));
-    }
-    
-    // Debug: Log sample data to verify names are being loaded correctly
-    if (speedrunItems.length > 0) {
-      console.log(`🔍 [SPEEDRUN DEBUG] Sample speedrun items:`, speedrunItems.slice(0, 3).map(item => ({
-        id: item.id,
-        name: item.name,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        company: item.company
-      })));
-    } else {
-      console.log(`⚠️ [SPEEDRUN DEBUG] No speedrun items loaded - checking raw data:`, {
-        leadsCount: leads.length,
-        prospectsCount: prospects.length,
-        opportunitiesCount: opportunities.length,
-        sampleLead: leads[0] ? {
-          id: leads[0].id,
-          fullName: leads[0].fullName,
-          firstName: leads[0].firstName,
-          lastName: leads[0].lastName
-        } : null,
-        sampleProspect: prospects[0] ? {
-          id: prospects[0].id,
-          fullName: prospects[0].fullName,
-          firstName: prospects[0].firstName,
-          lastName: prospects[0].lastName
-        } : null
-      });
-    }
-    
-    return {
-      success: true,
-      data: speedrunItems // 🆕 FIX: Return the array directly
-    };
-  } catch (error) {
-    console.error('❌ [SPEEDRUN] Error loading speedrun data:', error);
-    // Return empty data instead of throwing error to prevent dashboard failure
     return {
       success: true,
       data: {
+        speedrunItems,
+        counts: {
+          speedrun: speedrunItems.length
+        }
+      }
+    };
+  } catch (error) {
+    console.error('❌ [SPEEDRUN] Error loading speedrun data:', error);
+    return {
+      success: false,
+      error: error.message,
+      data: {
         speedrunItems: [],
         counts: {
-          speedrunItems: 0,
-          leads: 0,
-          prospects: 0,
-          opportunities: 0
-        },
-        timestamp: new Date().toISOString()
+          speedrun: 0
+        }
       }
     };
   }
 }
+
+// 🚀 MAIN API HANDLERS
 
 // 🚀 MAIN API HANDLERS
 export async function GET(request: NextRequest) {

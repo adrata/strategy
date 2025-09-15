@@ -29,7 +29,7 @@ import { Note } from "../types/SpeedrunTypes";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { CompanyDetailView } from "@/platform/ui/components/CompanyDetailView";
-import { InlineEditField } from "@/platform/ui/components/InlineEditField";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 export function SpeedrunRecordTemplate({
   person,

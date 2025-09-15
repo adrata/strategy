@@ -69,7 +69,7 @@ export function PipelineMiddlePanelStandalone({
       case 'people': return peopleData.loading;
       case 'clients': return clientsData.loading;
       case 'partners': return partnersData.loading;
-      case 'speedrun': return acquisitionData?.data?.loading?.isLoading || false;
+      case 'speedrun': return acquisitionData?.loading?.isLoading || false;
       default: return false;
     }
   };
