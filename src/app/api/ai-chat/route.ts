@@ -1,11 +1,12 @@
 /**
  * 🤖 AI CHAT API ENDPOINT
  * 
- * Forwards AI chat requests to the unified intelligence endpoint
- * Provides a simple interface for the AI right panel
+ * Direct Claude AI integration for intelligent sales chat responses
+ * Provides fast, context-aware responses using Anthropic's Claude API
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { claudeAIService } from '@/platform/services/ClaudeAIService';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,93 +25,64 @@ export async function POST(request: NextRequest) {
       selectedVoiceId 
     } = body;
 
-    // Forward to the unified intelligence endpoint
-    const intelligenceRequest = {
-      depth: 'quick',
-      type: 'chat',
-      target: {
-        query: message,
-        company: currentRecord?.company || currentRecord?.companyName,
-        accountId: currentRecord?.id
-      },
-      options: {
-        includeBuyerGroups: true,
-        includeIndustryAnalysis: true,
-        urgencyLevel: 'realtime',
-        conversationHistory,
-        appType,
-        currentRecord,
-        recordType,
-        enableVoiceResponse,
-        selectedVoiceId
-      }
-    };
-
-    // Make internal request to intelligence endpoint
-    const intelligenceUrl = new URL(`${request.nextUrl.origin}/api/intelligence/unified`);
-    intelligenceUrl.searchParams.set('workspaceId', workspaceId);
-    intelligenceUrl.searchParams.set('userId', userId);
-    
-    const intelligenceResponse = await fetch(intelligenceUrl.toString(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
-        'Cookie': request.headers.get('Cookie') || ''
-      },
-      body: JSON.stringify(intelligenceRequest)
+    console.log('🤖 [AI CHAT] Processing request:', {
+      message: message?.substring(0, 100) + '...',
+      appType,
+      workspaceId,
+      userId,
+      hasCurrentRecord: !!currentRecord,
+      recordType
     });
 
-    if (!intelligenceResponse.ok) {
-      // If intelligence API fails, provide a fallback response
-      console.warn(`Intelligence API error: ${intelligenceResponse.status}`);
-      
-      // Generate a contextual fallback response based on the message
-      let fallbackResponse = "I'm here to help you with your sales activities. ";
-      
-      if (currentRecord && recordType) {
-        const recordName = currentRecord.name || currentRecord.fullName || 'this contact';
-        const company = currentRecord.company || currentRecord.companyName || 'their company';
-        
-        if (message.toLowerCase().includes('challenge') || message.toLowerCase().includes('problem')) {
-          fallbackResponse += `For ${recordName} at ${company}, I'd recommend researching their industry challenges and recent company news to identify pain points.`;
-        } else if (message.toLowerCase().includes('call') || message.toLowerCase().includes('reach')) {
-          fallbackResponse += `To reach ${recordName} effectively, consider their role and company context. LinkedIn and email are usually the best starting points.`;
-        } else if (message.toLowerCase().includes('draft') || message.toLowerCase().includes('message')) {
-          fallbackResponse += `For messaging ${recordName}, focus on their specific role and company challenges. Keep it concise and value-focused.`;
-        } else {
-          fallbackResponse += `I can help you with research, messaging, and strategy for ${recordName} at ${company}. What specific aspect would you like to focus on?`;
-        }
-      } else {
-        fallbackResponse += "What would you like to know about your prospects or sales strategy?";
-      }
-      
+    // Validate required fields
+    if (!message || typeof message !== 'string') {
       return NextResponse.json({
-        success: true,
-        response: fallbackResponse,
-        todos: [],
-        navigation: null,
-        voice: null
-      });
+        success: false,
+        error: 'Message is required and must be a string'
+      }, { status: 400 });
     }
 
-    const intelligenceData = await intelligenceResponse.json();
+    // Generate Claude AI response
+    const claudeResponse = await claudeAIService.generateChatResponse({
+      message,
+      conversationHistory,
+      currentRecord,
+      recordType,
+      appType,
+      workspaceId,
+      userId
+    });
 
-    // Transform the response to match what the AI panel expects
+    console.log('🤖 [AI CHAT] Claude response generated:', {
+      responseLength: claudeResponse.response.length,
+      confidence: claudeResponse.confidence,
+      model: claudeResponse.model,
+      processingTime: claudeResponse.processingTime
+    });
+
+    // Return the response in the expected format
     return NextResponse.json({
       success: true,
-      response: intelligenceData.intelligence?.intelligence?.result?.response || 'I apologize, but I encountered an issue processing your request. Please try again.',
-      todos: intelligenceData.intelligence?.intelligence?.result?.todos || [],
-      navigation: intelligenceData.intelligence?.intelligence?.result?.navigation || null,
-      voice: intelligenceData.intelligence?.intelligence?.result?.voice || null
+      response: claudeResponse.response,
+      todos: [], // Claude can generate actionable items in the response text
+      navigation: null,
+      voice: null,
+      metadata: {
+        model: claudeResponse.model,
+        confidence: claudeResponse.confidence,
+        processingTime: claudeResponse.processingTime,
+        tokensUsed: claudeResponse.tokensUsed
+      }
     });
 
   } catch (error) {
-    console.error('AI Chat API Error:', error);
+    console.error('❌ [AI CHAT] Error:', error);
     
+    // Return a helpful error response
     return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      response: "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment, or feel free to ask me about your sales strategy, pipeline optimization, or any other sales-related questions."
     }, { status: 500 });
   }
 }
