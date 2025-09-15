@@ -290,20 +290,15 @@ export function useAcquisitionOSData(
     
     const apiData = response.data || {};
 
-    console.log('🚨🚨🚨 [SPEEDRUN API DEBUG] CRITICAL API RESPONSE CHECK:', {
+    console.log('✅ [ACQUISITION OS DATA] API response received:', {
       success: response.success,
       hasData: !!response.data,
       dataKeys: response.data ? Object.keys(response.data) : [],
       prospectsCount: apiData.prospects?.length || 0,
       leadsCount: apiData.leads?.length || 0,
       speedrunItemsCount: apiData.speedrunItems?.length || 0,
-      speedrunItemsExists: !!apiData.speedrunItems,
-      speedrunItemsType: typeof apiData.speedrunItems,
-      speedrunItemsIsArray: Array.isArray(apiData.speedrunItems),
-      rawSpeedrunItems: apiData.speedrunItems,
       counts: apiData.counts,
-      speedrunCount: apiData.counts?.speedrun,
-      fullApiData: apiData
+      speedrunCount: apiData.counts?.speedrun
     });
 
     // Map the API response to the expected structure
