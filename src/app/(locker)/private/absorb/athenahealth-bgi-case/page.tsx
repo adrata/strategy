@@ -12,7 +12,7 @@ export default function AthenahealthBusinessCasePage() {
         <header className="border-b border-gray-100">
           <div className="max-w-4xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold text-gray-900">Adrata</h1>
+              <h1 className="text-lg font-semibold text-gray-900">Absorb Adrata</h1>
               
               {/* Navigation Links */}
               <div className="flex items-center space-x-6">
