@@ -28,5 +28,19 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/private/sbi-growth/flexera-bgi-case",
+      "destination": "/private/sbi-growth/flexera-bgi-case"
+    },
+    {
+      "source": "/private/cloudcaddie/tim-frost-presales-report",
+      "destination": "/private/cloudcaddie/tim-frost-presales-report"
+    },
+    {
+      "source": "/private/(.*)",
+      "destination": "/private/$1"
+    }
   ]
 } 
