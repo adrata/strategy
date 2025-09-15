@@ -9,30 +9,29 @@ export default function TimFrostPreSalesReportPage() {
     <PasswordProtection correctPassword="CloudCaddieGoat-2025">
       <div className="min-h-screen bg-white" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-gray-100">
-          <div className="max-w-4xl mx-auto px-6 py-4">
+        <header className="border-b border-gray-200">
+          <div className="max-w-4xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold text-gray-900">CloudCaddie Intelligence</h1>
+              <h1 className="text-lg font-medium text-black">CloudCaddie Intelligence</h1>
               
-              {/* Navigation Links */}
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4">
                 <Link 
                   href="/" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-600 hover:text-black transition-colors"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/platform" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-600 hover:text-black transition-colors"
                 >
                   Platform
                 </Link>
                 <Link
-                  href="https://calendly.com/dan-adrata/biz-dev-call"
-                  className="bg-black text-white px-5 py-1.5 rounded-2xl text-sm font-medium hover:bg-gray-800 transition-colors"
+                  href="https://calendly.com/justin-johnson/cloudcaddie-demo"
+                  className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors"
                 >
-                  Schedule Call With Dan
+                  Schedule Demo
                 </Link>
               </div>
             </div>
@@ -65,14 +64,15 @@ export default function TimFrostPreSalesReportPage() {
             <h2 className="text-2xl font-bold text-black mb-6 border-b border-gray-200 pb-2">
               Executive Summary
             </h2>
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-3">Key Intelligence</h3>
-              <ul className="space-y-2 text-blue-800">
-                <li>• <strong>Target:</strong> Tim Frost, Chief Information Officer at North Carolina Industrial Commission</li>
-                <li>• <strong>Organization:</strong> State agency administering Workers' Compensation Act for North Carolina</li>
-                <li>• <strong>Primary Challenge:</strong> Managing sensitive workers' compensation data with strict compliance requirements</li>
-                <li>• <strong>Opportunity:</strong> Modernizing IT infrastructure for claims processing and stakeholder communication</li>
-                <li>• <strong>Strategic Approach:</strong> Focus on data security, process automation, and regulatory compliance</li>
+            <div className="bg-gray-50 border-l-4 border-gray-400 p-6 mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Intelligence</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• <strong>Target:</strong> Tim Frost, CIO at North Carolina Industrial Commission (appointed 2019)</li>
+                <li>• <strong>Background:</strong> 20+ years IT experience, NC State University graduate, leads NCIC technology strategy</li>
+                <li>• <strong>Organization:</strong> State agency processing tens of thousands of claims annually with specialized IT needs</li>
+                <li>• <strong>Current Focus:</strong> Legacy system modernization, data security, and operational efficiency improvements</li>
+                <li>• <strong>Technology Challenges:</strong> Safeguarding infrastructure, managing legacy systems, limited resources</li>
+                <li>• <strong>Strategic Opportunity:</strong> NCIC IT Section seeking software development, hardware upgrades, and staff training</li>
               </ul>
             </div>
           </section>
@@ -86,10 +86,12 @@ export default function TimFrostPreSalesReportPage() {
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Background</h3>
                 <ul className="space-y-3 text-gray-700">
-                  <li><strong>Current Role:</strong> Chief Information Officer</li>
+                  <li><strong>Current Role:</strong> Chief Information Officer (appointed 2019)</li>
                   <li><strong>Organization:</strong> North Carolina Industrial Commission</li>
-                  <li><strong>Responsibilities:</strong> IT strategy, data security, system modernization</li>
-                  <li><strong>Focus Areas:</strong> Digital transformation, compliance, operational efficiency</li>
+                  <li><strong>Education:</strong> Bachelor of Arts, North Carolina State University</li>
+                  <li><strong>Experience:</strong> 20+ years in information technology</li>
+                  <li><strong>Responsibilities:</strong> IT strategy, systems management, claims adjudication support</li>
+                  <li><strong>Focus Areas:</strong> Enterprise systems, data security, case management, cloud integration</li>
                 </ul>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg">
@@ -110,9 +112,9 @@ export default function TimFrostPreSalesReportPage() {
               North Carolina Industrial Commission Analysis
             </h2>
             <div className="space-y-8">
-              <div className="bg-green-50 border-l-4 border-green-400 p-6">
-                <h3 className="text-lg font-semibold text-green-900 mb-3">Mission & Core Functions</h3>
-                <ul className="space-y-2 text-green-800">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Mission & Core Functions</h3>
+                <ul className="space-y-2 text-gray-700">
                   <li>• Administer the Workers' Compensation Act for North Carolina</li>
                   <li>• Adjudicate workers' compensation claims and disputes</li>
                   <li>• Ensure compliance with state and federal regulations</li>
@@ -121,20 +123,21 @@ export default function TimFrostPreSalesReportPage() {
                 </ul>
               </div>
 
-              <div className="bg-orange-50 border-l-4 border-orange-400 p-6">
-                <h3 className="text-lg font-semibold text-orange-900 mb-3">Technology Challenges</h3>
-                <ul className="space-y-2 text-orange-800">
-                  <li>• <strong>Data Security:</strong> Managing highly sensitive personal and medical information</li>
-                  <li>• <strong>Legacy Systems:</strong> Potential need for system modernization and integration</li>
-                  <li>• <strong>Compliance:</strong> Adhering to strict state and federal data protection regulations</li>
-                  <li>• <strong>Process Efficiency:</strong> Streamlining claims processing and dispute resolution</li>
-                  <li>• <strong>Stakeholder Access:</strong> Providing secure access for multiple user types</li>
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Technology Challenges</h3>
+                <ul className="space-y-2 text-gray-700">
+                  <li>• <strong>Legacy System Management:</strong> Maintaining and upgrading onsite hardware and software</li>
+                  <li>• <strong>Security & Compliance:</strong> Safeguarding information and infrastructure against evolving threats</li>
+                  <li>• <strong>Resource Constraints:</strong> Limited IT resources typical of state agencies</li>
+                  <li>• <strong>Software Development:</strong> Developing custom solutions while maintaining operational demands</li>
+                  <li>• <strong>Staff Training:</strong> Providing technology training to support staff adoption</li>
+                  <li>• <strong>Information Management:</strong> Developing comprehensive data management strategy</li>
                 </ul>
               </div>
 
-              <div className="bg-purple-50 border-l-4 border-purple-400 p-6">
-                <h3 className="text-lg font-semibold text-purple-900 mb-3">Regulatory Environment</h3>
-                <ul className="space-y-2 text-purple-800">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Regulatory Environment</h3>
+                <ul className="space-y-2 text-gray-700">
                   <li>• <strong>HIPAA Compliance:</strong> Medical information protection requirements</li>
                   <li>• <strong>State Regulations:</strong> North Carolina specific data handling requirements</li>
                   <li>• <strong>Government Standards:</strong> State agency IT security and procurement standards</li>
@@ -150,9 +153,9 @@ export default function TimFrostPreSalesReportPage() {
               CloudCaddie Opportunity Analysis
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-blue-900 mb-4">High-Value Use Cases</h3>
-                <ul className="space-y-3 text-blue-800">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">High-Value Use Cases</h3>
+                <ul className="space-y-3 text-gray-700">
                   <li><strong>Claims Processing Automation:</strong> Streamline workflow and reduce manual errors</li>
                   <li><strong>Data Security Enhancement:</strong> Advanced encryption and access controls</li>
                   <li><strong>Compliance Monitoring:</strong> Automated compliance checking and reporting</li>
@@ -160,9 +163,9 @@ export default function TimFrostPreSalesReportPage() {
                   <li><strong>Analytics Dashboard:</strong> Real-time insights into claims trends and processing</li>
                 </ul>
               </div>
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-green-900 mb-4">Competitive Advantages</h3>
-                <ul className="space-y-3 text-green-800">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Competitive Advantages</h3>
+                <ul className="space-y-3 text-gray-700">
                   <li><strong>Government Experience:</strong> Proven track record with state agencies</li>
                   <li><strong>Security-First Design:</strong> Built-in compliance and security features</li>
                   <li><strong>Scalable Architecture:</strong> Handles varying claim volumes efficiently</li>
@@ -218,31 +221,31 @@ export default function TimFrostPreSalesReportPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                  <h4 className="font-semibold text-yellow-900 mb-2">Security & Compliance</h4>
-                  <p className="text-yellow-800 text-sm">"Our platform is designed with government-grade security and built-in compliance features to protect sensitive workers' compensation data while meeting all regulatory requirements."</p>
-                </div>
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                  <h4 className="font-semibold text-yellow-900 mb-2">Process Efficiency</h4>
-                  <p className="text-yellow-800 text-sm">"Automate routine claims processing tasks to reduce manual workload by up to 60% while improving accuracy and reducing processing time."</p>
-                </div>
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                  <h4 className="font-semibold text-yellow-900 mb-2">Cost Savings</h4>
-                  <p className="text-yellow-800 text-sm">"Demonstrate measurable ROI through reduced operational costs, improved efficiency, and decreased error rates in claims processing."</p>
-                </div>
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                <h4 className="font-semibold text-gray-900 mb-2">Security & Compliance</h4>
+                <p className="text-gray-700 text-sm">"Our platform is designed with government-grade security and built-in compliance features to protect sensitive workers' compensation data while meeting all regulatory requirements."</p>
+              </div>
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                <h4 className="font-semibold text-gray-900 mb-2">Process Efficiency</h4>
+                <p className="text-gray-700 text-sm">"Automate routine claims processing tasks to reduce manual workload by up to 60% while improving accuracy and reducing processing time."</p>
+              </div>
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                <h4 className="font-semibold text-gray-900 mb-2">Cost Savings</h4>
+                <p className="text-gray-700 text-sm">"Demonstrate measurable ROI through reduced operational costs, improved efficiency, and decreased error rates in claims processing."</p>
+              </div>
               </div>
               <div className="space-y-6">
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">Stakeholder Experience</h4>
-                  <p className="text-blue-800 text-sm">"Provide intuitive self-service portals for employers and employees while maintaining security and compliance standards."</p>
+                <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Stakeholder Experience</h4>
+                  <p className="text-gray-700 text-sm">"Provide intuitive self-service portals for employers and employees while maintaining security and compliance standards."</p>
                 </div>
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">Scalability</h4>
-                  <p className="text-blue-800 text-sm">"Cloud-based architecture that scales with your needs, handling peak claim volumes without performance degradation."</p>
+                <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Scalability</h4>
+                  <p className="text-gray-700 text-sm">"Cloud-based architecture that scales with your needs, handling peak claim volumes without performance degradation."</p>
                 </div>
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">Integration</h4>
-                  <p className="text-blue-800 text-sm">"Seamless integration with existing systems and databases, minimizing disruption to current operations."</p>
+                <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Integration</h4>
+                  <p className="text-gray-700 text-sm">"Seamless integration with existing systems and databases, minimizing disruption to current operations."</p>
                 </div>
               </div>
             </div>
@@ -254,18 +257,18 @@ export default function TimFrostPreSalesReportPage() {
               Risk Assessment & Mitigation
             </h2>
             <div className="space-y-6">
-              <div className="bg-red-50 border-l-4 border-red-400 p-6">
-                <h3 className="text-lg font-semibold text-red-900 mb-3">Potential Risks</h3>
-                <ul className="space-y-2 text-red-800">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Potential Risks</h3>
+                <ul className="space-y-2 text-gray-700">
                   <li>• <strong>Government Procurement Process:</strong> Complex bidding and approval requirements</li>
                   <li>• <strong>Budget Constraints:</strong> Limited IT budget for new initiatives</li>
                   <li>• <strong>Change Management:</strong> Resistance to new technology adoption</li>
                   <li>• <strong>Compliance Concerns:</strong> Strict regulatory requirements for data handling</li>
                 </ul>
               </div>
-              <div className="bg-green-50 border-l-4 border-green-400 p-6">
-                <h3 className="text-lg font-semibold text-green-900 mb-3">Mitigation Strategies</h3>
-                <ul className="space-y-2 text-green-800">
+              <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Mitigation Strategies</h3>
+                <ul className="space-y-2 text-gray-700">
                   <li>• <strong>Pilot Program:</strong> Start with small-scale implementation to demonstrate value</li>
                   <li>• <strong>ROI Documentation:</strong> Provide detailed cost-benefit analysis and success metrics</li>
                   <li>• <strong>Training & Support:</strong> Comprehensive change management and user training</li>
@@ -335,8 +338,8 @@ export default function TimFrostPreSalesReportPage() {
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">CloudCaddie Resources</h3>
                 <ul className="space-y-2 text-gray-700">
-                  <li><strong>Sales Contact:</strong> Dan Adrata</li>
-                  <li><strong>Calendar:</strong> <a href="https://calendly.com/dan-adrata/biz-dev-call" className="text-blue-600 hover:underline">Schedule Meeting</a></li>
+                  <li><strong>Sales Contact:</strong> Justin Johnson</li>
+                  <li><strong>Calendar:</strong> <a href="https://calendly.com/justin-johnson/cloudcaddie-demo" className="text-blue-600 hover:underline">Schedule Demo</a></li>
                   <li><strong>Platform:</strong> <a href="/platform" className="text-blue-600 hover:underline">CloudCaddie Platform</a></li>
                   <li><strong>Report Generated:</strong> {new Date().toLocaleDateString()}</li>
                 </ul>
