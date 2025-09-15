@@ -193,7 +193,6 @@ export default function AthenahealthBusinessCasePage() {
                 <div>
                   <h4 className="text-lg font-semibold text-black mb-3">Data Sources & Collection</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
-                    <li>• <strong>CoreSignal API:</strong> Real-time employee data and organizational structure</li>
                     <li>• <strong>LinkedIn Intelligence:</strong> Professional profiles and career progression</li>
                     <li>• <strong>Company Research:</strong> Public filings, press releases, and industry reports</li>
                     <li>• <strong>Competitive Analysis:</strong> Market positioning and strategic initiatives</li>
