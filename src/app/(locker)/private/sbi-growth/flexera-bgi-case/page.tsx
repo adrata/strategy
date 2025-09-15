@@ -121,7 +121,7 @@ export default function FlexeraBusinessCasePage() {
                 <div className="text-sm text-gray-600">Decision Makers</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">3</div>
+                <div className="text-3xl font-bold text-black">4</div>
                 <div className="text-sm text-gray-600">Champions</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -158,13 +158,14 @@ export default function FlexeraBusinessCasePage() {
               <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
                 <div>
                   <p><strong>CEO:</strong> Jim Ryan</p>
-                  <p><strong>CFO:</strong> Chris Andersen</p>
+                  <p><strong>CFO:</strong> Josh Fraser</p>
                   <p><strong>President:</strong> Mike Jerich</p>
                   <p><strong>Chief Growth Officer:</strong> Eric Free</p>
                 </div>
                 <div>
-                  <p><strong>VP Global Sales:</strong> Jason Lawton</p>
-                  <p><strong>VP Engineering:</strong> Ravi Mazumdar</p>
+                  <p><strong>VP Global Sales:</strong> Shinie Shaw</p>
+                  <p><strong>VP Marketing:</strong> Michael Beaver</p>
+                  <p><strong>VP Operations:</strong> Chris Anderson</p>
                   <p><strong>SVP Customer Experience:</strong> Barbara Boyer</p>
                   <p><strong>Chief People Officer:</strong> EL Lages</p>
                 </div>
@@ -206,7 +207,7 @@ export default function FlexeraBusinessCasePage() {
                   </div>
 
                   <div className="border-l-4 border-gray-600 pl-4">
-                    <h5 className="font-semibold text-black text-lg">Chris Andersen (CFO)</h5>
+                    <h5 className="font-semibold text-black text-lg">Josh Fraser (CFO)</h5>
                     <p className="text-sm text-gray-600 mb-3">Financial gatekeeper and ROI validator</p>
                     <div className="text-sm text-gray-700 space-y-2">
                       <p><strong>Pain Points:</strong> Pressure to optimize operational costs while funding growth initiatives. ITAM market commoditization is squeezing margins.</p>
@@ -220,7 +221,7 @@ export default function FlexeraBusinessCasePage() {
 
               {/* Champions */}
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Champions (3)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Champions (4)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-gray-500 pl-4">
@@ -234,12 +235,22 @@ export default function FlexeraBusinessCasePage() {
                   </div>
 
                   <div className="border-l-4 border-gray-500 pl-4">
-                    <h5 className="font-semibold text-black">Jason Lawton (VP Global Sales)</h5>
+                    <h5 className="font-semibold text-black">Shinie Shaw (VP Global Sales)</h5>
                     <p className="text-sm text-gray-600 mb-2">Sales process champion and revenue impact advocate</p>
                     <div className="text-xs text-gray-500">
                       <p><strong>Champion Potential:</strong> High - Directly impacted by go-to-market improvements</p>
                       <p><strong>Key Motivations:</strong> Sales efficiency, deal velocity, revenue growth, competitive positioning</p>
                       <p><strong>Engagement Strategy:</strong> Sales process optimization, competitive analysis, revenue impact metrics</p>
+                    </div>
+                  </div>
+
+                  <div className="border-l-4 border-gray-500 pl-4">
+                    <h5 className="font-semibold text-black">Michael Beaver (VP Marketing)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Marketing strategy champion and brand positioning advocate</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> High - Directly responsible for market positioning and growth initiatives</p>
+                      <p><strong>Key Motivations:</strong> Brand differentiation, market share growth, lead generation, competitive advantage</p>
+                      <p><strong>Engagement Strategy:</strong> Market analysis, competitive positioning, brand strategy, growth acceleration</p>
                     </div>
                   </div>
 
@@ -257,14 +268,9 @@ export default function FlexeraBusinessCasePage() {
 
               {/* Stakeholders */}
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (3)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (2)</h4>
                 
                 <div className="space-y-3">
-                  <div className="border-l-4 border-gray-400 pl-4">
-                    <h5 className="font-semibold text-black">Ravi Mazumdar (VP Engineering)</h5>
-                    <p className="text-sm text-gray-600">Technical feasibility and implementation oversight</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Technical validation required for any strategic technology initiatives</p>
-                  </div>
 
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Mike Jerich (President)</h5>
@@ -285,6 +291,16 @@ export default function FlexeraBusinessCasePage() {
                 <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (2)</h4>
                 
                 <div className="space-y-4">
+                  <div className="border-l-4 border-red-500 pl-4">
+                    <h5 className="font-semibold text-black">Chris Anderson (VP Operations)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Operational efficiency gatekeeper and change resistance advocate</p>
+                    <div className="text-sm text-gray-700">
+                      <p><strong>Blocking Potential:</strong> High - Can block initiatives that disrupt current operations or require significant change</p>
+                      <p><strong>Blocking Tactics:</strong> Operational risk concerns, implementation complexity, resource allocation challenges</p>
+                      <p><strong>Neutralization Strategy:</strong> Phased implementation approach, operational impact mitigation, change management support</p>
+                    </div>
+                  </div>
+
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Procurement & Legal Team</h5>
                     <p className="text-sm text-gray-600 mb-2">Vendor evaluation and contract negotiation gatekeepers</p>
@@ -328,7 +344,7 @@ export default function FlexeraBusinessCasePage() {
                     <p className="text-sm text-gray-700 mb-3"><strong>Primary C-Suite Targets:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Jim Ryan (CEO) - Final approval for strategic initiatives</li>
-                      <li>• Chris Andersen (CFO) - Budget authority for premium consulting</li>
+                      <li>• Josh Fraser (CFO) - Budget authority for premium consulting</li>
                       <li>• Eric Free (Chief Growth Officer) - Strategic growth investments</li>
                       <li>• Mike Jerich (President) - Operational strategy oversight</li>
                     </ul>
@@ -351,7 +367,6 @@ export default function FlexeraBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Technical Stakeholders:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Ravi Mazumdar (VP Engineering)</li>
                       <li>• Engineering teams</li>
                       <li>• IT operations</li>
                     </ul>
@@ -373,7 +388,8 @@ export default function FlexeraBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Internal Champions:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Jason Lawton (VP Global Sales)</li>
+                      <li>• Shinie Shaw (VP Global Sales)</li>
+                      <li>• Michael Beaver (VP Marketing)</li>
                       <li>• Barbara Boyer (SVP Customer Experience)</li>
                       <li>• EL Lages (Chief People Officer)</li>
                     </ul>
