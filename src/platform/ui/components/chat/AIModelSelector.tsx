@@ -15,22 +15,22 @@ export const AI_MODELS: AIModel[] = [
     id: "claude-3-5-sonnet",
     name: "Claude 3.5 Sonnet",
     displayName: "Claude 3.5 Sonnet",
-    version: "Latest Claude - Best Overall",
+    version: "Best Overall Performance",
     provider: "Anthropic"
+  },
+  {
+    id: "perplexity-research",
+    name: "Perplexity Research",
+    displayName: "Perplexity Research",
+    version: "Real-time Web Research",
+    provider: "Perplexity"
   },
   {
     id: "adrata-enhanced",
     name: "Adrata Enhanced",
     displayName: "Adrata Enhanced",
-    version: "Context-Aware + Web Research",
+    version: "Context-Aware Intelligence",
     provider: "Adrata"
-  },
-  {
-    id: "gpt-4o",
-    name: "GPT-4o",
-    displayName: "GPT-4o",
-    version: "Fast & Multimodal",
-    provider: "OpenAI"
   },
   {
     id: "adrata-powerhouse",

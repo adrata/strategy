@@ -1124,10 +1124,11 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-0 overflow-y-auto" style={{ 
+        <div className="flex-1 px-6 py-0 overflow-y-auto max-h-full" style={{ 
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
+          scrollBehavior: 'smooth'
         }}>
           
           {chatMessages['length'] === 0 && (

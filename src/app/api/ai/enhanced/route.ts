@@ -92,17 +92,17 @@ export async function GET(request: NextRequest) {
     message: 'Enhanced AI API - Use POST to send requests',
     capabilities: [
       'Claude 3.5 Sonnet - Best overall performance',
-      'GPT-4o - Fast and multimodal',
+      'Perplexity Research - Real-time web access',
       'Context-aware responses',
       'Web research integration',
       'Intelligent model selection',
       'Response caching',
-      'Cost optimization'
+      'Cost optimization',
+      'No emoji responses'
     ],
     models: [
       'claude-3-5-sonnet-20241022',
-      'gpt-4o',
-      'gpt-4o-search-preview'
+      'llama-3.1-sonar-large-128k-online'
     ],
     endpoints: {
       'POST /api/ai/enhanced': 'Main AI processing endpoint'
