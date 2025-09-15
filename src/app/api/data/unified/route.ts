@@ -2098,10 +2098,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         orderBy: [{ updatedAt: 'desc' }],
         take: 50
       }).catch(() => []), // Fallback to empty array if partners table has issues
-      // Load speedrun data from person table (same as dedicated speedrun endpoint)
-      prisma.person.findMany({
+      // Load speedrun data from people table (same as dedicated speedrun endpoint)
+      prisma.people.findMany({
         where: {
-          isActive: true
+          workspaceId,
+          deletedAt: null,
+          status: 'active'
         },
         select: {
           id: true,
@@ -2110,8 +2112,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           lastName: true,
           email: true,
           phone: true,
-          title: true,
-          location: true,
+          jobTitle: true,
+          city: true,
           createdAt: true,
           updatedAt: true
         },
@@ -2129,9 +2131,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           lastName: person.lastName,
           email: person.email,
           phone: person.phone,
-          title: person.title,
-          company: 'Unknown Company', // Person table doesn't have company
-          location: person.location,
+          title: person.jobTitle,
+          company: 'Unknown Company', // People table doesn't have company
+          location: person.city,
           status: 'active',
           priority: 'medium',
           source: 'person-table',
@@ -2338,10 +2340,12 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
   try {
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // Load first 50 people from person table for speedrun
-    const people = await prisma.person.findMany({
+    // Load first 50 people from people table for speedrun (with workspace isolation)
+    const people = await prisma.people.findMany({
       where: {
-        isActive: true
+        workspaceId,
+        deletedAt: null,
+        status: 'active'
       },
       select: {
         id: true,
@@ -2350,8 +2354,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         lastName: true,
         email: true,
         phone: true,
-        title: true,
-        location: true,
+        jobTitle: true,
+        city: true,
         createdAt: true,
         updatedAt: true
       },
@@ -2367,29 +2371,30 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     // Transform people data to speedrun format
     const speedrunItems = sortedPeople.map((person, index) => ({
       id: person.id,
-      name: person.fullName,
-      fullName: person.fullName,
-      firstName: person.firstName,
-      lastName: person.lastName,
+      // CRITICAL FIX: Ensure clean person names are used
+      name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown Person',
+      fullName: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown Person',
+      firstName: person.firstName || 'Unknown',
+      lastName: person.lastName || 'Person',
       email: person.email,
       phone: person.phone,
-      title: person.title,
-      company: 'Unknown Company', // Person table doesn't have company
-      location: person.location,
-      status: 'active',
-      priority: 'medium',
+      title: person.jobTitle || 'Unknown Title',
+      company: 'Unknown Company', // People table doesn't have company
+      location: person.city,
+      status: 'new', // Start as new for speedrun
+      priority: 'high', // High priority for speedrun items
       source: 'person-table',
       createdAt: person.createdAt,
       updatedAt: person.updatedAt,
       // Add ranking for speedrun - 1:1 with person order
       rank: index + 1,
-      // Add default action fields
+      // Add default action fields - these will be used by the UI
       lastAction: 'Initial Contact',
       lastActionDate: person.createdAt,
       nextAction: 'Follow Up',
       nextActionDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
       buyerGroupRole: 'unknown',
-      currentStage: 'initial'
+      currentStage: 'prospecting' // Use proper stage name
     }));
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items`);

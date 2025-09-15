@@ -537,7 +537,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
         'clients': ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'],
         'partners': ['rank', 'partner', 'type', 'relationship', 'strength', 'lastAction', 'actions'],
         'sellers': ['rank', 'company', 'name', 'title', 'lastAction', 'actions'],
-        'speedrun': ['rank', 'company', 'state', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+        'speedrun': ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
       };
       
       const sectionOrder = sectionConfig.columnOrder || defaultLogicalOrder[section] || ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions'];
@@ -1550,7 +1550,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
         });
         
         // Define logical column order for speedrun to match the headers and visible columns
-        const speedrunLogicalOrder = ['rank', 'company', 'person', 'title', 'role', 'stage', 'lastAction', 'nextAction', 'actions'];
+        const speedrunLogicalOrder = ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
         const speedrunVisibleColumns = speedrunLogicalOrder.filter(col => visibleColumns?.includes(col));
         
         return (
@@ -1569,28 +1569,10 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                 <div className="text-center font-medium">{record.rank || (index + 1)}</div>
               </td>
                       );
-                    case 'company':
-                      return (
-                        <td key="company" className={textClasses}>
-                <div className="truncate max-w-32">{record['company'] || record['companyName'] || '-'}</div>
-              </td>
-                      );
                     case 'person':
                       return (
                         <td key="person" className={nameClasses}>
                 <div className="truncate max-w-32">{displayName}</div>
-              </td>
-                      );
-                    case 'title':
-                      return (
-                        <td key="title" className={textClasses}>
-                <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || '-'}</div>
-              </td>
-                      );
-                    case 'role':
-                      return (
-                        <td key="role" className={textClasses}>
-                <div className="truncate max-w-32">{record['buyerGroupRole'] || record['role'] || '-'}</div>
               </td>
                       );
                     case 'stage':
@@ -1619,19 +1601,19 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                           switch (status) {
                             case 'new':
                             case 'uncontacted':
-                              return 'Prospecting';
+                              return 'Prospect';
                             case 'contacted':
-                              return 'Contacted';
                             case 'qualified':
-                              return 'Qualified';
+                              return 'Lead';
                             case 'demo-scheduled':
-                              return 'Demo';
                             case 'follow-up':
-                              return 'Follow-up';
                             case 'active':
-                              return 'Active';
+                              return 'Opportunity';
+                            case 'closed-won':
+                            case 'customer':
+                              return 'Customer';
                             default:
-                              return 'Prospecting';
+                              return 'Prospect';
                           }
                         }
                       }
@@ -1642,28 +1624,12 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                       }
                       
                       // Fallback to status or default
-                      return record.status || 'Prospecting';
+                      return record.status || 'Prospect';
                     };
                     
                     return getCleanStage();
                   })()}
                 </div>
-              </td>
-                      );
-                    case 'status':
-                      return (
-                        <td key="status" className={commonClasses}>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getSpeedrunStatusColor((record as any).type || (record as any).source || 'lead')}`}>
-                            {(() => {
-                              // Use actual record type/source for accurate status labels
-                              const type = (record as any).type || (record as any).source || 'lead';
-                              if (type === 'lead' || type === 'leads') return 'Lead';
-                              if (type === 'prospect' || type === 'prospects') return 'Prospect';
-                              if (type === 'opportunity' || type === 'opportunities') return 'Opportunity';
-                              if (type === 'customer' || type === 'customers') return 'Customer';
-                              return type.charAt(0).toUpperCase() + type.slice(1);
-                            })()}
-                </span>
               </td>
                       );
                     case 'lastAction':
@@ -1688,7 +1654,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                               );
                             })()}
                           </div>
-              </td>
+                        </td>
                       );
                     case 'nextAction':
                       return (
@@ -1707,26 +1673,26 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                                 </>
                               );
                             })()}
-                </div>
-              </td>
+                          </div>
+                        </td>
                       );
                     case 'actions':
                       return (
                         <td key="actions" className="px-2 py-4 whitespace-nowrap w-10 text-center">
-                <div className="flex justify-center">
-                  <ActionMenu
-                    record={record}
-                    recordType="speedrun"
-                    onEdit={handleEdit}
-                    onDelete={(record) => console.log('Delete:', record)}
-                    onCall={(record) => console.log('Call:', record)}
-                    onQuickAction={(record, action) => console.log('Quick action:', action, record)}
-                    onMarkComplete={handleMarkComplete}
+                          <div className="flex justify-center">
+                            <ActionMenu
+                              record={record}
+                              recordType="speedrun"
+                              onEdit={handleEdit}
+                              onDelete={(record) => console.log('Delete:', record)}
+                              onCall={(record) => console.log('Call:', record)}
+                              onQuickAction={(record, action) => console.log('Quick action:', action, record)}
+                              onMarkComplete={handleMarkComplete}
                               onAddAction={handleAddAction}
-                    className="z-10"
-                  />
-                </div>
-              </td>
+                              className="z-10"
+                            />
+                          </div>
+                        </td>
                       );
                     default:
                       return null;

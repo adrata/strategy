@@ -106,7 +106,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Fallback to default configuration
     switch (section) {
       case 'speedrun':
-        return ['rank', 'company', 'state', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
+        return ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
       case 'companies':
         return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
       case 'leads':
