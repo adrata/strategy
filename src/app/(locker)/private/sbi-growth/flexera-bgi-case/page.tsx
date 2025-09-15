@@ -181,18 +181,13 @@ export default function FlexeraBusinessCasePage() {
             <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Strategic Context</h3>
               <p className="text-gray-700 mb-4">
-                Flexera operates in the complex IT Asset Management (ITAM) market, where software licensing costs can consume 15-30% of IT budgets. 
-                Their buyer group is sophisticated, with deep technical knowledge and high stakes for vendor selection decisions. The company's 
-                strategic positioning requires nuanced understanding of both technical implementation and business transformation capabilities.
-              </p>
-              <p className="text-gray-700 mb-4">
-                <strong>Critical Market Intelligence:</strong> Flexera's growth trajectory is constrained by market saturation in traditional ITAM, 
-                creating an urgent need for strategic guidance to expand into adjacent markets (cloud governance, SaaS management) and optimize 
-                their go-to-market approach for enterprise sales. This presents a compelling opportunity for SBI Growth's premium consulting services.
+                Flexera operates in the complex IT Asset Management (ITAM) market, where software licensing costs consume 15-30% of IT budgets. 
+                Their growth is constrained by market saturation in traditional ITAM, creating urgent need for strategic guidance to expand into 
+                adjacent markets (cloud governance, SaaS management) and optimize their go-to-market approach.
               </p>
               <p className="text-gray-700">
-                <strong>Competitive Landscape Analysis:</strong> The ITAM market is experiencing consolidation and commoditization pressure, 
-                making strategic differentiation and operational excellence critical for sustained growth and market leadership.
+                <strong>Opportunity:</strong> Market consolidation and commoditization pressure make strategic differentiation critical for sustained growth, 
+                presenting a compelling opportunity for SBI Growth's premium consulting services.
               </p>
             </div>
 
@@ -206,9 +201,9 @@ export default function FlexeraBusinessCasePage() {
                     <h5 className="font-semibold text-black text-lg">Jim Ryan (CEO)</h5>
                     <p className="text-sm text-gray-600 mb-3">Ultimate decision authority for strategic initiatives</p>
                     <div className="text-sm text-gray-700 space-y-2">
-                      <p><strong>Pain Points:</strong> Flexera's growth has plateaued in core ITAM market. Needs to identify and execute expansion strategies into cloud governance and SaaS management.</p>
-                      <p><strong>Strategic Priorities:</strong> Market expansion, competitive differentiation, revenue diversification beyond traditional software licensing.</p>
-                      <p><strong>Engagement Approach:</strong> Board-level strategic presentation focusing on market opportunity analysis, competitive positioning, and growth acceleration strategies.</p>
+                      <p><strong>Pain Points:</strong> Growth plateaued in core ITAM market. Needs expansion into cloud governance and SaaS management.</p>
+                      <p><strong>Strategic Priorities:</strong> Market expansion, competitive differentiation, revenue diversification.</p>
+                      <p><strong>Engagement Approach:</strong> Board-level strategic presentation on market opportunity analysis and growth acceleration.</p>
                       <p><strong>Decision Criteria:</strong> Strategic fit, market opportunity size, competitive advantage, execution feasibility.</p>
                     </div>
                   </div>
@@ -217,9 +212,9 @@ export default function FlexeraBusinessCasePage() {
                     <h5 className="font-semibold text-black text-lg">Josh Fraser (CFO)</h5>
                     <p className="text-sm text-gray-600 mb-3">Financial gatekeeper and ROI validator</p>
                     <div className="text-sm text-gray-700 space-y-2">
-                      <p><strong>Pain Points:</strong> Pressure to optimize operational costs while funding growth initiatives. ITAM market commoditization is squeezing margins.</p>
-                      <p><strong>Strategic Priorities:</strong> Cost optimization, margin improvement, predictable revenue growth, operational efficiency.</p>
-                      <p><strong>Engagement Approach:</strong> Detailed financial modeling, ROI projections, cost-benefit analysis, and operational efficiency metrics.</p>
+                      <p><strong>Pain Points:</strong> Pressure to optimize costs while funding growth. ITAM commoditization squeezing margins.</p>
+                      <p><strong>Strategic Priorities:</strong> Cost optimization, margin improvement, predictable revenue growth.</p>
+                      <p><strong>Engagement Approach:</strong> Detailed financial modeling, ROI projections, cost-benefit analysis.</p>
                       <p><strong>Decision Criteria:</strong> Clear ROI, cost reduction potential, revenue impact, financial risk assessment.</p>
                     </div>
                   </div>
@@ -235,10 +230,10 @@ export default function FlexeraBusinessCasePage() {
                     <h5 className="font-semibold text-black">Cathleen Neibch (Sr Manager Rev Ops)</h5>
                     <p className="text-sm text-gray-600 mb-2">Primary champion with 7 years tenure and direct RevOps alignment</p>
                     <div className="text-xs text-gray-500">
-                      <p><strong>Champion Potential:</strong> Very High - Perfect role alignment with SBI's RevOps GTM consulting focus, with 7 years of institutional knowledge and direct operational responsibility</p>
-                      <p><strong>Key Motivations:</strong> RevOps optimization, GTM efficiency, process improvement, strategic growth acceleration, and operational excellence</p>
-                      <p><strong>Engagement Strategy:</strong> Direct RevOps consulting value proposition, GTM process optimization, strategic growth alignment, and technology-enabled implementation</p>
-                      <p><strong>Strategic Advantage:</strong> Most senior RevOps person on staff, close to the problem with high clout and tenure, positioned to influence C-Suite decisions</p>
+                      <p><strong>Champion Potential:</strong> Very High - Perfect role alignment with SBI's RevOps GTM consulting focus, 7 years tenure</p>
+                      <p><strong>Key Motivations:</strong> RevOps optimization, GTM efficiency, process improvement, strategic growth acceleration</p>
+                      <p><strong>Engagement Strategy:</strong> Direct RevOps consulting value proposition, GTM process optimization</p>
+                      <p><strong>Strategic Advantage:</strong> Most senior RevOps person on staff, positioned to influence C-Suite decisions</p>
                       <p><strong>Risk Assessment:</strong> Assess internal ability to drive deal on intro call. If not a driver, leverage for intros to other champions</p>
                     </div>
                   </div>
@@ -319,10 +314,10 @@ export default function FlexeraBusinessCasePage() {
                     <h5 className="font-semibold text-black">Jill DelGrosso (McNamara) (VP GTM Readiness & Programs)</h5>
                     <p className="text-sm text-gray-600 mb-2">Primary blocker with threat perception and territorial concerns</p>
                     <div className="text-sm text-gray-700">
-                      <p><strong>Blocking Potential:</strong> Very High - Only 10 months tenure, likely perceives outside consultants as existential threat to her hiring mandate and professional validation</p>
-                      <p><strong>Blocking Tactics:</strong> "We can do this ourselves, this is why I was hired" - internal capability claims, territorial protection, and resistance to external validation</p>
-                      <p><strong>Neutralization Strategy:</strong> Position SBI as complementary to her role, emphasize partnership over replacement, highlight her success metrics through external expertise, and address tenure insecurity with collaborative approach</p>
-                      <p><strong>Risk Assessment:</strong> High risk due to short tenure, potential insecurity about external consulting validation, and territorial protection of her strategic mandate</p>
+                      <p><strong>Blocking Potential:</strong> Very High - Only 10 months tenure, perceives outside consultants as threat to her mandate</p>
+                      <p><strong>Blocking Tactics:</strong> "We can do this ourselves, this is why I was hired" - internal capability claims, territorial protection</p>
+                      <p><strong>Neutralization Strategy:</strong> Position SBI as complementary, emphasize partnership over replacement, address tenure insecurity</p>
+                      <p><strong>Risk Assessment:</strong> High risk due to short tenure and territorial protection of strategic mandate</p>
                     </div>
                   </div>
 
@@ -368,12 +363,12 @@ export default function FlexeraBusinessCasePage() {
               <h3 className="text-xl font-semibold text-black mb-4">Primary Strategic Opener</h3>
               <p className="text-gray-700 mb-4">
                 The optimal entry point leverages the existing relationship between SBI Growth and Thoma Bravo, Flexera's primary investor, 
-                providing the highest probability of successful buyer group access and deal acceleration. This approach bypasses traditional 
+                providing the highest probability of successful buyer group access and deal acceleration. This bypasses traditional 
                 vendor evaluation processes and provides immediate institutional credibility.
               </p>
               <p className="text-gray-700">
                 <strong>Strategic Rationale:</strong> Investor-backed introductions carry significantly higher weight in enterprise sales, 
-                particularly for premium consulting services where strategic alignment and institutional trust are paramount to deal success.
+                particularly for premium consulting services where strategic alignment and institutional trust are paramount.
               </p>
             </div>
 
@@ -431,7 +426,7 @@ export default function FlexeraBusinessCasePage() {
             
             <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">CRO/CFO Level Approach</h3>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700">
                 Given SBI Growth's focus on CRO/CFO level engagement, the strategy centers on demonstrating clear ROI and strategic value to Flexera's growth objectives.
               </p>
             </div>
