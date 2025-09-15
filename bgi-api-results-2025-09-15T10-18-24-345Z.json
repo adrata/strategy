@@ -1,0 +1,14 @@
+[
+  {
+    "company": "Flexera",
+    "seller": "SBI Growth",
+    "error": "request to http://localhost:3000/api/intelligence/buyer-group-bulk failed, reason: ",
+    "success": false
+  },
+  {
+    "company": "athenahealth",
+    "seller": "Absorb",
+    "error": "request to http://localhost:3000/api/intelligence/buyer-group-bulk failed, reason: ",
+    "success": false
+  }
+]

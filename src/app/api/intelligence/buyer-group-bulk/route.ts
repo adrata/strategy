@@ -215,10 +215,24 @@ async function getRealPeopleFromCoreSignal(companyName: string): Promise<any[]> 
         if (collectResponse.ok) {
           const profile = await collectResponse.json();
           
+          // Extract current title from experience data
+          let currentTitle = 'Unknown Title';
+          if (profile.experience && Array.isArray(profile.experience)) {
+            const currentExperience = profile.experience.find(exp => exp.active_experience === 1);
+            if (currentExperience && currentExperience.position_title) {
+              currentTitle = currentExperience.position_title;
+            }
+          }
+          
+          // Fallback to other title fields if experience doesn't have it
+          if (currentTitle === 'Unknown Title') {
+            currentTitle = profile.member_position_title || profile.current_position_title || profile.member_headline || 'Unknown Title';
+          }
+
           detailedProfiles.push({
             id: employeeId,
             name: profile.full_name || profile.member_full_name || 'Unknown',
-            title: profile.member_position_title || profile.current_position_title || profile.member_headline || 'Unknown Title',
+            title: currentTitle,
             company: companyName,
             email: profile.primary_professional_email || null,
             phone: profile.primary_phone_number || null,
@@ -320,7 +334,8 @@ function assignRealisticRoles(people: any[]): any[] {
 
     peopleWithRoles.push({
       ...person,
-      buyerGroupRole: role,
+      role: role,
+      buyerGroupRole: role, // Keep both for compatibility
       confidence: Math.floor(Math.random() * 30) + 70 // 70-100% confidence
     });
   }
