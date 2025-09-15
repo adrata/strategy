@@ -12,25 +12,32 @@ export type AIModel = {
 
 export const AI_MODELS: AIModel[] = [
   {
-    id: "adrata-advanced",
-    name: "Adrata Advanced",
-    displayName: "Adrata Advanced",
-    version: "Enhanced Reasoning",
+    id: "claude-3-5-sonnet",
+    name: "Claude 3.5 Sonnet",
+    displayName: "Claude 3.5 Sonnet",
+    version: "Latest Claude - Best Overall",
+    provider: "Anthropic"
+  },
+  {
+    id: "adrata-enhanced",
+    name: "Adrata Enhanced",
+    displayName: "Adrata Enhanced",
+    version: "Context-Aware + Web Research",
     provider: "Adrata"
+  },
+  {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    displayName: "GPT-4o",
+    version: "Fast & Multimodal",
+    provider: "OpenAI"
   },
   {
     id: "adrata-powerhouse",
     name: "Adrata Powerhouse",
     displayName: "Adrata Powerhouse",
-    version: "Most Advanced",
+    version: "Multi-Model Intelligence",
     provider: "Adrata"
-  },
-  {
-    id: "claude-3-5-sonnet",
-    name: "Claude 3.5 Sonnet",
-    displayName: "Claude 3.5 Sonnet",
-    version: "Latest Claude - Best AI",
-    provider: "Anthropic"
   }
 ];
 

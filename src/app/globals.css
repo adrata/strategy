@@ -674,21 +674,53 @@ button[class*="linkedin"]:hover:not(.no-override) {
 
 /* Custom scrollbar styling for pipeline table */
 .pipeline-table-scroll::-webkit-scrollbar:horizontal {
-  height: 8px; /* Thinner horizontal scroll bar */
+  height: 4px; /* Much thinner horizontal scroll bar */
 }
 
 .pipeline-table-scroll::-webkit-scrollbar-track:horizontal {
-  background: #f1f5f9;
-  border-radius: 6px;
+  background: #f8fafc;
+  border-radius: 2px;
 }
 
 .pipeline-table-scroll::-webkit-scrollbar-thumb:horizontal {
-  background: #cbd5e1;
-  border-radius: 6px;
+  background: #e2e8f0;
+  border-radius: 2px;
 }
 
 .pipeline-table-scroll::-webkit-scrollbar-thumb:hover:horizontal {
-  background: #94a3b8;
+  background: #cbd5e1;
+}
+
+/* Global horizontal scrollbar styling - thin and light */
+::-webkit-scrollbar:horizontal {
+  height: 4px; /* Thin horizontal scroll bar */
+}
+
+::-webkit-scrollbar-track:horizontal {
+  background: #f8fafc;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover:horizontal {
+  background: #cbd5e1;
+}
+
+/* Dark theme horizontal scrollbar styling */
+[data-theme="dark"] ::-webkit-scrollbar-track:horizontal {
+  background: #1e293b;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:horizontal {
+  background: #475569;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover:horizontal {
+  background: #64748b;
 }
 
 /* Hide scrollbar while maintaining scroll functionality */

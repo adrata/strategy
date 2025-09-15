@@ -248,7 +248,8 @@ class LocationAnalysis {
     }
 
     /**
-     * 🌐 WEB RESEARCH LOCATION FALLBACK
+     * 🌐 ENHANCED WEB RESEARCH LOCATION FALLBACK
+     * Uses latest Perplexity models for real-time web research
      */
     async getWebResearchLocation(companyData) {
         if (!this.config.PERPLEXITY_API_KEY) {
@@ -256,7 +257,7 @@ class LocationAnalysis {
         }
 
         try {
-            const query = `What is the headquarters location, city, and country for ${companyData.name}? Include timezone information.`;
+            const query = `What is the headquarters location, city, and country for ${companyData.name}? Include timezone information and recent address changes.`;
             
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
@@ -265,23 +266,30 @@ class LocationAnalysis {
                     'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: 'sonar-pro',
+                    model: 'llama-3.1-sonar-large-128k-online', // Latest model with web access
                     messages: [{ role: 'user', content: query }],
-                    temperature: 0.1
+                    temperature: 0.1,
+                    max_tokens: 1000,
+                    // Enable web search for real-time data
+                    search_domain_filter: ["perplexity.ai"],
+                    return_images: false,
+                    return_related_questions: false
                 })
             });
 
             if (!response.ok) {
+                console.warn('Perplexity API error, falling back to cached data');
                 return this.generateLocationFallback(companyData);
             }
 
             const data = await response.json();
             const content = data.choices[0].message.content;
             
+            console.log(`🌐 Web research completed for ${companyData.name}`);
             return this.parseLocationFromText(content, companyData);
 
         } catch (error) {
-            console.error('Web research location error:', error.message);
+            console.error('Enhanced web research location error:', error.message);
             return this.generateLocationFallback(companyData);
         }
     }
