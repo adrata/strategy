@@ -113,7 +113,7 @@ export default function AthenahealthBusinessCasePage() {
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">8</div>
+                <div className="text-3xl font-bold text-black">10</div>
                 <div className="text-sm text-gray-600">Buyer Group Size</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -121,7 +121,7 @@ export default function AthenahealthBusinessCasePage() {
                 <div className="text-sm text-gray-600">Decision Makers</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">2</div>
+                <div className="text-3xl font-bold text-black">3</div>
                 <div className="text-sm text-gray-600">Champions</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -288,7 +288,7 @@ export default function AthenahealthBusinessCasePage() {
                 </div>
               </div>
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Champions (2)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Champions (3)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-gray-500 pl-4">
@@ -309,10 +309,19 @@ export default function AthenahealthBusinessCasePage() {
                       <p><strong>Engagement Strategy:</strong> Training effectiveness, employee satisfaction, compliance benefits, operational efficiency</p>
                     </div>
                   </div>
+                  <div className="border-l-4 border-gray-500 pl-4">
+                    <h5 className="font-semibold text-black">Sarah Rixey Pharr (Director Of Strategic Programs)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
+                      <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
+                      <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (2)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (3)</h4>
                 
                 <div className="space-y-3">
                   <div className="border-l-4 border-gray-400 pl-4">
@@ -324,6 +333,11 @@ export default function AthenahealthBusinessCasePage() {
                     <h5 className="font-semibold text-black">Erica Canuto (Manager Platform Services & Solutions)</h5>
                     <p className="text-sm text-gray-600">Based in Boston, key influencer in LMS selection process</p>
                     <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Platform services expertise provides operational influence on training processes and user experience</p>
+                  </div>
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Emily Anderson (Marketing And Events Coordinator)</h5>
+                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Stakeholder influence on training effectiveness and user satisfaction</p>
                   </div>
                 </div>
               </div>
@@ -413,6 +427,7 @@ export default function AthenahealthBusinessCasePage() {
                       <li>• Brittany Podolak (Chief People Officer) - Employee training efficiency and talent development</li>
                       <li>• Brittany Freeman (Director Workplace Experience) - Employee training efficiency</li>
                       <li>• Priya Dixit (HR Manager) - Employee development and compliance</li>
+                      <li>• Sarah Rixey Pharr (Director Strategic Programs) - Strategic program alignment</li>
                     </ul>
                   </div>
                   <div>
@@ -434,6 +449,7 @@ export default function AthenahealthBusinessCasePage() {
                     <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Brittany Freeman (Director Workplace Experience)</li>
                       <li>• Priya Dixit (HR Manager)</li>
+                      <li>• Sarah Rixey Pharr (Director Strategic Programs)</li>
                     </ul>
                   </div>
                   <div>
@@ -455,6 +471,7 @@ export default function AthenahealthBusinessCasePage() {
                     <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Sarah Ugaz Grove (Senior Solution Design Manager) - Solution architecture and design</li>
                       <li>• Erica Canuto (Manager Platform Services & Solutions) - Platform integration and services</li>
+                      <li>• Emily Anderson (Marketing And Events Coordinator) - Training effectiveness and user satisfaction</li>
                     </ul>
                   </div>
                   <div>
@@ -521,7 +538,7 @@ export default function AthenahealthBusinessCasePage() {
                     <li>• Schedule meetings with Scott O'Neil and Brittany Podolak (Decision Makers)</li>
                     <li>• Conduct technical validation with Sarah Ugaz Grove and Erica Canuto</li>
                     <li>• Present cost savings and ROI analysis to decision makers</li>
-                    <li>• Develop migration plan with Brittany Freeman and Priya Dixit</li>
+                    <li>• Develop migration plan with Brittany Freeman, Priya Dixit, and Sarah Rixey Pharr</li>
                   </ul>
                 </div>
               </div>
