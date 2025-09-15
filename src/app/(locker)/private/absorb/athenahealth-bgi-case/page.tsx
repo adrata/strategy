@@ -113,16 +113,16 @@ export default function AthenahealthBusinessCasePage() {
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">6-10</div>
-                <div className="text-sm text-gray-600">Key Stakeholders</div>
+                <div className="text-3xl font-bold text-black">12</div>
+                <div className="text-sm text-gray-600">Buyer Group Size</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">Cost</div>
-                <div className="text-sm text-gray-600">Primary Driver</div>
+                <div className="text-3xl font-bold text-black">2</div>
+                <div className="text-sm text-gray-600">Decision Makers</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">L&D</div>
-                <div className="text-sm text-gray-600">Primary Champion</div>
+                <div className="text-3xl font-bold text-black">3</div>
+                <div className="text-sm text-gray-600">Champions</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
                 <div className="text-3xl font-bold text-black">$200K+</div>
@@ -178,9 +178,75 @@ export default function AthenahealthBusinessCasePage() {
             </div>
           </section>
 
+          {/* Research Methodology */}
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold text-black mb-6">Research Methodology & Intelligence Sources</h2>
+            
+            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+              <h3 className="text-xl font-semibold text-black mb-4">Human-AI Partnership Approach</h3>
+              <p className="text-gray-700 mb-4">
+                This buyer group intelligence represents a sophisticated fusion of human expertise and AI-powered data analysis, 
+                leveraging multiple data sources and analytical frameworks to deliver unprecedented accuracy and depth.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-lg font-semibold text-black mb-3">Data Sources & Collection</h4>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li>• <strong>CoreSignal API:</strong> Real-time employee data and organizational structure</li>
+                    <li>• <strong>LinkedIn Intelligence:</strong> Professional profiles and career progression</li>
+                    <li>• <strong>Company Research:</strong> Public filings, press releases, and industry reports</li>
+                    <li>• <strong>Competitive Analysis:</strong> Market positioning and strategic initiatives</li>
+                    <li>• <strong>Industry Intelligence:</strong> Healthcare technology trends and compliance requirements</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-black mb-3">Analytical Framework</h4>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li>• <strong>Role-Based Analysis:</strong> Seniority, influence, and decision-making authority</li>
+                    <li>• <strong>Pain Point Mapping:</strong> Individual and organizational challenges</li>
+                    <li>• <strong>Engagement Sequencing:</strong> Optimal contact and influence patterns</li>
+                    <li>• <strong>Risk Assessment:</strong> Potential blockers and neutralization strategies</li>
+                    <li>• <strong>Success Probability:</strong> Data-driven win likelihood calculations</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <h3 className="text-lg font-semibold text-black mb-4">Intelligence Validation Process</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+                <div>
+                  <p className="font-semibold text-black mb-2">Cross-Reference Verification:</p>
+                  <ul className="space-y-1">
+                    <li>• Multiple data source confirmation</li>
+                    <li>• Professional network validation</li>
+                    <li>• Company structure verification</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-black mb-2">Contextual Analysis:</p>
+                  <ul className="space-y-1">
+                    <li>• Industry-specific insights</li>
+                    <li>• Healthcare compliance requirements</li>
+                    <li>• LMS market dynamics</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-black mb-2">Strategic Intelligence:</p>
+                  <ul className="space-y-1">
+                    <li>• Decision-making patterns</li>
+                    <li>• Influence network mapping</li>
+                    <li>• Engagement optimization</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Buyer Group Analysis */}
           <section className="mb-12">
-            <h2 className="text-3xl font-bold text-black mb-6">athenahealth Buyer Group Analysis</h2>
+            <h2 className="text-3xl font-bold text-black mb-6">athenahealth Buyer Group Intelligence</h2>
             
             <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Strategic Context</h3>
@@ -194,52 +260,105 @@ export default function AthenahealthBusinessCasePage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="space-y-8">
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Economic Buyers (Finance/Executive Level)</h4>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>CFO/Finance Director</strong> - Budget authority, cost optimization focus</li>
-                  <li><strong>VP Operations</strong> - Operational efficiency and cost containment</li>
-                  <li><strong>Chief Technology Officer</strong> - Technology integration and ROI</li>
-                </ul>
-                <div className="bg-green-50 p-3 rounded text-xs text-green-700 mt-3">
-                  <strong>Absorb Focus:</strong> Emphasize cost savings and ROI from day one
+                <h4 className="text-lg font-semibold text-black mb-4">Decision Makers (2)</h4>
+                
+                <div className="space-y-6">
+                  <div className="border-l-4 border-black pl-4">
+                    <h5 className="font-semibold text-black text-lg">Scott O'Neil (Vice President, Customer Success Management)</h5>
+                    <p className="text-sm text-gray-600 mb-3">Budget authority and final approval for LMS decisions</p>
+                    <div className="text-sm text-gray-700 space-y-2">
+                      <p><strong>Pain Points:</strong> Customer onboarding complexity and training effectiveness. Current LMS may not provide optimal user experience for healthcare providers learning athenahealth platform.</p>
+                      <p><strong>Strategic Priorities:</strong> Customer satisfaction, training effectiveness, user adoption, and platform proficiency.</p>
+                      <p><strong>Engagement Approach:</strong> Focus on customer training outcomes, user experience improvements, and platform adoption metrics.</p>
+                      <p><strong>Decision Criteria:</strong> User experience, training effectiveness, customer satisfaction, and platform integration.</p>
+                    </div>
+                  </div>
+                  <div className="border-l-4 border-black pl-4">
+                    <h5 className="font-semibold text-black text-lg">Brittany Freeman (Director, Workplace Experience)</h5>
+                    <p className="text-sm text-gray-600 mb-3">Budget authority and final approval for LMS decisions</p>
+                    <div className="text-sm text-gray-700 space-y-2">
+                      <p><strong>Pain Points:</strong> Employee training efficiency and compliance tracking. Need for streamlined onboarding and certification processes for internal staff.</p>
+                      <p><strong>Strategic Priorities:</strong> Employee development, compliance training, operational efficiency, and cost optimization.</p>
+                      <p><strong>Engagement Approach:</strong> Emphasize employee development ROI, compliance efficiency, and operational cost savings.</p>
+                      <p><strong>Decision Criteria:</strong> Cost effectiveness, compliance capabilities, employee satisfaction, and operational efficiency.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Primary Champions (L&D/HR)</h4>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>Learning & Development Director</strong> - Training effectiveness and user experience</li>
-                  <li><strong>HR Director</strong> - Employee training and compliance</li>
-                  <li><strong>Customer Success Manager</strong> - Customer training and onboarding</li>
-                </ul>
-                <div className="bg-blue-50 p-3 rounded text-xs text-blue-700 mt-3">
-                  <strong>Engagement Strategy:</strong> Focus on training effectiveness and user experience
+                <h4 className="text-lg font-semibold text-black mb-4">Champions (3)</h4>
+                
+                <div className="space-y-4">
+                  <div className="border-l-4 border-gray-500 pl-4">
+                    <h5 className="font-semibold text-black">Mackenzie Terry (Sr. Director, Strategic Alliances)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
+                      <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
+                      <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
+                    </div>
+                  </div>
+                  <div className="border-l-4 border-gray-500 pl-4">
+                    <h5 className="font-semibold text-black">Sarah Rixey Pharr (Director Of Strategic Programs)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
+                      <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
+                      <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
+                    </div>
+                  </div>
+                  <div className="border-l-4 border-gray-500 pl-4">
+                    <h5 className="font-semibold text-black">Danielle Beard (Partner Success Director)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> Medium - Influenced by training outcomes and operational efficiency</p>
+                      <p><strong>Key Motivations:</strong> Training effectiveness, operational efficiency, cost optimization, compliance maintenance</p>
+                      <p><strong>Engagement Strategy:</strong> Training effectiveness, operational efficiency, cost savings, compliance benefits</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Technical Validators</h4>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>IT Director</strong> - Technical integration and security</li>
-                  <li><strong>Compliance Officer</strong> - Healthcare compliance requirements</li>
-                  <li><strong>Training Manager</strong> - Content management and delivery</li>
-                </ul>
-                <div className="bg-yellow-50 p-3 rounded text-xs text-yellow-700 mt-3">
-                  <strong>Strategy:</strong> Address technical and compliance requirements early
+                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (4)</h4>
+                
+                <div className="space-y-3">
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Emily Anderson (Marketing And Events Coordinator)</h5>
+                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Stakeholder influence on training effectiveness and user satisfaction</p>
+                  </div>
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Kenneth Page (Director Of Engineering - Technical Operations)</h5>
+                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> High - Senior level influence on LMS selection and implementation decisions</p>
+                  </div>
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Vijay Viswanath Palaniappan (Engineering Manager)</h5>
+                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Operational influence on training processes and user experience</p>
+                  </div>
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Allen Godfrey (Engineering Manager)</h5>
+                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Operational influence on training processes and user experience</p>
+                  </div>
                 </div>
               </div>
-
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Potential Blockers</h4>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>Procurement Team</strong> - Vendor evaluation and contract terms</li>
-                  <li><strong>Legal/Compliance</strong> - Healthcare data security and HIPAA compliance</li>
-                  <li><strong>Current LMS Vendor</strong> - Contract termination and migration</li>
-                </ul>
-                <div className="bg-red-50 p-3 rounded text-xs text-red-700 mt-3">
-                  <strong>Risk Mitigation:</strong> Address compliance and migration concerns proactively
+                <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (1)</h4>
+                
+                <div className="space-y-4">
+                  <div className="border-l-4 border-red-500 pl-4">
+                    <h5 className="font-semibold text-black">Sharath Ramanathan (Engineering - Security And Fraud)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Potential obstacle to LMS change</p>
+                    <div className="text-sm text-gray-700">
+                      <p><strong>Blocking Potential:</strong> Medium - Can influence decision timeline and implementation approach</p>
+                      <p><strong>Blocking Tactics:</strong> Evaluation delays, competitive alternatives, budget limitations</p>
+                      <p><strong>Neutralization Strategy:</strong> Address concerns proactively, provide detailed implementation plan, offer support and training</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -263,10 +382,10 @@ export default function AthenahealthBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Primary Targets:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• CFO/Finance Director - Cost optimization for expensive LMS</li>
-                      <li>• VP Operations - Operational efficiency improvements</li>
-                      <li>• CTO - Technology ROI and enterprise integration</li>
-                      <li>• Chief Learning Officer - Strategic learning initiatives</li>
+                      <li>• Scott O'Neil (VP Customer Success) - Customer training ROI and effectiveness</li>
+                      <li>• Brittany Freeman (Director Workplace Experience) - Employee training efficiency</li>
+                      <li>• Kenneth Page (Director Engineering) - Technical integration and security</li>
+                      <li>• Mackenzie Terry (Sr. Director Strategic Alliances) - Partner enablement</li>
                     </ul>
                   </div>
                   <div>
@@ -286,9 +405,9 @@ export default function AthenahealthBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Internal Champions:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Learning & Development Director</li>
-                      <li>• HR Director</li>
-                      <li>• Customer Success Manager</li>
+                      <li>• Mackenzie Terry (Sr. Director Strategic Alliances)</li>
+                      <li>• Sarah Rixey Pharr (Director Strategic Programs)</li>
+                      <li>• Danielle Beard (Partner Success Director)</li>
                     </ul>
                   </div>
                   <div>
@@ -308,9 +427,10 @@ export default function AthenahealthBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Technical Stakeholders:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• IT Director - Integration and security</li>
-                      <li>• Compliance Officer - HIPAA compliance</li>
-                      <li>• Training Manager - Content management</li>
+                      <li>• Kenneth Page (Director Engineering) - Technical integration and security</li>
+                      <li>• Vijay Viswanath Palaniappan (Engineering Manager) - System architecture</li>
+                      <li>• Allen Godfrey (Engineering Manager) - Implementation and deployment</li>
+                      <li>• Sharath Ramanathan (Security & Fraud) - Compliance and security validation</li>
                     </ul>
                   </div>
                   <div>
@@ -365,19 +485,19 @@ export default function AthenahealthBusinessCasePage() {
                   <h4 className="font-bold text-black mb-3">Immediate Actions (Week 1-2)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Research athenahealth's current LMS costs and pain points</li>
-                    <li>• Identify mutual connections to L&D and Finance teams</li>
-                    <li>• Prepare cost comparison and ROI analysis</li>
-                    <li>• Develop healthcare compliance documentation</li>
+                    <li>• Identify mutual connections to Scott O'Neil and Brittany Freeman</li>
+                    <li>• Prepare cost comparison and ROI analysis for decision makers</li>
+                    <li>• Develop healthcare compliance documentation for technical validation</li>
                   </ul>
                 </div>
                 
                 <div className="bg-white border border-gray-200 p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Strategic Engagement (Week 3-4)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
-                    <li>• Schedule L&D and Finance stakeholder meetings</li>
-                    <li>• Conduct technical and compliance validation</li>
-                    <li>• Present cost savings and ROI analysis</li>
-                    <li>• Develop migration and implementation plan</li>
+                    <li>• Schedule meetings with Scott O'Neil and Brittany Freeman (Decision Makers)</li>
+                    <li>• Conduct technical validation with Kenneth Page and engineering team</li>
+                    <li>• Present cost savings and ROI analysis to decision makers</li>
+                    <li>• Develop migration plan with Mackenzie Terry and Sarah Rixey Pharr</li>
                   </ul>
                 </div>
               </div>
