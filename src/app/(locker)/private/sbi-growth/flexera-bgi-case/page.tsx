@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+// Updated for deployment fix
 import PasswordProtection from '../PasswordProtection';
 import Link from 'next/link';
 
@@ -238,7 +239,7 @@ export default function FlexeraBusinessCasePage() {
                       <p><strong>Key Motivations:</strong> RevOps optimization, GTM efficiency, process improvement, strategic growth acceleration, and operational excellence</p>
                       <p><strong>Engagement Strategy:</strong> Direct RevOps consulting value proposition, GTM process optimization, strategic growth alignment, and technology-enabled implementation</p>
                       <p><strong>Strategic Advantage:</strong> Most senior RevOps person on staff, close to the problem with high clout and tenure, positioned to influence C-Suite decisions</p>
-                      <p><strong>Risk Assessment:</strong> Only potential downside is personality drive assessment - requires evaluation of internal deal pushing capability and change management influence</p>
+                      <p><strong>Risk Assessment:</strong> Assess internal ability to drive deal on intro call. If not a driver, leverage for intros to other champions</p>
                     </div>
                   </div>
 
