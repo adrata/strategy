@@ -1,12 +1,12 @@
 /**
  * Batch Company Enrichment Script for Dano
  * 
- * This script enriches companies assigned to Dano (dano@retail-products.com) 
- * in the Notary Everyday workspace using Perplexity AI.
+ * This script enriches ALL companies in the Notary Everyday workspace 
+ * using Perplexity AI.
  * 
- * Target: ~150 companies assigned to Dano
+ * Target: ALL companies in Notary Everyday workspace (thousands)
  * Workspace: Notary Everyday (01K1VBYXHD0J895XAN0HGFBKJP)
- * User: Dano (01K1VBYYV7TRPY04NW4TW4XWRB)
+ * Limit: First 1000 companies per run (to manage API rate limits)
  */
 
 const { PrismaClient } = require('@prisma/client');
@@ -26,9 +26,10 @@ const NOTARY_WORKSPACE_ID = '01K1VBYXHD0J895XAN0HGFBKJP';
 // Dano's user ID
 const DANO_USER_ID = '01K1VBYYV7TRPY04NW4TW4XWRB';
 
-// Batch processing configuration
-const BATCH_SIZE = 5; // Process 5 companies in parallel
-const DELAY_BETWEEN_BATCHES = 3000; // 3 seconds between batches
+// Batch processing configuration for large datasets
+const BATCH_SIZE = 3; // Process 3 companies in parallel (reduced for stability)
+const DELAY_BETWEEN_BATCHES = 5000; // 5 seconds between batches (increased for rate limiting)
+const MAX_COMPANIES = 1000; // Limit to first 1000 companies to start
 
 // Rate limiting
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -134,6 +135,22 @@ Focus on recent, accurate information. If any information is not available, use 
 
 async function updateCompanyInDatabase(companyId, enrichedData) {
   try {
+    // First verify the company is in the correct workspace before updating
+    const company = await prisma.companies.findUnique({
+      where: { id: companyId },
+      select: { id: true, name: true, workspaceId: true }
+    });
+    
+    if (!company) {
+      console.error(`❌ Company ${companyId} not found in database`);
+      return false;
+    }
+    
+    if (company.workspaceId !== NOTARY_WORKSPACE_ID) {
+      console.error(`❌ Company ${company.name} is in wrong workspace: ${company.workspaceId} (expected: ${NOTARY_WORKSPACE_ID})`);
+      return false;
+    }
+    
     const updateData = {
       name: enrichedData.companyName || undefined,
       industry: enrichedData.industry || undefined,
@@ -206,15 +223,26 @@ async function processBatch(companies) {
 
 async function enrichAllCompanies() {
   try {
-    console.log('🚀 Starting BATCH enrichment of companies assigned to Dano in Notary Everyday workspace...');
+    console.log('🚀 Starting BATCH enrichment of ALL companies in Notary Everyday workspace...');
     console.log(`📋 Workspace ID: ${NOTARY_WORKSPACE_ID}`);
-    console.log(`👤 User ID: ${DANO_USER_ID}`);
     
-    // Get companies assigned to Dano in Notary Everyday workspace
+    // First, verify the workspace exists and get its details
+    const workspace = await prisma.workspaces.findUnique({
+      where: { id: NOTARY_WORKSPACE_ID },
+      select: { id: true, name: true }
+    });
+    
+    if (!workspace) {
+      console.error(`❌ Workspace ${NOTARY_WORKSPACE_ID} not found!`);
+      return;
+    }
+    
+    console.log(`✅ Found workspace: ${workspace.name} (${workspace.id})`);
+    
+    // Get companies ONLY from Notary Everyday workspace (limited for initial run)
     const companies = await prisma.companies.findMany({
       where: {
-        workspaceId: NOTARY_WORKSPACE_ID,
-        assignedUserId: DANO_USER_ID,
+        workspaceId: NOTARY_WORKSPACE_ID, // Explicitly filter by workspace ID
         deletedAt: null
       },
       select: {
@@ -222,15 +250,33 @@ async function enrichAllCompanies() {
         name: true,
         industry: true,
         description: true,
-        website: true
+        website: true,
+        workspaceId: true
       },
-      orderBy: { updatedAt: 'asc' } // Start with oldest updated companies
+      orderBy: { updatedAt: 'asc' }, // Start with oldest updated companies
+      take: MAX_COMPANIES // Limit to prevent overwhelming the API
     });
 
-    console.log(`📊 Found ${companies.length} companies assigned to Dano in Notary Everyday workspace to enrich`);
+    console.log(`📊 Found ${companies.length} companies in Notary Everyday workspace to enrich`);
+    console.log(`⚠️  Limited to first ${MAX_COMPANIES} companies for this run`);
+    
+    // Double-check: Verify all companies are from the correct workspace
+    const wrongWorkspaceCompanies = companies.filter(c => c.workspaceId !== NOTARY_WORKSPACE_ID);
+    if (wrongWorkspaceCompanies.length > 0) {
+      console.error(`❌ ERROR: Found ${wrongWorkspaceCompanies.length} companies from wrong workspace!`);
+      console.error(`   Expected workspace: ${NOTARY_WORKSPACE_ID}`);
+      console.error(`   Wrong companies:`, wrongWorkspaceCompanies.map(c => `${c.name} (${c.workspaceId})`));
+      return;
+    }
+    
+    // Show sample of companies to be processed
+    console.log(`\n📋 Sample companies to be enriched (first 5):`);
+    companies.slice(0, 5).forEach((company, index) => {
+      console.log(`   ${index + 1}. ${company.name} (${company.industry || 'No industry'})`);
+    });
 
     if (companies.length === 0) {
-      console.log('✅ No companies assigned to Dano in Notary Everyday workspace found to enrich');
+      console.log('✅ No companies found in Notary Everyday workspace to enrich');
       return;
     }
 
@@ -268,6 +314,8 @@ async function enrichAllCompanies() {
     console.log(`   🔍 Successfully enriched: ${totalEnriched}/${companies.length} companies`);
     console.log(`   ❌ Errors: ${totalErrors}/${companies.length} companies`);
     console.log(`   📈 Success rate: ${((totalSuccess/companies.length)*100).toFixed(1)}%`);
+    console.log(`\n💡 Note: This run processed the first ${companies.length} companies.`);
+    console.log(`   To process more companies, run the script again.`);
     
   } catch (error) {
     console.error('❌ Error in batch enrichment process:', error);

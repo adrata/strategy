@@ -2240,7 +2240,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         customers: customersData,
         partners: partnersData,
         speedrunItems: speedrunData,
-        // Use actual counts from database, but use array lengths for speedrun
+        // Use actual counts from database, but limit speedrun to 50 for display
         counts: { 
           leads: leadsCount, 
           prospects: prospectsCount, 
@@ -2249,7 +2249,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           people: peopleCount,
           customers: customersCount,
           partners: partnersCount,
-          speedrun: speedrunData.length
+          speedrun: Math.min(speedrunData.length, 50) // Limit speedrun count to 50 for left panel display
         },
         totalPipelineValue: 0,
         timestamp: new Date().toISOString()

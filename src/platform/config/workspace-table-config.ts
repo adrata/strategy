@@ -17,7 +17,7 @@ export interface WorkspaceTableConfig {
 
 // Notary Everyday workspace configuration
 const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
-  workspaceId: '01K1VBYmf75hgmvmz06psnc9ug',
+  workspaceId: '01K1VBYXHD0J895XAN0HGFBKJP', // Updated to match Dan's workspace ID
   workspaceName: 'Notary Everyday',
   sections: {
     people: {

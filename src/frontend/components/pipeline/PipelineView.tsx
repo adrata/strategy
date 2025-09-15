@@ -116,7 +116,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'opportunities':
         return ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'];
       case 'people':
-        return ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
       case 'clients':
         return ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'];
       case 'partners':
@@ -1100,6 +1100,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             sortField={sortField}
             sortDirection={sortDirection}
             visibleColumns={visibleColumns}
+            pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
           />
         ) : (
           // Data view - Different content types based on section
@@ -1119,6 +1120,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               sortField={sortField}
               sortDirection={sortDirection}
               visibleColumns={visibleColumns}
+              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
             />
           ) : section === 'prospects' ? (
             // Prospects table with filtered data
@@ -1131,6 +1133,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               sortField={sortField}
               sortDirection={sortDirection}
               visibleColumns={visibleColumns}
+              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
             />
           ) : section === 'sellers' ? (
             // Buyer Group style design for Sellers
@@ -1309,6 +1312,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               sortField={sortField}
               sortDirection={sortDirection}
               visibleColumns={visibleColumns}
+              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
             />
           )
         )}

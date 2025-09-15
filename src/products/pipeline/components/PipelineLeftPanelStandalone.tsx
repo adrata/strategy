@@ -352,7 +352,7 @@ function PipelineSections({
     });
     
     const hookCounts = {
-      speedrun: finalCounts.speedrun || speedrunItems.length, // Use API count first, fallback to array length
+      speedrun: Math.min(finalCounts.speedrun || speedrunItems.length, 50), // Limit speedrun to 50 for left panel display
       opportunities: openOpportunities.length, // Only open opportunities
       leads: leadsData.count,
       prospects: prospectsData.count,

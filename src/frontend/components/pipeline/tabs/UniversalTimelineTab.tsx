@@ -290,6 +290,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     <div className="space-y-8">
       <div>
         <div className="flex items-center justify-between">
+          <div></div>
           <div className="text-sm text-gray-500">
             {timelineEvents.length} {timelineEvents['length'] === 1 ? 'action' : 'actions'}
           </div>
@@ -305,14 +306,10 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         <div className="space-y-6">
           {timelineEvents.map((event, index) => (
             <div key={event.id} className="flex items-start gap-4">
-              {/* Timeline indicator with subtle numbering */}
+              {/* Timeline indicator */}
               <div className="flex flex-col items-center pt-1">
-                <div className={`w-8 h-8 rounded-full bg-white border-2 ${getEventColor(event.type)} flex items-center justify-center relative`}>
+                <div className={`w-8 h-8 rounded-full bg-white border-2 ${getEventColor(event.type)} flex items-center justify-center`}>
                   {getEventIcon(event.type)}
-                  {/* Subtle numbering in top-right corner */}
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gray-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
-                    {timelineEvents.length - index}
-                  </div>
                 </div>
                 {index < timelineEvents.length - 1 && (
                   <div className="w-px h-12 bg-gray-200 mt-2" />
