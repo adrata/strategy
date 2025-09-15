@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoho Notifications E2E Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9fafb;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .test-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .lead { background: #f97316; color: white; }
+        .contact { background: #3b82f6; color: white; }
+        .deal { background: #10b981; color: white; }
+        .api { background: #8b5cf6; color: white; }
+        .clear { background: #ef4444; color: white; }
+        .results {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 16px;
+            background: #f9fafb;
+        }
+        .result-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+        .success { background: #f0fdf4; border-color: #22c55e; }
+        .error { background: #fef2f2; border-color: #ef4444; }
+        .info { background: #eff6ff; border-color: #3b82f6; }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .notification-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .notification-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        .notification-title {
+            font-weight: 600;
+            color: #111827;
+        }
+        .notification-content {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .notification-meta {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Zoho Notifications E2E Test</h1>
+            <p>Test the complete Zoho notification flow in your browser</p>
+            <div style="background: #eff6ff; padding: 12px; border-radius: 6px; margin-top: 16px;">
+                <strong>Workspace ID:</strong> 01K1VBYV8ETM2RCQA4GNN9EG72 (Dano's workspace)
+            </div>
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-button lead" onclick="sendTestWebhook('lead')">
+                👥 Test Lead Webhook
+            </button>
+            <button class="test-button contact" onclick="sendTestWebhook('contact')">
+                📞 Test Contact Webhook
+            </button>
+            <button class="test-button deal" onclick="sendTestWebhook('deal')">
+                💼 Test Deal Webhook
+            </button>
+            <button class="test-button api" onclick="testNotificationsAPI()">
+                📡 Test Notifications API
+            </button>
+            <button class="test-button clear" onclick="clearResults()">
+                🗑️ Clear Results
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            Processing test...
+        </div>
+
+        <div class="results" id="results">
+            <div style="text-align: center; color: #6b7280; padding: 40px;">
+                No test results yet. Click a test button above to start testing!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test configuration
+        const TEST_CONFIG = {
+            workspaceId: '01K1VBYV8ETM2RCQA4GNN9EG72',
+            webhookUrl: '/api/webhooks/zoho',
+            notificationsApiUrl: '/api/zoho/notifications'
+        };
+
+        // Test data
+        const testData = {
+            lead: {
+                id: 'html_test_lead_' + Date.now(),
+                First_Name: 'HTML',
+                Last_Name: 'Test',
+                Email: 'html.test@example.com',
+                Company: 'HTML Test Company',
+                Title: 'Test Manager',
+                Phone: '+1-555-0999',
+                Description: 'HTML test lead with urgent budget approval needed for Q1 implementation',
+                Lead_Status: 'New',
+                Lead_Source: 'HTML Test',
+                workspaceId: TEST_CONFIG.workspaceId
+            },
+            contact: {
+                id: 'html_test_contact_' + Date.now(),
+                First_Name: 'HTML',
+                Last_Name: 'Contact',
+                Email: 'html.contact@example.com',
+                Title: 'Test Director',
+                Department: 'Engineering',
+                Phone: '+1-555-0998',
+                Description: 'HTML test contact with immediate purchase decision required',
+                Account_Name: 'HTML Test Account',
+                workspaceId: TEST_CONFIG.workspaceId
+            },
+            deal: {
+                id: 'html_test_deal_' + Date.now(),
+                Deal_Name: 'HTML Test Deal',
+                Amount: '150000',
+                Stage: 'Proposal',
+                Probability: '95',
+                Closing_Date: '2025-03-01',
+                Description: 'High-value HTML test deal with approved budget and urgent timeline',
+                Contact_Name: 'HTML Test Contact',
+                Account_Name: 'HTML Test Account',
+                workspaceId: TEST_CONFIG.workspaceId
+            }
+        };
+
+        let testResults = [];
+
+        // Show loading
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Add result to display
+        function addResult(type, success, data, error = null) {
+            const timestamp = new Date().toLocaleString();
+            const result = { type, success, data, error, timestamp };
+            testResults.push(result);
+            updateResultsDisplay();
+        }
+
+        // Update results display
+        function updateResultsDisplay() {
+            const resultsDiv = document.getElementById('results');
+            
+            if (testResults.length === 0) {
+                resultsDiv.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 40px;">No test results yet. Click a test button above to start testing!</div>';
+                return;
+            }
+
+            const resultsHTML = testResults.map((result, index) => {
+                const statusClass = result.success ? 'success' : 'error';
+                const icon = result.success ? '✅' : '❌';
+                const typeIcon = {
+                    'webhook_sent': '🚀',
+                    'webhook_success': '✅',
+                    'webhook_error': '❌',
+                    'api_success': '📡',
+                    'api_error': '❌'
+                }[result.type] || '📋';
+
+                let content = '';
+                if (result.type === 'webhook_success') {
+                    content = `<strong>Type:</strong> ${result.data.type}<br><strong>Response:</strong> ${JSON.stringify(result.data.response)}`;
+                } else if (result.type === 'api_success') {
+                    content = `<strong>Notifications Found:</strong> ${result.data.count}<br><strong>Response:</strong> ${JSON.stringify(result.data.notifications?.slice(0, 2))}`;
+                } else if (result.error) {
+                    content = `<strong>Error:</strong> ${result.error}`;
+                } else {
+                    content = JSON.stringify(result.data);
+                }
+
+                return `
+                    <div class="result-item ${statusClass}">
+                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 16px; margin-right: 8px;">${typeIcon}</span>
+                            <span style="font-weight: 600; text-transform: capitalize;">${result.type.replace('_', ' ')}</span>
+                            <span style="margin-left: auto; font-size: 12px; opacity: 0.7;">${result.timestamp}</span>
+                        </div>
+                        <div style="font-size: 14px;">${content}</div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsDiv.innerHTML = resultsHTML;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        // Send test webhook
+        async function sendTestWebhook(type) {
+            showLoading();
+            addResult('webhook_sent', true, { type });
+
+            try {
+                console.log(`🚀 [HTML TEST] Sending ${type} webhook...`);
+                
+                const response = await fetch(TEST_CONFIG.webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData[type])
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    console.log(`✅ [HTML TEST] ${type} webhook sent successfully:`, result);
+                    addResult('webhook_success', true, { type, response: result });
+                    showNotification(`✅ ${type} webhook sent successfully!`, 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(result)}`);
+                }
+            } catch (error) {
+                console.error(`❌ [HTML TEST] ${type} webhook failed:`, error);
+                addResult('webhook_error', false, { type }, error.message);
+                showNotification(`❌ ${type} webhook failed: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Test notifications API
+        async function testNotificationsAPI() {
+            showLoading();
+            
+            try {
+                console.log('📡 [HTML TEST] Testing notifications API...');
+                
+                const response = await fetch(`${TEST_CONFIG.notificationsApiUrl}?workspaceId=${TEST_CONFIG.workspaceId}&limit=10`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    console.log('✅ [HTML TEST] Notifications API test successful:', result);
+                    addResult('api_success', true, { notifications: result.notifications, count: result.count });
+                    showNotification(`✅ API test successful! Found ${result.count} notifications.`, 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(result)}`);
+                }
+            } catch (error) {
+                console.error('❌ [HTML TEST] Notifications API test failed:', error);
+                addResult('api_error', false, {}, error.message);
+                showNotification(`❌ API test failed: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Clear results
+        function clearResults() {
+            testResults = [];
+            updateResultsDisplay();
+            showNotification('🗑️ Results cleared!', 'info');
+        }
+
+        // Show notification toast
+        function showNotification(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="notification-header">
+                    <span class="notification-icon">${icon}</span>
+                    <span class="notification-title">Test Result</span>
+                </div>
+                <div class="notification-content">${message}</div>
+                <div class="notification-meta">${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 5000);
+        }
+
+        // Auto-run a quick test on page load
+        window.addEventListener('load', () => {
+            console.log('🧪 [HTML TEST] Page loaded, ready for testing!');
+            showNotification('🧪 Zoho notifications test page loaded! Click a button to start testing.', 'info');
+        });
+    </script>
+</body>
+</html>

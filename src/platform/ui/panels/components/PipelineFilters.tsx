@@ -37,8 +37,8 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
     const opportunities = data.acquireData.opportunities || [];
     const leads = data.acquireData.leads || [];
     const prospects = data.acquireData.prospects || [];
-    const contacts = data.acquireData.contacts || [];
-    const accounts = data.acquireData.accounts || [];
+    const people = data.acquireData.people || [];
+    const companies = data.acquireData.companies || [];
     const customers = data.acquireData.customers || [];
 
     switch (activeSection) {
@@ -49,9 +49,9 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
       case 'opportunities':
         return getOpportunityFilterOptions(opportunities);
       case 'people':
-        return getContactFilterOptions(contacts);
+        return getContactFilterOptions(people);
       case 'companies':
-        return getAccountFilterOptions(accounts);
+        return getAccountFilterOptions(companies);
       case 'customers':
         return getCustomerFilterOptions(customers);
       default:
@@ -75,8 +75,8 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={
                 activeSection === 'leads' ? 'Search leads' : 
-                activeSection === 'accounts' ? 'Search companies' :
-                activeSection === 'contacts' ? 'Search contacts' :
+                activeSection === 'companies' ? 'Search companies' :
+                activeSection === 'people' ? 'Search people' :
                 activeSection === 'opportunities' ? 'Search opportunities' :
                 activeSection === 'customers' ? 'Search customers' :
                 'Search records'
@@ -138,7 +138,7 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
           </div>
         )}
         
-        {activeSection === 'accounts' && (
+        {activeSection === 'companies' && (
           <>
             <div className="flex-1">
               <DynamicFilterDropdown
@@ -170,7 +170,7 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
           </>
         )}
         
-        {activeSection === 'contacts' && (
+        {activeSection === 'people' && (
           <>
             <div className="flex-1">
               <DynamicFilterDropdown

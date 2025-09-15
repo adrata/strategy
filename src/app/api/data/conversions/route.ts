@@ -106,11 +106,11 @@ export async function POST(request: NextRequest) {
       case "convert_prospect_to_lead":
         return await convertProspectToLead(workspaceId, userId, data);
 
-      case "create_account_from_lead":
-        return await createAccountFromLead(workspaceId, userId, data);
+      case "create_company_from_lead":
+        return await createCompanyFromLead(workspaceId, userId, data);
 
-      case "create_contact_from_lead":
-        return await createContactFromLead(workspaceId, userId, data);
+      case "create_person_from_lead":
+        return await createPersonFromLead(workspaceId, userId, data);
 
       default:
         await prisma.$disconnect();
@@ -170,7 +170,7 @@ async function convertLeadToOpportunity(
   // Create simplified opportunity
   const opportunity = await prisma.opportunities.create({
     data: {
-      id: `opp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `opp_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       name: opportunityName || `Opportunity from ${lead.fullName}`,
       currency: "USD",
       description: `Converted from lead: ${lead.fullName}`,
@@ -207,12 +207,12 @@ async function convertLeadToOpportunity(
   });
 }
 
-async function createAccountFromLead(
+async function createCompanyFromLead(
   workspaceId: string,
   userId: string,
   data: any,
 ) {
-  const { leadId, accountName } = data;
+  const { leadId, companyName } = data;
 
   if (!leadId) {
     await prisma.$disconnect();
@@ -239,41 +239,39 @@ async function createAccountFromLead(
     );
   }
 
-  // Create simplified account
-  const account = await prisma.companies.create({
+  // Create simplified company
+  const company = await prisma.companies.create({
     data: {
-      id: `account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name: accountName || `Company for ${lead.fullName}`,
-      currency: "USD",
-      description: `Account created from lead: ${lead.fullName}`,
+      id: `acc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      name: companyName || `Company for ${lead.fullName}`,
+      description: `Company created from lead: ${lead.fullName}`,
       workspaceId: workspaceId,
       updatedAt: new Date()
     },
   });
 
-  console.log(`✅ [CONVERSIONS API] Created account from lead: ${account.id}`);
+  console.log(`✅ [CONVERSIONS API] Created company from lead: ${company.id}`);
 
   await prisma.$disconnect();
 
   return NextResponse.json({
     success: true,
-    account: {
-      id: account.id,
-      name: account.name,
-      currency: account.currency,
+    company: {
+      id: company.id,
+      name: company.name,
       lead_id: leadId,
-      created_at: account.createdAt?.toISOString() || new Date().toISOString(),
+      created_at: company.createdAt?.toISOString() || new Date().toISOString(),
     },
-    message: "Account successfully created from lead",
+    message: "Company successfully created from lead",
   });
 }
 
-async function createContactFromLead(
+async function createPersonFromLead(
   workspaceId: string,
   userId: string,
   data: any,
 ) {
-  const { leadId, accountId } = data;
+  const { leadId, companyId } = data;
 
   if (!leadId) {
     await prisma.$disconnect();
@@ -305,16 +303,16 @@ async function createContactFromLead(
   const firstName = nameParts[0] || "";
   const lastName = nameParts.slice(1).join(" ") || "";
 
-  const contact = await prisma.people.create({
+  const person = await prisma.people.create({
     data: {
-      id: `contact-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `per_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       fullName: lead.fullName,
       firstName: firstName,
       lastName: lastName,
       email: lead.workEmail || lead.personalEmail || "",
       phone: lead.phone || "",
       jobTitle: lead.jobTitle || "",
-      companyId: accountId || null,
+      companyId: companyId || null,
       workspaceId: workspaceId,
       updatedAt: new Date()
     },
@@ -329,23 +327,23 @@ async function createContactFromLead(
     },
   });
 
-  console.log(`✅ [CONVERSIONS API] Created contact from lead: ${contact.id}`);
+  console.log(`✅ [CONVERSIONS API] Created person from lead: ${person.id}`);
 
   await prisma.$disconnect();
 
   return NextResponse.json({
     success: true,
-    contact: {
-      id: contact.id,
-      full_name: contact.fullName,
-      email: contact.email,
-      phone: contact.phone,
-      job_title: contact.jobTitle,
-      account_id: contact.companyId,
+    person: {
+      id: person.id,
+      full_name: person.fullName,
+      email: person.email,
+      phone: person.phone,
+      job_title: person.jobTitle,
+      company_id: person.companyId,
       lead_id: leadId,
-      created_at: contact.createdAt?.toISOString() || new Date().toISOString(),
+      created_at: person.createdAt?.toISOString() || new Date().toISOString(),
     },
-    message: "Contact successfully created from lead",
+    message: "Person successfully created from lead",
   });
 }
 
@@ -384,7 +382,7 @@ async function convertProspectToLead(
   // Create lead from prospect
   const lead = await prisma.leads.create({
     data: {
-      id: `lead-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       firstName: prospect.firstName,
       lastName: prospect.lastName,
       fullName: prospect.fullName,

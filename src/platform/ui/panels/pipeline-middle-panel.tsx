@@ -46,8 +46,8 @@ export function PipelineMiddlePanel() {
       case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.accounts || []; // Companies data is stored in accounts field
-      case 'people': return acquireData.contacts || []; // People data is stored in contacts field
+      case 'companies': return acquireData.companies || []; // Companies data
+      case 'people': return acquireData.people || []; // People data
       case 'customers': return acquireData.customers || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];

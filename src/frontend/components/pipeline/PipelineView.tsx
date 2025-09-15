@@ -10,12 +10,13 @@ import { MetricsDashboard } from './MetricsDashboard';
 import { Dashboard } from './Dashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
+import { useUnifiedAuth } from '@/platform/auth-unified';
+import { getSectionColumns } from '@/platform/config/workspace-table-config';
 // CRITICAL FIX: Disable SpeedrunDataProvider to eliminate duplicate data loading
 // import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 
 // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
 // import { usePipelineData } from '@/platform/stores/PipelineDataStore';
-import { useUnifiedAuth } from '@/platform/auth-unified';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
@@ -88,21 +89,34 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
-  // Section-specific default visible columns
+  // Section-specific default visible columns with workspace-specific configuration
   const getDefaultVisibleColumns = (section: string): string[] => {
+    // Get workspace context
+    const workspaceId = user?.activeWorkspaceId || '';
+    const workspaceName = user?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
+    
+    // Get workspace-specific column configuration
+    const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+    
+    // Use workspace-specific column order if available, otherwise use defaults
+    if (sectionConfig.columnOrder) {
+      return sectionConfig.columnOrder;
+    }
+    
+    // Fallback to default configuration
     switch (section) {
       case 'speedrun':
-        return ['rank', 'company', 'person', 'title', 'role', 'status', 'lastAction', 'nextAction', 'actions'];
+        return ['rank', 'company', 'state', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
       case 'companies':
         return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
-                    case 'leads':
+      case 'leads':
         return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
-        case 'prospects':
-          return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
-        case 'opportunities':
-          return ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'];
-        case 'people':
-          return ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+      case 'prospects':
+        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+      case 'opportunities':
+        return ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'];
+      case 'people':
+        return ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
       case 'clients':
         return ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'];
       case 'partners':
@@ -199,12 +213,27 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.accounts || []; // Companies data is stored in accounts field
-      case 'people': return acquireData.contacts || []; // People data is stored in contacts field
+      case 'companies': return acquireData.companies || []; // Companies data
+      case 'people': return acquireData.people || []; // People data
       case 'clients': return acquireData.customers || [];
       case 'partners': return acquireData.partnerships || [];
       case 'sellers': return acquireData.sellers || [];
-      case 'speedrun': return acquireData.speedrunItems || [];
+      case 'speedrun': 
+        const speedrunData = acquireData.speedrunItems || [];
+        console.log('🔍 [PIPELINE VIEW DEBUG] Speedrun data:', {
+          dataLength: speedrunData.length,
+          sampleRecord: speedrunData[0] ? {
+            id: speedrunData[0].id,
+            name: speedrunData[0].name,
+            fullName: speedrunData[0].fullName,
+            firstName: speedrunData[0].firstName,
+            lastName: speedrunData[0].lastName,
+            company: speedrunData[0].company,
+            title: speedrunData[0].title,
+            jobTitle: speedrunData[0].jobTitle
+          } : null
+        });
+        return speedrunData;
       default: return [];
     }
   };

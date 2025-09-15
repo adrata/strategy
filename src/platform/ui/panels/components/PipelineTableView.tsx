@@ -38,8 +38,8 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.accounts || [];
-      case 'people': return acquireData.contacts || [];
+      case 'companies': return acquireData.companies || [];
+      case 'people': return acquireData.people || [];
       case 'customers': return acquireData.customers || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
@@ -71,9 +71,9 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   const getTableHeaders = () => {
     switch (activeSection) {
       case 'leads':
-        return ['Name', 'Title', 'Company', 'Email', 'Last Contact', 'Next Action'];
+        return ['Company', 'Name', 'Title', 'Email', 'Last Contact', 'Next Action'];
       case 'prospects':
-        return ['Name', 'Title', 'Company', 'Email', 'Last Contact', 'Opportunity', 'Next Action'];
+        return ['Company', 'Name', 'Title', 'Email', 'Last Contact', 'Opportunity', 'Next Action'];
       case 'companies':
         return ['Rank', 'Company', 'Last Action', 'Next Action'];
       case 'people':
@@ -93,15 +93,15 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
         return (
           <tr key={item.id || index} className="hover:bg-gray-50 cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
+              <div className="text-sm text-gray-900 truncate max-w-32">{item.company || 'Unknown Company'}</div>
+            </td>
+            <td className="px-6 py-4">
               <div className="text-sm font-medium text-gray-900 truncate max-w-32">
                 {item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown Contact'}
               </div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-32">{item.title || 'No Title'}</div>
-            </td>
-            <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.company || 'Unknown Company'}</div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-40">{item.email || 'No Email'}</div>
@@ -120,15 +120,15 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
         return (
           <tr key={item.id || index} className="hover:bg-gray-50 cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
+              <div className="text-sm text-gray-900 truncate max-w-32">{item.company || 'Unknown Company'}</div>
+            </td>
+            <td className="px-6 py-4">
               <div className="text-sm font-medium text-gray-900 truncate max-w-32">
                 {item.name || item.fullName || 'Unknown Contact'}
               </div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-32">{item.title || 'No Title'}</div>
-            </td>
-            <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.company || 'Unknown Company'}</div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-40">{item.email || 'No Email'}</div>

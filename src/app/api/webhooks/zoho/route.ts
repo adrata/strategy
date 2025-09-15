@@ -3,6 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import Pusher from 'pusher';
 import { PusherServerService } from '@/platform/services/pusher-real-time-service';
 import { storeSignal } from '@/platform/services/signal-storage';
+import { zohoNotificationService } from '@/platform/services/zoho-notification-service';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -377,6 +378,24 @@ async function processLeadWebhook(operation: string, data: any) {
         }
         console.log(`✅ [ZOHO WEBHOOK] Lead created/updated: ${createFullName}`);
         
+        // Send Zoho update notification
+        await zohoNotificationService.sendZohoUpdateNotification(
+          workspaceId,
+          'leads',
+          operation.toLowerCase(),
+          {
+            id: leadData.id || 'unknown',
+            First_Name: leadData.First_Name || '',
+            Last_Name: leadData.Last_Name || '',
+            fullName: createFullName,
+            Email: leadData.Email || '',
+            Company: leadData.Company || '',
+            Title: leadData.Title || leadData.Designation || '',
+            Lead_Status: leadData.Lead_Status || 'New',
+            Description: leadData.Description || ''
+          }
+        );
+        
         // Check for buying signals in description and trigger Monaco popup
         await checkForBuyingSignalsAndNotify(workspaceId, {
           id: leadData.id || 'unknown',
@@ -438,6 +457,24 @@ async function processLeadWebhook(operation: string, data: any) {
           });
         }
         console.log(`✅ [ZOHO WEBHOOK] Lead upserted: ${fullName}`);
+        
+        // Send Zoho update notification
+        await zohoNotificationService.sendZohoUpdateNotification(
+          workspaceId,
+          'leads',
+          operation.toLowerCase(),
+          {
+            id: leadData.id || 'unknown',
+            First_Name: leadData.First_Name || '',
+            Last_Name: leadData.Last_Name || '',
+            fullName: fullName,
+            Email: leadData.Email || '',
+            Company: leadData.Company || '',
+            Title: leadData.Title || leadData.Designation || '',
+            Lead_Status: leadData.Lead_Status || 'New',
+            Description: leadData.Description || ''
+          }
+        );
         
         // Check for buying signals in description and trigger Monaco popup
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in description: "${leadData.Description || ''}"`);
@@ -550,6 +587,25 @@ async function processContactWebhook(operation: string, data: any) {
           console.log(`✅ [ZOHO WEBHOOK] Created new contact: ${contactData.First_Name} ${contactData.Last_Name}`);
         }
         
+        // Send Zoho update notification
+        await zohoNotificationService.sendZohoUpdateNotification(
+          workspaceId,
+          'contacts',
+          operation.toLowerCase(),
+          {
+            id: contactData.id || 'unknown',
+            First_Name: contactData.First_Name || '',
+            Last_Name: contactData.Last_Name || '',
+            Full_Name: contactData.Full_Name || '',
+            Email: contactData.Email || '',
+            Title: contactData.Title || '',
+            Department: contactData.Department || '',
+            Phone: contactData.Phone || '',
+            Description: contactData.Description || '',
+            Account_Name: contactData.Account_Name || ''
+          }
+        );
+        
         // Check for buying signals in contact description/notes
         const fullName = `${contactData.First_Name || ''} ${contactData.Last_Name || ''}`.trim();
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in contact: "${contactData.Description || ''}"`);
@@ -627,6 +683,24 @@ async function processDealWebhook(operation: string, data: any) {
           }
         });
         console.log(`✅ [ZOHO WEBHOOK] Deal created/updated: ${dealData.Deal_Name}`);
+        
+        // Send Zoho update notification
+        await zohoNotificationService.sendZohoUpdateNotification(
+          workspaceId,
+          'deals',
+          operation.toLowerCase(),
+          {
+            id: dealData.id || 'unknown',
+            Deal_Name: dealData.Deal_Name || '',
+            Amount: dealData.Amount || '0',
+            Stage: dealData.Stage || '',
+            Probability: dealData.Probability || '0',
+            Closing_Date: dealData.Closing_Date || '',
+            Description: dealData.Description || '',
+            Contact_Name: dealData.Contact_Name || '',
+            Account_Name: dealData.Account_Name || ''
+          }
+        );
         
         // Check for buying signals in deal description - HIGH PRIORITY for deals!
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in deal: "${dealData.Description || ''}"`);
@@ -714,6 +788,24 @@ async function processAccountWebhook(operation: string, data: any) {
           });
         }
         console.log(`✅ [ZOHO WEBHOOK] Account created/updated: ${accountData.Account_Name}`);
+        
+        // Send Zoho update notification
+        await zohoNotificationService.sendZohoUpdateNotification(
+          workspaceId,
+          'accounts',
+          operation.toLowerCase(),
+          {
+            id: accountData.id || 'unknown',
+            Account_Name: accountData.Account_Name || '',
+            Website: accountData.Website || '',
+            Phone: accountData.Phone || '',
+            Industry: accountData.Industry || '',
+            Type: accountData.Type || '',
+            Description: accountData.Description || '',
+            Employees: accountData.Employees || '',
+            Annual_Revenue: accountData.Annual_Revenue || ''
+          }
+        );
         
         // Check for buying signals in account description
         console.log(`🔍 [ZOHO WEBHOOK] Checking for buying signals in account: "${accountData.Description || ''}"`);

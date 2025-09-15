@@ -49,8 +49,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.accounts || [];
-      case 'people': return acquireData.contacts || [];
+      case 'companies': return acquireData.companies || [];
+      case 'people': return acquireData.people || [];
       case 'customers': return acquireData.customers || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
@@ -375,6 +375,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     setStatusFilter(value);
     // Real-time filtering - trigger immediately
     applyFilters(value, priorityFilter, verticalFilter);
+    onStatusChange?.(value);
   };
 
   const handlePriorityChange = (value: string) => {
@@ -395,13 +396,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     // Real-time filtering - trigger immediately
     applyFilters(statusFilter, priorityFilter, verticalFilter);
     onRevenueChange?.(value);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value);
-    // Real-time filtering - trigger immediately
-    applyFilters(value, priorityFilter, verticalFilter);
-    onStatusChange?.(value);
   };
 
   const handleLastContactedChange = (value: string) => {

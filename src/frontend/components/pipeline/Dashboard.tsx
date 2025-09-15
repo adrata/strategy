@@ -527,18 +527,18 @@ export function Dashboard() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Activity</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <ActivityMetric
-                title="Calls"
-                value={data.callsMade}
-                target={data.weeklyCallTarget}
-                trend={data.callsVsLastWeek}
-                onClick={handleCallsClick}
-              />
-              <ActivityMetric
                 title="LinkedIn"
                 value={data.linkedinsSent || 0}
                 target={data.weeklyLinkedinTarget || 20}
                 trend={data.linkedinsVsLastWeek || 0}
                 onClick={handleLinkedinsClick}
+              />
+              <ActivityMetric
+                title="Calls"
+                value={data.callsMade}
+                target={data.weeklyCallTarget}
+                trend={data.callsVsLastWeek}
+                onClick={handleCallsClick}
               />
               <ActivityMetric
                 title="Emails"

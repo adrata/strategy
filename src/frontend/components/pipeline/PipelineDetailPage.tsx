@@ -93,7 +93,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       case 'prospects': return acquisitionData.data?.prospects || [];
       case 'opportunities': return acquisitionData.data?.opportunities || [];
       case 'companies': return acquisitionData.data?.companies || [];
-      case 'people': return acquisitionData.data?.contacts || [];
+      case 'people': return acquisitionData.data?.people || [];
       case 'clients': return acquisitionData.data?.clients || [];
       case 'partners': return acquisitionData.data?.partners || [];
       case 'sellers': return acquisitionData.data?.sellers || [];
@@ -197,13 +197,30 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       if (result['success'] && result.data) {
         // Extract the record from the unified API response
         const sectionData = result['data'][section] || [];
+        console.log(`🔍 [DIRECT LOAD] Looking for record ${recordId} in ${sectionData.length} ${section} records`);
+        console.log(`🔍 [DIRECT LOAD] Available record IDs:`, sectionData.map((r: any) => r.id));
+        
         const record = sectionData.find((r: any) => r['id'] === recordId);
         
         if (record) {
           console.log(`✅ [DIRECT LOAD] Successfully loaded ${section} record from unified API:`, record.name || record.fullName || recordId);
           setSelectedRecord(record);
         } else {
-          throw new Error(`No ${section} record found with ID: ${recordId}`);
+          // If not found in the list, try to load the specific record directly
+          console.log(`⚠️ [DIRECT LOAD] Record ${recordId} not found in ${section} list, trying direct fetch...`);
+          const directResponse = await fetch(`/api/data/unified?type=${section}&action=get&id=${recordId}&workspaceId=${workspaceId}&userId=${userId}`);
+          
+          if (directResponse.ok) {
+            const directResult = await directResponse.json();
+            if (directResult.success && directResult.data) {
+              console.log(`✅ [DIRECT LOAD] Found record via direct fetch:`, directResult.data);
+              setSelectedRecord(directResult.data);
+            } else {
+              throw new Error(`No ${section} record found with ID: ${recordId}`);
+            }
+          } else {
+            throw new Error(`No ${section} record found with ID: ${recordId}`);
+          }
         }
       } else {
         throw new Error(result.error || `Failed to load ${section} record from unified API`);

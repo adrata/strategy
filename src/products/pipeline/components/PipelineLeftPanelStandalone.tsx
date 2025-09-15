@@ -268,7 +268,8 @@ function PipelineSections({
   useEffect(() => {
     const updateSection = () => {
       const pathname = window.location.pathname;
-      const sectionMatch = pathname.match(/\/pipeline\/([^\/]+)/);
+      // Updated regex to match workspace/section pattern instead of pipeline/section
+      const sectionMatch = pathname.match(/\/[^\/]+\/([^\/]+)/);
       const section = sectionMatch?.[1] || 'leads';
       setCurrentSection(section);
     };
@@ -993,7 +994,9 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Revenue</span>
               <span className="text-xs font-semibold text-black">
-                {(() => {
+                {acquisitionData?.isLoading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : (() => {
                   // Calculate revenue from closed won opportunities
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   if (opportunities.length > 0) {
@@ -1017,7 +1020,9 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Pipeline</span>
               <span className="text-xs font-semibold text-black">
-                {(() => {
+                {acquisitionData?.isLoading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : (() => {
                   // Calculate total pipeline value from all open opportunities
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   if (opportunities.length > 0) {
@@ -1044,7 +1049,9 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Coverage</span>
               <span className="text-xs font-semibold text-black">
-                {(() => {
+                {acquisitionData?.isLoading ? (
+                  <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : (() => {
                   // Calculate coverage as pipeline / quarterly target
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   const quarterlyTarget = 1000000; // $1M quarterly target (can be made configurable)

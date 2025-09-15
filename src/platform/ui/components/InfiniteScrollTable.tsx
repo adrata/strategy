@@ -24,8 +24,8 @@ export function InfiniteScrollTable({
       case 'leads': return data.acquireData.leads || [];
       case 'prospects': return data.acquireData.prospects || [];
       case 'opportunities': return data.acquireData.opportunities || [];
-      case 'companies': return data.acquireData.accounts || [];
-      case 'people': return data.acquireData.contacts || [];
+      case 'companies': return data.acquireData.companies || [];
+      case 'people': return data.acquireData.people || [];
       case 'clients': return data.acquireData.clients || [];
       case 'partners': return data.acquireData.partnerships || [];
       default: return [];
@@ -72,9 +72,9 @@ export function InfiniteScrollTable({
       case 'leads':
         return (
           <tr key={key} className="hover:bg-gray-50 cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.company || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{record.fullName || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.title || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.company || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.email || 'No email'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.status || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -92,9 +92,9 @@ export function InfiniteScrollTable({
       case 'prospects':
         return (
           <tr key={key} className="hover:bg-gray-50 cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.company || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{record.fullName || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.jobTitle || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.company || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.email || 'No email'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.status || 'Unknown'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

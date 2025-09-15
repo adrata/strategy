@@ -506,7 +506,7 @@ const SUPPORTED_TYPES = [
   'people', 'customers', 'partners', 'sellers', 'notes', 'activities', 'speedrun', 'dashboard', 'search'
 ] as const;
 
-const SUPPORTED_ACTIONS = ['get', 'create', 'update', 'delete', 'search', 'advance_to_prospect'] as const;
+const SUPPORTED_ACTIONS = ['get', 'create', 'update', 'delete', 'search', 'advance_to_prospect', 'advance_to_opportunity'] as const;
 
 // 🆕 CACHE HELPERS
 function getCachedResponse(key: string): any | null {
@@ -741,15 +741,20 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
     whereClause['deletedAt'] = null;
   }
   
+  console.log(`🔍 [GET SINGLE] Looking for ${type} record with ID: ${id} in workspace: ${workspaceId}`);
+  console.log(`🔍 [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
+  
   const record = await model.findFirst({
     where: whereClause,
     ...includeClause
   });
   
   if (!record) {
+    console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id}`);
     throw new Error(`${type} not found`);
   }
   
+  console.log(`✅ [GET SINGLE] Found ${type} record:`, record.id);
   return { success: true, data: record };
 }
 
@@ -1007,12 +1012,48 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
       createData['fullName'] = createData.name;
     }
     
-    // Map frontend fields to database fields - standardize on 'title'
-    if (createData['jobTitle'] && !createData.title) {
-      createData['title'] = createData.jobTitle;
-    }
-    // Remove jobTitle since we're standardizing on title
-    delete createData.jobTitle;
+    // Comprehensive field mapping for frontend to database consistency
+    const fieldMappings = {
+      // Name fields
+      'name': 'fullName',
+      'jobTitle': 'title',
+      'companyName': 'company',
+      'workEmail': 'workEmail',
+      'personalEmail': 'personalEmail',
+      'mobilePhone': 'mobilePhone',
+      'workPhone': 'workPhone',
+      'linkedinUrl': 'linkedinUrl',
+      'companyDomain': 'companyDomain',
+      'companySize': 'companySize',
+      'department': 'department',
+      'industry': 'industry',
+      'vertical': 'vertical',
+      'address': 'address',
+      'city': 'city',
+      'state': 'state',
+      'country': 'country',
+      'postalCode': 'postalCode',
+      'notes': 'notes',
+      'description': 'description',
+      'tags': 'tags',
+      'customFields': 'customFields',
+      'preferredLanguage': 'preferredLanguage',
+      'timezone': 'timezone',
+      'status': 'status',
+      'priority': 'priority',
+      'source': 'source',
+      'estimatedValue': 'estimatedValue',
+      'currency': 'currency'
+    };
+    
+    // Apply field mappings
+    Object.entries(fieldMappings).forEach(([frontendField, dbField]) => {
+      if (createData[frontendField] !== undefined && !createData[dbField]) {
+        createData[dbField] = createData[frontendField];
+      }
+      // Remove the frontend field after mapping
+      delete createData[frontendField];
+    });
     
     // Ensure required fields have defaults - these are required by the schema
     if (!createData.firstName) createData['firstName'] = 'Unknown';
@@ -1227,6 +1268,62 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
       updatedAt: new Date()
     };
     
+    // Handle special field requirements for leads, prospects, partners, and customers
+    if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'customers') {
+      // If name is provided but firstName/lastName are not, split the name
+      if (updateData['name'] && !updateData['firstName'] && !updateData.lastName) {
+        const nameParts = updateData.name.trim().split(' ');
+        updateData['firstName'] = nameParts[0] || '';
+        updateData['lastName'] = nameParts.slice(1).join(' ') || '';
+        updateData['fullName'] = updateData.name;
+      }
+      
+      // Comprehensive field mapping for frontend to database consistency
+      const fieldMappings = {
+        'name': 'fullName',
+        'jobTitle': 'title',
+        'companyName': 'company',
+        'workEmail': 'workEmail',
+        'personalEmail': 'personalEmail',
+        'mobilePhone': 'mobilePhone',
+        'workPhone': 'workPhone',
+        'linkedinUrl': 'linkedinUrl',
+        'companyDomain': 'companyDomain',
+        'companySize': 'companySize',
+        'department': 'department',
+        'industry': 'industry',
+        'vertical': 'vertical',
+        'address': 'address',
+        'city': 'city',
+        'state': 'state',
+        'country': 'country',
+        'postalCode': 'postalCode',
+        'notes': 'notes',
+        'description': 'description',
+        'tags': 'tags',
+        'customFields': 'customFields',
+        'preferredLanguage': 'preferredLanguage',
+        'timezone': 'timezone',
+        'status': 'status',
+        'priority': 'priority',
+        'source': 'source',
+        'estimatedValue': 'estimatedValue',
+        'currency': 'currency'
+      };
+      
+      // Apply field mappings
+      Object.entries(fieldMappings).forEach(([frontendField, dbField]) => {
+        if (updateData[frontendField] !== undefined && !updateData[dbField]) {
+          updateData[dbField] = updateData[frontendField];
+        }
+        // Remove the frontend field after mapping
+        delete updateData[frontendField];
+      });
+      
+      // Remove frontend-specific fields that don't exist in database
+      delete updateData.userId; // This is mapped to assignedUserId
+    }
+    
     const record = await model.update({
       where: { id },
       data: updateData
@@ -1236,11 +1333,24 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
     await logFieldChanges(type, id, currentRecord, data, userId, workspaceId);
     
     console.log(`✅ [UPDATE] Successfully updated ${type} ${id}`);
+    console.log(`✅ [UPDATE] Updated record:`, JSON.stringify(record, null, 2));
+    console.log(`✅ [UPDATE] Update data that was sent:`, JSON.stringify(updateData, null, 2));
     
     // Clear cache after update
     clearWorkspaceCache(workspaceId, userId, true);
     
-    return { success: true, data: record };
+    // Also clear the unified data cache specifically
+    const cacheKeysToClear = Array.from(unifiedDataMemoryCache.keys()).filter(key => 
+      key.includes(workspaceId) && key.includes(userId)
+    );
+    cacheKeysToClear.forEach(key => unifiedDataMemoryCache.delete(key));
+    console.log(`🧹 [UPDATE] Cleared ${cacheKeysToClear.length} cache entries`);
+    
+    return { 
+      success: true, 
+      data: record,
+      message: `Successfully updated ${type} record`
+    };
   } catch (updateError) {
     console.error(`❌ [UPDATE] Failed to update ${type} ${id}:`, updateError);
     console.error(`❌ [UPDATE] Data that failed:`, JSON.stringify(data, null, 2));
@@ -1609,14 +1719,14 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
   }
 }
 
-// 🆕 ADVANCE TO OPPORTUNITY OPERATIONS
+// 🆕 ADVANCE TO LEAD OPERATIONS (formerly advance to opportunity)
 async function handleAdvanceToOpportunity(type: string, workspaceId: string, userId: string, id: string, requestData: any): Promise<any> {
-  console.log(`🔧 [ADVANCE] Advancing ${type} ${id} to opportunity`);
+  console.log(`🔧 [ADVANCE] Advancing ${type} ${id} to lead`);
   
   try {
-    // Only allow advancing prospects to opportunities
+    // Only allow advancing prospects to leads
     if (type !== 'prospects') {
-      throw new Error(`Cannot advance ${type} to opportunity. Only prospects can be advanced.`);
+      throw new Error(`Cannot advance ${type} to lead. Only prospects can be advanced.`);
     }
     
     // Get the prospect record
@@ -1633,50 +1743,98 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
     
     console.log(`✅ [ADVANCE] Found prospect:`, prospect.fullName);
     
-    // Create a new opportunity record with the prospect data
-    const opportunityModel = getPrismaModel('opportunities');
-    if (!opportunityModel) throw new Error('Opportunities model not found');
+    // Create a new lead record with the prospect data
+    const leadModel = getPrismaModel('leads');
+    if (!leadModel) throw new Error('Leads model not found');
     
-    // Prepare opportunity data from prospect data
-    const opportunityData = {
+    // Prepare lead data from prospect data
+    const leadData = {
       workspaceId: prospect.workspaceId,
       assignedUserId: prospect.assignedUserId,
       personId: prospect.personId,
       companyId: prospect.companyId,
-      name: `${prospect.fullName} - ${prospect.company}`, // Use name field for opportunities
-      description: `Opportunity for ${prospect.fullName} at ${prospect.company}`,
-      amount: prospect.estimatedValue || 50000, // Default value for opportunities
-      currency: prospect.currency || 'USD',
-      probability: 20, // Default probability for new opportunities
-      stage: 'qualification', // Set to qualification stage for new opportunity
+      firstName: prospect.firstName,
+      lastName: prospect.lastName,
+      fullName: prospect.fullName,
+      displayName: prospect.displayName,
+      email: prospect.email,
+      workEmail: prospect.workEmail,
+      personalEmail: prospect.personalEmail,
+      phone: prospect.phone,
+      mobilePhone: prospect.mobilePhone,
+      workPhone: prospect.workPhone,
+      company: prospect.company,
+      companyDomain: prospect.companyDomain,
+      industry: prospect.industry,
+      vertical: prospect.vertical,
+      companySize: prospect.companySize,
+      jobTitle: prospect.jobTitle,
+      title: prospect.title,
+      department: prospect.department,
+      linkedinUrl: prospect.linkedinUrl,
+      address: prospect.address,
+      city: prospect.city,
+      state: prospect.state,
+      country: prospect.country,
+      postalCode: prospect.postalCode,
+      status: 'new', // Set to new status for new lead
       priority: prospect.priority || 'medium',
-      source: prospect.source,
-      expectedCloseDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
+      source: prospect.source || 'Advanced from Prospect',
+      estimatedValue: prospect.estimatedValue,
+      currency: prospect.currency || 'USD',
       notes: prospect.notes,
-      nextSteps: prospect.nextAction || 'Qualify the opportunity and understand requirements',
+      description: prospect.description,
       tags: prospect.tags || [],
       customFields: prospect.customFields,
-      riskScore: 0.3, // Default risk score
-      lastActivityDate: prospect.lastContactDate,
-      nextActivityDate: prospect.nextFollowUpDate,
+      preferredLanguage: prospect.preferredLanguage,
+      timezone: prospect.timezone,
+      lastEnriched: prospect.lastEnriched,
+      enrichmentSources: prospect.enrichmentSources || [],
+      emailVerified: prospect.emailVerified,
+      phoneVerified: prospect.phoneVerified,
+      mobileVerified: prospect.mobileVerified,
+      enrichmentScore: prospect.enrichmentScore,
+      emailConfidence: prospect.emailConfidence,
+      phoneConfidence: prospect.phoneConfidence,
+      dataCompleteness: prospect.dataCompleteness,
+      engagementLevel: 'initial', // Reset engagement level for new lead
+      lastContactDate: null,
+      nextFollowUpDate: null,
+      touchPointsCount: 0,
+      responseRate: null,
+      avgResponseTime: prospect.avgResponseTime || 0,
+      buyingSignals: prospect.buyingSignals || [],
+      painPoints: [],
+      interests: [],
+      budget: prospect.budget,
+      authority: prospect.authority,
+      needUrgency: null,
+      timeline: null,
+      competitorMentions: prospect.competitorMentions || [],
+      marketingQualified: false,
+      salesQualified: false,
+      buyerGroupRole: prospect.buyerGroupRole,
+      completedStages: [],
+      currentStage: null,
+      lastActionDate: null,
+      nextAction: null,
+      nextActionDate: null,
+      relationship: prospect.relationship,
       demoScenarioId: prospect.demoScenarioId,
       isDemoData: prospect.isDemoData,
       externalId: prospect.externalId,
       zohoId: prospect.zohoId,
-      createdBy: prospect.assignedUserId,
-      updatedBy: prospect.assignedUserId,
-      version: 1,
-      entity_id: prospect.entity_id,
       createdAt: new Date(),
       updatedAt: new Date()
     };
     
-    // Create the opportunity
-    const newOpportunity = await opportunityModel.create({
-      data: opportunityData
+    // Create the lead
+    const newLead = await leadModel.create({
+      data: leadData
     });
     
-    console.log(`✅ [ADVANCE] Created opportunity:`, newOpportunity.id);
+    console.log(`✅ [ADVANCE] Created lead:`, newLead.id);
+    console.log(`✅ [ADVANCE] Lead data:`, JSON.stringify(newLead, null, 2));
     
     // Soft delete the original prospect
     await prospectModel.update({
@@ -1687,21 +1845,28 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
       }
     });
     
-    console.log(`✅ [ADVANCE] Successfully advanced prospect ${id} to opportunity ${newOpportunity.id}`);
+    console.log(`✅ [ADVANCE] Successfully advanced prospect ${id} to lead ${newLead.id}`);
     
     // Clear cache after advance
     clearWorkspaceCache(workspaceId, userId, true);
     
+    // Also clear the unified data cache specifically
+    const cacheKeysToClear = Array.from(unifiedDataMemoryCache.keys()).filter(key => 
+      key.includes(workspaceId) && key.includes(userId)
+    );
+    cacheKeysToClear.forEach(key => unifiedDataMemoryCache.delete(key));
+    console.log(`🧹 [ADVANCE] Cleared ${cacheKeysToClear.length} cache entries`);
+    
     return { 
       success: true, 
-      data: newOpportunity,
-      newRecordId: newOpportunity.id,
-      message: `Prospect successfully advanced to opportunity`
+      data: newLead,
+      newRecordId: newLead.id,
+      message: `Prospect successfully advanced to lead`
     };
     
   } catch (error) {
     console.error(`❌ [ADVANCE] Failed to advance ${type} ${id}:`, error);
-    throw new Error(`Failed to advance to opportunity: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to advance to lead: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

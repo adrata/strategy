@@ -54,8 +54,8 @@ import {
 import { UniversalInsightsTab as ComprehensiveInsightsTab } from './tabs/UniversalInsightsTab';
 import { UniversalCareerTab as ComprehensiveCareerTab } from './tabs/UniversalCareerTab';
 import { UniversalHistoryTab } from './tabs/UniversalHistoryTab';
+import { UniversalBuyerGroupTab } from './tabs/UniversalBuyerGroupTab';
 import { UniversalProfileTab as ComprehensiveProfileTab } from './tabs/UniversalProfileTab';
-import { UniversalBuyerGroupTab as ComprehensiveBuyerGroupTab } from './tabs/UniversalBuyerGroupTab';
 import { UniversalCompanyTab as ComprehensiveCompanyTab } from './tabs/UniversalCompanyTab';
 import { HierarchicalBreadcrumb } from './HierarchicalBreadcrumb';
 import { URLFixer } from './URLFixer';
@@ -661,39 +661,49 @@ export function UniversalRecordTemplate({
       let targetModel = recordType;
       let targetId = recordId;
       
+      console.log(`🎯 [MODEL TARGETING] Field: ${field}, RecordType: ${recordType}, PersonId: ${record?.personId}, CompanyId: ${record?.companyId}`);
+      
       if (personalFields.includes(field)) {
-        // Personal fields should go to the people model
-        if (recordType === 'leads' && record?.personId) {
+        // Personal fields should go to the people model when personId exists
+        if (record?.personId) {
           targetModel = 'people';
           targetId = record.personId;
-        } else if (recordType === 'prospects' && record?.personId) {
-          targetModel = 'people';
-          targetId = record.personId;
-        } else if (recordType === 'people') {
-          targetModel = 'people';
+          console.log(`🎯 [MODEL TARGETING] Personal field ${field} -> people model (${targetId})`);
+        } else {
+          // If no personId, keep on current record
+          targetModel = recordType;
           targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Personal field ${field} -> ${recordType} model (no personId)`);
         }
       } else if (companyFields.includes(field)) {
-        // Company fields should go to the companies model if companyId exists
-        // Otherwise, they stay on the current record (leads/prospects)
+        // Company fields should go to the companies model when companyId exists
         if (record?.companyId) {
           targetModel = 'companies';
           targetId = record.companyId;
+          console.log(`🎯 [MODEL TARGETING] Company field ${field} -> companies model (${targetId})`);
         } else {
           // Keep company fields on the current record if no separate company record
           targetModel = recordType;
           targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Company field ${field} -> ${recordType} model (no companyId)`);
         }
+      } else {
+        // Lead/prospect specific fields stay on the current record
+        targetModel = recordType;
+        targetId = recordId;
+        console.log(`🎯 [MODEL TARGETING] Record-specific field ${field} -> ${recordType} model`);
       }
-      // Lead fields stay on the current record type
       
       // Map field names to match API expectations
       const fieldMapping: Record<string, string> = {
         'name': 'fullName',
+        'fullName': 'fullName',  // Ensure fullName maps to fullName
         'title': 'title',
+        'jobTitle': 'title',  // Map jobTitle to title
         'workEmail': 'workEmail',
         'mobilePhone': 'mobilePhone',
-        'company': 'companyName'
+        'company': 'company',  // Keep company as company for database
+        'companyName': 'company'  // Map companyName to company
       };
       
       const apiField = fieldMapping[field] || field;
@@ -709,6 +719,7 @@ export function UniversalRecordTemplate({
         updateData['firstName'] = nameParts[0] || '';
         updateData['lastName'] = nameParts.slice(1).join(' ') || '';
         updateData['fullName'] = value.trim();
+        console.log(`🔄 [UNIVERSAL] Name field update - original: ${value}, firstName: ${updateData['firstName']}, lastName: ${updateData['lastName']}, fullName: ${updateData['fullName']}`);
       }
       
       // Map recordType to pluralized form for API
@@ -722,21 +733,28 @@ export function UniversalRecordTemplate({
                            `${targetModel}s`;
       
       console.log(`🔄 [UNIVERSAL] Updating ${apiRecordType} ${targetId} with field ${apiField}:`, updateData);
+      console.log(`🔄 [UNIVERSAL] Original record:`, record);
+      console.log(`🔄 [UNIVERSAL] Target model: ${targetModel}, Target ID: ${targetId}`);
       
       // Make API call to save the change using unified API
+      const requestPayload = {
+        type: apiRecordType,
+        action: 'update',
+        id: targetId,
+        data: updateData,
+        workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
+        userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+      };
+      
+      console.log(`🔄 [UNIVERSAL] Making API call to update ${apiField} for ${apiRecordType} ${targetId}`);
+      console.log(`🔄 [UNIVERSAL] Request payload:`, JSON.stringify(requestPayload, null, 2));
+      
       const response = await fetch('/api/data/unified', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: apiRecordType,
-          action: 'update',
-          id: targetId,
-          data: updateData,
-          workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
-        }),
+        body: JSON.stringify(requestPayload),
       });
       
       if (!response.ok) {
@@ -745,31 +763,51 @@ export function UniversalRecordTemplate({
       }
       
       const result = await response.json();
-      console.log(`✅ [UNIVERSAL] Successfully saved ${field} for ${recordType} ${recordId}:`, result);
+      console.log(`✅ [UNIVERSAL] API Response for ${field}:`, JSON.stringify(result, null, 2));
+      console.log(`✅ [UNIVERSAL] API Response status: ${response.status}, success: ${result.success}`);
       
-      // Create updated record with the new field value
-      const updatedRecord = {
-        ...record,
-        [field]: value,
-        // Update related fields if name was changed
-        ...(field === 'name' || field === 'fullName' ? {
-          firstName: updateData['firstName'],
-          lastName: updateData['lastName'],
-          fullName: updateData['fullName']
-        } : {})
-      };
+      // Verify the update was successful
+      if (!result.success) {
+        throw new Error(`API returned success: false - ${result.error || 'Unknown error'}`);
+      }
       
-      // Call the parent callback to update the record
-      if (onRecordUpdate) {
+      // Additional verification: check if the data was actually updated
+      if (result.data && result.data[field] !== value) {
+        console.warn(`⚠️ [UNIVERSAL] Field ${field} value mismatch: expected ${value}, got ${result.data[field]}`);
+      }
+      
+      // Update local record state with the new value
+      if (onRecordUpdate && result.data) {
+        const updatedRecord = { ...record, ...result.data };
         onRecordUpdate(updatedRecord);
+        console.log(`🔄 [UNIVERSAL] Updated local record state:`, updatedRecord);
+      } else if (onRecordUpdate) {
+        // Fallback: update local state with the new field value
+        const updatedRecord = {
+          ...record,
+          [field]: value,
+          // Update related fields if name was changed
+          ...(field === 'name' || field === 'fullName' ? {
+            firstName: updateData['firstName'],
+            lastName: updateData['lastName'],
+            fullName: updateData['fullName']
+          } : {})
+        };
+        onRecordUpdate(updatedRecord);
+        console.log(`🔄 [UNIVERSAL] Updated local record state (fallback):`, updatedRecord);
       }
       
       // Also dispatch a custom event to notify other components of the update
+      const eventRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : {
+        ...record,
+        [field]: value
+      };
+      
       window.dispatchEvent(new CustomEvent('record-updated', {
         detail: {
           recordType,
           recordId,
-          updatedRecord,
+          updatedRecord: eventRecord,
           field,
           value
         }
@@ -873,9 +911,9 @@ export function UniversalRecordTemplate({
   const handleAdvanceToOpportunity = async () => {
     try {
       setLoading(true);
-      console.log('⬆️ [UNIVERSAL] Advancing to opportunity:', record.id);
+      console.log('⬆️ [UNIVERSAL] Advancing to lead:', record.id);
       
-      // Make API call to advance prospect to opportunity
+      // Make API call to advance prospect to lead
       const response = await fetch('/api/data/unified', {
         method: 'POST',
         headers: {
@@ -892,16 +930,21 @@ export function UniversalRecordTemplate({
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to advance to opportunity: ${response.statusText}`);
+        throw new Error(`Failed to advance to lead: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('✅ [UNIVERSAL] Successfully advanced to opportunity:', result);
+      console.log('✅ [UNIVERSAL] Successfully advanced to lead:', result);
       
-      showMessage('Successfully advanced to opportunity!');
+      showMessage('Successfully advanced to lead!');
       
-      // Update URL to opportunities page
-      const newOpportunityId = result.newRecordId || record.id.replace('prospect_', 'opportunity_');
+      // Update URL to leads page
+      const newLeadId = result.newRecordId || record.id.replace('prospect_', 'lead_');
+      
+      // Create a proper slug format: name-ulid (matching existing pattern)
+      const leadName = record.fullName || record.name || 'lead';
+      const cleanName = leadName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      const leadSlug = `${cleanName}-${newLeadId}`;
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -909,18 +952,18 @@ export function UniversalRecordTemplate({
       
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
-        const newUrl = `/${workspaceSlug}/opportunities/${newOpportunityId}`;
-        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
+        const newUrl = `/${workspaceSlug}/leads/${leadSlug}`;
+        console.log(`🔗 [ADVANCE] Navigating to lead: ${newUrl}`);
         window.location.href = newUrl;
       } else {
-        const newUrl = `/opportunities/${newOpportunityId}`;
-        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
+        const newUrl = `/leads/${leadSlug}`;
+        console.log(`🔗 [ADVANCE] Navigating to lead: ${newUrl}`);
         window.location.href = newUrl;
       }
       
     } catch (error) {
-      console.error('❌ [UNIVERSAL] Error advancing to opportunity:', error);
-      showMessage('Failed to advance to opportunity. Please try again.', 'error');
+      console.error('❌ [UNIVERSAL] Error advancing to lead:', error);
+      showMessage('Failed to advance to lead. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -1091,11 +1134,11 @@ export function UniversalRecordTemplate({
       // Advance to Opportunity button - LIGHT GRAY BUTTON (for prospects)
       buttons.push(
         <button
-          key="advance-to-opportunity"
+          key="advance-to-lead"
           onClick={handleAdvanceToOpportunity}
           className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
         >
-          Advance to Opportunity
+          Advance to Lead
         </button>
       );
     }
@@ -1188,7 +1231,7 @@ export function UniversalRecordTemplate({
           console.log(`👥 [UNIVERSAL] Rendering buyer groups tab for ${recordType}`);
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
-              <ComprehensiveBuyerGroupTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalBuyerGroupTab key={activeTab} recordType={recordType} /> :
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'insights':
@@ -1201,7 +1244,7 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
               <ComprehensiveCompanyTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'companies':
           return renderTabWithErrorBoundary(

@@ -362,6 +362,53 @@ export class PusherClientService {
   }
 
   /**
+   * Subscribe to Zoho update notifications
+   */
+  subscribeToZohoNotifications(onNotification: (data: any) => void): void {
+    if (!pusherClient) {
+      console.error("❌ Pusher client not initialized");
+      return;
+    }
+
+    const channelName = `workspace-${this.workspaceId}`;
+    console.log(`🔍 [Pusher Client] Subscribing to Zoho notifications on channel: ${channelName}`);
+    
+    const channel = pusherClient.subscribe(channelName);
+    this.channels.set("zoho", channel);
+
+    // Bind Zoho update event
+    channel.bind("zoho_update", (data: any) => {
+      console.log(`🔔 [Pusher Client] Zoho notification received on channel ${channelName}:`, data);
+      onNotification(data);
+    });
+
+    console.log(`🔔 Subscribed to Zoho notifications on channel: ${channelName}`);
+  }
+
+  /**
+   * Subscribe to a specific channel with custom event handler
+   */
+  subscribeToChannel(channelName: string, eventName: string, onEvent: (data: any) => void): void {
+    if (!pusherClient) {
+      console.error("❌ Pusher client not initialized");
+      return;
+    }
+
+    console.log(`🔍 [Pusher Client] Subscribing to ${eventName} on channel: ${channelName}`);
+    
+    const channel = pusherClient.subscribe(channelName);
+    this.channels.set(eventName, channel);
+
+    // Bind custom event
+    channel.bind(eventName, (data: any) => {
+      console.log(`📡 [Pusher Client] ${eventName} received on channel ${channelName}:`, data);
+      onEvent(data);
+    });
+
+    console.log(`📡 Subscribed to ${eventName} on channel: ${channelName}`);
+  }
+
+  /**
    * Disconnect from all channels
    */
   disconnect(): void {

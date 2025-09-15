@@ -90,8 +90,10 @@ export function useWorkspaceNavigation() {
       console.log(`🔄 [Workspace Navigation] AOS/Monaco route to: ${workspacePath}`);
       router.push(workspacePath);
     } else {
-      // Other routes navigate normally
-      router.push(path);
+      // For pipeline sections (leads, prospects, etc.), construct workspace-aware URL
+      const workspacePath = `/${workspaceSlug}/${cleanPath}`;
+      console.log(`🔄 [Workspace Navigation] Pipeline route to: ${workspacePath}`);
+      router.push(workspacePath);
     }
   }, [router, authUser]);
 

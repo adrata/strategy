@@ -14,6 +14,8 @@ import { EditRecordModal } from './EditRecordModal';
 import { AddActionModal, ActionLogData } from './AddActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useUnifiedAuth } from '@/platform/auth-unified';
+import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 
 
 interface PipelineRecord {
@@ -140,6 +142,12 @@ function getWorkingDayTiming(baseTiming: string, isWeekend: boolean): string {
 
 export function PipelineTable({ section, data, onRecordClick, onReorderRecords, onColumnSort, sortField, sortDirection, visibleColumns }: PipelineTableProps) {
   console.log('🔍 [PipelineTable] Component rendered for section:', section, 'visibleColumns:', visibleColumns);
+  
+  // Get workspace context
+  const { user: authUser } = useUnifiedAuth();
+  const workspaceId = authUser?.activeWorkspaceId || '';
+  const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
+  
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addActionModalOpen, setAddActionModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -312,10 +320,10 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
       case 'leads':
         switch (index) {
           case 0: return '60px';  // Rank
-          case 1: return '160px'; // Company
+          case 1: return '140px'; // Company
           case 2: return '140px'; // Person (Name)
-          case 3: return '140px'; // Title
-          case 4: return '120px'; // Role
+          case 3: return '100px'; // State
+          case 4: return '140px'; // Title
           case 5: return '220px'; // Last Action
           case 6: return '200px'; // Next Action
           case 7: return '32px';  // Actions
@@ -324,10 +332,10 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
       case 'prospects':
         switch (index) {
           case 0: return '60px';  // Rank
-          case 1: return '160px'; // Company
+          case 1: return '140px'; // Company
           case 2: return '140px'; // Person (Name)
-          case 3: return '140px'; // Title
-          case 4: return '120px'; // Role
+          case 3: return '100px'; // State
+          case 4: return '140px'; // Title
           case 5: return '220px'; // Last Action
           case 6: return '200px'; // Next Action
           case 7: return '32px';  // Actions
@@ -340,7 +348,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
           case 2: return '120px'; // Person
           case 3: return '140px'; // Title
           case 4: return '120px'; // Role
-          case 5: return '80px';  // Status (narrower)
+          case 5: return '100px'; // Stage
           case 6: return '200px'; // Last Action (wider for pill + text)
           case 7: return '160px'; // Next Action
           case 8: return '32px';  // Actions
@@ -455,10 +463,14 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
     }
   };
   
-  // Get table headers based on section - optimized for each record type
+  // Get table headers based on section - optimized for each record type with workspace-specific configuration
   const getTableHeaders = (): string[] => {
-    console.log('🔍 [PipelineTable] Getting headers for section:', section, 'visibleColumns:', visibleColumns);
-    // Define all possible columns for each section
+    console.log('🔍 [PipelineTable] Getting headers for section:', section, 'visibleColumns:', visibleColumns, 'workspace:', workspaceName);
+    
+    // Get workspace-specific column configuration
+    const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+    
+    // Define all possible columns for each section (fallback)
     const allColumns: Record<string, string[]> = {
       'leads': ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'],
       'prospects': ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'],
@@ -473,7 +485,8 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
       'speedrun': ['Rank', 'Company', 'Person', 'Title', 'Role', 'Stage', 'Last Action', 'Next Action', 'Actions']
     };
 
-    const defaultColumns = allColumns[section] || ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'];
+    // Use workspace-specific columns if available, otherwise fallback to default
+    const defaultColumns = sectionConfig.columns || allColumns[section] || ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'];
     
     // If visibleColumns is provided, filter the columns
     if (visibleColumns && visibleColumns.length > 0) {
@@ -512,8 +525,8 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
         'actions': 'Actions'
       };
       
-      // Define logical column order for each section
-      const logicalOrder: Record<string, string[]> = {
+      // Use workspace-specific column order if available, otherwise use default logical order
+      const defaultLogicalOrder: Record<string, string[]> = {
         'leads': ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'],
         'prospects': ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'],
         'opportunities': ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'],
@@ -524,10 +537,10 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
         'clients': ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'],
         'partners': ['rank', 'partner', 'type', 'relationship', 'strength', 'lastAction', 'actions'],
         'sellers': ['rank', 'company', 'name', 'title', 'lastAction', 'actions'],
-        'speedrun': ['rank', 'company', 'role', 'status', 'lastAction', 'nextAction', 'actions']
+        'speedrun': ['rank', 'company', 'state', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
       };
       
-      const sectionOrder = logicalOrder[section] || ['rank', 'name', 'title', 'lastAction'];
+      const sectionOrder = sectionConfig.columnOrder || defaultLogicalOrder[section] || ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions'];
       
       // Filter visible columns and maintain logical order
       const orderedVisibleColumns = sectionOrder.filter(col => visibleColumns.includes(col));
@@ -564,10 +577,58 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
     };
     
     // Get display name - prioritize actual person names over role titles
-    const displayName = (record['firstName'] && record['lastName'] ? `${record['firstName']} ${record['lastName']}` : '') ||
-                       record['fullName'] || 
-                       record.name || 
-                       'Unknown';
+    // CRITICAL FIX: Extract person name from action log format if needed
+    const getCleanPersonName = () => {
+      // First try firstName + lastName
+      if (record['firstName'] && record['lastName']) {
+        return `${record['firstName']} ${record['lastName']}`;
+      }
+      
+      // Then try fullName
+      if (record['fullName'] && !record['fullName'].includes('Added') && !record['fullName'].includes('Call')) {
+        return record['fullName'];
+      }
+      
+      // If record.name contains action log format, extract the person name
+      if (record.name && record.name.includes('Added') && record.name.includes('-')) {
+        const match = record.name.match(/Added\s+([^-]+)\s+-/);
+        if (match) return match[1].trim();
+      }
+      
+      // If record.name contains call instruction format, extract the person name
+      if (record.name && record.name.includes('Call') && record.name.includes('at')) {
+        const match = record.name.match(/Call\s+([^a]+)\sat/);
+        if (match) return match[1].trim();
+      }
+      
+      // Enhanced cleaning for speedrun data - handle various action description formats
+      if (record.name && (record.name.includes('Added') || record.name.includes('Call') || record.name.includes('ago'))) {
+        // Try to extract name from "Xm ago Added Name - description" format
+        const addedMatch = record.name.match(/(\d+[mhd]?\s+ago\s+)?Added\s+([^-]+)\s+-/);
+        if (addedMatch) return addedMatch[2].trim();
+        
+        // Try to extract name from "Call Name at Company" format
+        const callMatch = record.name.match(/Call\s+([^a]+)\sat/);
+        if (callMatch) return callMatch[1].trim();
+        
+        // Try to extract name from "Now Call Name at Company" format
+        const nowCallMatch = record.name.match(/Now\s+Call\s+([^a]+)\sat/);
+        if (nowCallMatch) return nowCallMatch[1].trim();
+        
+        // Try to extract name from "Today Call Name at Company" format
+        const todayCallMatch = record.name.match(/Today\s+Call\s+([^a]+)\sat/);
+        if (todayCallMatch) return todayCallMatch[1].trim();
+      }
+      
+      // Use record.name if it doesn't contain action text
+      if (record.name && !record.name.includes('Added') && !record.name.includes('Call') && !record.name.includes('-')) {
+        return record.name;
+      }
+      
+      return 'Unknown';
+    };
+    
+    const displayName = getCleanPersonName();
 
     const commonClasses = "px-6 py-3 whitespace-nowrap text-sm h-full";
     const nameClasses = `${commonClasses} font-medium text-gray-900`;
@@ -583,11 +644,14 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
             onClick={handleRowClick}
           >
             {(() => {
-                // Define logical column order for leads - same as prospects
-  const logicalOrder = ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
-  const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
+              // Use workspace-specific column order for leads
+              const sectionConfig = getSectionColumns(workspaceId, 'leads', workspaceName);
+              const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'];
+              const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
               
               return orderedVisibleColumns.map(column => {
+                if (isColumnHidden(workspaceId, 'leads', column, workspaceName)) return null; // Hide column if configured
+                
                 switch (column) {
                                      case 'rank':
                      return (
@@ -598,9 +662,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'company':
                     return (
                       <td key="company" className={textClasses}>
-                        <div className="truncate max-w-32">
-                          {record['accounts']?.name || record['company'] || '-'}
-                        </div>
+                        <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || '-'}</div>
                       </td>
                     );
                   case 'person':
@@ -609,16 +671,16 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                         <div className="truncate max-w-32">{displayName}</div>
                       </td>
                     );
+                  case 'state':
+                    return (
+                      <td key="state" className={textClasses}>
+                        <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
+                      </td>
+                    );
                   case 'title':
                     return (
                       <td key="title" className={textClasses}>
                         <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || '-'}</div>
-                      </td>
-                    );
-                  case 'role':
-                    return (
-                      <td key="role" className={textClasses}>
-                        <div className="truncate max-w-32">{record['buyerGroupRole'] || '-'}</div>
                       </td>
                     );
                   case 'nextAction':
@@ -708,11 +770,14 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
             onClick={handleRowClick}
           >
             {(() => {
-              // Define logical column order for prospects - same as leads
-              const logicalOrder = ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+              // Use workspace-specific column order for prospects
+              const sectionConfig = getSectionColumns(workspaceId, 'prospects', workspaceName);
+              const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'];
               const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
               
               return orderedVisibleColumns.map(column => {
+                if (isColumnHidden(workspaceId, 'prospects', column, workspaceName)) return null; // Hide column if configured
+                
                 switch (column) {
                   case 'rank':
                     return (
@@ -723,13 +788,19 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'company':
                     return (
                       <td key="company" className={textClasses}>
-                        <div className="truncate max-w-32">{record['company'] && record['company'] !== 'Company' ? record['company'] : '-'}</div>
+                        <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || '-'}</div>
                       </td>
                     );
                   case 'person':
                     return (
                       <td key="person" className={nameClasses}>
                         <div className="truncate max-w-32">{displayName}</div>
+                      </td>
+                    );
+                  case 'state':
+                    return (
+                      <td key="state" className={textClasses}>
+                        <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
                       </td>
                     );
                   case 'title':
@@ -886,8 +957,9 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
             onClick={handleRowClick}
           >
             {(() => {
-              // Define logical column order for companies/accounts - includes location column
-              const logicalOrder = ['rank', 'company', 'location', 'lastAction', 'nextAction', 'actions'];
+              // Use workspace-specific column order for companies
+              const sectionConfig = getSectionColumns(workspaceId, 'companies', workspaceName);
+              const logicalOrder = sectionConfig.columnOrder || ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
               const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
               
               return orderedVisibleColumns.map(column => {
@@ -902,6 +974,24 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                     return (
                       <td key="company" className={nameClasses}>
                         <div className="truncate max-w-40">{accountRecord.name || '-'}</div>
+                      </td>
+                    );
+                  case 'state':
+                    return (
+                      <td key="state" className={textClasses}>
+                        <div className="truncate max-w-32">
+                          {(() => {
+                            const state = accountRecord.state;
+                            const city = accountRecord.city;
+                            
+                            if (state) {
+                              return state;
+                            } else if (city) {
+                              return city;
+                            }
+                            return '-';
+                          })()}
+                        </div>
                       </td>
                     );
                   case 'location':
@@ -934,7 +1024,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                       <td key="people" className={textClasses}>
                         <div className="text-center">
                           <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                            {accountRecord.contacts_count || 0} contacts
+                            {accountRecord.people_count || 0} people
                           </span>
                         </div>
                       </td>
@@ -1045,8 +1135,9 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
             onClick={handleRowClick}
           >
             {(() => {
-              // Define logical column order for people - updated to match requirements
-              const logicalOrder = ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+              // Use workspace-specific column order for people
+              const sectionConfig = getSectionColumns(workspaceId, 'people', workspaceName);
+              const logicalOrder = sectionConfig.columnOrder || ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
               const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
               
               return orderedVisibleColumns.map(column => {
@@ -1060,13 +1151,19 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'company':
                     return (
                       <td key="company" className={textClasses}>
-                        <div className="truncate max-w-32">{record['company'] && record['company'] !== 'Company' ? record['company'] : '-'}</div>
+                        <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || '-'}</div>
                       </td>
                     );
                   case 'person':
                     return (
                       <td key="person" className={nameClasses}>
                         <div className="truncate max-w-32">{displayName}</div>
+                      </td>
+                    );
+                  case 'state':
+                    return (
+                      <td key="state" className={textClasses}>
+                        <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
                       </td>
                     );
                   case 'title':
@@ -1437,8 +1534,23 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
 
       case 'speedrun':
         const speedrunRecord = record as any;
-        // Define logical column order for speedrun
-        const speedrunLogicalOrder = ['rank', 'company', 'person', 'title', 'role', 'status', 'lastAction', 'nextAction', 'actions'];
+        // Debug: Log the actual record data to see what we're working with
+        console.log('🔍 [SPEEDRUN DEBUG] Record data:', {
+          id: record.id,
+          name: record.name,
+          fullName: record.fullName,
+          firstName: record.firstName,
+          lastName: record.lastName,
+          company: record.company,
+          title: record.title,
+          jobTitle: record.jobTitle,
+          stage: record.stage,
+          status: record.status,
+          displayName: displayName
+        });
+        
+        // Define logical column order for speedrun to match the headers and visible columns
+        const speedrunLogicalOrder = ['rank', 'company', 'person', 'title', 'role', 'stage', 'lastAction', 'nextAction', 'actions'];
         const speedrunVisibleColumns = speedrunLogicalOrder.filter(col => visibleColumns?.includes(col));
         
         return (
@@ -1460,7 +1572,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                     case 'company':
                       return (
                         <td key="company" className={textClasses}>
-                <div className="truncate max-w-32">{record['company'] && record['company'] !== 'Company' ? record['company'] : '-'}</div>
+                <div className="truncate max-w-32">{record['company'] || record['companyName'] || '-'}</div>
               </td>
                       );
                     case 'person':
@@ -1473,6 +1585,69 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                       return (
                         <td key="title" className={textClasses}>
                 <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || '-'}</div>
+              </td>
+                      );
+                    case 'role':
+                      return (
+                        <td key="role" className={textClasses}>
+                <div className="truncate max-w-32">{record['buyerGroupRole'] || record['role'] || '-'}</div>
+              </td>
+                      );
+                    case 'stage':
+                      return (
+                        <td key="stage" className={textClasses}>
+                <div className="truncate max-w-32">
+                  {/* Ensure we display the stage name, not next action instructions */}
+                  {(() => {
+                    // CRITICAL FIX: Extract proper stage name from potentially corrupted data
+                    const getCleanStage = () => {
+                      // Get stage from either 'stage' or 'currentStage' field
+                      const stageValue = record.stage || record.currentStage || '';
+                      
+                      // If stage contains action instructions, extract from status or use default
+                      if (stageValue && (stageValue.includes('Call') || stageValue.includes('at this company') || stageValue.includes('stop reading') || stageValue.includes('Now') || stageValue.includes('Today'))) {
+                        // This is action instruction data, determine stage from timing
+                        if (stageValue.includes('Now')) {
+                          return 'Ready to Call';
+                        } else if (stageValue.includes('Today')) {
+                          return 'Today';
+                        } else if (stageValue.includes('Call')) {
+                          return 'Prospecting';
+                        } else {
+                          // Fallback to status-based mapping
+                          const status = record.status?.toLowerCase() || '';
+                          switch (status) {
+                            case 'new':
+                            case 'uncontacted':
+                              return 'Prospecting';
+                            case 'contacted':
+                              return 'Contacted';
+                            case 'qualified':
+                              return 'Qualified';
+                            case 'demo-scheduled':
+                              return 'Demo';
+                            case 'follow-up':
+                              return 'Follow-up';
+                            case 'active':
+                              return 'Active';
+                            default:
+                              return 'Prospecting';
+                          }
+                        }
+                      }
+                      
+                      // Use stage if it looks like a proper stage name
+                      if (stageValue && !stageValue.includes('Call') && !stageValue.includes('-')) {
+                        return stageValue;
+                      }
+                      
+                      // Fallback to status or default
+                      return record.status || 'Prospecting';
+                    };
+                    
+                    return getCleanStage();
+                  })()}
+                </div>
               </td>
                       );
                     case 'status':
@@ -3162,9 +3337,9 @@ function getAccountCompositeRank(account: any, fallbackIndex: number): number | 
   
   let compositeScore = 0;
   
-  // Contact count scoring (more contacts = more important account)
-  const contactCount = account._count?.contacts || account.contactCount || 0;
-  compositeScore += contactCount * 10;
+  // People count scoring (more people = more important company)
+  const peopleCount = account._count?.people || account.peopleCount || 0;
+  compositeScore += peopleCount * 10;
   
   // Open opportunities scoring (active deals = high priority)
   const openOpps = account.openOpportunities || account._count?.opportunities || 0;
@@ -3243,8 +3418,8 @@ function getAccountStage(account: any): string {
   const openOpps = account.openOpportunities || account._count?.opportunities || 0;
   if (openOpps > 0) return 'Opportunity';
   
-  const contactCount = account._count?.contacts || account.contactCount || 0;
-  if (contactCount > 0) return 'Engaged';
+  const peopleCount = account._count?.people || account.peopleCount || 0;
+  if (peopleCount > 0) return 'Engaged';
   
   return 'Prospect';
 }

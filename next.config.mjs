@@ -42,6 +42,7 @@ const buildConfig = {
     // ppr: true, // DISABLED: Requires Next.js canary, causes production crashes
     optimizeCss: true, // CSS optimization
     serverComponentsHmrCache: false, // Disable for stability
+    
     // Optimize package imports for web
     optimizePackageImports: [
       '@heroicons/react',
@@ -52,11 +53,6 @@ const buildConfig = {
       'clsx',
       'swr' // Add SWR to optimized imports
     ],
-    // 2025 Performance Features - SCALING EDITION
-    optimizeCss: true,
-    
-    // SCALING: Optimize server components for high traffic
-    serverComponentsHmrCache: false, // Disable in production for memory efficiency
     
     // SCALING: Optimize bundle loading
     optimizeServerReact: true,
@@ -123,10 +119,8 @@ const buildConfig = {
   
   // Webpack configuration
   webpack: (config, { dev, isServer }) => {
-    // Enable source maps for better debugging
-    if (dev) {
-      config.devtool = 'eval-source-map';
-    }
+    // Let Next.js handle devtool configuration to avoid warnings
+    // Source maps are automatically enabled in development mode
     // Handle CSV modules - ensure they're bundled for server-side use
     if (isServer) {
       // Don't externalize csv modules - they need to be bundled

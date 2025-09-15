@@ -132,8 +132,8 @@ export function useAcquisitionOSData(
       leads: transformedLeads,
       prospects: transformedProspects,
       opportunities: apiData.opportunities || [],
-      accounts: apiData.companies || [], // API returns 'companies', map to 'accounts' for compatibility
-      contacts: apiData.people || [],
+      companies: apiData.companies || [], // Use companies directly
+      people: apiData.people || [], // Use people directly
       partnerships: apiData.partners || [], // API uses 'partners', interface expects 'partnerships'
       customers: apiData.customers || [],
       sellers: apiData.sellers || [], // 🆕 FIX: Include sellers data

@@ -58,19 +58,19 @@ export async function GET(request: NextRequest) {
       distinct: ["company"],
     });
 
-    // Transform accounts to company format
-    const companiesFromAccounts = accounts.map((account) => {
+    // Transform companies to company format
+    const companiesFromAccounts = accounts.map((company) => {
       // Build location string from city, state, country
-      const locationParts = [account.city, account.state, account.country].filter(Boolean);
+      const locationParts = [company.city, company.state, company.country].filter(Boolean);
       const location = locationParts.length > 0 ? locationParts.join(', ') : "Unknown";
       
       // Generate revenue estimate if no actual revenue data
-      let revenueDisplay = account.revenue ? `$${account.revenue.toLocaleString()}` : null;
-      if (!account.revenue) {
+      let revenueDisplay = company.revenue ? `$${company.revenue.toLocaleString()}` : null;
+      if (!company.revenue) {
         const estimate = RevenueEstimationService.estimateRevenue(
-          account.industry,
-          account.vertical,
-          account.size
+          company.industry,
+          company.vertical,
+          company.size
         );
         
         if (estimate) {
@@ -81,17 +81,17 @@ export async function GET(request: NextRequest) {
       }
       
       return {
-        id: account.id,
-        name: account.name,
-        industry: account.industry || "Unknown",
-        employees: account.size || "Unknown Size", // Use actual size data
+        id: company.id,
+        name: company.name,
+        industry: company.industry || "Unknown",
+        employees: company.size || "Unknown Size", // Use actual size data
         revenue: revenueDisplay || "Unknown",
-        website: account.website || "",
+        website: company.website || "",
         location: location,
         leads_count: 0, // Would need to query leads table
-        contacts_count: 0, // Will be updated below
+        people_count: 0, // Will be updated below
         opportunities_count: 0, // Will be updated below
-        contacts: [], // Will be updated below
+        people: [], // Will be updated below
       };
     });
 
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
     // Create company as an Account record
     const newAccount = await prisma.companies.create({
       data: {
-        id: `account-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `acc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         name: companyData.name,
         website: companyData.domain || companyData.website || null,
         industry: companyData.industry || null,

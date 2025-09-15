@@ -62,8 +62,8 @@ export class PipelineMetricsCalculator {
         openOpportunityStats,
         leadStats,
         prospectStats,
-        contactStats,
-        accountStats,
+        peopleStats,
+        companyStats,
         customerStats,
         activityCount,
         stageBreakdown
@@ -104,14 +104,14 @@ export class PipelineMetricsCalculator {
           _sum: { estimatedValue: true }
         }),
 
-        // Contact aggregations
-        prisma.contacts.aggregate({
+        // People aggregations
+        prisma.people.aggregate({
           where: { workspaceId, deletedAt: null },
           _count: { id: true }
         }),
 
-        // Account aggregations
-        prisma.accounts.aggregate({
+        // Company aggregations
+        prisma.companies.aggregate({
           where: { workspaceId, deletedAt: null },
           _count: { id: true },
           _sum: { revenue: true }
@@ -197,10 +197,10 @@ export class PipelineMetricsCalculator {
       const prospectConversionRate = totalProspects > 0 ? (totalOpportunities / totalProspects) * 100 : 0;
 
       // Calculate data quality from actual data
-      const totalContacts = contactStats._count.id;
+      const totalPeople = peopleStats._count.id;
       
-      // Get data completeness from contacts with email/phone
-      const contactsWithData = await prisma.contacts.count({
+      // Get data completeness from people with email/phone
+      const peopleWithData = await prisma.people.count({
         where: { workspaceId,
           OR: [
             { email: { not: null } },
@@ -209,11 +209,11 @@ export class PipelineMetricsCalculator {
         }
       });
 
-      const dataCompleteness = totalContacts > 0 ? (contactsWithData / totalContacts) * 100 : 0;
+      const dataCompleteness = totalPeople > 0 ? (peopleWithData / totalPeople) * 100 : 0;
 
-      // Calculate enrichment score from accounts with website/industry
-      const totalAccounts = accountStats._count.id;
-      const enrichedAccounts = await prisma.accounts.count({
+      // Calculate enrichment score from companies with website/industry
+      const totalCompanies = companyStats._count.id;
+      const enrichedCompanies = await prisma.companies.count({
         where: { workspaceId,
           OR: [
             { website: { not: null } },
