@@ -524,7 +524,7 @@ export function Dashboard() {
 
             {/* Row 1: Weekly Activity Metrics */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Activity</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <ActivityMetric
                 title="LinkedIn"
@@ -643,46 +643,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 4: Weekly Performance */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Performance</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div 
-                className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all"
-                onClick={handleTotalPipelineClick}
-              >
-                <h3 className="text-sm font-medium text-gray-600 mb-2">YTD Pipeline Value</h3>
-                <div className="text-3xl font-bold text-gray-900">
-                  ${(data.ytdPipelineValue || 0 / 1000000).toFixed(1)}M
-                </div>
-                <div className="text-xs text-gray-500 mt-1">Year to date</div>
-              </div>
-              <div 
-                className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all"
-                onClick={handleNewOpportunitiesClick}
-              >
-                <h3 className="text-sm font-medium text-gray-600 mb-2">YTD New Deals</h3>
-                <div className="text-3xl font-bold text-gray-900">{(data.ytdNewDeals || 0).toLocaleString()}</div>
-                <div className="text-xs text-gray-500 mt-1">Year to date</div>
-              </div>
-              <div 
-                className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all"
-                onClick={handleLeadConversionClick}
-              >
-                <h3 className="text-sm font-medium text-gray-600 mb-2">YTD Conversion Rate</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.ytdConversionRate || 0}%</div>
-                <div className="text-xs text-gray-500 mt-1">Year to date</div>
-              </div>
-              <div 
-                className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all"
-                onClick={handleTeamCallsClick}
-              >
-                <h3 className="text-sm font-medium text-gray-600 mb-2">YTD Activity Conversion</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.ytdActivityConversion || 0}%</div>
-                <div className="text-xs text-gray-500 mt-1">Year to date</div>
-              </div>
-            </div>
-          </div>
         </div>
         )}
       </div>

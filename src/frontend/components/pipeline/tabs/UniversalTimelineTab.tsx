@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { formatDistanceToNow, format } from 'date-fns';
+import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 
 interface TimelineEvent {
@@ -8,6 +9,7 @@ interface TimelineEvent {
   date: Date;
   title: string;
   description?: string;
+  content?: string; // Full content for emails/notes
   user?: string;
   metadata?: any;
 }
@@ -20,6 +22,7 @@ interface UniversalTimelineTabProps {
 export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTabProps) {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const { users } = useWorkspaceUsers();
 
   // Function to get user name from user ID
@@ -27,11 +30,68 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     if (!userId || userId === 'System') return 'System';
     const user = users.find(u => u['id'] === userId);
     if (user) {
-      // Return just the full name, not the username
-      return user.name || user.displayName || user.email || userId;
+      return user.fullName || user.name || user.displayName || user.email || userId;
     }
     return userId;
   }, [users]);
+
+  const toggleEventExpansion = (eventId: string) => {
+    setExpandedEvents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(eventId)) {
+        newSet.delete(eventId);
+      } else {
+        newSet.add(eventId);
+      }
+      return newSet;
+    });
+  };
+
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'email':
+      case 'email_conversation':
+        return <EnvelopeIcon className="w-4 h-4" />;
+      case 'call':
+      case 'phone_call':
+        return <PhoneIcon className="w-4 h-4" />;
+      case 'meeting':
+      case 'appointment':
+        return <CalendarIcon className="w-4 h-4" />;
+      case 'note':
+        return <DocumentTextIcon className="w-4 h-4" />;
+      case 'created':
+        return <UserIcon className="w-4 h-4" />;
+      default:
+        return <DocumentTextIcon className="w-4 h-4" />;
+    }
+  };
+
+  const getEventColor = (type: string) => {
+    switch (type) {
+      case 'email':
+      case 'email_conversation':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'call':
+      case 'phone_call':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'meeting':
+      case 'appointment':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'note':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'created':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'status_change':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const hasExpandableContent = (event: TimelineEvent) => {
+    return event.content && event.content.length > 150;
+  };
 
   const generateTimelineFromRecord = useCallback(() => {
     const events: TimelineEvent[] = [];
@@ -153,7 +213,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
               type: 'activity',
               date: new Date(activity.completedAt || activity.createdAt),
               title: activity.subject || activity.type || 'Activity',
-              description: activity.description || activity.outcome || '',
+              description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
+              content: activity.description || activity.outcome || '', // Full content for expansion
               user: getUserName(activity.userId || 'System'),
               metadata: {
                 type: activity.type,
@@ -186,7 +247,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
               type: 'note',
               date: new Date(note.createdAt),
               title: note.title || 'Note added',
-              description: note.content || note.summary || '',
+              description: note.content ? note.content.substring(0, 100) + (note.content.length > 100 ? '...' : '') : '',
+              content: note.content || note.summary || '', // Full content for expansion
               user: getUserName(note.authorId || 'System'),
               metadata: {
                 type: note.type,
@@ -258,10 +320,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
             <div key={event.id} className="flex items-start gap-4">
               {/* Timeline indicator */}
               <div className="flex flex-col items-center pt-1">
-                <div className={`w-6 h-6 rounded-md bg-white border border-gray-300 ${!isPastEvent(event.date) ? 'opacity-50' : ''} flex items-center justify-center`}>
-                  <span className="text-xs font-semibold text-gray-700">
-                    {timelineEvents.length - index}
-                  </span>
+                <div className={`w-8 h-8 rounded-full bg-white border-2 ${getEventColor(event.type)} flex items-center justify-center`}>
+                  {getEventIcon(event.type)}
                 </div>
                 {index < timelineEvents.length - 1 && (
                   <div className="w-px h-12 bg-gray-200 mt-2" />
@@ -291,6 +351,31 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                     </div>
                     {event['description'] && (
                       <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                    )}
+                    
+                    {/* Expandable content for emails and notes */}
+                    {hasExpandableContent(event) && (
+                      <div className="mb-3">
+                        <button
+                          onClick={() => toggleEventExpansion(event.id)}
+                          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          {expandedEvents.has(event.id) ? (
+                            <ChevronDownIcon className="w-4 h-4" />
+                          ) : (
+                            <ChevronRightIcon className="w-4 h-4" />
+                          )}
+                          {expandedEvents.has(event.id) ? 'Show less' : 'Show full content'}
+                        </button>
+                        
+                        {expandedEvents.has(event.id) && (
+                          <div className="mt-2 p-3 bg-gray-50 rounded-lg border">
+                            <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                              {event.content}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                     
                     {/* Business Context */}
