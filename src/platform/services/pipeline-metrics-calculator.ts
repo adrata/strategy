@@ -129,7 +129,7 @@ export class PipelineMetricsCalculator {
         }),
 
         // Activity count this week
-        prisma.activities.count({
+        prisma.actions.count({
           where: {
             workspaceId,
             createdAt: { gte: startOfWeek }
@@ -369,7 +369,7 @@ export class PipelineMetricsCalculator {
   private static async calculateActualResponseTime(workspaceId: string): Promise<number> {
     try {
       // Get activities with response times (emails with replies)
-      const emailActivities = await prisma.activities.findMany({
+      const emailActivities = await prisma.actions.findMany({
         where: {
           workspaceId,
           type: 'email',

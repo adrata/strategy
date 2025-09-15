@@ -23,23 +23,14 @@ export { UniversalCollaborationTab } from './UniversalCollaborationTab';
 export { UniversalPerformanceTab } from './UniversalPerformanceTab';
 export { UniversalStakeholdersTab } from './UniversalStakeholdersTab';
 export { UniversalDocumentsTab } from './UniversalDocumentsTab';
-export { UniversalNotesTab } from './UniversalNotesTab';
 export { UniversalStrategyTab } from './UniversalStrategyTab';
 export { UniversalContactsTab } from './UniversalContactsTab';
 export { UniversalBuyerGroupsTab } from './UniversalBuyerGroupsTab';
+export { UniversalCompetitorsTab } from './UniversalCompetitorsTab';
+export { UniversalIndustryTab } from './UniversalIndustryTab';
 export { UniversalSellerCompaniesTab } from './UniversalSellerCompaniesTab';
 
 // Placeholder components for tabs that don't exist yet
-export function UniversalIndustryTab({ record, recordType }: { record: any; recordType: string }) {
-  return (
-    <div className="p-6">
-      <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Industry Information</h3>
-        <p className="text-gray-600">Industry insights and analysis coming soon</p>
-      </div>
-    </div>
-  );
-}
 
 export function UniversalCareerTab({ record, recordType }: { record: any; recordType: string }) {
   return (

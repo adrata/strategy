@@ -1,0 +1,110 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+async function fixEmailLinking() {
+  console.log('🔧 FIXING EMAIL LINKING');
+  console.log('========================');
+  
+  try {
+    // Get unique accountIds from emails
+    const uniqueAccountIds = await prisma.$queryRaw`
+      SELECT "accountId", COUNT(*) as count
+      FROM email_messages 
+      GROUP BY "accountId"
+      ORDER BY count DESC;
+    `;
+    
+    console.log('📊 Found accountIds in emails:');
+    uniqueAccountIds.forEach(row => {
+      console.log(`  ${row.accountId}: ${row.count} emails`);
+    });
+    
+    let created = 0;
+    
+    for (const row of uniqueAccountIds) {
+      const currentAccountId = row.accountId;
+      const emailCount = row.count;
+      
+      console.log(`\n🔍 Processing accountId: ${currentAccountId}`);
+      
+      // Check if this accountId exists in companies
+      const existingCompany = await prisma.companies.findUnique({
+        where: { id: currentAccountId }
+      });
+      
+      if (existingCompany) {
+        console.log(`  ✅ Company already exists: ${existingCompany.name}`);
+        continue;
+      }
+      
+      // Get sample emails for this accountId
+      const sampleEmails = await prisma.$queryRaw`
+        SELECT "from", "to", subject
+        FROM email_messages 
+        WHERE "accountId" = $1
+        LIMIT 3;
+      `, [currentAccountId];
+      
+      if (sampleEmails.length === 0) {
+        console.log(`  ⚠️  No emails found for accountId: ${currentAccountId}`);
+        continue;
+      }
+      
+      console.log(`  📧 Sample emails:`);
+      sampleEmails.forEach((email, i) => {
+        console.log(`    ${i+1}. To: ${email.to}`);
+      });
+      
+      // Extract company name from first email recipient
+      const firstRecipient = sampleEmails[0].to;
+      let companyName = 'Unknown Company';
+      
+      if (firstRecipient && firstRecipient.includes('@')) {
+        const domain = firstRecipient.split('@')[1];
+        if (domain && !domain.includes('retail-products.com')) {
+          // Convert domain to company name
+          companyName = domain
+            .split('.')[0] // Remove .com, .org, etc.
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
+      }
+      
+      // Create new company
+      const newCompany = await prisma.companies.create({
+        data: {
+          id: currentAccountId,
+          name: companyName,
+          workspaceId: '01K1VBYV8ETM2RCQA4GNN9EG72', // Dano's workspace
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      });
+      
+      console.log(`  ✅ Created company: ${newCompany.name} (ID: ${newCompany.id})`);
+      created++;
+    }
+    
+    console.log('\n📊 EMAIL LINKING FIX SUMMARY:');
+    console.log(`  🆕 Created: ${created} companies`);
+    console.log(`  📧 Total emails that can now be linked: ${uniqueAccountIds.reduce((sum, row) => sum + row.count, 0)}`);
+    
+    // Verify the fix
+    console.log('\n🔍 VERIFICATION:');
+    const linkedEmails = await prisma.$queryRaw`
+      SELECT COUNT(*) as count
+      FROM email_messages em
+      JOIN companies c ON em."accountId" = c.id
+      WHERE c."workspaceId" = $1;
+    `, ['01K1VBYV8ETM2RCQA4GNN9EG72'];
+    console.log(`  📧 Emails now linked to companies: ${linkedEmails[0].count}`);
+    
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+fixEmailLinking();

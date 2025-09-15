@@ -1,0 +1,155 @@
+"use client";
+
+import React from 'react';
+import { useRouter } from 'next/navigation';
+
+interface HierarchicalBreadcrumbProps {
+  record: any;
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'sellers' | 'deals' | 'speedrun';
+  onBack: () => void;
+  workspaceId?: string;
+}
+
+export function HierarchicalBreadcrumb({ 
+  record, 
+  recordType, 
+  onBack, 
+  workspaceId = '01K1VBYXHD0J895XAN0HGFBKJP' 
+}: HierarchicalBreadcrumbProps) {
+  const router = useRouter();
+
+  // Get record display name with fallbacks
+  const getDisplayName = () => {
+    return record?.name || 
+           record?.fullName || 
+           record?.firstName + ' ' + record?.lastName ||
+           record?.company ||
+           'Unknown';
+  };
+
+  // Get company name
+  const getCompanyName = () => {
+    return record?.company || 'Unknown Company';
+  };
+
+  // Get company ID from record
+  const getCompanyId = () => {
+    return record?.companyId || record?.id; // Fallback to record ID if no companyId
+  };
+
+  // Handle navigation to company page
+  const handleCompanyClick = () => {
+    const companyId = getCompanyId();
+    if (companyId) {
+      // Navigate to company page
+      const currentPath = window.location.pathname;
+      console.log(`🔍 [BREADCRUMB] Current path for company navigation: ${currentPath}`);
+      
+      // Fix malformed URLs like /leads/prospects
+      if (currentPath.includes('/leads/prospects') || currentPath.includes('/prospects/leads')) {
+        console.warn(`⚠️ [BREADCRUMB] Detected malformed URL for company navigation: ${currentPath}`);
+      }
+      
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      
+      if (workspaceMatch) {
+        const workspaceSlug = workspaceMatch[1];
+        const newUrl = `/${workspaceSlug}/companies/${companyId}`;
+        console.log(`🔗 [BREADCRUMB] Navigating to company: ${newUrl}`);
+        router.push(newUrl);
+      } else {
+        const newUrl = `/companies/${companyId}`;
+        console.log(`🔗 [BREADCRUMB] Navigating to company: ${newUrl}`);
+        router.push(newUrl);
+      }
+    }
+  };
+
+  // Handle navigation back to person record
+  const handlePersonClick = () => {
+    const currentPath = window.location.pathname;
+    console.log(`🔍 [BREADCRUMB] Current path: ${currentPath}`);
+    
+    // Fix malformed URLs like /leads/prospects
+    if (currentPath.includes('/leads/prospects') || currentPath.includes('/prospects/leads')) {
+      console.warn(`⚠️ [BREADCRUMB] Detected malformed URL: ${currentPath}`);
+      // Redirect to correct URL immediately
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      if (workspaceMatch) {
+        const workspaceSlug = workspaceMatch[1];
+        const correctUrl = `/${workspaceSlug}/${recordType}/${record.id}`;
+        console.log(`🔧 [BREADCRUMB] Redirecting to correct URL: ${correctUrl}`);
+        window.location.href = correctUrl;
+        return;
+      }
+    }
+    
+    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+    
+    if (workspaceMatch) {
+      const workspaceSlug = workspaceMatch[1];
+      const newUrl = `/${workspaceSlug}/${recordType}/${record.id}`;
+      console.log(`🔗 [BREADCRUMB] Navigating back to person: ${newUrl}`);
+      router.push(newUrl);
+    } else {
+      const newUrl = `/${recordType}/${record.id}`;
+      console.log(`🔗 [BREADCRUMB] Navigating back to person: ${newUrl}`);
+      router.push(newUrl);
+    }
+  };
+
+  // Only show hierarchical breadcrumb for leads and prospects (not for companies or people)
+  if (recordType === 'companies' || recordType === 'people') {
+    // Simple breadcrumb for companies and people
+    return (
+      <div className="flex items-center gap-2">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors capitalize"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          All {recordType}
+        </button>
+        <span className="text-sm text-gray-400">/</span>
+        <span className="text-sm font-medium text-gray-900">{getDisplayName()}</span>
+      </div>
+    );
+  }
+
+  // Hierarchical breadcrumb for leads and prospects
+  return (
+    <div className="flex items-center gap-2">
+      <button 
+        onClick={onBack}
+        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors capitalize"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        All {recordType}
+      </button>
+      <span className="text-sm text-gray-400">/</span>
+      
+      {/* Company Link */}
+      <button
+        onClick={handleCompanyClick}
+        className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+        title={`View ${getCompanyName()} company details`}
+      >
+        {getCompanyName()}
+      </button>
+      <span className="text-sm text-gray-400">/</span>
+      
+      {/* Person Link */}
+      <button
+        onClick={handlePersonClick}
+        className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors"
+        title={`View ${getDisplayName()} details`}
+      >
+        {getDisplayName()}
+      </button>
+    </div>
+  );
+}

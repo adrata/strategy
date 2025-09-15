@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the activity
-    const activity = await prisma.activities.create({
+    const activity = await prisma.actions.create({
       data: {
         id: `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         workspaceId,
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get activities with pagination
-    const activities = await prisma.activities.findMany({
+    const activities = await prisma.actions.findMany({
       where,
       orderBy: {
         createdAt: 'desc'
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Get total count for pagination
-    const totalCount = await prisma.activities.count({ where });
+    const totalCount = await prisma.actions.count({ where });
 
     console.log('✅ [ACTIVITIES API] Retrieved activities:', {
       count: activities.length,

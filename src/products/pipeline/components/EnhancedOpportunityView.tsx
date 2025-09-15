@@ -711,11 +711,11 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
         {activeTab === "activity" && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">
-              Activity Timeline
+            Action Timeline
             </h3>
             <div className="text-center py-12 text-gray-500">
               <div className="text-4xl mb-4">📈</div>
-              <p>Activity timeline will be displayed here</p>
+              <p>Action timeline will be displayed here</p>
               <p className="text-sm mt-2">
                 Email tracking, meeting notes, and deal progression
               </p>

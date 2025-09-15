@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,11 +16,37 @@ export async function GET(request: NextRequest) {
 
     console.log(`🔍 [DATA OPPORTUNITIES] Fetching opportunities for workspace: ${workspaceId}, userId: ${userId}, includeClosed: ${includeClosed}`);
 
-    // Return empty opportunities for now to prevent 404 errors
+    await prisma.$connect();
+
+    // Build where clause for filtering
+    const whereClause: any = {
+      workspaceId: workspaceId,
+      deletedAt: null
+    };
+
+    if (!includeClosed) {
+      whereClause.status = {
+        notIn: ['closed_won', 'closed_lost', 'cancelled']
+      };
+    }
+
+    // Fetch opportunities from database
+    const opportunities = await prisma.opportunities.findMany({
+      where: whereClause,
+      orderBy: {
+        updatedAt: 'desc'
+      },
+      take: 100 // Limit to prevent large responses
+    });
+
+    console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);
+
+    await prisma.$disconnect();
+
     return NextResponse.json({
       success: true,
-      opportunities: [],
-      count: 0,
+      opportunities: opportunities,
+      count: opportunities.length,
       workspaceId: workspaceId,
       userId: userId,
       includeClosed: includeClosed
@@ -25,8 +54,69 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Error fetching opportunities:', error);
+    await prisma.$disconnect();
     return NextResponse.json(
       { error: 'Failed to fetch opportunities', details: error instanceof Error ? error.message : 'Unknown error' }, 
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { workspaceId, userId, name, description, currency, estimatedValue, stage } = await request.json();
+
+    if (!workspaceId || !userId || !name) {
+      return NextResponse.json({ 
+        error: "workspaceId, userId, and name are required" 
+      }, { status: 400 });
+    }
+
+    console.log(`🔄 [DATA OPPORTUNITIES] Creating opportunity: ${name} for workspace: ${workspaceId}`);
+
+    await prisma.$connect();
+
+    // Create new opportunity
+    const opportunity = await prisma.opportunities.create({
+      data: {
+        id: `opp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: name,
+        description: description || '',
+        currency: currency || 'USD',
+        estimatedValue: estimatedValue || 0,
+        stage: stage || 'prospecting',
+        status: 'open',
+        workspaceId: workspaceId,
+        createdBy: userId,
+        updatedBy: userId,
+        updatedAt: new Date()
+      }
+    });
+
+    console.log(`✅ [DATA OPPORTUNITIES] Created opportunity: ${opportunity.id}`);
+
+    await prisma.$disconnect();
+
+    return NextResponse.json({
+      success: true,
+      opportunity: {
+        id: opportunity.id,
+        name: opportunity.name,
+        description: opportunity.description,
+        currency: opportunity.currency,
+        estimatedValue: opportunity.estimatedValue,
+        stage: opportunity.stage,
+        status: opportunity.status,
+        created_at: opportunity.createdAt?.toISOString() || new Date().toISOString()
+      },
+      message: "Opportunity successfully created"
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating opportunity:', error);
+    await prisma.$disconnect();
+    return NextResponse.json(
+      { error: 'Failed to create opportunity', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     );
   }

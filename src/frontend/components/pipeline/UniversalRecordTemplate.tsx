@@ -44,9 +44,9 @@ import {
   UniversalDocumentsTab,
   UniversalContactsTab,
   UniversalOpportunitiesTab,
-  UniversalNotesTab,
   UniversalStrategyTab,
   UniversalBuyerGroupsTab,
+  UniversalCompetitorsTab,
   UniversalSellerCompaniesTab
 } from './tabs';
 
@@ -57,7 +57,8 @@ import { UniversalHistoryTab } from './tabs/UniversalHistoryTab';
 import { UniversalProfileTab as ComprehensiveProfileTab } from './tabs/UniversalProfileTab';
 import { UniversalBuyerGroupTab as ComprehensiveBuyerGroupTab } from './tabs/UniversalBuyerGroupTab';
 import { UniversalCompanyTab as ComprehensiveCompanyTab } from './tabs/UniversalCompanyTab';
-import { UniversalNotesTab as ComprehensiveNotesTab } from './tabs/UniversalNotesTab';
+import { HierarchicalBreadcrumb } from './HierarchicalBreadcrumb';
+import { URLFixer } from './URLFixer';
 
 export interface UniversalRecordTemplateProps {
   record: any;
@@ -109,10 +110,11 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Timeline' },
         { id: 'strategy', label: 'Strategy' },
         { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'industry', label: 'Industry' },
+        { id: 'competitive', label: 'Competitors' }
       ];
     case 'opportunities':
       return [
@@ -229,7 +231,6 @@ export function UniversalRecordTemplate({
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmName, setDeleteConfirmName] = useState('');
-  const [isAddActionDropdownOpen, setIsAddActionDropdownOpen] = useState(false);
 
   const tabs = customTabs || getTabsForRecordType(recordType, record);
   
@@ -253,21 +254,6 @@ export function UniversalRecordTemplate({
   }, [record, recordType, setCurrentRecord, clearCurrentRecord]);
 
   // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isAddActionDropdownOpen) {
-        const target = event.target as Element;
-        if (!target.closest('.add-action-dropdown')) {
-          setIsAddActionDropdownOpen(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isAddActionDropdownOpen]);
 
   // Listen for record updates from AI chat
   useEffect(() => {
@@ -839,7 +825,7 @@ export function UniversalRecordTemplate({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'leads',
+          type: recordType,
           action: 'advance_to_prospect',
           id: record.id,
           data: record,
@@ -859,14 +845,82 @@ export function UniversalRecordTemplate({
       
       // Update URL to prospects page
       const newProspectId = result.newRecordId || record.id.replace('lead_', 'prospect_');
-      const newUrl = window.location.href.replace('/leads/', '/prospects/').replace(record.id, newProspectId);
       
-      // Navigate to the new prospect page
-      window['location']['href'] = newUrl;
+      // Get current path and replace the section properly
+      const currentPath = window.location.pathname;
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      
+      if (workspaceMatch) {
+        const workspaceSlug = workspaceMatch[1];
+        const newUrl = `/${workspaceSlug}/prospects/${newProspectId}`;
+        console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
+        window.location.href = newUrl;
+      } else {
+        const newUrl = `/prospects/${newProspectId}`;
+        console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
+        window.location.href = newUrl;
+      }
       
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error advancing to prospect:', error);
       showMessage('Failed to advance to prospect. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle advance to opportunity
+  const handleAdvanceToOpportunity = async () => {
+    try {
+      setLoading(true);
+      console.log('⬆️ [UNIVERSAL] Advancing to opportunity:', record.id);
+      
+      // Make API call to advance prospect to opportunity
+      const response = await fetch('/api/data/unified', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: recordType,
+          action: 'advance_to_opportunity',
+          id: record.id,
+          data: record,
+          workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
+          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to advance to opportunity: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('✅ [UNIVERSAL] Successfully advanced to opportunity:', result);
+      
+      showMessage('Successfully advanced to opportunity!');
+      
+      // Update URL to opportunities page
+      const newOpportunityId = result.newRecordId || record.id.replace('prospect_', 'opportunity_');
+      
+      // Get current path and replace the section properly
+      const currentPath = window.location.pathname;
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      
+      if (workspaceMatch) {
+        const workspaceSlug = workspaceMatch[1];
+        const newUrl = `/${workspaceSlug}/opportunities/${newOpportunityId}`;
+        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
+        window.location.href = newUrl;
+      } else {
+        const newUrl = `/opportunities/${newOpportunityId}`;
+        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
+        window.location.href = newUrl;
+      }
+      
+    } catch (error) {
+      console.error('❌ [UNIVERSAL] Error advancing to opportunity:', error);
+      showMessage('Failed to advance to opportunity. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -1010,74 +1064,42 @@ export function UniversalRecordTemplate({
       </button>
     );
 
-    // Add Action dropdown button - WHITE BUTTON WITH DROPDOWN
+    // Add Action button - WHITE BUTTON THAT OPENS MODAL
     buttons.push(
-      <div key="add-action-dropdown" className="relative inline-block add-action-dropdown">
-        <button
-          onClick={() => setIsAddActionDropdownOpen(!isAddActionDropdownOpen)}
-          className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center gap-1"
-        >
-          Add Action
-          <ChevronDownIcon className="w-3 h-3" />
-        </button>
-        {/* Dropdown menu */}
-        {isAddActionDropdownOpen && (
-          <div className="absolute right-0 mt-1 w-52 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-            <div className="py-1">
-              <button
-                onClick={() => {
-                  setIsAddActionModalOpen(true);
-                  setIsAddActionDropdownOpen(false);
-                }}
-                className="flex items-center w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <svg className="w-4 h-4 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Add Action
-              </button>
-              <button
-                onClick={() => {
-                  setIsAddTaskModalOpen(true);
-                  setIsAddActionDropdownOpen(false);
-                }}
-                className="flex items-center w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <svg className="w-4 h-4 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-                Add Tasks
-              </button>
-              <button
-                onClick={() => {
-                  setIsAddNoteModalOpen(true);
-                  setIsAddActionDropdownOpen(false);
-                }}
-                className="flex items-center w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <svg className="w-4 h-4 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Add Note
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      <button
+        key="add-action"
+        onClick={() => setIsAddActionModalOpen(true)}
+        className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+      >
+        Add Action
+      </button>
     );
 
-    // Advance to Prospect button - ONLY COLORED BUTTON (blue) - only show for leads
+    // Context-aware advance button
     if (recordType === 'leads') {
+      // Advance to Lead button - LIGHT GRAY BUTTON (for leads)
       buttons.push(
         <button
-          key="make-prospect"
+          key="advance-to-prospect"
           onClick={handleAdvanceToProspect}
-          className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+          className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
         >
           Advance to Prospect
         </button>
       );
+    } else if (recordType === 'prospects') {
+      // Advance to Opportunity button - LIGHT GRAY BUTTON (for prospects)
+      buttons.push(
+        <button
+          key="advance-to-opportunity"
+          onClick={handleAdvanceToOpportunity}
+          className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+        >
+          Advance to Opportunity
+        </button>
+      );
     }
+
 
     return buttons;
   };
@@ -1221,7 +1243,7 @@ export function UniversalRecordTemplate({
           );
         case 'competitive':
           return renderTabWithErrorBoundary(
-            <UniversalCompetitiveTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'relationship':
           return renderTabWithErrorBoundary(
@@ -1296,12 +1318,6 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
           );
-        case 'notes':
-          return renderTabWithErrorBoundary(
-            recordType === 'people' ? 
-              <ComprehensiveNotesTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalNotesTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
-          );
         default:
           console.warn(`🔄 [UNIVERSAL] Unknown tab: ${activeTab}, falling back to overview`);
           return renderTabWithErrorBoundary(
@@ -1335,6 +1351,9 @@ export function UniversalRecordTemplate({
 
   return (
     <div className="h-full flex flex-col bg-white">
+      {/* URL Fixer - Automatically fixes malformed URLs */}
+      <URLFixer />
+      
       {/* Success Message */}
       <SuccessMessage
         message={successMessage}
@@ -1346,19 +1365,12 @@ export function UniversalRecordTemplate({
       {/* Breadcrumb Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={onBack}
-              className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors capitalize"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              {recordType}
-            </button>
-            <span className="text-sm text-gray-400">/</span>
-            <span className="text-sm font-medium text-gray-900">{getDisplayName()}</span>
-          </div>
+          <HierarchicalBreadcrumb 
+            record={record}
+            recordType={recordType}
+            onBack={onBack}
+            workspaceId={record?.workspaceId}
+          />
           
           <div className="flex items-center gap-1">
             {(() => {
@@ -1368,15 +1380,25 @@ export function UniversalRecordTemplate({
                 canGoPrevious: !(!recordIndex || recordIndex <= 1),
                 canGoNext: !(!recordIndex || !totalRecords || recordIndex >= totalRecords),
                 isPreviousDisabled: !recordIndex || recordIndex <= 1,
-                isNextDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords
+                isNextDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords,
+                hasOnNavigatePrevious: !!onNavigatePrevious,
+                hasOnNavigateNext: !!onNavigateNext
               });
               
               return (
                 <>
                   <button
                     onClick={() => {
-                      console.log(`🔍 [UNIVERSAL] Previous button clicked!`);
-                      onNavigatePrevious?.();
+                      console.log(`🔍 [UNIVERSAL] Previous button clicked!`, {
+                        hasOnNavigatePrevious: !!onNavigatePrevious,
+                        recordIndex,
+                        totalRecords
+                      });
+                      if (onNavigatePrevious) {
+                        onNavigatePrevious();
+                      } else {
+                        console.warn(`❌ [UNIVERSAL] onNavigatePrevious is not defined!`);
+                      }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
                       !recordIndex || recordIndex <= 1
@@ -1392,8 +1414,16 @@ export function UniversalRecordTemplate({
                   </button>
                   <button
                     onClick={() => {
-                      console.log(`🔍 [UNIVERSAL] Next button clicked!`);
-                      onNavigateNext?.();
+                      console.log(`🔍 [UNIVERSAL] Next button clicked!`, {
+                        hasOnNavigateNext: !!onNavigateNext,
+                        recordIndex,
+                        totalRecords
+                      });
+                      if (onNavigateNext) {
+                        onNavigateNext();
+                      } else {
+                        console.warn(`❌ [UNIVERSAL] onNavigateNext is not defined!`);
+                      }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
                       !recordIndex || !totalRecords || recordIndex >= totalRecords
@@ -1420,7 +1450,7 @@ export function UniversalRecordTemplate({
           <div className="flex items-center gap-4">
             {/* Minimal Avatar */}
             <div className="relative group">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+              <div className="w-10 h-10 bg-white border border-gray-300 rounded-xl flex items-center justify-center overflow-hidden">
                 {getProfileImageUrl() ? (
                   <img 
                     src={getProfileImageUrl()} 
@@ -1428,7 +1458,7 @@ export function UniversalRecordTemplate({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-lg font-semibold text-white">{getFirstInitial()}</span>
+                  <span className="text-sm font-semibold text-gray-700">{getFirstInitial()}</span>
                 )}
               </div>
               
@@ -1466,7 +1496,7 @@ export function UniversalRecordTemplate({
               }}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  ? 'bg-gray-50 text-gray-900 border border-gray-200'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >

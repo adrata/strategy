@@ -88,9 +88,19 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const getStatusOptions = () => {
     switch (section) {
       case 'leads':
+        return [
+          { value: 'all', label: 'All Leads' },
+          { value: 'new', label: 'New' },
+          { value: 'active', label: 'Active' },
+          { value: 'qualified', label: 'Qualified' },
+          { value: 'cold', label: 'Cold' },
+          { value: 'contacted', label: 'Contacted' },
+          { value: 'follow-up', label: 'Follow-up' },
+          { value: 'demo-scheduled', label: 'Demo Scheduled' }
+        ];
       case 'prospects':
         return [
-          { value: 'all', label: 'All Status' },
+          { value: 'all', label: 'All Prospects' },
           { value: 'new', label: 'New' },
           { value: 'active', label: 'Active' },
           { value: 'qualified', label: 'Qualified' },
@@ -387,6 +397,13 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     onRevenueChange?.(value);
   };
 
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    // Real-time filtering - trigger immediately
+    applyFilters(value, priorityFilter, verticalFilter);
+    onStatusChange?.(value);
+  };
+
   const handleLastContactedChange = (value: string) => {
     setLastContactedFilter(value);
     // Real-time filtering - trigger immediately
@@ -446,7 +463,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           </span>
         </button>
 
-        {/* Simplified Filter Dropdown Menu - Only Last Contacted */}
+        {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
         {isDropdownOpen && (
           <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
             <div className="p-4">
@@ -454,16 +471,38 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <h3 className="text-sm font-medium text-gray-900">Filter By</h3>
                 <button
                   onClick={() => {
+                    setStatusFilter('all');
                     setLastContactedFilter('all');
+                    onStatusChange?.('all');
                     onLastContactedChange?.('all');
                   }}
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
-                  Clear
+                  Clear All
                 </button>
               </div>
               
-              {/* Last Contacted Filter - Only Filter */}
+              {/* Status Filter - Show for leads, prospects, opportunities */}
+              {['leads', 'prospects', 'opportunities'].includes(section) && (
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                    {section === 'opportunities' ? 'Stage' : 'Status'}
+                  </label>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              {/* Last Contacted Filter */}
               <div className="mb-4">
                 <label className="block text-xs font-medium text-gray-700 mb-2">Last Contacted</label>
                 <select

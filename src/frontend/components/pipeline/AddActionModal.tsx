@@ -20,7 +20,7 @@ export interface ActionLogData {
   nextAction?: string;
   nextActionDate?: string;
   actionPerformedBy?: string;
-  contactId?: string;
+  personId?: string;
 }
 
 export interface AddActionModalProps {
@@ -103,7 +103,7 @@ export function AddActionModal({
     actionDate: new Date().toISOString().slice(0, 16), // Default to now
     notes: '',
     nextAction: '',
-    nextActionDate: '',
+    nextActionDate: new Date().toISOString().slice(0, 16), // Default to now
     actionPerformedBy: '' // Start empty, will be set when users load
   });
 
@@ -174,7 +174,7 @@ export function AddActionModal({
   };
 
   // Load contacts for selected account
-  const loadAccountContacts = async (accountId: string) => {
+  const loadAccountContacts = async (companyId: string) => {
     setIsLoadingAccountContacts(true);
     try {
       const response = await fetch('/api/data/search', {
@@ -182,8 +182,8 @@ export function AddActionModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           workspaceId: authUser?.activeWorkspaceId || '',
-          category: 'account-contacts',
-          query: accountId,
+          category: 'company-contacts',
+          query: companyId,
           limit: 50
         })
       });
@@ -246,7 +246,7 @@ export function AddActionModal({
     
     // If we have a selected contact, include it in the action data
     if (selectedContact) {
-      formData['contactId'] = selectedContact.id;
+      formData['personId'] = selectedContact.id;
     }
     
     onSubmit(formData);
@@ -264,7 +264,7 @@ export function AddActionModal({
 
   const clearSelectedContact = () => {
     setSelectedContact(null);
-    setFormData(prev => ({ ...prev, contactId: undefined }));
+    setFormData(prev => ({ ...prev, personId: undefined }));
   };
 
   const handleAccountSelect = (account: Account) => {
@@ -278,7 +278,7 @@ export function AddActionModal({
     setSelectedAccount(null);
     setAccountContacts([]);
     setSelectedContact(null);
-    setFormData(prev => ({ ...prev, contactId: undefined }));
+    setFormData(prev => ({ ...prev, personId: undefined }));
   };
 
   const handleAccountContactSelect = (contact: Contact) => {
@@ -305,7 +305,7 @@ export function AddActionModal({
       // If we have a record, pre-select the contact
       if (record) {
         if (record.id) {
-          setFormData(prev => ({ ...prev, contactId: record.id }));
+          setFormData(prev => ({ ...prev, personId: record.id }));
         }
       }
     } else if (isOpen) {
@@ -725,19 +725,6 @@ export function AddActionModal({
             />
           </div>
 
-          {/* Next Action */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Next Action (Optional)
-            </label>
-            <input
-              type="text"
-              value={formData.nextAction || ''}
-              onChange={(e) => handleChange('nextAction', e.target.value)}
-              placeholder="What should happen next?"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
 
           {/* Next Action Date */}
           <div>
@@ -745,6 +732,54 @@ export function AddActionModal({
               Next Action Date (Optional)
             </label>
             <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  // Now - set to current time
+                  const now = new Date();
+                  setFormData(prev => ({ ...prev, nextActionDate: now.toISOString().slice(0, 16) }));
+                }}
+                className={`px-3 py-2 text-sm rounded-md border ${
+                  formData.nextActionDate?.startsWith(new Date().toISOString().slice(0, 10))
+                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Now
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Today - set to 9 AM today
+                  const today = new Date();
+                  today.setHours(9, 0, 0, 0);
+                  setFormData(prev => ({ ...prev, nextActionDate: today.toISOString().slice(0, 16) }));
+                }}
+                className={`px-3 py-2 text-sm rounded-md border ${
+                  formData.nextActionDate?.startsWith(new Date().toISOString().slice(0, 10))
+                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Yesterday - set to 9 AM yesterday
+                  const yesterday = new Date();
+                  yesterday.setDate(yesterday.getDate() - 1);
+                  yesterday.setHours(9, 0, 0, 0);
+                  setFormData(prev => ({ ...prev, nextActionDate: yesterday.toISOString().slice(0, 16) }));
+                }}
+                className={`px-3 py-2 text-sm rounded-md border ${
+                  formData.nextActionDate?.startsWith(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
+                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                Yesterday
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -758,74 +793,6 @@ export function AddActionModal({
                 }`}
               >
                 Custom
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const tomorrow = new Date();
-                  tomorrow.setDate(tomorrow.getDate() + 1);
-                  tomorrow.setHours(9, 0, 0, 0); // Set to 9 AM tomorrow
-                  setFormData(prev => ({ ...prev, nextActionDate: tomorrow.toISOString().slice(0, 16) }));
-                }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData.nextActionDate?.startsWith(new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
-                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Tomorrow
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const nextWeek = new Date();
-                  nextWeek.setDate(nextWeek.getDate() + 7);
-                  nextWeek.setHours(9, 0, 0, 0); // Set to 9 AM next week
-                  setFormData(prev => ({ ...prev, nextActionDate: nextWeek.toISOString().slice(0, 16) }));
-                }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData.nextActionDate?.startsWith(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
-                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Next Week
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const twoWeeks = new Date();
-                  twoWeeks.setDate(twoWeeks.getDate() + 14);
-                  twoWeeks.setHours(9, 0, 0, 0); // Set to 9 AM two weeks from now
-                  setFormData(prev => ({ ...prev, nextActionDate: twoWeeks.toISOString().slice(0, 16) }));
-                }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  formData.nextActionDate?.startsWith(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
-                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Two Weeks
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const nextMonth = new Date();
-                  nextMonth.setMonth(nextMonth.getMonth() + 1);
-                  nextMonth.setHours(9, 0, 0, 0); // Set to 9 AM next month
-                  setFormData(prev => ({ ...prev, nextActionDate: nextMonth.toISOString().slice(0, 16) }));
-                }}
-                className={`px-3 py-2 text-sm rounded-md border ${
-                  (() => {
-                    const nextMonthDate = new Date();
-                    nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
-                    return formData.nextActionDate?.startsWith(nextMonthDate.toISOString().slice(0, 10));
-                  })()
-                    ? 'bg-blue-100 border-blue-300 text-blue-700' 
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Next Month
               </button>
             </div>
             <div className="relative mt-2">

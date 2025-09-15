@@ -849,7 +849,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
           />
           
           {/* Prospect Information */}
-          <div>
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Prospect Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1142,138 +1142,138 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
       case 'people':
         return (
           <div className="space-y-8">
-            {/* Key Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Contact Information</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Email:</span>
-                    <InlineEditField
-                      value={record?.email || record?.workEmail || ''}
-                      field="email"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="email"
-                      placeholder="Enter email address"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Phone:</span>
-                    <InlineEditField
-                      value={record?.phone || record?.mobilePhone || ''}
-                      field="phone"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="tel"
-                      placeholder="Enter phone number"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">LinkedIn:</span>
-                    <InlineEditField
-                      value={record?.linkedinUrl || ''}
-                      field="linkedinUrl"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="url"
-                      placeholder="Enter LinkedIn URL"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-blue-600"
-                    />
-                  </div>
+            {/* Contact Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                  <InlineEditField
+                    value={record?.email || record?.workEmail || ''}
+                    field="email"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="email"
+                    placeholder="Enter email address"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+                  <InlineEditField
+                    value={record?.phone || record?.mobilePhone || ''}
+                    field="phone"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="tel"
+                    placeholder="Enter phone number"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn</label>
+                  <InlineEditField
+                    value={record?.linkedinUrl || ''}
+                    field="linkedinUrl"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="url"
+                    placeholder="Enter LinkedIn URL"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Professional Information</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Title:</span>
-                    <InlineEditField
-                      value={record?.jobTitle || record?.title || ''}
-                      field="jobTitle"
+            {/* Professional Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Job Title</label>
+                  <InlineEditField
+                    value={record?.jobTitle || record?.title || ''}
+                    field="jobTitle"
                       recordId={record?.id || ''}
                       recordType="universal"
                       placeholder="Enter job title"
                       onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
+                      className="text-sm text-gray-800 font-medium"
                     />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Department:</span>
-                    <InlineEditField
-                      value={record?.department || ''}
-                      field="department"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter department"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Company:</span>
-                    <span className="ml-2 text-sm font-medium text-gray-900">
-                      {record?.company || record?.companyName || 'No company assigned'}
-                    </span>
-                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
+                  <InlineEditField
+                    value={record?.department || ''}
+                    field="department"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter department"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Company</label>
+                  <p className="text-sm text-gray-800 font-medium">
+                    {record?.company || record?.companyName || 'No company assigned'}
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status & Priority</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Status:</span>
-                    <InlineEditField
-                      value={record?.status || 'active'}
-                      field="status"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="select"
-                      options={[
-                        { value: 'active', label: 'Active' },
-                        { value: 'inactive', label: 'Inactive' },
-                        { value: 'unqualified', label: 'Unqualified' }
-                      ]}
-                      onSave={handleInlineSave}
-                      className="ml-2"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Priority:</span>
-                    <InlineEditField
-                      value={record?.priority || 'medium'}
-                      field="priority"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="select"
-                      options={[
-                        { value: 'high', label: 'High' },
-                        { value: 'medium', label: 'Medium' },
-                        { value: 'low', label: 'Low' }
-                      ]}
-                      onSave={handleInlineSave}
-                      className="ml-2"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Source:</span>
-                    <InlineEditField
-                      value={record?.source || ''}
-                      field="source"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter source"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
+            {/* Status & Priority */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Status & Priority</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Status</label>
+                  <InlineEditField
+                    value={record?.status || 'active'}
+                    field="status"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="select"
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                      { value: 'unqualified', label: 'Unqualified' }
+                    ]}
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Priority</label>
+                  <InlineEditField
+                    value={record?.priority || 'medium'}
+                    field="priority"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="select"
+                    options={[
+                      { value: 'high', label: 'High' },
+                      { value: 'medium', label: 'Medium' },
+                      { value: 'low', label: 'Low' }
+                    ]}
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Source</label>
+                  <InlineEditField
+                    value={record?.source || ''}
+                    field="source"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter source"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
                 </div>
               </div>
             </div>

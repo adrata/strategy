@@ -312,7 +312,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   console.log(`📊 [DASHBOARD API] DEBUG: workspaceId type: ${typeof workspaceId}, userId type: ${typeof userId}`);
   
   // Debug: Check what activities exist for this user/workspace
-  const debugActivities = await prisma.activities.findMany({
+  const debugActivities = await prisma.actions.findMany({
     where: {
       workspaceId,
       userId: userId
@@ -427,7 +427,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     thisWeekCalendarEvents
   ] = await Promise.all([
     // This week's activities
-    prisma.activities.groupBy({
+    prisma.actions.groupBy({
       by: ['type'],
       where: {
         workspaceId,
@@ -441,7 +441,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     }),
 
     // Last week's activities for comparison
-    prisma.activities.groupBy({
+    prisma.actions.groupBy({
       by: ['type'],
       where: {
         workspaceId,
@@ -500,7 +500,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     }),
 
     // Team-wide stats for context
-    prisma.activities.groupBy({
+    prisma.actions.groupBy({
       by: ['type'],
       where: {
         workspaceId,
@@ -585,7 +585,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   let finalThisWeekActivities: any[] = thisWeekActivities;
   if (thisWeekActivities['length'] === 0) {
     console.log(`📊 [DASHBOARD API] No user-specific current week activities, trying workspace-wide activities`);
-    const workspaceActivities = await prisma.activities.groupBy({
+    const workspaceActivities = await prisma.actions.groupBy({
       by: ['type'],
       where: {
         workspaceId,
@@ -604,7 +604,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   const thisWeekMeetingsFromActivities = getActivityCount(finalThisWeekActivities, meetingTypes);
   
   // Get additional meeting activities (completed meetings)
-  const meetingActivities = await prisma.activities.count({
+  const meetingActivities = await prisma.actions.count({
     where: {
       workspaceId,
       userId: userId,
@@ -689,7 +689,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
 
   // If no activities this week, show recent activity from last 30 days as fallback
   // First try with the specific user, then fall back to workspace-wide activities
-  let recentActivities = await prisma.activities.groupBy({
+  let recentActivities = await prisma.actions.groupBy({
     by: ['type'],
     where: {
       workspaceId,
@@ -704,7 +704,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   // If no user-specific activities, try workspace-wide activities
   if (recentActivities['length'] === 0) {
     console.log(`📊 [DASHBOARD API] No user-specific activities found, trying workspace-wide activities`);
-    const workspaceRecentActivities = await prisma.activities.groupBy({
+    const workspaceRecentActivities = await prisma.actions.groupBy({
       by: ['type'],
       where: {
         workspaceId,
@@ -758,7 +758,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   const teamMeetingsTotal = getActivityCount(teamStats, meetingTypes);
 
   // Calculate actual top performer from real data
-  const topPerformerQuery = await prisma.activities.groupBy({
+  const topPerformerQuery = await prisma.actions.groupBy({
     by: ['userId'],
     where: {
       workspaceId,
@@ -911,7 +911,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
       }
     }),
     ytdConversionRate: totalLeads > 0 ? Math.round((totalOpportunities / totalLeads) * 100) : 0,
-    ytdActivityVolume: await prisma.activities.count({
+    ytdActivityVolume: await prisma.actions.count({
       where: {
         workspaceId,
         createdAt: {
@@ -921,7 +921,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     }),
     ytdActivityConversion: await (async () => {
       // Calculate conversion rate from activities to opportunities
-      const ytdActivities = await prisma.activities.count({
+      const ytdActivities = await prisma.actions.count({
         where: {
           workspaceId,
           createdAt: { gte: ytdStart }

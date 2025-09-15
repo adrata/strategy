@@ -599,7 +599,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
               <>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-[var(--foreground)]">
-                    Activity Timeline
+                  Action Timeline
                   </h2>
                   <div className="text-sm text-[var(--muted)]">
                     {timelineData.length} events

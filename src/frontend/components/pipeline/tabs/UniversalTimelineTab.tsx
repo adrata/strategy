@@ -27,9 +27,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     if (!userId || userId === 'System') return 'System';
     const user = users.find(u => u['id'] === userId);
     if (user) {
-      const fullName = user.name || user.displayName || user.email;
-      const username = user.email?.split('@')[0] || '';
-      return `${fullName} (@${username})`;
+      // Return just the full name, not the username
+      return user.name || user.displayName || user.email || userId;
     }
     return userId;
   }, [users]);
@@ -99,78 +98,111 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
   }, [record, users, generateTimelineFromRecord]);
 
   const loadTimelineFromAPI = useCallback(async () => {
-    if (!record?.id) return;
+    if (!record?.id) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     try {
-      // Load activities for this specific record
-      const activitiesResponse = await fetch(`/api/activities?workspaceId=${record.workspaceId}&userId=${record.assignedUserId}&limit=100`);
-      let activityEvents: TimelineEvent[] = [];
+      // ⚡ PERFORMANCE: Check cache first to avoid unnecessary API calls
+      const cacheKey = `timeline-${record.id}`;
+      const cachedData = localStorage.getItem(cacheKey);
       
-      if (activitiesResponse.ok) {
-        const activitiesData = await activitiesResponse.json();
-        if (activitiesData['success'] && activitiesData.activities) {
-          // Filter activities for this specific record
-          const recordActivities = activitiesData.activities.filter((activity: any) => {
-            // Check if this activity is related to our record
-            return (
-              activity['leadId'] === record.id ||
-              activity['prospectId'] === record.id ||
-              activity['opportunityId'] === record.id ||
-              activity['contactId'] === record.id ||
-              activity['accountId'] === record.id
-            );
-          });
-
-          // Convert activities to timeline events
-          activityEvents = recordActivities.map((activity: any) => ({
-            id: activity.id,
-            type: 'activity',
-            date: new Date(activity.completedAt || activity.createdAt),
-            title: activity.subject || activity.type || 'Activity',
-            description: activity.description || activity.outcome || '',
-            user: getUserName(activity.userId || 'System'),
-            metadata: {
-              type: activity.type,
-              status: activity.status,
-              priority: activity.priority
-            }
-          }));
-        }
-      }
-
-      // Load notes for this specific record using unified API
-      const notesResponse = await fetch(`/api/data/unified?type=notes&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
+      let activityEvents: TimelineEvent[] = [];
       let noteEvents: TimelineEvent[] = [];
       
-      if (notesResponse.ok) {
-        const notesData = await notesResponse.json();
-        if (notesData['success'] && notesData.data) {
-          // Filter notes for this specific record
-          const recordNotes = notesData.data.filter((note: any) => {
-            return (
-              note['leadId'] === record.id ||
-              note['opportunityId'] === record.id ||
-              note['contactId'] === record.id ||
-              note['accountId'] === record.id
-            );
-          });
-
-          // Convert notes to timeline events
-          noteEvents = recordNotes.map((note: any) => ({
-            id: note.id,
-            type: 'note',
-            date: new Date(note.createdAt),
-            title: note.title || 'Note added',
-            description: note.content || note.summary || '',
-            user: getUserName(note.authorId || 'System'),
-            metadata: {
-              type: note.type,
-              priority: note.priority,
-              isPrivate: note.isPrivate
-            }
-          }));
+      if (cachedData) {
+        try {
+          const parsed = JSON.parse(cachedData);
+          if (parsed.timestamp && Date.now() - parsed.timestamp < 180000) { // 3 minute cache
+            activityEvents = parsed.activities || [];
+            noteEvents = parsed.notes || [];
+            console.log('⚡ [TIMELINE] Using cached timeline data');
+          }
+        } catch (e) {
+          console.log('Timeline cache parse error, fetching fresh data');
         }
+      }
+      
+      // Only fetch if no cache or cache is stale
+      if (activityEvents.length === 0 && noteEvents.length === 0) {
+        console.log('🔍 [TIMELINE] Fetching fresh timeline data');
+        
+        // Load activities for this specific record
+        const activitiesResponse = await fetch(`/api/activities?workspaceId=${record.workspaceId}&userId=${record.assignedUserId}&limit=100`);
+        
+        if (activitiesResponse.ok) {
+          const activitiesData = await activitiesResponse.json();
+          if (activitiesData['success'] && activitiesData.activities) {
+            // Filter activities for this specific record
+            const recordActivities = activitiesData.activities.filter((activity: any) => {
+              // Check if this activity is related to our record
+              return (
+                activity['leadId'] === record.id ||
+                activity['prospectId'] === record.id ||
+                activity['opportunityId'] === record.id ||
+                activity['contactId'] === record.id ||
+                activity['accountId'] === record.id
+              );
+            });
+
+            // Convert activities to timeline events
+            activityEvents = recordActivities.map((activity: any) => ({
+              id: activity.id,
+              type: 'activity',
+              date: new Date(activity.completedAt || activity.createdAt),
+              title: activity.subject || activity.type || 'Activity',
+              description: activity.description || activity.outcome || '',
+              user: getUserName(activity.userId || 'System'),
+              metadata: {
+                type: activity.type,
+                status: activity.status,
+                priority: activity.priority
+              }
+            }));
+          }
+        }
+
+        // Load notes for this specific record using unified API
+        const notesResponse = await fetch(`/api/data/unified?type=notes&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
+        
+        if (notesResponse.ok) {
+          const notesData = await notesResponse.json();
+          if (notesData['success'] && notesData.data) {
+            // Filter notes for this specific record
+            const recordNotes = notesData.data.filter((note: any) => {
+              return (
+                note['leadId'] === record.id ||
+                note['opportunityId'] === record.id ||
+                note['contactId'] === record.id ||
+                note['accountId'] === record.id
+              );
+            });
+
+            // Convert notes to timeline events
+            noteEvents = recordNotes.map((note: any) => ({
+              id: note.id,
+              type: 'note',
+              date: new Date(note.createdAt),
+              title: note.title || 'Note added',
+              description: note.content || note.summary || '',
+              user: getUserName(note.authorId || 'System'),
+              metadata: {
+                type: note.type,
+                priority: note.priority,
+                isPrivate: note.isPrivate
+              }
+            }));
+          }
+        }
+        
+        // Cache the data
+        localStorage.setItem(cacheKey, JSON.stringify({
+          activities: activityEvents,
+          notes: noteEvents,
+          timestamp: Date.now()
+        }));
       }
 
       // Merge all events and sort by date
@@ -208,7 +240,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     <div className="space-y-8">
       <div>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Activity Timeline</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
           <div className="text-sm text-gray-500">
             {timelineEvents.length} {timelineEvents['length'] === 1 ? 'activity' : 'activities'}
           </div>
@@ -226,7 +258,11 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
             <div key={event.id} className="flex items-start gap-4">
               {/* Timeline indicator */}
               <div className="flex flex-col items-center pt-1">
-                <div className={`w-3 h-3 rounded-full ${getEventColor(event.type)} ${!isPastEvent(event.date) ? 'opacity-50' : ''}`} />
+                <div className={`w-6 h-6 rounded-md bg-white border border-gray-300 ${!isPastEvent(event.date) ? 'opacity-50' : ''} flex items-center justify-center`}>
+                  <span className="text-xs font-semibold text-gray-700">
+                    {timelineEvents.length - index}
+                  </span>
+                </div>
                 {index < timelineEvents.length - 1 && (
                   <div className="w-px h-12 bg-gray-200 mt-2" />
                 )}
@@ -243,13 +279,51 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                           Scheduled
                         </span>
                       )}
+                      {event.metadata?.status && (
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          event.metadata.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          event.metadata.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {event.metadata.status}
+                        </span>
+                      )}
                     </div>
                     {event['description'] && (
                       <p className="text-sm text-gray-600 mb-2">{event.description}</p>
                     )}
+                    
+                    {/* Business Context */}
+                    {event.metadata && (
+                      <div className="bg-gray-50 rounded-lg p-3 mb-2">
+                        <div className="grid grid-cols-2 gap-4 text-xs">
+                          {event.metadata.type && (
+                            <div>
+                              <span className="font-medium text-gray-700">Type:</span>
+                              <span className="ml-1 text-gray-600 capitalize">{event.metadata.type}</span>
+                            </div>
+                          )}
+                          {event.metadata.priority && (
+                            <div>
+                              <span className="font-medium text-gray-700">Priority:</span>
+                              <span className={`ml-1 px-1 py-0.5 rounded text-xs ${
+                                event.metadata.priority === 'high' ? 'bg-red-100 text-red-800' :
+                                event.metadata.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {event.metadata.priority}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>{formatDistanceToNow(event.date, { addSuffix: true })}</span>
                       {event['user'] && <span>by {event.user}</span>}
+                      <span>•</span>
+                      <span>{format(event.date, 'MMM d, yyyy h:mm a')}</span>
                     </div>
                   </div>
                 </div>

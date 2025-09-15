@@ -727,7 +727,7 @@ export function CompanyDetailView({
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Recent Activity Timeline
+                Recent Action Timeline
               </h3>
               <div className="space-y-4">
                 {[

@@ -65,8 +65,8 @@ export interface AccountContext {
   
   activeOpportunities: {
     id: string;
-    accountId: string;
-    accountName: string;
+    companyId: string;
+    companyName: string;
     amount?: number;
     stage: string;
     closeDate?: Date;
@@ -244,8 +244,8 @@ export class ContextLoader {
       })),
       activeOpportunities: opportunities.map(opp => ({
         id: opp.id,
-        accountId: opp.accountId || '',
-        accountName: 'Unknown', // We'll need to join with accounts later
+        companyId: opp.companyId || '',
+        companyName: 'Unknown', // We'll need to join with companies later
         amount: opp.amount ? Number(opp.amount) : undefined,
         stage: opp.stage,
         closeDate: opp.expectedCloseDate || undefined,

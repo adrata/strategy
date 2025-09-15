@@ -685,6 +685,8 @@ async function handleDataOperation(
       return await handleSearch(type, workspaceId, userId, search!, pagination);
     case 'advance_to_prospect':
       return await handleAdvanceToProspect(type, workspaceId, userId, id!, requestData);
+    case 'advance_to_opportunity':
+      return await handleAdvanceToOpportunity(type, workspaceId, userId, id!, requestData);
     case 'get_buyer_groups':
       return await handleGetBuyerGroups(type, workspaceId, userId, id!);
     default:
@@ -911,7 +913,7 @@ async function handleGetBuyerGroups(type: string, workspaceId: string, userId: s
     }
     
     // Find buyer groups that include this person
-    const buyerGroups = await (prisma as any).buyer_groups.findMany({
+    const buyerGroups = await prisma.buyer_groups.findMany({
       where: {
         workspaceId,
         people: {
@@ -964,11 +966,19 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
   // Add workspace and user context
   const createData = {
     ...data,
-    workspaceId,
-    assignedUserId: userId,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    workspaceId
   };
+  
+  // Only add assignedUserId for records that have this field
+  if (type !== 'notes') {
+    createData.assignedUserId = userId;
+  }
+  
+  // Only add createdAt/updatedAt for records that need them
+  if (type !== 'notes') {
+    createData.createdAt = new Date();
+    createData.updatedAt = new Date();
+  }
 
   // Generate ID for records that require it
   if (!createData.id) {
@@ -1166,7 +1176,7 @@ async function handleCustomerCreate(workspaceId: string, userId: string, data: a
       data: {
         id: `customer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         workspaceId,
-        accountId: account.id,
+        companyId: account.id,
         customerSince: new Date(),
         customerStatus: 'active',
         contractValue: data.contractValue ? parseFloat(data.contractValue) : 0,
@@ -1176,10 +1186,10 @@ async function handleCustomerCreate(workspaceId: string, userId: string, data: a
       }
     });
 
-    // Log contact IDs for future relationship creation
-    if (data['contactIds'] && data.contactIds.length > 0) {
-      console.log('📝 [UNIFIED API] Contact IDs to associate with customer:', data.contactIds);
-      // TODO: Implement contact-customer relationship creation
+    // Log person IDs for future relationship creation
+    if (data['personIds'] && data.personIds.length > 0) {
+      console.log('📝 [UNIFIED API] Person IDs to associate with customer:', data.personIds);
+      // TODO: Implement person-customer relationship creation
     }
 
     // Clear cache after create
@@ -1467,7 +1477,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
     console.log(`✅ [ADVANCE] Created prospect:`, newProspect.id);
     
     // Create buyer group for the company if it doesn't exist
-    let buyerGroup = await (prisma as any).buyer_groups.findFirst({
+    let buyerGroup = await prisma.buyer_groups.findFirst({
       where: {
         workspaceId,
         name: { contains: lead.company }
@@ -1475,7 +1485,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
     });
     
     if (!buyerGroup) {
-      buyerGroup = await (prisma as any).buyer_groups.create({
+      buyerGroup = await prisma.buyer_groups.create({
         data: {
           workspaceId,
           assignedUserId: userId,
@@ -1494,7 +1504,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
     }
     
     // Add the new prospect to the buyer group
-    await (prisma as any).buyerGroupToPerson.create({
+    await prisma.buyerGroupToPerson.create({
       data: {
         buyerGroupId: buyerGroup.id,
         personId: lead.personId,
@@ -1543,7 +1553,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
         });
         
         // Add to buyer group
-        await (prisma as any).buyerGroupToPerson.create({
+        await prisma.buyerGroupToPerson.create({
           data: {
             buyerGroupId: buyerGroup.id,
             personId: companyLead.personId,
@@ -1596,6 +1606,102 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
   } catch (error) {
     console.error(`❌ [ADVANCE] Failed to advance ${type} ${id}:`, error);
     throw new Error(`Failed to advance to prospect: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+// 🆕 ADVANCE TO OPPORTUNITY OPERATIONS
+async function handleAdvanceToOpportunity(type: string, workspaceId: string, userId: string, id: string, requestData: any): Promise<any> {
+  console.log(`🔧 [ADVANCE] Advancing ${type} ${id} to opportunity`);
+  
+  try {
+    // Only allow advancing prospects to opportunities
+    if (type !== 'prospects') {
+      throw new Error(`Cannot advance ${type} to opportunity. Only prospects can be advanced.`);
+    }
+    
+    // Get the prospect record
+    const prospectModel = getPrismaModel('prospects');
+    if (!prospectModel) throw new Error('Prospects model not found');
+    
+    const prospect = await prospectModel.findUnique({
+      where: { id }
+    });
+    
+    if (!prospect) {
+      throw new Error(`Prospect with id ${id} not found`);
+    }
+    
+    console.log(`✅ [ADVANCE] Found prospect:`, prospect.fullName);
+    
+    // Create a new opportunity record with the prospect data
+    const opportunityModel = getPrismaModel('opportunities');
+    if (!opportunityModel) throw new Error('Opportunities model not found');
+    
+    // Prepare opportunity data from prospect data
+    const opportunityData = {
+      workspaceId: prospect.workspaceId,
+      assignedUserId: prospect.assignedUserId,
+      personId: prospect.personId,
+      companyId: prospect.companyId,
+      name: `${prospect.fullName} - ${prospect.company}`, // Use name field for opportunities
+      description: `Opportunity for ${prospect.fullName} at ${prospect.company}`,
+      amount: prospect.estimatedValue || 50000, // Default value for opportunities
+      currency: prospect.currency || 'USD',
+      probability: 20, // Default probability for new opportunities
+      stage: 'qualification', // Set to qualification stage for new opportunity
+      priority: prospect.priority || 'medium',
+      source: prospect.source,
+      expectedCloseDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days from now
+      notes: prospect.notes,
+      nextSteps: prospect.nextAction || 'Qualify the opportunity and understand requirements',
+      tags: prospect.tags || [],
+      customFields: prospect.customFields,
+      riskScore: 0.3, // Default risk score
+      lastActivityDate: prospect.lastContactDate,
+      nextActivityDate: prospect.nextFollowUpDate,
+      demoScenarioId: prospect.demoScenarioId,
+      isDemoData: prospect.isDemoData,
+      externalId: prospect.externalId,
+      zohoId: prospect.zohoId,
+      createdBy: prospect.assignedUserId,
+      updatedBy: prospect.assignedUserId,
+      version: 1,
+      entity_id: prospect.entity_id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    // Create the opportunity
+    const newOpportunity = await opportunityModel.create({
+      data: opportunityData
+    });
+    
+    console.log(`✅ [ADVANCE] Created opportunity:`, newOpportunity.id);
+    
+    // Soft delete the original prospect
+    await prospectModel.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+    
+    console.log(`✅ [ADVANCE] Successfully advanced prospect ${id} to opportunity ${newOpportunity.id}`);
+    
+    // Clear cache after advance
+    clearWorkspaceCache(workspaceId, userId, true);
+    
+    return { 
+      success: true, 
+      data: newOpportunity,
+      newRecordId: newOpportunity.id,
+      message: `Prospect successfully advanced to opportunity`
+    };
+    
+  } catch (error) {
+    console.error(`❌ [ADVANCE] Failed to advance ${type} ${id}:`, error);
+    throw new Error(`Failed to advance to opportunity: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -1688,7 +1794,7 @@ function getPrismaModel(type: string): any {
     partners: prisma.partners,
     sellers: prisma.workspace_users, // 🆕 FIX: Add sellers support
     notes: prisma.notes,
-    activities: prisma.activities
+    activities: prisma.actions
   };
   
   return modelMap[type];

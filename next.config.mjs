@@ -34,7 +34,7 @@ const buildConfig = {
   },
   
   // External packages that should be handled by the server
-  serverExternalPackages: ['@prisma/client', 'csv-writer', 'csv-parser', 'pdf-parse'],
+  serverExternalPackages: ['@prisma/client', 'csv-writer', 'csv-parser', 'pdf-parse', 'redis'],
   
   // 2025 PERFORMANCE OPTIMIZATIONS - ENHANCED CACHING
   experimental: {
@@ -138,6 +138,10 @@ const buildConfig = {
             true
         );
       }
+      
+      // Add Redis to externals for server-side builds
+      config.externals = config.externals || [];
+      config.externals.push('redis');
     }
     
     // Fix client-reference-manifest issues and Node.js modules
