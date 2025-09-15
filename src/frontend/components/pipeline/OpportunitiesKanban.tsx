@@ -3,6 +3,133 @@
 import React, { useState } from 'react';
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 
+// Import the ranking function from PipelineTable
+function getPersonMasterRank(record: any, fallbackIndex: number): number | string {
+  // Partners get excluded from ranking
+  if (record['status'] === 'Partner' || record.tags?.includes('partner')) {
+    return '-';
+  }
+  
+  // Calculate unified rank based on company importance + person role
+  let unifiedScore = 0;
+  
+  // === COMPANY RANKING FACTORS ===
+  // Company size/importance
+  const companySize = record.companySize || record.company?.companySize || 0;
+  if (companySize >= 1000) unifiedScore += 100;
+  else if (companySize >= 500) unifiedScore += 75;
+  else if (companySize >= 100) unifiedScore += 50;
+  else if (companySize >= 50) unifiedScore += 25;
+  
+  // Company revenue/value
+  const revenue = record.revenue || record.company?.revenue || record.estimatedValue || record.amount || 0;
+  if (revenue >= 10000000) unifiedScore += 100; // $10M+
+  else if (revenue >= 1000000) unifiedScore += 75;  // $1M+
+  else if (revenue >= 500000) unifiedScore += 50;   // $500K+
+  else if (revenue >= 100000) unifiedScore += 25;   // $100K+
+  
+  // Company industry importance
+  const industry = record.industry || record.company?.industry || '';
+  if (['Technology', 'Finance', 'Healthcare', 'Manufacturing'].includes(industry)) {
+    unifiedScore += 30;
+  } else if (['Legal', 'Real Estate', 'Construction'].includes(industry)) {
+    unifiedScore += 20;
+  }
+  
+  // === PERSON ROLE RANKING FACTORS ===
+  // Buyer group role (Decision Makers get highest priority)
+  const buyerGroupRole = record.buyerGroupRole || record.role || '';
+  if (buyerGroupRole === 'Decision Maker') unifiedScore += 150;
+  else if (buyerGroupRole === 'Champion') unifiedScore += 100;
+  else if (buyerGroupRole === 'Stakeholder') unifiedScore += 75;
+  else if (buyerGroupRole === 'Blocker') unifiedScore += 50; // Blockers need attention
+  else if (buyerGroupRole === 'Introducer') unifiedScore += 60;
+  
+  // Job title/authority level
+  const title = record.title || record.jobTitle || '';
+  if (title.toLowerCase().includes('ceo') || title.toLowerCase().includes('president')) unifiedScore += 100;
+  else if (title.toLowerCase().includes('vp') || title.toLowerCase().includes('vice president')) unifiedScore += 80;
+  else if (title.toLowerCase().includes('director') || title.toLowerCase().includes('head of')) unifiedScore += 60;
+  else if (title.toLowerCase().includes('manager') || title.toLowerCase().includes('lead')) unifiedScore += 40;
+  
+  // === RECORD TYPE RANKING FACTORS ===
+  // Status-based scoring
+  const status = record.status?.toLowerCase() || '';
+  if (status === 'responded' || status === 'engaged') unifiedScore += 80;
+  else if (status === 'contacted') unifiedScore += 50;
+  else if (status === 'new' || status === 'uncontacted') unifiedScore += 30;
+  
+  // Priority scoring
+  const priority = record.priority?.toLowerCase() || '';
+  if (priority === 'urgent') unifiedScore += 100;
+  else if (priority === 'high') unifiedScore += 60;
+  else if (priority === 'medium') unifiedScore += 30;
+  
+  // Record type importance - opportunities get high priority
+  if (record.recordType === 'opportunities' || record.stage) unifiedScore += 100; // Active opportunities
+  
+  // === ACTIVITY RANKING FACTORS ===
+  // Recent activity boost
+  const lastActivity = record.lastActivityDate || record.lastContactDate || record.updatedAt;
+  if (lastActivity) {
+    const daysSince = Math.floor((new Date().getTime() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSince <= 7) unifiedScore += 20;
+    else if (daysSince <= 30) unifiedScore += 10;
+  }
+  
+  // === NEXT ACTION PRIORITY RANKING ===
+  const nextActionDate = record.nextActionDate || record.nextFollowUpDate || record.nextActivityDate;
+  const lastContactDate = record.lastContactDate || record.lastActionDate || record.lastActivityDate || record.updatedAt;
+  
+  const daysSinceLastContact = lastContactDate 
+    ? Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 999;
+  
+  const daysUntilNextAction = nextActionDate 
+    ? Math.floor((new Date(nextActionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+  
+  // === ACTION-BASED RANKING LOGIC ===
+  let actionPriority = 0;
+  
+  // Overdue actions get highest priority (rank 1-10)
+  if (daysUntilNextAction < 0) {
+    actionPriority = Math.abs(daysUntilNextAction) * 50; // More overdue = higher priority
+  }
+  // Actions due today get high priority (rank 11-20)
+  else if (daysUntilNextAction === 0) {
+    actionPriority = 100;
+  }
+  // Actions due tomorrow get medium-high priority (rank 21-30)
+  else if (daysUntilNextAction === 1) {
+    actionPriority = 80;
+  }
+  // Actions due this week get medium priority (rank 31-50)
+  else if (daysUntilNextAction <= 7) {
+    actionPriority = 60 - (daysUntilNextAction * 5);
+  }
+  // Actions due next week get lower priority (rank 51-70)
+  else if (daysUntilNextAction <= 14) {
+    actionPriority = 40 - (daysUntilNextAction * 2);
+  }
+  // No next action set - use last contact timing
+  else if (!nextActionDate) {
+    if (daysSinceLastContact >= 30) actionPriority = 70; // Haven't contacted in 30+ days
+    else if (daysSinceLastContact >= 14) actionPriority = 50; // Haven't contacted in 2+ weeks
+    else if (daysSinceLastContact >= 7) actionPriority = 30; // Haven't contacted in 1+ week
+    else actionPriority = 10; // Recently contacted
+  }
+  
+  // === COMBINE ACTION PRIORITY WITH COMPANY/PERSON IMPORTANCE ===
+  // Action priority is the primary factor, but company/person importance creates sub-ranking
+  const finalScore = (actionPriority * 10) + (unifiedScore / 10);
+  
+  // Convert to rank (higher score = lower rank number, rank 1 is most urgent)
+  const rank = Math.max(1, Math.floor(1000 / (finalScore + 1)) + 1);
+  
+  return rank;
+}
+
 interface Opportunity {
   id: string;
   name: string;
@@ -200,7 +327,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                     <p className="text-xs">No opportunities</p>
                   </div>
                 ) : (
-                  opportunities.map((opportunity) => (
+                  opportunities.map((opportunity, index) => (
                     <div
                       key={opportunity.id}
                       className={`bg-white border rounded-sm p-3 hover:border-gray-300 transition-colors cursor-pointer relative ${
@@ -213,7 +340,14 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       onDragEnd={handleDragEnd}
                       onClick={() => onRecordClick(opportunity)}
                     >
-                      <div className="mb-3">
+                      {/* Rank Display */}
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
+                          #{getPersonMasterRank(opportunity, index)}
+                        </span>
+                      </div>
+                      
+                      <div className="mb-3 pr-8">
                         <h4 className="font-medium text-gray-900 text-sm leading-tight mb-1 flex items-center gap-1">
                           {opportunity.name}
                           {opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' && (

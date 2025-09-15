@@ -656,7 +656,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                                      case 'rank':
                      return (
                        <td key="rank" className={textClasses}>
-                         <div className="text-left font-medium">{index + 1}</div>
+                         <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
             </td>
                      );
                   case 'company':
@@ -782,7 +782,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{index + 1}</div>
+                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
                       </td>
                     );
                   case 'company':
@@ -967,7 +967,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{index + 1}</div>
+                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
                       </td>
                     );
                   case 'company':
@@ -1145,7 +1145,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{index + 1}</div>
+                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
                       </td>
                     );
                   case 'company':
@@ -1269,7 +1269,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{index + 1}</div>
+                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
                       </td>
                     );
                   case 'company':
@@ -1341,7 +1341,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                       <td key="nextAction" className={textClasses}>
                         <div className="flex items-center gap-2">
                           {(() => {
-                            const nextAction = getContactNextAction(record);
+                            const nextAction = getPersonNextAction(record);
                             return (
                               <>
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${nextAction.timingColor}`}>
@@ -1566,7 +1566,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                     case 'rank':
                       return (
                         <td key="rank" className={textClasses}>
-                <div className="text-center font-medium">{index + 1}</div>
+                <div className="text-center font-medium">{getPersonMasterRank(record, index)}</div>
               </td>
                       );
                     case 'company':
@@ -2068,6 +2068,43 @@ function getLastActionDescription(record: any): string {
   return 'Contact activity tracked';
 }
 
+// 🎨 STANDARDIZED ACTION TIMING COLOR SCHEME
+// Consistent colors for both last action and next action timing pills
+function getStandardizedActionTimingColor(timing: string, isLastAction: boolean = false): string {
+  const timingLower = timing.toLowerCase();
+  
+  // Last Action Colors (based on recency)
+  if (isLastAction) {
+    if (timingLower.includes('just now') || timingLower.includes('today')) {
+      return 'bg-blue-100 text-blue-800'; // Recent contact
+    } else if (timingLower.includes('yesterday') || timingLower.includes('1d ago') || timingLower.includes('2d ago') || timingLower.includes('3d ago')) {
+      return 'bg-blue-100 text-blue-800'; // Recent contact
+    } else if (timingLower.includes('4d ago') || timingLower.includes('5d ago') || timingLower.includes('6d ago') || timingLower.includes('7d ago') || timingLower.includes('1w ago') || timingLower.includes('2w ago')) {
+      return 'bg-gray-100 text-gray-800'; // Moderate timing
+    } else if (timingLower.includes('3w ago') || timingLower.includes('4w ago') || timingLower.includes('1mo ago') || timingLower.includes('2mo ago')) {
+      return 'bg-orange-100 text-orange-800'; // Stale timing
+    } else if (timingLower.includes('3mo ago') || timingLower.includes('6mo ago') || timingLower.includes('1y ago') || timingLower.includes('never')) {
+      return 'bg-red-100 text-red-800'; // Very stale or never contacted
+    }
+  }
+  
+  // Next Action Colors (based on urgency)
+  if (timingLower.includes('now') || timingLower.includes('today') || timingLower.includes('overdue')) {
+    return 'bg-red-100 text-red-800'; // Urgent - do now
+  } else if (timingLower.includes('tomorrow') || timingLower.includes('this week')) {
+    return 'bg-orange-100 text-orange-800'; // High priority - this week
+  } else if (timingLower.includes('next week') || timingLower.includes('monday') || timingLower.includes('tuesday')) {
+    return 'bg-blue-100 text-blue-800'; // Medium priority - next week
+  } else if (timingLower.includes('two weeks') || timingLower.includes('wednesday') || timingLower.includes('thursday') || timingLower.includes('friday')) {
+    return 'bg-indigo-100 text-indigo-800'; // Lower priority - two weeks
+  } else if (timingLower.includes('next month') || timingLower.includes('future')) {
+    return 'bg-gray-100 text-gray-800'; // Low priority - future
+  }
+  
+  // Default fallback
+  return 'bg-gray-100 text-gray-800';
+}
+
 // Smart Last Action description with tough coach personality and real data
 function getSmartLastActionDescription(record: any, healthStatus: string): string {
   const name = record['fullName'] || record.name || 'this contact';
@@ -2297,26 +2334,25 @@ function getHealthStatus(record: any): { status: string; color: string; text: st
     return `${Math.ceil(days / 365)}y ago`;
   };
 
-  // Neutral color coding: Blue for timing indicators (not health status)
+  // Use standardized color scheme for last action timing
+  const timingText = formatPreciseTime(daysDiff, hoursDiff);
+  const color = getStandardizedActionTimingColor(timingText, true);
+  
+  // Determine status for logic purposes
+  let status = 'recent';
   if (daysDiff === 0) {
-    // Same day = recent contact
-    return { status: 'recent', color: 'bg-blue-100 text-blue-800', text: formatPreciseTime(daysDiff, hoursDiff) };
+    status = 'recent';
   } else if (daysDiff <= 3) {
-    // 1-3 days = recent
-    return { status: 'recent', color: 'bg-blue-100 text-blue-800', text: formatPreciseTime(daysDiff, hoursDiff) };
-  } else if (daysDiff <= 7) {
-    // 4-7 days = moderate
-    return { status: 'moderate', color: 'bg-gray-100 text-gray-800', text: formatPreciseTime(daysDiff, hoursDiff) };
+    status = 'recent';
   } else if (daysDiff <= 14) {
-    // 8-14 days = moderate
-    return { status: 'moderate', color: 'bg-gray-100 text-gray-800', text: formatPreciseTime(daysDiff, hoursDiff) };
+    status = 'moderate';
   } else if (daysDiff <= 30) {
-    // 15-30 days = stale
-    return { status: 'stale', color: 'bg-orange-100 text-orange-800', text: formatPreciseTime(daysDiff, hoursDiff) };
+    status = 'stale';
   } else {
-    // 30+ days = very stale
-    return { status: 'very-stale', color: 'bg-red-100 text-red-800', text: formatPreciseTime(daysDiff, hoursDiff) };
+    status = 'very-stale';
   }
+  
+  return { status, color, text: timingText };
 }
 
 function getNextAction(record: any): string {
@@ -2870,29 +2906,29 @@ function getSpeedrunNextAction(record: any, recordIndex: number): { timing: stri
       if (isWeekend) {
         // If it's weekend and Monday is a working day, show "Monday"
         if (isMondayWorkingDay) {
-          return { timing: 'Monday', color: 'bg-blue-100 text-blue-800' }; // Blue for weekend
+          return { timing: 'Monday', color: getStandardizedActionTimingColor('Monday') };
         }
         // If Monday is also a holiday, show "Tuesday"
-        return { timing: 'Tuesday', color: 'bg-blue-100 text-blue-800' }; // Blue for weekend
+        return { timing: 'Tuesday', color: getStandardizedActionTimingColor('Tuesday') };
       }
       if (isHolidayTomorrow) {
-        return { timing: 'Tuesday', color: 'bg-blue-100 text-blue-800' }; // Blue for holiday
+        return { timing: 'Tuesday', color: getStandardizedActionTimingColor('Tuesday') };
       }
-      return { timing: 'Now', color: 'bg-red-100 text-red-800' };
+      return { timing: 'Now', color: getStandardizedActionTimingColor('Now') };
     } else {
-      // All other Speedrun items should be done TODAY - use green to match Last Action
+      // All other Speedrun items should be done TODAY
       if (isWeekend) {
         // If it's weekend and Monday is a working day, show "Monday"
         if (isMondayWorkingDay) {
-          return { timing: 'Monday', color: 'bg-blue-100 text-blue-800' }; // Blue for weekend
+          return { timing: 'Monday', color: getStandardizedActionTimingColor('Monday') };
         }
         // If Monday is also a holiday, show "Tuesday"
-        return { timing: 'Tuesday', color: 'bg-blue-100 text-blue-800' }; // Blue for weekend
+        return { timing: 'Tuesday', color: getStandardizedActionTimingColor('Tuesday') };
       }
       if (isHolidayTomorrow) {
-        return { timing: 'Tuesday', color: 'bg-blue-100 text-blue-800' }; // Blue for holiday
+        return { timing: 'Tuesday', color: getStandardizedActionTimingColor('Tuesday') };
       }
-      return { timing: 'Today', color: 'bg-green-100 text-green-800' };
+      return { timing: 'Today', color: getStandardizedActionTimingColor('Today') };
     }
   };
   
@@ -3032,33 +3068,33 @@ function getLeadsNextAction(record: any, recordIndex?: number): { timing: string
   const getLeadsTiming = (): { timing: string; color: string } => {
     // If this lead is also in Speedrun, match Speedrun timing
     if (isInSpeedrun) {
-      return { timing: 'Today', color: 'bg-orange-100 text-orange-800' };
+      return { timing: 'Today', color: getStandardizedActionTimingColor('Today') };
     }
     
     // Macro ranking distribution based on score
     if (rankingScore >= 150) {
       // Top tier - next business day (accounting for weekends)
       if (isWeekend || isFriday) {
-        return { timing: 'Monday', color: 'bg-blue-100 text-blue-800' };
+        return { timing: 'Monday', color: getStandardizedActionTimingColor('Monday') };
       } else {
-        return { timing: 'This Week', color: 'bg-blue-100 text-blue-800' };
+        return { timing: 'This Week', color: getStandardizedActionTimingColor('This Week') };
       }
     } 
     else if (rankingScore >= 100) {
       // High tier - next week
-      return { timing: 'Next Week', color: 'bg-indigo-100 text-indigo-800' };
+      return { timing: 'Next Week', color: getStandardizedActionTimingColor('Next Week') };
     } 
     else if (rankingScore >= 50) {
       // Medium tier - two weeks
-      return { timing: 'Two Weeks', color: 'bg-purple-100 text-purple-800' };
+      return { timing: 'Two Weeks', color: getStandardizedActionTimingColor('Two Weeks') };
     } 
     else if (rankingScore >= 25) {
       // Lower tier - next month
-      return { timing: 'Next Month', color: 'bg-gray-100 text-gray-800' };
+      return { timing: 'Next Month', color: getStandardizedActionTimingColor('Next Month') };
     }
     else {
       // Lowest tier - future
-      return { timing: 'Future', color: 'bg-gray-100 text-gray-600' };
+      return { timing: 'Future', color: getStandardizedActionTimingColor('Future') };
     }
   };
   
@@ -3273,27 +3309,27 @@ function getCustomerNextAction(record: any): { timing: string; timingColor: stri
   const getCustomerTiming = (): { timing: string; color: string } => {
     // Health-based urgency
     if (healthScore === 'poor' || healthScore === 'at-risk') {
-      return { timing: 'Today', color: 'bg-red-100 text-red-800' };
+      return { timing: 'Today', color: getStandardizedActionTimingColor('Today') };
     } else if (healthScore === 'fair' || healthScore === 'warning') {
-      return { timing: 'This Week', color: 'bg-orange-100 text-orange-800' };
+      return { timing: 'This Week', color: getStandardizedActionTimingColor('This Week') };
     }
     
     // Activity-based timing
     if (daysSinceLastDeal && daysSinceLastDeal >= 90) {
-      return { timing: 'This Week', color: 'bg-blue-100 text-blue-800' };
+      return { timing: 'This Week', color: getStandardizedActionTimingColor('This Week') };
     } else if (daysSinceLastDeal && daysSinceLastDeal >= 60) {
-      return { timing: 'Two Weeks', color: 'bg-purple-100 text-purple-800' };
+      return { timing: 'Two Weeks', color: getStandardizedActionTimingColor('Two Weeks') };
     } else if (daysSinceLastDeal && daysSinceLastDeal >= 30) {
-      return { timing: 'Next Month', color: 'bg-gray-100 text-gray-800' };
+      return { timing: 'Next Month', color: getStandardizedActionTimingColor('Next Month') };
     }
     
     // High-value customers get regular attention
     if (totalValue >= 100000) {
-      return { timing: 'Next Week', color: 'bg-indigo-100 text-indigo-800' };
+      return { timing: 'Next Week', color: getStandardizedActionTimingColor('Next Week') };
     }
     
     // Default customer maintenance
-    return { timing: 'Next Month', color: 'bg-gray-100 text-gray-800' };
+    return { timing: 'Next Month', color: getStandardizedActionTimingColor('Next Month') };
   };
   
   const getCustomerAction = (): string => {
@@ -3322,8 +3358,8 @@ function getCustomerNextAction(record: any): { timing: string; timingColor: stri
   };
 }
 
-// Account composite ranking based on multiple contacts and opportunities
-function getAccountCompositeRank(account: any, fallbackIndex: number): number | string {
+// Company master ranking based on multiple people and opportunities
+function getCompanyMasterRank(company: any, fallbackIndex: number): number | string {
   // Partners get excluded from ranking
   if (account['accountType'] === 'partner' || account.tags?.includes('partner')) {
     return '-';
@@ -3369,46 +3405,148 @@ function getAccountCompositeRank(account: any, fallbackIndex: number): number | 
   return Math.max(1, fallbackIndex + 1 - Math.floor(compositeScore / 10));
 }
 
-// Contact master ranking that aligns with Speedrun and other views
-function getContactMasterRank(contact: any, fallbackIndex: number): number | string {
+// Person master ranking that aligns with Speedrun and other views
+// Unified hierarchical ranking system: Companies first, then people within companies
+function getPersonMasterRank(record: any, fallbackIndex: number): number | string {
+  
   // Partners get excluded from ranking
-  if (contact['status'] === 'Partner' || contact.tags?.includes('partner')) {
+  if (record['status'] === 'Partner' || record.tags?.includes('partner')) {
     return '-';
   }
   
-  // Calculate master rank based on priority across all systems
-  let masterScore = 0;
+  // Calculate unified rank based on company importance + person role
+  let unifiedScore = 0;
   
-  // Status-based scoring (matches Speedrun logic)
-  const status = contact.status?.toLowerCase() || '';
-  if (status === 'responded' || status === 'engaged') masterScore += 100;
-  else if (status === 'contacted') masterScore += 50;
-  else if (status === 'new' || status === 'uncontacted') masterScore += 30;
+  // === COMPANY RANKING FACTORS ===
+  // Company size/importance
+  const companySize = record.companySize || record.company?.companySize || 0;
+  if (companySize >= 1000) unifiedScore += 100;
+  else if (companySize >= 500) unifiedScore += 75;
+  else if (companySize >= 100) unifiedScore += 50;
+  else if (companySize >= 50) unifiedScore += 25;
   
-  // Priority scoring
-  const priority = contact.priority?.toLowerCase() || '';
-  if (priority === 'urgent') masterScore += 75;
-  else if (priority === 'high') masterScore += 50;
-  else if (priority === 'medium') masterScore += 25;
+  // Company revenue/value
+  const revenue = record.revenue || record.company?.revenue || record.estimatedValue || 0;
+  if (revenue >= 10000000) unifiedScore += 100; // $10M+
+  else if (revenue >= 1000000) unifiedScore += 75;  // $1M+
+  else if (revenue >= 500000) unifiedScore += 50;   // $500K+
+  else if (revenue >= 100000) unifiedScore += 25;   // $100K+
   
-  // Customer status boost
-  if (contact.isCustomer) masterScore += 40;
-  
-  // Open opportunities boost
-  const openOpps = contact.openOpportunities || contact._count?.opportunities || 0;
-  masterScore += openOpps * 20;
-  
-  // Recent activity boost
-  const lastActivity = contact.lastActivityDate || contact.lastContactDate;
-  if (lastActivity) {
-    const daysSince = Math.floor((new Date().getTime() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24));
-    if (daysSince <= 3) masterScore += 25;
-    else if (daysSince <= 7) masterScore += 15;
-    else if (daysSince <= 14) masterScore += 10;
+  // Company industry importance
+  const industry = record.industry || record.company?.industry || '';
+  if (['Technology', 'Finance', 'Healthcare', 'Manufacturing'].includes(industry)) {
+    unifiedScore += 30;
+  } else if (['Legal', 'Real Estate', 'Construction'].includes(industry)) {
+    unifiedScore += 20;
   }
   
-  // Convert to rank (higher score = lower rank number)
-  return Math.max(1, fallbackIndex + 1 - Math.floor(masterScore / 15));
+  // === PERSON ROLE RANKING FACTORS ===
+  // Buyer group role (Decision Makers get highest priority)
+  const buyerGroupRole = record.buyerGroupRole || record.role || '';
+  if (buyerGroupRole === 'Decision Maker') unifiedScore += 150;
+  else if (buyerGroupRole === 'Champion') unifiedScore += 100;
+  else if (buyerGroupRole === 'Stakeholder') unifiedScore += 75;
+  else if (buyerGroupRole === 'Blocker') unifiedScore += 50; // Blockers need attention
+  else if (buyerGroupRole === 'Introducer') unifiedScore += 60;
+  
+  // Job title/authority level
+  const title = record.title || record.jobTitle || '';
+  if (title.toLowerCase().includes('ceo') || title.toLowerCase().includes('president')) unifiedScore += 100;
+  else if (title.toLowerCase().includes('vp') || title.toLowerCase().includes('vice president')) unifiedScore += 80;
+  else if (title.toLowerCase().includes('director') || title.toLowerCase().includes('head of')) unifiedScore += 60;
+  else if (title.toLowerCase().includes('manager') || title.toLowerCase().includes('lead')) unifiedScore += 40;
+  
+  // === RECORD TYPE RANKING FACTORS ===
+  // Status-based scoring
+  const status = record.status?.toLowerCase() || '';
+  if (status === 'responded' || status === 'engaged') unifiedScore += 80;
+  else if (status === 'contacted') unifiedScore += 50;
+  else if (status === 'new' || status === 'uncontacted') unifiedScore += 30;
+  
+  // Priority scoring
+  const priority = record.priority?.toLowerCase() || '';
+  if (priority === 'urgent') unifiedScore += 100;
+  else if (priority === 'high') unifiedScore += 60;
+  else if (priority === 'medium') unifiedScore += 30;
+  
+  // Record type importance
+  if (record.recordType === 'customers' || record.isCustomer) unifiedScore += 120; // Existing customers
+  else if (record.recordType === 'opportunities') unifiedScore += 100; // Active opportunities
+  else if (record.recordType === 'leads') unifiedScore += 80; // Qualified leads
+  else if (record.recordType === 'prospects') unifiedScore += 60; // Prospects
+  
+  // === ACTIVITY RANKING FACTORS ===
+  // Recent activity boost
+  const lastActivity = record.lastActivityDate || record.lastContactDate || record.updatedAt;
+  if (lastActivity) {
+    const daysSince = Math.floor((new Date().getTime() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSince <= 3) unifiedScore += 40;
+    else if (daysSince <= 7) unifiedScore += 25;
+    else if (daysSince <= 14) unifiedScore += 15;
+    else if (daysSince >= 30) unifiedScore += 20; // Old records need attention
+  }
+  
+  // Open opportunities boost
+  const openOpps = record.openOpportunities || record._count?.opportunities || 0;
+  unifiedScore += openOpps * 30;
+  
+  // === NEXT ACTION PRIORITY RANKING ===
+  // The key is ranking by "what's the next action" - who should be contacted next?
+  
+  // Get next action timing and urgency
+  const nextActionDate = record.nextActionDate || record.nextFollowUpDate;
+  const nextAction = record.nextAction || record.nextSteps;
+  const lastContactDate = record.lastContactDate || record.lastActivityDate;
+  
+  // Calculate days since last contact
+  const daysSinceLastContact = lastContactDate 
+    ? Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 999;
+  
+  // Calculate days until next action
+  const daysUntilNextAction = nextActionDate 
+    ? Math.floor((new Date(nextActionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+  
+  // === ACTION-BASED RANKING LOGIC ===
+  let actionPriority = 0;
+  
+  // Overdue actions get highest priority (rank 1-10)
+  if (daysUntilNextAction < 0) {
+    actionPriority = Math.abs(daysUntilNextAction) * 50; // More overdue = higher priority
+  }
+  // Actions due today get high priority (rank 11-20)
+  else if (daysUntilNextAction === 0) {
+    actionPriority = 100;
+  }
+  // Actions due tomorrow get medium-high priority (rank 21-30)
+  else if (daysUntilNextAction === 1) {
+    actionPriority = 80;
+  }
+  // Actions due this week get medium priority (rank 31-50)
+  else if (daysUntilNextAction <= 7) {
+    actionPriority = 60 - (daysUntilNextAction * 5);
+  }
+  // Actions due next week get lower priority (rank 51-70)
+  else if (daysUntilNextAction <= 14) {
+    actionPriority = 40 - (daysUntilNextAction * 2);
+  }
+  // No next action set - use last contact timing
+  else if (!nextActionDate) {
+    if (daysSinceLastContact >= 30) actionPriority = 70; // Haven't contacted in 30+ days
+    else if (daysSinceLastContact >= 14) actionPriority = 50; // Haven't contacted in 2+ weeks
+    else if (daysSinceLastContact >= 7) actionPriority = 30; // Haven't contacted in 1+ week
+    else actionPriority = 10; // Recently contacted
+  }
+  
+  // === COMBINE ACTION PRIORITY WITH COMPANY/PERSON IMPORTANCE ===
+  // Action priority is the primary factor, but company/person importance creates sub-ranking
+  const finalScore = (actionPriority * 10) + (unifiedScore / 10);
+  
+  // Convert to rank (higher score = lower rank number, rank 1 is most urgent)
+  const rank = Math.max(1, Math.floor(1000 / (finalScore + 1)) + 1);
+  
+  return rank;
 }
 
 // Account stage determination
@@ -3424,11 +3562,11 @@ function getAccountStage(account: any): string {
   return 'Prospect';
 }
 
-// Contact stage determination
-function getContactStage(contact: any): string {
-  const status = contact.status?.toLowerCase() || '';
+// Person stage determination
+function getPersonStage(person: any): string {
+  const status = person.status?.toLowerCase() || '';
   
-  if (contact.isCustomer) return 'Customer';
+  if (person.isCustomer) return 'Customer';
   if (status === 'responded' || status === 'engaged') return 'Engaged';
   if (status === 'contacted') return 'Contacted';
   if (status === 'qualified') return 'Qualified';
@@ -3449,9 +3587,9 @@ function getAccountStageColor(account: any): string {
   }
 }
 
-// Contact stage color
-function getContactStageColor(contact: any): string {
-  const stage = getContactStage(contact);
+// Person stage color
+function getPersonStageColor(person: any): string {
+  const stage = getPersonStage(person);
   
   switch (stage) {
     case 'Customer': return 'bg-green-100 text-green-800';
@@ -3481,13 +3619,13 @@ function getAccountNextAction(account: any): { timing: string; timingColor: stri
   return getCompanyCentricAccountAction(account, []);
 }
 
-// Contact Next Action using Company-Centric Ranking System
-function getContactNextAction(contact: any): { timing: string; timingColor: string; action: string } {
+// Person Next Action using Company-Centric Ranking System
+function getPersonNextAction(person: any): { timing: string; timingColor: string; action: string } {
   // Import the company-centric ranking system
   const { getContactNextAction: getCompanyCentricContactAction } = require('@/platform/services/global-ranking-system');
   
   // Use the company-centric ranking system
-  return getCompanyCentricContactAction(contact);
+  return getCompanyCentricContactAction(person);
 }
 
 function generateAdvice(record: any): string {

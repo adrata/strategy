@@ -2234,6 +2234,77 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
   }
 }
 
+// 🎯 ACTION PRIORITY SCORING FOR SPEEDRUN
+function calculateActionPriorityScore(record: any): number {
+  let actionScore = 0;
+  
+  // Get next action timing and urgency - using real database fields
+  const nextActionDate = record.nextActionDate || record.nextFollowUpDate || record.nextActivityDate;
+  const lastContactDate = record.lastContactDate || record.lastActionDate || record.lastActivityDate || record.updatedAt;
+  
+  // Calculate days since last contact
+  const daysSinceLastContact = lastContactDate 
+    ? Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 999;
+  
+  // Calculate days until next action
+  const daysUntilNextAction = nextActionDate 
+    ? Math.floor((new Date(nextActionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+  
+  // === ACTION-BASED SCORING ===
+  // Overdue actions get highest priority
+  if (daysUntilNextAction < 0) {
+    actionScore = Math.abs(daysUntilNextAction) * 100; // More overdue = higher score
+  }
+  // Actions due today get high priority
+  else if (daysUntilNextAction === 0) {
+    actionScore = 200;
+  }
+  // Actions due tomorrow get medium-high priority
+  else if (daysUntilNextAction === 1) {
+    actionScore = 150;
+  }
+  // Actions due this week get medium priority
+  else if (daysUntilNextAction <= 7) {
+    actionScore = 100 - (daysUntilNextAction * 10);
+  }
+  // No next action set - use last contact timing
+  else if (!nextActionDate) {
+    if (daysSinceLastContact >= 30) actionScore = 80; // Haven't contacted in 30+ days
+    else if (daysSinceLastContact >= 14) actionScore = 60; // Haven't contacted in 2+ weeks
+    else if (daysSinceLastContact >= 7) actionScore = 40; // Haven't contacted in 1+ week
+    else actionScore = 20; // Recently contacted
+  }
+  
+  // === COMPANY/PERSON IMPORTANCE BOOST ===
+  // Company size boost
+  const companySize = record.companySize || 0;
+  if (companySize >= 1000) actionScore += 50;
+  else if (companySize >= 500) actionScore += 30;
+  else if (companySize >= 100) actionScore += 20;
+  
+  // Role importance boost
+  const buyerGroupRole = record.buyerGroupRole || record.role || '';
+  if (buyerGroupRole === 'Decision Maker') actionScore += 100;
+  else if (buyerGroupRole === 'Champion') actionScore += 75;
+  else if (buyerGroupRole === 'Stakeholder') actionScore += 50;
+  
+  // Priority boost
+  const priority = record.priority?.toLowerCase() || '';
+  if (priority === 'urgent') actionScore += 80;
+  else if (priority === 'high') actionScore += 50;
+  else if (priority === 'medium') actionScore += 25;
+  
+  // Status boost
+  const status = record.status?.toLowerCase() || '';
+  if (status === 'responded' || status === 'engaged') actionScore += 60;
+  else if (status === 'contacted') actionScore += 30;
+  else if (status === 'new' || status === 'uncontacted') actionScore += 20;
+  
+  return actionScore;
+}
+
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {
@@ -2259,7 +2330,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           email: true,
           phone: true,
           company: true,
-          jobTitle: true, // 🆕 FIX: Use correct field name
+          jobTitle: true,
           industry: true,
           status: true,
           priority: true,
@@ -2269,7 +2340,16 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           createdAt: true,
           updatedAt: true,
           assignedUserId: true,
-          workspaceId: true
+          workspaceId: true,
+          // 🎯 ACTION SYSTEM FIELDS
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          lastContactDate: true,
+          nextFollowUpDate: true,
+          buyerGroupRole: true,
+          companySize: true
         },
         orderBy: { updatedAt: 'desc' },
         take: 100
@@ -2303,7 +2383,16 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           createdAt: true,
           updatedAt: true,
           assignedUserId: true,
-          workspaceId: true
+          workspaceId: true,
+          // 🎯 ACTION SYSTEM FIELDS
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          lastContactDate: true,
+          nextFollowUpDate: true,
+          buyerGroupRole: true,
+          companySize: true
         },
         orderBy: { updatedAt: 'desc' },
         take: 100
@@ -2332,7 +2421,11 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           createdAt: true,
           updatedAt: true,
           assignedUserId: true,
-          workspaceId: true
+          workspaceId: true,
+          // 🎯 ACTION SYSTEM FIELDS
+          lastActivityDate: true,
+          nextActivityDate: true,
+          nextSteps: true
         },
         orderBy: { updatedAt: 'desc' },
         take: 100
@@ -2342,8 +2435,27 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     // Combine all data sources
     const allRecords = [...leads, ...prospects, ...opportunities];
     
+    // === APPLY UNIFIED ACTION-BASED RANKING ===
+    // Sort all records by action priority (most actionable first)
+    const rankedRecords = allRecords.sort((a, b) => {
+      const aScore = calculateActionPriorityScore(a);
+      const bScore = calculateActionPriorityScore(b);
+      return bScore - aScore; // Higher score = more actionable = first
+    });
+    
+    // Take only the top 50 most actionable records for today
+    const top50Records = rankedRecords.slice(0, 50);
+    
+    // Add recordType to each record for filtering
+    const recordsWithType = top50Records.map(record => ({
+      ...record,
+      recordType: leads.find(l => l.id === record.id) ? 'leads' : 
+                  prospects.find(p => p.id === record.id) ? 'prospects' : 
+                  opportunities.find(o => o.id === record.id) ? 'opportunities' : 'unknown'
+    }));
+    
     // Transform leads to speedrun format
-    const leadItems = leads.map(lead => ({
+    const leadItems = recordsWithType.filter(record => record.recordType === 'leads').map(lead => ({
       id: lead.id,
       name: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown',
       fullName: lead.fullName,
@@ -2378,7 +2490,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     }));
     
     // Transform prospects to speedrun format
-    const prospectItems = prospects.map(prospect => ({
+    const prospectItems = recordsWithType.filter(record => record.recordType === 'prospects').map(prospect => ({
       id: prospect.id,
       name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unknown',
       fullName: prospect.fullName,
@@ -2413,7 +2525,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     }));
     
     // Transform opportunities to speedrun format
-    const opportunityItems = opportunities.map(opportunity => ({
+    const opportunityItems = recordsWithType.filter(record => record.recordType === 'opportunities').map(opportunity => ({
       id: opportunity.id,
       name: opportunity.name || 'Unknown Opportunity',
       fullName: opportunity.name,
@@ -2450,7 +2562,20 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     // Combine all items
     const speedrunItems = [...leadItems, ...prospectItems, ...opportunityItems];
     
-    console.log(`✅ [SPEEDRUN] Loaded ${speedrunItems.length} speedrun items (${leads.length} leads, ${prospects.length} prospects, ${opportunities.length} opportunities)`);
+    console.log(`✅ [SPEEDRUN] Loaded top 50 most actionable records: ${speedrunItems.length} total (${leadItems.length} leads, ${prospectItems.length} prospects, ${opportunityItems.length} opportunities)`);
+    
+    // Debug: Show action data for top 3 records
+    if (speedrunItems.length > 0) {
+      console.log(`🔍 [SPEEDRUN ACTION DEBUG] Top 3 records with action data:`, speedrunItems.slice(0, 3).map(item => ({
+        id: item.id,
+        name: item.name,
+        nextAction: item.nextAction,
+        nextActionDate: item.nextActionDate,
+        lastContactDate: item.lastContactDate,
+        lastActionDate: item.lastActionDate,
+        actionScore: calculateActionPriorityScore(item)
+      })));
+    }
     
     // Debug: Log sample data to verify names are being loaded correctly
     if (speedrunItems.length > 0) {
