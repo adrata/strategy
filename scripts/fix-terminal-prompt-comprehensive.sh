@@ -45,3 +45,4 @@ echo "🎯 Your prompt should now show: adrata % "
 
 
 
+

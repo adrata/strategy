@@ -52,3 +52,4 @@ echo "   3. Run: source ~/.zshrc"
 
 
 
+
