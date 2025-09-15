@@ -574,6 +574,44 @@ export default function FlexeraBusinessCasePage() {
             </div>
           </section>
 
+          {/* Research Methodology */}
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold text-black mb-6">Research Methodology</h2>
+            
+            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+              <h3 className="text-xl font-semibold text-black mb-4">Intelligence Gathering Process</h3>
+              <p className="text-gray-700 mb-4">
+                This buyer group intelligence was developed through systematic analysis of SBI's sales process, 
+                Flexera's organizational structure, and enterprise sales methodology targeting for tech-enabled GTM consulting engagements.
+              </p>
+              <p className="text-gray-700">
+                <strong>Intelligence Framework:</strong> Multi-dimensional approach analyzing organizational dynamics, 
+                individual motivations, network relationships, and strategic priorities to identify optimal engagement pathways.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Research Sources</h4>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• SBI Growth company website and service descriptions</li>
+                  <li>• LinkedIn content from company page and leadership</li>
+                  <li>• AI-powered analysis of service positioning</li>
+                  <li>• PE/VC history analysis (Thoma Bravo investment timeline)</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Strategic Analysis</h4>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Company website leadership roster and organizational structure</li>
+                  <li>• LinkedIn data analysis for tenure and network proximity</li>
+                  <li>• Career history evaluation and content engagement analysis</li>
+                  <li>• Cross-reference of names for optimal fit assessment</li>
+                </ul>
+              </div>
+            </div>
+          </section>
 
           {/* Key Success Factors */}
           <section className="mb-12">
