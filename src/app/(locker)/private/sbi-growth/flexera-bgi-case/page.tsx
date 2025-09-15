@@ -113,7 +113,7 @@ export default function FlexeraBusinessCasePage() {
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">10</div>
+                <div className="text-3xl font-bold text-black">11</div>
                 <div className="text-sm text-gray-600">Buyer Group Size</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -121,7 +121,7 @@ export default function FlexeraBusinessCasePage() {
                 <div className="text-sm text-gray-600">Decision Makers</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">4</div>
+                <div className="text-3xl font-bold text-black">5</div>
                 <div className="text-sm text-gray-600">Champions</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -221,9 +221,21 @@ export default function FlexeraBusinessCasePage() {
 
               {/* Champions */}
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Champions (4)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Champions (5)</h4>
                 
                 <div className="space-y-4">
+                  <div className="border-l-4 border-green-500 pl-4">
+                    <h5 className="font-semibold text-black">Cathleen Neibch (Sr Manager Rev Ops)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Primary champion with 7 years tenure and direct RevOps alignment</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Champion Potential:</strong> Very High - Perfect role alignment with SBI's RevOps GTM consulting focus</p>
+                      <p><strong>Key Motivations:</strong> RevOps optimization, GTM efficiency, process improvement, strategic growth</p>
+                      <p><strong>Engagement Strategy:</strong> Direct RevOps consulting value proposition, GTM process optimization, strategic growth alignment</p>
+                      <p><strong>Strategic Advantage:</strong> Most senior RevOps person on staff, close to the problem with high clout and tenure</p>
+                      <p><strong>Risk Assessment:</strong> Only potential downside is personality drive - needs assessment for internal deal pushing capability</p>
+                    </div>
+                  </div>
+
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Eric Free (Chief Growth Officer)</h5>
                     <p className="text-sm text-gray-600 mb-2">Growth strategy champion and market expansion advocate</p>
@@ -268,10 +280,9 @@ export default function FlexeraBusinessCasePage() {
 
               {/* Stakeholders */}
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (2)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (3)</h4>
                 
                 <div className="space-y-3">
-
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Mike Jerich (President)</h5>
                     <p className="text-sm text-gray-600">Operational execution and team alignment</p>
@@ -283,14 +294,31 @@ export default function FlexeraBusinessCasePage() {
                     <p className="text-sm text-gray-600">Organizational change and team development</p>
                     <p className="text-xs text-gray-500"><strong>Influence:</strong> Change management and organizational readiness</p>
                   </div>
+
+                  <div className="border-l-4 border-gray-400 pl-4">
+                    <h5 className="font-semibold text-black">Thomas Charles Davis, Jr (Technology Operating Partner, Thoma Bravo)</h5>
+                    <p className="text-sm text-gray-600">Strategic opener with VC/PE influence and direct buyer group access</p>
+                    <p className="text-xs text-gray-500"><strong>Strategic Value:</strong> Primary investor relationship (Thoma Bravo purchased Flexera in 2008, reacquired controlling stake in 2020 for $2.85B with KKR as financier). Direct connection to Anthony Erickson (Head of Commercial Sales at SBI) provides warm introduction pathway to Flexera buyer group.</p>
+                  </div>
                 </div>
               </div>
 
               {/* Blockers */}
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (2)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (4)</h4>
                 
                 <div className="space-y-4">
+                  <div className="border-l-4 border-red-500 pl-4">
+                    <h5 className="font-semibold text-black">Jill DelGrosso (McNamara) (VP GTM Readiness & Programs)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Primary blocker with threat perception and territorial concerns</p>
+                    <div className="text-sm text-gray-700">
+                      <p><strong>Blocking Potential:</strong> Very High - Only 10 months tenure, likely sees outside consultants as threat to her hiring mandate</p>
+                      <p><strong>Blocking Tactics:</strong> "We can do this ourselves, this is why I was hired" - internal capability claims, territorial protection</p>
+                      <p><strong>Neutralization Strategy:</strong> Position SBI as complementary to her role, emphasize partnership over replacement, highlight her success metrics through external expertise</p>
+                      <p><strong>Risk Assessment:</strong> High risk due to short tenure and potential insecurity about external consulting validation</p>
+                    </div>
+                  </div>
+
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Chris Anderson (VP Operations)</h5>
                     <p className="text-sm text-gray-600 mb-2">Operational efficiency gatekeeper and change resistance advocate</p>
@@ -325,6 +353,66 @@ export default function FlexeraBusinessCasePage() {
             </div>
           </section>
 
+          {/* Strategic Opener */}
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold text-black mb-6">Strategic Opener Analysis</h2>
+            
+            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+              <h3 className="text-xl font-semibold text-black mb-4">Primary Strategic Opener</h3>
+              <p className="text-gray-700 mb-6">
+                The optimal entry point leverages the existing relationship between SBI Growth and Thoma Bravo, Flexera's primary investor, 
+                providing the highest probability of successful buyer group access and deal acceleration.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <h4 className="text-lg font-semibold text-black mb-4">Thomas Charles Davis, Jr - Technology Operating Partner, Thoma Bravo</h4>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h5 className="font-semibold text-black mb-3">Strategic Context</h5>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li>• <strong>Investment History:</strong> Thoma Bravo purchased Flexera in 2008, reacquired controlling stake in 2020 for $2.85B</li>
+                    <li>• <strong>Financial Structure:</strong> KKR serves as the financier for the 2020 acquisition</li>
+                    <li>• <strong>Operating Role:</strong> Technology Operating Partner advising primarily on technology strategy</li>
+                    <li>• <strong>Decision Influence:</strong> Direct access to Flexera's C-Suite and strategic decision-making process</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 className="font-semibold text-black mb-3">Connection Pathway</h5>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li>• <strong>Direct Connection:</strong> Anthony Erickson, Head of Commercial Sales at SBI Growth</li>
+                    <li>• <strong>Relationship Type:</strong> Existing business relationship with SBI Growth</li>
+                    <li>• <strong>Introduction Value:</strong> Warm introduction with institutional credibility</li>
+                    <li>• <strong>Strategic Alignment:</strong> SBI's blended consulting and technology deployment matches Thoma Bravo's tech focus</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h5 className="font-semibold text-black mb-3">Strategic Advantages</h5>
+                <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
+                  <div>
+                    <p className="font-semibold text-black mb-2">Institutional Credibility:</p>
+                    <ul className="space-y-1">
+                      <li>• VC/PE backing provides immediate legitimacy</li>
+                      <li>• Investor recommendation carries significant weight</li>
+                      <li>• Bypasses traditional vendor evaluation processes</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-black mb-2">Strategic Alignment:</p>
+                    <ul className="space-y-1">
+                      <li>• Technology focus aligns with SBI's blended approach</li>
+                      <li>• Growth acceleration matches investor objectives</li>
+                      <li>• Direct access to decision-making authority</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Engagement Strategy */}
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">SBI Growth Engagement Strategy</h2>
@@ -338,7 +426,55 @@ export default function FlexeraBusinessCasePage() {
 
             <div className="space-y-6">
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Phase 1: C-Suite Executive Engagement</h4>
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 1: Strategic Opener Engagement</h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Primary Opener Target:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Thomas Charles Davis, Jr (Thoma Bravo) - Technology Operating Partner</li>
+                      <li>• Leverage Anthony Erickson (SBI) connection for warm introduction</li>
+                      <li>• Position SBI's blended consulting + technology approach</li>
+                      <li>• Emphasize growth acceleration alignment with investor objectives</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Key Messages:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Technology-enabled GTM consulting for growth acceleration</li>
+                      <li>• Strategic alignment with Thoma Bravo's technology focus</li>
+                      <li>• Direct ROI impact on Flexera's market positioning</li>
+                      <li>• Warm introduction pathway to Flexera buyer group</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 2: Primary Champion Development</h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Primary Champion Target:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Cathleen Neibch (Sr Manager Rev Ops) - 7 years tenure, perfect role alignment</li>
+                      <li>• Direct RevOps GTM consulting value proposition</li>
+                      <li>• Most senior RevOps person on staff with high clout</li>
+                      <li>• Close to the problem with strategic influence</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Champion Strategy:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• RevOps optimization and GTM efficiency focus</li>
+                      <li>• Strategic growth alignment and process improvement</li>
+                      <li>• Internal advocacy development and deal pushing</li>
+                      <li>• Personality assessment for internal drive capability</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 3: C-Suite Executive Engagement</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Primary C-Suite Targets:</strong></p>
@@ -362,7 +498,31 @@ export default function FlexeraBusinessCasePage() {
               </div>
 
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Phase 2: Technical Validation</h4>
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 4: Primary Blocker Neutralization</h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Primary Blocker Target:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Jill DelGrosso (VP GTM Readiness & Programs) - 10 months tenure</li>
+                      <li>• High threat perception of external consultants</li>
+                      <li>• Territorial protection of her hiring mandate</li>
+                      <li>• "We can do this ourselves" resistance</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Neutralization Strategy:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Position SBI as complementary to her role</li>
+                      <li>• Emphasize partnership over replacement</li>
+                      <li>• Highlight her success metrics through external expertise</li>
+                      <li>• Address tenure insecurity with collaborative approach</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 5: Technical Validation</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Technical Stakeholders:</strong></p>
@@ -383,15 +543,15 @@ export default function FlexeraBusinessCasePage() {
               </div>
 
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Phase 3: Champion Development</h4>
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 6: Secondary Champion Development</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-sm text-gray-700 mb-3"><strong>Internal Champions:</strong></p>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Secondary Champions:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Shinie Shaw (VP Global Sales)</li>
                       <li>• Michael Beaver (VP Marketing)</li>
                       <li>• Barbara Boyer (SVP Customer Experience)</li>
-                      <li>• EL Lages (Chief People Officer)</li>
+                      <li>• Eric Free (Chief Growth Officer)</li>
                     </ul>
                   </div>
                   <div>

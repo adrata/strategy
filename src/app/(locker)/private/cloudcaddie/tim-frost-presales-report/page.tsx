@@ -88,10 +88,11 @@ export default function TimFrostPreSalesReportPage() {
                 <ul className="space-y-3 text-gray-700">
                   <li><strong>Current Role:</strong> Chief Information Officer (appointed 2019)</li>
                   <li><strong>Organization:</strong> North Carolina Industrial Commission</li>
-                  <li><strong>Education:</strong> Bachelor of Arts, North Carolina State University</li>
-                  <li><strong>Experience:</strong> 20+ years in information technology</li>
-                  <li><strong>Responsibilities:</strong> IT strategy, systems management, claims adjudication support</li>
-                  <li><strong>Focus Areas:</strong> Enterprise systems, data security, case management, cloud integration</li>
+                  <li><strong>Education:</strong> Bachelor of Arts, Poole College of Management, NC State University</li>
+                  <li><strong>Experience:</strong> 20+ years IT (13 years at NCDOT + private sector)</li>
+                  <li><strong>Certifications:</strong> Project Management Professional (PMP)</li>
+                  <li><strong>Contact:</strong> tim.frost@ic.nc.gov, (919) 807-2512</li>
+                  <li><strong>Expertise:</strong> Project management, data analytics, application development</li>
                 </ul>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg">
@@ -143,6 +144,59 @@ export default function TimFrostPreSalesReportPage() {
                   <li>• <strong>Government Standards:</strong> State agency IT security and procurement standards</li>
                   <li>• <strong>Audit Requirements:</strong> Regular compliance audits and reporting</li>
                 </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Actionable Intelligence for Justin */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-black mb-6 border-b border-gray-200 pb-2">
+              Actionable Intelligence for CloudCaddie
+            </h2>
+            <div className="bg-gray-50 border-l-4 border-gray-400 p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Research Findings</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Current NCIC Projects</h4>
+                  <ul className="space-y-1 text-gray-700 text-sm">
+                    <li>• <strong>New Integrated Case Management System</strong> (launched March 2024)</li>
+                    <li>• Electronic filing and document management modernization</li>
+                    <li>• Staff training programs for new systems</li>
+                    <li>• Database administration and data security initiatives</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Tim Frost's Background</h4>
+                  <ul className="space-y-1 text-gray-700 text-sm">
+                    <li>• <strong>13 years at NCDOT</strong> - project management, data analytics</li>
+                    <li>• <strong>PMP Certified</strong> - formal project management expertise</li>
+                    <li>• <strong>Poole College graduate</strong> - business administration focus</li>
+                    <li>• <strong>Application development</strong> and reporting systems experience</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 border-l-4 border-gray-400 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recruitment Opportunities</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Immediate Needs</h4>
+                  <ul className="space-y-1 text-gray-700 text-sm">
+                    <li>• <strong>Systems Analysts</strong> for case management system support</li>
+                    <li>• <strong>Data Analytics Specialists</strong> for reporting improvements</li>
+                    <li>• <strong>Application Developers</strong> for custom software solutions</li>
+                    <li>• <strong>IT Support Staff</strong> for user training and adoption</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Future Opportunities</h4>
+                  <ul className="space-y-1 text-gray-700 text-sm">
+                    <li>• <strong>Cloud Migration Specialists</strong> for infrastructure modernization</li>
+                    <li>• <strong>Cybersecurity Analysts</strong> for data protection initiatives</li>
+                    <li>• <strong>Project Managers</strong> with government experience</li>
+                    <li>• <strong>Business Intelligence Developers</strong> for analytics dashboards</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </section>
@@ -222,30 +276,30 @@ export default function TimFrostPreSalesReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
               <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Security & Compliance</h4>
-                <p className="text-gray-700 text-sm">"Our platform is designed with government-grade security and built-in compliance features to protect sensitive workers' compensation data while meeting all regulatory requirements."</p>
+                <h4 className="font-semibold text-gray-900 mb-2">NCDOT Experience Alignment</h4>
+                <p className="text-gray-700 text-sm">"With your 13 years at NCDOT managing large-scale government IT projects, you understand the complexity of state agency technology needs. We can provide talent with similar government experience."</p>
               </div>
               <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Process Efficiency</h4>
-                <p className="text-gray-700 text-sm">"Automate routine claims processing tasks to reduce manual workload by up to 60% while improving accuracy and reducing processing time."</p>
+                <h4 className="font-semibold text-gray-900 mb-2">Case Management System Support</h4>
+                <p className="text-gray-700 text-sm">"Your new integrated case management system launched in March 2024 needs ongoing support. We can provide Systems Analysts and Application Developers familiar with government case management systems."</p>
               </div>
               <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Cost Savings</h4>
-                <p className="text-gray-700 text-sm">"Demonstrate measurable ROI through reduced operational costs, improved efficiency, and decreased error rates in claims processing."</p>
+                <h4 className="font-semibold text-gray-900 mb-2">PMP-Certified Project Management</h4>
+                <p className="text-gray-700 text-sm">"As a PMP-certified professional, you value structured project delivery. Our candidates include certified project managers with government IT experience and proven track records."</p>
               </div>
               </div>
               <div className="space-y-6">
                 <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Stakeholder Experience</h4>
-                  <p className="text-gray-700 text-sm">"Provide intuitive self-service portals for employers and employees while maintaining security and compliance standards."</p>
+                  <h4 className="font-semibold text-gray-900 mb-2">Data Analytics & Reporting</h4>
+                  <p className="text-gray-700 text-sm">"Your background in data analytics and reporting systems aligns with our expertise in Business Intelligence and data visualization specialists who can enhance your reporting capabilities."</p>
                 </div>
                 <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Scalability</h4>
-                  <p className="text-gray-700 text-sm">"Cloud-based architecture that scales with your needs, handling peak claim volumes without performance degradation."</p>
+                  <h4 className="font-semibold text-gray-900 mb-2">Government IT Expertise</h4>
+                  <p className="text-gray-700 text-sm">"We specialize in placing IT professionals with government experience, understanding compliance requirements, procurement processes, and the unique challenges of public sector technology."</p>
                 </div>
                 <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Integration</h4>
-                  <p className="text-gray-700 text-sm">"Seamless integration with existing systems and databases, minimizing disruption to current operations."</p>
+                  <h4 className="font-semibold text-gray-900 mb-2">Poole College Network</h4>
+                  <p className="text-gray-700 text-sm">"As a Poole College of Management graduate, you value business-focused IT solutions. Our candidates understand the intersection of technology and business strategy."</p>
                 </div>
               </div>
             </div>
