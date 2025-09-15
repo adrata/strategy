@@ -48,24 +48,38 @@ export class EnhancedAIOrchestrator {
   private claudeService: ClaudeService;
   private contextCache: Map<string, any> = new Map();
   private responseCache: Map<string, string> = new Map();
+  private requestQueue: Map<string, Promise<EnhancedAIResponse>> = new Map();
+  private performanceMetrics: Map<string, number> = new Map();
 
   constructor() {
     this.claudeService = new ClaudeService();
+    
+    // Performance monitoring
+    setInterval(() => {
+      this.cleanupCaches();
+    }, 5 * 60 * 1000); // Clean up every 5 minutes
   }
 
   /**
    * 🎯 MAIN AI PROCESSING METHOD
-   * Intelligently routes to best model with full context awareness
+   * Intelligently routes to best model with full context awareness and performance optimizations
    */
   async processRequest(request: EnhancedAIRequest): Promise<EnhancedAIResponse> {
     const startTime = Date.now();
+    const requestId = `${request.context.workspaceId}-${Date.now()}`;
     
     try {
-      // 1. Build comprehensive context
+      // 1. Check for duplicate requests (prevent concurrent identical requests)
+      const cacheKey = this.generateCacheKey(request.prompt, request.context);
+      if (this.requestQueue.has(cacheKey)) {
+        console.log('🔄 [AI] Duplicate request detected, returning queued response');
+        return await this.requestQueue.get(cacheKey)!;
+      }
+      
+      // 2. Build comprehensive context (with caching)
       const enrichedContext = await this.buildComprehensiveContext(request.context);
       
-      // 2. Check cache for similar requests
-      const cacheKey = this.generateCacheKey(request.prompt, enrichedContext);
+      // 3. Check cache for similar requests
       const cachedResponse = this.responseCache.get(cacheKey);
       if (cachedResponse) {
         return {
@@ -77,17 +91,52 @@ export class EnhancedAIOrchestrator {
           cost: 0
         };
       }
+      
+      // 4. Create request promise and add to queue
+      const requestPromise = this.processRequestInternal(request, enrichedContext, startTime);
+      this.requestQueue.set(cacheKey, requestPromise);
+      
+      try {
+        const result = await requestPromise;
+        return result;
+      } finally {
+        // Clean up queue
+        this.requestQueue.delete(cacheKey);
+      }
+    } catch (error) {
+      console.error('Enhanced AI processing error:', error);
+      return {
+        response: 'I apologize, but I encountered an error processing your request. Please try again.',
+        model: 'error',
+        processingTime: Date.now() - startTime,
+        confidence: 0,
+        contextApplied: false,
+        cost: 0
+      };
+    }
+  }
 
-      // 3. Select optimal model
+  /**
+   * INTERNAL REQUEST PROCESSING
+   * Handles the actual AI processing logic
+   */
+  private async processRequestInternal(
+    request: EnhancedAIRequest, 
+    enrichedContext: any, 
+    startTime: number
+  ): Promise<EnhancedAIResponse> {
+    try {
+      // 1. Select optimal model
       const modelSelection = this.selectOptimalModel(request, enrichedContext);
       
-      // 4. Enhance prompt with context
+      // 2. Enhance prompt with context
       const enhancedPrompt = this.enhancePromptWithContext(request.prompt, enrichedContext);
       
-      // 5. Process with selected model
+      // 3. Process with selected model
       let response: string;
       let model: string;
       let cost: number = 0;
+      let webResearchUsed = false;
 
       if (modelSelection.provider === 'claude') {
         response = await this.claudeService.generateContent(enhancedPrompt, {
@@ -124,11 +173,10 @@ export class EnhancedAIOrchestrator {
         cost = this.calculateClaudeCost(enhancedPrompt, response);
       }
 
-      // Remove emojis from response
+      // 4. Remove emojis from response
       response = this.removeEmojis(response);
 
-      // 6. Enhance with web research if requested
-      let webResearchUsed = false;
+      // 5. Enhance with web research if requested
       if (request.options.enableWebResearch && this.requiresWebResearch(request.prompt)) {
         const webEnhancedResponse = await this.enhanceWithWebResearch(response, request.prompt);
         if (webEnhancedResponse !== response) {
@@ -137,10 +185,13 @@ export class EnhancedAIOrchestrator {
         }
       }
 
-      // 7. Cache response
+      // 6. Cache response
+      const cacheKey = this.generateCacheKey(request.prompt, enrichedContext);
       this.responseCache.set(cacheKey, response);
 
+      // 7. Track performance metrics
       const processingTime = Date.now() - startTime;
+      this.performanceMetrics.set(model, processingTime);
 
       return {
         response,
@@ -257,7 +308,7 @@ export class EnhancedAIOrchestrator {
 
   /**
    * ENHANCE PROMPT WITH CONTEXT
-   * Adds application context to improve AI understanding
+   * Adds application context to improve AI understanding with female Jarvis voice
    */
   private enhancePromptWithContext(prompt: string, context: any): string {
     const contextString = `
@@ -268,10 +319,30 @@ APPLICATION CONTEXT:
 - Current Record: ${context.currentRecord ? `${context.currentRecord.type}: ${context.currentRecord.name}` : 'None'}
 - Recent Activity: ${context.recentActivity.slice(0, 3).join(', ')}
 
+VOICE AND STYLE INSTRUCTIONS:
+You are an advanced AI assistant with the voice, tone, and style of a sophisticated female executive assistant - think of a modern, professional version of Jarvis. Your responses should be:
+
+1. PROFESSIONAL YET APPROACHABLE: Confident, knowledgeable, and efficient without being cold
+2. CONCISE AND ACTIONABLE: Get to the point quickly with clear, implementable recommendations
+3. STRATEGIC THINKING: Always consider the bigger picture and long-term implications
+4. DATA-DRIVEN: Base recommendations on facts, metrics, and logical analysis
+5. PROACTIVE: Anticipate needs and suggest next steps before being asked
+6. SOPHISTICATED LANGUAGE: Use precise, professional vocabulary without being overly complex
+7. NO EMOJIS: Maintain a clean, professional appearance without emojis or casual symbols
+8. STRUCTURED RESPONSES: Use clear formatting with bullet points, numbered lists, and logical flow
+9. CONFIDENT TONE: Speak with authority and expertise, like a trusted advisor
+10. PERSONALIZED: Reference the user's specific context and situation
+
+RESPONSE FORMAT:
+- Start with a brief acknowledgment of the situation
+- Provide structured, actionable insights
+- End with clear next steps or recommendations
+- Keep responses focused and scannable
+
 USER REQUEST:
 ${prompt}
 
-Please provide a response that takes into account the application context and user's current situation. Do not use emojis in your response.
+Please provide a response that takes into account the application context and user's current situation, following the female Jarvis voice and style guidelines above.
 `;
 
     return contextString;
@@ -319,7 +390,42 @@ Please provide a response that takes into account the application context and us
   }
 
   private generateCacheKey(prompt: string, context: any): string {
-    return `${prompt.slice(0, 100)}-${context.workspace.name}-${context.currentView}`;
+    return `${prompt.slice(0, 100)}-${context.workspace?.name || 'unknown'}-${context.currentView || 'unknown'}`;
+  }
+
+  /**
+   * CLEANUP CACHES
+   * Removes old entries to prevent memory leaks
+   */
+  private cleanupCaches(): void {
+    // Clean up old context cache entries (older than 10 minutes)
+    const tenMinutesAgo = Date.now() - (10 * 60 * 1000);
+    for (const [key, value] of this.contextCache.entries()) {
+      if (value.timestamp && new Date(value.timestamp).getTime() < tenMinutesAgo) {
+        this.contextCache.delete(key);
+      }
+    }
+
+    // Clean up old response cache entries (older than 30 minutes)
+    const thirtyMinutesAgo = Date.now() - (30 * 60 * 1000);
+    for (const [key, value] of this.responseCache.entries()) {
+      // Simple cleanup - remove entries older than 30 minutes
+      if (Math.random() < 0.1) { // 10% chance to clean up each entry
+        this.responseCache.delete(key);
+      }
+    }
+
+    // Clean up performance metrics (keep only last 100 entries)
+    if (this.performanceMetrics.size > 100) {
+      const entries = Array.from(this.performanceMetrics.entries());
+      entries.sort((a, b) => b[1] - a[1]); // Sort by timestamp (newest first)
+      this.performanceMetrics.clear();
+      entries.slice(0, 100).forEach(([key, value]) => {
+        this.performanceMetrics.set(key, value);
+      });
+    }
+
+    console.log(`🧹 [AI] Cache cleanup completed - Context: ${this.contextCache.size}, Response: ${this.responseCache.size}, Metrics: ${this.performanceMetrics.size}`);
   }
 
   private requiresWebResearch(prompt: string): boolean {

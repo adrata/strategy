@@ -2159,13 +2159,72 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       lastName: lead.lastName || lead.fullName?.split(' ').slice(1).join(' ') || 'Person'
     }));
     
-    const transformedProspects = prospectsData.map(prospect => ({
-      ...prospect,
-      name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unknown',
-      // Ensure firstName and lastName are available for display logic
-      firstName: prospect.firstName || prospect.fullName?.split(' ')[0] || 'Unknown',
-      lastName: prospect.lastName || prospect.fullName?.split(' ').slice(1).join(' ') || 'Person'
-    }));
+    const transformedProspects = prospectsData.map(prospect => {
+      // Calculate smart action data for prospects
+      const lastContactDate = prospect.lastContactDate || prospect.lastActionDate || prospect.updatedAt;
+      const nextFollowUpDate = prospect.nextFollowUpDate || prospect.nextActionDate;
+      
+      // Determine last action based on prospect data
+      let lastAction = 'Initial Contact';
+      let lastActionTime = 'Never';
+      
+      if (lastContactDate) {
+        const daysSince = Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSince === 0) lastActionTime = 'Today';
+        else if (daysSince === 1) lastActionTime = 'Yesterday';
+        else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+        else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+        else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+        
+        // Determine action type based on status
+        if (prospect.status === 'responded') lastAction = 'Email Response';
+        else if (prospect.status === 'contacted') lastAction = 'Phone Call';
+        else if (prospect.status === 'engaged') lastAction = 'Meeting Scheduled';
+        else lastAction = 'Initial Outreach';
+      }
+      
+      // Determine next action and timing
+      let nextAction = 'Schedule Discovery Call';
+      let nextActionTiming = 'This Week';
+      
+      if (nextFollowUpDate) {
+        const daysUntil = Math.floor((new Date(nextFollowUpDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        if (daysUntil <= 0) nextActionTiming = 'Overdue';
+        else if (daysUntil === 1) nextActionTiming = 'Tomorrow';
+        else if (daysUntil <= 7) nextActionTiming = 'This Week';
+        else if (daysUntil <= 14) nextActionTiming = 'Next Week';
+        else nextActionTiming = 'Future';
+      }
+      
+      // Determine stage based on status and engagement
+      let currentStage = 'Prospect';
+      if (prospect.status === 'responded') currentStage = 'Engaged';
+      else if (prospect.status === 'contacted') currentStage = 'Contacted';
+      else if (prospect.status === 'qualified') currentStage = 'Qualified';
+      else if (prospect.status === 'opportunity') currentStage = 'Opportunity';
+      
+      return {
+        ...prospect,
+        name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unknown',
+        // Ensure firstName and lastName are available for display logic
+        firstName: prospect.firstName || prospect.fullName?.split(' ')[0] || 'Unknown',
+        lastName: prospect.lastName || prospect.fullName?.split(' ').slice(1).join(' ') || 'Person',
+        // Add complete action fields
+        lastAction: lastAction,
+        lastActionDate: lastContactDate,
+        lastActionTime: lastActionTime,
+        nextAction: nextAction,
+        nextActionDate: nextFollowUpDate,
+        nextActionTiming: nextActionTiming,
+        currentStage: currentStage,
+        stage: currentStage,
+        // Add additional fields for table display
+        state: prospect.state || prospect.city || 'Unknown',
+        jobTitle: prospect.jobTitle || prospect.title || 'Unknown Title',
+        companyName: prospect.company || 'Unknown Company',
+        buyerGroupRole: prospect.buyerGroupRole || 'Stakeholder'
+      };
+    });
     
     // Debug: Log transformed data
     if (transformedLeads.length > 0) {
@@ -2341,34 +2400,86 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       console.log(`📊 [SPEEDRUN] Loaded ${people.length} people as fallback`);
     }
     
-    // Transform data to speedrun format
-    const speedrunItems = speedrunData.map((record, index) => ({
-      id: record.id,
-      // Handle both prospects and people data structures
-      name: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
-      fullName: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
-      firstName: record.firstName || 'Unknown',
-      lastName: record.lastName || 'Person',
-      email: record.email || record.workEmail,
-      phone: record.phone || record.workPhone || record.mobilePhone,
-      title: record.jobTitle || record.title || 'Unknown Title',
-      company: record.company || record.company?.name || 'Unknown Company',
-      location: record.city || record.state || record.country,
-      status: record.status || 'new',
-      priority: record.priority || 'high',
-      source: dataSource,
-      createdAt: record.createdAt,
-      updatedAt: record.updatedAt,
-      // Add ranking for speedrun
-      rank: index + 1,
-      // Add action fields
-      lastAction: record.nextAction || 'Initial Contact',
-      lastActionDate: record.lastActionDate || record.lastContactDate || record.createdAt,
-      nextAction: record.nextAction || 'Follow Up',
-      nextActionDate: record.nextActionDate || record.nextFollowUpDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      buyerGroupRole: record.buyerGroupRole || 'unknown',
-      currentStage: record.currentStage || 'Prospect' // Use the actual currentStage from prospects
-    }));
+    // Transform data to speedrun format with complete field mapping
+    const speedrunItems = speedrunData.map((record, index) => {
+      // Calculate smart action data based on record status and dates
+      const lastContactDate = record.lastContactDate || record.lastActionDate || record.updatedAt;
+      const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
+      
+      // Determine last action based on record data
+      let lastAction = 'Initial Contact';
+      let lastActionTime = 'Never';
+      
+      if (lastContactDate) {
+        const daysSince = Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSince === 0) lastActionTime = 'Today';
+        else if (daysSince === 1) lastActionTime = 'Yesterday';
+        else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+        else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+        else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+        
+        // Determine action type based on status
+        if (record.status === 'responded') lastAction = 'Email Response';
+        else if (record.status === 'contacted') lastAction = 'Phone Call';
+        else if (record.status === 'engaged') lastAction = 'Meeting Scheduled';
+        else lastAction = 'Initial Outreach';
+      }
+      
+      // Determine next action and timing
+      let nextAction = 'Schedule Discovery Call';
+      let nextActionTiming = 'This Week';
+      
+      if (nextFollowUpDate) {
+        const daysUntil = Math.floor((new Date(nextFollowUpDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        if (daysUntil <= 0) nextActionTiming = 'Overdue';
+        else if (daysUntil === 1) nextActionTiming = 'Tomorrow';
+        else if (daysUntil <= 7) nextActionTiming = 'This Week';
+        else if (daysUntil <= 14) nextActionTiming = 'Next Week';
+        else nextActionTiming = 'Future';
+      }
+      
+      // Determine stage based on status and engagement
+      let currentStage = 'Prospect';
+      if (record.status === 'responded') currentStage = 'Engaged';
+      else if (record.status === 'contacted') currentStage = 'Contacted';
+      else if (record.status === 'qualified') currentStage = 'Qualified';
+      else if (record.status === 'opportunity') currentStage = 'Opportunity';
+      
+      return {
+        id: record.id,
+        // Handle both prospects and people data structures
+        name: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
+        fullName: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
+        firstName: record.firstName || 'Unknown',
+        lastName: record.lastName || 'Person',
+        email: record.email || record.workEmail,
+        phone: record.phone || record.workPhone || record.mobilePhone,
+        title: record.jobTitle || record.title || 'Unknown Title',
+        company: record.company || record.company?.name || 'Unknown Company',
+        location: record.city || record.state || record.country,
+        status: record.status || 'new',
+        priority: record.priority || 'high',
+        source: dataSource,
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+        // Add ranking for speedrun
+        rank: index + 1,
+        // Add complete action fields
+        lastAction: lastAction,
+        lastActionDate: lastContactDate,
+        lastActionTime: lastActionTime,
+        nextAction: nextAction,
+        nextActionDate: nextFollowUpDate,
+        nextActionTiming: nextActionTiming,
+        buyerGroupRole: record.buyerGroupRole || 'Stakeholder',
+        currentStage: currentStage,
+        // Add additional fields for table display
+        stage: currentStage,
+        state: record.state || record.city || 'Unknown',
+        jobTitle: record.jobTitle || record.title || 'Unknown Title',
+        companyName: record.company || record.company?.name || 'Unknown Company'
+      };
+    });
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);
     

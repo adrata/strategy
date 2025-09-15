@@ -232,7 +232,7 @@ export function AddActionModal({
     
     // Contact selection is required
     if (!selectedContact && !record) {
-      alert('Please select a contact to associate this action with.');
+      alert('Please select a person to associate this action with.');
       return;
     }
     
@@ -561,14 +561,14 @@ export function AddActionModal({
               {/* Account Selection (Optional) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Account (Optional)
+                  Company (Optional)
                 </label>
                 <div className="relative">
                   <input
                     type="text"
                     value={accountSearchQuery}
                     onChange={(e) => setAccountSearchQuery(e.target.value)}
-                    placeholder="Search for an account..."
+                    placeholder="Search for a company..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                   <MagnifyingGlassIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -620,7 +620,7 @@ export function AddActionModal({
               {/* Contact Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Contact *
+                  Person *
                 </label>
                 
                 {/* If account is selected, show account contacts dropdown */}
@@ -635,7 +635,7 @@ export function AddActionModal({
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     >
-                      <option value="">Select a contact from {selectedAccount.name}...</option>
+                      <option value="">Select a person from {selectedAccount.name}...</option>
                       {accountContacts.map((contact) => (
                         <option key={contact.id} value={contact.id}>
                           {contact.fullName || `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unnamed Contact'} - {contact.jobTitle}
@@ -643,10 +643,10 @@ export function AddActionModal({
                       ))}
                     </select>
                     {isLoadingAccountContacts && (
-                      <p className="text-sm text-blue-600 mt-1">Loading contacts...</p>
+                      <p className="text-sm text-blue-600 mt-1">Loading people...</p>
                     )}
                     {accountContacts['length'] === 0 && !isLoadingAccountContacts && (
-                      <p className="text-sm text-gray-500 mt-1">No contacts found for this account</p>
+                      <p className="text-sm text-gray-500 mt-1">No people found for this company</p>
                     )}
                   </div>
                 ) : (
@@ -656,13 +656,13 @@ export function AddActionModal({
                       type="text"
                       value={contactSearchQuery}
                       onChange={(e) => setContactSearchQuery(e.target.value)}
-                      placeholder="Search for a contact..."
+                      placeholder="Search for a person..."
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     />
                     <MagnifyingGlassIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
                     
-                    {/* Contact Search Results */}
+                    {/* Person Search Results */}
                     {contactSearchResults.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {contactSearchResults.map((contact) => (
@@ -692,7 +692,7 @@ export function AddActionModal({
                   </div>
                 )}
                 
-                {/* Selected Contact */}
+                {/* Selected Person */}
                 {selectedContact && (
                   <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex items-center justify-between">
