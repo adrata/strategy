@@ -832,13 +832,13 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
-  // Special handling for people - show only direct people records (not aggregated)
+  // Special handling for people - show all people records in workspace
   if (type === 'people') {
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null,
-        assignedUserId: userId
+        deletedAt: null
+        // Removed assignedUserId filter to show all people in workspace
       },
       include: {
         company: {
@@ -850,7 +850,8 @@ async function getMultipleRecords(
           }
         }
       },
-      orderBy: [{ updatedAt: 'desc' }]
+      orderBy: [{ updatedAt: 'desc' }],
+      take: 1000 // Show all people, not just 50
     });
     
     return { success: true, data: people };
@@ -2105,20 +2106,17 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null,
           status: 'active'
         },
-        select: {
-          id: true,
-          fullName: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          phone: true,
-          jobTitle: true,
-          city: true,
-          createdAt: true,
-          updatedAt: true
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true
+            }
+          }
         },
         orderBy: { createdAt: 'desc' },
-        take: 50
+        take: 1000 // Show all people, not just 50
       }).then(people => {
         // Sort people by createdAt descending to get most recent first
         const sortedPeople = people.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -2132,7 +2130,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           email: person.email,
           phone: person.phone,
           title: person.jobTitle,
-          company: 'Unknown Company', // People table doesn't have company
+          company: person.company?.name || 'Unknown Company',
           location: person.city,
           status: 'active',
           priority: 'medium',

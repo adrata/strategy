@@ -656,7 +656,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                                      case 'rank':
                      return (
                        <td key="rank" className={textClasses}>
-                         <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
+                         <div className="text-left font-medium">{index + 1}</div>
             </td>
                      );
                   case 'company':
@@ -782,7 +782,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
+                        <div className="text-left font-medium">{index + 1}</div>
                       </td>
                     );
                   case 'company':
@@ -967,7 +967,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
+                        <div className="text-left font-medium">{index + 1}</div>
                       </td>
                     );
                   case 'company':
@@ -1145,7 +1145,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
+                        <div className="text-left font-medium">{index + 1}</div>
                       </td>
                     );
                   case 'company':
@@ -1269,7 +1269,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                   case 'rank':
                     return (
                       <td key="rank" className={textClasses}>
-                        <div className="text-left font-medium">{getPersonMasterRank(record, index)}</div>
+                        <div className="text-left font-medium">{index + 1}</div>
                       </td>
                     );
                   case 'company':
