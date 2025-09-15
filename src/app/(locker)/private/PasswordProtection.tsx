@@ -80,7 +80,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
       <div className="h-screen bg-white flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
         <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Snyk Adrata</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">CloudCaddie Adrata</h1>
             <p className="text-gray-600">This content is private</p>
           </div>
           <form className="space-y-4">
@@ -122,7 +122,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
     <div className="h-screen bg-white flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
       <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
         <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">Snyk Adrata</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">CloudCaddie Adrata</h1>
             <p className="text-gray-600">This content is private</p>
         </div>
         
