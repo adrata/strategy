@@ -283,18 +283,6 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     }
   }, [record, getUserName]);
 
-  const getEventColor = (type: string) => {
-    switch (type) {
-      case 'created': return 'bg-gray-500';
-      case 'activity': return 'bg-green-500';
-      case 'email': return 'bg-purple-500';
-      case 'note': return 'bg-yellow-500';
-      case 'status_change': return 'bg-orange-500';
-      case 'field_update': return 'bg-blue-500';
-      case 'updated': return 'bg-gray-500';
-      default: return 'bg-gray-400';
-    }
-  };
 
   const isPastEvent = (date: Date) => date <= new Date();
 
