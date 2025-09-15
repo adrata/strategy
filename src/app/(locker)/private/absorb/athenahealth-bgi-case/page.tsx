@@ -113,7 +113,7 @@ export default function AthenahealthBusinessCasePage() {
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">12</div>
+                <div className="text-3xl font-bold text-black">8</div>
                 <div className="text-sm text-gray-600">Buyer Group Size</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -121,7 +121,7 @@ export default function AthenahealthBusinessCasePage() {
                 <div className="text-sm text-gray-600">Decision Makers</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
-                <div className="text-3xl font-bold text-black">3</div>
+                <div className="text-3xl font-bold text-black">2</div>
                 <div className="text-sm text-gray-600">Champions</div>
               </div>
               <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
@@ -276,89 +276,116 @@ export default function AthenahealthBusinessCasePage() {
                     </div>
                   </div>
                   <div className="border-l-4 border-black pl-4">
-                    <h5 className="font-semibold text-black text-lg">Brittany Freeman (Director, Workplace Experience)</h5>
-                    <p className="text-sm text-gray-600 mb-3">Budget authority and final approval for LMS decisions</p>
+                    <h5 className="font-semibold text-black text-lg">Brittany Podolak (Chief People Officer)</h5>
+                    <p className="text-sm text-gray-600 mb-3">Oversees HR, culture, talent retention & acquisition, DEI at athenahealth</p>
                     <div className="text-sm text-gray-700 space-y-2">
-                      <p><strong>Pain Points:</strong> Employee training efficiency and compliance tracking. Need for streamlined onboarding and certification processes for internal staff.</p>
-                      <p><strong>Strategic Priorities:</strong> Employee development, compliance training, operational efficiency, and cost optimization.</p>
-                      <p><strong>Engagement Approach:</strong> Emphasize employee development ROI, compliance efficiency, and operational cost savings.</p>
-                      <p><strong>Decision Criteria:</strong> Cost effectiveness, compliance capabilities, employee satisfaction, and operational efficiency.</p>
+                      <p><strong>Pain Points:</strong> Employee training efficiency, talent development, and compliance tracking. Need for comprehensive learning solutions that support HR initiatives and employee growth.</p>
+                      <p><strong>Strategic Priorities:</strong> Employee development, talent retention, compliance training, operational efficiency, and cost optimization.</p>
+                      <p><strong>Engagement Approach:</strong> Emphasize employee development ROI, talent retention benefits, compliance efficiency, and operational cost savings.</p>
+                      <p><strong>Decision Criteria:</strong> Cost effectiveness, compliance capabilities, employee satisfaction, talent development impact, and operational efficiency.</p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Champions (3)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Champions (2)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-gray-500 pl-4">
-                    <h5 className="font-semibold text-black">Mackenzie Terry (Sr. Director, Strategic Alliances)</h5>
+                    <h5 className="font-semibold text-black">Brittany Freeman (Director, Workplace Experience)</h5>
                     <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
                     <div className="text-xs text-gray-500">
-                      <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
-                      <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
-                      <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
+                      <p><strong>Champion Potential:</strong> High - Directors don't buy at that pricepoint across that large of an organization, but can influence decision makers</p>
+                      <p><strong>Key Motivations:</strong> Employee training efficiency, operational cost savings, compliance tracking, workplace experience improvement</p>
+                      <p><strong>Engagement Strategy:</strong> Training effectiveness, operational efficiency, cost savings, compliance benefits, employee satisfaction</p>
                     </div>
                   </div>
                   <div className="border-l-4 border-gray-500 pl-4">
-                    <h5 className="font-semibold text-black">Sarah Rixey Pharr (Director Of Strategic Programs)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
+                    <h5 className="font-semibold text-black">Priya Dixit (HR Manager)</h5>
+                    <p className="text-sm text-gray-600 mb-2">11+ yrs tenure, based in Boston alongside Nikki</p>
                     <div className="text-xs text-gray-500">
-                      <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
-                      <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
-                      <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
-                    </div>
-                  </div>
-                  <div className="border-l-4 border-gray-500 pl-4">
-                    <h5 className="font-semibold text-black">Danielle Beard (Partner Success Director)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
-                    <div className="text-xs text-gray-500">
-                      <p><strong>Champion Potential:</strong> Medium - Influenced by training outcomes and operational efficiency</p>
-                      <p><strong>Key Motivations:</strong> Training effectiveness, operational efficiency, cost optimization, compliance maintenance</p>
-                      <p><strong>Engagement Strategy:</strong> Training effectiveness, operational efficiency, cost savings, compliance benefits</p>
+                      <p><strong>Champion Potential:</strong> High - Long tenure provides deep organizational knowledge and influence</p>
+                      <p><strong>Key Motivations:</strong> Employee development, training effectiveness, compliance efficiency, operational improvements</p>
+                      <p><strong>Engagement Strategy:</strong> Training effectiveness, employee satisfaction, compliance benefits, operational efficiency</p>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (4)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (2)</h4>
                 
                 <div className="space-y-3">
                   <div className="border-l-4 border-gray-400 pl-4">
-                    <h5 className="font-semibold text-black">Emily Anderson (Marketing And Events Coordinator)</h5>
-                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Stakeholder influence on training effectiveness and user satisfaction</p>
+                    <h5 className="font-semibold text-black">Sarah Ugaz Grove (Senior Solution Design Manager)</h5>
+                    <p className="text-sm text-gray-600">14+ years at athenahealth, key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> High - Long tenure and solution design expertise provides significant influence on LMS selection and implementation decisions</p>
                   </div>
                   <div className="border-l-4 border-gray-400 pl-4">
-                    <h5 className="font-semibold text-black">Kenneth Page (Director Of Engineering - Technical Operations)</h5>
-                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> High - Senior level influence on LMS selection and implementation decisions</p>
-                  </div>
-                  <div className="border-l-4 border-gray-400 pl-4">
-                    <h5 className="font-semibold text-black">Vijay Viswanath Palaniappan (Engineering Manager)</h5>
-                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Operational influence on training processes and user experience</p>
-                  </div>
-                  <div className="border-l-4 border-gray-400 pl-4">
-                    <h5 className="font-semibold text-black">Allen Godfrey (Engineering Manager)</h5>
-                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Operational influence on training processes and user experience</p>
+                    <h5 className="font-semibold text-black">Erica Canuto (Manager Platform Services & Solutions)</h5>
+                    <p className="text-sm text-gray-600">Based in Boston, key influencer in LMS selection process</p>
+                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Platform services expertise provides operational influence on training processes and user experience</p>
                   </div>
                 </div>
               </div>
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (1)</h4>
+                <h4 className="text-lg font-semibold text-black mb-4">Openers (2)</h4>
                 
                 <div className="space-y-4">
-                  <div className="border-l-4 border-red-500 pl-4">
-                    <h5 className="font-semibold text-black">Sharath Ramanathan (Engineering - Security And Fraud)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Potential obstacle to LMS change</p>
-                    <div className="text-sm text-gray-700">
-                      <p><strong>Blocking Potential:</strong> Medium - Can influence decision timeline and implementation approach</p>
-                      <p><strong>Blocking Tactics:</strong> Evaluation delays, competitive alternatives, budget limitations</p>
-                      <p><strong>Neutralization Strategy:</strong> Address concerns proactively, provide detailed implementation plan, offer support and training</p>
+                  <div className="border-l-4 border-blue-500 pl-4">
+                    <h5 className="font-semibold text-black">Nikki Ward (Former Global Executive Dir of Learning & Development)</h5>
+                    <p className="text-sm text-gray-600 mb-2">Now SVP HR for OncoHealth - Leverage to get inside baseball on athenahealth prior to activating Priya</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Opening Potential:</strong> High - Former insider with deep knowledge of athenahealth's training needs and organizational dynamics</p>
+                      <p><strong>Key Value:</strong> Inside intelligence on athenahealth's training challenges, organizational structure, and decision-making processes</p>
+                      <p><strong>Engagement Strategy:</strong> Leverage former insider knowledge to understand athenahealth's specific training pain points and organizational dynamics before engaging current team</p>
                     </div>
                   </div>
+                  <div className="border-l-4 border-blue-500 pl-4">
+                    <h5 className="font-semibold text-black">David Onorato (Former Director Platform Sales)</h5>
+                    <p className="text-sm text-gray-600 mb-2">12+ years at athenahealth, now sales specialist at Snowflake based in Boston - Get him to vent about issues with training reps</p>
+                    <div className="text-xs text-gray-500">
+                      <p><strong>Opening Potential:</strong> High - Former sales leader with deep understanding of athenahealth's training challenges and sales team needs</p>
+                      <p><strong>Key Value:</strong> Sales training insights, understanding of rep training pain points, and organizational knowledge</p>
+                      <p><strong>Engagement Strategy:</strong> Leverage his experience with training challenges at athenahealth to understand specific pain points and training needs</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* LinkedIn Profiles Reference */}
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold text-black mb-6">LinkedIn Profiles Reference</h2>
+            
+            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold text-black mb-4">Key Contact LinkedIn Profiles</h3>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-semibold text-black mb-2">Decision Makers:</p>
+                  <ul className="text-gray-700 space-y-1">
+                    <li>• <a href="https://www.linkedin.com/in/brittanypodolak/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Brittany Podolak - Chief People Officer</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-black mb-2">Champions:</p>
+                  <ul className="text-gray-700 space-y-1">
+                    <li>• <a href="https://www.linkedin.com/in/priyadixit/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Priya Dixit - HR Manager</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-black mb-2">Openers:</p>
+                  <ul className="text-gray-700 space-y-1">
+                    <li>• <a href="https://www.linkedin.com/in/nikkiwardhr/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Nikki Ward - Former Global Executive Dir of Learning & Development</a></li>
+                    <li>• <a href="https://www.linkedin.com/in/david-onorato/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">David Onorato - Former Director Platform Sales</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-black mb-2">Stakeholders:</p>
+                  <ul className="text-gray-700 space-y-1">
+                    <li>• <a href="https://www.linkedin.com/in/sarah-ugaz-grove-217520120/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Sarah Ugaz Grove - Senior Solution Design Manager</a></li>
+                    <li>• <a href="https://www.linkedin.com/in/ericabielat/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">Erica Canuto - Manager Platform Services & Solutions</a></li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -383,9 +410,9 @@ export default function AthenahealthBusinessCasePage() {
                     <p className="text-sm text-gray-700 mb-3"><strong>Primary Targets:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Scott O'Neil (VP Customer Success) - Customer training ROI and effectiveness</li>
+                      <li>• Brittany Podolak (Chief People Officer) - Employee training efficiency and talent development</li>
                       <li>• Brittany Freeman (Director Workplace Experience) - Employee training efficiency</li>
-                      <li>• Kenneth Page (Director Engineering) - Technical integration and security</li>
-                      <li>• Mackenzie Terry (Sr. Director Strategic Alliances) - Partner enablement</li>
+                      <li>• Priya Dixit (HR Manager) - Employee development and compliance</li>
                     </ul>
                   </div>
                   <div>
@@ -405,9 +432,8 @@ export default function AthenahealthBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Internal Champions:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Mackenzie Terry (Sr. Director Strategic Alliances)</li>
-                      <li>• Sarah Rixey Pharr (Director Strategic Programs)</li>
-                      <li>• Danielle Beard (Partner Success Director)</li>
+                      <li>• Brittany Freeman (Director Workplace Experience)</li>
+                      <li>• Priya Dixit (HR Manager)</li>
                     </ul>
                   </div>
                   <div>
@@ -427,10 +453,8 @@ export default function AthenahealthBusinessCasePage() {
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Technical Stakeholders:</strong></p>
                     <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Kenneth Page (Director Engineering) - Technical integration and security</li>
-                      <li>• Vijay Viswanath Palaniappan (Engineering Manager) - System architecture</li>
-                      <li>• Allen Godfrey (Engineering Manager) - Implementation and deployment</li>
-                      <li>• Sharath Ramanathan (Security & Fraud) - Compliance and security validation</li>
+                      <li>• Sarah Ugaz Grove (Senior Solution Design Manager) - Solution architecture and design</li>
+                      <li>• Erica Canuto (Manager Platform Services & Solutions) - Platform integration and services</li>
                     </ul>
                   </div>
                   <div>
@@ -485,7 +509,7 @@ export default function AthenahealthBusinessCasePage() {
                   <h4 className="font-bold text-black mb-3">Immediate Actions (Week 1-2)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Research athenahealth's current LMS costs and pain points</li>
-                    <li>• Identify mutual connections to Scott O'Neil and Brittany Freeman</li>
+                    <li>• Identify mutual connections to Scott O'Neil and Brittany Podolak</li>
                     <li>• Prepare cost comparison and ROI analysis for decision makers</li>
                     <li>• Develop healthcare compliance documentation for technical validation</li>
                   </ul>
@@ -494,10 +518,10 @@ export default function AthenahealthBusinessCasePage() {
                 <div className="bg-white border border-gray-200 p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Strategic Engagement (Week 3-4)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
-                    <li>• Schedule meetings with Scott O'Neil and Brittany Freeman (Decision Makers)</li>
-                    <li>• Conduct technical validation with Kenneth Page and engineering team</li>
+                    <li>• Schedule meetings with Scott O'Neil and Brittany Podolak (Decision Makers)</li>
+                    <li>• Conduct technical validation with Sarah Ugaz Grove and Erica Canuto</li>
                     <li>• Present cost savings and ROI analysis to decision makers</li>
-                    <li>• Develop migration plan with Mackenzie Terry and Sarah Rixey Pharr</li>
+                    <li>• Develop migration plan with Brittany Freeman and Priya Dixit</li>
                   </ul>
                 </div>
               </div>
