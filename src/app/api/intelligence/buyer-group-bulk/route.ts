@@ -175,7 +175,7 @@ async function getRealPeopleFromCoreSignal(companyName: string): Promise<any[]> 
       }
     };
 
-    const searchResponse = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl?items_per_page=20', {
+    const searchResponse = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl?items_per_page=100', {
       method: 'POST',
       headers: {
         'apikey': apiKey,
@@ -201,7 +201,8 @@ async function getRealPeopleFromCoreSignal(companyName: string): Promise<any[]> 
 
     // Collect detailed profiles for each employee ID
     const detailedProfiles = [];
-    for (let i = 0; i < Math.min(10, employeeIds.length); i++) { // Limit to 10 for cost control
+    const maxCollects = Math.min(50, employeeIds.length); // Use configurable limit, max 50 for cost control
+    for (let i = 0; i < maxCollects; i++) {
       const employeeId = employeeIds[i];
       
       try {
