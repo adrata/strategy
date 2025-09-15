@@ -2063,16 +2063,16 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           }
         })
       ]).then(([leadsCount, prospectsCount]) => leadsCount + prospectsCount),
-      // Load actual data (OPTIMIZED: Reduced from 1000 to 50 records for performance)
+      // Load actual data (Updated to show all records for better user experience)
       prisma.leads.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 1000 // Show all leads
       }),
       prisma.prospects.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 1000 // Show all prospects
       }),
       prisma.opportunities.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
@@ -2082,12 +2082,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.companies.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 1000 // Show all companies
       }),
       prisma.people.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 1000 // Show all people
       }),
       prisma.customers.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
