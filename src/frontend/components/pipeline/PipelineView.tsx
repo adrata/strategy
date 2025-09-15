@@ -521,6 +521,11 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
     if (!data || data['length'] === 0) return data;
+    
+    // For speedrun, don't sort - preserve API ranking order
+    if (section === 'speedrun') {
+      return data;
+    }
 
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = data;

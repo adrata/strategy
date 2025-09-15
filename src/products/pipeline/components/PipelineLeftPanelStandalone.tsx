@@ -721,7 +721,7 @@ function PipelineSections({
       ) : (isDemoMode ? 25 : productionCounts.companies),
       visible: true
     },
-    // SELLERS: Moved to bottom as requested
+    // SELLERS: Hidden for now as requested
     {
       id: "sellers",
       name: "Sellers",
@@ -729,7 +729,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : (isDemoMode ? 10 : sellersData.count), // Use actual count from data
-      visible: true
+      visible: false
     },
     {
       id: "metrics",

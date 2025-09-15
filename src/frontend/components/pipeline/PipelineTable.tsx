@@ -1566,7 +1566,7 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
                     case 'rank':
                       return (
                         <td key="rank" className={textClasses}>
-                <div className="text-center font-medium">{getPersonMasterRank(record, index)}</div>
+                <div className="text-center font-medium">{record.rank || (index + 1)}</div>
               </td>
                       );
                     case 'company':
