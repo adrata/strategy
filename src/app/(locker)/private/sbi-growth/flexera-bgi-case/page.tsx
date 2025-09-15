@@ -481,7 +481,7 @@ export default function FlexeraBusinessCasePage() {
               </div>
 
               <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Phase 3: C-Suite Executive Engagement</h4>
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 3a: C-Suite Executive Engagement (Parallel Track)</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <p className="text-sm text-gray-700 mb-3"><strong>Primary C-Suite Targets:</strong></p>
@@ -499,6 +499,30 @@ export default function FlexeraBusinessCasePage() {
                       <li>• Strategic growth alignment and market positioning</li>
                       <li>• Competitive advantage metrics and market share growth</li>
                       <li>• Enterprise-level consulting value proposition</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-black mb-3">Phase 3b: Secondary Champion Development (Parallel Track)</h4>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Secondary Champions:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Shinie Shaw (VP Global Sales) - Revenue impact focus</li>
+                      <li>• Michael Beaver (VP Marketing) - Brand positioning advocate</li>
+                      <li>• Barbara Boyer (SVP Customer Experience) - Retention advocate</li>
+                      <li>• Eric Free (Chief Growth Officer) - Growth strategy champion</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-700 mb-3"><strong>Champion Strategy:</strong></p>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Internal advocacy development and deal pushing</li>
+                      <li>• Success story sharing and executive support building</li>
+                      <li>• Cross-functional alignment and consensus building</li>
+                      <li>• Momentum creation for C-Suite approval</li>
                     </ul>
                   </div>
                 </div>
@@ -549,28 +573,6 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-black mb-3">Phase 6: Secondary Champion Development</h4>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-700 mb-3"><strong>Secondary Champions:</strong></p>
-                    <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Shinie Shaw (VP Global Sales)</li>
-                      <li>• Michael Beaver (VP Marketing)</li>
-                      <li>• Barbara Boyer (SVP Customer Experience)</li>
-                      <li>• Eric Free (Chief Growth Officer)</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-700 mb-3"><strong>Champion Strategy:</strong></p>
-                    <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Internal advocacy development</li>
-                      <li>• Success story sharing</li>
-                      <li>• Executive support building</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
             </div>
           </section>
 
