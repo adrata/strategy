@@ -232,7 +232,7 @@ export function Dashboard() {
       setError(null);
       console.log('📊 Loading Dashboard...', { workspaceId, userId });
       
-              const response = await fetch(`/api/pipeline/dashboard?workspaceId=${workspaceId}&userId=${userId}&_t=${Date.now()}&_cache=${Math.random()}`);
+      const response = await fetch(`/api/pipeline/dashboard?workspaceId=${workspaceId}&userId=${userId}&_t=${Date.now()}&_cache=${Math.random()}`);
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -430,9 +430,9 @@ export function Dashboard() {
       const headerMetrics = null;
 
   // Show skeleton loading state for content only (header always visible)
-  // if (isLoading && !activityData) {
-  //   return <DashboardSkeleton />;
-  // }
+  if (isLoading && !activityData) {
+    return <DashboardSkeleton />;
+  }
 
   if (error) {
     return (
@@ -643,9 +643,9 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Row 4: YTD Pipeline Performance */}
+          {/* Row 4: Weekly Performance */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">YTD Pipeline Performance</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Weekly Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
                 className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all"

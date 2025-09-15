@@ -4,7 +4,7 @@ import { cache } from '../../../../platform/services';
 import * as jwt from 'jsonwebtoken';
 
 // 🚀 PERFORMANCE: Aggressive caching for instant loading
-const DASHBOARD_TTL = 60; // 1 minute for dashboard data (faster refresh)
+const DASHBOARD_TTL = 300; // 5 minutes for dashboard data (optimized for performance)
 const WORKSPACE_CONTEXT_TTL = 60; // 1 minute
 
 // 🚀 CACHING: Multi-layer cache for instant responses
@@ -311,22 +311,22 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   console.log(`📊 [DASHBOARD API] Loading leadership dashboard for workspace: ${workspaceId}, user: ${userId}`);
   console.log(`📊 [DASHBOARD API] DEBUG: workspaceId type: ${typeof workspaceId}, userId type: ${typeof userId}`);
   
-  // Debug: Check what activities exist for this user/workspace
-  const debugActivities = await prisma.actions.findMany({
-    where: {
-      workspaceId,
-      userId: userId
-    },
-    take: 5,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      type: true,
-      subject: true,
-      createdAt: true
-    }
-  });
+  // Debug: Check what activities exist for this user/workspace (DISABLED FOR PERFORMANCE)
+  // const debugActivities = await prisma.actions.findMany({
+  //   where: {
+  //     workspaceId,
+  //     userId: userId
+  //   },
+  //   take: 5,
+  //   orderBy: { createdAt: 'desc' },
+  //   select: {
+  //     type: true,
+  //     subject: true,
+  //     createdAt: true
+  //   }
+  // });
   
-  console.log(`📊 [DASHBOARD API] Debug - Found ${debugActivities.length} activities for user ${userId}:`, debugActivities);
+  // console.log(`📊 [DASHBOARD API] Debug - Found ${debugActivities.length} activities for user ${userId}:`, debugActivities);
 
   // Get date ranges for current week (Monday to Sunday)
   const now = new Date();
@@ -412,14 +412,13 @@ async function loadDashboardData(workspaceId: string, userId: string) {
   });
   console.log(`📊 [DASHBOARD API] All email accounts for user:`, allEmailAccounts);
 
-  // Parallel queries for comprehensive leadership metrics
+  // OPTIMIZED: Reduced parallel queries for better performance
   const [
     thisWeekActivities,
     lastWeekActivities,
     thisWeekOpportunities,
     thisWeekClosedDeals,
     thisWeekLeads,
-    teamStats,
     totalPipelineValue,
     totalOpportunities,
     totalLeads,
@@ -499,18 +498,18 @@ async function loadDashboardData(workspaceId: string, userId: string) {
       }
     }),
 
-    // Team-wide stats for context
-    prisma.actions.groupBy({
-      by: ['type'],
-      where: {
-        workspaceId,
-        createdAt: {
-          gte: startOfWeek,
-          lte: endOfWeek
-        }
-      },
-      _count: { type: true }
-    }),
+    // Team-wide stats for context (REMOVED FOR PERFORMANCE - can be added back if needed)
+    // prisma.actions.groupBy({
+    //   by: ['type'],
+    //   where: {
+    //     workspaceId,
+    //     createdAt: {
+    //       gte: startOfWeek,
+    //       lte: endOfWeek
+    //     }
+    //   },
+    //   _count: { type: true }
+    // }),
 
     // Total pipeline value (all open opportunities) - FIXED: Use same logic as left panel
     prisma.opportunities.aggregate({
@@ -639,49 +638,49 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     weekRange: `${startOfWeek.toLocaleDateString()} - ${endOfWeek.toLocaleDateString()}`
   });
 
-  // Debug: Check what events exist for this user/workspace
-  const debugEvents = await prisma.events.findMany({
-    where: {
-      workspaceId,
-      userId: userId,
-      startTime: {
-        gte: startOfWeek,
-        lte: endOfWeek
-      }
-    },
-    select: {
-      id: true,
-      title: true,
-      startTime: true,
-      endTime: true
-    },
-    take: 5
-  });
-  console.log(`📊 [DASHBOARD API] Debug events found:`, debugEvents);
+  // Debug: Check what events exist for this user/workspace (DISABLED FOR PERFORMANCE)
+  // const debugEvents = await prisma.events.findMany({
+  //   where: {
+  //     workspaceId,
+  //     userId: userId,
+  //     startTime: {
+  //       gte: startOfWeek,
+  //       lte: endOfWeek
+  //     }
+  //   },
+  //   select: {
+  //     id: true,
+  //     title: true,
+  //     startTime: true,
+  //     endTime: true
+  //   },
+  //   take: 5
+  // });
+  // console.log(`📊 [DASHBOARD API] Debug events found:`, debugEvents);
 
-  // Debug: Check what email messages exist
-  if (userEmailAccount) {
-    const debugEmails = await prisma.email_messages.findMany({
-      where: {
-        accountId: userEmailAccount.id,
-        from: {
-          contains: userEmailAccount.email
-        },
-        createdAt: {
-          gte: startOfWeek,
-          lte: endOfWeek
-        }
-      },
-      select: {
-        id: true,
-        subject: true,
-        from: true,
-        createdAt: true
-      },
-      take: 5
-    });
-    console.log(`📊 [DASHBOARD API] Debug emails found:`, debugEmails);
-  }
+  // Debug: Check what email messages exist (DISABLED FOR PERFORMANCE)
+  // if (userEmailAccount) {
+  //   const debugEmails = await prisma.email_messages.findMany({
+  //     where: {
+  //       accountId: userEmailAccount.id,
+  //       from: {
+  //         contains: userEmailAccount.email
+  //       },
+  //       createdAt: {
+  //         gte: startOfWeek,
+  //         lte: endOfWeek
+  //       }
+  //     },
+  //     select: {
+  //       id: true,
+  //       subject: true,
+  //       from: true,
+  //       createdAt: true
+  //     },
+  //     take: 5
+  //   });
+  //   console.log(`📊 [DASHBOARD API] Debug emails found:`, debugEmails);
+  // }
 
   const lastWeekCalls = getActivityCount(lastWeekActivities, callTypes);
   const lastWeekEmails = getActivityCount(lastWeekActivities, emailTypes);
@@ -752,10 +751,10 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     return Math.round(trend);
   };
 
-  // Team totals
-  const teamCallsTotal = getActivityCount(teamStats, callTypes);
-  const teamEmailsTotal = getActivityCount(teamStats, emailTypes);
-  const teamMeetingsTotal = getActivityCount(teamStats, meetingTypes);
+  // Team totals (DISABLED FOR PERFORMANCE - using user stats instead)
+  const teamCallsTotal = thisWeekCalls; // Use user stats as fallback
+  const teamEmailsTotal = actualThisWeekEmails; // Use user stats as fallback
+  const teamMeetingsTotal = actualThisWeekMeetings; // Use user stats as fallback
 
   // Calculate actual top performer from real data
   const topPerformerQuery = await prisma.actions.groupBy({

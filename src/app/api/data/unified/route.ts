@@ -2062,41 +2062,41 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           }
         })
       ]).then(([leadsCount, prospectsCount]) => leadsCount + prospectsCount),
-      // Load actual data
+      // Load actual data (OPTIMIZED: Reduced from 1000 to 50 records for performance)
       prisma.leads.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.prospects.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.opportunities.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.companies.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.people.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.customers.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }),
       prisma.partners.findMany({ 
         where: { workspaceId, deletedAt: null },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000
+        take: 50
       }).catch(() => []), // Fallback to empty array if partners table has issues
       // Load speedrun data from person table (same as dedicated speedrun endpoint)
       prisma.person.findMany({
