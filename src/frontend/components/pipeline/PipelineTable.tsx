@@ -1821,13 +1821,13 @@ export function PipelineTable({ section, data, onRecordClick, onReorderRecords, 
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedData.map(renderTableRow)}
+            {(section === 'speedrun' ? data : paginatedData).map(renderTableRow)}
           </tbody>
         </table>
       </div>
 
       {/* Pagination Controls */}
-      {data.length > pageSize && (
+      {data.length > pageSize && section !== 'speedrun' && (
         <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
