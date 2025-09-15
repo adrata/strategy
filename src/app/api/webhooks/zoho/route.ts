@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
-import Pusher from 'pusher';
 import { PusherServerService } from '@/platform/services/pusher-real-time-service';
 import { storeSignal } from '@/platform/services/signal-storage';
 import { zohoNotificationService } from '@/platform/services/zoho-notification-service';

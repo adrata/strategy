@@ -3,7 +3,7 @@
  * Provides instant updates for pipeline data changes
  */
 
-import Pusher from 'pusher';
+import { PusherServerService } from './pusher-real-time-service';
 import { cache } from './';
 
 // Server-side Pusher instance
@@ -22,13 +22,7 @@ function getPusherServer(): Pusher | null {
         return null;
       }
 
-      pusherServer = new Pusher({
-        appId,
-        key,
-        secret,
-        cluster,
-        useTLS: true,
-      });
+      pusherServer = PusherServerService.getInstance();
 
       console.log('🟢 [PUSHER] Server initialized successfully');
     } catch (error) {

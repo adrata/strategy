@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
-import Pusher from 'pusher';
+import { PusherServerService } from '@/platform/services/pusher-real-time-service';
 
 export const runtime = 'nodejs';
 
@@ -353,13 +353,7 @@ async function triggerSpeedrunNotification(signalData: any) {
 
     // Use statically imported Pusher
     
-    const pusher = new Pusher({
-      appId: process['env']['PUSHER_APP_ID'],
-      key: process['env']['PUSHER_KEY'],
-      secret: process['env']['PUSHER_SECRET'],
-      cluster: process['env']['PUSHER_CLUSTER'] || "us2",
-      useTLS: true,
-    });
+    const pusher = PusherServerService.getInstance();
 
     const speedrunSignal = {
       type: 'BUYING_INTENT_DETECTED',
