@@ -1104,6 +1104,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       <style jsx>{`
         .ai-panel-scroll::-webkit-scrollbar {
           width: 8px;
+          height: 8px;
         }
         .ai-panel-scroll::-webkit-scrollbar-track {
           background: #f9fafb;
@@ -1118,14 +1119,15 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         
         /* Middle panel scrollbar styling */
         .middle-panel-scroll::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
+          height: 8px;
         }
         .middle-panel-scroll::-webkit-scrollbar-track {
           background: #f9fafb;
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb {
           background: #e5e7eb;
-          border-radius: 3px;
+          border-radius: 4px;
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
           background: #d1d5db;
