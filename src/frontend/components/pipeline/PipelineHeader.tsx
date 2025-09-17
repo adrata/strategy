@@ -417,13 +417,6 @@ export function PipelineHeader({
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'
         };
-      case 'customers':
-        return {
-          title: 'Customers',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: 'Add Customer',
-          secondaryActionButton: 'Add Action'
-        };
       case 'clients':
         return {
           title: 'Clients',
@@ -475,7 +468,8 @@ export function PipelineHeader({
         return {
           title: 'Dashboard',
           subtitle: `Week ${weekNumber} (${weekRange})`,
-          actionButton: 'Start Speedrun',
+          actionButton: 'Add Person',
+          secondaryActionButton: 'Add Action',
           showShare: true,
           showAddNote: true,
           showStartSpeedrun: false
@@ -857,31 +851,27 @@ export function PipelineHeader({
               {/* Removed Now dropdown for cleaner Speedrun interface */}
 
 
-              {/* Dashboard section with Add Action dropdown */}
+              {/* Dashboard section with Add Person and Add Action buttons */}
               {section === 'dashboard' ? (
                 <>
-                  <button 
-                    onClick={() => {
-                      setSelectedRecord(null);
-                      setShowAddActionModal(true);
-                    }}
-                    className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-                  >
-                    <BoltIcon className="w-4 h-4" />
-                    Add Action
-                  </button>
-                  {sectionInfo['showStartSpeedrun'] && (
-                    <button 
+                  {sectionInfo['actionButton'] && (
+                    <button
                       onClick={handleAction}
-                      disabled={loading}
-                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
                     >
-                      {loading ? <PanelLoader message='Starting...' /> : (
-                        <>
-                          <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-xs font-mono">⌘G</span>
-                          Start Speedrun
-                        </>
-                      )}
+                      {sectionInfo.actionButton}
+                    </button>
+                  )}
+                  {(sectionInfo as any).secondaryActionButton && (
+                    <button
+                      onClick={() => {
+                        setSelectedRecord(null);
+                        setShowAddActionModal(true);
+                      }}
+                      disabled={loading}
+                      className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {(sectionInfo as any).secondaryActionButton}
                     </button>
                   )}
                 </>
@@ -919,7 +909,7 @@ export function PipelineHeader({
               ) : (
                 <div className="flex items-center gap-2">
                   {/* For prospects, leads, opportunities, companies, people, customers, and speedrun, show custom buttons; for others, show unified button */}
-                  {section === 'prospects' || section === 'leads' || section === 'opportunities' || section === 'companies' || section === 'people' || section === 'customers' || section === 'speedrun' ? (
+                  {section === 'prospects' || section === 'leads' || section === 'opportunities' || section === 'companies' || section === 'people' || section === 'clients' || section === 'speedrun' ? (
                     <>
                       {sectionInfo['actionButton'] && (
                         <button 

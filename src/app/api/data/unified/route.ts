@@ -50,7 +50,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         opportunities: [],
         companies: [],
         people: [],
-        customers: [],
+        clients: [],
         partnerships: [],
         sellers: [],
         speedrunItems: [],
@@ -60,7 +60,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           opportunities: 0,
           companies: 0,
           people: 0,
-          customers: 0,
+          clients: 0,
           partners: 0,
           sellers: 0,
           speedrun: 0
@@ -234,7 +234,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         companies: companiesFromLeads, // Use companies derived from leads data
         people: people,
         partnerships: partnerships,
-        customers: [],
+        clients: [],
         buyerGroups: buyerGroups,
         catalyst: [],
         calendar: [],
@@ -248,7 +248,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           opportunities: realOpportunities.length,
           companies: companiesFromLeads.length, // Use the correct count
           people: people.length,
-          customers: 0,
+          clients: 0,
           partners: partnerships.length,
           sellers: enrichedSellers.length,
           speedrun: speedrunItems.length // Add speedrun count
@@ -403,7 +403,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       companies: companies,
       people: combinedPeople,
       partnerships: partnerships, // Load partnerships from database
-      customers: [], // No customers yet
+      clients: [], // No clients yet
       buyerGroups: realBuyerGroups.length > 0 ? realBuyerGroups : buyerGroups,
       catalyst: [],
       calendar: [],

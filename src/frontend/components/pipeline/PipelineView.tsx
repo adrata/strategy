@@ -38,7 +38,7 @@ import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation"
 
 
 interface PipelineViewProps {
-  section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
+  section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
 }
 
 // PERFORMANCE: Memoize component to prevent unnecessary re-renders
@@ -242,7 +242,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
           } : null
         });
         return peopleData;
-      case 'clients': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'sellers': return acquireData.sellers || [];
       case 'speedrun': 
@@ -1031,9 +1031,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     userId
   });
   
-  // CUSTOMERS DEBUG: Extra logging for customers section
-  if (section === 'customers') {
-    console.log(`🛒 [CUSTOMERS DEBUG] Detailed state:`, {
+  // CLIENTS DEBUG: Extra logging for clients section
+  if (section === 'clients') {
+    console.log(`🛒 [CLIENTS DEBUG] Detailed state:`, {
       section,
       workspaceId,
       userId,
@@ -1143,7 +1143,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               <p className="text-sm text-black max-w-sm mb-4">
                 {section === 'leads' ? 'Start building your warm relationships by adding your first lead.' :
                  section === 'prospects' ? 'Begin your outreach by adding prospects to your pipeline.' :
-                 section === 'customers' ? 'Track your successful relationships and customer success.' :
+                 section === 'clients' ? 'Track your successful relationships and client success.' :
                  section === 'people' ? 'Build your network by adding people to your database.' :
                  section === 'companies' ? 'Expand your company intelligence by adding organizations.' :
                  `Add your first ${section.slice(0, -1)} to get started.`}

@@ -9,7 +9,7 @@ import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvid
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
-export default function CustomerDetailPage() {
+export default function ClientDetailPage() {
   const params = useParams();
   const slug = params['id'] as string;
   
@@ -21,7 +21,7 @@ export default function CustomerDetailPage() {
             <RecordContextProvider>
               <ProfilePopupProvider>
                 <PipelineDetailPage
-                  section="customers"
+                  section="clients"
                   slug={slug}
                 />
               </ProfilePopupProvider>
