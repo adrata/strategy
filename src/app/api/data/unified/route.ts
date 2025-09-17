@@ -85,7 +85,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           isDemoData: true
         };
 
-    const [leads, prospects, opportunities, companies, people, buyerGroups, workspaceUsers, partnerships] = await Promise.all([
+    const [leads, prospects, opportunities, companies, people, clients, buyerGroups, workspaceUsers, partnerships] = await Promise.all([
       prisma.leads.findMany({
         where: demoScenarioFilter
       }),
@@ -99,6 +99,11 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         where: { workspaceId: workspaceId }
       }),
       prisma.people.findMany({
+        where: {
+          workspaceId: workspaceId
+        }
+      }),
+      prisma.clients.findMany({
         where: {
           workspaceId: workspaceId
         }
@@ -234,7 +239,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         companies: companiesFromLeads, // Use companies derived from leads data
         people: people,
         partnerships: partnerships,
-        clients: [],
+        clients: clients,
         buyerGroups: buyerGroups,
         catalyst: [],
         calendar: [],
@@ -248,7 +253,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           opportunities: realOpportunities.length,
           companies: companiesFromLeads.length, // Use the correct count
           people: people.length,
-          clients: 0,
+          clients: clients.length,
           partners: partnerships.length,
           sellers: enrichedSellers.length,
           speedrun: speedrunItems.length // Add speedrun count
@@ -403,7 +408,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       companies: companies,
       people: combinedPeople,
       partnerships: partnerships, // Load partnerships from database
-      clients: [], // No clients yet
+      clients: clients, // Load clients from database
       buyerGroups: realBuyerGroups.length > 0 ? realBuyerGroups : buyerGroups,
       catalyst: [],
       calendar: [],
@@ -417,7 +422,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         opportunities: realOpportunities.length > 0 ? realOpportunities.length : opportunities.length,
         companies: companies.length,
         people: combinedPeople.length,
-        customers: 0,
+        clients: clients.length,
         partners: partnerships.length,
         sellers: sellers.length,
         speedrun: prospects.length > 0 ? prospects.length : realProspects.length // Add speedrun count
@@ -442,7 +447,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         companies: [],
         people: [],
       partnerships: [],
-      customers: [],
+      clients: [],
       buyerGroups: [],
       catalyst: [],
       calendar: [],
@@ -456,7 +461,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         opportunities: 0,
         companies: 0,
         people: 0,
-        customers: 0,
+        clients: 0,
         partners: 0,
         sellers: 0,
         speedrun: 0
@@ -485,7 +490,7 @@ interface UnifiedDataResponse {
 }
 
 interface UnifiedDataRequest {
-  type: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'speedrun' | 'dashboard' | 'search';
+  type: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'speedrun' | 'dashboard' | 'search';
   action: 'get' | 'create' | 'update' | 'delete' | 'search';
   id?: string;
   data?: any;
@@ -503,7 +508,7 @@ interface UnifiedDataRequest {
 // 🆕 SUPPORTED DATA TYPES
 const SUPPORTED_TYPES = [
   'leads', 'prospects', 'opportunities', 'companies', 
-  'people', 'customers', 'partners', 'sellers', 'notes', 'activities', 'speedrun', 'dashboard', 'search'
+  'people', 'clients', 'partners', 'sellers', 'notes', 'activities', 'speedrun', 'dashboard', 'search'
 ] as const;
 
 const SUPPORTED_ACTIONS = ['get', 'create', 'update', 'delete', 'search', 'advance_to_prospect', 'advance_to_opportunity'] as const;
@@ -739,7 +744,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   };
   
   // Only add deletedAt filter for models that have this field
-  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'customers', 'partners'].includes(type)) {
+  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners'].includes(type)) {
     whereClause['deletedAt'] = null;
   }
   
@@ -788,7 +793,7 @@ async function getMultipleRecords(
             companies: demoData.companies,
             people: demoData.people,
             partnerships: demoData.partnerships,
-            customers: demoData.customers,
+            clients: demoData.clients,
             buyerGroups: demoData.buyerGroups,
             catalyst: demoData.catalyst,
             calendar: demoData.calendar,
@@ -811,8 +816,8 @@ async function getMultipleRecords(
         return { success: true, data: demoData.companies };
       case 'people':
         return { success: true, data: demoData.people };
-      case 'customers':
-        return { success: true, data: demoData.customers };
+      case 'clients':
+        return { success: true, data: demoData.clients };
       case 'partners':
         return { success: true, data: demoData.partnerships };
       case 'sellers':
@@ -872,7 +877,7 @@ async function getMultipleRecords(
   };
   
   // Only add deletedAt filter for models that have this field
-  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'customers', 'partners'].includes(type)) {
+  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners'].includes(type)) {
     whereClause['deletedAt'] = null;
   }
   
@@ -968,9 +973,9 @@ async function handleGetBuyerGroups(type: string, workspaceId: string, userId: s
 
 // 🆕 CREATE OPERATIONS
 async function handleCreate(type: string, workspaceId: string, userId: string, data: any): Promise<any> {
-  // Special handling for customers - need to create both account and customer records
-  if (type === 'customers') {
-    return await handleCustomerCreate(workspaceId, userId, data);
+  // Special handling for clients - need to create both account and client records
+  if (type === 'clients') {
+    return await handleClientCreate(workspaceId, userId, data);
   }
   
   const model = getPrismaModel(type);
@@ -1010,8 +1015,8 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     }
   }
 
-  // Handle special field requirements for leads, prospects, partners, and customers
-  if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'customers') {
+  // Handle special field requirements for leads, prospects, partners, and clients
+  if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
     // If name is provided but firstName/lastName are not, split the name
     if (createData['name'] && !createData['firstName'] && !createData.lastName) {
       const nameParts = createData.name.trim().split(' ');
@@ -1204,8 +1209,8 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
   }
 }
 
-// Special function to handle customer creation (account + customer records)
-async function handleCustomerCreate(workspaceId: string, userId: string, data: any): Promise<any> {
+// Special function to handle client creation (account + client records)
+async function handleClientCreate(workspaceId: string, userId: string, data: any): Promise<any> {
   try {
     // First create the account record
     const account = await prisma.companies.create({
@@ -1220,10 +1225,10 @@ async function handleCustomerCreate(workspaceId: string, userId: string, data: a
       }
     });
 
-    // Then create the customer record
-    const customer = await prisma.customers.create({
+    // Then create the client record
+    const client = await prisma.clients.create({
       data: {
-        id: `customer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         workspaceId,
         companyId: account.id,
         customerSince: new Date(),
@@ -1237,8 +1242,8 @@ async function handleCustomerCreate(workspaceId: string, userId: string, data: a
 
     // Log person IDs for future relationship creation
     if (data['personIds'] && data.personIds.length > 0) {
-      console.log('📝 [UNIFIED API] Person IDs to associate with customer:', data.personIds);
-      // TODO: Implement person-customer relationship creation
+      console.log('📝 [UNIFIED API] Person IDs to associate with client:', data.personIds);
+      // TODO: Implement person-client relationship creation
     }
 
     // Clear cache after create
@@ -1247,14 +1252,14 @@ async function handleCustomerCreate(workspaceId: string, userId: string, data: a
     return { 
       success: true, 
       data: { 
-        ...customer, 
+        ...client, 
         accountName: account.name, 
         accountWebsite: account.website 
       } 
     };
   } catch (error) {
-    console.error('Error creating customer:', error);
-    throw new Error(`Failed to create customer: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error('Error creating client:', error);
+    throw new Error(`Failed to create client: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -1276,8 +1281,8 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
       updatedAt: new Date()
     };
     
-    // Handle special field requirements for leads, prospects, partners, and customers
-    if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'customers') {
+    // Handle special field requirements for leads, prospects, partners, and clients
+    if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
       // If name is provided but firstName/lastName are not, split the name
       if (updateData['name'] && !updateData['firstName'] && !updateData.lastName) {
         const nameParts = updateData.name.trim().split(' ');
@@ -1963,7 +1968,7 @@ function getPrismaModel(type: string): any {
     opportunities: prisma.opportunities,
     companies: prisma.companies,
     people: prisma.people,
-    customers: prisma.customers,
+    clients: prisma.clients,
     partners: prisma.partners,
     sellers: prisma.workspace_users, // 🆕 FIX: Add sellers support
     notes: prisma.notes,
@@ -1992,7 +1997,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           opportunities: demoData.opportunities,
           companies: demoData.companies,
           people: demoData.people,
-          customers: demoData.customers,
+          clients: demoData.clients,
           partners: demoData.partnerships,
           speedrunItems: demoData.speedrunItems,
           counts: demoData.counts,
@@ -2009,7 +2014,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       opportunitiesCount,
       companiesCount,
       peopleCount,
-      customersCount,
+      clientsCount,
       partnersCount,
       speedrunCount,
       leadsData,
@@ -2017,7 +2022,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       opportunitiesData,
       companiesData,
       peopleData,
-      customersData,
+      clientsData,
       partnersData,
       speedrunData
     ] = await Promise.all([
@@ -2036,9 +2041,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.people.count({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId }
       }),
-      prisma.customers.count({ 
+      prisma.clients.count({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId }
-      }),
+      }).catch(() => 0), // Fallback to 0 if clients table has issues
       prisma.partners.count({ 
         where: { workspaceId, deletedAt: null }
       }).catch(() => 0), // Fallback to 0 if partners table has issues
@@ -2096,12 +2101,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         take: 10, // Only load 10 most recent people
         select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
       }),
-      prisma.customers.findMany({ 
+      prisma.clients.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10, // Only load 10 most recent customers
+        take: 10, // Only load 10 most recent clients
         select: { id: true, customerStatus: true, totalLifetimeValue: true, updatedAt: true }
-      }),
+      }).catch(() => []), // Fallback to empty array if clients table has issues
       prisma.partners.findMany({ 
         where: { workspaceId, deletedAt: null },
         orderBy: [{ updatedAt: 'desc' }],
@@ -2377,7 +2382,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         opportunities: opportunitiesData,
         companies: companiesData,
         people: peopleData,
-        customers: customersData,
+        clients: clientsData,
         partners: partnersData,
         speedrunItems: speedrunData,
         // Use actual counts from database, but limit speedrun to 20 for display
@@ -2387,7 +2392,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           opportunities: opportunitiesCount, 
           companies: companiesCount, 
           people: peopleCount,
-          customers: customersCount,
+          clients: clientsCount,
           partners: partnersCount,
           speedrun: Math.min(speedrunData.length, 20) // Limit speedrun count to 20 for dashboard performance
         },

@@ -11,7 +11,7 @@ import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 
 interface UniversalRecordDetailsProps {
   record: any;
-  recordType: 'leads' | 'prospects' | 'opportunities' | 'accounts' | 'contacts' | 'customers' | 'partners';
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'accounts' | 'contacts' | 'clients' | 'partners';
   onBack: () => void;
   onComplete?: () => void;
   onSnooze?: (recordId: string, duration: string) => void;

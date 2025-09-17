@@ -25,7 +25,7 @@ function getDefaultStages(sectionType: string) {
         { id: 'negotiate', name: 'Negotiate', order: 3, color: '#F59E0B' },
         { id: 'legal-procurement', name: 'Legal/Procurement', order: 4, color: '#8B5CF6' }
       ];
-    case 'customers':
+    case 'clients':
       return [
         { id: 'activate', name: 'Activate', order: 1, color: '#3B82F6' },
         { id: 'embed', name: 'Embed', order: 2, color: '#10B981' },

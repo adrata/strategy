@@ -35,12 +35,12 @@ async function simpleSchemaAudit() {
     const leadsCount = await prisma.leads.count();
     const prospectsCount = await prisma.prospects.count();
     const opportunitiesCount = await prisma.opportunities.count();
-    const customersCount = await prisma.customers.count();
+    const clientsCount = await prisma.clients.count();
     
     console.log(`  🎯 Leads: ${leadsCount} records`);
     console.log(`  🔍 Prospects: ${prospectsCount} records`);
     console.log(`  💰 Opportunities: ${opportunitiesCount} records`);
-    console.log(`  🏆 Customers: ${customersCount} records`);
+    console.log(`  🏆 Customers: ${clientsCount} records`);
 
     // Check linking status
     console.log('\n🔗 LINKING STATUS:');

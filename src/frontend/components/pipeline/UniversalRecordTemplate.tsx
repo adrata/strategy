@@ -63,7 +63,7 @@ import { URLFixer } from './URLFixer';
 
 export interface UniversalRecordTemplateProps {
   record: any;
-  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'sellers' | 'deals' | 'speedrun';
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'deals' | 'speedrun';
   onBack: () => void;
   onComplete?: () => void;
   onSnooze?: (recordId: string, duration: string) => void;
@@ -145,7 +145,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'company', label: 'Company' },
         { id: 'notes', label: 'Notes' }
       ];
-    case 'customers':
+    case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
         { id: 'relationship', label: 'Relationship' },
@@ -390,7 +390,7 @@ export function UniversalRecordTemplate({
         return `${record?.stage || 'Unknown Stage'} • ${record?.amount || record?.value ? `$${(record.amount || record.value).toLocaleString()}` : 'No Amount'}`;
       case 'companies':
         return `${record?.industry || 'Unknown Industry'} • ${record?.size || record?.employeeCount || 'Unknown Size'}`;
-      case 'customers':
+      case 'clients':
         return `${record?.status || 'Unknown Status'} • ${record?.totalValue ? `$${record.totalValue.toLocaleString()}` : 'No Value'}`;
       case 'partners':
         return `${record?.type || 'Unknown Type'} • ${record?.status || 'Unknown Status'}`;
@@ -729,7 +729,7 @@ export function UniversalRecordTemplate({
                            targetModel === 'prospects' ? 'prospects' :
                            targetModel === 'opportunities' ? 'opportunities' :
                            targetModel === 'companies' ? 'companies' :
-                           targetModel === 'customers' ? 'customers' :
+                           targetModel === 'clients' ? 'clients' :
                            targetModel === 'partners' ? 'partners' :
                            `${targetModel}s`;
       
@@ -1559,7 +1559,7 @@ export function UniversalRecordTemplate({
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
         record={record}
-        recordType={recordType as 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'partners' | 'customers'}
+        recordType={recordType as 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'partners' | 'clients'}
         onUpdate={handleUpdateSubmit}
         onDelete={handleDeleteRecord}
         initialTab={activeTab}

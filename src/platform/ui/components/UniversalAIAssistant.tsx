@@ -558,7 +558,7 @@ export function UniversalAIAssistant({
             response = `🏆 **Top Customer Analysis**\n\n${intelligence.contextualGuidance}\n\n**Next Actions:**\n${intelligence.nextBestActions
               .slice(0, 3)
               .map((action) => `• ${action.action} (${action.timeframe})`)
-              .join("\n")}\n\n*Ask me anything else about your customers*`;
+              .join("\n")}\n\n*Ask me anything else about your clients*`;
           } else {
             response = `🎙️ **Voice Command Processed**: &quot;${command}&quot;\n\n${intelligence.contextualGuidance}\n\n*I&apos;m listening for your next request*`;
           }

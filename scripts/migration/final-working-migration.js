@@ -12,7 +12,7 @@ async function finalWorkingMigration() {
     leadsLinked: 0,
     prospectsLinked: 0,
     opportunitiesLinked: 0,
-    customersCreated: 0,
+    clientsCreated: 0,
     errors: 0
   };
 
@@ -190,8 +190,8 @@ async function finalWorkingMigration() {
       }
     }
 
-    // STEP 5: Create customers from closed opportunities
-    console.log('\n🏆 STEP 5: Creating customers from closed opportunities...');
+    // STEP 5: Create clients from closed opportunities
+    console.log('\n🏆 STEP 5: Creating clients from closed opportunities...');
     
     const closedOpportunities = await prisma.opportunities.findMany({
       where: {
@@ -210,7 +210,7 @@ async function finalWorkingMigration() {
     for (const opp of closedOpportunities) {
       if (opp.personId && opp.companyId) {
         // Check if customer already exists (prevent duplicates)
-        let customer = await prisma.customers.findFirst({
+        let customer = await prisma.clients.findFirst({
           where: {
             personId: opp.personId,
             companyId: opp.companyId
@@ -218,7 +218,7 @@ async function finalWorkingMigration() {
         });
 
         if (!customer) {
-          customer = await prisma.customers.create({
+          customer = await prisma.clients.create({
             data: {
               id: `customer_${opp.personId}_${opp.companyId}`,
               personId: opp.personId,
@@ -232,7 +232,7 @@ async function finalWorkingMigration() {
               updatedAt: new Date()
             }
           });
-          stats.customersCreated++;
+          stats.clientsCreated++;
           console.log(`✅ Created customer from opportunity: ${opp.name}`);
         } else {
           console.log(`ℹ️ Customer already exists for opportunity: ${opp.name}`);
@@ -249,7 +249,7 @@ async function finalWorkingMigration() {
     console.log(`   • Leads linked: ${stats.leadsLinked}`);
     console.log(`   • Prospects linked: ${stats.prospectsLinked}`);
     console.log(`   • Opportunities linked: ${stats.opportunitiesLinked}`);
-    console.log(`   • Customers created: ${stats.customersCreated}`);
+    console.log(`   • Customers created: ${stats.clientsCreated}`);
     console.log(`   • Errors: ${stats.errors}`);
     
     console.log('\n✅ DATA MODEL NOW FOLLOWS CRM BEST PRACTICES:');

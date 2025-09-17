@@ -169,7 +169,7 @@ class CleanOutputFormatter {
       'Budget authority indicators present': 'Likely controls or influences budget decisions',
       'Sales function alignment': 'Works directly in sales organization, understands revenue challenges',
       'Revenue operations focus': 'Responsible for sales efficiency and process optimization',
-      'Customer-facing role': 'Regular interaction with customers provides valuable market insights',
+      'Customer-facing role': 'Regular interaction with clients provides valuable market insights',
       'Analytics/data focus': 'Data-driven role suggests need for better business intelligence',
       'Technology leadership': 'Technical authority for evaluating and implementing new solutions',
       'Enterprise scope': 'Manages enterprise-level initiatives and strategic programs',

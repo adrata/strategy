@@ -139,14 +139,14 @@ async function standardizeActionTerminology() {
       }
     }
 
-    // Update customers to use nextAction instead of nextBestAction
-    const customersWithNextBestAction = await prisma.customers.findMany({
+    // Update clients to use nextAction instead of nextBestAction
+    const clientsWithNextBestAction = await prisma.clients.findMany({
       where: { nextBestAction: { not: null } }
     });
     
-    for (const customer of customersWithNextBestAction) {
+    for (const customer of clientsWithNextBestAction) {
       try {
-        await prisma.customers.update({
+        await prisma.clients.update({
           where: { id: customer.id },
           data: {
             nextAction: customer.nextBestAction,

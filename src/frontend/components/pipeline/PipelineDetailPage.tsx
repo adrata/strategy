@@ -21,7 +21,7 @@ import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvid
 
 
 interface PipelineDetailPageProps {
-  section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'sellers' | 'speedrun';
+  section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun';
   slug: string;
 }
 
@@ -95,7 +95,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || [];
       case 'people': return acquireData.people || [];
-      case 'clients': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'sellers': return acquireData.sellers || [];
       case 'speedrun': return acquireData.speedrunItems || [];

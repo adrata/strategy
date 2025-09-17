@@ -21,7 +21,7 @@ interface UpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   record: any;
-  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners';
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners';
   onUpdate: (updatedData: any, actionData?: ActionLogData) => Promise<void>;
   onDelete?: (recordId: string) => Promise<void>;
   initialTab?: string;

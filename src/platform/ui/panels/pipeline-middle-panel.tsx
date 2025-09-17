@@ -48,7 +48,7 @@ export function PipelineMiddlePanel() {
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || []; // Companies data
       case 'people': return acquireData.people || []; // People data
-      case 'customers': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
       default: return [];
@@ -277,7 +277,7 @@ export function PipelineMiddlePanel() {
           ],
           actionButton: '+ Add Partner'
         };
-      case 'customers':
+      case 'clients':
       case 'clients':
         const activeCustomers = sectionData.filter((c: any) => c['customerStatus'] === 'active' || c['status'] === 'active').length;
         return {

@@ -3,7 +3,7 @@
  *
  * SURGICAL UPGRADE: Adds quantum-resistant intelligence processing to Monaco
  * WITHOUT disrupting existing 25-step pipeline. This is an OPTIONAL step 26
- * that can be enabled via feature flag for advanced customers.
+ * that can be enabled via feature flag for advanced clients.
  *
  * Features:
  * - Quantum-resistant cryptographic verification of intelligence data

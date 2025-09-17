@@ -176,9 +176,9 @@ export function getRevenueFilterOptions(data: any[]) {
 }
 
 /**
- * Get filter options for customers
+ * Get filter options for clients
  */
-export function getCustomerFilterOptions(customers: any[]) {
+export function getCustomerFilterOptions(clients: any[]) {
   return {
     stage: [
       { value: 'active', label: 'Active' },
@@ -186,8 +186,8 @@ export function getCustomerFilterOptions(customers: any[]) {
       { value: 'expand', label: 'Expand' },
       { value: 'risk', label: 'At Risk' }
     ],
-    revenue: getRevenueFilterOptions(customers),
-    industry: getUniqueFilterValues(customers, 'industry', 10),
+    revenue: getRevenueFilterOptions(clients),
+    industry: getUniqueFilterValues(clients, 'industry', 10),
     lifetimeValue: [
       { value: 'high', label: 'High Value ($50K+)' },
       { value: 'medium', label: 'Medium Value ($10K-$50K)' },

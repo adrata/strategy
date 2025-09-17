@@ -95,7 +95,7 @@ export default function UniversalCommandPalette({
         category: "navigation",
         icon: <Users className="w-4 h-4" />,
         action: () => router.push("/oasis"),
-        keywords: ["oasis", "pipeline", "customers", "relationships"],
+        keywords: ["oasis", "pipeline", "clients", "relationships"],
         shortcut: "⌘3",
         priority: 10,
       },

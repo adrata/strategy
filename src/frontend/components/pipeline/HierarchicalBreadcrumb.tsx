@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 interface HierarchicalBreadcrumbProps {
   record: any;
-  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'customers' | 'partners' | 'sellers' | 'deals' | 'speedrun';
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'deals' | 'speedrun';
   onBack: () => void;
   workspaceId?: string;
 }

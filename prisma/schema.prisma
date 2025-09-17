@@ -1770,8 +1770,8 @@ model client_users {
 model clients {
   id                       String    @id(map: "clients_pkey")
   workspaceId              String    @db.VarChar(30)
-  clientSince              DateTime
-  clientStatus             String    @default("active") @db.VarChar(20)
+  customerSince            DateTime
+  customerStatus           String    @default("active") @db.VarChar(20)
   tier                     String?   @db.VarChar(20)
   segment                  String?   @db.VarChar(50)
   totalLifetimeValue       Float     @default(0)
@@ -1811,7 +1811,7 @@ model clients {
   lastPurchaseDate         DateTime?
   nextExpectedPurchase     DateTime?
   contractEndDate          DateTime?
-  clientType               String?   @db.VarChar(30)
+  customerType             String?   @db.VarChar(30)
   riskLevel                String    @default("low") @db.VarChar(20)
   priority                 String    @default("medium") @db.VarChar(20)
   tags                     String[]  @default([])

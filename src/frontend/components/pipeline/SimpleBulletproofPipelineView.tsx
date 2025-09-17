@@ -34,7 +34,7 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || []; // Companies data
       case 'people': return acquireData.people || []; // People data
-      case 'customers': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
       default: return [];

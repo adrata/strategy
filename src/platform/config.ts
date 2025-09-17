@@ -60,7 +60,7 @@ export const SECTION_TITLES: Record<string, string> = {
   leads: "Leads",
   prospects: "Prospects",
   opportunities: "Opportunities",
-  customers: "Customers",
+  clients: "Customers",
   accounts: "Accounts",
   contacts: "Contacts",
   catalyst: "Catalyst",

@@ -250,7 +250,7 @@ export class SemanticRoleMapper {
       department: 'sales',
       semanticKeywords: ['sales', 'revenue', 'business development', 'growth'],
       excludeKeywords: ['assistant', 'coordinator', 'intern', 'support'],
-      contextualHints: ['quota', 'pipeline', 'deals', 'customers'],
+      contextualHints: ['quota', 'pipeline', 'deals', 'clients'],
       industrySpecific: {
         'saas': ['Head of Revenue', 'Chief Revenue Officer', 'VP Revenue'],
         'enterprise': ['VP Enterprise Sales', 'Head of Enterprise'],

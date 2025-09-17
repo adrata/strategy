@@ -118,7 +118,7 @@ export class PipelineMetricsCalculator {
         }),
 
         // Customer aggregations
-        prisma.customers.aggregate({
+        prisma.clients.aggregate({
           where: { workspaceId },
           _count: { id: true },
           _sum: { 

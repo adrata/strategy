@@ -42,7 +42,7 @@ export class StrategicGameIntelligenceService {
         riskMitigation: [
           "Proof of concept",
           "Pilot program",
-          "Reference customers",
+          "Reference clients",
         ],
       },
       confidenceScore: 0.87,

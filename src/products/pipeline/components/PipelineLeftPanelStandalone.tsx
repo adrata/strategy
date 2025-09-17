@@ -213,12 +213,12 @@ function PipelineSections({
     count: finalCounts.people || 0
   };
   
-  const customersData = {
-    data: acquisitionData?.acquireData?.customers || [],
+  const clientsData = {
+    data: acquisitionData?.acquireData?.clients || [],
     loading: loading || fallbackLoading,
     error: null,
-    isEmpty: (acquisitionData?.acquireData?.customers || []).length === 0,
-    count: finalCounts.customers || 0
+    isEmpty: (acquisitionData?.acquireData?.clients || []).length === 0,
+    count: finalCounts.clients || 0
   };
   
   const partnersData = {
@@ -256,7 +256,7 @@ function PipelineSections({
     opportunities: opportunitiesData.count,
     companies: companiesData.count,
     people: peopleData.count,
-    customers: customersData.count,
+    clients: clientsData.count,
     partners: partnersData.count,
     sellers: sellersData.count
   });
@@ -299,7 +299,7 @@ function PipelineSections({
     opportunities: 0,
     leads: 0,
     prospects: 0,
-    customers: 0,
+    clients: 0,
     partners: 0,
     companies: 0,
     people: 0,
@@ -356,7 +356,7 @@ function PipelineSections({
       opportunities: openOpportunities.length, // Only open opportunities
       leads: leadsData.count,
       prospects: prospectsData.count,
-      customers: customersData.count,
+      clients: clientsData.count,
       partners: partnersData.count,
       companies: uniqueCompanies.size, // Count unique companies from leads/prospects
       people: uniquePeople.size, // Count unique people from leads/prospects
@@ -387,7 +387,7 @@ function PipelineSections({
   companiesData.count,
   peopleData.count,
   sellersData.count,
-  customersData.count,
+  clientsData.count,
   partnersData.count,
   acquisitionData?.acquireData?.speedrunItems // Add speedrun data dependency
 ]);
@@ -686,12 +686,12 @@ function PipelineSections({
       visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
     },
     {
-      id: "customers",
-      name: "Customers",
+      id: "clients",
+      name: "Clients",
       description: "Earned Relationships",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : productionCounts.customers,
+      ) : productionCounts.clients,
       visible: isDemoMode ? demoModeVisibility.isCustomersVisible : (isCustomersVisible ?? true)
     },
     {

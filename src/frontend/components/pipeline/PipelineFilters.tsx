@@ -51,7 +51,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || [];
       case 'people': return acquireData.people || [];
-      case 'customers': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
       default: return [];
@@ -137,7 +137,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           { value: 'Closed Won', label: 'Closed Won' },
           { value: 'Closed Lost', label: 'Closed Lost' }
         ];
-      case 'customers':
+      case 'clients':
         return [
           { value: 'all', label: 'All Status' },
           { value: 'active', label: 'Active' },

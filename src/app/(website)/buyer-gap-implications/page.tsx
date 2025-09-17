@@ -441,7 +441,7 @@ export default function BuyerGapImplicationsPage() {
           <div className="space-y-3 text-sm text-gray-700">
             <div id="footnote-7" className="border-l-4 border-black pl-4">
               <strong>⁷</strong> Customer Success Association & Totango: "B2B Churn Analysis Report 2023" - Study of 1,200+ SaaS companies tracking churn correlation with stakeholder engagement patterns. 
-              <a href="https://www.customersuccessassociation.com" target="_blank" rel="noopener noreferrer" className="text-black hover:underline ml-1">View Research →</a>
+              <a href="https://www.clientsuccessassociation.com" target="_blank" rel="noopener noreferrer" className="text-black hover:underline ml-1">View Research →</a>
             </div>
             
             <div id="footnote-8" className="border-l-4 border-black pl-4">

@@ -423,7 +423,7 @@ export class AIActionsServiceExtended {
     const { parameters, workspaceId, userId } = request;
     
     try {
-      const response = await fetch('/api/data/customers', {
+      const response = await fetch('/api/data/clients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -464,7 +464,7 @@ export class AIActionsServiceExtended {
     const { parameters, workspaceId, userId } = request;
     
     try {
-      const response = await fetch(`/api/data/customers/${parameters.customerId}`, {
+      const response = await fetch(`/api/data/clients/${parameters.customerId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -503,7 +503,7 @@ export class AIActionsServiceExtended {
     const { parameters } = request;
     
     try {
-      const response = await fetch(`/api/data/customers/${parameters.customerId}`, {
+      const response = await fetch(`/api/data/clients/${parameters.customerId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });

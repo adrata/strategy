@@ -160,7 +160,7 @@ const generateDirectionalIntelligence = (person: Person): string => {
 
   if (role === "Blocker") {
     if (company === "ADP" && painSummary.includes("SOC 2")) {
-      return `${name} (Security/Compliance) faces SOC 2 Type II audit Q1 2025 with vendor assessment bottlenecks. Approach: (1) Security architecture review demonstrating SOC 2 compliance and automated audit reporting, (2) Vendor risk assessment documentation and third-party security certifications, (3) Compliance roadmap showing accelerated audit preparation, (4) Reference customers with similar regulatory requirements and successful implementations.`;
+      return `${name} (Security/Compliance) faces SOC 2 Type II audit Q1 2025 with vendor assessment bottlenecks. Approach: (1) Security architecture review demonstrating SOC 2 compliance and automated audit reporting, (2) Vendor risk assessment documentation and third-party security certifications, (3) Compliance roadmap showing accelerated audit preparation, (4) Reference clients with similar regulatory requirements and successful implementations.`;
     }
     if (company === "ADP" && painSummary.includes("EU Digital Services Act")) {
       return `${name} (Chief Legal Officer) manages EU Digital Services Act compliance deadline February 2025 across 140 countries. Approach: (1) Legal and compliance briefing on data residency and cross-border data protection, (2) Regulatory compliance documentation and audit trail capabilities, (3) Risk mitigation strategies for international operations, (4) Legal team collaboration on contract terms and liability frameworks.`;

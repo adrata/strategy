@@ -302,7 +302,7 @@ export function AcquisitionOSMiddlePanel() {
   const [isPipelineURL, setIsPipelineURL] = React.useState(() => {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname;
-      return pathname.includes('/dashboard') || pathname.includes('/leads') || pathname.includes('/opportunities') || pathname.includes('/companies') || pathname.includes('/people') || pathname.includes('/partners') || pathname.includes('/prospects') || pathname.includes('/sellers') || pathname.includes('/customers') || pathname.includes('/metrics') || pathname.includes('/speedrun');
+      return pathname.includes('/dashboard') || pathname.includes('/leads') || pathname.includes('/opportunities') || pathname.includes('/companies') || pathname.includes('/people') || pathname.includes('/partners') || pathname.includes('/prospects') || pathname.includes('/sellers') || pathname.includes('/clients') || pathname.includes('/metrics') || pathname.includes('/speedrun');
     }
     return false;
   });
@@ -311,7 +311,7 @@ export function AcquisitionOSMiddlePanel() {
     if (typeof window !== 'undefined') {
       const checkPipelineURL = () => {
         const pathname = window.location.pathname;
-        const isInPipeline = pathname.includes('/dashboard') || pathname.includes('/leads') || pathname.includes('/opportunities') || pathname.includes('/companies') || pathname.includes('/people') || pathname.includes('/partners') || pathname.includes('/prospects') || pathname.includes('/sellers') || pathname.includes('/customers') || pathname.includes('/metrics') || pathname.includes('/speedrun');
+        const isInPipeline = pathname.includes('/dashboard') || pathname.includes('/leads') || pathname.includes('/opportunities') || pathname.includes('/companies') || pathname.includes('/people') || pathname.includes('/partners') || pathname.includes('/prospects') || pathname.includes('/sellers') || pathname.includes('/clients') || pathname.includes('/metrics') || pathname.includes('/speedrun');
         setIsPipelineURL(isInPipeline);
       };
       

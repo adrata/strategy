@@ -6,16 +6,16 @@ async function checkSchema() {
   console.log('=====================================');
   
   try {
-    // Check if customers table exists and what fields it has
-    console.log('\n📋 Checking customers table structure...');
+    // Check if clients table exists and what fields it has
+    console.log('\n📋 Checking clients table structure...');
     
     // Try to get one customer record to see what fields exist
-    const customer = await prisma.customers.findFirst();
+    const customer = await prisma.clients.findFirst();
     if (customer) {
       console.log('✅ Customers table exists');
       console.log('Fields:', Object.keys(customer));
     } else {
-      console.log('❌ No customers found, but table exists');
+      console.log('❌ No clients found, but table exists');
     }
     
     // Check if we can create a customer with just the required fields
@@ -32,7 +32,7 @@ async function checkSchema() {
     
     // Try to create a test customer
     try {
-      const testCustomer = await prisma.customers.create({
+      const testCustomer = await prisma.clients.create({
         data: {
           id: 'test_customer_' + Date.now(),
           workspaceId: company.workspaceId,
@@ -45,7 +45,7 @@ async function checkSchema() {
       console.log('Created customer ID:', testCustomer.id);
       
       // Clean up test customer
-      await prisma.customers.delete({
+      await prisma.clients.delete({
         where: { id: testCustomer.id }
       });
       console.log('🧹 Test customer cleaned up');

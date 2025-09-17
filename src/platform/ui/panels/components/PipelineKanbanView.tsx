@@ -21,14 +21,14 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
   // Get pipeline stages from database
   const { stages: pipelineStages, loading: stagesLoading } = useWorkspacePipelineStages(
     workspaceId, 
-    activeSection as 'opportunities' | 'customers' | 'leads' | 'partners'
+    activeSection as 'opportunities' | 'clients' | 'leads' | 'partners'
   );
 
   // Get current view data
   const getCurrentViewData = () => {
     switch (activeSection) {
       case 'opportunities': return data.acquireData.opportunities || [];
-      case 'customers': return data.acquireData.customers || [];
+      case 'clients': return data.acquireData.clients || [];
       case 'partners': return data.acquireData.partnerships || [];
       default: return [];
     }
@@ -100,7 +100,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         {/* Item Name */}
                         <h4 className="text-sm font-semibold text-gray-900">
                           {activeSection === 'opportunities' ? item.name || item.companyName || item.company || 'Unknown Opportunity' :
-                           activeSection === 'customers' ? item.company || item.name || 'Customer' :
+                           activeSection === 'clients' ? item.company || item.name || 'Customer' :
                            activeSection === 'partners' ? item.name || item.partnerName || item.company || 'Unknown Partner' :
                            'Unknown'}
                         </h4>
@@ -112,11 +112,11 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         
                         {/* Company Name */}
                         {((activeSection === 'opportunities' && (item.account?.name || item.accountName || item.company)) ||
-                          (activeSection === 'customers' && item.company) ||
+                          (activeSection === 'clients' && item.company) ||
                           (activeSection === 'partners' && item.company)) && (
                           <p className="text-xs text-gray-600">
                             {activeSection === 'opportunities' ? (item.account?.name || item.accountName || item.company) :
-                             activeSection === 'customers' ? item.company :
+                             activeSection === 'clients' ? item.company :
                              activeSection === 'partners' ? item.company : ''}
                           </p>
                         )}
@@ -124,7 +124,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         {/* Amount */}
                         <p className="text-xs text-gray-600">
                           {activeSection === 'opportunities' ? (item.amount ? '$' + Number(item.amount).toLocaleString() : 'No amount') :
-                           activeSection === 'customers' ? (item.contractValue ? '$' + Number(item.contractValue).toLocaleString() : '') :
+                           activeSection === 'clients' ? (item.contractValue ? '$' + Number(item.contractValue).toLocaleString() : '') :
                            activeSection === 'partners' ? (item.partnershipValue ? '$' + Number(item.partnershipValue).toLocaleString() : '') :
                            'No amount'}
                         </p>

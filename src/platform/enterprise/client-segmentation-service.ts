@@ -1,9 +1,9 @@
 /**
- * Customer Segmentation Service
- * Basic implementation for customer analytics and segmentation
+ * Client Segmentation Service
+ * Basic implementation for client analytics and segmentation
  */
 
-export interface CustomerSegment {
+export interface ClientSegment {
   id: string;
   name: string;
   description: string;
@@ -13,20 +13,20 @@ export interface CustomerSegment {
   engagementScore: number;
 }
 
-export interface CustomerAnalytics {
+export interface ClientAnalytics {
   totalCustomers: number;
   payingCustomers: number;
   monthlyRecurringRevenue: number;
   averageEngagementScore: number;
-  segments: CustomerSegment[];
+  segments: ClientSegment[];
 }
 
-export class CustomerSegmentationService {
+export class ClientSegmentationService {
   /**
-   * Get customer analytics for a company
+   * Get client analytics for a company
    */
-  static async getCustomerAnalytics(companyId: string): Promise<CustomerAnalytics> {
-    // Mock implementation - in production this would query actual customer data
+  static async getClientAnalytics(companyId: string): Promise<ClientAnalytics> {
+    // Mock implementation - in production this would query actual client data
     return {
       totalCustomers: 150,
       payingCustomers: 45,
@@ -36,7 +36,7 @@ export class CustomerSegmentationService {
         {
           id: "enterprise",
           name: "Enterprise",
-          description: "Large enterprise customers",
+          description: "Large enterprise clients",
           criteria: { size: "enterprise", revenue: ">$100M" },
           customerCount: 25,
           revenue: 8500,
@@ -45,7 +45,7 @@ export class CustomerSegmentationService {
         {
           id: "mid-market",
           name: "Mid-Market",
-          description: "Mid-market customers",
+          description: "Mid-market clients",
           criteria: { size: "mid-market", revenue: "$10M-$100M" },
           customerCount: 75,
           revenue: 3200,
@@ -54,7 +54,7 @@ export class CustomerSegmentationService {
         {
           id: "smb",
           name: "Small Business",
-          description: "Small business customers",
+          description: "Small business clients",
           criteria: { size: "smb", revenue: "<$10M" },
           customerCount: 50,
           revenue: 800,
@@ -65,17 +65,17 @@ export class CustomerSegmentationService {
   }
 
   /**
-   * Get customer segments for a company
+   * Get client segments for a company
    */
-  static async getCustomerSegments(companyId: string): Promise<CustomerSegment[]> {
-    const analytics = await this.getCustomerAnalytics(companyId);
+  static async getClientSegments(companyId: string): Promise<ClientSegment[]> {
+    const analytics = await this.getClientAnalytics(companyId);
     return analytics.segments;
   }
 
   /**
    * Get segmented analytics for overall company
    */
-  static async getSegmentedAnalytics(): Promise<CustomerAnalytics> {
+  static async getSegmentedAnalytics(): Promise<ClientAnalytics> {
     // Mock implementation - in production this would aggregate across all companies
     return {
       totalCustomers: 850,
@@ -86,7 +86,7 @@ export class CustomerSegmentationService {
         {
           id: "enterprise",
           name: "Enterprise",
-          description: "Large enterprise customers",
+          description: "Large enterprise clients",
           criteria: { size: "enterprise", revenue: ">$100M" },
           customerCount: 120,
           revenue: 45000,
@@ -95,7 +95,7 @@ export class CustomerSegmentationService {
         {
           id: "mid-market", 
           name: "Mid-Market",
-          description: "Mid-market customers",
+          description: "Mid-market clients",
           criteria: { size: "mid-market", revenue: "$10M-$100M" },
           customerCount: 380,
           revenue: 22000,
@@ -104,7 +104,7 @@ export class CustomerSegmentationService {
         {
           id: "smb",
           name: "Small Business", 
-          description: "Small business customers",
+          description: "Small business clients",
           criteria: { size: "smb", revenue: "<$10M" },
           customerCount: 350,
           revenue: 8000,
@@ -115,9 +115,9 @@ export class CustomerSegmentationService {
   }
 
   /**
-   * Get customer profile for a workspace
+   * Get client profile for a workspace
    */
-  static async getCustomerProfile(workspaceId: string): Promise<{
+  static async getClientProfile(workspaceId: string): Promise<{
     engagementScore: number;
     healthScore: number;
     activityLevel: "high" | "medium" | "low";

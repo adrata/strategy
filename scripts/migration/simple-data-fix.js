@@ -12,7 +12,7 @@ async function simpleDataFix() {
     leadsLinked: 0,
     prospectsLinked: 0,
     opportunitiesLinked: 0,
-    customersCreated: 0,
+    clientsCreated: 0,
     errors: 0
   };
 
@@ -183,8 +183,8 @@ async function simpleDataFix() {
       }
     }
 
-    // STEP 5: Create customers from closed opportunities
-    console.log('\n🏆 STEP 5: Creating customers from closed opportunities...');
+    // STEP 5: Create clients from closed opportunities
+    console.log('\n🏆 STEP 5: Creating clients from closed opportunities...');
     
     const closedOpportunities = await prisma.opportunities.findMany({
       where: {
@@ -202,7 +202,7 @@ async function simpleDataFix() {
 
     for (const opp of closedOpportunities) {
       if (opp.personId && opp.companyId) {
-        let customer = await prisma.customers.findFirst({
+        let customer = await prisma.clients.findFirst({
           where: {
             personId: opp.personId,
             companyId: opp.companyId
@@ -210,7 +210,7 @@ async function simpleDataFix() {
         });
 
         if (!customer) {
-          customer = await prisma.customers.create({
+          customer = await prisma.clients.create({
             data: {
               id: `customer_${opp.personId}_${opp.companyId}`,
               companyId: opp.companyId,
@@ -224,7 +224,7 @@ async function simpleDataFix() {
               updatedAt: new Date()
             }
           });
-          stats.customersCreated++;
+          stats.clientsCreated++;
           console.log(`✅ Created customer from opportunity: ${opp.name}`);
         }
       }
@@ -238,7 +238,7 @@ async function simpleDataFix() {
     console.log(`🔥 Leads linked: ${stats.leadsLinked}`);
     console.log(`🎯 Prospects linked: ${stats.prospectsLinked}`);
     console.log(`💰 Opportunities linked: ${stats.opportunitiesLinked}`);
-    console.log(`🏆 Customers created: ${stats.customersCreated}`);
+    console.log(`🏆 Customers created: ${stats.clientsCreated}`);
     console.log(`❌ Errors: ${stats.errors}`);
 
     // VERIFICATION
@@ -248,14 +248,14 @@ async function simpleDataFix() {
     const leadsWithPeople = await prisma.leads.count({ where: { personId: { not: null } } });
     const prospectsWithPeople = await prisma.prospects.count({ where: { personId: { not: null } } });
     const opportunitiesWithPeople = await prisma.opportunities.count({ where: { personId: { not: null } } });
-    const customersCount = await prisma.customers.count();
+    const clientsCount = await prisma.clients.count();
 
     console.log(`📊 Total people: ${peopleCount}`);
     console.log(`📊 Total companies: ${companiesCount}`);
     console.log(`📊 Leads with people: ${leadsWithPeople}`);
     console.log(`📊 Prospects with people: ${prospectsWithPeople}`);
     console.log(`📊 Opportunities with people: ${opportunitiesWithPeople}`);
-    console.log(`📊 Total customers: ${customersCount}`);
+    console.log(`📊 Total clients: ${clientsCount}`);
 
     console.log('\n✅ DATA MODEL NOW FOLLOWS CRM BEST PRACTICES:');
     console.log('• Core records (People/Companies) are master data');

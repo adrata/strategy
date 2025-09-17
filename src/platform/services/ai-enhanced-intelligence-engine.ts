@@ -378,7 +378,7 @@ export class AIEnhancedIntelligenceEngine {
     if (title.includes('ceo') || title.includes('president') || title.includes('owner')) {
       nextSteps.push("Present executive summary with projected revenue impact");
     } else if (title.includes('operations') || title.includes('manager')) {
-      nextSteps.push("Demonstrate operational efficiency gains with current customers");
+      nextSteps.push("Demonstrate operational efficiency gains with current clients");
     }
     
     return {

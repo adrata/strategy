@@ -703,7 +703,7 @@ export default function SnykBusinessCasePage() {
               
               <p><sup>6</sup> Sales Executive Council Research, "Stakeholder Mapping ROI Study." Analysis showing 73% revenue increase when sales teams accurately identify all buying group members early in sales cycle.</p>
               
-              <p><sup>7</sup> Altify (previously The TAS Group) Study shows $591 Billion is Wasted Annually on Futile Sales Meetings. <a href="https://uplandsoftware.com/altify/resources/press-release/altify-knowledge-study-shows-customers-engaging-salespeople-early-purchase-cycle-591-billion-wasted-annually-futile-meetings/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Source</a></p>
+              <p><sup>7</sup> Altify (previously The TAS Group) Study shows $591 Billion is Wasted Annually on Futile Sales Meetings. <a href="https://uplandsoftware.com/altify/resources/press-release/altify-knowledge-study-shows-clients-engaging-salespeople-early-purchase-cycle-591-billion-wasted-annually-futile-meetings/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Source</a></p>
               
               <p><sup>8</sup> Current industry analysis based on buyer group focus and sales efficiency improvements through systematic stakeholder engagement, validated across enterprise technology sales organizations.</p>
               

@@ -513,7 +513,7 @@ export const ExamplePainData: Record<string, PainIntelligenceData> = {
         evidence: [
           "Current vendor assessment cycle: 6 weeks (target: 1 week)",
           "127 enterprise prospects waiting for SOC 2 Type II certification",
-          "3 major enterprise customers threatened contract review without certification",
+          "3 major enterprise clients threatened contract review without certification",
           "Compliance team working 60+ hour weeks to meet deadline"
         ],
         consequences: [
@@ -961,7 +961,7 @@ export const ExamplePainData: Record<string, PainIntelligenceData> = {
             type: "discovery", 
             confidence: 91,
             lastUpdated: "2024-12-14",
-            data: "David expressed frustration: 'we're spending more time fixing old code than building new features - customers are starting to notice delays.'"
+            data: "David expressed frustration: 'we're spending more time fixing old code than building new features - clients are starting to notice delays.'"
           }
         ],
         evidence: [

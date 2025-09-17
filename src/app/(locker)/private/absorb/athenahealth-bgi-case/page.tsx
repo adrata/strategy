@@ -77,7 +77,7 @@ export default function AthenahealthBusinessCasePage() {
             <h2 className="text-3xl font-bold text-black mb-6">Executive Summary</h2>
             
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              athenahealth, a leading healthcare technology company providing cloud-based services for medical practices and health systems, is actively seeking to change LMS providers due to rising costs of their incumbent solution. Their primary use cases include onboarding and training customers on their platform, plus onboarding and certifying compliance for internal employees. This presents a significant opportunity for Absorb's premium, enterprise-grade LMS to demonstrate cost containment while streamlining operations.
+              athenahealth, a leading healthcare technology company providing cloud-based services for medical practices and health systems, is actively seeking to change LMS providers due to rising costs of their incumbent solution. Their primary use cases include onboarding and training clients on their platform, plus onboarding and certifying compliance for internal employees. This presents a significant opportunity for Absorb's premium, enterprise-grade LMS to demonstrate cost containment while streamlining operations.
             </p>
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">
               As Absorb offers expensive, comprehensive LMS solutions designed for enterprise healthcare organizations, understanding athenahealth's complex compliance requirements, training needs, and procurement process is critical for successful engagement with their revenue and sales teams.
@@ -544,7 +544,7 @@ export default function AthenahealthBusinessCasePage() {
 
               <div className="bg-white border border-gray-200 p-6 rounded-lg text-center">
                 <p className="text-lg font-bold text-black mb-3">
-                  <strong>Key Question for athenahealth Engagement:</strong> "How can Absorb's premium, enterprise-grade LMS solution help athenahealth reduce expensive LMS costs while improving training effectiveness for both customers and employees in the healthcare sector?"
+                  <strong>Key Question for athenahealth Engagement:</strong> "How can Absorb's premium, enterprise-grade LMS solution help athenahealth reduce expensive LMS costs while improving training effectiveness for both clients and employees in the healthcare sector?"
                 </p>
                 <p className="text-sm text-gray-700 mb-4">
                   Focus on immediate cost savings, operational efficiency improvements, and healthcare compliance that address athenahealth's current expensive LMS challenges.

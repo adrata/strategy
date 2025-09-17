@@ -108,7 +108,7 @@ export default function DemoPage() {
               <div>
                 <h3 className="text-lg font-semibold mb-2">Proven Results</h3>
                 <p className="text-gray-400">
-                  73% faster deal closure and 2.3x higher win rates for our customers.
+                  73% faster deal closure and 2.3x higher win rates for our clients.
                 </p>
               </div>
             </div>

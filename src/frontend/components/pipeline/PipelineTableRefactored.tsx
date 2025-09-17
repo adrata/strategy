@@ -243,7 +243,7 @@ export function PipelineTable({
       case 'opportunities': return 'opportunity';
       case 'companies': return 'account';
       case 'people': return 'contact';
-      case 'customers': return 'customer';
+      case 'clients': return 'customer';
       case 'partners': return 'partner';
       default: return 'lead';
     }

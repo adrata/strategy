@@ -22,7 +22,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Contact search functionality for customers
+  // Contact search functionality for clients
   const [contactSearchQuery, setContactSearchQuery] = useState('');
   const [contactSearchResults, setContactSearchResults] = useState<any[]>([]);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
@@ -66,7 +66,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
   // Search contacts as user types
   useEffect(() => {
-    if (contactSearchQuery.length >= 2 && activeSection === "customers") {
+    if (contactSearchQuery.length >= 2 && activeSection === "clients") {
       searchContacts(contactSearchQuery);
     } else {
       setContactSearchResults([]);
@@ -210,7 +210,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         return "Person";
       case "companies":
         return "Company";
-      case "customers":
+      case "clients":
         return "Customer";
       case "speedrun":
         return "Speedrun Item";
@@ -677,7 +677,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             )}
 
             {/* Customer-specific fields */}
-            {activeSection === "customers" && (
+            {activeSection === "clients" && (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

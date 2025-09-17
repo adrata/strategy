@@ -122,10 +122,10 @@ async function analyzeActionTerminology() {
     console.log('\n📋 6. CUSTOMERS WITH ACTION FIELDS');
     console.log('==================================');
     
-    const customersWithNextBestAction = await prisma.customers.count({
+    const clientsWithNextBestAction = await prisma.clients.count({
       where: { nextBestAction: { not: null } }
     });
-    console.log(`Customers with nextBestAction: ${customersWithNextBestAction}`);
+    console.log(`Customers with nextBestAction: ${clientsWithNextBestAction}`);
 
     // 7. SUMMARY AND RECOMMENDATIONS
     console.log('\n📋 7. TERMINOLOGY ANALYSIS SUMMARY');

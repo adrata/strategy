@@ -672,7 +672,7 @@ export default function DemoBuyerGroupsPage() {
             <div>
               <h4 className="font-semibold mb-2">Snowflake Partner Focus</h4>
               <p className="text-sm text-gray-300">
-                All three companies are existing Snowflake customers with high data volumes and complex analytics needs.
+                All three companies are existing Snowflake clients with high data volumes and complex analytics needs.
               </p>
             </div>
             <div>

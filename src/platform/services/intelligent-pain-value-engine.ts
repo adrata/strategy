@@ -226,7 +226,7 @@ export class IntelligentPainValueEngine {
    */
   private getRoleSpecificPains(): Record<string, string> {
     return {
-      'operations': 'Staff spending 3+ hours daily on restocking due to inefficient fixture access, while customers can\'t find 20% of advertised products due to poor shelf visibility',
+      'operations': 'Staff spending 3+ hours daily on restocking due to inefficient fixture access, while clients can\'t find 20% of advertised products due to poor shelf visibility',
       'executive': 'Revenue per square foot trailing competitors by 15-30% due to suboptimal fixture layouts and missed merchandising opportunities worth $100K+ annually',
       'technology': 'Current fixture systems can\'t integrate with digital price tags or inventory management systems, limiting real-time merchandising optimization',
       'finance': 'Store renovation projects lack fixture ROI analysis, making it difficult to justify $50K-200K investments in merchandising improvements',
@@ -369,7 +369,7 @@ export class IntelligentPainValueEngine {
     return {
       // Operations + Industry combinations
       'operations_manager_convenience_store': 'Current gondola systems create restocking bottlenecks during peak hours, while poor sight-lines hide 40% of high-margin items from customer view',
-      'operations_manager_grocery': 'Aging fixture layouts force customers into inefficient shopping patterns, increasing store labor costs and reducing basket size potential',
+      'operations_manager_grocery': 'Aging fixture layouts force clients into inefficient shopping patterns, increasing store labor costs and reducing basket size potential',
       'operations_manager_retail_general': 'Inflexible merchandising systems prevent rapid category resets, limiting seasonal promotion effectiveness and revenue capture',
       
       // Executive + Industry combinations  

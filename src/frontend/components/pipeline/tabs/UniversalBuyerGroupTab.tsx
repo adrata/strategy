@@ -367,7 +367,7 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
                   <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                   <div>
                     <div className="text-sm font-medium text-gray-900">Reference Calls</div>
-                    <div className="text-sm text-gray-600">Arrange calls with similar enterprise customers</div>
+                    <div className="text-sm text-gray-600">Arrange calls with similar enterprise clients</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

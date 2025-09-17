@@ -13,7 +13,7 @@ export default function DemoPipelineCustomersPage() {
       <ZoomProvider>
         <PipelineProvider>
           <ProfilePopupProvider>
-            <PipelineView section="customers" />
+            <PipelineView section="clients" />
           </ProfilePopupProvider>
         </PipelineProvider>
       </ZoomProvider>

@@ -16,7 +16,7 @@ async function comprehensiveDataFix() {
     prospectsLinked: 0,
     leadsLinked: 0,
     opportunitiesLinked: 0,
-    customersLinked: 0,
+    clientsLinked: 0,
     customerOpportunitiesLinked: 0,
     duplicatesRemoved: 0,
     errors: 0
@@ -26,7 +26,7 @@ async function comprehensiveDataFix() {
     // STEP 1: Create comprehensive people and companies from all sources
     console.log('👥 STEP 1: Creating comprehensive PEOPLE & COMPANIES...');
     
-    // Get all unique people from leads, prospects, opportunities, customers
+    // Get all unique people from leads, prospects, opportunities, clients
     const allLeads = await prisma.leads.findMany({
       select: {
         id: true, fullName: true, firstName: true, lastName: true,
@@ -232,7 +232,7 @@ async function comprehensiveDataFix() {
     for (const opp of closedOpportunities) {
       if (opp.personId && opp.companyId) {
         // Check if customer already exists (prevent duplicates)
-        let customer = await prisma.customers.findFirst({
+        let customer = await prisma.clients.findFirst({
           where: {
             personId: opp.personId,
             companyId: opp.companyId
@@ -240,7 +240,7 @@ async function comprehensiveDataFix() {
         });
 
         if (!customer) {
-          customer = await prisma.customers.create({
+          customer = await prisma.clients.create({
             data: {
               id: `customer_${opp.personId}_${opp.companyId}`,
               companyId: opp.companyId,
@@ -254,7 +254,7 @@ async function comprehensiveDataFix() {
               updatedAt: new Date()
             }
           });
-          stats.customersLinked++;
+          stats.clientsLinked++;
           console.log(`✅ Created customer from opportunity: ${opp.name} (Company: ${opp.companyId})`);
         } else {
           console.log(`⏭️  Customer already exists for opportunity: ${opp.name}`);
@@ -282,7 +282,7 @@ async function comprehensiveDataFix() {
     });
 
     for (const opp of customerOpportunities) {
-      const customer = await prisma.customers.findFirst({
+      const customer = await prisma.clients.findFirst({
         where: {
           personId: opp.personId,
           companyId: opp.companyId
@@ -291,7 +291,7 @@ async function comprehensiveDataFix() {
 
       if (customer) {
         // Update customer metrics
-        await prisma.customers.update({
+        await prisma.clients.update({
           where: { id: customer.id },
           data: {
             dealCount: { increment: 1 },
@@ -319,7 +319,7 @@ async function comprehensiveDataFix() {
     console.log(`🎯 Prospects linked: ${stats.prospectsLinked}`);
     console.log(`🔥 Leads linked: ${stats.leadsLinked}`);
     console.log(`💰 Opportunities linked: ${stats.opportunitiesLinked}`);
-    console.log(`🏆 Customers created: ${stats.customersLinked}`);
+    console.log(`🏆 Customers created: ${stats.clientsLinked}`);
     console.log(`🔄 Customer opportunities linked: ${stats.customerOpportunitiesLinked}`);
     console.log(`🧹 Duplicate records cleaned: ${stats.duplicatesRemoved}`);
     console.log(`❌ Errors: ${stats.errors}`);
@@ -331,14 +331,14 @@ async function comprehensiveDataFix() {
     const leadsWithPeople = await prisma.leads.count({ where: { personId: { not: null } } });
     const prospectsWithPeople = await prisma.prospects.count({ where: { personId: { not: null } } });
     const opportunitiesWithPeople = await prisma.opportunities.count({ where: { personId: { not: null } } });
-    const customersCount = await prisma.customers.count();
+    const clientsCount = await prisma.clients.count();
 
     console.log(`📊 Total people: ${peopleCount}`);
     console.log(`📊 Total companies: ${companiesCount}`);
     console.log(`📊 Leads with people: ${leadsWithPeople}`);
     console.log(`📊 Prospects with people: ${prospectsWithPeople}`);
     console.log(`📊 Opportunities with people: ${opportunitiesWithPeople}`);
-    console.log(`📊 Total customers: ${customersCount}`);
+    console.log(`📊 Total clients: ${clientsCount}`);
 
     console.log('\n✅ DATA MODEL NOW FOLLOWS CRM BEST PRACTICES:');
     console.log('• Core records (People/Companies) are master data');

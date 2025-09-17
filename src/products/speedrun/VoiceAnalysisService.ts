@@ -82,7 +82,7 @@ function getUserDataForAnalysis(): any {
     linkedinPosts: [
       {
         content:
-          "Excited to share that our team just closed a fantastic quarter! The key was really listening to our customers and understanding their unique challenges. When you focus on value over volume, amazing things happen. What's driving success in your business lately?",
+          "Excited to share that our team just closed a fantastic quarter! The key was really listening to our clients and understanding their unique challenges. When you focus on value over volume, amazing things happen. What's driving success in your business lately?",
         engagement: 45,
         type: "post",
       },
@@ -96,7 +96,7 @@ function analyzeFromLinkedInPosts(posts: any[]): VoiceProfile {
   return {
     tone: "Professional and enthusiastic",
     style: "Engaging with specific examples",
-    vocabulary: ["excited", "fantastic", "value", "success", "customers"],
+    vocabulary: ["excited", "fantastic", "value", "success", "clients"],
     writingPatterns: ["Asks engaging questions", "Uses specific examples"],
     personalityTraits: ["Enthusiastic", "Customer-focused", "Results-oriented"],
     signatureElements: ["Best regards", "Looking forward to connecting"],

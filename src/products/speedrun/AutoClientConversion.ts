@@ -65,7 +65,7 @@ export interface CustomerAccount {
   };
 }
 
-export class AutoCustomerConversion {
+export class AutoClientConversion {
   
   /**
    * 🏆 Main function: Detect closed won and trigger conversion
@@ -76,7 +76,7 @@ export class AutoCustomerConversion {
       return null;
     }
 
-    console.log(`🏆 AutoCustomerConversion: Detecting closed won for ${prospect.name} at ${prospect.company}`);
+    console.log(`🏆 AutoClientConversion: Detecting closed won for ${prospect.name} at ${prospect.company}`);
     
     // Get all people at the same company
     const companyPeople = await this.getCompanyPeople(prospect.company);
@@ -142,7 +142,7 @@ export class AutoCustomerConversion {
       return data.leads || [];
       
     } catch (error) {
-      console.error("❌ AutoCustomerConversion: Failed to get company people:", error);
+      console.error("❌ AutoClientConversion: Failed to get company people:", error);
       return [];
     }
   }
@@ -361,7 +361,7 @@ export class AutoCustomerConversion {
       outcome: `Customer conversion: ${conversionResults.convertedCount} people converted, $${customerAccount.dealValue.toLocaleString()} deal value`
     });
 
-    console.log(`🏆 AutoCustomerConversion: Successfully converted ${customerAccount.companyName} to customer status`);
+    console.log(`🏆 AutoClientConversion: Successfully converted ${customerAccount.companyName} to customer status`);
   }
 
   /**

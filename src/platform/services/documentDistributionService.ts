@@ -88,7 +88,7 @@ export class DocumentDistributionService {
       {
         id: "baa",
         title: "Business Associate Agreement (BAA)",
-        description: "HIPAA compliance for healthcare customers",
+        description: "HIPAA compliance for healthcare clients",
         pages: 8,
         shareUrl: "https://adrata.com/shared/legal/baa",
         downloadUrl: "https://adrata.com/api/documents/baa/download",
@@ -434,7 +434,7 @@ Thank you for the comprehensive security discussion today. As promised, here's y
 
 **ENTERPRISE SECURITY HIGHLIGHTS:**
 ✅ Zero security exceptions in 3+ years of audits
-✅ Exceeds security standards of Fortune 100 customers
+✅ Exceeds security standards of Fortune 100 clients
 ✅ 24/7 SOC with sub-15-minute incident response
 ✅ Modern cloud-native architecture vs. legacy systems
 ✅ Continuous compliance monitoring vs. annual audits

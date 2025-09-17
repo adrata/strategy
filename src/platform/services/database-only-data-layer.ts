@@ -12,7 +12,7 @@ export interface PipelineStage {
   order: number;
   color?: string;
   workspaceId: string;
-  sectionType: 'opportunities' | 'customers' | 'leads' | 'partners';
+  sectionType: 'opportunities' | 'clients' | 'leads' | 'partners';
 }
 
 export interface ContactData {
@@ -48,7 +48,7 @@ export class DatabaseOnlyDataLayer {
    */
   static async getPipelineStages(
     workspaceId: string, 
-    sectionType: 'opportunities' | 'customers' | 'leads' | 'partners'
+    sectionType: 'opportunities' | 'clients' | 'leads' | 'partners'
   ): Promise<PipelineStage[]> {
     try {
       const response = await fetch('/api/workspace/pipeline-stages', {
@@ -299,7 +299,7 @@ export class DatabaseOnlyDataLayer {
  */
 export function useWorkspacePipelineStages(
   workspaceId: string, 
-  sectionType: 'opportunities' | 'customers' | 'leads' | 'partners'
+  sectionType: 'opportunities' | 'clients' | 'leads' | 'partners'
 ) {
   const [stages, setStages] = React.useState<PipelineStage[]>([]);
   const [loading, setLoading] = React.useState(true);

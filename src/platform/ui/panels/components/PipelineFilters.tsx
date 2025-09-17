@@ -39,7 +39,7 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
     const prospects = data.acquireData.prospects || [];
     const people = data.acquireData.people || [];
     const companies = data.acquireData.companies || [];
-    const customers = data.acquireData.customers || [];
+    const clients = data.acquireData.clients || [];
 
     switch (activeSection) {
       case 'leads':
@@ -52,8 +52,8 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
         return getContactFilterOptions(people);
       case 'companies':
         return getAccountFilterOptions(companies);
-      case 'customers':
-        return getCustomerFilterOptions(customers);
+      case 'clients':
+        return getCustomerFilterOptions(clients);
       default:
         return {};
     }
@@ -78,7 +78,7 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
                 activeSection === 'companies' ? 'Search companies' :
                 activeSection === 'people' ? 'Search people' :
                 activeSection === 'opportunities' ? 'Search opportunities' :
-                activeSection === 'customers' ? 'Search customers' :
+                activeSection === 'clients' ? 'Search clients' :
                 'Search records'
               }
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
@@ -202,7 +202,7 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
           </>
         )}
 
-        {activeSection === 'customers' && (
+        {activeSection === 'clients' && (
           <>
             <div className="flex-1">
               <DynamicFilterDropdown

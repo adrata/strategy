@@ -346,7 +346,7 @@ function predictBehaviorPatterns(executive: EnrichedProfile, traits: any) {
           : ("standard" as const),
       keyFactors: [
         "ROI demonstration",
-        "Reference customers",
+        "Reference clients",
         "Implementation timeline",
       ],
       likelyBlockers: [

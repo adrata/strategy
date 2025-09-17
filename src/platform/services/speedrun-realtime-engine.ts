@@ -274,14 +274,14 @@ export class SpeedrunRealtimeEngine {
       where: { workspaceId, deletedAt: null},
       include: {
         contacts: true
-        // Removed: customers relationship doesn't exist on accounts model
+        // Removed: clients relationship doesn't exist on accounts model
         // Note: accounts model doesn't have opportunities relationship
       }
     });
 
 
     for (const account of customerAccounts) {
-      // Skip customer value calculation since customers relationship doesn't exist
+      // Skip customer value calculation since clients relationship doesn't exist
       const totalValue = 0;
       
       for (const contact of account.contacts) {

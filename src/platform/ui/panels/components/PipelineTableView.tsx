@@ -40,7 +40,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || [];
       case 'people': return acquireData.people || [];
-      case 'customers': return acquireData.customers || [];
+      case 'clients': return acquireData.clients || [];
       case 'partners': return acquireData.partnerships || [];
       case 'speedrun': return acquireData.speedrunItems || [];
       default: return [];

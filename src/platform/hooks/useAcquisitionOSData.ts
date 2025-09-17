@@ -53,7 +53,7 @@ interface UseAcquisitionOSDataReturn {
     accounts: any[];
     contacts: any[];
     partnerships: any[];
-    customers: any[];
+    clients: any[];
     sellers: any[]; // 🆕 FIX: Add sellers to interface
     buyerGroups: any[];
     catalyst: any[];
@@ -68,7 +68,7 @@ interface UseAcquisitionOSDataReturn {
       accounts: number;
       people: number;
       partners: number;
-      customers: number;
+      clients: number;
       sellers: number; // 🆕 FIX: Add sellers count to interface
       speedrun: number; // 🆕 FIX: Add speedrun count to interface
     };
@@ -138,7 +138,7 @@ export function useAcquisitionOSData(
       companies: apiData.companies || [], // Use companies directly
       people: apiData.people || [], // Use people directly
       partnerships: apiData.partners || [], // API uses 'partners', interface expects 'partnerships'
-      customers: apiData.customers || [],
+      clients: apiData.clients || [],
       sellers: apiData.sellers || [], // 🆕 FIX: Include sellers data
       buyerGroups: apiData.buyerGroups || [],
       catalyst: apiData.catalyst || [],
@@ -439,7 +439,7 @@ export function useAcquisitionOSData(
       accounts: [],
       contacts: [],
       partnerships: [],
-      customers: [],
+      clients: [],
       sellers: [], // 🆕 FIX: Add sellers to fallback data
       buyerGroups: [],
       catalyst: [],
@@ -454,7 +454,7 @@ export function useAcquisitionOSData(
         accounts: 0,
         contacts: 0,
         partners: 0,
-        customers: 0,
+        clients: 0,
         sellers: 0, // 🆕 FIX: Add sellers count to fallback data
         speedrun: 0, // 🆕 FIX: Add speedrun count to fallback data
       },

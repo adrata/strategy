@@ -12,7 +12,7 @@ async function workingDataFix() {
     leadsLinked: 0,
     prospectsLinked: 0,
     opportunitiesLinked: 0,
-    customersCreated: 0,
+    clientsCreated: 0,
     errors: 0
   };
 
@@ -188,8 +188,8 @@ async function workingDataFix() {
       }
     }
 
-    // STEP 5: Create customers from closed opportunities
-    console.log('\n🏆 STEP 5: Creating customers from closed opportunities...');
+    // STEP 5: Create clients from closed opportunities
+    console.log('\n🏆 STEP 5: Creating clients from closed opportunities...');
     
     const closedOpportunities = await prisma.opportunities.findMany({
       where: {
@@ -208,7 +208,7 @@ async function workingDataFix() {
     for (const opp of closedOpportunities) {
       if (opp.personId && opp.companyId) {
         // Check if customer already exists (prevent duplicates)
-        let customer = await prisma.customers.findFirst({
+        let customer = await prisma.clients.findFirst({
           where: {
             personId: opp.personId,
             companyId: opp.companyId
@@ -216,7 +216,7 @@ async function workingDataFix() {
         });
 
         if (!customer) {
-          customer = await prisma.customers.create({
+          customer = await prisma.clients.create({
             data: {
               id: `customer_${opp.personId}_${opp.companyId}`,
               companyId: opp.companyId,
@@ -230,7 +230,7 @@ async function workingDataFix() {
               updatedAt: new Date()
             }
           });
-          stats.customersCreated++;
+          stats.clientsCreated++;
           console.log(`✅ Created customer from opportunity: ${opp.name}`);
         } else {
           console.log(`ℹ️ Customer already exists for: ${opp.name}`);
@@ -246,7 +246,7 @@ async function workingDataFix() {
     console.log(`✅ Leads linked: ${stats.leadsLinked}`);
     console.log(`✅ Prospects linked: ${stats.prospectsLinked}`);
     console.log(`✅ Opportunities linked: ${stats.opportunitiesLinked}`);
-    console.log(`✅ Customers created: ${stats.customersCreated}`);
+    console.log(`✅ Customers created: ${stats.clientsCreated}`);
     console.log(`❌ Errors: ${stats.errors}`);
     
     console.log('\n🎉 Data model migration completed successfully!');
