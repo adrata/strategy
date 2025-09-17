@@ -1103,17 +1103,17 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     <>
       <style jsx>{`
         .ai-panel-scroll::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .ai-panel-scroll::-webkit-scrollbar-track {
           background: #f9fafb;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb {
-          background: #d1d5db;
-          border-radius: 3px;
+          background: #9ca3af;
+          border-radius: 4px;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
-          background: #9ca3af;
+          background: #6b7280;
         }
         
         /* Middle panel scrollbar styling */
