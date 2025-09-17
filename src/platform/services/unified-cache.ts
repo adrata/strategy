@@ -150,7 +150,7 @@ export class UnifiedCache {
                       process['env']['UPSTASH_REDIS_URL'] || 
                       process['env']['REDIS_CONNECTION_STRING'];
       
-      if (!redisUrl || redisUrl === 'your_redis_url' || redisUrl.includes('placeholder') || redisUrl === 'PLACEHOLDER_VALUE') {
+      if (!redisUrl || redisUrl === 'your_redis_url' || redisUrl.includes('placeholder') || redisUrl === 'PLACEHOLDER_VALUE' || redisUrl.includes('PLACEHOLDER_VALUE')) {
         console.log('🔧 [UNIFIED CACHE] No valid Redis URL found, using memory-only mode');
         return;
       }

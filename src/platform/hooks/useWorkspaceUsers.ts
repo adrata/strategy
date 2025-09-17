@@ -13,6 +13,9 @@ export interface WorkspaceUser {
   displayName?: string;
 }
 
+// 🚀 PERFORMANCE: Request deduplication to prevent multiple simultaneous calls
+const pendingRequests = new Map<string, Promise<any>>();
+
 export function useWorkspaceUsers() {
   const [users, setUsers] = useState<WorkspaceUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,14 +54,49 @@ export function useWorkspaceUsers() {
       setLoading(true);
       setError(null);
       
+      // 🚀 PERFORMANCE: Define requestKey outside try block for finally access
+      const requestKey = `workspace_users:${workspaceId}`;
+      
       try {
-        const response = await fetch(`/api/workspace/users?workspaceId=${workspaceId}`);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to fetch workspace users: ${response.status} ${errorText}`);
-        }
+        // 🚀 PERFORMANCE: Check for existing request to prevent duplicates
+        const existingRequest = pendingRequests.get(requestKey);
         
-        const data = await response.json();
+        if (existingRequest) {
+          console.log('⚡ [DEDUP] Waiting for existing workspace users request:', requestKey);
+          const data = await existingRequest;
+          
+          if (!data.success) {
+            throw new Error(data.error || 'Failed to fetch users');
+          }
+          
+          const workspaceUsers = data.users || [];
+          const validUsers = workspaceUsers.filter((u: any) => u['id'] && (u.name || u.email));
+          setUsers(validUsers);
+          
+          if (validUsers['length'] === 0) {
+            setError('No users found in this workspace');
+          }
+          
+          setLoading(false);
+          return;
+        }
+
+        // Create new request promise
+        const requestPromise = (async () => {
+          const response = await fetch(`/api/workspace/users?workspaceId=${workspaceId}`);
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch workspace users: ${response.status} ${errorText}`);
+          }
+          
+          const data = await response.json();
+          return data;
+        })();
+
+        // Store the request promise and clean up when done
+        pendingRequests.set(requestKey, requestPromise);
+        
+        const data = await requestPromise;
         
         if (!data.success) {
           throw new Error(data.error || 'Failed to fetch users');
@@ -89,6 +127,8 @@ export function useWorkspaceUsers() {
         setError(err instanceof Error ? err.message : 'Failed to fetch users');
         setUsers([]);
       } finally {
+        // 🚀 PERFORMANCE: Clean up the request promise
+        pendingRequests.delete(requestKey);
         setLoading(false);
       }
     }

@@ -83,11 +83,14 @@ interface UseAcquisitionOSDataReturn {
  * 🚀 ACQUISITION OS DATA HOOK - UNIFIED CACHE SYSTEM
  * Uses the new unified caching system for optimal performance
  */
+// 🚀 PERFORMANCE: Add request deduplication
+const pendingRequests = new Map<string, Promise<any>>();
+
 export function useAcquisitionOSData(
   props: UseAcquisitionOSDataProps,
 ): UseAcquisitionOSDataReturn {
   const { authUser, isAuthenticated, isAuthLoading, activeWorkspace } = props;
-
+  
   // Simplified cache key - let useAdrataData handle workspace-specific caching
   // Add version to force cache refresh when data transformation is updated
   const cacheKey = authUser?.id && activeWorkspace?.id ? 
@@ -174,9 +177,19 @@ export function useAcquisitionOSData(
       throw new Error('User is required in non-demo mode');
     }
 
-    // Get the current session to include authentication
-    const { UnifiedAuthService } = await import('@/platform/auth/service');
-    const session = await UnifiedAuthService.getSession();
+    // 🚀 PERFORMANCE: Check for existing request to prevent duplicates
+    const requestKey = `acquisition-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
+    const existingRequest = pendingRequests.get(requestKey);
+    if (existingRequest) {
+      console.log('⚡ [DEDUP] Waiting for existing acquisition data request:', requestKey);
+      return await existingRequest;
+    }
+
+    // Create new request promise
+    const requestPromise = (async () => {
+      // Get the current session to include authentication
+      const { UnifiedAuthService } = await import('@/platform/auth/service');
+      const session = await UnifiedAuthService.getSession();
     
     // 🆕 IMPROVED AUTHENTICATION HANDLING: Better error handling for missing/invalid tokens
     if (!session?.accessToken) {
@@ -313,6 +326,17 @@ export function useAcquisitionOSData(
     });
 
     return mappedData;
+    })();
+
+    // Store the request promise and clean up when done
+    pendingRequests.set(requestKey, requestPromise);
+    
+    try {
+      const result = await requestPromise;
+      return result;
+    } finally {
+      pendingRequests.delete(requestKey);
+    }
   }, [authUser?.id, activeWorkspace?.id]);
 
   // Debug the enabled condition

@@ -1065,7 +1065,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const middlePanel = section === 'metrics' ? (
     <MetricsDashboard />
   ) : section === 'dashboard' ? (
-        <Dashboard />
+    (() => {
+      console.log('🚨 [PipelineView CRITICAL] Rendering Dashboard component!');
+      return <Dashboard />;
+    })()
   ) : (
     <div className="h-full flex flex-col bg-white">
 

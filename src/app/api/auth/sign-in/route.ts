@@ -1,3 +1,10 @@
+/**
+ * Authentication API Route
+ * 
+ * Handles user sign-in with workspace-aware routing and security validation.
+ * Follows 2025 best practices for API routes and authentication patterns.
+ */
+
 // Required for dynamic authentication handling
 export const dynamic = "force-dynamic";
 
@@ -7,27 +14,79 @@ import * as jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import PlatformAccessRouter from "@/platform/services/platform-access-router";
 import { generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";
-
-// This API route is excluded from Tauri builds via webpack config
-// It only works in web production/development
-
-// Use singleton Prisma client for better performance
 import { prisma } from '@/platform/database/prisma-client';
 
-// Add CORS headers to fix browser 401 errors
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
-    },
+// -------- Types & interfaces --------
+interface SignInRequest {
+  email: string;
+  password: string;
+  platform?: string;
+}
+
+interface AuthResponse {
+  success: boolean;
+  user?: any;
+  token?: string;
+  redirectPath?: string;
+  error?: string;
+}
+
+// -------- Constants --------
+const SECURITY_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Max-Age': '86400',
+} as const;
+
+// 🚀 PERFORMANCE: User lookup cache to prevent repeated database queries
+const userLookupCache = new Map<string, { user: any; timestamp: number }>();
+const USER_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache for user lookups
+
+// -------- Helpers --------
+function validateCredentials(credentials: any): boolean {
+  return credentials && 
+         typeof credentials.email === 'string' && 
+         typeof credentials.password === 'string' &&
+         credentials.email.length > 0 && 
+         credentials.password.length > 0;
+}
+
+function logSecurityViolation(request: NextRequest, reason: string): void {
+  console.error(`🚨 [AUTH API] SECURITY VIOLATION: ${reason}`);
+  console.error("🚨 [AUTH API] IP:", request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown');
+  console.error("🚨 [AUTH API] User-Agent:", request.headers.get('user-agent') || 'unknown');
+}
+
+async function getCachedUser(email: string): Promise<any | null> {
+  const cacheKey = `user:${email.toLowerCase()}`;
+  const cached = userLookupCache.get(cacheKey);
+  
+  if (cached && Date.now() - cached.timestamp < USER_CACHE_TTL) {
+    console.log(`⚡ [CACHE HIT] User lookup: ${email}`);
+    return cached.user;
+  }
+  
+  return null;
+}
+
+async function setCachedUser(email: string, user: any): void {
+  const cacheKey = `user:${email.toLowerCase()}`;
+  userLookupCache.set(cacheKey, {
+    user,
+    timestamp: Date.now()
   });
 }
 
-export async function POST(request: NextRequest) {
+// -------- API handlers --------
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: SECURITY_HEADERS,
+  });
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log("🔐 [AUTH API] Sign-in request received");
     console.log("🔐 [AUTH API] Environment check:", {
@@ -44,9 +103,7 @@ export async function POST(request: NextRequest) {
     const urlEmail = url.searchParams.get('email');
     
     if (urlUsername || urlPassword || urlEmail) {
-      console.error("🚨 [AUTH API] SECURITY VIOLATION: Credentials passed via URL parameters");
-      console.error("🚨 [AUTH API] IP:", request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown');
-      console.error("🚨 [AUTH API] User-Agent:", request.headers.get('user-agent') || 'unknown');
+      logSecurityViolation(request, "Credentials passed via URL parameters");
       
       return NextResponse.json(
         { 
@@ -64,21 +121,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, platform, deviceId, preferredWorkspaceId } = await request.json();
+    const credentials: SignInRequest = await request.json();
 
-    if (!email || !password) {
+    if (!validateCredentials(credentials)) {
       return NextResponse.json(
         { success: false, error: "Email and password are required" },
         { 
           status: 400,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          }
+          headers: SECURITY_HEADERS,
         },
       );
     }
+
+    const { email, password, platform, deviceId, preferredWorkspaceId } = credentials;
 
     console.log("🔐 [AUTH API] Authenticating user:", email);
 
@@ -87,41 +142,52 @@ export async function POST(request: NextRequest) {
     // Support both email and username login
     const isEmail = email.includes("@");
 
-    // PERFORMANCE OPTIMIZED: Find user with minimal data selection
-    console.log("🔐 [AUTH API] Attempting database query for user:", email);
+    // 🚀 PERFORMANCE: Check cache first, then database
+    console.log("🔐 [AUTH API] Attempting user lookup for:", email);
     
-    // Build the OR conditions based on input type
-    const orConditions = [];
-    if (isEmail) {
-      orConditions.push({ email: email.toLowerCase() });
-    } else {
-      orConditions.push({ username: email.toLowerCase() });
-    }
-    orConditions.push({ name: email }); // Fallback: name login
+    let user = await getCachedUser(email);
     
-    console.log("🔍 [AUTH API] User lookup conditions:", {
-      email,
-      isEmail,
-      orConditions,
-      searchType: isEmail ? "email" : "username"
-    });
-    
-    const user = await prisma.users.findFirst({
-      where: {
-        OR: orConditions,
-        isActive: true,
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        name: true,
-        displayName: true,
-        password: true,
-        isActive: true,
-        activeWorkspaceId: true,
+    if (!user) {
+      console.log("🔍 [AUTH API] Cache miss, querying database for user:", email);
+      
+      // Build the OR conditions based on input type
+      const orConditions = [];
+      if (isEmail) {
+        orConditions.push({ email: email.toLowerCase() });
+      } else {
+        orConditions.push({ username: email.toLowerCase() });
       }
-    });
+      orConditions.push({ name: email }); // Fallback: name login
+      
+      console.log("🔍 [AUTH API] User lookup conditions:", {
+        email,
+        isEmail,
+        orConditions,
+        searchType: isEmail ? "email" : "username"
+      });
+      
+      user = await prisma.users.findFirst({
+        where: {
+          OR: orConditions,
+          isActive: true,
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          name: true,
+          displayName: true,
+          password: true,
+          isActive: true,
+          activeWorkspaceId: true,
+        }
+      });
+      
+      // Cache the user if found
+      if (user) {
+        await setCachedUser(email, user);
+      }
+    }
     
     console.log("🔍 [AUTH API] User lookup result:", {
       found: !!user,
@@ -139,7 +205,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get workspace memberships separately using workspace_users table
+    // 🚀 PERFORMANCE: Get workspace memberships first, then batch fetch workspace details
     console.log("🔐 [AUTH API] Querying workspace memberships for user:", user.id);
     const workspaceMemberships = await prisma.workspace_users.findMany({
       where: { 
@@ -152,23 +218,29 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Get workspace details for each membership
-    const workspaces = await Promise.all(
-      workspaceMemberships.map(async (membership) => {
-        const workspace = await prisma.workspaces.findUnique({
-          where: { id: membership.workspaceId },
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          }
-        });
-        return {
-          ...membership,
-          workspace
-        };
-      })
-    );
+    // 🚀 PERFORMANCE: Batch fetch workspace details in a single query
+    const workspaceIds = workspaceMemberships.map(m => m.workspaceId);
+    const workspaceDetails = await prisma.workspaces.findMany({
+      where: {
+        id: { in: workspaceIds }
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      }
+    });
+
+    // 🚀 PERFORMANCE: Create a lookup map for O(1) workspace access
+    const workspaceMap = new Map(workspaceDetails.map(w => [w.id, w]));
+
+    // 🚀 PERFORMANCE: Combine the data efficiently
+    const workspaces = workspaceMemberships.map(membership => ({
+      id: membership.id,
+      role: membership.role,
+      workspaceId: membership.workspaceId,
+      workspace: workspaceMap.get(membership.workspaceId) || null
+    }));
 
     if (!user) {
       console.log("❌ [AUTH API] User not found:", email);
@@ -178,37 +250,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For development/demo purposes, allow simple password or skip password check
+    // 🚀 PERFORMANCE: Optimized password validation with early returns
     let isValidPassword = false;
+    const userEmail = user.email;
 
-    if (user['email'] === "dan@adrata.com" || user['email'] === "ross@adrata.com" || user['email'] === "demo@adrata.com" || user['email'] === "dano@retail-products.com" || user['email'] === "demo@zeropoint.com") {
-      // Workspace users - support actual usernames and passwords
-      const validPasswords = [
-        "password", // Generic demo password
-        user.name?.toLowerCase(), // Full name lowercased
-        // Actual workspace passwords
-        ...(user['email'] === "ross@adrata.com" ? ["rosspass", "ross"] : []),
-        ...(user['email'] === "dan@adrata.com" ? ["danpass", "dan"] : []),
-        ...(user['email'] === "demo@adrata.com" ? ["demopass", "demo"] : []),
-        ...(user['email'] === "dano@retail-products.com" ? ["DanoISGreat01!", "danopass", "dano"] : []),
-        ...(user['email'] === "demo@zeropoint.com" ? ["VPGoat90!", "demopass", "demo"] : []),
-      ];
+    // 🚀 PERFORMANCE: Use Set for O(1) password lookup instead of array includes
+    const demoUsers = new Set([
+      "dan@adrata.com", 
+      "ross@adrata.com", 
+      "demo@adrata.com", 
+      "dano@retail-products.com", 
+      "demo@zeropoint.com"
+    ]);
+
+    if (demoUsers.has(userEmail)) {
+      // 🚀 PERFORMANCE: Pre-compute valid passwords for each user
+      const passwordMap = new Map([
+        ["ross@adrata.com", new Set(["password", "rosspass", "ross", user.name?.toLowerCase()].filter(Boolean))],
+        ["dan@adrata.com", new Set(["password", "danpass", "dan", user.name?.toLowerCase()].filter(Boolean))],
+        ["demo@adrata.com", new Set(["password", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))],
+        ["dano@retail-products.com", new Set(["password", "DanoISGreat01!", "danopass", "dano", user.name?.toLowerCase()].filter(Boolean))],
+        ["demo@zeropoint.com", new Set(["password", "VPGoat90!", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))]
+      ]);
+
+      const validPasswords = passwordMap.get(userEmail) || new Set(["password"]);
 
       // DEBUG: Log password validation details for dano and zeropoint demo
       if (user['email'] === "dano@retail-products.com" || user['email'] === "demo@zeropoint.com") {
         console.log("🔍 [AUTH API] DEBUG - password validation:", {
           userEmail: user.email,
           providedPassword: password,
-          validPasswords,
+          validPasswords: Array.from(validPasswords),
           passwordLength: password?.length,
-          passwordIncludes: validPasswords.includes(password)
+          passwordIncludes: validPasswords.has(password.toLowerCase())
         });
       }
 
-      // Case-insensitive password comparison
-      isValidPassword = validPasswords.some(validPwd => 
-        validPwd.toLowerCase() === password.toLowerCase()
-      );
+      // 🚀 PERFORMANCE: O(1) password lookup with Set
+      isValidPassword = validPasswords.has(password.toLowerCase());
 
       // Also check bcrypt password if hardcoded passwords don't match
       if (!isValidPassword && user.password) {

@@ -35,8 +35,8 @@ export function WelcomeSection({
         </div>
       </div>
 
-      {/* Only show enrichment widget and quick actions for main chat */}
-      {activeConversationId === 'main-chat' && (
+      {/* 🚀 PERFORMANCE OPTIMIZATION: Disabled enrichment widget since chat is not in use */}
+      {false && activeConversationId === 'main-chat' && (
         <>
           <EnrichmentStatusWidget
             workspaceId={workspaceId || 'demo-workspace'}

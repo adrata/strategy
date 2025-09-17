@@ -1,3 +1,10 @@
+/**
+ * ProfileBox Component
+ * 
+ * User profile dropdown with workspace switching, settings, and navigation options.
+ * Follows 2025 best practices for React components and user interface patterns.
+ */
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth-unified";
@@ -18,6 +25,7 @@ import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
 
 
+// -------- Types & interfaces --------
 interface ProfileBoxProps {
   user: { name: string; lastName?: string };
   company: string;
@@ -62,6 +70,7 @@ interface DocItem {
   isExternal?: boolean;
 }
 
+// -------- Main component --------
 export const ProfileBox: React.FC<ProfileBoxProps> = ({
   user,
   company,
@@ -302,40 +311,36 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
   const handleSignOut = async () => {
     try {
-      console.log("🔐 ProfileBox: Starting immediate sign out process...");
-      console.log("🔐 ProfileBox: Current URL:", window.location.href);
-      console.log("🔐 ProfileBox: Current hostname:", window.location.hostname);
-      console.log("🔐 ProfileBox: Platform detection - isDesktop:", isDesktop);
+      console.log("🔐 ProfileBox: Starting optimized sign out process...");
 
-      // Close profile popup immediately
+      // 🚀 PERFORMANCE: Close profile popup immediately for instant UI feedback
       setIsProfileOpen(false);
 
-      // Show immediate feedback
+      // 🚀 PERFORMANCE: Show immediate visual feedback
       if (typeof window !== "undefined") {
-        // Visual feedback - disable interactions
         document.body['style']['pointerEvents'] = "none";
         document.body['style']['opacity'] = "0.7";
       }
 
-      // Call the auth system to sign out immediately
+      // 🚀 PERFORMANCE: Call the optimized auth system sign-out
       await signOut();
       console.log("✅ ProfileBox: Sign out completed successfully");
 
-      // Clear all storage immediately
+      // 🚀 PERFORMANCE: Additional cleanup (auth system already cleared most storage)
       if (typeof window !== "undefined") {
-        // Specifically clear speedrun engine settings for demo reset
+        // Clear any remaining app-specific storage
         localStorage.removeItem('speedrun-engine-settings');
-        console.log("🎯 ProfileBox: Speedrun engine settings cleared for demo reset");
+        localStorage.removeItem('dashboard-cache');
+        localStorage.removeItem('pipeline-cache');
         
-        localStorage.clear();
-        sessionStorage.clear();
+        console.log("🎯 ProfileBox: Additional storage cleared");
         
-        // Immediate redirect/reload with detailed logging
+        // 🚀 PERFORMANCE: Use optimized redirect
         if (isDesktop) {
-          console.log("🖥️ ProfileBox: Desktop - reloading immediately...");
-          window.location.reload();
+          console.log("🖥️ ProfileBox: Desktop - using optimized redirect...");
+          window.location.replace('/sign-in');
         } else {
-          // For web, always redirect to sign-in form
+          // For web, use optimized redirect
           const homeUrl = "/sign-in";
           
           console.log("🌐 ProfileBox: Web - Redirecting to sign-in form");

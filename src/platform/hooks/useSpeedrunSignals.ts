@@ -47,39 +47,55 @@ export function useSpeedrunSignals(
   const [activeSignal, setActiveSignal] = useState<SpeedrunSignalData | null>(null);
   const [lastCheck, setLastCheck] = useState<Date>(new Date());
 
-  // Poll for new signals every 5 seconds
+  // 🚀 PERFORMANCE: Smart polling with reduced frequency and deduplication
   useEffect(() => {
     if (!workspaceId || !userId) return;
 
+    let isActive = true; // Flag to prevent state updates after unmount
+
     const checkForSignals = async () => {
+      if (!isActive) return; // Skip if component unmounted
+      
       try {
         console.log('🔍 [Speedrun Signals] Checking for new signals...');
         
         // Call API to check for new signals since lastCheck
         const response = await fetch(`/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`);
         
-        if (response.ok) {
+        if (response.ok && isActive) {
           const data = await response.json();
           
-          if (data.signal) {
+          if (data.signal && isActive) {
             console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
             setActiveSignal(data.signal);
             setLastCheck(new Date());
           }
         }
       } catch (error) {
-        console.error('❌ [Speedrun Signals] Error checking for signals:', error);
+        if (isActive) {
+          console.error('❌ [Speedrun Signals] Error checking for signals:', error);
+        }
       }
     };
 
-    // Check immediately
-    checkForSignals();
+    // Check immediately only if no active signal
+    if (!activeSignal) {
+      checkForSignals();
+    }
 
-    // Then check every 30 seconds (reduced frequency for better performance)
-    const interval = setInterval(checkForSignals, 30000);
+    // 🚀 PERFORMANCE: Reduced polling frequency - check every 2 minutes instead of 30 seconds
+    // This reduces API calls by 75% while still being responsive
+    const interval = setInterval(() => {
+      if (isActive && !activeSignal) { // Only poll if no active signal
+        checkForSignals();
+      }
+    }, 120000); // 2 minutes
 
-    return () => clearInterval(interval);
-  }, [workspaceId, userId, lastCheck]);
+    return () => {
+      isActive = false;
+      clearInterval(interval);
+    };
+  }, [workspaceId, userId, lastCheck, activeSignal]);
 
   // Accept signal and add to Speedrun
   const acceptSignal = async (): Promise<void> => {

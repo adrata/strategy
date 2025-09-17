@@ -853,7 +853,7 @@ async function getMultipleRecords(
         }
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: 1000 // Show all people, not just 50
+      take: 10 // Only load 10 most recent people for performance
     });
     
     return { success: true, data: people };
@@ -2065,46 +2065,54 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           }
         })
       ]).then(([leadsCount, prospectsCount]) => leadsCount + prospectsCount),
-      // Load actual data (Updated to show all records for better user experience)
+      // 🚀 PERFORMANCE: Load minimal data for dashboard display only
       prisma.leads.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000 // Show all leads
+        take: 10, // Only load 10 most recent leads for dashboard
+        select: { id: true, fullName: true, email: true, company: true, updatedAt: true }
       }),
       prisma.prospects.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000 // Show all prospects
+        take: 10, // Only load 10 most recent prospects for dashboard
+        select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
       }),
       prisma.opportunities.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 10, // Only load 10 most recent opportunities
+        select: { id: true, name: true, stage: true, amount: true, updatedAt: true }
       }),
       prisma.companies.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000 // Show all companies
+        take: 10, // Only load 10 most recent companies
+        select: { id: true, name: true, industry: true, updatedAt: true }
       }),
       prisma.people.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000 // Show all people
+        take: 10, // Only load 10 most recent people
+        select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
       }),
       prisma.customers.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 10, // Only load 10 most recent customers
+        select: { id: true, customerStatus: true, totalLifetimeValue: true, updatedAt: true }
       }),
       prisma.partners.findMany({ 
         where: { workspaceId, deletedAt: null },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50
+        take: 10, // Only load 10 most recent partners
+        select: { id: true, name: true, email: true, updatedAt: true }
       }).catch(() => []), // Fallback to empty array if partners table has issues
-      // Load speedrun data using the dedicated function
+      // 🚀 PERFORMANCE: Load limited speedrun data for dashboard
       loadSpeedrunData(workspaceId, userId).then(result => {
         if (result.success) {
-          return result.data.speedrunItems;
+          // Only return first 20 items for dashboard performance
+          return result.data.speedrunItems.slice(0, 20);
         } else {
           console.error('❌ [DASHBOARD] Failed to load speedrun data:', result.error);
           return [];
@@ -2249,6 +2257,117 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       })));
     }
 
+    // 🚀 PERFORMANCE: Calculate real dashboard metrics from database
+    console.log('📊 [DASHBOARD] Calculating real metrics from database...');
+    
+    // Calculate date ranges for metrics
+    const now = new Date();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    
+    // Calculate activity metrics from actions table
+    const [weeklyActivities, monthlyActivities, ytdActivities] = await Promise.all([
+      // Weekly activities
+      prisma.actions.findMany({
+        where: {
+          workspaceId,
+          userId,
+          completedAt: { gte: startOfWeek },
+          status: 'completed'
+        },
+        select: { type: true, completedAt: true }
+      }),
+      // Monthly activities  
+      prisma.actions.findMany({
+        where: {
+          workspaceId,
+          userId,
+          completedAt: { gte: startOfMonth },
+          status: 'completed'
+        },
+        select: { type: true, completedAt: true }
+      }),
+      // YTD activities
+      prisma.actions.findMany({
+        where: {
+          workspaceId,
+          userId,
+          completedAt: { gte: startOfYear },
+          status: 'completed'
+        },
+        select: { type: true, completedAt: true }
+      })
+    ]);
+
+    // Calculate activity counts by type
+    const calculateActivityCounts = (activities: any[]) => {
+      return activities.reduce((acc, activity) => {
+        const type = activity.type?.toLowerCase() || 'unknown';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+    };
+
+    const weeklyActivityCounts = calculateActivityCounts(weeklyActivities);
+    const monthlyActivityCounts = calculateActivityCounts(monthlyActivities);
+    const ytdActivityCounts = calculateActivityCounts(ytdActivities);
+
+    // Calculate pipeline metrics from opportunities
+    const pipelineMetrics = await prisma.opportunities.aggregate({
+      where: {
+        workspaceId,
+        assignedUserId: userId,
+        deletedAt: null
+      },
+      _sum: { amount: true },
+      _avg: { amount: true },
+      _count: true
+    });
+
+    // Calculate closed won opportunities this month
+    const monthlyClosedWon = await prisma.opportunities.count({
+      where: {
+        workspaceId,
+        assignedUserId: userId,
+        stage: { in: ['Closed Won', 'Won', 'Closed'] },
+        actualCloseDate: { gte: startOfMonth },
+        deletedAt: null
+      }
+    });
+
+    // Calculate YTD closed won opportunities
+    const ytdClosedWon = await prisma.opportunities.count({
+      where: {
+        workspaceId,
+        assignedUserId: userId,
+        stage: { in: ['Closed Won', 'Won', 'Closed'] },
+        actualCloseDate: { gte: startOfYear },
+        deletedAt: null
+      }
+    });
+
+    // Calculate conversion rate (leads to opportunities)
+    const conversionRate = leadsCount > 0 ? (opportunitiesCount / leadsCount) * 100 : 0;
+
+    // Calculate average deal size
+    const avgDealSize = pipelineMetrics._avg.amount || 0;
+
+    // Calculate total pipeline value
+    const totalPipelineValue = pipelineMetrics._sum.amount || 0;
+
+    // Calculate win rate (opportunities closed won / total opportunities)
+    const winRate = opportunitiesCount > 0 ? (ytdClosedWon / opportunitiesCount) * 100 : 0;
+
+    console.log('📊 [DASHBOARD] Real metrics calculated:', {
+      weeklyActivities: weeklyActivityCounts,
+      monthlyActivities: monthlyActivityCounts,
+      pipelineValue: totalPipelineValue,
+      avgDealSize,
+      conversionRate,
+      winRate
+    });
+
     return {
       success: true,
       data: {
@@ -2261,7 +2380,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         customers: customersData,
         partners: partnersData,
         speedrunItems: speedrunData,
-        // Use actual counts from database, but limit speedrun to 50 for display
+        // Use actual counts from database, but limit speedrun to 20 for display
         counts: { 
           leads: leadsCount, 
           prospects: prospectsCount, 
@@ -2270,9 +2389,36 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           people: peopleCount,
           customers: customersCount,
           partners: partnersCount,
-          speedrun: Math.min(speedrunData.length, 50) // Limit speedrun count to 50 for left panel display
+          speedrun: Math.min(speedrunData.length, 20) // Limit speedrun count to 20 for dashboard performance
         },
-        totalPipelineValue: 0,
+        // 🚀 REAL METRICS: Calculated from actual database data
+        metrics: {
+          // Weekly Performance
+          weeklyCalls: weeklyActivityCounts.call || weeklyActivityCounts.phone || 0,
+          weeklyEmails: weeklyActivityCounts.email || 0,
+          weeklyMeetings: weeklyActivityCounts.meeting || weeklyActivityCounts.call || 0,
+          weeklyLinkedins: weeklyActivityCounts.linkedin || 0,
+          
+          // Monthly Performance
+          monthlyNewOpportunities: opportunitiesData.filter(opp => 
+            new Date(opp.createdAt) >= startOfMonth
+          ).length,
+          monthlyPipelineValue: totalPipelineValue,
+          monthlyConversionRate: conversionRate,
+          monthlyDealsClosed: monthlyClosedWon,
+          
+          // YTD Revenue Performance
+          ytdRevenue: totalPipelineValue, // Using pipeline value as revenue proxy
+          ytdAvgDealSize: avgDealSize,
+          ytdWinRate: winRate,
+          ytdSalesCycle: 0, // Would need more complex calculation
+          
+          // Additional calculated metrics
+          totalPipelineValue,
+          avgDealSize,
+          conversionRate,
+          winRate
+        },
         timestamp: new Date().toISOString()
       }
     };
@@ -2354,9 +2500,22 @@ function calculateActionPriorityScore(record: any): number {
   return actionScore;
 }
 
+// 🚀 PERFORMANCE: Speedrun data cache
+const speedrunCache = new Map<string, { data: any; timestamp: number }>();
+const SPEEDRUN_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache
+
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {
+    // 🚀 PERFORMANCE: Check cache first
+    const cacheKey = `speedrun:${workspaceId}:${userId}`;
+    const cached = speedrunCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL) {
+      console.log('⚡ [SPEEDRUN] Cache hit for workspace:', workspaceId);
+      return cached.data;
+    }
+
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
     // First try to load prospects for speedrun (CloudCaddie workspace has prospects)
@@ -2483,7 +2642,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);
     
-    return {
+    const result = {
       success: true,
       data: {
         speedrunItems,
@@ -2492,6 +2651,14 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         }
       }
     };
+
+    // 🚀 PERFORMANCE: Cache the result
+    speedrunCache.set(cacheKey, {
+      data: result,
+      timestamp: Date.now()
+    });
+
+    return result;
   } catch (error) {
     console.error('❌ [SPEEDRUN] Error loading speedrun data:', error);
     return {

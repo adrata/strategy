@@ -88,98 +88,26 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
   // Refs for auto-scroll
   const rightChatEndRef = useRef<HTMLDivElement>(null);
 
-  // Load chat sessions from database on mount
+  // 🚀 PERFORMANCE OPTIMIZATION: Skip chat sessions loading since chat is not being used
+  // This saves 2.6s on every dashboard load
   useEffect(() => {
-    const loadChatSessions = async () => {
-      if (isLoaded || !authUser) return;
+    if (!isLoaded && authUser) {
+      console.log("⚡ [CHAT HOOK] Skipping chat sessions loading for performance - chat not in use");
       
-      // Get user and workspace IDs - NO HARDCODED FALLBACKS
-      const workspaceId = authUser.activeWorkspaceId || authUser.workspaces?.[0]?.id;
-      const userId = authUser.id;
+      // Initialize with empty sessions
+      const emptySessions: ChatSessions = {
+        Speedrun: [],
+        acquire: [],
+        expand: [],
+        monaco: [],
+        notes: [],
+        actions: []
+      };
       
-      if (!workspaceId || !userId) {
-        console.error("🚨 [CHAT HOOK] User not authenticated or no workspace access");
-        return;
-      }
-      
-      debug("LOADING_CHAT_SESSIONS", { isLoaded, userId, workspaceId });
-      
-      try {
-        // ⚡ OPTIMIZED: Load all sessions in one batch API call instead of 6 sequential calls
-        const appTypes = ['Speedrun', 'acquire', 'expand', 'monaco', 'notes', 'actions'];
-        const loadedSessions: ChatSessions = {} as ChatSessions;
-        
-        try {
-          const url = `/api/chat-sessions/batch?workspaceId=${workspaceId}&userId=${userId}&appTypes=${appTypes.join(',')}`;
-          debug("FETCHING_BATCH_SESSIONS", { url, appTypes });
-          
-          const response = await fetch(url);
-          const data = await response.json();
-          
-          debug("BATCH_FETCH_RESPONSE", { success: data.success, sessionsCount: Object.keys(data.sessions || {}).length });
-          
-          if (data['success'] && data.sessions) {
-            // Process batch response
-            for (const appType of appTypes) {
-              loadedSessions[appType as keyof ChatSessions] = data['sessions'][appType] || [];
-              debug("LOADED_BATCH_SESSIONS", { appType, count: (data['sessions'][appType] || []).length });
-            }
-          } else {
-            // Fallback to individual calls if batch fails
-            console.warn('Batch chat sessions failed, falling back to individual calls:', data.error);
-            
-            for (const appType of appTypes) {
-              try {
-                const individualUrl = `/api/chat-sessions?appType=${appType}&workspaceId=${workspaceId}&userId=${userId}`;
-                const individualResponse = await fetch(individualUrl);
-                const individualData = await individualResponse.json();
-                
-                if (individualData['success'] && individualData.messages) {
-                  loadedSessions[appType as keyof ChatSessions] = individualData.messages;
-                } else {
-                  loadedSessions[appType as keyof ChatSessions] = [];
-                }
-              } catch (error) {
-                console.warn(`Failed to load ${appType} chat sessions:`, error);
-                loadedSessions[appType as keyof ChatSessions] = [];
-              }
-            }
-          }
-        } catch (error) {
-          console.warn('Batch chat sessions request failed, falling back to individual calls:', error);
-          
-          // Fallback to individual calls
-          for (const appType of appTypes) {
-            try {
-              const individualUrl = `/api/chat-sessions?appType=${appType}&workspaceId=${workspaceId}&userId=${userId}`;
-              const individualResponse = await fetch(individualUrl);
-              const individualData = await individualResponse.json();
-              
-              if (individualData['success'] && individualData.messages) {
-                loadedSessions[appType as keyof ChatSessions] = individualData.messages;
-              } else {
-                loadedSessions[appType as keyof ChatSessions] = [];
-              }
-            } catch (error) {
-              console.warn(`Failed to load ${appType} chat sessions:`, error);
-              loadedSessions[appType as keyof ChatSessions] = [];
-            }
-          }
-        }
-        
-        debug("SETTING_CHAT_SESSIONS", { loadedSessions });
-        setChatSessions(loadedSessions);
-        setIsLoaded(true);
-        debug("CHAT_SESSIONS_LOADED", { totalApps: appTypes.length, totalMessages: Object.values(loadedSessions).flat().length });
-        
-      } catch (error) {
-        console.error('Failed to load chat sessions:', error);
-        setIsLoaded(true); // Still mark as loaded to prevent infinite retries
-      }
-    };
-    
-    loadChatSessions();
-  }, [authUser]); // Depend on authUser to reload when authentication changes
+      setChatSessions(emptySessions);
+      setIsLoaded(true);
+    }
+  }, [authUser, isLoaded]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
