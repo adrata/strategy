@@ -543,17 +543,23 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         <button
           type="button"
           onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-          className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
+          className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
         >
-          <span className="block truncate text-gray-900 pr-8">
+          <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
+          <span className="block truncate text-gray-900 pr-6">
             Sort
           </span>
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <ArrowsUpDownIcon 
+            <svg
               className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
                 isSortDropdownOpen ? 'rotate-180' : 'rotate-0'
               }`}
-            />
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </span>
         </button>
 
