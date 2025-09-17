@@ -1110,11 +1110,11 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           background: #f9fafb;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb {
-          background: #9ca3af;
+          background: #6b7280;
           border-radius: 4px;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
-          background: #6b7280;
+          background: #4b5563;
         }
         
         /* Middle panel scrollbar styling */
@@ -1126,11 +1126,11 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           background: #f9fafb;
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb {
-          background: #e5e7eb;
+          background: #d1d5db;
           border-radius: 4px;
         }
         .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
-          background: #d1d5db;
+          background: #9ca3af;
         }
       `}</style>
       <div className="bg-[var(--background)] flex flex-col" style={{ 
