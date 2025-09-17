@@ -158,7 +158,7 @@ export function ChatInput({
           <div className="relative">
             <textarea
               ref={textareaRef}
-              placeholder="Think, brainstorm, win"
+              placeholder="Think, execute, repeat"
               rows={4}
               value={rightChatInput}
               onChange={e => {

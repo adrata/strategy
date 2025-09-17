@@ -103,31 +103,31 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Get workspace-specific column configuration
     const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
     
-    // Use workspace-specific column order if available, otherwise use defaults
-    if (sectionConfig.columnOrder) {
-      return sectionConfig.columnOrder;
+    // Use workspace-specific column display names if available, otherwise use defaults
+    if (sectionConfig.columns) {
+      return sectionConfig.columns;
     }
     
-    // Fallback to default configuration
+    // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'opportunities':
-        return ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
       case 'people':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
       case 'partners':
-        return ['rank', 'partner', 'type', 'relationship', 'strength', 'lastAction', 'actions'];
+        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action', 'Actions'];
       default:
-        return ['rank', 'company', 'name', 'title', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Actions'];
     }
   };
   

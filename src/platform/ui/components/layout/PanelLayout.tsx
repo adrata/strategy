@@ -55,7 +55,7 @@ export function PanelLayout({
   }, [rightPanelFlex, isHydrated]);
 
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
-  const dividerHitArea = 8; // Reduced for more precise cursor alignment
+  const dividerHitArea = 12; // Increased for better usability while maintaining precision
   const dividerLineWidth = 1;
   const dividerLineColor =
     dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)"; // Blue when dragging, gray when hovering

@@ -867,37 +867,66 @@ export function PipelineHeader({
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  {/* Unified Add Action Experience */}
-                  <UnifiedAddActionButton
-                    onAddAction={() => {
-                      setSelectedRecord(null);
-                      setShowAddActionModal(true);
-                    }}
-                    onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
-                    variant={section === 'speedrun' ? 'dropdown' : 'simple'}
-                    size="md"
-                  />
-                  
-                  {sectionInfo['actionButton'] && (
-                    <button 
-                      onClick={handleAction}
-                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-                    >
-                      {sectionInfo.actionButton}
-                    </button>
-                  )}
-                  {(sectionInfo as any).secondaryActionButton && (
-                    <button 
-                      onClick={() => {
-                        // Handle secondary action (Add Action for prospects)
-                        setSelectedRecord(null);
-                        setShowAddActionModal(true);
-                      }}
-                      disabled={loading}
-                      className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {(sectionInfo as any).secondaryActionButton}
-                    </button>
+                  {/* For prospects, show custom buttons; for others, show unified button */}
+                  {section === 'prospects' ? (
+                    <>
+                      {sectionInfo['actionButton'] && (
+                        <button 
+                          onClick={handleAction}
+                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                          {sectionInfo.actionButton}
+                        </button>
+                      )}
+                      {(sectionInfo as any).secondaryActionButton && (
+                        <button 
+                          onClick={() => {
+                            // Handle secondary action (Add Action for prospects)
+                            setSelectedRecord(null);
+                            setShowAddActionModal(true);
+                          }}
+                          disabled={loading}
+                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {(sectionInfo as any).secondaryActionButton}
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Unified Add Action Experience for other sections */}
+                      <UnifiedAddActionButton
+                        onAddAction={() => {
+                          setSelectedRecord(null);
+                          setShowAddActionModal(true);
+                        }}
+                        onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
+                        variant={section === 'speedrun' ? 'dropdown' : 'simple'}
+                        size="md"
+                      />
+                      
+                      {sectionInfo['actionButton'] && (
+                        <button 
+                          onClick={handleAction}
+                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                          {sectionInfo.actionButton}
+                        </button>
+                      )}
+                      {(sectionInfo as any).secondaryActionButton && (
+                        <button 
+                          onClick={() => {
+                            // Handle secondary action (Add Action for prospects)
+                            setSelectedRecord(null);
+                            setShowAddActionModal(true);
+                          }}
+                          disabled={loading}
+                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {(sectionInfo as any).secondaryActionButton}
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               )}
