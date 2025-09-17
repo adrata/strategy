@@ -142,11 +142,11 @@ export function TableRow({
   // Render based on section
   if (section === 'leads' || section === 'prospects') {
     return (
-      <tr 
-        key={record.id || index} 
-        className="cursor-pointer transition-colors hover:bg-gray-50 h-16"
-        onClick={handleRowClick}
-      >
+         <tr 
+           key={record.id || index} 
+           className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+           onClick={handleRowClick}
+         >
         {(() => {
           // Use workspace-specific column order for leads/prospects
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
@@ -268,10 +268,10 @@ export function TableRow({
 
   // Default rendering for other sections
   return (
-    <tr
-      className="cursor-pointer transition-colors hover:bg-gray-50 h-16"
-      onClick={handleRowClick}
-    >
+       <tr
+         className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+         onClick={handleRowClick}
+       >
       {headers.map((header, index) => {
         const isActionColumn = header === 'Actions';
         
