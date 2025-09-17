@@ -1126,6 +1126,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                 sortDirection={sortDirection}
                 visibleColumns={visibleColumns}
                 pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                isLoading={isLoading}
               />
             ) : (
               <PipelineTable
@@ -1153,6 +1154,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                 sortDirection={sortDirection}
                 visibleColumns={visibleColumns}
                 pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                isLoading={isLoading}
               />
             ) : (
               <PipelineTable

@@ -11,6 +11,7 @@ import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
+import { TableSkeleton } from './table/TableSkeleton';
 import { EditRecordModal } from './EditRecordModal';
 import { AddActionModal, ActionLogData } from './AddActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
@@ -39,6 +40,7 @@ interface PipelineTableProps {
   sortDirection?: 'asc' | 'desc';
   visibleColumns?: string[];
   pageSize?: number;
+  isLoading?: boolean;
 }
 
 // -------- Constants --------
@@ -103,6 +105,7 @@ export function PipelineTableRefactored({
   sortDirection,
   visibleColumns,
   pageSize = DEFAULT_PAGE_SIZE,
+  isLoading = false,
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns);
   
@@ -185,6 +188,17 @@ export function PipelineTableRefactored({
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+  
+  // Show skeleton loading state
+  if (isLoading) {
+    return (
+      <TableSkeleton 
+        section={section}
+        visibleColumns={visibleColumns}
+        rowCount={pageSize}
+      />
+    );
+  }
   
   return (
     <div 

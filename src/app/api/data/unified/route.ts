@@ -2219,9 +2219,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         currentStage: currentStage,
         stage: currentStage,
         // Add additional fields for table display
-        state: prospect.state || prospect.city || 'Unknown',
-        jobTitle: prospect.jobTitle || prospect.title || 'Unknown Title',
-        companyName: prospect.company || 'Unknown Company',
+        state: prospect.state || prospect.city || 'State',
+        jobTitle: prospect.jobTitle || prospect.title || 'Title',
+        companyName: prospect.company || 'Company',
         buyerGroupRole: prospect.buyerGroupRole || 'Stakeholder'
       };
     });
@@ -2454,8 +2454,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         lastName: record.lastName || 'Person',
         email: record.email || record.workEmail,
         phone: record.phone || record.workPhone || record.mobilePhone,
-        title: record.jobTitle || record.title || 'Unknown Title',
-        company: record.company || record.company?.name || 'Unknown Company',
+        title: record.jobTitle || record.title || 'Title',
+        company: record.company || record.company?.name || 'Company',
         location: record.city || record.state || record.country,
         status: record.status || 'new',
         priority: record.priority || 'high',
@@ -2475,9 +2475,9 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         currentStage: currentStage,
         // Add additional fields for table display
         stage: currentStage,
-        state: record.state || record.city || 'Unknown',
-        jobTitle: record.jobTitle || record.title || 'Unknown Title',
-        companyName: record.company || record.company?.name || 'Unknown Company'
+        state: record.state || record.city || 'State',
+        jobTitle: record.jobTitle || record.title || 'Title',
+        companyName: record.company || record.company?.name || 'Company'
       };
     });
     
