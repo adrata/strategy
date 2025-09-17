@@ -511,7 +511,13 @@ export function AIRightPanel() {
     }
   };
 
-  // Note: Removed auto-scroll behavior as requested
+  // Auto-scroll to bottom only on component mount (page load)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array = only on mount
 
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
