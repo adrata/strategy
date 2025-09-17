@@ -114,7 +114,7 @@ export function AIRightPanel() {
         console.warn('Failed to load saved AI model:', e);
       }
     }
-    return AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
+    return AI_MODELS.find(m => m.provider === 'Adrata') || AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
   });
 
   // Voice settings disabled for now
@@ -510,6 +510,17 @@ export function AIRightPanel() {
       }, 0);
     }
   };
+
+  // Auto-scroll to bottom instantly on component mount (no animation)
+  useEffect(() => {
+    if (chatEndRef.current) {
+      // Use instant scroll without animation
+      chatEndRef.current.scrollIntoView({ 
+        behavior: 'instant', 
+        block: 'end' 
+      });
+    }
+  }, []); // Only on mount
 
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1100,12 +1111,45 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
   }
 
   return (
-    <div className="bg-[var(--background)] flex flex-col" style={{ 
-      minWidth: '300px',
-      height: '100vh',
-      maxHeight: '100vh',
-      overflow: 'hidden'
-    }}>
+    <>
+      <style jsx>{`
+        .ai-panel-scroll::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-track {
+          background: #f9fafb;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-thumb {
+          background: #9ca3af;
+          border-radius: 4px;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background: #6b7280;
+        }
+        
+        /* Middle panel scrollbar styling */
+        .middle-panel-scroll::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-track {
+          background: #f9fafb;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 4px;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background: #d1d5db;
+        }
+      `}</style>
+      <div className="bg-[var(--background)] flex flex-col" style={{ 
+        minWidth: '300px',
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden'
+      }}>
       
       <ConversationHeader
         conversations={conversations}
@@ -1124,11 +1168,10 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-0 overflow-y-auto max-h-full" style={{ 
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
-          scrollBehavior: 'smooth'
+        <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
+          scrollBehavior: 'smooth',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#d1d5db #f9fafb'
         }}>
           
           {chatMessages['length'] === 0 && (
@@ -1187,6 +1230,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         scrollToBottom={scrollToBottom}
         chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
       />
-    </div>
+      </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTable';
+import { PipelineTableRefactored } from './PipelineTableRefactored';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
@@ -43,6 +44,9 @@ interface PipelineViewProps {
 // PERFORMANCE: Memoize component to prevent unnecessary re-renders
 export const PipelineView = React.memo(function PipelineView({ section }: PipelineViewProps) {
   console.log('🔍 [PipelineView] Component rendered for section:', section);
+  
+  // Feature flag to test refactored component
+  const USE_REFACTORED_TABLE = true; // Set to false to use old table
   
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
@@ -85,8 +89,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
-  const [sortField, setSortField] = useState<string>('rank');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  // Default sorting: prospects by oldest Last Action, others by rank
+  const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
   // Section-specific default visible columns with workspace-specific configuration
@@ -98,39 +103,47 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Get workspace-specific column configuration
     const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
     
-    // Use workspace-specific column order if available, otherwise use defaults
-    if (sectionConfig.columnOrder) {
-      return sectionConfig.columnOrder;
+    // Use workspace-specific column display names if available, otherwise use defaults
+    if (sectionConfig.columns) {
+      return sectionConfig.columns;
     }
     
-    // Fallback to default configuration
+    // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'opportunities':
-        return ['rank', 'name', 'account', 'amount', 'stage', 'probability', 'closeDate', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
       case 'people':
-        return ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'arr', 'healthScore', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
       case 'partners':
-        return ['rank', 'partner', 'type', 'relationship', 'strength', 'lastAction', 'actions'];
+        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action', 'Actions'];
       default:
-        return ['rank', 'company', 'name', 'title', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Actions'];
     }
   };
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
   
-  // Update visible columns when section changes
+  // Update visible columns and sort when section changes
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
+    // Reset sort to default for new section
+    if (section === 'prospects') {
+      setSortField('lastContactDate');
+      setSortDirection('asc'); // Oldest first
+    } else {
+      setSortField('rank');
+      setSortDirection('desc'); // Highest rank first
+    }
   }, [section]);
   
   // Monaco Signal popup state for Speedrun section
@@ -246,12 +259,20 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     clearCache: () => {} // Not needed with single data source
   };
   
+  // Set loading to false when data is available
+  useEffect(() => {
+    if (pipelineData.data !== undefined) {
+      setIsLoading(false);
+    }
+  }, [pipelineData.data]);
+  
   // Show data immediately - no loading states
   console.log(`🔍 [PIPELINE VIEW] Data state:`, {
     section,
     dataLength: pipelineData.data?.length || 0,
     error: pipelineData.error,
     isEmpty: pipelineData.isEmpty,
+    isLoading,
     acquisitionDataStructure: {
       hasAcquireData: !!acquisitionData?.acquireData,
       hasDirectData: !!acquisitionData && !acquisitionData.acquireData,
@@ -1114,30 +1135,60 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             />
           ) : section === 'speedrun' ? (
             // Always show speedrun table - no view switching needed
-            <PipelineTable
-              section={section}
-              data={filteredData || []}
-              onRecordClick={handleRecordClick}
-              onReorderRecords={() => {}}
-              onColumnSort={handleColumnSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              visibleColumns={visibleColumns}
-              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-            />
+            USE_REFACTORED_TABLE ? (
+              <PipelineTableRefactored
+                section={section}
+                data={filteredData || []}
+                onRecordClick={handleRecordClick}
+                onReorderRecords={() => {}}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                isLoading={isLoading}
+              />
+            ) : (
+              <PipelineTable
+                section={section}
+                data={filteredData || []}
+                onRecordClick={handleRecordClick}
+                onReorderRecords={() => {}}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            )
           ) : section === 'prospects' ? (
             // Prospects table with filtered data
-            <PipelineTable
-              section={section}
-              data={filteredData || []} // Use filtered data like other sections
-              onRecordClick={handleRecordClick}
-              onReorderRecords={handleReorderRecords}
-              onColumnSort={handleColumnSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              visibleColumns={visibleColumns}
-              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-            />
+            USE_REFACTORED_TABLE ? (
+              <PipelineTableRefactored
+                section={section}
+                data={filteredData || []} // Use filtered data like other sections
+                onRecordClick={handleRecordClick}
+                onReorderRecords={handleReorderRecords}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                isLoading={isLoading}
+              />
+            ) : (
+              <PipelineTable
+                section={section}
+                data={filteredData || []} // Use filtered data like other sections
+                onRecordClick={handleRecordClick}
+                onReorderRecords={handleReorderRecords}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            )
           ) : section === 'sellers' ? (
             // Buyer Group style design for Sellers
             <div className="bg-white rounded-lg border border-gray-200">

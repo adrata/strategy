@@ -240,19 +240,22 @@ export function PanelLayout({
           {/* Draggable Divider */}
           {isRightPanelVisible && (
             <div
+              className={`${hovering ? 'panel-divider-hover' : ''} ${dragging ? 'panel-divider-drag' : ''}`}
               style={{
                 position: "absolute",
                 top: 0,
-                right: -(dividerHitArea / 2),
+                right: 0, // Position at the exact edge of the middle panel
                 width: dividerHitArea,
                 height: "100%",
                 cursor: "col-resize",
                 zIndex: 30,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start", // Align the visual line to the left edge of hit area
                 background: "transparent",
                 pointerEvents: "auto",
+                transform: `translateX(-${dividerHitArea / 2}px)`, // Center the hit area on the panel edge
+                transition: "background 0.15s ease",
               }}
               onMouseDown={startDrag}
               onDoubleClick={() => setRightPanelFlex(0.4603)} // Reset to default ratio on double-click (35% wider)
@@ -296,6 +299,7 @@ export function PanelLayout({
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

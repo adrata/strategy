@@ -386,49 +386,50 @@ export function PipelineHeader({
         return {
           title: 'Leads',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Convert to prospects',
-          actionButton: '+ Add Lead'
+          actionButton: 'Add Lead'
         };
       case 'prospects':
         return {
           title: 'Prospects',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Create opportunity',
-          actionButton: '+ Add Prospect'
+          actionButton: 'Add Prospect',
+          secondaryActionButton: 'Add Action'
         };
       case 'opportunities':
         return {
           title: 'Opportunities',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Active opportunities',
-          actionButton: '+ Add Opportunity'
+          actionButton: 'Add Opportunity'
         };
       case 'companies':
         return {
           title: 'Companies',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
-          actionButton: '+ Add Company'
+          actionButton: 'Add Company'
         };
       case 'people':
         return {
           title: 'People',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'People',
-          actionButton: '+ Add Person'
+          actionButton: 'Add Person'
         };
       case 'customers':
         return {
           title: 'Customers',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: '+ Add Customer'
+          actionButton: 'Add Customer'
         };
       case 'clients':
         return {
           title: 'Clients',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: '+ Add Client'
+          actionButton: 'Add Client'
         };
       case 'partners':
         return {
           title: 'Partners',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Strategic alliances',
-          actionButton: '+ Add Partner'
+          actionButton: 'Add Partner'
         };
       case 'speedrun':
         return {
@@ -483,7 +484,7 @@ export function PipelineHeader({
         return {
           title: sectionTitle,
           subtitle: 'Pipeline data',
-          actionButton: '+ Add Record'
+          actionButton: 'Add Record'
         };
     }
   };
@@ -866,37 +867,66 @@ export function PipelineHeader({
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  {/* Unified Add Action Experience */}
-                  <UnifiedAddActionButton
-                    onAddAction={() => {
-                      setSelectedRecord(null);
-                      setShowAddActionModal(true);
-                    }}
-                    onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
-                    variant={section === 'speedrun' ? 'dropdown' : 'simple'}
-                    size="md"
-                  />
-                  
-                  {sectionInfo['actionButton'] && (
-                    <button 
-                      onClick={handleAction}
-                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
-                    >
-                      {sectionInfo.actionButton}
-                    </button>
-                  )}
-                  {(sectionInfo as any).secondaryActionButton && (
-                    <button 
-                      onClick={() => {
-                        // Handle secondary action (Add Opportunity for prospects)
-                        console.log('Secondary action clicked:', (sectionInfo as any).secondaryActionButton);
-                        // TODO: Implement secondary action handler
-                      }}
-                      disabled={loading}
-                      className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {(sectionInfo as any).secondaryActionButton}
-                    </button>
+                  {/* For prospects, show custom buttons; for others, show unified button */}
+                  {section === 'prospects' ? (
+                    <>
+                      {sectionInfo['actionButton'] && (
+                        <button 
+                          onClick={handleAction}
+                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                          {sectionInfo.actionButton}
+                        </button>
+                      )}
+                      {(sectionInfo as any).secondaryActionButton && (
+                        <button 
+                          onClick={() => {
+                            // Handle secondary action (Add Action for prospects)
+                            setSelectedRecord(null);
+                            setShowAddActionModal(true);
+                          }}
+                          disabled={loading}
+                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {(sectionInfo as any).secondaryActionButton}
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Unified Add Action Experience for other sections */}
+                      <UnifiedAddActionButton
+                        onAddAction={() => {
+                          setSelectedRecord(null);
+                          setShowAddActionModal(true);
+                        }}
+                        onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
+                        variant={section === 'speedrun' ? 'dropdown' : 'simple'}
+                        size="md"
+                      />
+                      
+                      {sectionInfo['actionButton'] && (
+                        <button 
+                          onClick={handleAction}
+                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                          {sectionInfo.actionButton}
+                        </button>
+                      )}
+                      {(sectionInfo as any).secondaryActionButton && (
+                        <button 
+                          onClick={() => {
+                            // Handle secondary action (Add Action for prospects)
+                            setSelectedRecord(null);
+                            setShowAddActionModal(true);
+                          }}
+                          disabled={loading}
+                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {(sectionInfo as any).secondaryActionButton}
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               )}

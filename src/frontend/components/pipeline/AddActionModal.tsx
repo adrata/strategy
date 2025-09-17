@@ -327,6 +327,7 @@ export function AddActionModal({
     { value: 'call', label: 'Phone Call' },
     { value: 'email', label: 'Email' },
     { value: 'meeting', label: 'Meeting' },
+    { value: 'add_prospect', label: 'Add Prospect' },
     { value: 'other', label: 'Other' }
   ];
 

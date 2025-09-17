@@ -30,8 +30,8 @@ const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['rank', 'company', 'state', 'lastAction', 'nextAction', 'actions']
     },
     prospects: {
-      columns: ['Rank', 'Company', 'Person', 'State', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'],
+      columns: ['Rank', 'Company', 'Person', 'State', 'Title', 'Last Action', 'Next Action'],
+      columnOrder: ['rank', 'company', 'person', 'state', 'title', 'lastAction', 'nextAction'],
       hiddenColumns: ['stage'] // Hide stage column
     },
     leads: {

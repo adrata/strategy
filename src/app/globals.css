@@ -733,3 +733,19 @@ button[class*="linkedin"]:hover:not(.no-override) {
   display: none;  /* Safari and Chrome */
 }
 
+/* Middle panel scrollbar styling */
+.middle-panel-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.middle-panel-scroll::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+.middle-panel-scroll::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+.middle-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
