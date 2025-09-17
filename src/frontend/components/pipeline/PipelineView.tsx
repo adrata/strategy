@@ -89,8 +89,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
-  const [sortField, setSortField] = useState<string>('rank');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  // Default sorting: prospects by oldest Last Action, others by rank
+  const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
   // Section-specific default visible columns with workspace-specific configuration
@@ -132,9 +133,17 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
   
-  // Update visible columns when section changes
+  // Update visible columns and sort when section changes
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
+    // Reset sort to default for new section
+    if (section === 'prospects') {
+      setSortField('lastContactDate');
+      setSortDirection('asc'); // Oldest first
+    } else {
+      setSortField('rank');
+      setSortDirection('desc'); // Highest rank first
+    }
   }, [section]);
   
   // Monaco Signal popup state for Speedrun section

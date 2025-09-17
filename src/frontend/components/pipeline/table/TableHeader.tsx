@@ -70,7 +70,7 @@ export function TableHeader({
           return (
             <th 
               key={header}
-              className={`px-6 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 h-8 border-b border-gray-200 ${
+              className={`px-6 py-1 text-left text-xs font-medium text-gray-500 tracking-wider bg-gray-50 h-8 border-b border-gray-200 ${
                 !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-100 transition-colors group' : ''
               }`}
               style={{ width: getColumnWidth(index) }}
