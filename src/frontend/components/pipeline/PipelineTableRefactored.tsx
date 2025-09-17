@@ -108,6 +108,7 @@ export function PipelineTableRefactored({
   isLoading = false,
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
+  console.log('🔍 [PipelineTableRefactored] Sample data:', data?.slice(0, 2));
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();
@@ -149,6 +150,13 @@ export function PipelineTableRefactored({
     setSortField,
     setSortDirection,
   } = usePipelineData({ data, pageSize });
+  
+  console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {
+    paginatedDataLength: paginatedData?.length,
+    currentPage,
+    totalPages,
+    totalItems
+  });
   
   const {
     editModalOpen,

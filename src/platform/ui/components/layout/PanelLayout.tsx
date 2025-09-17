@@ -55,7 +55,7 @@ export function PanelLayout({
   }, [rightPanelFlex, isHydrated]);
 
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
-  const dividerHitArea = 12; // Increased for better usability while maintaining precision
+  const dividerHitArea = 8; // Reduced for more precise cursor alignment
   const dividerLineWidth = 1;
   const dividerLineColor =
     dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)"; // Blue when dragging, gray when hovering
@@ -89,23 +89,13 @@ export function PanelLayout({
       const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
       const availableWidth = containerRect.width - leftPanelWidth;
       
-      // Calculate the current middle panel width based on current flex values
-      const currentMiddleFlex = 1; // Middle panel always has flex: 1
-      const currentRightFlex = rightPanelFlex;
-      const totalFlex = currentMiddleFlex + currentRightFlex;
-      const currentMiddleWidth = (currentMiddleFlex / totalFlex) * availableWidth;
-      
-      // Precise mouse tracking - account for exact cursor position relative to the divider
+      // Precise mouse tracking - account for exact cursor position
       const mouseX = e.clientX - containerRect.left - leftPanelWidth;
-      const dividerPosition = currentMiddleWidth; // Current position of the divider
+      const mouseRatio = Math.max(0, Math.min(1, mouseX / availableWidth));
       
-      // Calculate how much the mouse has moved from the divider position
-      const mouseOffset = mouseX - dividerPosition;
-      
-      // Convert mouse movement to flex ratio change
-      // Each pixel of movement should correspond to a proportional change in flex
-      const flexChangePerPixel = 0.01; // Adjust this value to control sensitivity
-      const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelFlex + (mouseOffset * flexChangePerPixel)));
+      // Calculate right panel flex more smoothly
+      const rightPanelRatio = Math.max(0.1, Math.min(0.9, 1 - mouseRatio));
+      const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
       
       setRightPanelFlex(newRightFlex);
     };
@@ -222,29 +212,10 @@ export function PanelLayout({
   }, [router, isDesktop]);
 
   return (
-    <>
-      <style jsx>{`
-        .dragging-panel-divider {
-          cursor: col-resize !important;
-          user-select: none !important;
-        }
-        
-        .dragging-panel-divider * {
-          pointer-events: none !important;
-        }
-        
-        .panel-divider-hover {
-          background: rgba(59, 130, 246, 0.1) !important;
-        }
-        
-        .panel-divider-drag {
-          background: rgba(59, 130, 246, 0.2) !important;
-        }
-      `}</style>
-      <div
-        className="w-screen h-screen overflow-hidden bg-[var(--background)]"
-        style={{ position: "relative" }}
-      >
+    <div
+      className="w-screen h-screen overflow-hidden bg-[var(--background)]"
+      style={{ position: "relative" }}
+    >
       <div ref={containerRef} className="flex h-full w-full relative">
         {/* Thin Left Panel */}
         {thinLeftPanel && (

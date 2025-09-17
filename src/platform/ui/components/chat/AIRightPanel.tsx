@@ -511,7 +511,16 @@ export function AIRightPanel() {
     }
   };
 
-  // Note: Removed auto-scroll behavior - chat should stay at bottom naturally
+  // Auto-scroll to bottom instantly on component mount (no animation)
+  useEffect(() => {
+    if (chatEndRef.current) {
+      // Use instant scroll without animation
+      chatEndRef.current.scrollIntoView({ 
+        behavior: 'instant', 
+        block: 'end' 
+      });
+    }
+  }, []); // Only on mount
 
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
