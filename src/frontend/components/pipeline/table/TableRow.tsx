@@ -167,7 +167,7 @@ export function TableRow({
               case 'company':
                 return (
                   <td key="company" className={textClasses}>
-                    <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || '-'}</div>
+                    <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || 'Company'}</div>
                   </td>
                 );
               case 'person':
@@ -179,13 +179,13 @@ export function TableRow({
               case 'state':
                 return (
                   <td key="state" className={textClasses}>
-                    <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
+                    <div className="truncate max-w-32">{record['state'] || record['location'] || 'State'}</div>
                   </td>
                 );
               case 'title':
                 return (
                   <td key="title" className={textClasses}>
-                    <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || '-'}</div>
+                    <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || 'Title'}</div>
                   </td>
                 );
               case 'nextAction':
@@ -285,7 +285,7 @@ export function TableRow({
               </div>
             ) : (
               <div className="text-sm text-gray-900 truncate">
-                {String(record[header.toLowerCase()] || record[header] || '')}
+                {String(record[header.toLowerCase()] || record[header] || header)}
               </div>
             )}
           </td>
