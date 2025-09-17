@@ -441,12 +441,15 @@ const companyName = firstCompany?.name ?? 'Unknown';
 - **Type Checking** - ULTRA-STRICT TypeScript with zero tolerance policy
 - **Testing** - 90%+ coverage for critical paths
 
-### Git Workflow
-- **Branch Strategy** - Feature branches from `develop`
+### Git Workflow (Git Flow)
+- **Branch Strategy** - Git Flow: `main` (production) → `staging` (testing) → `develop` (development)
+- **Daily Work** - ALL development work happens on `develop` branch first
+- **Deployment Flow** - `develop` → `staging` (test) → `main` (production)
 - **Commit Convention** - Conventional commits with semantic versioning
 - **Pre-commit Hooks** - MANDATORY: Lint, type-check, and test before commit
 - **CI/CD** - Automated testing and deployment pipeline
 - **CRITICAL: Git Commit Safety** - NEVER use multi-line commit messages in terminal commands. Always use single-line commits with -m flag to prevent terminal hanging. If long message needed, use multiple -m flags or commit in separate steps.
+- **MANDATORY: Develop-First** - NEVER commit directly to `main` or `staging`. ALL changes must go through `develop` first.
 
 ### Development Environment
 - **Cross-Platform** - Ensure consistency across macOS, Windows, Linux
