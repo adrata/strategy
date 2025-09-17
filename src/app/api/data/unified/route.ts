@@ -284,8 +284,8 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     const realLeads = matchGroupPeople.map((person, index) => ({
       id: ulid(), // Generate proper ULID
       fullName: person.name,
-      firstName: person.name.split(' ')[0] || 'Unknown',
-      lastName: person.name.split(' ').slice(1).join(' ') || 'Person',
+      firstName: person.name.split(' ')[0] || 'First',
+      lastName: person.name.split(' ').slice(1).join(' ') || 'Last',
       name: person.name, // Add name field for consistency
       email: person.email,
       company: 'Match Group',
@@ -308,8 +308,8 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       .map((person, index) => ({
         id: ulid(), // Generate proper ULID
         fullName: person.name,
-        firstName: person.name.split(' ')[0] || 'Unknown',
-        lastName: person.name.split(' ').slice(1).join(' ') || 'Person',
+        firstName: person.name.split(' ')[0] || 'First',
+        lastName: person.name.split(' ').slice(1).join(' ') || 'Last',
         name: person.name, // Add name field for consistency
         email: person.email,
         company: 'Brex',
@@ -1064,8 +1064,8 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     });
     
     // Ensure required fields have defaults - these are required by the schema
-    if (!createData.firstName) createData['firstName'] = 'Unknown';
-    if (!createData.lastName) createData['lastName'] = 'Person';
+    if (!createData.firstName) createData['firstName'] = 'First';
+    if (!createData.lastName) createData['lastName'] = 'Last';
     if (!createData.fullName) createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
     
     // Ensure updatedAt is set
@@ -2153,10 +2153,10 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     // Transform data to ensure consistent field mapping
     const transformedLeads = leadsData.map(lead => ({
       ...lead,
-      name: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown',
+      name: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Name',
       // Ensure firstName and lastName are available for display logic
-      firstName: lead.firstName || lead.fullName?.split(' ')[0] || 'Unknown',
-      lastName: lead.lastName || lead.fullName?.split(' ').slice(1).join(' ') || 'Person'
+      firstName: lead.firstName || lead.fullName?.split(' ')[0] || 'First',
+      lastName: lead.lastName || lead.fullName?.split(' ').slice(1).join(' ') || 'Last'
     }));
     
     const transformedProspects = prospectsData.map(prospect => {
@@ -2205,10 +2205,10 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       
       return {
         ...prospect,
-        name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unknown',
+        name: prospect.fullName || `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Name',
         // Ensure firstName and lastName are available for display logic
-        firstName: prospect.firstName || prospect.fullName?.split(' ')[0] || 'Unknown',
-        lastName: prospect.lastName || prospect.fullName?.split(' ').slice(1).join(' ') || 'Person',
+        firstName: prospect.firstName || prospect.fullName?.split(' ')[0] || 'First',
+        lastName: prospect.lastName || prospect.fullName?.split(' ').slice(1).join(' ') || 'Last',
         // Add complete action fields
         lastAction: lastAction,
         lastActionDate: lastContactDate,
@@ -2448,10 +2448,10 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       return {
         id: record.id,
         // Handle both prospects and people data structures
-        name: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
-        fullName: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown Person',
-        firstName: record.firstName || 'Unknown',
-        lastName: record.lastName || 'Person',
+        name: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
+        fullName: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
+        firstName: record.firstName || 'First',
+        lastName: record.lastName || 'Last',
         email: record.email || record.workEmail,
         phone: record.phone || record.workPhone || record.mobilePhone,
         title: record.jobTitle || record.title || 'Title',

@@ -250,12 +250,20 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     clearCache: () => {} // Not needed with single data source
   };
   
+  // Set loading to false when data is available
+  useEffect(() => {
+    if (pipelineData.data !== undefined) {
+      setIsLoading(false);
+    }
+  }, [pipelineData.data]);
+  
   // Show data immediately - no loading states
   console.log(`🔍 [PIPELINE VIEW] Data state:`, {
     section,
     dataLength: pipelineData.data?.length || 0,
     error: pipelineData.error,
     isEmpty: pipelineData.isEmpty,
+    isLoading,
     acquisitionDataStructure: {
       hasAcquireData: !!acquisitionData?.acquireData,
       hasDirectData: !!acquisitionData && !acquisitionData.acquireData,
