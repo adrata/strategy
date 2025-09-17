@@ -647,7 +647,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
       {/* Timezone Filter removed per user request */}
 
-
     </div>
   );
 }

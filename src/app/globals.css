@@ -742,10 +742,10 @@ button[class*="linkedin"]:hover:not(.no-override) {
   background: #f9fafb;
 }
 .middle-panel-scroll::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #e5e7eb;
   border-radius: 4px;
 }
 .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #d1d5db;
 }
 
