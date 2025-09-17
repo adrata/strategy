@@ -511,13 +511,7 @@ export function AIRightPanel() {
     }
   };
 
-  // Auto-scroll to bottom only on component mount (page load)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []); // Empty dependency array = only on mount
+  // Note: Removed auto-scroll behavior - chat should stay at bottom naturally
 
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {

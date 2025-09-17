@@ -107,7 +107,7 @@ export function PipelineTableRefactored({
   pageSize = DEFAULT_PAGE_SIZE,
   isLoading = false,
 }: PipelineTableProps) {
-  console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns);
+  console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();

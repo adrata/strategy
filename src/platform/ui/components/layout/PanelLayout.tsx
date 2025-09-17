@@ -89,13 +89,23 @@ export function PanelLayout({
       const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
       const availableWidth = containerRect.width - leftPanelWidth;
       
-      // Precise mouse tracking - account for exact cursor position
-      const mouseX = e.clientX - containerRect.left - leftPanelWidth;
-      const mouseRatio = Math.max(0, Math.min(1, mouseX / availableWidth));
+      // Calculate the current middle panel width based on current flex values
+      const currentMiddleFlex = 1; // Middle panel always has flex: 1
+      const currentRightFlex = rightPanelFlex;
+      const totalFlex = currentMiddleFlex + currentRightFlex;
+      const currentMiddleWidth = (currentMiddleFlex / totalFlex) * availableWidth;
       
-      // Calculate right panel flex more smoothly
-      const rightPanelRatio = Math.max(0.1, Math.min(0.9, 1 - mouseRatio));
-      const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
+      // Precise mouse tracking - account for exact cursor position relative to the divider
+      const mouseX = e.clientX - containerRect.left - leftPanelWidth;
+      const dividerPosition = currentMiddleWidth; // Current position of the divider
+      
+      // Calculate how much the mouse has moved from the divider position
+      const mouseOffset = mouseX - dividerPosition;
+      
+      // Convert mouse movement to flex ratio change
+      // Each pixel of movement should correspond to a proportional change in flex
+      const flexChangePerPixel = 0.01; // Adjust this value to control sensitivity
+      const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelFlex + (mouseOffset * flexChangePerPixel)));
       
       setRightPanelFlex(newRightFlex);
     };
@@ -212,10 +222,29 @@ export function PanelLayout({
   }, [router, isDesktop]);
 
   return (
-    <div
-      className="w-screen h-screen overflow-hidden bg-[var(--background)]"
-      style={{ position: "relative" }}
-    >
+    <>
+      <style jsx>{`
+        .dragging-panel-divider {
+          cursor: col-resize !important;
+          user-select: none !important;
+        }
+        
+        .dragging-panel-divider * {
+          pointer-events: none !important;
+        }
+        
+        .panel-divider-hover {
+          background: rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        .panel-divider-drag {
+          background: rgba(59, 130, 246, 0.2) !important;
+        }
+      `}</style>
+      <div
+        className="w-screen h-screen overflow-hidden bg-[var(--background)]"
+        style={{ position: "relative" }}
+      >
       <div ref={containerRef} className="flex h-full w-full relative">
         {/* Thin Left Panel */}
         {thinLeftPanel && (
@@ -240,19 +269,22 @@ export function PanelLayout({
           {/* Draggable Divider */}
           {isRightPanelVisible && (
             <div
+              className={`${hovering ? 'panel-divider-hover' : ''} ${dragging ? 'panel-divider-drag' : ''}`}
               style={{
                 position: "absolute",
                 top: 0,
-                right: -(dividerHitArea / 2),
+                right: 0, // Position at the exact edge of the middle panel
                 width: dividerHitArea,
                 height: "100%",
                 cursor: "col-resize",
                 zIndex: 30,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start", // Align the visual line to the left edge of hit area
                 background: "transparent",
                 pointerEvents: "auto",
+                transform: `translateX(-${dividerHitArea / 2}px)`, // Center the hit area on the panel edge
+                transition: "background 0.15s ease",
               }}
               onMouseDown={startDrag}
               onDoubleClick={() => setRightPanelFlex(0.4603)} // Reset to default ratio on double-click (35% wider)
@@ -296,6 +328,7 @@ export function PanelLayout({
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
