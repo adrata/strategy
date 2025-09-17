@@ -215,11 +215,17 @@ export function TableRow({
                       {(() => {
                         const lastActionDate = record.lastActionDate || record.lastContactDate || record.lastContact;
                         const timing = getRealtimeActionTiming(lastActionDate);
+                        const actionText = record.lastAction || record.lastActionDescription || 'No action';
                         
                         return (
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
-                            {timing.text}
-                          </span>
+                          <>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
+                              {timing.text}
+                            </span>
+                            <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                              {actionText}
+                            </span>
+                          </>
                         );
                       })()}
                     </div>
