@@ -511,6 +511,19 @@ export function AIRightPanel() {
     }
   };
 
+  // Auto-scroll to bottom on component mount and when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages, activeConversationId]);
+
+  // Auto-scroll to bottom when component first mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);

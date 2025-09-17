@@ -58,6 +58,9 @@ export function TableHeader({
   onColumnSort, 
   getColumnWidth 
 }: TableHeaderProps) {
+  // Debug: Log headers to see what's being passed
+  console.log('🔍 [TableHeader] Headers received:', headers);
+  
   return (
     <thead className="sticky top-0 z-10">
       <tr>
@@ -77,7 +80,7 @@ export function TableHeader({
               onClick={() => !isActionColumn && onColumnSort?.(header)}
             >
               <div className="flex items-center justify-between">
-                <span>{isActionColumn ? '' : header}</span>
+                <span style={{ wordSpacing: 'normal' }}>{isActionColumn ? '' : header}</span>
                 {!isActionColumn && onColumnSort && (
                   <div className="flex items-center ml-2">
                     {isCurrentSort ? (
