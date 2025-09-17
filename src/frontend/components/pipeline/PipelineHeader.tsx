@@ -385,8 +385,9 @@ export function PipelineHeader({
       case 'leads':
         return {
           title: 'Leads',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Convert to prospects',
-          actionButton: 'Add Lead'
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Warm relationships',
+          actionButton: 'Add Lead',
+          secondaryActionButton: 'Add Action'
         };
       case 'prospects':
         return {
@@ -398,26 +399,30 @@ export function PipelineHeader({
       case 'opportunities':
         return {
           title: 'Opportunities',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Active opportunities',
-          actionButton: 'Add Opportunity'
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Real pipeline',
+          actionButton: 'Add Opportunity',
+          secondaryActionButton: 'Add Action'
         };
       case 'companies':
         return {
           title: 'Companies',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
-          actionButton: 'Add Company'
+          actionButton: 'Add Company',
+          secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
           title: 'People',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'People',
-          actionButton: 'Add Person'
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Individual entities',
+          actionButton: 'Add Person',
+          secondaryActionButton: 'Add Action'
         };
       case 'customers':
         return {
           title: 'Customers',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: 'Add Customer'
+          actionButton: 'Add Customer',
+          secondaryActionButton: 'Add Action'
         };
       case 'clients':
         return {
@@ -435,7 +440,8 @@ export function PipelineHeader({
         return {
           title: 'Speedrun',
           subtitle: 'Win more, faster',
-          actionButton: null,
+          actionButton: 'Add Person',
+          secondaryActionButton: 'Add Action',
           showStartSpeedrun: true
         };
       case 'dashboard':
@@ -513,7 +519,7 @@ export function PipelineHeader({
       
       switch (currentView) {
         case 'sales_actions':
-          // Sales Actions view - show time-based progress with dynamic goals
+          // Sales Actions view - show only 3 key metrics
           metricItems.push({
             label: 'Hours Left',
             value: formatHours(timeData.hoursLeft),
@@ -534,11 +540,7 @@ export function PipelineHeader({
             isProgress: true,
             color: 'text-gray-900'
           });
-          metricItems.push({
-            label: 'All Time',
-            value: timeData.allTimeRecord.toString(),
-            color: 'text-gray-900'
-          });
+          // Removed 'All Time' to show only 3 stats
           break;
 
         case 'prospects':
@@ -762,9 +764,9 @@ export function PipelineHeader({
         }).length : 0;
         
         metricItems.push({
-          label: 'Active',
-          value: totalCount.toString(),
-          color: 'text-gray-900'
+          label: 'Actions',
+          value: overdueActions.toString(),
+          color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
         });
         
         metricItems.push({
@@ -774,15 +776,9 @@ export function PipelineHeader({
         });
         
         metricItems.push({
-          label: 'Overdue',
-          value: overdueActions.toString(),
-          color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
-        });
-        
-        metricItems.push({
-          label: 'Recent',
-          value: recentActivity.toString(),
-          color: 'text-blue-600'
+          label: 'Prospects',
+          value: totalCount.toString(),
+          color: 'text-gray-900'
         });
       } else {
         // Use recordCount for all other sections
@@ -922,8 +918,8 @@ export function PipelineHeader({
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  {/* For prospects, show custom buttons; for others, show unified button */}
-                  {section === 'prospects' ? (
+                  {/* For prospects, leads, opportunities, companies, people, customers, and speedrun, show custom buttons; for others, show unified button */}
+                  {section === 'prospects' || section === 'leads' || section === 'opportunities' || section === 'companies' || section === 'people' || section === 'customers' || section === 'speedrun' ? (
                     <>
                       {sectionInfo['actionButton'] && (
                         <button 
@@ -936,7 +932,7 @@ export function PipelineHeader({
                       {(sectionInfo as any).secondaryActionButton && (
                         <button 
                           onClick={() => {
-                            // Handle secondary action (Add Action for prospects)
+                            // Handle secondary action (Add Action for prospects and speedrun)
                             setSelectedRecord(null);
                             setShowAddActionModal(true);
                           }}
@@ -958,6 +954,7 @@ export function PipelineHeader({
                         onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
                         variant={section === 'speedrun' ? 'dropdown' : 'simple'}
                         size="md"
+                        color={section === 'speedrun' ? 'blue' : 'red'}
                       />
                       
                       {sectionInfo['actionButton'] && (

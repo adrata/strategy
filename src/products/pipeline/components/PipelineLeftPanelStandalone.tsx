@@ -701,7 +701,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : productionCounts.partners,
-      visible: isDemoMode ? demoModeVisibility.isPartnersVisible : (isPartnersVisible ?? true)
+      visible: false // Hidden as requested
     },
     {
       id: "people",

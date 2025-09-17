@@ -104,12 +104,23 @@ function getNextActionTiming(record: PipelineRecord) {
   }
 }
 
-function getTableHeaders(visibleColumns?: string[]): string[] {
+function getTableHeaders(visibleColumns?: string[], section?: string): string[] {
   if (visibleColumns && visibleColumns.length > 0) {
     return visibleColumns;
   }
   
-  // Default headers based on section
+  // Section-specific headers
+  if (section === 'speedrun') {
+    return [
+      'Rank',
+      'Person',
+      'Stage',
+      'Last Action',
+      'Next Action'
+    ];
+  }
+  
+  // Default headers for other sections
   const defaultHeaders = [
     'Rank',
     'Company',
@@ -124,14 +135,13 @@ function getTableHeaders(visibleColumns?: string[]): string[] {
     'Industry',
     'Email',
     'Phone',
-    'Actions',
   ];
   
   return defaultHeaders;
 }
 
 // -------- Main Component --------
-export function PipelineTableRefactored({
+export function PipelineTable({
   section,
   data,
   onRecordClick,
@@ -152,28 +162,25 @@ export function PipelineTableRefactored({
   const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
   
   // Get table headers
-  const headers = getTableHeaders(visibleColumns);
+  const headers = getTableHeaders(visibleColumns, section);
   
-  // Dynamic height calculation (same as original table)
+  // Dynamic height calculation - align with AI chat panel bottom
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 600; // Reserve 160px for other UI elements
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 187.5 : 600; // Reserve space below table to align with chat panel
   
-  // Dynamic height calculation based on content size
+  // Dynamic height calculation - align with chat panel
   let tableHeight;
   if (data.length === 0) {
-    // Empty state - use minimal height
-    tableHeight = 120;
-  } else if (data.length === 1) {
-    // Single record - use content height with just enough buffer to avoid scroll
-    tableHeight = contentHeight + 12;
-  } else if (data.length <= 3) {
-    // Small datasets - use content height with moderate buffer
-    tableHeight = contentHeight + 16;
+    // Empty state - use moderate height
+    tableHeight = 200;
+  } else if (data.length <= 10) {
+    // Small to medium datasets - use content height with small buffer to match AI panel
+    tableHeight = contentHeight + 20; // Slightly taller to match AI right panel
   } else {
-    // Larger datasets - use viewport constraint
-    tableHeight = Math.min(contentHeight, maxViewportHeight);
+    // Larger datasets - use viewport height to fill available space and align with chat panel
+    tableHeight = maxViewportHeight;
   }
   
   // Use custom hooks for data and actions
@@ -281,12 +288,7 @@ export function PipelineTableRefactored({
     >
       {/* Table container */}
       <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
-        <table className="min-w-full table-fixed border-collapse mb-0">
-          <colgroup>
-            {headers.map((_, index) => (
-              <col key={index} style={{ width: getColumnWidth(index) }} />
-            ))}
-          </colgroup>
+        <table className="w-full table-auto border-collapse mb-0">
           
           {/* Table header */}
           <TableHeader
@@ -325,7 +327,6 @@ export function PipelineTableRefactored({
                   onClick={() => onRecordClick(record)}
                 >
                   {headers.map((header, headerIndex) => {
-                    const isActionColumn = header === 'Actions';
                     let cellContent = '';
                     
                     // Simple cell content mapping
@@ -334,16 +335,16 @@ export function PipelineTableRefactored({
                         cellContent = String(index + 1);
                         break;
                       case 'company':
-                        cellContent = record['company'] || record['companyName'] || record['organization'] || 'Unknown Company';
+                        cellContent = record['company'] || record['companyName'] || record['organization'] || 'Company';
                         break;
                       case 'person':
-                        cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Unknown Person';
+                        cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Person';
                         break;
                       case 'state':
-                        cellContent = record['state'] || record['status'] || record['location'] || 'Unknown';
+                        cellContent = record['state'] || record['status'] || record['location'] || 'State';
                         break;
                       case 'title':
-                        cellContent = record['title'] || record['jobTitle'] || record['position'] || 'Unknown Title';
+                        cellContent = record['title'] || record['jobTitle'] || record['position'] || 'Title';
                         break;
                       case 'last action':
                         cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';
@@ -352,28 +353,17 @@ export function PipelineTableRefactored({
                         cellContent = record['nextAction'] || record['nextActionDescription'] || 'No action planned';
                         break;
                       default:
-                        cellContent = String(record[header.toLowerCase()] || record[header] || '');
+                        const value = record[header.toLowerCase()] || record[header];
+                        cellContent = value ? String(value) : '';
                     }
                     
                     return (
                       <td
                         key={`${record.id}-${header}`}
-                        className={isActionColumn ? "px-2 py-4 whitespace-nowrap w-10 text-center" : "px-6 py-3 whitespace-nowrap text-sm text-gray-900"}
+                        className="px-6 py-3 whitespace-nowrap text-sm text-gray-900"
                         style={{ width: getColumnWidth(headerIndex) }}
                       >
-                        {isActionColumn ? (
-                          <div className="flex justify-center">
-                            <button
-                              className="text-blue-600 hover:text-blue-800 text-sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAddAction(record);
-                              }}
-                            >
-                              Action
-                            </button>
-                          </div>
-                        ) : header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
+                        {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
                           <div className="flex items-center gap-2">
                             {(() => {
                               const timing = header.toLowerCase() === 'last action' 

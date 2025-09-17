@@ -9,6 +9,7 @@ interface UnifiedAddActionButtonProps {
   variant?: 'dropdown' | 'simple';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  color?: 'red' | 'blue';
 }
 
 export function UnifiedAddActionButton({ 
@@ -16,7 +17,8 @@ export function UnifiedAddActionButton({
   onAddNote, 
   variant = 'simple',
   size = 'md',
-  className = ''
+  className = '',
+  color = 'red'
 }: UnifiedAddActionButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -26,7 +28,11 @@ export function UnifiedAddActionButton({
     lg: 'px-6 py-3 text-base'
   };
 
-  const baseClasses = `bg-red-600 text-white border border-red-600 rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
+  const colorClasses = color === 'blue' 
+    ? 'bg-blue-600 text-white border border-blue-600 hover:bg-blue-700'
+    : 'bg-red-600 text-white border border-red-600 hover:bg-red-700';
+  
+  const baseClasses = `${colorClasses} rounded-lg font-medium transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
 
   if (variant === 'dropdown' && onAddNote) {
     return (

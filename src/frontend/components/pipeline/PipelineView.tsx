@@ -3,12 +3,12 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTable';
-import { PipelineTableRefactored } from './PipelineTableRefactored';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
 import { MetricsDashboard } from './MetricsDashboard';
 import { Dashboard } from './Dashboard';
+import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { useUnifiedAuth } from '@/platform/auth-unified';
@@ -45,8 +45,6 @@ interface PipelineViewProps {
 export const PipelineView = React.memo(function PipelineView({ section }: PipelineViewProps) {
   console.log('🔍 [PipelineView] Component rendered for section:', section);
   
-  // Feature flag to test refactored component
-  const USE_REFACTORED_TABLE = true; // Set to false to use old table
   
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
@@ -233,7 +231,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'sellers': return acquireData.sellers || [];
       case 'speedrun': 
         const speedrunData = acquireData.speedrunItems || [];
-        console.log('🔍 [SPEEDRUN DEBUG] Speedrun data:', {
+        console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
+          hasAcquireData: !!acquireData,
+          acquireDataKeys: Object.keys(acquireData),
+          speedrunItemsExists: !!acquireData.speedrunItems,
           dataLength: speedrunData.length,
           sampleRecord: speedrunData[0] ? {
             id: speedrunData[0].id,
@@ -1108,9 +1109,6 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-500 p-6">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl text-gray-400">🔍</span>
-              </div>
               <h4 className="text-lg font-medium text-gray-900 mb-2">
                 No results found
               </h4>
@@ -1120,88 +1118,66 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             </div>
           </div>
         ) : !hasData && !error && section !== 'opportunities' && workspaceId && userId ? (
-          // Show table with "Add first record" message for empty lists (except opportunities)
-          <PipelineTable
-            section={section}
-            data={[{
-              id: 'empty-placeholder',
-              name: `No ${section.toLowerCase()} yet.`,
-              actionText: `Add one today`,
-              isPlaceholder: true
-            } as any]}
-            onRecordClick={handleAddRecord}
-            onReorderRecords={section === 'speedrun' ? (() => {}) : handleReorderRecords}
-            onColumnSort={handleColumnSort}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            visibleColumns={visibleColumns}
-            pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-          />
+          // Show simple centered empty state instead of table with placeholder
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center p-6" style={{ marginTop: '-40px' }}>
+              <h4 className="text-lg font-medium text-black mb-2">
+                No {section} yet
+              </h4>
+              <p className="text-sm text-black max-w-sm mb-4">
+                {section === 'leads' ? 'Start building your warm relationships by adding your first lead.' :
+                 section === 'prospects' ? 'Begin your outreach by adding prospects to your pipeline.' :
+                 section === 'customers' ? 'Track your successful relationships and customer success.' :
+                 section === 'people' ? 'Build your network by adding people to your database.' :
+                 section === 'companies' ? 'Expand your company intelligence by adding organizations.' :
+                 `Add your first ${section.slice(0, -1)} to get started.`}
+              </p>
+              <button
+                onClick={handleAddRecord}
+                className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+              >
+                Add {section === 'people' ? 'Person' : section === 'companies' ? 'Company' : section.slice(0, -1)}
+              </button>
+            </div>
+          </div>
         ) : (
           // Data view - Different content types based on section
-          section === 'opportunities' ? (
-            <OpportunitiesKanban
-              data={(filteredData || []) as any[]} // Type assertion for compatibility
-              onRecordClick={handleRecordClick}
-            />
-          ) : section === 'speedrun' ? (
-            // Always show speedrun table - no view switching needed
-            USE_REFACTORED_TABLE ? (
-              <PipelineTableRefactored
-                section={section}
-                data={filteredData || []}
+          <>
+            {section === 'opportunities' ? (
+              <OpportunitiesKanban
+                data={(filteredData || []) as any[]} // Type assertion for compatibility
                 onRecordClick={handleRecordClick}
-                onReorderRecords={() => {}}
-                onColumnSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                visibleColumns={visibleColumns}
-                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-                isLoading={isLoading}
               />
-            ) : (
+            ) : section === 'speedrun' ? (
+              // Always show speedrun table - no view switching needed
               <PipelineTable
-                section={section}
-                data={filteredData || []}
-                onRecordClick={handleRecordClick}
-                onReorderRecords={() => {}}
-                onColumnSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                visibleColumns={visibleColumns}
-                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-              />
-            )
-          ) : section === 'prospects' ? (
-            // Prospects table with filtered data
-            USE_REFACTORED_TABLE ? (
-              <PipelineTableRefactored
-                section={section}
-                data={filteredData || []} // Use filtered data like other sections
-                onRecordClick={handleRecordClick}
-                onReorderRecords={handleReorderRecords}
-                onColumnSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                visibleColumns={visibleColumns}
-                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-                isLoading={isLoading}
-              />
-            ) : (
-              <PipelineTable
-                section={section}
-                data={filteredData || []} // Use filtered data like other sections
-                onRecordClick={handleRecordClick}
-                onReorderRecords={handleReorderRecords}
-                onColumnSort={handleColumnSort}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                visibleColumns={visibleColumns}
-                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-              />
-            )
-          ) : section === 'sellers' ? (
-            // Buyer Group style design for Sellers
+                  section={section}
+                  data={filteredData || []}
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={() => {}}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                  isLoading={isLoading}
+                />
+              ) : section === 'prospects' ? (
+                // Prospects table with filtered data
+                <PipelineTable
+                  section={section}
+                  data={filteredData || []} // Use filtered data like other sections
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={handleReorderRecords}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                  isLoading={isLoading}
+                />
+              ) : section === 'sellers' ? (
+                // Buyer Group style design for Sellers
             <div className="bg-white rounded-lg border border-gray-200">
               {/* Header Section */}
               <div className="p-6 border-b border-gray-200">
@@ -1242,7 +1218,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               
               {/* Sellers List */}
               <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
-                {filteredData?.map((seller: any, index: number) => {
+                {filteredData?.filter(seller => seller != null).map((seller: any, index: number) => {
                   // Seller data matching the buyer group style
                   const sellerData = [
                     {
@@ -1303,7 +1279,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   
                   return (
                     <div
-                      key={seller.id || index}
+                      key={seller?.id || `seller-${index}`}
                       onClick={() => handleRecordClick(seller)}
                       className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
                     >
@@ -1379,7 +1355,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               visibleColumns={visibleColumns}
               pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
             />
-          )
+          )}
+          </>
         )}
       </div>
     </div>

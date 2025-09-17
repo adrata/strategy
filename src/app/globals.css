@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import centralized scrollbar styling */
+@import '../platform/styles/scrollbar.css';
+
 /* FIRST PRINCIPLES: Minimal loading animations */
 
 /* Safari Compatibility Fixes */

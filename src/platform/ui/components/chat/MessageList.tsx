@@ -151,7 +151,7 @@ export function MessageList({
       {messages.map((message) => (
         <div
           key={message.id}
-          className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full leading-snug"
+          className="bg-transparent px-0 py-0 text-base text-black w-fit max-w-full leading-snug p-3"
           style={{ marginBottom: '16px' }}
         >
           {message['type'] === 'user' ? (

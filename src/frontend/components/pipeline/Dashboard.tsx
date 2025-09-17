@@ -627,7 +627,6 @@ export function Dashboard() {
         />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Dashboard Error</h3>
             <p className="text-gray-600 mb-4">{error}</p>
             <button

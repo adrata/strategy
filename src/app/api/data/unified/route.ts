@@ -22,7 +22,7 @@ import { ulid } from 'ulid';
 // 🚀 PERFORMANCE: Aggressive caching for instant loading
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
 const UNIFIED_DATA_TTL = 600; // 10 minutes for unified data
-const DASHBOARD_TTL = 300; // 5 minutes for dashboard data
+const DASHBOARD_TTL = 60; // 1 minute for dashboard data (faster updates)
 
 // 🎯 DEMO SCENARIO SUPPORT
 const DEMO_WORKSPACE_ID = "demo-workspace-2025";
@@ -2002,7 +2002,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       };
     }
     
-    // Load both counts and actual data
+    // 🚀 PERFORMANCE: Load counts and data in fewer queries
     const [
       leadsCount,
       prospectsCount,
@@ -2518,14 +2518,47 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // First try to load prospects for speedrun (CloudCaddie workspace has prospects)
+    // 🚀 PERFORMANCE: Load prospects for speedrun with optimized query
     const prospects = await prisma.prospects.findMany({
       where: {
         workspaceId,
         deletedAt: null
       },
       orderBy: { createdAt: 'desc' },
-      take: 50
+      take: 50,
+      select: {
+        id: true,
+        fullName: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        company: true,
+        title: true,
+        jobTitle: true,
+        phone: true,
+        phoneNumber: true,
+        location: true,
+        city: true,
+        industry: true,
+        status: true,
+        priority: true,
+        lastContact: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextFollowUpDate: true,
+        nextActionDate: true,
+        notes: true,
+        tags: true,
+        source: true,
+        enrichmentScore: true,
+        buyerGroupRole: true,
+        currentStage: true,
+        nextAction: true,
+        createdAt: true,
+        updatedAt: true,
+        assignedUser: true,
+        workspaceId: true
+      }
     });
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospects.length} prospects from prospects table`);

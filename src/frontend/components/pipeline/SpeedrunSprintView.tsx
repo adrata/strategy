@@ -314,9 +314,6 @@ export function SpeedrunSprintView() {
     return (
       <div className="h-full flex items-center justify-center bg-white">
         <div className="text-center max-w-md">
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🏃‍♂️</span>
-          </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             No Sprint Data
           </h3>

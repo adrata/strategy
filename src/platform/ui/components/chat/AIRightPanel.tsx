@@ -1169,9 +1169,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
-          scrollBehavior: 'smooth',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#d1d5db #f9fafb'
+          scrollBehavior: 'smooth'
         }}>
           
           {chatMessages['length'] === 0 && (

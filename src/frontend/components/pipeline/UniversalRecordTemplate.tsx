@@ -1099,14 +1099,15 @@ export function UniversalRecordTemplate({
 
     // Edit button removed per user request
 
-    // Add Action button - WHITE BUTTON THAT OPENS MODAL
+    // Add Action button - WHITE BUTTON WITH GRAY BORDER
     buttons.push(
-      <UnifiedAddActionButton
+      <button
         key="add-action"
-        onAddAction={() => setIsAddActionModalOpen(true)}
-        variant="simple"
-        size="sm"
-      />
+        onClick={() => setIsAddActionModalOpen(true)}
+        className="px-3 py-1.5 text-sm bg-white text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+      >
+        Add Action
+      </button>
     );
 
     // Context-aware advance button
@@ -1122,12 +1123,12 @@ export function UniversalRecordTemplate({
         </button>
       );
     } else if (recordType === 'prospects') {
-      // Advance to Opportunity button - LIGHT GRAY BUTTON (for prospects)
+      // Advance to Lead button - LIGHT BLUE BUTTON (matching list page style)
       buttons.push(
         <button
           key="advance-to-lead"
           onClick={handleAdvanceToOpportunity}
-          className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+          className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
         >
           Advance to Lead
         </button>

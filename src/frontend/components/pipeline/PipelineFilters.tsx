@@ -422,6 +422,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           value={searchQuery}
           onChange={handleSearchChange}
           className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-white"
+          title=""
         />
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
           <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -579,7 +580,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
         {/* Columns Dropdown Menu */}
         {isColumnsDropdownOpen && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto min-w-[160px]">
+          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto min-w-[200px]">
             {columnOptions.map((option) => {
               const isAllOption = option['value'] === 'all';
               const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
