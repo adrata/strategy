@@ -43,3 +43,7 @@ echo "🔄 Backup saved as: ~/.zshrc.backup.$(date +%Y%m%d_%H%M%S)"
 
 
 
+
+
+
+
