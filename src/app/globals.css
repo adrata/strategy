@@ -735,8 +735,8 @@ button[class*="linkedin"]:hover:not(.no-override) {
 
 /* Middle panel scrollbar styling */
 .middle-panel-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 .middle-panel-scroll::-webkit-scrollbar-track {
   background: #f9fafb;
