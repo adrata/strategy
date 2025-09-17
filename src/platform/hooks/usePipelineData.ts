@@ -159,11 +159,15 @@ function sortData(
       return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
     }
     
-    // Handle date values
-    if (aValue instanceof Date && bValue instanceof Date) {
+    // Handle date values (including date strings)
+    const aDate = new Date(aValue);
+    const bDate = new Date(bValue);
+    
+    // Check if both values are valid dates
+    if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
       return sortDirection === 'asc' 
-        ? aValue.getTime() - bValue.getTime()
-        : bValue.getTime() - aValue.getTime();
+        ? aDate.getTime() - bDate.getTime()
+        : bDate.getTime() - aDate.getTime();
     }
     
     // Handle string values

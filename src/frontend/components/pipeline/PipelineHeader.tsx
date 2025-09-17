@@ -386,49 +386,49 @@ export function PipelineHeader({
         return {
           title: 'Leads',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Convert to prospects',
-          actionButton: '+ Add Lead'
+          actionButton: 'Add Lead'
         };
       case 'prospects':
         return {
           title: 'Prospects',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Create opportunity',
-          actionButton: '+ Add Prospect'
+          actionButton: 'Add Prospect'
         };
       case 'opportunities':
         return {
           title: 'Opportunities',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Active opportunities',
-          actionButton: '+ Add Opportunity'
+          actionButton: 'Add Opportunity'
         };
       case 'companies':
         return {
           title: 'Companies',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
-          actionButton: '+ Add Company'
+          actionButton: 'Add Company'
         };
       case 'people':
         return {
           title: 'People',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'People',
-          actionButton: '+ Add Person'
+          actionButton: 'Add Person'
         };
       case 'customers':
         return {
           title: 'Customers',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: '+ Add Customer'
+          actionButton: 'Add Customer'
         };
       case 'clients':
         return {
           title: 'Clients',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: '+ Add Client'
+          actionButton: 'Add Client'
         };
       case 'partners':
         return {
           title: 'Partners',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Strategic alliances',
-          actionButton: '+ Add Partner'
+          actionButton: 'Add Partner'
         };
       case 'speedrun':
         return {
@@ -483,7 +483,7 @@ export function PipelineHeader({
         return {
           title: sectionTitle,
           subtitle: 'Pipeline data',
-          actionButton: '+ Add Record'
+          actionButton: 'Add Record'
         };
     }
   };
