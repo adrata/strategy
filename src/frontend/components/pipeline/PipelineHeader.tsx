@@ -392,7 +392,8 @@ export function PipelineHeader({
         return {
           title: 'Prospects',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Create opportunity',
-          actionButton: 'Add Prospect'
+          actionButton: 'Add Prospect',
+          secondaryActionButton: 'Add Action'
         };
       case 'opportunities':
         return {
@@ -888,9 +889,9 @@ export function PipelineHeader({
                   {(sectionInfo as any).secondaryActionButton && (
                     <button 
                       onClick={() => {
-                        // Handle secondary action (Add Opportunity for prospects)
-                        console.log('Secondary action clicked:', (sectionInfo as any).secondaryActionButton);
-                        // TODO: Implement secondary action handler
+                        // Handle secondary action (Add Action for prospects)
+                        setSelectedRecord(null);
+                        setShowAddActionModal(true);
                       }}
                       disabled={loading}
                       className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
