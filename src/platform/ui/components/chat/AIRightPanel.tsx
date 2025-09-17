@@ -114,7 +114,7 @@ export function AIRightPanel() {
         console.warn('Failed to load saved AI model:', e);
       }
     }
-    return AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
+    return AI_MODELS.find(m => m.provider === 'Adrata') || AI_MODELS[0] || { id: 'adrata-advanced', name: 'Adrata Advanced', provider: 'Adrata' };
   });
 
   // Voice settings disabled for now
@@ -1104,6 +1104,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       minWidth: '300px',
       height: 'calc(100vh - 7.5px)',
       maxHeight: 'calc(100vh - 7.5px)',
+      marginTop: '7.5px',
       overflow: 'hidden'
     }}>
       
