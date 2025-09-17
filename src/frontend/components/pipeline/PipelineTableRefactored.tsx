@@ -118,7 +118,7 @@ export function PipelineTableRefactored({
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 187.5 : 600; // Reserve 160px for other UI elements
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 183.5 : 600; // Reserve 160px for other UI elements
   
   // Dynamic height calculation based on content size
   let tableHeight;
