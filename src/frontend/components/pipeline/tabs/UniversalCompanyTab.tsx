@@ -185,7 +185,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
 
   // Use real company data from record
   const companyData = {
-    name: record.name || record.company || 'Unknown Company',
+    name: record.name || (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 'Unknown Company',
     industry: record.industry || 'Unknown Industry',
     size: record.size || record.employeeCount || 'Unknown Size',
     revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown Revenue',

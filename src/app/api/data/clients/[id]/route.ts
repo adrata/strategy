@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     await prisma.$connect();
 
-    const client = await prisma.customers.findUnique({
+    const client = await prisma.clients.findUnique({
       where: { id: clientId }
     });
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       name: `Client ${client.id}`,
       company: client.companyId,
       companyId: client.companyId,
-      clientStatus: client.customerStatus,
+      clientStatus: client.clientStatus,
       tier: client.tier,
       segment: client.segment,
       healthScore: client.healthScore,
@@ -87,14 +87,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       updatedAt: new Date(),
     };
 
-    if (updateData.status) updateFields['customerStatus'] = updateData.status;
+    if (updateData.status) updateFields['clientStatus'] = updateData.status;
     if (updateData.tier) updateFields['tier'] = updateData.tier;
     if (updateData.segment) updateFields['segment'] = updateData.segment;
     if (updateData.healthScore) updateFields['healthScore'] = updateData.healthScore;
     if (updateData.contractValue) updateFields['totalLifetimeValue'] = updateData.contractValue;
     if (updateData.contractEndDate) updateFields['contractEndDate'] = new Date(updateData.contractEndDate);
 
-    const updatedClient = await prisma.customers.update({
+    const updatedClient = await prisma.clients.update({
       where: { id: clientId },
       data: updateFields,
     });
@@ -140,7 +140,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     await prisma.$connect();
 
     // Soft delete by setting deletedAt timestamp
-    const deletedClient = await prisma.customers.update({
+    const deletedClient = await prisma.clients.update({
       where: { id: clientId },
       data: { deletedAt: new Date() },
     });

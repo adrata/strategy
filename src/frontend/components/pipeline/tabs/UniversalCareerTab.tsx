@@ -220,7 +220,7 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   const careerData = {
     currentPosition: {
       title: record.jobTitle || 'VP of Sales Operations',
-      company: record.company || 'ADP',
+      company: (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 'ADP',
       department: record.department || 'Sales Operations',
       startDate: '2022-01-15',
       responsibilities: [

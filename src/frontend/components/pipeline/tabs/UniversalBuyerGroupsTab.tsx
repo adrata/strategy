@@ -40,7 +40,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // Instant loading - no spinner needed
         
         // Get the company name from the record
-        const companyName = record.company || record.companyName;
+        const companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || record.companyName;
         
         if (!companyName) {
           console.log('No company found for record, showing empty buyer group');
@@ -286,7 +286,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             <div>
               <h3 className="text-sm font-medium text-gray-900">No team members found</h3>
               <p className="text-sm text-gray-500">
-                No people found for {record.company || record.companyName || 'this company'}.
+                No people found for {(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || record.companyName || 'this company'}.
               </p>
             </div>
           </div>

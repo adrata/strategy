@@ -225,7 +225,23 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || []; // Companies data
-      case 'people': return acquireData.people || []; // People data
+      case 'people': 
+        const peopleData = acquireData.people || [];
+        console.log('🔍 [PEOPLE DEBUG] People data structure:', {
+          dataLength: peopleData.length,
+          sampleRecord: peopleData[0] ? {
+            id: peopleData[0].id,
+            name: peopleData[0].name,
+            fullName: peopleData[0].fullName,
+            firstName: peopleData[0].firstName,
+            lastName: peopleData[0].lastName,
+            company: peopleData[0].company,
+            title: peopleData[0].title,
+            jobTitle: peopleData[0].jobTitle,
+            keys: Object.keys(peopleData[0])
+          } : null
+        });
+        return peopleData;
       case 'clients': return acquireData.customers || [];
       case 'partners': return acquireData.partnerships || [];
       case 'sellers': return acquireData.sellers || [];

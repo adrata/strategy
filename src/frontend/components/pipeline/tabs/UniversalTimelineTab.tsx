@@ -30,6 +30,11 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     if (!userId || userId === 'System') return 'System';
     const user = users.find(u => u['id'] === userId);
     if (user) {
+      // Check if this is the current user
+      const currentUser = users.find(u => u.isCurrentUser);
+      if (currentUser && user.id === currentUser.id) {
+        return 'Me';
+      }
       return user.fullName || user.name || user.displayName || user.email || userId;
     }
     return userId;
@@ -290,9 +295,14 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     <div className="space-y-8">
       <div>
         <div className="flex items-center justify-between">
-          <div></div>
-          <div className="text-sm text-gray-500">
-            {timelineEvents.length} {timelineEvents['length'] === 1 ? 'action' : 'actions'}
+          <div className="text-lg font-medium text-gray-900">Timeline</div>
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+              {timelineEvents.length}
+            </span>
+            <span className="text-sm text-gray-500">
+              {timelineEvents['length'] === 1 ? 'Action' : 'Actions'}
+            </span>
           </div>
         </div>
       </div>

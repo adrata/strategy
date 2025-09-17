@@ -1,0 +1,155 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/platform/database/prisma-client';
+
+
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get("workspaceId");
+    const userId = searchParams.get("userId");
+
+    if (!workspaceId || !userId) {
+      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
+    }
+
+    console.log(`📊 [CLIENTS API] Getting clients for workspace: ${workspaceId}, user: ${userId}`);
+
+    // Get clients from database - using clients table
+    const clients = await prisma.clients.findMany({
+      where: {
+        workspaceId: workspaceId // Just filter by workspace to match metrics count
+      },
+      include: {
+        company: true, // Include related company information
+      },
+      orderBy: {
+        clientSince: 'desc'
+      }
+    });
+
+    console.log(`📊 Found ${clients.length} client accounts in database`);
+
+    // Transform clients to include company name and proper kanban format
+    const transformedClients = clients.map(client => ({
+      id: client.id,
+      name: client.company?.name || 'Client', // Use company name as primary display
+      company: client.company?.name || 'Client', // Ensure company field exists
+      contractValue: client.totalLifetimeValue, // For kanban display
+      assignedTo: client.company?.assignedUserId,
+      owner: 'Just Dano', // For kanban display
+      // Include all original client data without duplication
+      clientStatus: client.clientStatus,
+      tier: client.tier,
+      segment: client.segment,
+      totalLifetimeValue: client.totalLifetimeValue,
+      avgDealSize: client.avgDealSize,
+      dealCount: client.dealCount,
+      lastDealValue: client.lastDealValue,
+      priority: client.priority,
+      healthScore: client.healthScore,
+      loyaltyScore: client.loyaltyScore,
+      retentionProbability: client.retentionProbability,
+      clientSince: client.clientSince,
+      lastDealDate: client.lastDealDate,
+      createdAt: client.createdAt,
+      updatedAt: client.updatedAt
+    }));
+
+    return NextResponse.json({ 
+      success: true,
+      clients: transformedClients,
+      count: transformedClients.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching clients:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch clients', details: error }, 
+      { status: 500 }
+    );
+  }
+}
+
+// POST: Create new client
+export async function POST(request: NextRequest) {
+  try {
+    const { workspaceId, userId, clientData } = await request.json();
+
+    console.log(
+      `📝 [CLIENTS API] Adding client for workspace: ${workspaceId}, user: ${userId}`,
+    );
+
+    if (!clientData || !clientData.accountId) {
+      return NextResponse.json(
+        { success: false, error: "Account ID is required for client creation" },
+        { status: 400 },
+      );
+    }
+
+    await prisma.$connect();
+
+    // Create client using actual schema fields
+    const newClient = await prisma.clients.create({
+      data: {
+        id: `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        accountId: clientData.accountId,
+        clientStatus: clientData.status || "active",
+        tier: clientData.tier || "standard",
+        segment: clientData.segment || "enterprise",
+        healthScore: clientData.healthScore || 75,
+        loyaltyScore: clientData.loyaltyScore || 50,
+        retentionProbability: clientData.retentionProbability || 85,
+        totalLifetimeValue: clientData.contractValue || 0,
+        avgDealSize: clientData.avgDealSize || 0,
+        dealCount: clientData.dealCount || 0,
+        clientSince: clientData.contractStartDate ? new Date(clientData.contractStartDate) : new Date(),
+        firstPurchaseDate: clientData.contractStartDate ? new Date(clientData.contractStartDate) : new Date(),
+        contractEndDate: clientData.contractEndDate ? new Date(clientData.contractEndDate) : null,
+        priority: clientData.priority || "medium",
+        workspaceId: workspaceId,
+        updatedAt: new Date(),
+        // notes: clientData.notes || null, // Remove notes field as it doesn't exist in schema
+      }
+    });
+
+    // Transform to match expected structure
+    const transformedClient = {
+      id: newClient.id,
+      name: newClient.accountId || 'Client',
+      company: newClient.accountId || 'Client',
+      accountId: newClient.accountId,
+      clientStatus: newClient.clientStatus,
+      tier: newClient.tier,
+      healthScore: newClient.healthScore,
+      totalLifetimeValue: newClient.totalLifetimeValue,
+      contractEndDate: newClient.contractEndDate,
+      created_at: newClient.clientSince.toISOString(),
+      updated_at: newClient.clientSince.toISOString(),
+    };
+
+    console.log(
+      `✅ [CLIENTS API] Client created: ${newClient.accountId} (ID: ${newClient.id})`,
+    );
+
+    await prisma.$disconnect();
+
+    return NextResponse.json({
+      success: true,
+      client: transformedClient,
+      message: "Client created successfully",
+    });
+  } catch (error) {
+    console.error("❌ [CLIENTS API] Error creating client:", error);
+    await prisma.$disconnect();
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to create client",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
+  }
+} 

@@ -41,6 +41,11 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
     if (!userId || userId === 'System') return 'System';
     const user = users.find(u => u['id'] === userId);
     if (user) {
+      // Check if this is the current user
+      const currentUser = users.find(u => u.isCurrentUser);
+      if (currentUser && user.id === currentUser.id) {
+        return 'Me';
+      }
       return user.fullName || user.name || userId;
     }
     return userId;
@@ -309,9 +314,14 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
     <div className="space-y-8">
       <div>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Enhanced Timeline</h3>
-          <div className="text-sm text-gray-500">
-            {timelineEvents.length} {timelineEvents['length'] === 1 ? 'activity' : 'activities'}
+          <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+              {timelineEvents.length}
+            </span>
+            <span className="text-sm text-gray-500">
+              {timelineEvents['length'] === 1 ? 'Action' : 'Actions'}
+            </span>
           </div>
         </div>
       </div>

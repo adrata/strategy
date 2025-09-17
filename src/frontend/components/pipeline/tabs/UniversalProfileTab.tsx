@@ -273,7 +273,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Company</div>
-                <div className="text-sm text-gray-600">{record.company || 'Not specified'}</div>
+                <div className="text-sm text-gray-600">{(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 'Not specified'}</div>
               </div>
             </div>
           </div>

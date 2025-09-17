@@ -3,11 +3,11 @@
 import { PipelineView } from "@/frontend/components/pipeline/PipelineView";
 import { WorkspacePipelineWrapper } from "../WorkspacePipelineWrapper";
 
-export default function WorkspaceCustomersPage() {
+export default function WorkspaceClientsPage() {
   // Use the EXACT same approach as working Speedrun
   return (
     <WorkspacePipelineWrapper>
-      <PipelineView section="customers" />
+      <PipelineView section="clients" />
     </WorkspacePipelineWrapper>
   );
 }

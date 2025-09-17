@@ -335,7 +335,13 @@ export function PipelineTable({
                         cellContent = String(index + 1);
                         break;
                       case 'company':
-                        cellContent = record['company'] || record['companyName'] || record['organization'] || 'Company';
+                        // Handle both string and object company data
+                        const company = record['company'];
+                        if (typeof company === 'object' && company !== null) {
+                          cellContent = company.name || company.companyName || 'Company';
+                        } else {
+                          cellContent = company || record['companyName'] || record['organization'] || 'Company';
+                        }
                         break;
                       case 'person':
                         cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Person';
