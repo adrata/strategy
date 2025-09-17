@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTable';
+import { PipelineTableRefactored } from './PipelineTableRefactored';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
@@ -43,6 +44,9 @@ interface PipelineViewProps {
 // PERFORMANCE: Memoize component to prevent unnecessary re-renders
 export const PipelineView = React.memo(function PipelineView({ section }: PipelineViewProps) {
   console.log('🔍 [PipelineView] Component rendered for section:', section);
+  
+  // Feature flag to test refactored component
+  const USE_REFACTORED_TABLE = true; // Set to false to use old table
   
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
@@ -1111,30 +1115,58 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             />
           ) : section === 'speedrun' ? (
             // Always show speedrun table - no view switching needed
-            <PipelineTable
-              section={section}
-              data={filteredData || []}
-              onRecordClick={handleRecordClick}
-              onReorderRecords={() => {}}
-              onColumnSort={handleColumnSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              visibleColumns={visibleColumns}
-              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-            />
+            USE_REFACTORED_TABLE ? (
+              <PipelineTableRefactored
+                section={section}
+                data={filteredData || []}
+                onRecordClick={handleRecordClick}
+                onReorderRecords={() => {}}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            ) : (
+              <PipelineTable
+                section={section}
+                data={filteredData || []}
+                onRecordClick={handleRecordClick}
+                onReorderRecords={() => {}}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            )
           ) : section === 'prospects' ? (
             // Prospects table with filtered data
-            <PipelineTable
-              section={section}
-              data={filteredData || []} // Use filtered data like other sections
-              onRecordClick={handleRecordClick}
-              onReorderRecords={handleReorderRecords}
-              onColumnSort={handleColumnSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              visibleColumns={visibleColumns}
-              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
-            />
+            USE_REFACTORED_TABLE ? (
+              <PipelineTableRefactored
+                section={section}
+                data={filteredData || []} // Use filtered data like other sections
+                onRecordClick={handleRecordClick}
+                onReorderRecords={handleReorderRecords}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            ) : (
+              <PipelineTable
+                section={section}
+                data={filteredData || []} // Use filtered data like other sections
+                onRecordClick={handleRecordClick}
+                onReorderRecords={handleReorderRecords}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              />
+            )
           ) : section === 'sellers' ? (
             // Buyer Group style design for Sellers
             <div className="bg-white rounded-lg border border-gray-200">
