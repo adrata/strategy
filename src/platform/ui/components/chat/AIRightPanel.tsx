@@ -886,8 +886,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 120px)',
-        maxHeight: 'calc(100vh - 120px)',
+        height: '100vh',
+        maxHeight: '100vh',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -964,8 +964,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 120px)',
-        maxHeight: 'calc(100vh - 120px)',
+        height: '100vh',
+        maxHeight: '100vh',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1034,8 +1034,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 120px)',
-        maxHeight: 'calc(100vh - 120px)',
+        height: '100vh',
+        maxHeight: '100vh',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1100,12 +1100,28 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
   }
 
   return (
-    <div className="bg-[var(--background)] flex flex-col" style={{ 
-      minWidth: '300px',
-      height: 'calc(100vh - 120px)',
-      maxHeight: 'calc(100vh - 120px)',
-      overflow: 'hidden'
-    }}>
+    <>
+      <style jsx>{`
+        .ai-panel-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-track {
+          background: #f9fafb;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 3px;
+        }
+        .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
+        }
+      `}</style>
+      <div className="bg-[var(--background)] flex flex-col" style={{ 
+        minWidth: '300px',
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden'
+      }}>
       
       <ConversationHeader
         conversations={conversations}
@@ -1124,12 +1140,13 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-0 overflow-y-auto" style={{ 
+        <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-end',
           scrollBehavior: 'smooth',
-          maxHeight: 'calc(100% - 120px)'
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#d1d5db #f9fafb'
         }}>
           
           {chatMessages['length'] === 0 && (
@@ -1188,6 +1205,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         scrollToBottom={scrollToBottom}
         chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
       />
-    </div>
+      </div>
+    </>
   );
 }
