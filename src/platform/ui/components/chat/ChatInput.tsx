@@ -104,7 +104,7 @@ export function ChatInput({
 
   return (
     <>
-    <div className="w-full bg-[var(--background)] flex-shrink-0" style={{ paddingBottom: '10px' }}>
+    <div className="w-full bg-[var(--background)] flex-shrink-0" style={{ paddingBottom: '4px' }}>
       <form className="flex items-center p-4 pt-[16px] mt-0" onSubmit={onSubmit}>
         <div className="relative flex-1">
           <input

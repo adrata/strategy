@@ -193,7 +193,7 @@ export function PipelineTableRefactored({
       style={{ height: `${tableHeight}px` }}
     >
       {/* Table container */}
-      <div className="flex-1 overflow-auto min-h-0 pipeline-table-scroll">
+      <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
         <table className="min-w-full table-fixed border-collapse mb-0">
           <colgroup>
             {headers.map((_, index) => (

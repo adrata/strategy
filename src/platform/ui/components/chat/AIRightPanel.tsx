@@ -1115,6 +1115,21 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
           background: #9ca3af;
         }
+        
+        /* Middle panel scrollbar styling */
+        .middle-panel-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-track {
+          background: #f9fafb;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 3px;
+        }
+        .middle-panel-scroll::-webkit-scrollbar-thumb:hover {
+          background: #d1d5db;
+        }
       `}</style>
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
@@ -1141,9 +1156,6 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
           scrollBehavior: 'smooth',
           scrollbarWidth: 'thin',
           scrollbarColor: '#d1d5db #f9fafb'
