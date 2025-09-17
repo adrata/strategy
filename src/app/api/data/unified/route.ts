@@ -2541,7 +2541,6 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         title: true,
         jobTitle: true,
         phone: true,
-        phoneNumber: true,
         location: true,
         city: true,
         industry: true,

@@ -183,8 +183,7 @@ export default function WorkspacesPage() {
             console.log("🔄 [WORKSPACE SWITCH] Dispatched session update event");
             
             // 🆕 CRITICAL FIX: Wait for session to be fully updated before navigation
-            console.log("⏳ [WORKSPACE SWITCH] Waiting for session to be fully updated...");
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second for session update
+            console.log("⏳ [WORKSPACE SWITCH] Session updated, proceeding with navigation..."); // Wait 1 second for session update
             
             // Verify the session was updated correctly
             const { UnifiedAuthService } = await import("@/platform/auth/service");
