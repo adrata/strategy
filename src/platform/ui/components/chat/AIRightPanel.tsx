@@ -1104,7 +1104,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       minWidth: '300px',
       height: 'calc(100vh - 7.5px)',
       maxHeight: 'calc(100vh - 7.5px)',
-      marginTop: '20px',
+      marginTop: '25px',
       overflow: 'hidden'
     }}>
       
