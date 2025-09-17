@@ -56,6 +56,30 @@ export function getLastActionTime(record: any): string {
   return formatRelativeTime(record.lastActionDate);
 }
 
+export function formatLastActionTime(record: any): string {
+  // Prioritize lastContactDate as it's more accurate for actual contact timing
+  const lastContact = record.lastContactDate || 
+                     record.lastContact;
+  
+  if (lastContact) {
+    return formatRelativeTime(lastContact);
+  }
+  
+  // Fall back to lastActionDate if no contact date available
+  const lastActivity = record.lastActionDate || 
+                      record.lastActivityDate ||
+                      record.lastEngagementAt ||
+                      record.lastCallDate ||
+                      record.lastEmailDate ||
+                      record.lastMeetingDate;
+  
+  if (lastActivity) {
+    return formatRelativeTime(lastActivity);
+  }
+  
+  return 'Never';
+}
+
 export function getLastActionDescription(record: any): string {
   if (!record?.lastActionDescription) {
     return 'No recent action';
