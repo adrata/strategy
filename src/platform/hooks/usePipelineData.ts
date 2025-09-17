@@ -235,8 +235,22 @@ export function usePipelineData({
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    return sortedData.slice(startIndex, endIndex);
-  }, [sortedData, currentPage, pageSize]);
+    const result = sortedData.slice(startIndex, endIndex);
+    
+    console.log('🔍 [usePipelineData] Pagination calculation:', {
+      inputDataLength: data.length,
+      filteredDataLength: filteredData.length,
+      sortedDataLength: sortedData.length,
+      currentPage,
+      pageSize,
+      startIndex,
+      endIndex,
+      paginatedDataLength: result.length,
+      samplePaginatedData: result.slice(0, 2)
+    });
+    
+    return result;
+  }, [sortedData, currentPage, pageSize, data.length, filteredData.length]);
   
   // Pagination info
   const totalPages = Math.ceil(sortedData.length / pageSize);

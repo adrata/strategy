@@ -26,7 +26,7 @@ export function UnifiedAddActionButton({
     lg: 'px-6 py-3 text-base'
   };
 
-  const baseClasses = `bg-white text-gray-700 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
+  const baseClasses = `bg-red-600 text-white border border-red-600 rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
 
   if (variant === 'dropdown' && onAddNote) {
     return (

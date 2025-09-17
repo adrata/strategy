@@ -154,6 +154,16 @@ export function TableRow({
           const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'];
           const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
           
+          console.log(`🔍 [TableRow] Column configuration for ${section}:`, {
+            workspaceId,
+            workspaceName,
+            sectionConfig,
+            logicalOrder,
+            visibleColumns,
+            orderedVisibleColumns,
+            recordId: record.id
+          });
+          
           return orderedVisibleColumns.map(column => {
             if (isColumnHidden(workspaceId, section, column, workspaceName)) return null;
             

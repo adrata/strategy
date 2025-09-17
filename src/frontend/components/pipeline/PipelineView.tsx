@@ -251,10 +251,21 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     }
   };
   
+  const sectionData = getSectionData(section);
+  
+  // DEBUG: Log the data loading
+  console.log(`🔍 [PIPELINE VIEW DEBUG] Section: ${section}`, {
+    hasAcquisitionData: !!acquisitionData,
+    hasAcquireData: !!acquisitionData?.acquireData,
+    sectionDataLength: sectionData?.length || 0,
+    sectionDataSample: sectionData?.slice(0, 2) || [],
+    acquisitionDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : []
+  });
+  
   const pipelineData = {
-    data: getSectionData(section),
+    data: sectionData,
     error: null,
-    isEmpty: getSectionData(section).length === 0,
+    isEmpty: sectionData?.length === 0,
     refresh: acquisitionData?.refreshData || (() => Promise.resolve()),
     clearCache: () => {} // Not needed with single data source
   };
@@ -541,18 +552,18 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
-    if (!data || data['length'] === 0) return data;
+    if (!pipelineData.data || pipelineData.data['length'] === 0) return pipelineData.data;
     
     // For speedrun, don't sort - preserve API ranking order
     if (section === 'speedrun') {
-      return data;
+      return pipelineData.data;
     }
 
     // Apply timeframe filtering for speedrun section
-    let timeframeFilteredData = data;
+    let timeframeFilteredData = pipelineData.data;
     if (section === 'speedrun') {
       const dataCount = getTimeframeDataCount(timeframeFilter);
-      timeframeFilteredData = data.slice(0, dataCount);
+      timeframeFilteredData = pipelineData.data.slice(0, dataCount);
     }
 
     let filtered = timeframeFilteredData.filter((record: any) => {
@@ -700,7 +711,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Note: Removed rank limiting logic - user wants to see all records
 
     return filtered;
-  }, [data, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter]);
+  }, [pipelineData.data, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {

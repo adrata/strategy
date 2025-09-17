@@ -76,11 +76,21 @@ export function TableHeader({
               className={`px-6 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 h-8 border-b border-gray-200 ${
                 !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-100 transition-colors group' : ''
               }`}
-              style={{ width: getColumnWidth(index) }}
+              style={{ 
+                width: getColumnWidth(index),
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
               onClick={() => !isActionColumn && onColumnSort?.(header)}
             >
               <div className="flex items-center justify-between">
-                <span style={{ wordSpacing: 'normal' }}>{isActionColumn ? '' : header}</span>
+                <span style={{ 
+                  wordSpacing: 'normal',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>{isActionColumn ? '' : header}</span>
                 {!isActionColumn && onColumnSort && (
                   <div className="flex items-center ml-2">
                     {isCurrentSort ? (

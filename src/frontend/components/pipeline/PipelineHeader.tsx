@@ -391,7 +391,7 @@ export function PipelineHeader({
       case 'prospects':
         return {
           title: 'Prospects',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Create opportunity',
+          subtitle: 'Cold relationships',
           actionButton: 'Add Prospect',
           secondaryActionButton: 'Add Action'
         };
@@ -731,21 +731,76 @@ export function PipelineHeader({
         color: 'text-gray-900'
       });
     } else if (section !== 'dashboard') {
-      // Use recordCount for all other sections
-      const totalCount = recordCount || (metrics.totalLeads ?? 0);
-      
-      metricItems.push({
-        label: 'Total',
-        value: totalCount.toString(),
-        color: 'text-gray-900'
-      });
-      
-      if (metrics.winRate) {
+      // For prospects section, show detailed stats instead of just total
+      if (section === 'prospects') {
+        const totalCount = recordCount || (metrics.totalLeads ?? 0);
+        
+        // Calculate unique companies from the actual data
+        const uniqueCompanies = new Set();
+        if ('data' in metrics && Array.isArray(metrics.data)) {
+          metrics.data.forEach((prospect: any) => {
+            if (prospect.company || prospect.companyName) {
+              uniqueCompanies.add(prospect.company || prospect.companyName);
+            }
+          });
+        }
+        
+        // Calculate overdue actions
+        const now = new Date();
+        const overdueActions = metrics.data ? metrics.data.filter((prospect: any) => {
+          const nextActionDate = prospect.nextActionDate || prospect.nextContactDate;
+          if (!nextActionDate) return false;
+          return new Date(nextActionDate) < now;
+        }).length : 0;
+        
+        // Calculate recent activity (last 7 days)
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const recentActivity = metrics.data ? metrics.data.filter((prospect: any) => {
+          const lastActionDate = prospect.lastActionDate || prospect.lastContactDate || prospect.lastContact;
+          if (!lastActionDate) return false;
+          return new Date(lastActionDate) >= sevenDaysAgo;
+        }).length : 0;
+        
         metricItems.push({
-          label: 'Win Rate',
-          value: metrics.winRate,
+          label: 'Active',
+          value: totalCount.toString(),
           color: 'text-gray-900'
         });
+        
+        metricItems.push({
+          label: uniqueCompanies.size === 1 ? 'Company' : 'Companies',
+          value: uniqueCompanies.size.toString(),
+          color: 'text-gray-900'
+        });
+        
+        metricItems.push({
+          label: 'Overdue',
+          value: overdueActions.toString(),
+          color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
+        });
+        
+        metricItems.push({
+          label: 'Recent',
+          value: recentActivity.toString(),
+          color: 'text-blue-600'
+        });
+      } else {
+        // Use recordCount for all other sections
+        const totalCount = recordCount || (metrics.totalLeads ?? 0);
+        
+        metricItems.push({
+          label: 'Total',
+          value: totalCount.toString(),
+          color: 'text-gray-900'
+        });
+        
+        if (metrics.winRate) {
+          metricItems.push({
+            label: 'Win Rate',
+            value: metrics.winRate,
+            color: 'text-gray-900'
+          });
+        }
       }
     }
     

@@ -88,16 +88,17 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
+    const acquireData = acquisitionData?.acquireData || {};
     switch (section) {
-      case 'leads': return acquisitionData.data?.leads || [];
-      case 'prospects': return acquisitionData.data?.prospects || [];
-      case 'opportunities': return acquisitionData.data?.opportunities || [];
-      case 'companies': return acquisitionData.data?.companies || [];
-      case 'people': return acquisitionData.data?.people || [];
-      case 'clients': return acquisitionData.data?.clients || [];
-      case 'partners': return acquisitionData.data?.partners || [];
-      case 'sellers': return acquisitionData.data?.sellers || [];
-      case 'speedrun': return acquisitionData.data?.speedrunItems || [];
+      case 'leads': return acquireData.leads || [];
+      case 'prospects': return acquireData.prospects || [];
+      case 'opportunities': return acquireData.opportunities || [];
+      case 'companies': return acquireData.companies || [];
+      case 'people': return acquireData.people || [];
+      case 'clients': return acquireData.customers || [];
+      case 'partners': return acquireData.partnerships || [];
+      case 'sellers': return acquireData.sellers || [];
+      case 'speedrun': return acquireData.speedrunItems || [];
       default: return [];
     }
   };

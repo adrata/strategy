@@ -8,6 +8,7 @@ import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
+import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
@@ -54,8 +55,8 @@ function getColumnWidth(index: number): string {
     '180px',  // Person/Name
     '150px',  // Title
     '120px',  // Status
-    '140px',  // Last Action
-    '160px',  // Next Action
+    '160px',  // Last Action (increased from 140px)
+    '180px',  // Next Action (increased from 160px)
     '100px',  // Amount
     '120px',  // Stage
     '100px',  // Priority
@@ -66,6 +67,41 @@ function getColumnWidth(index: number): string {
   ];
   
   return widths[index] || '120px';
+}
+
+// -------- Timing Functions --------
+function getLastActionTiming(record: PipelineRecord) {
+  const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+  return getRealtimeActionTiming(lastActionDate);
+}
+
+function getNextActionTiming(record: PipelineRecord) {
+  // For next actions, we need to calculate timing based on when the next action should happen
+  const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
+  if (!nextActionDate) {
+    return { text: 'No date set', color: 'bg-gray-100 text-gray-800' };
+  }
+  
+  const now = new Date();
+  const actionDate = new Date(nextActionDate);
+  const diffMs = actionDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    return { text: 'Overdue', color: 'bg-red-100 text-red-800' };
+  } else if (diffDays === 0) {
+    return { text: 'Today', color: 'bg-orange-100 text-orange-800' };
+  } else if (diffDays === 1) {
+    return { text: 'Tomorrow', color: 'bg-yellow-100 text-yellow-800' };
+  } else if (diffDays <= 7) {
+    return { text: 'This week', color: 'bg-blue-100 text-blue-800' };
+  } else if (diffDays <= 14) {
+    return { text: 'Next week', color: 'bg-blue-100 text-blue-800' };
+  } else if (diffDays <= 30) {
+    return { text: 'This month', color: 'bg-gray-100 text-gray-800' };
+  } else {
+    return { text: 'Future', color: 'bg-gray-100 text-gray-800' };
+  }
 }
 
 function getTableHeaders(visibleColumns?: string[]): string[] {
@@ -152,11 +188,14 @@ export function PipelineTableRefactored({
   } = usePipelineData({ data, pageSize });
   
   console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {
+    inputDataLength: data?.length,
     paginatedDataLength: paginatedData?.length,
     currentPage,
     totalPages,
-    totalItems
+    totalItems,
+    samplePaginatedData: paginatedData?.slice(0, 2)
   });
+
   
   const {
     editModalOpen,
@@ -176,6 +215,32 @@ export function PipelineTableRefactored({
     closeAddActionModal,
     closeDetailModal,
   } = usePipelineActions();
+
+  // Wrapper function to convert ActionLogData types
+  const handleActionSubmitWrapper = (actionData: any) => {
+    // Convert from AddActionModal format to usePipelineActions format
+    const convertedActionData = {
+      type: actionData.actionType || actionData.type,
+      description: actionData.notes || actionData.description,
+      date: actionData.actionDate || actionData.date,
+      outcome: actionData.nextAction || actionData.outcome
+    };
+    return handleActionSubmit(convertedActionData);
+  };
+
+  // Map section to recordType for RecordDetailModal
+  const getRecordType = (section: string): 'lead' | 'prospect' | 'opportunity' | 'account' | 'contact' | 'customer' | 'partner' => {
+    switch (section) {
+      case 'leads': return 'lead';
+      case 'prospects': return 'prospect';
+      case 'opportunities': return 'opportunity';
+      case 'companies': return 'account';
+      case 'people': return 'contact';
+      case 'customers': return 'customer';
+      case 'partners': return 'partner';
+      default: return 'lead';
+    }
+  };
   
   // Handle column sort
   const handleColumnSort = (columnName: string) => {
@@ -234,26 +299,109 @@ export function PipelineTableRefactored({
           
           {/* Table body */}
           <tbody>
-            {paginatedData.map((record, index) => (
-              <TableRow
-                key={record.id}
-                record={record}
-                headers={headers}
-                section={section}
-                index={index}
-                workspaceId={workspaceId}
-                workspaceName={workspaceName}
-                visibleColumns={visibleColumns}
-                onRecordClick={onRecordClick}
-                onEdit={handleEdit}
-                onAddAction={handleAddAction}
-                onMarkComplete={handleMarkComplete}
-                onDelete={handleDelete}
-                onCall={handleCall}
-                onEmail={handleEmail}
-                getColumnWidth={getColumnWidth}
-              />
-            ))}
+            {paginatedData.map((record, index) => {
+              console.log(`🔍 [PipelineTableRefactored] Rendering row ${index}:`, {
+                recordId: record.id,
+                recordName: record.name || record['fullName'],
+                recordCompany: record['company'],
+                headersLength: headers.length,
+                visibleColumnsLength: visibleColumns?.length,
+                sampleRecordData: {
+                  name: record.name,
+                  company: record['company'],
+                  state: record['state'],
+                  title: record['title'],
+                  lastAction: record['lastAction'],
+                  nextAction: record['nextAction'],
+                  allKeys: Object.keys(record).slice(0, 10) // Show first 10 keys
+                }
+              });
+              
+              // Simple table row for debugging
+              return (
+                <tr
+                  key={record.id}
+                  className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+                  onClick={() => onRecordClick(record)}
+                >
+                  {headers.map((header, headerIndex) => {
+                    const isActionColumn = header === 'Actions';
+                    let cellContent = '';
+                    
+                    // Simple cell content mapping
+                    switch (header.toLowerCase()) {
+                      case 'rank':
+                        cellContent = String(index + 1);
+                        break;
+                      case 'company':
+                        cellContent = record['company'] || record['companyName'] || record['organization'] || 'Unknown Company';
+                        break;
+                      case 'person':
+                        cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Unknown Person';
+                        break;
+                      case 'state':
+                        cellContent = record['state'] || record['status'] || record['location'] || 'Unknown';
+                        break;
+                      case 'title':
+                        cellContent = record['title'] || record['jobTitle'] || record['position'] || 'Unknown Title';
+                        break;
+                      case 'last action':
+                        cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';
+                        break;
+                      case 'next action':
+                        cellContent = record['nextAction'] || record['nextActionDescription'] || 'No action planned';
+                        break;
+                      default:
+                        cellContent = String(record[header.toLowerCase()] || record[header] || '');
+                    }
+                    
+                    return (
+                      <td
+                        key={`${record.id}-${header}`}
+                        className={isActionColumn ? "px-2 py-4 whitespace-nowrap w-10 text-center" : "px-6 py-3 whitespace-nowrap text-sm text-gray-900"}
+                        style={{ width: getColumnWidth(headerIndex) }}
+                      >
+                        {isActionColumn ? (
+                          <div className="flex justify-center">
+                            <button
+                              className="text-blue-600 hover:text-blue-800 text-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddAction(record);
+                              }}
+                            >
+                              Action
+                            </button>
+                          </div>
+                        ) : header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const timing = header.toLowerCase() === 'last action' 
+                                ? getLastActionTiming(record)
+                                : getNextActionTiming(record);
+                              return (
+                                <>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
+                                    {timing.text}
+                                  </span>
+                                  <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                                    {cellContent}
+                                  </span>
+                                </>
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-900 truncate">
+                            {cellContent}
+                          </div>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -273,8 +421,9 @@ export function PipelineTableRefactored({
           record={selectedRecord}
           isOpen={editModalOpen}
           onClose={closeEditModal}
-          onSubmit={handleEditSubmit}
-          isSubmitting={isSubmitting}
+          onSave={handleEditSubmit}
+          recordType={section}
+          isLoading={isSubmitting}
         />
       )}
       
@@ -283,14 +432,16 @@ export function PipelineTableRefactored({
           record={selectedRecord}
           isOpen={addActionModalOpen}
           onClose={closeAddActionModal}
-          onSubmit={handleActionSubmit}
-          isSubmitting={isSubmitting}
+          onSubmit={handleActionSubmitWrapper}
+          recordType={section}
+          isLoading={isSubmitting}
         />
       )}
       
       {detailModalOpen && selectedRecord && (
         <RecordDetailModal
           record={selectedRecord}
+          recordType={getRecordType(section)}
           isOpen={detailModalOpen}
           onClose={closeDetailModal}
         />
