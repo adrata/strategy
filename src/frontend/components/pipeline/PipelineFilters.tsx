@@ -534,20 +534,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
         >
           <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
-          <span className="block truncate text-gray-900 pr-8">
+          <span className="block truncate text-gray-900">
             Sort
-          </span>
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none z-10">
-            <svg
-              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                isSortDropdownOpen ? 'rotate-180' : 'rotate-0'
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
           </span>
         </button>
 
@@ -584,20 +572,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
           </svg>
-          <span className="block truncate text-gray-900 pr-6">
+          <span className="block truncate text-gray-900">
             {section === 'opportunities' ? 'Show' : 'Columns'}
-          </span>
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg
-              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
-                isColumnsDropdownOpen ? 'rotate-180' : 'rotate-0'
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
           </span>
         </button>
 
