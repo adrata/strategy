@@ -127,3 +127,51 @@ export function getStandardizedActionTimingColor(timing: string, isLastAction: b
   // Default timing
   return 'bg-gray-100 text-gray-800 border border-gray-200';
 }
+
+// -------- Realtime Action Timing --------
+export function getRealtimeActionTiming(lastActionDate?: string | Date): { text: string; color: StatusColor } {
+  if (!lastActionDate) {
+    return { text: 'Never', color: 'bg-gray-100 text-gray-800' };
+  }
+  
+  const now = new Date();
+  const actionDate = new Date(lastActionDate);
+  const diffMs = now.getTime() - actionDate.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+  
+  // Recent (within 1 hour) - Green
+  if (diffMinutes < 60) {
+    if (diffMinutes < 1) {
+      return { text: 'Just now', color: 'bg-green-100 text-green-800' };
+    }
+    return { text: `${diffMinutes}m ago`, color: 'bg-green-100 text-green-800' };
+  }
+  
+  // Today (within 24 hours) - Blue
+  if (diffHours < 24) {
+    return { text: `${diffHours}h ago`, color: 'bg-blue-100 text-blue-800' };
+  }
+  
+  // This week (within 7 days) - Yellow
+  if (diffDays < 7) {
+    return { text: `${diffDays}d ago`, color: 'bg-yellow-100 text-yellow-800' };
+  }
+  
+  // This month (within 30 days) - Orange
+  if (diffDays < 30) {
+    return { text: `${diffWeeks}w ago`, color: 'bg-orange-100 text-orange-800' };
+  }
+  
+  // This year (within 365 days) - Red
+  if (diffDays < 365) {
+    return { text: `${diffMonths}mo ago`, color: 'bg-red-100 text-red-800' };
+  }
+  
+  // Very old - Gray
+  return { text: `${diffYears}y ago`, color: 'bg-gray-100 text-gray-800' };
+}

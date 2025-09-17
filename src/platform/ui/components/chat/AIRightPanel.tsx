@@ -886,8 +886,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 180px)',
-        maxHeight: 'calc(100vh - 180px)',
+        height: 'calc(100vh - 120px)',
+        maxHeight: 'calc(100vh - 120px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -964,8 +964,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 180px)',
-        maxHeight: 'calc(100vh - 180px)',
+        height: 'calc(100vh - 120px)',
+        maxHeight: 'calc(100vh - 120px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1034,8 +1034,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 180px)',
-        maxHeight: 'calc(100vh - 180px)',
+        height: 'calc(100vh - 120px)',
+        maxHeight: 'calc(100vh - 120px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1102,8 +1102,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
   return (
     <div className="bg-[var(--background)] flex flex-col" style={{ 
       minWidth: '300px',
-      height: 'calc(100vh - 180px)',
-      maxHeight: 'calc(100vh - 180px)',
+      height: 'calc(100vh - 120px)',
+      maxHeight: 'calc(100vh - 120px)',
       overflow: 'hidden'
     }}>
       
@@ -1124,11 +1124,12 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-0 overflow-y-auto max-h-full" style={{ 
+        <div className="flex-1 px-6 py-0 overflow-y-auto" style={{ 
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-end',
-          scrollBehavior: 'smooth'
+          scrollBehavior: 'smooth',
+          maxHeight: 'calc(100% - 120px)'
         }}>
           
           {chatMessages['length'] === 0 && (

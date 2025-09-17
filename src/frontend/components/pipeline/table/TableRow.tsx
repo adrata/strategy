@@ -7,6 +7,7 @@ import React from 'react';
 import { ActionMenu } from '@/platform/ui/components/ActionMenu';
 import { getStatusColor, getPriorityColor, getStageColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
+import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { formatDate } from '@/platform/utils/dateUtils';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 
@@ -212,27 +213,13 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const health = getHealthStatus(record);
-                        const leadName = record.name || record['fullName'] || 'this lead';
+                        const lastActionDate = record.lastActionDate || record.lastContactDate || record.lastContact;
+                        const timing = getRealtimeActionTiming(lastActionDate);
                         
                         return (
-                          <>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${health.color}`}>
-                              {health.text}
-                            </span>
-                            <span className="text-sm text-gray-600 font-normal">
-                              {health['status'] === 'never' 
-                                ? `${leadName} not yet contacted` 
-                                : (() => {
-                                    const actionDescription = getSmartLastActionDescription(record, health.status);
-                                    const timing = formatLastActionTime(record);
-                                    return timing && timing !== 'Never' 
-                                      ? `${actionDescription} ${timing}`
-                                      : actionDescription;
-                                  })()
-                              }
-                            </span>
-                          </>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
+                            {timing.text}
+                          </span>
                         );
                       })()}
                     </div>
