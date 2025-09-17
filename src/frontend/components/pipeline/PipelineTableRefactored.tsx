@@ -43,7 +43,6 @@ interface PipelineTableProps {
 
 // -------- Constants --------
 const DEFAULT_PAGE_SIZE = 50;
-const TABLE_HEIGHT = 600;
 
 // -------- Helper Functions --------
 function getColumnWidth(index: number): string {
@@ -115,6 +114,28 @@ export function PipelineTableRefactored({
   // Get table headers
   const headers = getTableHeaders(visibleColumns);
   
+  // Dynamic height calculation (same as original table)
+  const headerHeight = 40; // Height of table header
+  const rowHeight = 64; // Approximate height per row
+  const contentHeight = headerHeight + (data.length * rowHeight);
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 187.5 : 600; // Reserve 160px for other UI elements
+  
+  // Dynamic height calculation based on content size
+  let tableHeight;
+  if (data.length === 0) {
+    // Empty state - use minimal height
+    tableHeight = 120;
+  } else if (data.length === 1) {
+    // Single record - use content height with just enough buffer to avoid scroll
+    tableHeight = contentHeight + 12;
+  } else if (data.length <= 3) {
+    // Small datasets - use content height with moderate buffer
+    tableHeight = contentHeight + 16;
+  } else {
+    // Larger datasets - use viewport constraint
+    tableHeight = Math.min(contentHeight, maxViewportHeight);
+  }
+  
   // Use custom hooks for data and actions
   const {
     paginatedData,
@@ -169,7 +190,7 @@ export function PipelineTableRefactored({
     <div 
       key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
       className="bg-white rounded-lg border border-gray-200 flex flex-col relative" 
-      style={{ height: `${TABLE_HEIGHT}px` }}
+      style={{ height: `${tableHeight}px` }}
     >
       {/* Table container */}
       <div className="flex-1 overflow-auto min-h-0 pipeline-table-scroll">
