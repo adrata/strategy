@@ -68,19 +68,31 @@ export function TableHeader({
           const sortIcon = getSortIcon(sortField || '', field, sortDirection);
           
           return (
-            <th
+            <th 
               key={header}
-              className={`
-                px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
-                bg-white border-b border-gray-200
-                ${!isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-50' : ''}
-              `}
+              className={`px-6 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 h-8 border-b border-gray-200 ${
+                !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-100 transition-colors group' : ''
+              }`}
               style={{ width: getColumnWidth(index) }}
-              onClick={!isActionColumn && onColumnSort ? () => onColumnSort(field) : undefined}
+              onClick={() => !isActionColumn && onColumnSort?.(header)}
             >
-              <div className="flex items-center space-x-1">
-                <span>{header}</span>
-                {sortIcon}
+              <div className="flex items-center justify-between">
+                <span>{isActionColumn ? '' : header}</span>
+                {!isActionColumn && onColumnSort && (
+                  <div className="flex items-center ml-2">
+                    {isCurrentSort ? (
+                      sortDirection === 'asc' ? (
+                        <ChevronUpIcon className="w-4 h-4 text-gray-600" />
+                      ) : (
+                        <ChevronDownIcon className="w-4 h-4 text-gray-600" />
+                      )
+                    ) : (
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ChevronUpIcon className="w-4 h-4 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </th>
           );

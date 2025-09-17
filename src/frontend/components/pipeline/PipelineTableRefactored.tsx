@@ -196,6 +196,11 @@ export function PipelineTableRefactored({
                 key={record.id}
                 record={record}
                 headers={headers}
+                section={section}
+                index={index}
+                workspaceId={workspaceId}
+                workspaceName={workspaceName}
+                visibleColumns={visibleColumns}
                 onRecordClick={onRecordClick}
                 onEdit={handleEdit}
                 onAddAction={handleAddAction}
