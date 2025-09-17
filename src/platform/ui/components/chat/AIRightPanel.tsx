@@ -886,8 +886,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 7.5px)',
-        maxHeight: 'calc(100vh - 7.5px)',
+        height: 'calc(100vh - 180px)',
+        maxHeight: 'calc(100vh - 180px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -964,8 +964,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 7.5px)',
-        maxHeight: 'calc(100vh - 7.5px)',
+        height: 'calc(100vh - 180px)',
+        maxHeight: 'calc(100vh - 180px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1034,8 +1034,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     return (
       <div className="bg-[var(--background)] flex flex-col" style={{ 
         minWidth: '300px',
-        height: 'calc(100vh - 7.5px)',
-        maxHeight: 'calc(100vh - 7.5px)',
+        height: 'calc(100vh - 180px)',
+        maxHeight: 'calc(100vh - 180px)',
         overflow: 'hidden'
       }}>
         <ConversationHeader
@@ -1102,8 +1102,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
   return (
     <div className="bg-[var(--background)] flex flex-col" style={{ 
       minWidth: '300px',
-      height: 'calc(100vh - 25px)',
-      maxHeight: 'calc(100vh - 25px)',
+      height: 'calc(100vh - 180px)',
+      maxHeight: 'calc(100vh - 180px)',
       overflow: 'hidden'
     }}>
       
