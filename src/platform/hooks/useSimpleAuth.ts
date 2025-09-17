@@ -1,7 +1,15 @@
+/**
+ * Simple Authentication Hook
+ * 
+ * Provides unified authentication state management across web/desktop/mobile platforms.
+ * Follows 2025 best practices for React hooks and authentication patterns.
+ */
+
 "use client";
 
 import { useState, useEffect } from 'react';
 
+// -------- Types & interfaces --------
 export interface SimpleUser {
   id: string;
   name: string;
@@ -21,6 +29,62 @@ export interface AuthResult {
   redirectPath?: string;
 }
 
+// -------- Constants --------
+const AUTH_STORAGE_KEYS = {
+  TOKEN: 'adrata_auth_token',
+  USER: 'adrata_user',
+} as const;
+
+const CACHE_KEYS = {
+  SPEEDRUN_ENGINE: 'speedrun-engine-settings',
+  WORKSPACE: 'workspace-cache',
+  USER_PREFERENCES: 'user-preferences',
+  DASHBOARD: 'dashboard-cache',
+  PIPELINE: 'pipeline-cache',
+} as const;
+
+// -------- Helpers --------
+function isBrowser(): boolean {
+  return typeof window !== 'undefined';
+}
+
+function getStoredAuthData(): { token: string | null; userData: string | null } {
+  if (!isBrowser()) return { token: null, userData: null };
+  
+  return {
+    token: localStorage.getItem(AUTH_STORAGE_KEYS.TOKEN),
+    userData: localStorage.getItem(AUTH_STORAGE_KEYS.USER),
+  };
+}
+
+function clearAuthStorage(): void {
+  if (!isBrowser()) return;
+  
+  localStorage.removeItem(AUTH_STORAGE_KEYS.TOKEN);
+  localStorage.removeItem(AUTH_STORAGE_KEYS.USER);
+  sessionStorage.clear();
+}
+
+function clearCacheStorage(): void {
+  if (!isBrowser()) return;
+  
+  Object.values(CACHE_KEYS).forEach(key => {
+    localStorage.removeItem(key);
+  });
+  
+  // Clear browser caches
+  if (window.caches) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        if (name.includes('adrata') || name.includes('workspace')) {
+          caches.delete(name);
+        }
+      });
+    });
+  }
+}
+
+// -------- Main hook --------
 export function useSimpleAuth() {
   const [user, setUser] = useState<SimpleUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,11 +95,9 @@ export function useSimpleAuth() {
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = async (): Promise<void> => {
     try {
-      // Check if we have a token in localStorage (for non-web platforms)
-      const token = localStorage.getItem('adrata_auth_token');
-      const userData = localStorage.getItem('adrata_user');
+      const { token, userData } = getStoredAuthData();
       
       if (token && userData) {
         // For now, assume token is valid if it exists
@@ -77,13 +139,11 @@ export function useSimpleAuth() {
         setUser(result.user);
         setIsAuthenticated(true);
         
-        // Store token for non-web platforms
-        if (result.token) {
-          localStorage.setItem('adrata_auth_token', result.token);
+        // Store authentication data
+        if (isBrowser() && result.token) {
+          localStorage.setItem(AUTH_STORAGE_KEYS.TOKEN, result.token);
+          localStorage.setItem(AUTH_STORAGE_KEYS.USER, JSON.stringify(result.user));
         }
-
-        // Store user data in localStorage for workspace layout compatibility
-        localStorage.setItem('adrata_user', JSON.stringify(result.user));
 
         return {
           success: true,
@@ -109,22 +169,35 @@ export function useSimpleAuth() {
     }
   };
 
-  const signOut = async () => {
+  const signOut = async (): Promise<void> => {
     try {
-      // Clear local storage
-      localStorage.removeItem('adrata_auth_token');
-      localStorage.removeItem('adrata_user');
+      console.log('🚪 [SIGN-OUT] Starting optimized sign-out process...');
       
-      // Clear state
+      // Clear state immediately for instant UI feedback
       setUser(null);
       setIsAuthenticated(false);
       
-      // Redirect to sign-in page
-      if (typeof window !== 'undefined') {
-        window['location']['href'] = '/sign-in';
+      // Clear critical storage immediately
+      clearAuthStorage();
+      
+      // Redirect immediately, clear cache storage in background
+      if (isBrowser()) {
+        window.location.replace('/sign-in');
+        
+        // Clear additional storage in background (non-blocking)
+        setTimeout(() => {
+          clearCacheStorage();
+        }, 0);
       }
+      
+      console.log('✅ [SIGN-OUT] Critical storage cleared, redirecting immediately...');
+      
     } catch (error) {
-      console.error('Sign-out error:', error);
+      console.error('❌ [SIGN-OUT] Error during sign-out:', error);
+      // Fallback: force redirect even if there's an error
+      if (isBrowser()) {
+        window.location.href = '/sign-in';
+      }
     }
   };
 

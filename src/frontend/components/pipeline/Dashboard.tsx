@@ -1,12 +1,20 @@
+/**
+ * Dashboard Component
+ * 
+ * Displays weekly activity metrics and performance data for the pipeline.
+ * Follows 2025 best practices for React components and data loading patterns.
+ */
+
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 import { DashboardSkeleton } from './DashboardSkeleton';
 
+// -------- Types & interfaces --------
 interface WeeklyActivityData {
   // This Week Performance
   callsMade: number;
@@ -201,14 +209,44 @@ function ActivityMetric({
 
 
 
+// -------- Constants --------
+const dashboardCache = new Map<string, { data: WeeklyActivityData; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// -------- Main component --------
 export function Dashboard() {
   const { user, isLoading: authLoading } = useUnifiedAuth();
   const router = useRouter();
   // 🆕 CRITICAL FIX: Use useAcquisitionOS for consistent data source
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionOSData } = useAcquisitionOS();
+  const acquisitionData = acquisitionOSData.acquireData;
+  const acquisitionLoading = acquisitionOSData.loading;
   const [activityData, setActivityData] = useState<WeeklyActivityData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 🚀 DEBUG: Track component renders
+  console.log('🔄 [DASHBOARD] Component rendered:', {
+    timestamp: Date.now(),
+    hasUser: !!user,
+    hasAcquisitionData: !!acquisitionData,
+    acquisitionDataStructure: acquisitionData ? Object.keys(acquisitionData) : 'null',
+    acquisitionDataCounts: acquisitionData?.counts || 'no counts',
+    acquisitionLoading: acquisitionLoading?.isLoading,
+    isLoading,
+    hasActivityData: !!activityData
+  });
+  
+  // 🚨 CRITICAL DEBUG: Force visible log
+  console.log('🚨 [DASHBOARD CRITICAL] Component is rendering!', {
+    user: user?.email || 'no user',
+    hasAcquisitionData: !!acquisitionData,
+    acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'NO DATA',
+    hasCounts: !!(acquisitionData?.counts),
+    countsData: acquisitionData?.counts || 'NO COUNTS',
+    loading: acquisitionLoading?.isLoading,
+    hasActivityData: !!activityData
+  });
 
   // 🆕 CRITICAL FIX: Use workspace from provider instead of URL detection
   const workspaceId = user?.activeWorkspaceId;
@@ -220,7 +258,8 @@ export function Dashboard() {
     userId: userId
   });
 
-  const loadActivityData = async () => {
+  // 🚀 PERFORMANCE FIX: Use data from provider instead of making duplicate API calls
+  const loadActivityData = useCallback(async () => {
     try {
       if (!workspaceId || !userId) {
         console.warn('No workspace or user ID available for Dashboard');
@@ -228,92 +267,211 @@ export function Dashboard() {
         return;
       }
 
-      setIsLoading(true);
-      setError(null);
-      console.log('📊 Loading Dashboard...', { workspaceId, userId });
-      
-      const response = await fetch(`/api/pipeline/dashboard?workspaceId=${workspaceId}&userId=${userId}&_t=${Date.now()}&_cache=${Math.random()}`);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Dashboard API error:', response.status, errorText);
-        throw new Error(`Failed to load dashboard: ${response.status} - ${errorText}`);
+      // 🚀 PERFORMANCE: Prevent multiple simultaneous calls
+      if (isLoading) {
+        console.log('⏳ [DASHBOARD] Already loading, skipping duplicate call');
+        return;
       }
 
-      const data = await response.json();
+      // 🚀 PERFORMANCE: Check client-side cache first
+      const cacheKey = `dashboard:${workspaceId}:${userId}`;
+      const cached = dashboardCache.get(cacheKey);
       
-      // Debug: Log the actual response structure
-      console.log('🔍 [DASHBOARD DEBUG] API Response:', {
-        hasSuccess: 'success' in data,
-        successValue: data.success,
-        hasData: 'data' in data,
-        dataType: typeof data.data,
-        dataKeys: data.data ? Object.keys(data.data) : 'no data',
-        fullResponse: data
-      });
-      
-      // More detailed validation - handle both direct data and wrapped responses
-      const isValidResponse = data && typeof data === 'object';
-      const hasWrappedResponse = data && 'success' in data && 'data' in data;
-      const hasDirectData = data && !hasWrappedResponse && typeof data === 'object';
-      
-      console.log('🔍 [DASHBOARD DEBUG] Response validation:', {
-        isValidResponse,
-        hasWrappedResponse,
-        hasDirectData,
-        dataExists: !!data,
-        dataType: typeof data,
-        successExists: 'success' in data,
-        successValue: data?.success,
-        successType: typeof data?.success,
-        dataExists: 'data' in data,
-        dataValue: !!data?.data,
-        dataType: typeof data?.data,
-        dataKeys: data?.data ? Object.keys(data.data) : (data ? Object.keys(data) : 'no data')
-      });
-      
-      if (isValidResponse) {
-        let dashboardData;
-        
-        if (hasWrappedResponse && data['success'] === true && data.data) {
-          // Handle wrapped response format: { success: true, data: {...} }
-          dashboardData = data.data;
-        } else if (hasDirectData) {
-          // Handle direct data format: {...}
-          dashboardData = data;
-        } else {
-          throw new Error(data?.error || 'Invalid response format');
-        }
-        
-        // Add timestamp to track data freshness
-        const dataWithTimestamp = {
-          ...dashboardData,
-          lastUpdated: Date.now()
-        };
-        setActivityData(dataWithTimestamp);
-        console.log('✅ Dashboard loaded successfully');
-      } else {
-        console.error('❌ [DASHBOARD DEBUG] Response validation failed:', {
-          success: data?.success,
-          hasData: !!data?.data,
-          error: data?.error,
-          fullData: data
-        });
-        throw new Error(data?.error || 'Invalid response format');
+      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        console.log('⚡ [DASHBOARD CACHE HIT] Using cached dashboard data');
+        setActivityData(cached.data);
+        setIsLoading(false);
+        return;
       }
+
+      // 🚀 PERFORMANCE: Use cached data from provider instead of making new API call
+      if (acquisitionData && acquisitionData.counts) {
+        console.log('⚡ [DASHBOARD] Using cached data from provider - NO API CALL NEEDED');
+        
+        // Transform acquisition data to dashboard format
+        const dashboardData: WeeklyActivityData = {
+          // This Week Performance
+          callsMade: 0,
+          emailsSent: 0,
+          meetingsScheduled: 0,
+          opportunitiesAdvanced: 0,
+          newLeadsGenerated: acquisitionData.counts.leads || 0,
+          
+          // Weekly Targets & Progress
+          weeklyCallTarget: 20,
+          weeklyEmailTarget: 50,
+          weeklyMeetingTarget: 5,
+          weeklyOpportunityTarget: 3,
+          
+          // Weekly Trends
+          callsVsLastWeek: 0,
+          emailsVsLastWeek: 0,
+          meetingsVsLastWeek: 0,
+          opportunitiesVsLastWeek: 0,
+          
+          // Pipeline Health This Week
+          newOpportunities: acquisitionData.counts.opportunities || 0,
+          closedWonOpportunities: 0,
+          pipelineValueAdded: 0,
+          avgOpportunitySizeThisWeek: 0,
+          
+          // Real Pipeline Metrics
+          totalPipelineValue: 0,
+          totalOpportunitiesCount: acquisitionData.counts.opportunities || 0,
+          totalLeadsCount: acquisitionData.counts.leads || 0,
+          openOpportunitiesCount: acquisitionData.counts.opportunities || 0,
+          
+          // Conversion Metrics
+          leadToOpportunityRate: 0,
+          weeklyRevenue: 0,
+          avgSalesCycleLength: null,
+          
+          // Team Performance
+          topPerformer: 'Team',
+          teamCallsTotal: 0,
+          teamEmailsTotal: 0,
+          teamMeetingsTotal: 0,
+          
+          lastUpdated: new Date().toISOString()
+        };
+        
+        setActivityData(dashboardData);
+        
+        // 🚀 PERFORMANCE: Cache the transformed data
+        dashboardCache.set(cacheKey, {
+          data: dashboardData,
+          timestamp: Date.now()
+        });
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // 🚀 PERFORMANCE: Skip API call if we're still loading from provider
+      if (!acquisitionData) {
+        console.log('⏳ [DASHBOARD] Waiting for provider data, skipping API call');
+        setIsLoading(false);
+        return;
+      }
+
+      // 🚀 PERFORMANCE: NEVER make API calls when we have provider data
+      console.log('⚡ [DASHBOARD] Provider data available, skipping API call completely');
+      setIsLoading(false);
+      return;
     } catch (error) {
       console.error('❌ Error loading Dashboard:', error);
       setError(error instanceof Error ? error.message : 'Failed to load dashboard');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [workspaceId, userId, acquisitionData]);
+
+  // 🚀 PERFORMANCE: Immediately transform acquisition data when available
+  useEffect(() => {
+    console.log('🔄 [DASHBOARD] Data transformation useEffect triggered:', {
+      hasAcquisitionData: !!acquisitionData,
+      hasCounts: !!(acquisitionData?.counts),
+      hasActivityData: !!activityData,
+      acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'null',
+      countsData: acquisitionData?.counts || 'no counts',
+      willTransform: !!(acquisitionData && acquisitionData.counts && !activityData)
+    });
+    
+    if (acquisitionData && acquisitionData.counts && !activityData) {
+      console.log('⚡ [DASHBOARD] Immediately transforming acquisition data to dashboard format');
+      
+      // Transform acquisition data to dashboard format using REAL calculated metrics
+      const metrics = acquisitionData.metrics || {};
+      
+      const dashboardData: WeeklyActivityData = {
+        // This Week Performance - REAL DATA from actions table
+        callsMade: metrics.weeklyCalls || 0,
+        emailsSent: metrics.weeklyEmails || 0,
+        meetingsScheduled: metrics.weeklyMeetings || 0,
+        opportunitiesAdvanced: 0, // Would need more complex calculation
+        newLeadsGenerated: acquisitionData.counts.leads || 0,
+        
+        // Weekly Targets & Progress - REALISTIC TARGETS
+        weeklyCallTarget: 20,
+        weeklyEmailTarget: 50,
+        weeklyMeetingTarget: 5,
+        weeklyOpportunityTarget: 3,
+        
+        // Weekly Trends - PLACEHOLDER (would need historical data)
+        callsVsLastWeek: 0,
+        emailsVsLastWeek: 0,
+        meetingsVsLastWeek: 0,
+        opportunitiesVsLastWeek: 0,
+        
+        // Pipeline Health This Week - REAL DATA
+        newOpportunities: acquisitionData.counts.opportunities || 0,
+        closedWonOpportunities: metrics.monthlyDealsClosed || 0,
+        pipelineValueAdded: 0, // Would need more complex calculation
+        avgOpportunitySizeThisWeek: metrics.avgDealSize || 0,
+        
+        // Real Pipeline Metrics - CALCULATED FROM DATABASE
+        totalPipelineValue: metrics.totalPipelineValue || 0,
+        avgDealSize: metrics.avgDealSize || 0,
+        salesCycleLength: metrics.ytdSalesCycle || 0,
+        conversionRate: metrics.conversionRate || 0,
+        
+        // Team Performance - PLACEHOLDER (would need team data)
+        teamCallsThisWeek: 0,
+        teamEmailsThisWeek: 0,
+        teamMeetingsThisWeek: 0,
+        topPerformer: 'N/A',
+        
+        // Revenue Metrics - REAL DATA from opportunities
+        weeklyRevenue: 0, // Would need weekly revenue calculation
+        monthlyRevenue: metrics.monthlyPipelineValue || 0,
+        ytdRevenue: metrics.ytdRevenue || 0,
+        
+        // Lead Generation - REAL DATA
+        newLeadsThisWeek: acquisitionData.counts.leads || 0,
+        leadConversionRate: metrics.conversionRate || 0,
+        qualifiedLeads: acquisitionData.counts.prospects || 0,
+        
+        // Activity Summary - REAL DATA
+        totalActivities: (metrics.weeklyCalls || 0) + (metrics.weeklyEmails || 0) + (metrics.weeklyMeetings || 0),
+        activitiesThisWeek: (metrics.weeklyCalls || 0) + (metrics.weeklyEmails || 0) + (metrics.weeklyMeetings || 0),
+        lastUpdated: new Date().toISOString()
+      };
+      
+            setActivityData(dashboardData);
+            
+            // Cache the transformed data
+            if (workspaceId && userId) {
+              const cacheKey = `dashboard:${workspaceId}:${userId}`;
+              dashboardCache.set(cacheKey, {
+                data: dashboardData,
+                timestamp: Date.now()
+              });
+            }
+            
+            console.log('✅ [DASHBOARD] Data transformed and set immediately!', {
+              dashboardData: dashboardData,
+              newLeadsGenerated: dashboardData.newLeadsGenerated,
+              newOpportunities: dashboardData.newOpportunities
+            });
+    }
+  }, [acquisitionData, activityData, workspaceId, userId]);
 
   // Track workspace changes to force data refresh
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
   const [lastUserId, setLastUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔄 [DASHBOARD] useEffect triggered:', {
+      authLoading,
+      hasUser: !!user,
+      workspaceId,
+      userId,
+      lastWorkspaceId,
+      lastUserId,
+      hasAcquisitionData: !!acquisitionData,
+      hasActivityData: !!activityData
+    });
+
     if (!authLoading && user && workspaceId && userId) {
       // Check if workspace or user has changed - force refresh if so
       const workspaceChanged = workspaceId !== lastWorkspaceId;
@@ -336,14 +494,16 @@ export function Dashboard() {
         loadActivityData();
       } else if (!activityData || Date.now() - (activityData as any).lastUpdated > 300000) {
         // Load data if we don't have it or if it's stale
+        console.log('🔄 [DASHBOARD] Loading data - no data or stale data');
         loadActivityData();
       } else {
         // We have fresh data
+        console.log('🔄 [DASHBOARD] We have fresh data, skipping load');
       }
     } else if (!authLoading && !user) {
       setError('Please sign in to view dashboard');
     }
-  }, [workspaceId, userId, authLoading, user, lastWorkspaceId, lastUserId]);
+  }, [workspaceId, userId, authLoading, user, lastWorkspaceId, lastUserId, acquisitionData]);
 
   const handleRefresh = () => {
     loadActivityData();
@@ -429,9 +589,29 @@ export function Dashboard() {
         // Dashboard doesn't need header metrics - pass null
       const headerMetrics = null;
 
-  // Show skeleton loading state for content only (header always visible)
-  if (isLoading && !activityData) {
+  // 🚀 PERFORMANCE: Show loading state only when truly loading
+  if (authLoading || (acquisitionLoading?.isLoading)) {
+    console.log('🔄 [DASHBOARD] Showing skeleton - auth or data loading');
     return <DashboardSkeleton />;
+  }
+
+  // 🚀 PERFORMANCE: Show loading state if we have user but no data at all
+  if (user && !activityData && !acquisitionData) {
+    console.log('🔄 [DASHBOARD] Showing skeleton - no data available');
+    return <DashboardSkeleton />;
+  }
+
+  // 🚀 PERFORMANCE: If we have acquisition data but no activity data yet, show a simple loading message
+  if (user && !activityData && acquisitionData) {
+    console.log('🔄 [DASHBOARD] Has acquisition data, waiting for transformation...');
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Processing dashboard data...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -462,8 +642,10 @@ export function Dashboard() {
     );
   }
 
-  // Remove loading state - show content immediately
-  // Provide default values if no data yet
+  // 🚀 PERFORMANCE: Only show default data if we have user but no activity data yet
+  // This prevents showing blank/zero data during initial load
+  const shouldShowDefaultData = user && !activityData && !isLoading;
+  
   const defaultData: WeeklyActivityData = {
     callsMade: 0,
     emailsSent: 0,
@@ -499,7 +681,8 @@ export function Dashboard() {
     lastUpdated: new Date().toISOString()
   };
 
-  const data = activityData || defaultData;
+  // 🚀 PERFORMANCE: Only use default data if we should show it, otherwise use activity data
+  const dashboardData = shouldShowDefaultData ? defaultData : (activityData || defaultData);
 
   return (
     <div className="h-full flex flex-col bg-white">
@@ -528,30 +711,30 @@ export function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <ActivityMetric
                 title="LinkedIn"
-                value={data.linkedinsSent || 0}
-                target={data.weeklyLinkedinTarget || 20}
-                trend={data.linkedinsVsLastWeek || 0}
+                value={dashboardData.linkedinsSent || 0}
+                target={dashboardData.weeklyLinkedinTarget || 20}
+                trend={dashboardData.linkedinsVsLastWeek || 0}
                 onClick={handleLinkedinsClick}
               />
               <ActivityMetric
                 title="Calls"
-                value={data.callsMade}
-                target={data.weeklyCallTarget}
-                trend={data.callsVsLastWeek}
+                value={dashboardData.callsMade}
+                target={dashboardData.weeklyCallTarget}
+                trend={dashboardData.callsVsLastWeek}
                 onClick={handleCallsClick}
               />
               <ActivityMetric
                 title="Emails"
-                value={data.emailsSent}
-                target={data.weeklyEmailTarget}
-                trend={data.emailsVsLastWeek}
+                value={dashboardData.emailsSent}
+                target={dashboardData.weeklyEmailTarget}
+                trend={dashboardData.emailsVsLastWeek}
                 onClick={handleEmailsClick}
               />
               <ActivityMetric
                 title="Meetings"
-                value={data.meetingsScheduled}
-                target={data.weeklyMeetingTarget}
-                trend={data.meetingsVsLastWeek}
+                value={dashboardData.meetingsScheduled}
+                target={dashboardData.weeklyMeetingTarget}
+                trend={dashboardData.meetingsVsLastWeek}
                 onClick={handleMeetingsClick}
               />
             </div>
@@ -566,7 +749,7 @@ export function Dashboard() {
                 onClick={handleNewOpportunitiesClick}
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">New Opportunities</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.monthlyNewOpportunities || 0}</div>
+                <div className="text-3xl font-bold text-gray-900">{dashboardData.newOpportunities || 0}</div>
                 <div className="text-xs text-gray-500 mt-1">This month</div>
               </div>
               <div 
@@ -575,7 +758,7 @@ export function Dashboard() {
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Pipeline Value</h3>
                 <div className="text-3xl font-bold text-gray-900">
-                  ${(data.monthlyPipelineValue || 0 / 1000000).toFixed(1)}M
+                  ${((dashboardData.monthlyRevenue || 0) / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-xs text-gray-500 mt-1">This month</div>
               </div>
@@ -584,7 +767,7 @@ export function Dashboard() {
                 onClick={handleLeadConversionClick}
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Conversion Rate</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.monthlyConversionRate || 0}%</div>
+                <div className="text-3xl font-bold text-gray-900">{Math.round(dashboardData.conversionRate || 0)}%</div>
                 <div className="text-xs text-gray-500 mt-1">This month</div>
               </div>
               <div 
@@ -592,7 +775,7 @@ export function Dashboard() {
                 onClick={handleOpportunitiesClosedClick}
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Deals Closed</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.monthlyDealsClosed || 0}</div>
+                <div className="text-3xl font-bold text-gray-900">{dashboardData.closedWonOpportunities || 0}</div>
                 <div className="text-xs text-gray-500 mt-1">This month</div>
               </div>
             </div>
@@ -608,7 +791,7 @@ export function Dashboard() {
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">YTD Revenue</h3>
                 <div className="text-3xl font-bold text-gray-900">
-                  ${(data.ytdRevenue || 0 / 1000000).toFixed(1)}M
+                  ${((dashboardData.ytdRevenue || 0) / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-xs text-gray-500 mt-1">Year to date</div>
               </div>
@@ -618,7 +801,7 @@ export function Dashboard() {
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Avg Deal Size</h3>
                 <div className="text-3xl font-bold text-gray-900">
-                  ${(data.ytdAvgDealSize || 0 / 1000).toFixed(0)}K
+                  ${((dashboardData.avgDealSize || 0) / 1000).toFixed(0)}K
                 </div>
                 <div className="text-xs text-gray-500 mt-1">Year to date</div>
               </div>
@@ -628,7 +811,7 @@ export function Dashboard() {
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Win Rate</h3>
                 <div className="text-3xl font-bold text-gray-900">
-                  {data.ytdWinRate || 0}%
+                  {Math.round(dashboardData.conversionRate || 0)}%
                 </div>
                 <div className="text-xs text-gray-500 mt-1">Year to date</div>
               </div>
@@ -637,7 +820,7 @@ export function Dashboard() {
                 onClick={handleSalesCycleClick}
               >
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Sales Cycle</h3>
-                <div className="text-3xl font-bold text-gray-900">{data.ytdSalesCycle || 0} days</div>
+                <div className="text-3xl font-bold text-gray-900">{dashboardData.salesCycleLength || 0} days</div>
                 <div className="text-xs text-gray-500 mt-1">Year to date</div>
               </div>
             </div>

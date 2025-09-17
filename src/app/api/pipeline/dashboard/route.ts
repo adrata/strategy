@@ -1,18 +1,16 @@
+/**
+ * Dashboard API Route
+ * 
+ * Provides optimized dashboard data with multi-layer caching and workspace context.
+ * Follows 2025 best practices for API performance and data loading patterns.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../platform/database/prisma-client';
 import { cache } from '../../../../platform/services';
 import * as jwt from 'jsonwebtoken';
 
-// 🚀 PERFORMANCE: Aggressive caching for instant loading
-const DASHBOARD_TTL = 300; // 5 minutes for dashboard data (optimized for performance)
-const WORKSPACE_CONTEXT_TTL = 60; // 1 minute
-
-// 🚀 CACHING: Multi-layer cache for instant responses
-const pendingRequests = new Map<string, Promise<any>>();
-const dashboardMemoryCache = new Map<string, { data: any; timestamp: number }>();
-const workspaceContextMemoryCache = new Map<string, { data: any; timestamp: number }>();
-
-// 🆕 TYPES: Enhanced API structures
+// -------- Types & interfaces --------
 interface DashboardResponse {
   success: boolean;
   data?: any;
@@ -24,8 +22,22 @@ interface DashboardResponse {
   };
 }
 
-// 🆕 CACHE HELPERS - Placeholder for future Redis integration
+interface WorkspaceContext {
+  workspaceId: string;
+  userId: string;
+  userEmail: string;
+}
 
+// -------- Constants --------
+const DASHBOARD_TTL = 300; // 5 minutes for dashboard data (optimized for performance)
+const WORKSPACE_CONTEXT_TTL = 60; // 1 minute
+
+// -------- Cache management --------
+const pendingRequests = new Map<string, Promise<any>>();
+const dashboardMemoryCache = new Map<string, { data: any; timestamp: number }>();
+const workspaceContextMemoryCache = new Map<string, { data: any; timestamp: number }>();
+
+// -------- Helpers --------
 function clearWorkspaceCache(workspaceId: string, userId: string, forceClear: boolean = false): void {
   if (!forceClear) return;
   
@@ -215,6 +227,7 @@ async function calculateActualForecastAccuracy(workspaceId: string): Promise<num
   }
 }
 
+// -------- API handlers --------
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   

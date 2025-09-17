@@ -169,10 +169,13 @@ function PipelineSections({
     speedrunCount: finalCounts.speedrun
   });
   
+  // 🚀 CONSISTENT LOADING: Use the same loading state as the middle panel
+  const loading = acquisitionData?.loading?.isLoading || authLoading || false;
+  
   // Use acquisitionData counts that were working before
   const leadsData = {
     data: acquisitionData?.acquireData?.leads || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.leads || []).length === 0,
     count: finalCounts.leads || 0
@@ -180,7 +183,7 @@ function PipelineSections({
   
   const prospectsData = {
     data: acquisitionData?.acquireData?.prospects || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.prospects || []).length === 0,
     count: finalCounts.prospects || 0
@@ -188,7 +191,7 @@ function PipelineSections({
   
   const opportunitiesData = {
     data: acquisitionData?.acquireData?.opportunities || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.opportunities || []).length === 0,
     count: finalCounts.opportunities || 0
@@ -196,7 +199,7 @@ function PipelineSections({
   
   const companiesData = {
     data: acquisitionData?.acquireData?.companies || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.companies || []).length === 0,
     count: finalCounts.companies || 0
@@ -204,7 +207,7 @@ function PipelineSections({
   
   const peopleData = {
     data: acquisitionData?.acquireData?.people || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.people || []).length === 0,
     count: finalCounts.people || 0
@@ -212,7 +215,7 @@ function PipelineSections({
   
   const customersData = {
     data: acquisitionData?.acquireData?.customers || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.customers || []).length === 0,
     count: finalCounts.customers || 0
@@ -220,7 +223,7 @@ function PipelineSections({
   
   const partnersData = {
     data: acquisitionData?.acquireData?.partners || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.partners || []).length === 0,
     count: finalCounts.partners || 0
@@ -228,14 +231,11 @@ function PipelineSections({
   
   const sellersData = {
     data: acquisitionData?.acquireData?.sellers || [],
-    loading: fallbackLoading,
+    loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.sellers || []).length === 0,
     count: finalCounts.sellers || 0
   };
-  
-  // 🚀 CONSISTENT LOADING: Use the same loading state as the middle panel
-  const loading = acquisitionData?.loading?.isLoading || false;
   
   // Debug logging to understand glitch
   console.log('🔍 [LEFT PANEL] Loading states:', {

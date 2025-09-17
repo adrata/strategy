@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/platform/database/prisma-client";
 
+// 🚀 PERFORMANCE: Add caching for workspace users
+const workspaceUsersCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -11,6 +15,15 @@ export async function GET(request: NextRequest) {
         { success: false, error: "workspaceId is required" },
         { status: 400 }
       );
+    }
+
+    // 🚀 PERFORMANCE: Check cache first
+    const cacheKey = `workspace_users:${workspaceId}`;
+    const cached = workspaceUsersCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log('⚡ [CACHE HIT] Workspace users:', workspaceId);
+      return NextResponse.json(cached.data);
     }
 
     console.log('🔍 [API] Fetching users for workspace:', workspaceId);
@@ -71,12 +84,20 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
+    const response = {
       success: true,
       users: usersWithRole,
       count: usersWithRole.length,
       workspaceId
+    };
+
+    // 🚀 PERFORMANCE: Cache the response
+    workspaceUsersCache.set(cacheKey, {
+      data: response,
+      timestamp: Date.now()
     });
+
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error("Error fetching workspace users:", error);
