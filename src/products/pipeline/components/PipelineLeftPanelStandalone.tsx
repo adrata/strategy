@@ -991,7 +991,7 @@ export function PipelineLeftPanelStandalone({
               </span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center mb-1">
                 <h3 className="text-lg font-bold leading-tight" style={{ margin: 0, padding: 0 }}>
                   {(() => {
                     const companyName = (workspace || "Sales Acceleration").trim();
@@ -1005,7 +1005,7 @@ export function PipelineLeftPanelStandalone({
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
                   })()}
                 </h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 ml-2">
                   Pro
                 </span>
               </div>
