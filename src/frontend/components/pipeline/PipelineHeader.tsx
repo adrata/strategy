@@ -715,15 +715,29 @@ export function PipelineHeader({
         });
       }
       
+      // Calculate overdue actions
+      const now = new Date();
+      const overdueActions = metrics.data ? metrics.data.filter((lead: any) => {
+        const nextActionDate = lead.nextActionDate || lead.nextContactDate;
+        if (!nextActionDate) return false;
+        return new Date(nextActionDate) < now;
+      }).length : 0;
+      
       metricItems.push({
-        label: leadsCount === 1 ? 'Lead' : 'Leads',
-        value: leadsCount.toString(),
-        color: 'text-gray-900'
+        label: 'Actions',
+        value: overdueActions.toString(),
+        color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
       });
       
       metricItems.push({
         label: uniqueCompanies['size'] === 1 ? 'Company' : 'Companies',
         value: uniqueCompanies.size.toString(),
+        color: 'text-gray-900'
+      });
+      
+      metricItems.push({
+        label: leadsCount === 1 ? 'Lead' : 'Leads',
+        value: leadsCount.toString(),
         color: 'text-gray-900'
       });
     } else if (section !== 'dashboard') {
