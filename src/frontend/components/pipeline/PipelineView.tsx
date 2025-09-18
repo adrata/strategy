@@ -233,7 +233,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'sellers': 
         return acquireData[section] || [];
       case 'speedrun': 
-        const speedrunData = acquireData[section] || [];
+        const speedrunData = acquireData.speedrunItems || [];
         console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
           hasAcquireData: !!acquireData,
           dataLength: speedrunData.length,
