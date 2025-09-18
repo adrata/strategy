@@ -196,37 +196,14 @@ async function redistributeOpportunitiesCorrectly() {
             stage: 'Prospecting',
             amount: amount,
             probability: probability,
-            closeDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-            status: 'active',
+            expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
             priority: 'high',
             source: 'import',
             notes: allNotes,
             tags: allTags,
             createdAt: primaryContact.createdAt,
             updatedAt: primaryContact.updatedAt,
-            assignedUserId: primaryContact.assignedUserId,
-            company: companyName,
-            industry: primaryContact.industry,
-            vertical: primaryContact.vertical,
-            companySize: primaryContact.companySize,
-            timezone: primaryContact.timezone,
-            engagementLevel: primaryContact.engagementLevel,
-            dataCompleteness: primaryContact.dataCompleteness,
-            communicationStyle: primaryContact.communicationStyle,
-            decisionMakingStyle: primaryContact.decisionMakingStyle,
-            companyId: primaryContact.companyId,
-            // Contact information (primary contact)
-            contactName: primaryContact.fullName,
-            contactEmail: primaryContact.email,
-            contactPhone: primaryContact.phone,
-            contactTitle: primaryContact.jobTitle,
-            // Additional contacts
-            additionalContacts: people.length > 1 ? people.slice(1).map(p => ({
-              name: p.fullName,
-              email: p.email,
-              phone: p.phone,
-              title: p.jobTitle
-            })) : []
+            assignedUserId: primaryContact.assignedUserId
           }
         });
         

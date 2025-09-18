@@ -469,19 +469,19 @@ export function AIRightPanel() {
       
       switch (app) {
         case "Speedrun":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
         case "pipeline":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
         case "monaco":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
         default:
           return isPipelineContext 
-            ? "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?"
-            : "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
+            ? "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?"
+            : "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
       }
     }
 
-    return activeConv?.welcomeMessage || "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
+    return activeConv?.welcomeMessage || "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
   };
 
   // Click outside handler

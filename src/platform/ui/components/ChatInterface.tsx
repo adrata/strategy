@@ -304,7 +304,7 @@ export const ChatInterface: React['FC'] = () => {
       >
         {/* Welcome message */}
         <div className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full mb-2">
-          Welcome! My name is Adrata. I&apos;m here to help you sell convincingly. Do you want to review your pipeline?
+          Welcome! My name is Adrata. I&apos;m here to help you sell convincingly. I can help with:<br/><br/>1. Pipeline optimization,<br/>2. Message crafting, and<br/>3. Sales analytics.<br/><br/>What would you like to focus on?
         </div>
         {[...messages].reverse().map((msg, idx) => (
           <div
