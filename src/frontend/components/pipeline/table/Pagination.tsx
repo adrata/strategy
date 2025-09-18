@@ -125,7 +125,7 @@ export function Pagination({
               ${page === '...'
                 ? 'text-gray-400 cursor-default'
                 : page === currentPage
-                ? 'bg-blue-50 text-blue-600 border border-blue-200'
+                ? 'bg-navy-50 text-navy-900 border border-navy-200'
                 : 'text-gray-700 hover:bg-gray-100'
               }
             `}

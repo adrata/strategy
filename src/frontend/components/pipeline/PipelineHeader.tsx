@@ -869,7 +869,7 @@ export function PipelineHeader({
                         setShowAddActionModal(true);
                       }}
                       disabled={loading}
-                      className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-navy-50 text-navy-900 border border-navy-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {(sectionInfo as any).secondaryActionButton}
                     </button>
@@ -927,7 +927,7 @@ export function PipelineHeader({
                             setShowAddActionModal(true);
                           }}
                           disabled={loading}
-                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-navy-50 text-navy-900 border border-navy-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {(sectionInfo as any).secondaryActionButton}
                         </button>
@@ -963,7 +963,7 @@ export function PipelineHeader({
                             setShowAddActionModal(true);
                           }}
                           disabled={loading}
-                          className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-navy-50 text-navy-900 border border-navy-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {(sectionInfo as any).secondaryActionButton}
                         </button>

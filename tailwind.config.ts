@@ -23,6 +23,22 @@ const config: Config = {
         'tighter': '-0.015em',
         'enterprise': '-0.025em',
       },
+      colors: {
+        // Custom navy color scheme based on #1B3758
+        navy: {
+          50: '#f0f4f8',   // Very light navy tint
+          100: '#d9e2ec',  // Light navy tint
+          200: '#bcccdc',  // Lighter navy
+          300: '#9fb3c8',  // Light navy
+          400: '#829ab1',  // Medium-light navy
+          500: '#627d98',  // Medium navy
+          600: '#486581',  // Medium-dark navy
+          700: '#334e68',  // Dark navy
+          800: '#243b53',  // Darker navy
+          900: '#1B3758',  // Base navy color
+          950: '#102a43',  // Darkest navy
+        },
+      },
     },
   },
   plugins: [],

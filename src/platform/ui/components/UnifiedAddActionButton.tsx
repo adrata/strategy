@@ -9,7 +9,7 @@ interface UnifiedAddActionButtonProps {
   variant?: 'dropdown' | 'simple';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  color?: 'red' | 'blue';
+  color?: 'red' | 'blue' | 'navy';
 }
 
 export function UnifiedAddActionButton({ 
@@ -18,7 +18,7 @@ export function UnifiedAddActionButton({
   variant = 'simple',
   size = 'md',
   className = '',
-  color = 'red'
+  color = 'navy'
 }: UnifiedAddActionButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -30,6 +30,8 @@ export function UnifiedAddActionButton({
 
   const colorClasses = color === 'blue' 
     ? 'bg-blue-600 text-white border border-blue-600 hover:bg-blue-700'
+    : color === 'navy'
+    ? 'bg-navy-50 text-navy-900 border border-navy-200 hover:bg-navy-100'
     : 'bg-red-600 text-white border border-red-600 hover:bg-red-700';
   
   const baseClasses = `${colorClasses} rounded-lg font-medium transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
