@@ -1177,17 +1177,17 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   isLoading={isLoading}
                 />
               ) : section === 'prospects' ? (
-                // Prospects table with filtered data
+                // Prospects table with same design as other sections
                 <PipelineTable
                   section={section}
-                  data={filteredData || []} // Use filtered data like other sections
+                  data={filteredData || []}
                   onRecordClick={handleRecordClick}
                   onReorderRecords={handleReorderRecords}
                   onColumnSort={handleColumnSort}
                   sortField={sortField}
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
-                  pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                  pageSize={100}
                   isLoading={isLoading}
                 />
               ) : section === 'leads' ? (
@@ -1409,7 +1409,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               sortField={sortField}
               sortDirection={sortDirection}
               visibleColumns={visibleColumns}
-              pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+              pageSize={100} // Default page size for other sections
+              isLoading={isLoading}
             />
           )}
           </>
