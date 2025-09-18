@@ -215,12 +215,13 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       return acquireData[section] || [];
     }
     
-    // For all other sections, use pipeline data (full records)
-    const fullData = pipelineData.data || [];
-    console.log(`🔍 [PIPELINE VIEW] Getting full data for section ${section}:`, {
-      hasPipelineData: !!pipelineData.data,
-      dataLength: fullData.length,
-      sampleData: fullData.slice(0, 2)
+    // For all other sections, use acquisition data directly
+    const acquireData = acquisitionData?.acquireData || {};
+    console.log(`🔍 [PIPELINE VIEW] Getting data for section ${section}:`, {
+      hasAcquisitionData: !!acquisitionData,
+      hasAcquireData: !!acquisitionData?.acquireData,
+      acquireDataKeys: Object.keys(acquireData),
+      sectionData: acquireData[section] || []
     });
     
     switch (section) {
@@ -232,11 +233,11 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'clients': 
       case 'partners': 
       case 'sellers': 
-        return fullData;
+        return acquireData[section] || [];
       case 'speedrun': 
-        const speedrunData = fullData;
+        const speedrunData = acquireData[section] || [];
         console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
-          hasFullData: !!fullData,
+          hasAcquireData: !!acquireData,
           dataLength: speedrunData.length,
           sampleRecord: speedrunData[0] ? {
             id: speedrunData[0].id,
