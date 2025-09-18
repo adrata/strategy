@@ -274,13 +274,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
-  const pipelineData = {
-    data: sectionData,
-    error: null,
-    isEmpty: sectionData?.length === 0,
-    refresh: acquisitionData?.refreshData || (() => Promise.resolve()),
-    clearCache: () => {} // Not needed with single data source
-  };
+  // Use the pipelineData from usePipelineData hook above
   
   // Set loading to false when data is actually loaded
   useEffect(() => {

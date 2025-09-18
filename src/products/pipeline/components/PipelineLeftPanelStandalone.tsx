@@ -404,7 +404,7 @@ function PipelineSections({
     actualCounts: actualCounts,
     fallbackCounts: fallbackCounts,
     finalCounts: finalCounts,
-    totalCount: Object.values(productionCounts).reduce((sum: number, count: number) => sum + count, 0)
+    totalCount: Object.values(productionCounts).reduce((sum: number, count: unknown) => sum + (typeof count === 'number' ? count : 0), 0)
   });
   const [dashboardStats, setDashboardStats] = useState({
     revenue: '$0.0M',
