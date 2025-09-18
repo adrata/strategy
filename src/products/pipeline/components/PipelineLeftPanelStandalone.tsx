@@ -997,9 +997,9 @@ export function PipelineLeftPanelStandalone({
                     const companyName = (workspace || "Sales Acceleration").trim();
                     console.log('🔍 Company name debug:', { companyName, length: companyName.length });
                     
-                    // Special handling for TOP Engineering Plus - show full name
+                    // Special handling for TOP Engineering Plus - show truncated name
                     if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
-                      return "TOP Engineering Plus";
+                      return "TOP Engin...";
                     }
                     
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
