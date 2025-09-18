@@ -1190,6 +1190,48 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
                   isLoading={isLoading}
                 />
+              ) : section === 'leads' ? (
+                // Leads table with same design as prospects
+                <PipelineTable
+                  section={section}
+                  data={filteredData || []}
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={handleReorderRecords}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={100}
+                  isLoading={isLoading}
+                />
+              ) : section === 'people' ? (
+                // People table with same design as prospects
+                <PipelineTable
+                  section={section}
+                  data={filteredData || []}
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={handleReorderRecords}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={100}
+                  isLoading={isLoading}
+                />
+              ) : section === 'companies' ? (
+                // Companies table with same design as prospects
+                <PipelineTable
+                  section={section}
+                  data={filteredData || []}
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={handleReorderRecords}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={100}
+                  isLoading={isLoading}
+                />
               ) : section === 'sellers' ? (
                 // Buyer Group style design for Sellers
             <div className="bg-white rounded-lg border border-gray-200">
