@@ -63,10 +63,12 @@ export const COLOR_SCHEMES: Record<string, ColorScheme> = {
 
 // Workspace-specific color scheme mappings
 export const WORKSPACE_COLOR_MAPPINGS: Record<string, string> = {
-  'TOP Engineers Plus': 'navy',
+  'TOP Engineering Plus': 'navy', // Correct name from database
+  'TOP Engineers Plus': 'navy',   // Fallback for potential variations
   'Retail Product Solutions': 'default',
   'Notary Everyday': 'default',
-  'adrata': 'default'
+  'adrata': 'default',
+  'Adrata': 'default'
 };
 
 /**

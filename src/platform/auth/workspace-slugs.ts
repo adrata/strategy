@@ -15,7 +15,9 @@ const WORKSPACE_SLUGS: Record<string, string> = {
   'Retail Product Solutions': 'rps',
   'Notary Everyday': 'ne',
   'adrata': 'adrata',
-  'TOP Engineers Plus': 'top',
+  'Adrata': 'adrata',
+  'TOP Engineering Plus': 'top', // Correct name from database
+  'TOP Engineers Plus': 'top',   // Fallback for potential variations
   // Add more mappings as needed
 };
 

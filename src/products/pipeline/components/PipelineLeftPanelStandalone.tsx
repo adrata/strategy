@@ -989,8 +989,8 @@ export function PipelineLeftPanelStandalone({
                     const companyName = (workspace || "Sales Acceleration").trim();
                     console.log('🔍 Company name debug:', { companyName, length: companyName.length });
                     
-                    // Special handling for TOP Engineers Plus
-                    if (companyName === "TOP Engineers Plus") {
+                    // Special handling for TOP Engineering Plus
+                    if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
                       return "TOP";
                     }
                     
