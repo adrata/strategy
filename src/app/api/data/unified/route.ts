@@ -844,8 +844,12 @@ async function getMultipleRecords(
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null
-        // Removed assignedUserId filter to show all people in workspace
+        deletedAt: null,
+        // Modified: Show all people in workspace, not just assigned ones
+        OR: [
+          { assignedUserId: userId }, // User's assigned people
+          { assignedUserId: null }    // Unassigned people in workspace
+        ]
       },
       include: {
         company: {
@@ -881,10 +885,13 @@ async function getMultipleRecords(
     whereClause['deletedAt'] = null;
   }
   
-  // Add user assignment filter for most types (temporarily disabled for debugging)
-  // if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
-  //   whereClause['assignedUserId'] = userId;
-  // }
+  // Add workspace-level visibility for most types (show assigned + unassigned)
+  if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
+    whereClause['OR'] = [
+      { assignedUserId: userId }, // User's assigned records
+      { assignedUserId: null }    // Unassigned records in workspace
+    ];
+  }
   
   // Apply additional filters
   if (filters) {
@@ -2027,19 +2034,54 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       speedrunData
     ] = await Promise.all([
       prisma.leads.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        }
       }),
       prisma.prospects.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        }
       }),
       prisma.opportunities.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        }
       }),
       prisma.companies.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        }
       }),
       prisma.people.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        }
       }),
       prisma.clients.count({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId }
@@ -2072,31 +2114,73 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       ]).then(([leadsCount, prospectsCount]) => leadsCount + prospectsCount),
       // 🚀 PERFORMANCE: Load minimal data for dashboard display only
       prisma.leads.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent leads for dashboard
         select: { id: true, fullName: true, email: true, company: true, updatedAt: true }
       }),
       prisma.prospects.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent prospects for dashboard
         select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
       }),
       prisma.opportunities.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent opportunities
-        select: { id: true, name: true, stage: true, amount: true, updatedAt: true }
+        select: { 
+          id: true, 
+          name: true, 
+          stage: true, 
+          amount: true, 
+          updatedAt: true,
+          description: true // Include description to extract people count
+        }
       }),
       prisma.companies.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent companies
         select: { id: true, name: true, industry: true, updatedAt: true }
       }),
       prisma.people.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent people
         select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
@@ -2116,8 +2200,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       // 🚀 PERFORMANCE: Load limited speedrun data for dashboard
       loadSpeedrunData(workspaceId, userId).then(result => {
         if (result.success) {
-          // Only return first 20 items for dashboard performance
-          return result.data.speedrunItems.slice(0, 20);
+          // Return first 50 items for speedrun
+          return result.data.speedrunItems.slice(0, 50);
         } else {
           console.error('❌ [DASHBOARD] Failed to load speedrun data:', result.error);
           return [];
@@ -2373,13 +2457,31 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       winRate
     });
 
+    // Process opportunities to extract people count from description
+    const processedOpportunities = opportunitiesData.map((opp: any) => {
+      let peopleCount = 0;
+      
+      // Extract people count from description
+      if (opp.description) {
+        const match = opp.description.match(/(\d+)\s+engaged\s+contact/);
+        if (match) {
+          peopleCount = parseInt(match[1]);
+        }
+      }
+      
+      return {
+        ...opp,
+        peopleCount: peopleCount
+      };
+    });
+
     return {
       success: true,
       data: {
         // Return transformed data arrays
         leads: transformedLeads,
         prospects: transformedProspects,
-        opportunities: opportunitiesData,
+        opportunities: processedOpportunities,
         companies: companiesData,
         people: peopleData,
         clients: clientsData,
@@ -2541,12 +2643,10 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         title: true,
         jobTitle: true,
         phone: true,
-        location: true,
         city: true,
         industry: true,
         status: true,
         priority: true,
-        lastContact: true,
         lastContactDate: true,
         lastActionDate: true,
         nextFollowUpDate: true,
@@ -2560,7 +2660,6 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         nextAction: true,
         createdAt: true,
         updatedAt: true,
-        assignedUser: true,
         workspaceId: true
       }
     });

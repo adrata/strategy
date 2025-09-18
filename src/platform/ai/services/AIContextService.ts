@@ -190,6 +190,16 @@ CRUD OPERATIONS CAPABILITY:
     try {
       let dataContext = '';
       
+      // Import the enhanced workspace context service
+      const { EnhancedWorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
+      
+      // Build comprehensive workspace context
+      const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
+      
+      if (workspaceContext) {
+        dataContext = EnhancedWorkspaceContextService.buildAIContextString(workspaceContext);
+      }
+      
       if (appType === 'Speedrun') {
         const speedrunData = await this.fetchSpeedrunData(workspaceId, userId);
         if (speedrunData) {
@@ -197,7 +207,7 @@ CRUD OPERATIONS CAPABILITY:
           const readyCount = speedrunData.prospects?.filter((p: any) => p['status'] === 'ready')?.length || 0;
           const completedCount = speedrunData.prospects?.filter((p: any) => p['status'] === 'completed')?.length || 0;
           
-          dataContext = `REAL SPEEDRUN DATA CONTEXT:
+          dataContext += `\n\nREAL SPEEDRUN DATA CONTEXT:
 - Total Prospects: ${prospectsCount}
 - Ready to Contact: ${readyCount}
 - Completed Today: ${completedCount}

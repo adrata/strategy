@@ -530,6 +530,23 @@ model companies {
   actionStatus          String?
   industryId            String?             @db.VarChar(30)
   verticalId            String?             @db.VarChar(30)
+  
+  // Enhanced context fields for TOP Engineers Plus
+  serviceOfferings      String[]            @default([])
+  technicalCapabilities String[]            @default([])
+  deliveryCapabilities  String[]            @default([])
+  expertiseAreas        String[]            @default([])
+  clientEngagementModel String?             @db.VarChar(100)
+  projectMethodology    String?             @db.VarChar(100)
+  communicationStyle    String?             @default("Professional") @db.VarChar(50)
+  uniqueValuePropositions String[]          @default([])
+  marketPositioning     String?             @db.VarChar(100)
+  targetSegments        String[]            @default([])
+  qualityStandards      String[]            @default([])
+  businessApproach      String?             @db.VarChar(200)
+  industrySpecializations String[]          @default([])
+  targetMarkets         String[]            @default([])
+  
   buyerGroups           buyer_groups[]
   industryData          industries?         @relation(fields: [industryId], references: [id])
   verticalData          industry_verticals? @relation(fields: [verticalId], references: [id])
@@ -631,6 +648,11 @@ model people {
   nextAction        String?
   nextActionDate    DateTime?            @db.Timestamp(6)
   actionStatus      String?
+  
+  // Enhanced context fields for engagement scoring
+  engagementScore   Float?               @default(0)
+  funnelStage       String?              @default("Prospect") @db.VarChar(50)
+  
   buyerGroups       BuyerGroupToPerson[]
   company           companies?           @relation(fields: [companyId], references: [id])
   actions           actions[]
@@ -1652,6 +1674,14 @@ model workspaces {
   createdBy            String?  @db.VarChar(30)
   updatedBy            String?  @db.VarChar(30)
   version              Int      @default(1)
+  
+  // Enhanced context fields for TOP Engineers Plus
+  companyContext       Json?
+  businessModel        String?  @db.VarChar(100)
+  serviceFocus         String[] @default([])
+  stakeholderApproach  String?  @default("Client-Centric") @db.VarChar(50)
+  projectDeliveryStyle String?  @default("Strategic Clarity") @db.VarChar(50)
+  
   users                users[]
 
   @@index([createdBy], map: "idx_workspaces_created_by")

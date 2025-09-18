@@ -25,11 +25,15 @@ export async function GET(request: NextRequest) {
 
     await prisma.$connect();
 
-    // Get companies from accounts table (represents companies in the schema) - SECURITY: Filter by user assignment
+    // Get companies from accounts table (represents companies in the schema) - WORKSPACE-LEVEL VISIBILITY
     const accounts = await prisma.companies.findMany({
       where: {
         workspaceId: workspaceId,
-        assignedUserId: userId, // SECURITY: Only show accounts assigned to this user
+        // Modified: Show all companies in workspace, not just assigned ones
+        OR: [
+          { assignedUserId: userId }, // User's assigned companies
+          { assignedUserId: null }    // Unassigned companies in workspace
+        ],
         deletedAt: null
       },
       // Note: No include needed since we'll fetch people separately

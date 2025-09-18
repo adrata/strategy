@@ -229,11 +229,20 @@ export class EnhancedAIOrchestrator {
     }
 
     try {
-      // Gather workspace data
+      // Gather workspace data with enhanced context
       const [workspace, user, recentActivity, currentRecordData] = await Promise.all([
         prisma.workspaces.findUnique({
           where: { id: context.workspaceId },
-          select: { name: true, industry: true, companySize: true }
+          select: { 
+            id: true,
+            name: true, 
+            description: true,
+            // Note: Enhanced fields would be here if migration was applied
+            // businessModel: true,
+            // serviceFocus: true,
+            // stakeholderApproach: true,
+            // projectDeliveryStyle: true,
+          }
         }),
         prisma.users.findUnique({
           where: { id: context.userId },
@@ -243,11 +252,21 @@ export class EnhancedAIOrchestrator {
         context.currentRecord ? this.getCurrentRecordData(context.currentRecord) : null
       ]);
 
+      // Get enhanced workspace context
+      const { EnhancedWorkspaceContextService } = await import('./EnhancedWorkspaceContextService');
+      const enhancedWorkspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(context.workspaceId);
+
       const enrichedContext = {
         workspace: {
           name: workspace?.name || 'Unknown',
-          industry: workspace?.industry || 'Unknown',
-          companySize: workspace?.companySize || 'Unknown'
+          description: workspace?.description,
+          industry: enhancedWorkspaceContext?.company.industry || 'Unknown',
+          businessModel: enhancedWorkspaceContext?.workspace.businessModel || 'Unknown',
+          serviceFocus: enhancedWorkspaceContext?.workspace.serviceFocus || [],
+          stakeholderApproach: enhancedWorkspaceContext?.workspace.stakeholderApproach || 'Unknown',
+          projectDeliveryStyle: enhancedWorkspaceContext?.workspace.projectDeliveryStyle || 'Unknown',
+          // Enhanced context data
+          enhancedContext: enhancedWorkspaceContext
         },
         user: {
           email: user?.email || 'Unknown',

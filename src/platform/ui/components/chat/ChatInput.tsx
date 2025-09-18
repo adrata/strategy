@@ -28,6 +28,7 @@ interface ChatInputProps {
   showAddFilesPopup: boolean;
   setShowAddFilesPopup: (show: boolean) => void;
   onSubmit: (e: React.FormEvent) => void;
+  workspaceId?: string;
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDragLeave: (e: React.DragEvent) => void;
@@ -54,6 +55,7 @@ export function ChatInput({
   showAddFilesPopup,
   setShowAddFilesPopup,
   onSubmit,
+  workspaceId,
   onFileSelect,
   onDragOver,
   onDragLeave,
@@ -123,9 +125,12 @@ export function ChatInput({
                 files={contextFiles}
                 onRemoveFile={(fileId) => setContextFiles(prev => {
                   const updated = prev.filter(f => f.id !== fileId);
-                  // Persist to localStorage
+                  // Persist to localStorage - WORKSPACE ISOLATED
                   try {
-                    localStorage.setItem('adrata-context-files', JSON.stringify(updated));
+                    if (workspaceId) {
+                      const storageKey = `adrata-context-files-${workspaceId}`;
+                      localStorage.setItem(storageKey, JSON.stringify(updated));
+                    }
                   } catch (error) {
                     console.warn('Failed to persist context files:', error);
                   }

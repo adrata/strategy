@@ -55,12 +55,16 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
   } as ChatSessions);
   const [isLoaded, setIsLoaded] = useState(false);
   
-  // CSV Data Storage - stores uploaded CSV files per subApp
+  // Get workspace ID for isolation
+  const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
+
+  // CSV Data Storage - stores uploaded CSV files per subApp - WORKSPACE ISOLATED
   const [csvData, setCsvData] = useState<Record<string, { fileName: string; content: string }>>(() => {
     // Load from localStorage on initialization
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const stored = localStorage.getItem('adrata-chat-csv-data');
+        const storageKey = `adrata-chat-csv-data-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
         return stored ? JSON.parse(stored) : {};
       } catch (error) {
         console.warn('Failed to load stored CSV data:', error);
@@ -70,12 +74,13 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
     return {};
   });
   
-  // Document Data Storage - stores parsed documents per subApp
+  // Document Data Storage - stores parsed documents per subApp - WORKSPACE ISOLATED
   const [documentData, setDocumentData] = useState<Record<string, any>>(() => {
     // Load from localStorage on initialization
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const stored = localStorage.getItem('adrata-chat-document-data');
+        const storageKey = `adrata-chat-document-data-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
         return stored ? JSON.parse(stored) : {};
       } catch (error) {
         console.warn('Failed to load stored document data:', error);
@@ -255,16 +260,19 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
         [subApp]: newData
       };
       
-      // Persist to localStorage
+      // Persist to localStorage - WORKSPACE ISOLATED
       try {
-        localStorage.setItem('adrata-chat-csv-data', JSON.stringify(updated));
+        if (workspaceId) {
+          const storageKey = `adrata-chat-csv-data-${workspaceId}`;
+          localStorage.setItem(storageKey, JSON.stringify(updated));
+        }
       } catch (error) {
         console.warn('Failed to persist CSV data:', error);
       }
       
       return updated;
     });
-  }, []);
+  }, [workspaceId]);
 
   const getCsvData = useCallback((subApp: string) => {
     return csvData[subApp] || null;
@@ -298,14 +306,17 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
             }
           }
         };
-        localStorage.setItem('adrata-chat-document-data', JSON.stringify(dataToStore));
+        if (workspaceId) {
+          const storageKey = `adrata-chat-document-data-${workspaceId}`;
+          localStorage.setItem(storageKey, JSON.stringify(dataToStore));
+        }
       } catch (error) {
         console.warn('Failed to persist document data:', error);
       }
       
       return updated;
     });
-  }, []);
+  }, [workspaceId]);
 
   const getDocumentData = useCallback((subApp: string) => {
     return documentData[subApp] || null;

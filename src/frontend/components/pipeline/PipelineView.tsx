@@ -77,7 +77,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isProspectsVisible, setIsProspectsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isLeadsVisible, setIsLeadsVisible] = useState(!isDemoMode); // true for production, false for demo
-  const [isCustomersVisible, setIsCustomersVisible] = useState(!isDemoMode); // true for production, false for demo
+  const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
   const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
   // Panel visibility is now managed by useAcquisitionOSUI context
   const [searchQuery, setSearchQuery] = useState('');
@@ -211,7 +211,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // The useAcquisitionOSData hook returns acquireData, not data
+    // The useAcquisitionOSData hook returns acquireData directly
     const acquireData = acquisitionData?.acquireData || {};
     console.log(`🔍 [PIPELINE VIEW] Getting data for section ${section}:`, {
       hasAcquisitionData: !!acquisitionData,
@@ -276,7 +276,13 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     hasAcquireData: !!acquisitionData?.acquireData,
     sectionDataLength: sectionData?.length || 0,
     sectionDataSample: sectionData?.slice(0, 2) || [],
-    acquisitionDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : []
+    acquisitionDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
+    rawAcquisitionData: acquisitionData,
+    // Specific debugging for companies and people
+    companiesData: acquisitionData?.acquireData?.companies || [],
+    peopleData: acquisitionData?.acquireData?.people || [],
+    companiesLength: acquisitionData?.acquireData?.companies?.length || 0,
+    peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
   const pipelineData = {
@@ -587,8 +593,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       // Search filter
       const matchesSearch = !searchQuery || 
         (record['name'] && record.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (record['fullName'] && record.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['title'] && record.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['company'] && record.company.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (record['company'] && record.company && record.company.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['email'] && record.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['companyName'] && record.companyName.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -1019,6 +1026,17 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
   // Show content immediately - no loading states
   const hasData = data && data.length > 0;
+  
+  // CRITICAL DEBUG: Log the final data state
+  console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
+    hasData,
+    dataLength: data?.length || 0,
+    data: data?.slice(0, 3) || [],
+    error,
+    isEmpty,
+    workspaceId,
+    userId
+  });
   
   // DEBUG: Add logging to understand the data state
   console.log(`🔍 [PIPELINE DEBUG] Data state:`, {

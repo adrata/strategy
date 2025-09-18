@@ -682,7 +682,11 @@ function PipelineSections({
       description: "Real Pipeline",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : productionCounts.opportunities,
+      ) : (() => {
+        const opportunities = acquisitionData?.acquireData?.opportunities || [];
+        const totalPeople = opportunities.reduce((sum: number, opp: any) => sum + (opp.peopleCount || 0), 0);
+        return `${productionCounts.opportunities}${totalPeople > 0 ? ` (${totalPeople})` : ''}`;
+      })(),
       visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
     },
     {
@@ -859,6 +863,16 @@ export function PipelineLeftPanelStandalone({
     monthlyGrowth: '0%' // Will be replaced by real data from API
   });
   const [statsLoading, setStatsLoading] = useState(true);
+  const [minLoadingTimeElapsed, setMinLoadingTimeElapsed] = useState(false);
+
+  // Ensure minimum loading time for better UX
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinLoadingTimeElapsed(true);
+    }, 500); // Show loading for at least 500ms
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Workspace branding state
   const [workspaceBranding, setWorkspaceBranding] = useState({
@@ -994,7 +1008,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Revenue</span>
               <span className="text-xs font-semibold text-black">
-                {acquisitionData?.isLoading ? (
+                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
                   // Calculate revenue from closed won opportunities
@@ -1020,7 +1034,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Pipeline</span>
               <span className="text-xs font-semibold text-black">
-                {acquisitionData?.isLoading ? (
+                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
                   // Calculate total pipeline value from all open opportunities
@@ -1049,7 +1063,7 @@ export function PipelineLeftPanelStandalone({
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-gray-600">Coverage</span>
               <span className="text-xs font-semibold text-black">
-                {acquisitionData?.isLoading ? (
+                {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
                   // Calculate coverage as pipeline / quarterly target

@@ -1,0 +1,13 @@
+{
+  "exportDate": "2025-09-18T01:35:03.230Z",
+  "tables": {
+    "workspaces": 1,
+    "users": 1,
+    "companies": 451,
+    "people": 1342,
+    "leads": 0,
+    "prospects": 0,
+    "opportunities": 0
+  },
+  "notes": "Database export before reset - contains TOP Engineering Plus data and Ross user"
+}
