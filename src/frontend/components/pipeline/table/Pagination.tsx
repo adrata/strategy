@@ -69,10 +69,6 @@ export function Pagination({
   const endItem = Math.min(currentPage * pageSize, totalItems);
   const pageNumbers = getPageNumbers(currentPage, totalPages);
   
-  if (totalPages <= 1) {
-    return null;
-  }
-  
   return (
     <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
       {/* Page size selector */}
@@ -93,15 +89,16 @@ export function Pagination({
         </div>
       )}
       
-      {/* Page info */}
+      {/* Page info - Always show results count */}
       <div className="flex items-center space-x-2">
         <span className="text-sm text-gray-700">
           Showing {startItem} to {endItem} of {totalItems} results
         </span>
       </div>
       
-      {/* Page navigation */}
-      <div className="flex items-center space-x-1">
+      {/* Page navigation - Only show when there are multiple pages */}
+      {totalPages > 1 && (
+        <div className="flex items-center space-x-1">
         {/* Previous button */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
@@ -151,7 +148,8 @@ export function Pagination({
         >
           <ChevronRightIcon className="w-4 h-4" />
         </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
