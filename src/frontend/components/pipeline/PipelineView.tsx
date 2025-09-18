@@ -1006,6 +1006,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   }, []);
 
   // Show content immediately - no loading states
+  const data = pipelineData.data || sectionData || [];
+  const error = pipelineData.error || null;
+  const isEmpty = pipelineData.isEmpty || data.length === 0;
   const hasData = data && data.length > 0;
   
   // CRITICAL DEBUG: Log the final data state
