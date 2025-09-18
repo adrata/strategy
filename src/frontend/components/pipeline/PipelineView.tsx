@@ -1006,16 +1006,14 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   }, []);
 
   // Show content immediately - no loading states
-  const data = pipelineData.data || sectionData || [];
-  const error = pipelineData.error || null;
-  const isEmpty = pipelineData.isEmpty || data.length === 0;
-  const hasData = data && data.length > 0;
+  const sectionDataArray = pipelineData.data || sectionData || [];
+  const hasData = sectionDataArray && sectionDataArray.length > 0;
   
   // CRITICAL DEBUG: Log the final data state
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
     hasData,
-    dataLength: data?.length || 0,
-    data: data?.slice(0, 3) || [],
+    dataLength: sectionDataArray?.length || 0,
+    data: sectionDataArray?.slice(0, 3) || [],
     error,
     isEmpty,
     workspaceId,
@@ -1026,7 +1024,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   console.log(`🔍 [PIPELINE DEBUG] Data state:`, {
     section,
     hasData,
-    dataLength: data?.length || 0,
+    dataLength: sectionDataArray?.length || 0,
     filteredDataLength: filteredData?.length || 0,
     error,
     workspaceId,
@@ -1040,9 +1038,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       workspaceId,
       userId,
       error,
-      dataExists: !!data,
-      dataLength: data?.length || 0,
-      rawData: data?.slice(0, 2), // Show first 2 records for debugging
+      dataExists: !!sectionDataArray,
+      dataLength: sectionDataArray?.length || 0,
+      rawData: sectionDataArray?.slice(0, 2), // Show first 2 records for debugging
       filteredDataLength: filteredData?.length || 0,
       isEmpty
     });
@@ -1123,7 +1121,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
       {/* Main content */}
       <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`}>
-        {data && data.length > 0 && (filteredData?.length === 0) ? (
+        {sectionDataArray && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-500 p-6">
