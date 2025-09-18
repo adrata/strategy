@@ -988,6 +988,12 @@ export function PipelineLeftPanelStandalone({
                   {(() => {
                     const companyName = (workspace || "Sales Acceleration").trim();
                     console.log('🔍 Company name debug:', { companyName, length: companyName.length });
+                    
+                    // Special handling for TOP Engineers Plus
+                    if (companyName === "TOP Engineers Plus") {
+                      return "TOP";
+                    }
+                    
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
                   })()}
                 </h3>

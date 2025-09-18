@@ -47,7 +47,7 @@ export function getStageColor(stage?: string): StatusColor {
   if (stageLower === 'closed-lost-to-competition') return 'bg-red-100 text-red-800 border border-red-200';
   
   // Active stages  
-  if (['proposal', 'proposal-price-quote'].includes(stageLower)) return 'bg-blue-100 text-blue-800';
+  if (['proposal', 'proposal-price-quote'].includes(stageLower)) return 'bg-navy-100 text-navy-800';
   if (['negotiation', 'negotiation-review'].includes(stageLower)) return 'bg-orange-100 text-orange-800';
   if (['discovery', 'qualification', 'needs-analysis'].includes(stageLower)) return 'bg-gray-100 text-gray-800';
   
@@ -121,7 +121,7 @@ export function getStandardizedActionTimingColor(timing: string, isLastAction: b
   
   // Next week timing
   if (timingLower.includes('next week') || timingLower.includes('following week')) {
-    return 'bg-blue-100 text-blue-800 border border-blue-200';
+    return 'bg-navy-100 text-navy-800 border border-navy-200';
   }
   
   // Default timing
@@ -154,7 +154,7 @@ export function getRealtimeActionTiming(lastActionDate?: string | Date): { text:
   
   // Today (within 24 hours) - Blue
   if (diffHours < 24) {
-    return { text: `${diffHours}h ago`, color: 'bg-blue-100 text-blue-800' };
+    return { text: `${diffHours}h ago`, color: 'bg-navy-100 text-navy-800' };
   }
   
   // This week (within 7 days) - Yellow

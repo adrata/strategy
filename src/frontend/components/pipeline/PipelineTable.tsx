@@ -94,9 +94,9 @@ function getNextActionTiming(record: PipelineRecord) {
   } else if (diffDays === 1) {
     return { text: 'Tomorrow', color: 'bg-yellow-100 text-yellow-800' };
   } else if (diffDays <= 7) {
-    return { text: 'This week', color: 'bg-blue-100 text-blue-800' };
+    return { text: 'This week', color: 'bg-navy-100 text-navy-800' };
   } else if (diffDays <= 14) {
-    return { text: 'Next week', color: 'bg-blue-100 text-blue-800' };
+    return { text: 'Next week', color: 'bg-navy-100 text-navy-800' };
   } else if (diffDays <= 30) {
     return { text: 'This month', color: 'bg-gray-100 text-gray-800' };
   } else {
