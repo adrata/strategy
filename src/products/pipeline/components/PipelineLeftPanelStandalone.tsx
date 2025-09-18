@@ -1005,7 +1005,7 @@ export function PipelineLeftPanelStandalone({
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
                   })()}
                 </h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 ml-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                   Pro
                 </span>
               </div>
