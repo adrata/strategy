@@ -2625,43 +2625,14 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🚀 PERFORMANCE: Load prospects for speedrun with optimized query
+    // 🚀 SIMPLIFIED: Load prospects for speedrun with basic query
     const prospects = await prisma.prospects.findMany({
       where: {
         workspaceId,
         deletedAt: null
       },
       orderBy: { createdAt: 'desc' },
-      take: 50,
-      select: {
-        id: true,
-        fullName: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        company: true,
-        title: true,
-        jobTitle: true,
-        phone: true,
-        city: true,
-        industry: true,
-        status: true,
-        priority: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextFollowUpDate: true,
-        nextActionDate: true,
-        notes: true,
-        tags: true,
-        source: true,
-        enrichmentScore: true,
-        buyerGroupRole: true,
-        currentStage: true,
-        nextAction: true,
-        createdAt: true,
-        updatedAt: true,
-        workspaceId: true
-      }
+      take: 50
     });
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospects.length} prospects from prospects table`);
