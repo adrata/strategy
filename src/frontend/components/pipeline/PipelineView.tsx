@@ -1163,17 +1163,17 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                 onRecordClick={handleRecordClick}
               />
             ) : section === 'speedrun' ? (
-              // Always show speedrun table - no view switching needed
+              // Speedrun table with same design as other sections
               <PipelineTable
                   section={section}
                   data={filteredData || []}
                   onRecordClick={handleRecordClick}
-                  onReorderRecords={() => {}}
+                  onReorderRecords={handleReorderRecords}
                   onColumnSort={handleColumnSort}
                   sortField={sortField}
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
-                  pageSize={section === 'speedrun' ? 50 : 100} // Speedrun shows 50, others show 100
+                  pageSize={50} // Speedrun shows 50 items per page
                   isLoading={isLoading}
                 />
               ) : section === 'prospects' ? (
