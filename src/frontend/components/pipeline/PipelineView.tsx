@@ -1095,14 +1095,14 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         onRefresh={handleRefresh}
         onClearCache={handleClearCache}
         onAddRecord={handleAddRecord}
-        recordCount={filteredData?.length || 0}
+        recordCount={sectionDataArray?.length || 0}
       />
 
       {/* Filters */}
       <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
         <PipelineFilters 
           section={section}
-          totalCount={filteredData?.length || 0}
+          totalCount={sectionDataArray?.length || 0}
           onSearchChange={setSearchQuery}
           onVerticalChange={setVerticalFilter}
           onStatusChange={setStatusFilter}
