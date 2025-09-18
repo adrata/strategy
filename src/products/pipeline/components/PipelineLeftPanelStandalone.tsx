@@ -979,7 +979,15 @@ export function PipelineLeftPanelStandalone({
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">
-                {workspace?.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 3) || 'AD'}
+                {(() => {
+                  const companyName = (workspace || "Sales Acceleration").trim();
+                  // Special handling for TOP Engineering Plus - show "TOP" in icon
+                  if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
+                    return "TOP";
+                  }
+                  // Default behavior for other workspaces
+                  return companyName.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 3) || 'AD';
+                })()}
               </span>
             </div>
             <div className="flex-1">
@@ -989,9 +997,9 @@ export function PipelineLeftPanelStandalone({
                     const companyName = (workspace || "Sales Acceleration").trim();
                     console.log('🔍 Company name debug:', { companyName, length: companyName.length });
                     
-                    // Special handling for TOP Engineering Plus
+                    // Special handling for TOP Engineering Plus - show full name
                     if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
-                      return "TOP";
+                      return "TOP Engineering Plus";
                     }
                     
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
