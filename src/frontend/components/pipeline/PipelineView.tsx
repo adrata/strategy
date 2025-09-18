@@ -13,11 +13,9 @@ import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel'
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
+import { usePipelineData } from '@/platform/hooks/useAdrataData';
 // CRITICAL FIX: Disable SpeedrunDataProvider to eliminate duplicate data loading
 // import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
-
-// CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
-// import { usePipelineData } from '@/platform/stores/PipelineDataStore';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
@@ -169,10 +167,6 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     }
   }, [section]);
   
-  // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
-  // Use individual section data for full records instead of dashboard data
-  const pipelineData = usePipelineData(section, workspaceId, userId);
-  
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
@@ -198,6 +192,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     }
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
+  
+  // CRITICAL FIX: Use individual section data for full records instead of dashboard data
+  const pipelineData = usePipelineData(section, workspaceId, userId);
   
   console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
   
