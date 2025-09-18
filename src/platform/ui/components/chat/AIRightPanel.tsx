@@ -132,11 +132,12 @@ export function AIRightPanel() {
   const [textareaHeight, setTextareaHeight] = useState(182);
   const [viewMode, setViewMode] = useState<'ai' | 'conversations' | 'chat' | 'actions' | 'achievements' | 'targets' | 'calendar' | 'insights'>('ai');
   
-  // Conversation management with persistence
+  // Conversation management with persistence - WORKSPACE ISOLATED
   const [conversations, setConversations] = useState<Conversation[]>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const stored = localStorage.getItem('adrata-conversations');
+        const storageKey = `adrata-conversations-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
           // Convert date strings back to Date objects
@@ -191,9 +192,10 @@ export function AIRightPanel() {
   
   // Context files state with persistence
   const [contextFiles, setContextFiles] = useState<ContextFile[]>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const stored = localStorage.getItem('adrata-context-files');
+        const storageKey = `adrata-context-files-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
         return stored ? JSON.parse(stored) : [];
       } catch (error) {
         console.warn('Failed to load stored context files:', error);
@@ -207,21 +209,23 @@ export function AIRightPanel() {
 
   // Save conversations to localStorage whenever they change
   useEffect(() => {
-    if (typeof window !== 'undefined' && conversations.length > 0) {
+    if (typeof window !== 'undefined' && conversations.length > 0 && workspaceId) {
       try {
-        localStorage.setItem('adrata-conversations', JSON.stringify(conversations));
-        console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length);
+        const storageKey = `adrata-conversations-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify(conversations));
+        console.log('💾 [CHAT] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
       } catch (error) {
         console.warn('Failed to save conversations to localStorage:', error);
       }
     }
-  }, [conversations]);
+  }, [conversations, workspaceId]);
 
-  // Load conversations from localStorage on component mount
+  // Load conversations from localStorage on component mount - WORKSPACE ISOLATED
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && workspaceId) {
       try {
-        const stored = localStorage.getItem('adrata-conversations');
+        const storageKey = `adrata-conversations-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
           const restoredConversations = parsed.map((conv: any) => ({
@@ -235,13 +239,13 @@ export function AIRightPanel() {
             }))
           }));
           setConversations(restoredConversations);
-          console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length);
+          console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
         }
       } catch (error) {
         console.warn('Failed to load stored conversations:', error);
       }
     }
-  }, []);
+  }, [workspaceId]);
 
   
   // Refs
@@ -465,19 +469,19 @@ export function AIRightPanel() {
       
       switch (app) {
         case "Speedrun":
-          return "Welcome to Adrata! I'm here to help you maximize your sales success. Let's turn those leads into revenue together.";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
         case "pipeline":
-          return "Welcome to Adrata! I'm here to help you optimize your pipeline and close more deals. How can I assist you today?";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
         case "monaco":
-          return "Welcome to Adrata! I have **14 strategic accounts** loaded with executive buyer group intelligence. Let's turn this data into deals.";
+          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
         default:
           return isPipelineContext 
-            ? "Welcome to Adrata! I'm your intelligent sales assistant, ready to help you close more opportunities. What would you like to work on today?"
-            : "Welcome to Adrata! I'm your intelligent sales assistant, ready to help you close more opportunities. What would you like to work on today?";
+            ? "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?"
+            : "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
       }
     }
 
-    return activeConv?.welcomeMessage || "Ready to help you succeed! What would you like to work on today?";
+    return activeConv?.welcomeMessage || "Welcome! My name is Adrata. I'm here to help you sell convincingly. Do you want to review your pipeline?";
   };
 
   // Click outside handler
@@ -538,9 +542,12 @@ export function AIRightPanel() {
       
       setContextFiles(prev => {
         const updated = [...prev, contextFile];
-        // Persist to localStorage
+        // Persist to localStorage - WORKSPACE ISOLATED
         try {
-          localStorage.setItem('adrata-context-files', JSON.stringify(updated));
+          if (workspaceId) {
+            const storageKey = `adrata-context-files-${workspaceId}`;
+            localStorage.setItem(storageKey, JSON.stringify(updated));
+          }
         } catch (error) {
           console.warn('Failed to persist context files:', error);
         }
@@ -1169,36 +1176,40 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
-          scrollBehavior: 'smooth'
+          scrollBehavior: 'smooth',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           
-          {chatMessages['length'] === 0 && (
-            <WelcomeSection
-              activeSubApp={activeSubApp}
-              workspaceId={workspaceId || 'demo-workspace'}
-              isPersonFinderMinimized={isPersonFinderMinimized}
-              onMinimizePersonFinder={() => setIsPersonFinderMinimized(true)}
-              onExpandPersonFinder={() => setIsPersonFinderMinimized(false)}
-              onQuickAction={handleQuickAction}
-              getWelcomeMessage={getWelcomeMessage}
-              quickActions={quickActions}
-              activeConversationId={activeConversationId}
-            />
-          )}
-
           <ChatQueueManager 
             onProcessNext={async (query) => {
               await processMessageWithQueue(query);
             }}
           />
 
-        <MessageList
-          messages={chatMessages}
-          chatEndRef={chatEndRef}
-          onUpdateChatSessions={chat.setChatSessions}
-          activeSubApp={activeSubApp}
-          onRecordSearch={handleRecordSearch}
-        />
+          <MessageList
+            messages={chatMessages}
+            chatEndRef={chatEndRef}
+            onUpdateChatSessions={chat.setChatSessions}
+            activeSubApp={activeSubApp}
+            onRecordSearch={handleRecordSearch}
+          />
+
+          {chatMessages['length'] === 0 && (
+            <div className="flex-1 flex items-end">
+              <WelcomeSection
+                activeSubApp={activeSubApp}
+                workspaceId={workspaceId || 'demo-workspace'}
+                isPersonFinderMinimized={isPersonFinderMinimized}
+                onMinimizePersonFinder={() => setIsPersonFinderMinimized(true)}
+                onExpandPersonFinder={() => setIsPersonFinderMinimized(false)}
+                onQuickAction={handleQuickAction}
+                getWelcomeMessage={getWelcomeMessage}
+                quickActions={quickActions}
+                activeConversationId={activeConversationId}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -1214,7 +1225,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         isDragOver={isDragOver}
         showAddFilesPopup={showAddFilesPopup}
         setShowAddFilesPopup={setShowAddFilesPopup}
-        
+        workspaceId={workspaceId}
         onSubmit={handleSubmit}
         onFileSelect={handleFileSelect}
         onDragOver={handleDragOver}

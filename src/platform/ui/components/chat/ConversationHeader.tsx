@@ -80,7 +80,7 @@ export function ConversationHeader({
                 className={`flex items-center px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                   conv.isActive
                     ? 'bg-gray-100 text-gray-800 dark:bg-gray-200 dark:text-gray-900'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                    : 'bg-gray-50 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] dark:bg-gray-700 dark:text-gray-300'
                 }`}
               >
                 <span className="group-hover:opacity-50 transition-opacity">{conv.title}</span>
