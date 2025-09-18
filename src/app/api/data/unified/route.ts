@@ -2474,7 +2474,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         clients: clientsData,
         partners: partnersData,
         speedrunItems: speedrunData,
-        // Use actual counts from database, but limit speedrun to 20 for display
+        // Use actual counts from database, but limit speedrun to 50 for display
         counts: { 
           leads: leadsCount, 
           prospects: prospectsCount, 
@@ -2483,7 +2483,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           people: peopleCount,
           clients: clientsCount,
           partners: partnersCount,
-          speedrun: Math.min(speedrunData.length, 20) // Limit speedrun count to 20 for dashboard performance
+          speedrun: Math.min(speedrunData.length, 50) // Limit speedrun count to 50 for dashboard performance
         },
         // 🚀 REAL METRICS: Calculated from actual database data
         metrics: {

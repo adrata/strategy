@@ -177,10 +177,10 @@ export function PipelineTable({
     tableHeight = 200;
   } else if (data.length <= 10) {
     // Small to medium datasets - use content height with small buffer to match AI panel
-    tableHeight = contentHeight + 20; // Slightly taller to match AI right panel
+    tableHeight = contentHeight + 24; // Extended by 4px to align with AI chat input box
   } else {
     // Larger datasets - use viewport height to fill available space and align with chat panel
-    tableHeight = maxViewportHeight;
+    tableHeight = maxViewportHeight + 7; // Extended by 4px to align with AI chat input box
   }
   
   // Use custom hooks for data and actions

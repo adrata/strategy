@@ -14,8 +14,6 @@ import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/c
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
-// CRITICAL FIX: Disable SpeedrunDataProvider to eliminate duplicate data loading
-// import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
@@ -379,14 +377,12 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const { 
     data, 
     error, 
-    isEmpty, 
     refresh, 
     clearCache 
   } = section === 'metrics' 
     ? { 
         data: [], 
         error: null, 
-        isEmpty: false, 
         refresh: () => Promise.resolve([]), 
         clearCache: () => {} 
       }
@@ -554,20 +550,47 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     }
   }, []);
 
+  // CRITICAL FIX: Define sectionDataArray before using it in filteredData
+  // The acquisition data is what populates the left panel counts and should be used for the middle panel too
+  const sectionDataArray = (sectionData && sectionData.length > 0) ? sectionData : (pipelineData.data || []);
+  const hasData = sectionDataArray && sectionDataArray.length > 0;
+  
+  // Calculate isEmpty based on actual data
+  const isEmpty = !hasData;
+
+  // CRITICAL DEBUG: Log the final data state with source information
+  console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
+    hasData,
+    dataLength: sectionDataArray?.length || 0,
+    data: sectionDataArray?.slice(0, 3) || [],
+    error,
+    isEmpty,
+    workspaceId,
+    userId,
+    dataSource: {
+      sectionDataLength: sectionData?.length || 0,
+      pipelineDataLength: pipelineData.data?.length || 0,
+      usingSectionData: (sectionData && sectionData.length > 0),
+      usingPipelineData: !(sectionData && sectionData.length > 0)
+    }
+  });
+
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
-    if (!pipelineData.data || pipelineData.data['length'] === 0) return pipelineData.data;
+    // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of pipelineData.data
+    const dataToFilter = sectionDataArray || [];
+    if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
     // For speedrun, don't sort - preserve API ranking order
     if (section === 'speedrun') {
-      return pipelineData.data;
+      return dataToFilter;
     }
 
     // Apply timeframe filtering for speedrun section
-    let timeframeFilteredData = pipelineData.data;
+    let timeframeFilteredData = dataToFilter;
     if (section === 'speedrun') {
       const dataCount = getTimeframeDataCount(timeframeFilter);
-      timeframeFilteredData = pipelineData.data.slice(0, dataCount);
+      timeframeFilteredData = dataToFilter.slice(0, dataCount);
     }
 
     let filtered = timeframeFilteredData.filter((record: any) => {
@@ -716,7 +739,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Note: Removed rank limiting logic - user wants to see all records
 
     return filtered;
-  }, [pipelineData.data, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter]);
+  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
@@ -1005,31 +1028,6 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     return score;
   }, []);
 
-  // Show content immediately - no loading states
-  const sectionDataArray = pipelineData.data || sectionData || [];
-  const hasData = sectionDataArray && sectionDataArray.length > 0;
-  
-  // CRITICAL DEBUG: Log the final data state
-  console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
-    hasData,
-    dataLength: sectionDataArray?.length || 0,
-    data: sectionDataArray?.slice(0, 3) || [],
-    error,
-    isEmpty,
-    workspaceId,
-    userId
-  });
-  
-  // DEBUG: Add logging to understand the data state
-  console.log(`🔍 [PIPELINE DEBUG] Data state:`, {
-    section,
-    hasData,
-    dataLength: sectionDataArray?.length || 0,
-    filteredDataLength: filteredData?.length || 0,
-    error,
-    workspaceId,
-    userId
-  });
   
   // CLIENTS DEBUG: Extra logging for clients section
   if (section === 'clients') {
