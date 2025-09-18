@@ -250,7 +250,7 @@ export function usePipelineData(
     }
 
     const response = await fetch(
-      `/api/data/unified?currentSection=${section}&workspaceId=${workspaceId}&userId=${userId}`
+      `/api/data/unified?type=${section}&workspaceId=${workspaceId}&userId=${userId}`
     );
     
     if (!response.ok) {

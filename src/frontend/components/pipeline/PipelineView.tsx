@@ -170,9 +170,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   }, [section]);
   
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
-  // const pipelineData = usePipelineData(section, workspaceId, userId);
+  // Use individual section data for full records instead of dashboard data
+  const pipelineData = usePipelineData(section, workspaceId, userId);
   
-  // Use single data source from useAcquisitionOS instead
+  // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
   // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
@@ -209,48 +210,36 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     acquisitionDataExists: !!acquisitionData
   });
   
-  // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
+  // CRITICAL FIX: Use full data for list views, dashboard data for dashboard
   const getSectionData = (section: string) => {
-    // The useAcquisitionOSData hook returns acquireData directly
-    const acquireData = acquisitionData?.acquireData || {};
-    console.log(`🔍 [PIPELINE VIEW] Getting data for section ${section}:`, {
-      hasAcquisitionData: !!acquisitionData,
-      hasAcquireData: !!acquisitionData?.acquireData,
-      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
-      sectionData: acquireData[section] || []
+    // For dashboard, use acquisition data (limited for performance)
+    if (section === 'dashboard') {
+      const acquireData = acquisitionData?.acquireData || {};
+      return acquireData[section] || [];
+    }
+    
+    // For all other sections, use pipeline data (full records)
+    const fullData = pipelineData.data || [];
+    console.log(`🔍 [PIPELINE VIEW] Getting full data for section ${section}:`, {
+      hasPipelineData: !!pipelineData.data,
+      dataLength: fullData.length,
+      sampleData: fullData.slice(0, 2)
     });
     
     switch (section) {
-      case 'leads': return acquireData.leads || [];
-      case 'prospects': return acquireData.prospects || [];
-      case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.companies || []; // Companies data
+      case 'leads': 
+      case 'prospects': 
+      case 'opportunities': 
+      case 'companies': 
       case 'people': 
-        const peopleData = acquireData.people || [];
-        console.log('🔍 [PEOPLE DEBUG] People data structure:', {
-          dataLength: peopleData.length,
-          sampleRecord: peopleData[0] ? {
-            id: peopleData[0].id,
-            name: peopleData[0].name,
-            fullName: peopleData[0].fullName,
-            firstName: peopleData[0].firstName,
-            lastName: peopleData[0].lastName,
-            company: peopleData[0].company,
-            title: peopleData[0].title,
-            jobTitle: peopleData[0].jobTitle,
-            keys: Object.keys(peopleData[0])
-          } : null
-        });
-        return peopleData;
-      case 'clients': return acquireData.clients || [];
-      case 'partners': return acquireData.partnerships || [];
-      case 'sellers': return acquireData.sellers || [];
+      case 'clients': 
+      case 'partners': 
+      case 'sellers': 
+        return fullData;
       case 'speedrun': 
-        const speedrunData = acquireData.speedrunItems || [];
+        const speedrunData = fullData;
         console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
-          hasAcquireData: !!acquireData,
-          acquireDataKeys: Object.keys(acquireData),
-          speedrunItemsExists: !!acquireData.speedrunItems,
+          hasFullData: !!fullData,
           dataLength: speedrunData.length,
           sampleRecord: speedrunData[0] ? {
             id: speedrunData[0].id,
@@ -293,12 +282,12 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     clearCache: () => {} // Not needed with single data source
   };
   
-  // Set loading to false when data is available
+  // Set loading to false when data is actually loaded
   useEffect(() => {
-    if (pipelineData.data !== undefined) {
+    if (pipelineData.data !== undefined && !pipelineData.error) {
       setIsLoading(false);
     }
-  }, [pipelineData.data]);
+  }, [pipelineData.data, pipelineData.error]);
   
   // Show data immediately - no loading states
   console.log(`🔍 [PIPELINE VIEW] Data state:`, {

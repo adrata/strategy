@@ -862,7 +862,7 @@ async function getMultipleRecords(
         }
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: 10 // Only load 10 most recent people for performance
+      take: pagination?.limit || 1000 // Load all people records
     });
     
     return { success: true, data: people };
