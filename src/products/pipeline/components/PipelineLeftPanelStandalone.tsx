@@ -366,7 +366,7 @@ function PipelineSections({
   // Only update counts if they've actually changed to prevent infinite loops
   setStableCounts(prevCounts => {
     const hasChanged = Object.keys(hookCounts).some(key => 
-      prevCounts[key] !== hookCounts[key]
+      prevCounts[key as keyof typeof prevCounts] !== hookCounts[key as keyof typeof hookCounts]
     );
     
     if (hasChanged) {
@@ -404,7 +404,7 @@ function PipelineSections({
     actualCounts: actualCounts,
     fallbackCounts: fallbackCounts,
     finalCounts: finalCounts,
-    totalCount: Object.values(productionCounts).reduce((sum, count) => sum + count, 0)
+    totalCount: Object.values(productionCounts).reduce((sum: number, count: number) => sum + count, 0)
   });
   const [dashboardStats, setDashboardStats] = useState({
     revenue: '$0.0M',
