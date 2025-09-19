@@ -71,12 +71,36 @@ export class RoleBalancer {
     blocker: { min: number; max: number; ideal: number };
     introducer: { min: number; max: number; ideal: number };
   } {
-    // RESEARCH-BASED TARGETS: Based on Gartner/CEB studies showing 5.4 avg buyer group
+    // REALISTIC TARGETS: Based on actual buyer group dynamics
     const dealComplexity = {
-      small: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 1, max: 2, ideal: 1 } },
-      medium: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 1, max: 2, ideal: 2 } },
-      large: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 2, max: 3, ideal: 2 } },
-      enterprise: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 2, max: 3, ideal: 2 } }
+      small: { 
+        decision: { min: 1, max: 2, ideal: 1 }, 
+        champion: { min: 1, max: 2, ideal: 1 },
+        stakeholder: { min: 1, max: 3, ideal: 2 },
+        blocker: { min: 0, max: 1, ideal: 0 },
+        introducer: { min: 1, max: 2, ideal: 1 }
+      },
+      medium: { 
+        decision: { min: 1, max: 2, ideal: 1 }, 
+        champion: { min: 1, max: 3, ideal: 2 },
+        stakeholder: { min: 2, max: 4, ideal: 3 },
+        blocker: { min: 1, max: 2, ideal: 1 },
+        introducer: { min: 1, max: 2, ideal: 1 }
+      },
+      large: { 
+        decision: { min: 1, max: 3, ideal: 2 }, 
+        champion: { min: 2, max: 4, ideal: 3 },
+        stakeholder: { min: 3, max: 6, ideal: 4 },
+        blocker: { min: 1, max: 2, ideal: 1 },
+        introducer: { min: 2, max: 3, ideal: 2 }
+      },
+      enterprise: { 
+        decision: { min: 1, max: 3, ideal: 2 }, 
+        champion: { min: 2, max: 4, ideal: 3 },
+        stakeholder: { min: 4, max: 6, ideal: 5 },
+        blocker: { min: 1, max: 2, ideal: 1 },
+        introducer: { min: 2, max: 3, ideal: 2 }
+      }
     };
 
     const baseTargets = (dealComplexity as any)[sellerProfile.dealSize] || dealComplexity.medium;
@@ -84,9 +108,9 @@ export class RoleBalancer {
     return {
       decision: baseTargets.decision,
       champion: baseTargets.champion,
-      stakeholder: { min: 1, max: 3, ideal: 2 },
-      blocker: { min: 1, max: 2, ideal: 1 },
-      introducer: { min: 2, max: 3, ideal: 2 }
+      stakeholder: baseTargets.stakeholder,
+      blocker: baseTargets.blocker,
+      introducer: baseTargets.introducer
     };
   }
 

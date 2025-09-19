@@ -666,7 +666,7 @@ export class BuyerGroupPipeline {
           batchSize: 25,
           targetRange: { min: 12, max: 18 },
           earlyStopMode: 'accuracy_first',
-          minRoleTargets: { decision: 2, champion: 3, stakeholder: 3, blocker: 2, introducer: 3 }
+          minRoleTargets: { decision: 1, champion: 2, stakeholder: 4, blocker: 1, introducer: 2 }
         };
       case 'large':
         return {
@@ -674,7 +674,7 @@ export class BuyerGroupPipeline {
           batchSize: 20,
           targetRange: { min: 10, max: 15 },
           earlyStopMode: 'accuracy_first',
-          minRoleTargets: { decision: 2, champion: 2, stakeholder: 3, blocker: 1, introducer: 2 }
+          minRoleTargets: { decision: 1, champion: 2, stakeholder: 3, blocker: 1, introducer: 2 }
         };
       case 'medium':
         return {
@@ -682,7 +682,7 @@ export class BuyerGroupPipeline {
           batchSize: 15,
           targetRange: { min: 8, max: 12 },
           earlyStopMode: 'conservative',
-          minRoleTargets: { decision: 1, champion: 2, stakeholder: 2, blocker: 1, introducer: 2 }
+          minRoleTargets: { decision: 1, champion: 1, stakeholder: 2, blocker: 1, introducer: 1 }
         };
       case 'small':
         return {

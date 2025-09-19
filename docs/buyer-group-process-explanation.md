@@ -206,20 +206,23 @@ Results: Complete buyer group with intelligence and recommendations
 
 ### **Buyer Group Structure:**
 ```
-Decision Makers (2-3 people):
+Decision Makers (1-3 people):
 - John Smith, VP Engineering
 - Sarah Johnson, Director IT
 
-Champions (3-4 people):
+Champions (1-4 people):
 - Mike Chen, Senior Manager Infrastructure
 - Lisa Rodriguez, Manager Cloud Operations
 
-Stakeholders (3-4 people):
+Stakeholders (1-6 people):
 - David Kim, Senior Engineer
 - Jennifer Lee, DevOps Lead
+- Alex Thompson, Cloud Architect
+- Maria Garcia, Security Engineer
 
-Introducers (1-2 people):
+Introducers (1-3 people):
 - Tom Wilson, Solutions Architect
+- Rachel Green, Business Analyst
 ```
 
 ### **Intelligence Report:**
