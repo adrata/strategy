@@ -99,7 +99,7 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 capitalize">
-          {section} ({data.length} records)
+          {section} {section === 'companies' ? '(Business entities)' : section === 'people' ? '(Individual entities)' : `(${data.length} records)`}
         </h3>
       </div>
 

@@ -406,14 +406,14 @@ export function PipelineHeader({
       case 'companies':
         return {
           title: 'Companies',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
+          subtitle: 'Business entities',
           actionButton: 'Add Company',
           secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
           title: 'People',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Individual entities',
+          subtitle: 'Individual entities',
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'
         };

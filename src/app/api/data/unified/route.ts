@@ -2156,7 +2156,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10, // Only load 10 most recent companies
+        take: 2000, // Load all companies for full pipeline view
         select: { id: true, name: true, industry: true, updatedAt: true }
       }),
       prisma.people.findMany({ 
@@ -2169,7 +2169,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10, // Only load 10 most recent people
+        take: 2000, // Load all people for full pipeline view
         select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
       }),
       prisma.clients.findMany({ 
