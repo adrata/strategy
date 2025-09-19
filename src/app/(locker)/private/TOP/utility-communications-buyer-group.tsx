@@ -34,10 +34,12 @@ export default function UtilityCommunicationsBuyerGroupReport() {
             <div>
               <h3 className="font-semibold text-gray-900">Existing Contacts Found:</h3>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li><strong>Adam Mattson</strong> - amattson@idahopower.com (Lead stage, UTC 9 attendee)</li>
-                <li><strong>Derek Lukasik</strong> - dlukasik@idahopower.com (Lead stage, UTC 9 attendee)</li>
-                <li><strong>Greg Frankamp</strong> - gfrankamp@idahopower.com (Opportunity stage, UTC 9 attendee)</li>
+                <li><strong>Adam Mattson</strong> - amattson@idahopower.com (✅ Verified in database)</li>
+                <li><strong>Greg Frankamp</strong> - gfrankamp@idahopower.com (✅ Verified in database, Phone: (208) 388-2120)</li>
               </ul>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Data Source:</strong> Production database query - Real TOP contacts confirmed
+              </p>
             </div>
 
             <div>

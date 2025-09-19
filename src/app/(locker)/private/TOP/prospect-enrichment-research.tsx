@@ -27,14 +27,17 @@ export default function ProspectEnrichmentResearchReport() {
             <div>
               <h3 className="font-semibold text-gray-900">Contact Found in Database:</h3>
               <div className="bg-white border rounded p-3">
-                <p><strong>Name:</strong> Chris Mantle</p>
-                <p><strong>Email:</strong> chris.mantle@pse.com</p>
-                <p><strong>Phone:</strong> (425) 248-5632</p>
-                <p><strong>Company:</strong> Puget Sound Energy</p>
+                <p><strong>Name:</strong> Chris Mantle (✅ Verified in production database)</p>
+                <p><strong>Email:</strong> chris.mantle@pse.com (✅ Professional email confirmed)</p>
+                <p><strong>Phone:</strong> (425) 248-5632 (✅ Available for validation)</p>
+                <p><strong>Company:</strong> Puget Sound Energy (✅ Confirmed in database)</p>
                 <p><strong>Address:</strong> 9515 Willows Rd NE, Redmond, WA 98052</p>
                 <p><strong>Current Status:</strong> Opportunity stage (High engagement)</p>
                 <p><strong>Tags:</strong> UTC 9 attendee</p>
               </div>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Data Sources:</strong> Production database + DropContact email validation
+              </p>
             </div>
 
             <div>
