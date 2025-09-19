@@ -1,21 +1,33 @@
 /**
  * Middleware Configuration
  * 
- * Currently disabled due to production issues with privacy middleware
- * that were causing MIDDLEWARE_INVOCATION_FAILED errors.
- * 
- * This minimal implementation provides a pass-through only approach
- * to restore service stability.
+ * Safe crawling protection for private content without breaking the site
  */
 
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  // Pass-through implementation - no processing
+  const { pathname } = request.nextUrl;
+  
+  // Only process private routes
+  if (pathname.startsWith('/private/')) {
+    // Add noindex, nofollow meta tags for private content
+    const response = NextResponse.next();
+    
+    // Add headers to prevent crawling
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    
+    return response;
+  }
+  
+  // Pass through for all other routes
   return NextResponse.next();
 }
 
-// Disabled middleware matching to prevent processing
+// Only match private routes to avoid breaking the main site
 export const config = {
-  matcher: [],  // Empty matcher disables middleware processing
+  matcher: [
+    '/private/:path*'
+  ],
 };
