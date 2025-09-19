@@ -248,17 +248,19 @@ class ComprehensiveAPIFixer {
                 url: 'https://api.prospeo.io/email-finder',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.PROSPEO_API_KEY}`
+                    'X-KEY': process.env.PROSPEO_API_KEY
                 },
                 data: {
                     first_name: 'John',
                     last_name: 'Doe',
-                    company: 'Example'
+                    company: 'microsoft.com'
                 },
                 timeout: 10000
             });
 
-            return { status: 'FIXED', message: 'Fixed - using Bearer token instead of X-KEY' };
+            if (response.status === 200) {
+                return { status: 'WORKING', message: 'Working with X-KEY header and correct parameters' };
+            }
         } catch (error) {
             if (error.response?.status === 401) {
                 return { status: 'NEEDS_KEY', message: 'Invalid API key - update in Prospeo dashboard' };

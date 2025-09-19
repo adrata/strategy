@@ -1475,11 +1475,11 @@ export class UnifiedEnrichmentFactory {
           maxCollects: 200,
           useCache: true
         },
-        hunter: {
-          apiKey: process.env.HUNTER_API_KEY!,
-          baseUrl: 'https://api.hunter.io/v2',
-          rateLimit: 60
-        },
+        // hunter: {
+        //   apiKey: process.env.HUNTER_API_KEY!,
+        //   baseUrl: 'https://api.hunter.io/v2',
+        //   rateLimit: 60
+        // }, // REMOVED - API key issues
         prospeo: {
           apiKey: process.env.PROSPEO_API_KEY!,
           baseUrl: 'https://api.prospeo.io',

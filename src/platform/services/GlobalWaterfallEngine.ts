@@ -263,29 +263,29 @@ export class GlobalWaterfallEngine {
       lastPerformanceUpdate: new Date(),
     });
 
-    // Hunter.io - Primary email provider (HIGH INTEGRITY)
-    this.registerProvider({
-      id: "hunter",
-      name: "Hunter.io",
-      type: "email",
-      regions: ["GLOBAL"],
-      dataTypes: ["work_email", "email_verification"],
-      pricing: { model: "per_success", cost: 0.01, currency: "USD" },
-      qualityMetrics: {
-        accuracy: 95,
-        coverage: 75,
-        freshness: 1,
-        deliverability: 95,
-      },
-      rateLimit: { requestsPerMinute: 60, requestsPerDay: 5000 },
-      apiConfig: {
-        baseUrl: "https://api.hunter.io",
-        authType: "api_key",
-        apiKey: process['env']['HUNTER_API_KEY'] || "",
-      },
-      enabled: true,
-      lastPerformanceUpdate: new Date(),
-    });
+    // Hunter.io - REMOVED (API key issues)
+    // this.registerProvider({
+    //   id: "hunter",
+    //   name: "Hunter.io",
+    //   type: "email",
+    //   regions: ["GLOBAL"],
+    //   dataTypes: ["work_email", "email_verification"],
+    //   pricing: { model: "per_success", cost: 0.01, currency: "USD" },
+    //   qualityMetrics: {
+    //     accuracy: 95,
+    //     coverage: 75,
+    //     freshness: 1,
+    //     deliverability: 95,
+    //   },
+    //   rateLimit: { requestsPerMinute: 60, requestsPerDay: 5000 },
+    //   apiConfig: {
+    //     baseUrl: "https://api.hunter.io",
+    //     authType: "api_key",
+    //     apiKey: process['env']['HUNTER_API_KEY'] || "",
+    //   },
+    //   enabled: false, // DISABLED - API key issues
+    //   lastPerformanceUpdate: new Date(),
+    // });
 
     // Prospeo - Secondary email + mobile provider (HIGH INTEGRITY)
     this.registerProvider({
