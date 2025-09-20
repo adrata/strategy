@@ -129,3 +129,4 @@ export const mockApiResponse = (data: any, status = 200) => {
 export const mockApiError = (message: string, status = 500) => {
   (global.fetch as jest.Mock).mockRejectedValueOnce(new Error(message));
 };
+

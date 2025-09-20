@@ -323,3 +323,4 @@ export const RealTimeMonitoring: React.FC<RealTimeMonitoringProps> = ({
     </div>
   );
 };
+

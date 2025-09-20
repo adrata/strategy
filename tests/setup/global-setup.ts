@@ -22,3 +22,4 @@ export default async function globalSetup() {
   // Store server reference for teardown
   (global as any).__MSW_SERVER__ = server;
 }
+
