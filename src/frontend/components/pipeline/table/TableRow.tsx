@@ -177,7 +177,7 @@ export function TableRow({
               case 'company':
                 return (
                   <td key="company" className={textClasses}>
-                    <div className="truncate max-w-32">{record['company']?.name || record['companyName'] || record['company'] || 'Company'}</div>
+                    <div className="truncate max-w-32">{record['name'] || record['company']?.name || record['companyName'] || record['company'] || 'Company'}</div>
                   </td>
                 );
               case 'person':

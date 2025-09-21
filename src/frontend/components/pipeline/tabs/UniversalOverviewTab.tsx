@@ -615,132 +615,118 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
       case 'companies':
         return (
           <div className="space-y-8">
-            {/* Key Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account Information</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Name:</span>
-                    <InlineEditField
-                      value={record?.name || ''}
-                      field="name"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter account name"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Domain:</span>
-                    <InlineEditField
-                      value={record?.domain || record?.companyDomain || ''}
-                      field="domain"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter domain"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Website:</span>
-                    <InlineEditField
-                      value={record?.website || ''}
-                      field="website"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      inputType="url"
-                      placeholder="Enter website URL"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-blue-600"
-                    />
-                  </div>
+            {/* Company Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Name</label>
+                  <InlineEditField
+                    value={record?.name || ''}
+                    field="name"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter company name"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
                 </div>
-              </div>
-
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Business Details</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Industry:</span>
-                    <InlineEditField
-                      value={record?.industry || ''}
-                      field="industry"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter industry"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Vertical:</span>
-                    <InlineEditField
-                      value={record?.vertical || ''}
-                      field="vertical"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter vertical"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Size:</span>
-                    <InlineEditField
-                      value={record?.companySize || record?.size || ''}
-                      field="companySize"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter company size"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Domain</label>
+                  <InlineEditField
+                    value={record?.domain || record?.companyDomain || ''}
+                    field="domain"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter domain"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
                 </div>
-              </div>
-
-              <div className="bg-white p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account Details</label>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-sm text-gray-600">Type:</span>
-                    <InlineEditField
-                      value={record?.accountType || ''}
-                      field="accountType"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter account type"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Website</label>
+                  <InlineEditField
+                    value={record?.website || ''}
+                    field="website"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    inputType="url"
+                    placeholder="Enter website URL"
+                    onSave={handleInlineSave}
+                    className="text-sm text-blue-600 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Industry</label>
+                  <InlineEditField
+                    value={record?.industry || ''}
+                    field="industry"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter industry"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Vertical</label>
+                  <InlineEditField
+                    value={record?.vertical || ''}
+                    field="vertical"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter vertical"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Size</label>
+                  <InlineEditField
+                    value={record?.companySize || record?.size || ''}
+                    field="companySize"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter company size"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Type</label>
+                  <InlineEditField
+                    value={record?.accountType || ''}
+                    field="accountType"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter account type"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
                     />
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Tier:</span>
-                    <InlineEditField
-                      value={record?.tier || ''}
-                      field="tier"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter tier"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Revenue:</span>
-                    <InlineEditField
-                      value={record?.revenue?.toString() || ''}
-                      field="revenue"
-                      recordId={record?.id || ''}
-                      recordType="universal"
-                      placeholder="Enter revenue"
-                      onSave={handleInlineSave}
-                      className="ml-2 text-sm font-medium text-gray-900"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Tier</label>
+                  <InlineEditField
+                    value={record?.tier || ''}
+                    field="tier"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter tier"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Revenue</label>
+                  <InlineEditField
+                    value={record?.revenue?.toString() || ''}
+                    field="revenue"
+                    recordId={record?.id || ''}
+                    recordType="universal"
+                    placeholder="Enter revenue"
+                    onSave={handleInlineSave}
+                    className="text-sm text-gray-800 font-medium"
+                  />
                 </div>
               </div>
             </div>
@@ -839,7 +825,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
           </div>
         );
 
-    case 'prospects':
+      case 'prospects':
       return (
         <div className="space-y-8">
           {/* Pipeline Progress */}

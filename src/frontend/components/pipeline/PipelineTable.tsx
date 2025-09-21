@@ -340,7 +340,7 @@ export function PipelineTable({
                         if (typeof company === 'object' && company !== null) {
                           cellContent = company.name || company.companyName || 'Company';
                         } else {
-                          cellContent = company || record['companyName'] || record['organization'] || 'Company';
+                          cellContent = record['name'] || company || record['companyName'] || record['organization'] || 'Company';
                         }
                         break;
                       case 'person':

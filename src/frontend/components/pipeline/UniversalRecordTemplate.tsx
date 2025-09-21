@@ -130,10 +130,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'strategy', label: 'Strategy' },
-        { id: 'contacts', label: 'Contacts' },
         { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
     case 'people':
@@ -1483,9 +1480,9 @@ export function UniversalRecordTemplate({
       <div className="flex-shrink-0 border-b border-gray-200 px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Minimal Avatar */}
+            {/* Minimal Avatar with Rank */}
             <div className="relative group">
-              <div className="w-10 h-10 bg-white border border-gray-300 rounded-xl flex items-center justify-center overflow-hidden">
+              <div className="w-10 h-10 bg-white border border-gray-300 rounded-xl flex items-center justify-center overflow-hidden relative">
                 {getProfileImageUrl() ? (
                   <img 
                     src={getProfileImageUrl()} 
@@ -1493,7 +1490,9 @@ export function UniversalRecordTemplate({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-sm font-semibold text-gray-700">{getFirstInitial()}</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {recordIndex !== undefined ? recordIndex + 1 : getFirstInitial()}
+                  </span>
                 )}
               </div>
               
