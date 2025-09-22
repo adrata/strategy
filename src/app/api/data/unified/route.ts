@@ -798,8 +798,87 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   console.log(`🔍 [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
   
   try {
+    // Use dynamic field selection based on record type to avoid PostgreSQL rank function conflicts
+    let selectFields: any = {};
+    
+    if (type === 'people') {
+      selectFields = {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        companyId: true,
+        jobTitle: true,
+        phone: true,
+        linkedinUrl: true,
+        customFields: true,
+        tags: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        department: true,
+        seniority: true,
+        mobilePhone: true,
+        workPhone: true,
+        city: true,
+        state: true,
+        country: true,
+        address: true,
+        industry: true,
+        notes: true,
+        description: true
+      };
+    } else if (type === 'companies') {
+      selectFields = {
+        id: true,
+        name: true,
+        industry: true,
+        website: true,
+        description: true,
+        size: true,
+        address: true,
+        city: true,
+        state: true,
+        country: true,
+        customFields: true,
+        updatedAt: true,
+        lastAction: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        actionStatus: true,
+        assignedUserId: true,
+        rank: true
+      };
+    } else if (type === 'leads' || type === 'prospects') {
+      selectFields = {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
+        status: true,
+        priority: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        workspaceId: true,
+        assignedUserId: true
+      };
+    }
+
     const record = await model.findFirst({
       where: whereClause,
+      select: selectFields,
       ...includeClause
     });
     
@@ -809,6 +888,20 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
     }
     
     console.log(`✅ [GET SINGLE] Found ${type} record:`, record.id);
+    
+    // For people records, manually lookup company information
+    if (type === 'people' && record.companyId) {
+      try {
+        const companyData = await prisma.companies.findUnique({
+          where: { id: record.companyId },
+          select: { id: true, name: true }
+        });
+        record.company = companyData;
+      } catch (error) {
+        console.warn(`Failed to lookup company for person ${record.id}:`, error);
+      }
+    }
+    
     return { success: true, data: record };
   } catch (dbError) {
     console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
@@ -926,28 +1019,33 @@ async function getMultipleRecords(
           { assignedUserId: null }    // Unassigned people in workspace
         ]
       },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        phone: true,
-        linkedinUrl: true,
-        customFields: true,
-        tags: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true
-      },
       orderBy: [{ updatedAt: 'desc' }],
       take: pagination?.limit || 2000 // Load all people records (increased for large workspaces)
     });
     
-    return { success: true, data: people };
+    // Manually lookup company names for people that have companyId
+    const peopleWithCompanies = await Promise.all(
+      people.map(async (person) => {
+        if (person.companyId) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: person.companyId },
+              select: { id: true, name: true }
+            });
+            return {
+              ...person,
+              company: companyData
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for person ${person.id}:`, error);
+            return person;
+          }
+        }
+        return person;
+      })
+    );
+    
+    return { success: true, data: peopleWithCompanies };
   }
   
   // Handle speedrun case for non-demo workspaces
