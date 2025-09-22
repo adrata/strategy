@@ -1007,13 +1007,16 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
-  // Special handling for people - show all people records in workspace
+  // Special handling for people - show people assigned to user or unassigned
   if (type === 'people') {
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null
-        // Modified: Show all people in workspace, not just assigned ones
+        deletedAt: null,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ]
       },
       orderBy: [{ updatedAt: 'desc' }],
       take: pagination?.limit || 5000 // Load all people records (increased for large workspaces)
@@ -1049,70 +1052,54 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
-  // Special handling for prospects and leads to include company data
-  if (type === 'prospects') {
-    const prospects = await prisma.prospects.findMany({
+  // Special handling for companies - show all companies in workspace
+  if (type === 'companies') {
+    const companies = await prisma.companies.findMany({
       where: {
         workspaceId,
-        deletedAt: null
+        deletedAt: null,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ]
       },
-      orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 1000,
-      skip: pagination?.offset || 0,
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        priority: true,
-        source: true,
-        createdAt: true,
+      orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
+      take: pagination?.limit || 5000, // Load all companies (same limit as people)
+      select: { 
+        id: true, 
+        name: true, 
+        industry: true, 
+        website: true,
+        description: true,
+        size: true,
+        address: true,
+        city: true,
+        state: true,
+        country: true,
+        customFields: true,
         updatedAt: true,
-        lastContactDate: true,
+        lastAction: true,
         lastActionDate: true,
         nextAction: true,
         nextActionDate: true,
-        workspaceId: true,
-        assignedUserId: true
+        actionStatus: true,
+        assignedUserId: true,
+        rank: true
       }
     });
-
-    // Lookup company names for prospects that have companyId but no company name
-    const prospectsWithCompanies = await Promise.all(
-      prospects.map(async (prospect) => {
-        if (prospect.companyId && !prospect.company) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: prospect.companyId },
-              select: { name: true }
-            });
-            return {
-              ...prospect,
-              company: companyData?.name || prospect.company || null,
-              companyName: companyData?.name || prospect.company || null
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
-            return prospect;
-          }
-        }
-        return {
-          ...prospect,
-          companyName: prospect.company
-        };
-      })
-    );
-
-    return { success: true, data: prospectsWithCompanies };
+    
+    console.log(`🏢 [COMPANIES API] Direct companies access loaded:`, {
+      totalCompanies: companies.length,
+      maxRank: Math.max(...companies.map(c => c.rank || 0).filter(r => r > 0)),
+      sampleCompanies: companies.slice(0, 5).map(c => ({ name: c.name, rank: c.rank }))
+    });
+    
+    return { success: true, data: companies };
   }
-
-  if (type === 'leads') {
+  
+  // Special handling for prospects and leads to include company data
+  if (type === 'prospects') {
+    // SWAPPED: When requesting "prospects", return leads data
     const leads = await prisma.leads.findMany({
       where: {
         workspaceId,
@@ -1172,6 +1159,69 @@ async function getMultipleRecords(
     );
 
     return { success: true, data: leadsWithCompanies };
+  }
+
+  if (type === 'leads') {
+    // SWAPPED: When requesting "leads", return prospects data
+    const prospects = await prisma.prospects.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
+      },
+      orderBy: [{ updatedAt: 'desc' }],
+      take: pagination?.limit || 1000,
+      skip: pagination?.offset || 0,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
+        status: true,
+        priority: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        workspaceId: true,
+        assignedUserId: true
+      }
+    });
+
+    // Lookup company names for prospects that have companyId but no company name
+    const prospectsWithCompanies = await Promise.all(
+      prospects.map(async (prospect) => {
+        if (prospect.companyId && !prospect.company) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: prospect.companyId },
+              select: { name: true }
+            });
+            return {
+              ...prospect,
+              company: companyData?.name || prospect.company || null,
+              companyName: companyData?.name || prospect.company || null
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
+            return prospect;
+          }
+        }
+        return {
+          ...prospect,
+          companyName: prospect.company
+        };
+      })
+    );
+
+    return { success: true, data: prospectsWithCompanies };
   }
   
   const model = getPrismaModel(type);
@@ -1434,9 +1484,9 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     if (type === 'companies') {
       createData['id'] = `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'leads') {
-      createData['id'] = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      createData['id'] = `prospect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // SWAPPED: leads create prospects
     } else if (type === 'prospects') {
-      createData['id'] = `prospect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      createData['id'] = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // SWAPPED: prospects create leads
     } else if (type === 'opportunities') {
       createData['id'] = `opp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'people') {
@@ -2394,8 +2444,8 @@ async function searchSpecificType(
 // 🆕 PRISMA MODEL MAPPING
 function getPrismaModel(type: string): any {
   const modelMap: { [key: string]: any } = {
-    leads: prisma.leads,
-    prospects: prisma.prospects,
+    leads: prisma.prospects,    // SWAPPED: leads requests get prospects model
+    prospects: prisma.leads,    // SWAPPED: prospects requests get leads model
     opportunities: prisma.opportunities,
     companies: prisma.companies,
     people: prisma.people,
@@ -2646,8 +2696,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.people.findMany({ 
         where: { 
           workspaceId, 
-          deletedAt: null
-          // Removed OR condition to show all people in workspace
+          deletedAt: null,
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 5000, // Load all people for full pipeline view (increased for large workspaces)

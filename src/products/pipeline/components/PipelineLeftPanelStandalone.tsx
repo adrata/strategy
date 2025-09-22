@@ -643,15 +643,6 @@ function PipelineSections({
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
     {
-      id: "prospects",
-      name: "Prospects",
-      description: "Cold Relationships",
-      count: loading ? (
-        <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (productionCounts.prospects || 0),
-      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true)
-    },
-    {
       id: "leads",
       name: "Leads",
       description: "Cold relationships",
@@ -659,6 +650,15 @@ function PipelineSections({
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : productionCounts.leads,
       visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true)
+    },
+    {
+      id: "prospects",
+      name: "Prospects",
+      description: "Cold Relationships",
+      count: loading ? (
+        <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
+      ) : (productionCounts.prospects || 0),
+      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true)
     },
     {
       id: "opportunities",
