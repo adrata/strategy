@@ -51,7 +51,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         const companyName = record.name || 
                            (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
                            record.companyName ||
-                           '5 Bars Services, LLC'; // Fallback for this specific company
+                           'Company'; // Generic fallback
         console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
         console.log('🔍 [BUYER GROUPS DEBUG] Record name:', record.name);
         console.log('🔍 [BUYER GROUPS DEBUG] Record company:', record.company);

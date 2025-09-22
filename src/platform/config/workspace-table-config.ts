@@ -21,27 +21,27 @@ const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
   workspaceName: 'Notary Everyday',
   sections: {
     people: {
-      columns: ['Rank', 'Company', 'Person', 'State', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['role'] // Hide role column
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['role', 'state'] // Hide role and state columns
     },
     companies: {
       columns: ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'],
       columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
     },
     prospects: {
-      columns: ['Rank', 'Company', 'Person', 'State', 'Title', 'Last Action', 'Next Action'],
-      columnOrder: ['rank', 'company', 'person', 'state', 'title', 'lastAction', 'nextAction'],
-      hiddenColumns: ['stage'] // Hide stage column
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details'] // Hide stage, status, and details columns
     },
     leads: {
-      columns: ['Rank', 'Company', 'Person', 'State', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage'] // Hide stage column
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details'] // Hide stage, status, and details columns
     },
     speedrun: {
-      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
     }
   }
 };
@@ -52,16 +52,27 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceName: 'Default',
   sections: {
     people: {
-      columns: ['Rank', 'Company', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'title', 'role', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['role', 'state'] // Hide role and state columns
     },
     companies: {
       columns: ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'],
       columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
     },
     speedrun: {
-      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+    },
+    prospects: {
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details']
+    },
+    leads: {
+      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details']
     }
   }
 };

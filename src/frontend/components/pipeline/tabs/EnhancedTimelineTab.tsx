@@ -68,7 +68,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
 
     // Always add creation event if we have created date
     if (record?.createdAt) {
-      const recordTypeName = recordType.slice(0, -1); // Remove 's' from 'leads' -> 'lead'
+      const recordTypeName = recordType === 'companies' ? 'company' : recordType.slice(0, -1); // Handle 'companies' -> 'company' and other plurals
       events.push({
         id: 'created',
         type: 'created',
@@ -98,7 +98,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
         type: 'status_change',
         date: new Date(record?.updatedAt || record?.createdAt),
         title: `Status changed to ${record.status}`,
-        description: `${recordType.slice(0, -1)} status updated to ${record.status}`,
+        description: `${recordType === 'companies' ? 'company' : recordType.slice(0, -1)} status updated to ${record.status}`,
         user: getUserName(record?.assignedUserId || record?.updatedBy || 'System')
       });
     }

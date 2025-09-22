@@ -553,4 +553,4 @@ export class BuyerGroupRelevanceEngine {
 }
 
 // Export only the class
-export { BuyerGroupRelevanceEngine };
+// export { BuyerGroupRelevanceEngine }; // Removed duplicate export

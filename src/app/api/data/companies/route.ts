@@ -51,7 +51,12 @@ export async function GET(request: NextRequest) {
         customFields: true,
         updatedAt: true,
         rank: true,
-        assignedUserId: true
+        assignedUserId: true,
+        lastAction: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        actionStatus: true
       },
       orderBy: {
         updatedAt: "desc",
@@ -122,6 +127,12 @@ export async function GET(request: NextRequest) {
         revenue: revenueDisplay || "Unknown",
         website: company.website || "",
         location: location,
+        // Action data included
+        lastAction: company.lastAction || null,
+        lastActionDate: company.lastActionDate || null,
+        nextAction: company.nextAction || null,
+        nextActionDate: company.nextActionDate || null,
+        actionStatus: company.actionStatus || null,
         // Company data included
         leads_count: 0, // Would need to query leads table
         people_count: 0, // Will be updated below

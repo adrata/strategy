@@ -12,7 +12,7 @@ export function UniversalDocumentsTab({ record, recordType }: UniversalDocuments
     <div className="p-6">
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Documents</h2>
-        <p className="text-gray-600">Files and documents related to this {recordType.slice(0, -1)}</p>
+        <p className="text-gray-600">Files and documents related to this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)}</p>
       </div>
 
       {documents['length'] === 0 ? (

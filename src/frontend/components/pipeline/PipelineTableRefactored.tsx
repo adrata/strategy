@@ -92,11 +92,11 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'prospects': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'opportunities': ['Rank', 'Company', 'Stage', 'Value', 'Last Action', 'Next Action'],
       'companies': ['Rank', 'Company', 'Last Action', 'Next Action'],
-      'people': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
+      'people': ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action'],
       'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
-      'speedrun': ['Rank', 'Company', 'Last Action', 'Next Action']
+      'speedrun': ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action']
     };
     
     return defaultHeaders[section || 'companies'] || defaultHeaders['companies'];
@@ -302,7 +302,8 @@ export function PipelineTable({
                         }
                         break;
                       case 'person':
-                        cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Person';
+                      case 'name':
+                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || 'Person';
                         break;
                       case 'state':
                         cellContent = record['state'] || record['status'] || record['location'] || 'State';

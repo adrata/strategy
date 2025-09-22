@@ -157,7 +157,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
-              <p className="text-sm">No contacts associated with this {recordType.slice(0, -1)} yet</p>
+              <p className="text-sm">No contacts associated with this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)} yet</p>
             </div>
           )}
         </div>

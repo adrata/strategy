@@ -77,7 +77,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
       case 'companies':
         return ['Rank', 'Company', 'Last Action', 'Next Action'];
       case 'people':
-        return ['Rank', 'Title', 'Company', 'Last Action', 'Next Action'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action'];
       default:
         return ['Name', 'Details'];
     }

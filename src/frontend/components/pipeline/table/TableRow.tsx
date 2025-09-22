@@ -57,6 +57,11 @@ function getCleanPersonName(record: PipelineRecord): string {
     return record['fullName'];
   }
   
+  // Try displayName
+  if (record['displayName'] && !record['displayName'].includes('Added') && !record['displayName'].includes('Call')) {
+    return record['displayName'];
+  }
+  
   // If record.name contains action log format, extract the person name
   if (record.name && record.name.includes('Added') && record.name.includes('-')) {
     const match = record.name.match(/Added\s+([^-]+)\s+-/);
@@ -164,7 +169,7 @@ export function TableRow({
             recordId: record.id
           });
           
-          return orderedVisibleColumns.map(column => {
+          return orderedVisibleColumns.map((column, columnIndex) => {
             if (isColumnHidden(workspaceId, section, column, workspaceName)) return null;
             
             switch (column) {
@@ -175,14 +180,39 @@ export function TableRow({
                   </td>
                 );
               case 'company':
+                // Handle both string company names and company objects
+                let companyName = '';
+                
+                // First try to get company from various fields
+                if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
+                  companyName = record['company'];
+                } else if (record['company']?.name) {
+                  companyName = record['company'].name;
+                } else if (record['companyName']) {
+                  companyName = record['companyName'];
+                } else {
+                  // If no company data is available, show a placeholder instead of person name
+                  companyName = 'No Company';
+                }
+                
+                // Make sure we're not showing the person's name as company name
+                const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
+                if (companyName === personName) {
+                  companyName = 'No Company';
+                }
+                
+                const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
                 return (
                   <td key="company" className={textClasses}>
-                    <div className="truncate max-w-32">{record['name'] || record['company']?.name || record['companyName'] || record['company'] || 'Company'}</div>
+                    <div className="truncate max-w-20" title={companyName}>
+                      {truncatedName}
+                    </div>
                   </td>
                 );
               case 'person':
+              case 'name':
                 return (
-                  <td key="person" className={nameClasses}>
+                  <td key="name" className={nameClasses}>
                     <div className="truncate max-w-32">{displayName}</div>
                   </td>
                 );
@@ -223,9 +253,9 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const lastActionDate = record.lastActionDate || record.lastContactDate || record.lastContact;
+                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
                         const timing = getRealtimeActionTiming(lastActionDate);
-                        const actionText = record.lastAction || record.lastActionDescription || 'No action';
+                        const actionText = record['lastAction'] || record['lastActionDescription'] || 'No action';
                         
                         return (
                           <>
@@ -247,7 +277,7 @@ export function TableRow({
                     <div className="flex justify-center">
                       <ActionMenu
                         record={record}
-                        recordType={section}
+                        recordType={section === 'leads' ? 'lead' : section === 'prospects' ? 'prospect' : section as any}
                         onEdit={onEdit}
                         onDelete={onDelete}
                         onView={(record) => onRecordClick(record)}
@@ -288,7 +318,7 @@ export function TableRow({
               <div className="flex justify-center">
                 <ActionMenu
                   record={record}
-                  recordType={section}
+                  recordType={section === 'leads' ? 'lead' : section === 'prospects' ? 'prospect' : section as any}
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onView={(record) => onRecordClick(record)}

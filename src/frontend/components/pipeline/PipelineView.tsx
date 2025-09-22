@@ -105,7 +105,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
+        return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
         return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
@@ -471,7 +471,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Handle common field variations
     switch (field) {
       case 'name':
-        return (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') || record.fullName || record.name || '';
+        return (record['firstName'] && record['lastName'] ? `${record['firstName']} ${record['lastName']}` : '') || record['fullName'] || record.name || '';
       
       case 'company':
         return record.company || record.companyName || '';

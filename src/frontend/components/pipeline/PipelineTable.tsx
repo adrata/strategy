@@ -360,7 +360,8 @@ export function PipelineTable({
                         }
                         break;
                       case 'person':
-                        cellContent = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || 'Person';
+                      case 'name':
+                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || 'Person';
                         break;
                       case 'state':
                         cellContent = record['state'] || record['status'] || record['location'] || 'State';

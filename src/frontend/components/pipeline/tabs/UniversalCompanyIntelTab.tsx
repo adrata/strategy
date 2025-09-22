@@ -16,41 +16,62 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
     );
   }
 
+  // Generate dynamic intelligence based on real company data
+  const generateCompanyIntelligence = () => {
+    const companyName = record?.name || 'Company';
+    const industry = record?.industry || 'Unknown Industry';
+    const size = record?.size || 'Unknown Size';
+    const revenue = record?.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown Revenue';
+    const website = record?.website || 'No website available';
+    const description = record?.description || 'No description available';
+    const location = record?.city && record?.state ? `${record.city}, ${record.state}` : record?.address || 'Unknown Location';
+    
+    // Get enrichment data if available
+    const coresignalData = record?.customFields?.coresignalData;
+    const employeeCount = coresignalData?.employees_count || 'Unknown';
+    const foundedYear = coresignalData?.founded_year;
+    const age = foundedYear ? new Date().getFullYear() - parseInt(foundedYear) : null;
+    const categories = coresignalData?.categories_and_keywords || [];
+    
+    return {
+      companyName,
+      industry,
+      size,
+      revenue,
+      website,
+      description,
+      location,
+      employeeCount,
+      age,
+      categories
+    };
+  };
+
+  const intelligence = generateCompanyIntelligence();
+
   return (
     <div className="space-y-8">
-             {/* Situation */}
-             <div className="space-y-4">
-               <h3 className="text-lg font-semibold text-gray-900 mb-4">Situation</h3>
-               <div>
-                 <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
-                 <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-                   {(() => {
-                     const coresignalData = record?.customFields?.coresignalData;
-                     const employeeCount = coresignalData?.employees_count || 13;
-                     const foundedYear = coresignalData?.founded_year || 2015;
-                     const age = new Date().getFullYear() - foundedYear;
-                     const categories = coresignalData?.categories_and_keywords || [];
-                     
-                     return `5 Bars Services has built a lean, privately-held telecommunications infrastructure operation with ${employeeCount} employees and ${age} years of market presence, enabling rapid decision-making and personalized service delivery as an agile alternative to larger telecom contractors. The company has strategically positioned itself as a comprehensive telecommunications infrastructure specialist, offering end-to-end solutions across ${categories.length} distinct service categories spanning underground infrastructure, fiber installation, small cell & DAS deployment, directional drilling, and structured cabling, enabling them to serve as a single-source provider for complex telecom projects while positioning advantageously in the evolving 5G and fiber expansion markets.`;
-                   })()}
-                 </div>
-               </div>
-             </div>
-
-      {/* Complications */}
+      {/* Situation */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{record?.name || 'Company'} Complications</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Situation</h3>
         <div>
           <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
           <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-          {(() => {
-            const coresignalData = record?.customFields?.coresignalData;
-            const employeeCount = coresignalData?.employees_count || 13;
-            const categories = coresignalData?.categories_and_keywords || [];
-            const companyName = record?.name || 'Company';
-            
-            return `5 Bars Services confronts significant operational challenges with a lean workforce of ${employeeCount} employees managing ${categories.length} distinct service categories, facing capacity constraints, skilled labor shortages in emerging technologies, equipment cost volatility, complex multi-state permitting requirements, and competition from larger contractors with deeper financial resources and economies of scale. The competitive landscape presents formidable challenges with large telecommunications contractors leveraging economies of scale, technology companies offering integrated infrastructure solutions, local competitors with lower overhead costs, and automation reducing demand for manual installation services.`;
-          })()}
+            {intelligence.description && intelligence.description.trim() !== '' 
+              ? intelligence.description
+              : `${intelligence.companyName} operates in the ${intelligence.industry} industry${intelligence.location !== 'Unknown Location' ? `, located in ${intelligence.location}` : ''}. ${intelligence.employeeCount !== 'Unknown' ? `The company has ${intelligence.employeeCount} employees` : 'Company size information is not available'}. ${intelligence.revenue !== 'Unknown Revenue' ? `Revenue is estimated at ${intelligence.revenue}` : 'Financial information is not available'}. ${intelligence.website !== 'No website available' ? `More information can be found at ${intelligence.website}` : ''}.`
+            }
+          </div>
+        </div>
+      </div>
+
+      {/* Complications */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{intelligence.companyName} Complications</h3>
+        <div>
+          <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
+          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+            {intelligence.companyName} operates in the competitive {intelligence.industry} industry, facing typical challenges including market competition, regulatory compliance, technology adoption, and operational efficiency. {intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees, the company must balance growth with resource management.` : 'The company must effectively manage resources and operations.'} Key challenges may include staying competitive in the evolving {intelligence.industry} landscape, maintaining quality standards, and adapting to changing market conditions and customer expectations.
           </div>
         </div>
       </div>
@@ -61,13 +82,7 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
         <div>
           <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
           <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-          {(() => {
-            const coresignalData = record?.customFields?.coresignalData;
-            const employeeCount = coresignalData?.employees_count || 13;
-            const categories = coresignalData?.categories_and_keywords || [];
-            
-            return `5 Bars Services must build a path to converged infrastructure services and reposition as an integrated telecommunications provider to win in the specialized infrastructure segment by delivering on 3 strategic imperatives: Create converged experiences. Evolve the 5 Bars product proposition to provide shared infrastructure capabilities across fixed and wireless networks. Get connected easily. Create a seamless new connect, migration and project experience for customers that is simple and painless. Start and stay online. Design service propositions that are fully digital enabled, helping customers to easily connect and manage their infrastructure needs. High partnership potential with ${employeeCount} employees managing ${categories.length} service categories includes engineering talent acquisition for specialized telecom roles, project management expertise for complex infrastructure projects, safety training and certification programs, technology consulting for modernization, and geographic expansion support across multi-state operations.`;
-          })()}
+            {intelligence.companyName} represents a strategic opportunity in the {intelligence.industry} sector. {intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees,` : 'The company'} demonstrates established market presence and operational capability. Key strategic considerations include understanding their business priorities, decision-making processes, and growth objectives. Partnership potential exists in areas such as technology solutions, operational improvements, and market expansion. The company's focus on {intelligence.industry} suggests opportunities for collaboration in industry-specific solutions, process optimization, and strategic initiatives that align with their business goals and market position.
           </div>
         </div>
       </div>
