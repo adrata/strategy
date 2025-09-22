@@ -276,79 +276,46 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   // No loading spinner - instant display
 
   return (
-    <div className="space-y-0">
-
-      {/* Company People */}
-      {buyerGroups['length'] === 0 ? (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <div className="space-y-4">
-            <BuildingOfficeIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">No team members found</h3>
-              <p className="text-sm text-gray-500">
-                No people found for {(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || record.companyName || 'this company'}.
-              </p>
+    <div className="space-y-8">
+      {/* Buyer Group Members */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Members</h3>
+        {buyerGroups['length'] === 0 ? (
+          <div className="text-center py-8">
+            <div className="text-sm text-gray-500">
+              No people found for {(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || record.companyName || 'this company'}.
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {buyerGroups.map((person) => {
-            const isCurrentPerson = person.isPrimary;
-            return (
-              <div 
-                key={person.id} 
-                className={`flex items-center p-4 rounded-lg cursor-pointer transition-colors ${
-                  isCurrentPerson 
-                    ? 'bg-blue-50 border-2 border-blue-500 shadow-sm' 
-                    : 'bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-                }`}
-                onClick={() => handleMemberClick(person)}
-              >
-                <div className="flex items-center space-x-3 flex-1">
-                  <div className="flex-shrink-0">
-                    <div className={`w-7 h-7 rounded flex items-center justify-center border ${
-                      isCurrentPerson ? 'bg-white border-gray-300' : 'bg-gray-300 border-gray-400'
-                    }`}>
-                      <span className={`font-semibold text-xs ${
-                        isCurrentPerson ? 'text-gray-700' : 'text-white'
-                      }`}>
+        ) : (
+          <div className="space-y-3">
+            {buyerGroups.map((person) => {
+              return (
+                <div 
+                  key={person.id} 
+                  className="flex items-center justify-between p-3 border border-gray-200 rounded cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleMemberClick(person)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-700">
                         {person.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                       </span>
                     </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <p className={`text-sm font-medium truncate ${
-                        isCurrentPerson ? 'text-blue-900' : 'text-gray-900'
-                      }`}>
-                        {person.name}
-                      </p>
-                      {isCurrentPerson && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          Current
-                        </span>
-                      )}
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{person.name}</div>
+                      <div className="text-sm text-gray-600">{person.title}</div>
                     </div>
-                    <p className={`text-sm ${isCurrentPerson ? 'text-blue-700' : 'text-gray-600'}`}>
-                      {person.title}
-                    </p>
-                    <p className={`text-xs ${isCurrentPerson ? 'text-blue-600' : 'text-gray-500'}`}>
-                      {person.role}
-                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600">{person.role}</div>
+                    <div className="text-xs text-gray-500">{person.influence}</div>
                   </div>
                 </div>
-                {person.email && (
-                  <div className="flex items-center text-xs text-gray-500">
-                    <EnvelopeIcon className="w-3 h-3 mr-1" />
-                    {person.email}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Add Member Modal Placeholder */}
       {showAddMemberModal && (
