@@ -100,19 +100,28 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
 
   const generateTimelineFromRecord = useCallback(() => {
     const events: TimelineEvent[] = [];
+    console.log('🔄 [TIMELINE] Generating timeline from record:', {
+      record: record,
+      recordType: recordType,
+      createdAt: record?.createdAt
+    });
 
-    // Always add creation event if we have created date
-    if (record?.createdAt) {
-      const recordTypeName = recordType.slice(0, -1); // Remove 's' from 'leads' -> 'lead'
-      events.push({
-        id: 'created',
-        type: 'created',
-        date: new Date(record.createdAt),
-        title: `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} added to pipeline`,
-        description: `New ${recordTypeName} record created in system`,
-        user: getUserName(record?.assignedUserId || record?.createdBy || 'System')
-      });
-    }
+    // Always add creation event - use createdAt if available, otherwise use current date
+    const recordTypeName = recordType.slice(0, -1); // Remove 's' from 'leads' -> 'lead'
+    const creationDate = record?.createdAt ? new Date(record.createdAt) : new Date();
+    
+    const creationEvent = {
+      id: 'created',
+      type: 'created' as const,
+      date: creationDate,
+      title: `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} added to pipeline`,
+      description: record?.createdAt 
+        ? `New ${recordTypeName} record created in system`
+        : `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} record loaded`,
+      user: getUserName(record?.assignedUserId || record?.createdBy || 'System')
+    };
+    events.push(creationEvent);
+    console.log('🔄 [TIMELINE] Added creation event:', creationEvent);
 
     // Add last action if available
     if (record?.lastActionDate) {
@@ -152,6 +161,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
 
     // Sort events by date (newest first)
     events.sort((a, b) => b.date.getTime() - a.date.getTime());
+    console.log('🔄 [TIMELINE] Setting initial timeline events:', events);
     setTimelineEvents(events);
   }, [record, recordType, getUserName]);
 
@@ -164,9 +174,23 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
 
   const loadTimelineFromAPI = useCallback(async () => {
     if (!record?.id) {
+      console.log('🚨 [TIMELINE] No record ID, skipping API load');
       setLoading(false);
       return;
     }
+    
+    // Get workspace and user IDs with fallbacks
+    const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // TOP Engineering Plus workspace
+    const userId = record.assignedUserId || '01K1VBYZG41K9QA0D9CF06KNRG'; // Ross Sylvester user ID
+    
+    console.log('🔍 [TIMELINE] Loading timeline for record:', {
+      id: record.id,
+      type: recordType,
+      workspaceId: workspaceId,
+      assignedUserId: userId,
+      recordWorkspaceId: record.workspaceId,
+      recordAssignedUserId: record.assignedUserId
+    });
     
     setLoading(true);
     try {
@@ -194,23 +218,28 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       if (activityEvents.length === 0 && noteEvents.length === 0) {
         console.log('🔍 [TIMELINE] Fetching fresh timeline data');
         
-        // Load activities for this specific record
-        const activitiesResponse = await fetch(`/api/activities?workspaceId=${record.workspaceId}&userId=${record.assignedUserId}&limit=100`);
+        // Load activities for this specific record using unified API
+        const activitiesResponse = await fetch(`/api/data/unified?type=activities&action=get&workspaceId=${workspaceId}&userId=${userId}`);
         
         if (activitiesResponse.ok) {
           const activitiesData = await activitiesResponse.json();
-          if (activitiesData['success'] && activitiesData.activities) {
+          console.log('📅 [TIMELINE] Activities data:', activitiesData);
+          
+          if (activitiesData['success'] && activitiesData.data) {
             // Filter activities for this specific record
-            const recordActivities = activitiesData.activities.filter((activity: any) => {
+            const recordActivities = activitiesData.data.filter((activity: any) => {
               // Check if this activity is related to our record
               return (
                 activity['leadId'] === record.id ||
                 activity['prospectId'] === record.id ||
                 activity['opportunityId'] === record.id ||
                 activity['contactId'] === record.id ||
-                activity['accountId'] === record.id
+                activity['accountId'] === record.id ||
+                activity['companyId'] === record.id
               );
             });
+            
+            console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
 
             // Convert activities to timeline events
             activityEvents = recordActivities.map((activity: any) => ({
@@ -231,10 +260,16 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         }
 
         // Load notes for this specific record using unified API
-        const notesResponse = await fetch(`/api/data/unified?type=notes&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
+        const notesUrl = `/api/data/unified?type=notes&action=get&workspaceId=${workspaceId}&userId=${userId}`;
+        console.log('🔍 [TIMELINE] Fetching notes from:', notesUrl);
+        
+        const notesResponse = await fetch(notesUrl);
+        console.log('📝 [TIMELINE] Notes response status:', notesResponse.status);
         
         if (notesResponse.ok) {
           const notesData = await notesResponse.json();
+          console.log('📝 [TIMELINE] Notes data:', notesData);
+          
           if (notesData['success'] && notesData.data) {
             // Filter notes for this specific record
             const recordNotes = notesData.data.filter((note: any) => {
@@ -242,7 +277,9 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                 note['leadId'] === record.id ||
                 note['opportunityId'] === record.id ||
                 note['contactId'] === record.id ||
-                note['accountId'] === record.id
+                note['accountId'] === record.id ||
+                note['personId'] === record.id ||
+                note['companyId'] === record.id
               );
             });
 
@@ -261,7 +298,12 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                 isPrivate: note.isPrivate
               }
             }));
+            console.log('📝 [TIMELINE] Converted notes to events:', noteEvents);
+          } else {
+            console.log('📝 [TIMELINE] No notes found or API error:', notesData);
           }
+        } else {
+          console.error('📝 [TIMELINE] Notes API error:', notesResponse.status, notesResponse.statusText);
         }
         
         // Cache the data
@@ -275,11 +317,22 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       // Merge all events and sort by date
       setTimelineEvents(prev => {
         const combined = [...prev, ...activityEvents, ...noteEvents];
+        console.log('🔄 [TIMELINE] Merging events:', {
+          prev: prev.length,
+          activities: activityEvents.length,
+          notes: noteEvents.length,
+          combined: combined.length
+        });
+        
         // Remove duplicates based on ID
         const uniqueEvents = combined.filter((event, index, self) => 
           index === self.findIndex(e => e['id'] === event.id)
         );
-        return uniqueEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
+        
+        const sortedEvents = uniqueEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
+        console.log('🔄 [TIMELINE] Final timeline events:', sortedEvents);
+        
+        return sortedEvents;
       });
     } catch (error) {
       console.error('Error loading timeline from API:', error);

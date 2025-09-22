@@ -2301,49 +2301,109 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 
 
 function NotesTab({ record, recordType }: { record: any; recordType: string }) {
-  const handleSaveNotes = async (field: string, value: string) => {
+  const [notes, setNotes] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [newNote, setNewNote] = React.useState('');
+
+  // Load existing notes
+  React.useEffect(() => {
+    const loadNotes = async () => {
+      if (!record?.id) return;
+      
+      try {
+        setIsLoading(true);
+        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        
+        const response = await fetch(`/api/notes?recordId=${record.id}&recordType=${recordType}&workspaceId=${workspaceId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setNotes(result.notes || []);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading notes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadNotes();
+  }, [record?.id, recordType]);
+
+  const handleAddNote = async () => {
+    if (!newNote.trim() || !record?.id) return;
+
     try {
-      console.log(`💾 [NOTES-TAB] Saving ${field} for ${recordType}:`, record?.id, value);
-      
-      // Get workspace and user context
-      const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Default to Dan's workspace
+      setIsLoading(true);
+      const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
       const userId = '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
-      
-      // Call the unified API to update the record
-      const response = await fetch('/api/data/unified', {
-        method: 'PUT',
+
+      // Prepare note data with appropriate record linking
+      const noteData: any = {
+        content: newNote.trim(),
+        title: `Note for ${record.name || record.fullName || 'Record'}`,
+        workspaceId,
+        userId
+      };
+
+      // Link to the appropriate record based on type
+      switch (recordType) {
+        case 'leads':
+          noteData.leadId = record.id;
+          break;
+        case 'opportunities':
+          noteData.opportunityId = record.id;
+          break;
+        case 'companies':
+          noteData.accountId = record.id;
+          noteData.companyId = record.id; // Also link to companyId for companies
+          break;
+        case 'people':
+          noteData.contactId = record.id;
+          break;
+        case 'prospects':
+          noteData.personId = record.id;
+          break;
+        default:
+          noteData.accountId = record.id; // Default fallback
+      }
+
+      const response = await fetch('/api/notes', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: recordType,
-          action: 'update',
-          id: record.id,
-          data: {
-            [field]: value
-          }
-        }),
+        body: JSON.stringify(noteData),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to save ${field}: ${response.statusText}`);
+        throw new Error(`Failed to create note: ${response.statusText}`);
       }
 
       const result = await response.json();
       if (!result.success) {
-        throw new Error(result.error || 'Failed to save notes');
+        throw new Error(result.error || 'Failed to create note');
       }
 
-      console.log(`✅ [NOTES-TAB] Successfully saved ${field} for ${recordType}:`, result);
+      console.log(`✅ [NOTES-TAB] Successfully created note for ${recordType}:`, result);
       
-      // Update the local record to reflect the change
-      if (record) {
-        record[field] = value;
-      }
+      // Add the new note to the list
+      setNotes(prev => [result.note, ...prev]);
+      setNewNote(''); // Clear the input
       
     } catch (error) {
-      console.error(`❌ [NOTES-TAB] Error saving ${field}:`, error);
-      throw error; // Re-throw to let InlineEditField handle the error display
+      console.error(`❌ [NOTES-TAB] Error creating note:`, error);
+      alert('Failed to save note. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleAddNote();
     }
   };
 
@@ -2351,18 +2411,55 @@ function NotesTab({ record, recordType }: { record: any; recordType: string }) {
     <div className="space-y-8">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
-        <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Notes</label>
-          <InlineEditField
-            value={record?.notes || ''}
-            field="notes"
-            recordId={record?.id || ''}
-            recordType="universal"
-            type="textarea"
-            placeholder="Add notes about this record..."
-            onSave={handleSaveNotes}
-            className="w-full h-32 text-sm text-gray-800 font-medium"
-          />
+        
+        {/* Add new note */}
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-600 mb-1">Add Note</label>
+          <div className="space-y-2">
+            <textarea
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Add notes about this record... (Cmd/Ctrl + Enter to save)"
+              className="w-full h-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              disabled={isLoading}
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={handleAddNote}
+                disabled={!newNote.trim() || isLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoading ? 'Saving...' : 'Add Note'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Existing notes */}
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-600 mb-1">Recent Notes</label>
+          {isLoading && notes.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">Loading notes...</div>
+          ) : notes.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">No notes yet. Add your first note above.</div>
+          ) : (
+            <div className="space-y-3">
+              {notes.map((note) => (
+                <div key={note.id} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-sm font-medium text-gray-900">
+                      {note.title || 'Note'}
+                    </h4>
+                    <span className="text-xs text-gray-500">
+                      {new Date(note.createdAt).toLocaleDateString()} at {new Date(note.createdAt).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{note.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

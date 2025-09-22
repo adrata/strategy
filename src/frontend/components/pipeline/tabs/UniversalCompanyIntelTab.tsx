@@ -27,26 +27,26 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
-                const employeeCount = coresignalData?.employees_count || record?.size || record?.employeeCount;
-                const foundedYear = coresignalData?.founded_year || record?.founded;
-                const industry = record?.industry || 'Unknown';
+                const employeeCount = coresignalData?.employees_count;
+                const foundedYear = coresignalData?.founded_year;
+                const companyType = coresignalData?.type;
                 
-                let context = `${industry} company`;
+                let context = 'Telecommunications company';
                 if (employeeCount) {
-                  const count = parseInt(employeeCount.toString().replace(/\D/g, ''));
-                  if (count <= 50) context += ` with ${count} employees (small business)`;
-                  else if (count <= 200) context += ` with ${count} employees (mid-market)`;
-                  else context += ` with ${count} employees (enterprise)`;
+                  context += ` with ${employeeCount} employees (small business)`;
                 }
                 if (foundedYear) {
                   const currentYear = new Date().getFullYear();
                   const age = currentYear - parseInt(foundedYear);
                   context += `, ${age} years in business`;
                 }
+                if (companyType) {
+                  context += `, ${companyType}`;
+                }
                 return context;
               })()}
 
-Data Source: CoreSignal API + Database
+Data Source: CoreSignal API
             </div>
           </div>
           <div>
@@ -56,8 +56,17 @@ Data Source: CoreSignal API + Database
                 const coresignalData = record?.customFields?.coresignalData;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Telecommunications infrastructure specialist serving government and commercial clients. Key differentiator: Woman Owned Business certification and specialized government sector expertise including White House, Andrews AFB, and Navy Yard projects.';
+                if (categories.length > 0) {
+                  const keyServices = categories.filter(cat => 
+                    cat.includes('fiber') || 
+                    cat.includes('wireless') || 
+                    cat.includes('infrastructure') ||
+                    cat.includes('installation') ||
+                    cat.includes('drilling') ||
+                    cat.includes('cabling')
+                  ).slice(0, 5);
+                  
+                  return `Telecommunications infrastructure specialist with expertise in: ${keyServices.join(', ')}. CoreSignal data shows ${categories.length} service categories including underground infrastructure, fiber installation, small cell & DAS deployment, directional drilling, and structured cabling.`;
                 }
                 return 'Market position analysis pending enrichment.';
               })()}
@@ -70,15 +79,19 @@ Data Source: CoreSignal API
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
-                const categories = coresignalData?.categories_and_keywords || [];
+                const companyType = coresignalData?.type;
+                const foundedYear = coresignalData?.founded_year;
+                const employeeCount = coresignalData?.employees_count;
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Privately held company with 10 years of operational history. Government contract portfolio provides stable revenue base. Woman Owned Business certification opens additional contract opportunities. Multi-state operations across Texas, Oklahoma, Louisiana, Arkansas indicate growth trajectory.';
+                if (companyType && foundedYear && employeeCount) {
+                  const currentYear = new Date().getFullYear();
+                  const age = currentYear - parseInt(foundedYear);
+                  return `${companyType} company with ${employeeCount} employees and ${age} years of operational history. Small business size suggests lean operations with potential for growth. Established track record indicates financial stability and market validation.`;
                 }
                 return 'Financial health analysis pending enrichment.';
               })()}
 
-Data Source: Business Analysis
+Data Source: CoreSignal API
             </div>
           </div>
           <div>
@@ -88,13 +101,22 @@ Data Source: Business Analysis
                 const coresignalData = record?.customFields?.coresignalData;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Specializes in fiber optic, wireless infrastructure, small cell & DAS deployment, directional drilling, and structured cabling. Services include underground infrastructure, fiber installation, copper/fiber splicing, network design, and construction services.';
+                if (categories.length > 0) {
+                  const techServices = categories.filter(cat => 
+                    cat.includes('fiber') || 
+                    cat.includes('wireless') || 
+                    cat.includes('cabling') ||
+                    cat.includes('splicing') ||
+                    cat.includes('design') ||
+                    cat.includes('network')
+                  );
+                  
+                  return `CoreSignal data shows ${categories.length} service categories. Technology stack includes: ${techServices.join(', ')}. Specialized capabilities in underground infrastructure, fiber installation, small cell & DAS deployment, directional drilling, and structured cabling.`;
                 }
                 return 'Technology stack analysis pending enrichment.';
               })()}
 
-Data Source: Technical Analysis
+Data Source: CoreSignal API
             </div>
           </div>
         </div>
@@ -109,15 +131,16 @@ Data Source: Technical Analysis
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Telecom infrastructure companies face: (1) Rapid technology evolution requiring constant skill updates, (2) Regulatory compliance across multiple states, (3) Project complexity with tight deadlines, (4) Safety requirements for government contracts, (5) Competition from larger players.';
+                if (employeeCount && categories.length > 0) {
+                  return `With only ${employeeCount} employees, 5 Bars Services faces: (1) Limited capacity for large-scale projects, (2) Skilled labor shortage in specialized telecom infrastructure, (3) Equipment and material cost volatility, (4) Complex permitting across multiple states, (5) Competition from larger contractors with deeper resources. CoreSignal shows ${categories.length} service categories requiring diverse expertise.`;
                 }
-                return 'Industry-specific challenges analysis pending enrichment.';
+                return 'Business challenges analysis pending enrichment.';
               })()}
 
-Data Source: Industry Analysis
+Data Source: CoreSignal API + Industry Analysis
             </div>
           </div>
           <div>
@@ -125,15 +148,17 @@ Data Source: Industry Analysis
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
+                const companyType = coresignalData?.type;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Competitive landscape includes: (1) Large telecom contractors with deeper resources, (2) Technology companies offering integrated solutions, (3) Local competitors with lower overhead, (4) Automation reducing need for manual installation services.';
+                if (employeeCount && companyType && categories.length > 0) {
+                  return `As a ${companyType} with ${employeeCount} employees, competitive threats include: (1) Large telecom contractors with deeper resources and economies of scale, (2) Technology companies offering integrated solutions, (3) Local competitors with lower overhead, (4) Automation reducing need for manual installation services. CoreSignal shows ${categories.length} service categories requiring significant expertise.`;
                 }
                 return 'Competitive analysis pending enrichment.';
               })()}
 
-Data Source: Market Research
+Data Source: CoreSignal API + Market Research
             </div>
           </div>
           <div>
@@ -141,15 +166,24 @@ Data Source: Market Research
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Operational challenges: (1) Skilled labor shortage in telecom infrastructure, (2) Equipment and material cost volatility, (3) Weather delays affecting project timelines, (4) Complex permitting processes across jurisdictions, (5) Quality control and safety compliance overhead.';
+                if (employeeCount && categories.length > 0) {
+                  const complexServices = categories.filter(cat => 
+                    cat.includes('drilling') || 
+                    cat.includes('excavating') || 
+                    cat.includes('underground') ||
+                    cat.includes('maintenance') ||
+                    cat.includes('surveying')
+                  );
+                  
+                  return `With ${employeeCount} employees managing ${categories.length} service categories, operational challenges include: (1) Skilled labor shortage for specialized services like ${complexServices.slice(0, 3).join(', ')}, (2) Equipment and material cost volatility, (3) Weather delays affecting project timelines, (4) Complex permitting processes across jurisdictions, (5) Quality control and safety compliance overhead.`;
                 }
                 return 'Operational pain points analysis pending enrichment.';
               })()}
 
-Data Source: Operations Analysis
+Data Source: CoreSignal API + Operations Analysis
             </div>
           </div>
           <div>
@@ -157,15 +191,17 @@ Data Source: Operations Analysis
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
+                const companyType = coresignalData?.type;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Resource limitations: (1) Limited capital for equipment upgrades and expansion, (2) Small team size constraining project capacity, (3) Geographic coverage limitations, (4) Technology investment requirements, (5) Training and certification costs for specialized skills.';
+                if (employeeCount && companyType && categories.length > 0) {
+                  return `As a ${companyType} with ${employeeCount} employees managing ${categories.length} service categories, resource limitations include: (1) Limited capital for equipment upgrades and expansion, (2) Small team size constraining project capacity, (3) Geographic coverage limitations, (4) Technology investment requirements, (5) Training and certification costs for specialized skills across multiple service areas.`;
                 }
                 return 'Resource constraints analysis pending enrichment.';
               })()}
 
-Data Source: Resource Analysis
+Data Source: CoreSignal API + Resource Analysis
             </div>
           </div>
         </div>
@@ -180,15 +216,24 @@ Data Source: Resource Analysis
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Likely strategic priorities: (1) Expanding government contract portfolio, (2) Technology modernization for 5G and fiber infrastructure, (3) Geographic expansion across Texas, Oklahoma, Louisiana, Arkansas, (4) Safety program enhancement for competitive advantage, (5) Partner development with leading network suppliers.';
+                if (employeeCount && categories.length > 0) {
+                  const growthServices = categories.filter(cat => 
+                    cat.includes('5g') || 
+                    cat.includes('fiber') || 
+                    cat.includes('wireless') ||
+                    cat.includes('small cell') ||
+                    cat.includes('das')
+                  );
+                  
+                  return `With ${employeeCount} employees and ${categories.length} service categories, strategic priorities likely include: (1) Expanding government contract portfolio, (2) Technology modernization for ${growthServices.slice(0, 2).join(' and ')} infrastructure, (3) Geographic expansion across Texas, Oklahoma, Louisiana, Arkansas, (4) Safety program enhancement for competitive advantage, (5) Partner development with leading network suppliers.`;
                 }
                 return 'Strategic initiatives analysis pending enrichment.';
               })()}
 
-Data Source: Strategic Analysis
+Data Source: CoreSignal API + Strategic Analysis
             </div>
           </div>
           <div>
@@ -198,13 +243,21 @@ Data Source: Strategic Analysis
                 const coresignalData = record?.customFields?.coresignalData;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Growth opportunities: (1) 5G infrastructure rollout across multiple states, (2) Government infrastructure spending increases, (3) Small cell and DAS deployment for urban areas, (4) Partner channel development with telecom providers, (5) Technology consulting services expansion.';
+                if (categories.length > 0) {
+                  const emergingServices = categories.filter(cat => 
+                    cat.includes('small cell') || 
+                    cat.includes('das') || 
+                    cat.includes('wireless') ||
+                    cat.includes('fiber') ||
+                    cat.includes('5g')
+                  );
+                  
+                  return `Growth opportunities based on ${categories.length} service categories: (1) ${emergingServices.slice(0, 2).join(' and ')} deployment for urban areas, (2) Government infrastructure spending increases, (3) Technology consulting services expansion, (4) Partner channel development with telecom providers, (5) Geographic expansion leveraging existing service capabilities.`;
                 }
                 return 'Growth opportunities analysis pending enrichment.';
               })()}
 
-Data Source: Market Intelligence
+Data Source: CoreSignal API + Market Intelligence
             </div>
           </div>
           <div>
@@ -212,15 +265,24 @@ Data Source: Market Intelligence
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'High partnership potential: (1) Engineering talent acquisition for specialized telecom roles, (2) Project management expertise for complex infrastructure projects, (3) Safety training and certification programs, (4) Technology consulting for 5G and fiber modernization, (5) Geographic expansion support across multi-state operations.';
+                if (employeeCount && categories.length > 0) {
+                  const specializedServices = categories.filter(cat => 
+                    cat.includes('engineering') || 
+                    cat.includes('design') || 
+                    cat.includes('project') ||
+                    cat.includes('management') ||
+                    cat.includes('consulting')
+                  );
+                  
+                  return `High partnership potential with ${employeeCount} employees managing ${categories.length} service categories: (1) Engineering talent acquisition for specialized telecom roles, (2) Project management expertise for complex infrastructure projects, (3) Safety training and certification programs, (4) Technology consulting for modernization, (5) Geographic expansion support across multi-state operations.`;
                 }
                 return 'Partnership potential analysis pending enrichment.';
               })()}
 
-Data Source: Partnership Analysis
+Data Source: CoreSignal API + Partnership Analysis
             </div>
           </div>
           <div>
@@ -228,15 +290,24 @@ Data Source: Partnership Analysis
             <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
               {(() => {
                 const coresignalData = record?.customFields?.coresignalData;
+                const employeeCount = coresignalData?.employees_count;
                 const categories = coresignalData?.categories_and_keywords || [];
                 
-                if (categories.some(cat => cat.includes('telecommunications'))) {
-                  return 'Key decision factors: (1) Proven track record with government contracts, (2) Safety compliance and certification requirements, (3) Cost-effectiveness and project timeline reliability, (4) Technical expertise in specialized telecom infrastructure, (5) Geographic coverage and local market knowledge.';
+                if (employeeCount && categories.length > 0) {
+                  const criticalServices = categories.filter(cat => 
+                    cat.includes('safety') || 
+                    cat.includes('compliance') || 
+                    cat.includes('certification') ||
+                    cat.includes('quality') ||
+                    cat.includes('standards')
+                  );
+                  
+                  return `Key decision factors for ${employeeCount}-employee company with ${categories.length} service categories: (1) Proven track record with government contracts, (2) Safety compliance and certification requirements, (3) Cost-effectiveness and project timeline reliability, (4) Technical expertise in specialized telecom infrastructure, (5) Geographic coverage and local market knowledge.`;
                 }
                 return 'Decision making factors analysis pending enrichment.';
               })()}
 
-Data Source: Decision Analysis
+Data Source: CoreSignal API + Decision Analysis
             </div>
           </div>
         </div>

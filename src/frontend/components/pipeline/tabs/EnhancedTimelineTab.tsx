@@ -194,7 +194,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
         }
       }
 
-      // Fetch notes
+      // Fetch notes using unified API
       const notesResponse = await fetch(`/api/data/unified?type=notes&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
       
       if (notesResponse.ok) {

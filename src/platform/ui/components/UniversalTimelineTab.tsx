@@ -50,20 +50,172 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     try {
       setLoading(true);
       
-      const response = await fetch(`/api/timeline/${entityType}/${entityId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch timeline data');
+      // Get workspace ID from entity data or use default
+      const workspaceId = entityData?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+      const userId = entityData?.assignedUserId || '01K1VBYZMWTCT09FWEKBDMCXZM';
+      
+      console.log('🔍 [PLATFORM TIMELINE] Fetching timeline for:', {
+        entityType,
+        entityId,
+        workspaceId,
+        userId
+      });
+      
+      // Fetch activities and notes separately using unified API
+      const activitiesUrl = `/api/data/unified?type=activities&action=get&workspaceId=${workspaceId}&userId=${userId}`;
+      const notesUrl = `/api/data/unified?type=notes&action=get&workspaceId=${workspaceId}&userId=${userId}`;
+      
+      console.log('🔍 [PLATFORM TIMELINE] Fetching activities from:', activitiesUrl);
+      console.log('🔍 [PLATFORM TIMELINE] Fetching notes from:', notesUrl);
+      
+      const [activitiesResponse, notesResponse] = await Promise.all([
+        fetch(activitiesUrl),
+        fetch(notesUrl)
+      ]);
+      
+      console.log('📅 [PLATFORM TIMELINE] Activities response status:', activitiesResponse.status);
+      console.log('📅 [PLATFORM TIMELINE] Notes response status:', notesResponse.status);
+      
+      const timelineEvents: any[] = [];
+      
+      // Process activities
+      if (activitiesResponse.ok) {
+        const activitiesData = await activitiesResponse.json();
+        console.log('📅 [PLATFORM TIMELINE] Activities data:', activitiesData);
+        
+        if (activitiesData.success && activitiesData.data) {
+          console.log('📅 [PLATFORM TIMELINE] Found activities:', activitiesData.data.length);
+          // Filter activities for this entity
+          const entityActivities = activitiesData.data.filter((activity: any) => {
+            return (
+              activity.leadId === entityId ||
+              activity.opportunityId === entityId ||
+              activity.contactId === entityId ||
+              activity.accountId === entityId ||
+              activity.personId === entityId ||
+              activity.companyId === entityId
+            );
+          });
+          
+          console.log('📅 [PLATFORM TIMELINE] Filtered activities for entity:', entityActivities.length);
+          
+          // Convert to timeline events
+          const activityEvents = entityActivities.map((activity: any) => ({
+            id: activity.id,
+            type: 'activity',
+            date: activity.createdAt,
+            title: activity.subject || 'Activity',
+            description: activity.description || '',
+            user: activity.userId || 'System',
+            source: 'activity',
+            priority: activity.priority || 'normal',
+            metadata: {
+              type: activity.type,
+              status: activity.status,
+              scheduledAt: activity.scheduledAt
+            }
+          }));
+          
+          timelineEvents.push(...activityEvents);
+        }
       }
+      
+      // Process notes
+      if (notesResponse.ok) {
+        const notesData = await notesResponse.json();
+        console.log('📅 [PLATFORM TIMELINE] Notes data:', notesData);
+        
+        if (notesData.success && notesData.data) {
+          console.log('📅 [PLATFORM TIMELINE] Found notes:', notesData.data.length);
+          // Filter notes for this entity
+          const entityNotes = notesData.data.filter((note: any) => {
+            return (
+              note.leadId === entityId ||
+              note.opportunityId === entityId ||
+              note.contactId === entityId ||
+              note.accountId === entityId ||
+              note.personId === entityId ||
+              note.companyId === entityId
+            );
+          });
+          
+          console.log('📅 [PLATFORM TIMELINE] Filtered notes for entity:', entityNotes.length);
+          
+          // Convert to timeline events
+          const noteEvents = entityNotes.map((note: any) => ({
+            id: note.id,
+            type: 'note',
+            date: note.createdAt,
+            title: note.title || 'Note added',
+            description: note.content ? note.content.substring(0, 100) + (note.content.length > 100 ? '...' : '') : '',
+            user: note.authorId || 'System',
+            source: 'note',
+            priority: note.priority || 'normal',
+            metadata: {
+              content: note.content,
+              type: note.type,
+              isPrivate: note.isPrivate
+            }
+          }));
+          
+          timelineEvents.push(...noteEvents);
+        }
+      }
+      
+      // Add record creation event
+      console.log('📅 [PLATFORM TIMELINE] Entity data for creation event:', {
+        entityData,
+        createdAt: entityData?.createdAt,
+        entityType
+      });
+      
+      if (entityData?.createdAt) {
+        const entityName = entityType === 'account' ? 'company' : entityType.slice(0, -1);
+        const creationEvent = {
+          id: 'record_created',
+          type: 'record_created',
+          date: entityData.createdAt,
+          title: `${entityName.charAt(0).toUpperCase() + entityName.slice(1)} added to pipeline`,
+          description: `New ${entityName} record created in system`,
+          user: entityData.assignedUserId || entityData.createdBy || 'System',
+          source: 'system',
+          priority: 'normal'
+        };
+        timelineEvents.push(creationEvent);
+        console.log('📅 [PLATFORM TIMELINE] Added creation event:', creationEvent);
+      } else {
+        console.log('📅 [PLATFORM TIMELINE] No createdAt found, skipping creation event');
+      }
+      
+      // Sort by date (newest first)
+      timelineEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      // If no events found, add a fallback event to show the timeline is working
+      if (timelineEvents.length === 0) {
+        timelineEvents.push({
+          id: 'no_events',
+          type: 'record_created',
+          date: new Date(),
+          title: 'Timeline initialized',
+          description: 'Timeline is working but no events found yet',
+          user: 'System',
+          source: 'system',
+          priority: 'normal'
+        });
+        console.log('📅 [PLATFORM TIMELINE] No events found, added fallback event');
+      }
+      
+      console.log('📅 [PLATFORM TIMELINE] Final timeline events:', timelineEvents.length, 'events');
+      console.log('📅 [PLATFORM TIMELINE] Timeline events details:', timelineEvents);
+      setTimelineEvents(timelineEvents);
 
-      const data = await response.json();
-      setTimelineEvents(data.timeline || []);
-
-      const emailEvents = (data.timeline || []).filter((e: any) => e['type'] === 'email');
+      const emailEvents = timelineEvents.filter((e: any) => e['type'] === 'email');
       const threads = groupEmailsIntoThreads(emailEvents);
       setEmailThreads(threads);
 
     } catch (error) {
-      console.error('Error fetching timeline data:', error);
+      console.error('❌ [PLATFORM TIMELINE] Error fetching timeline data:', error);
+      setTimelineEvents([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
