@@ -360,7 +360,7 @@ export default function GeniusLevelIntelligenceReportPage() {
                     <li>• 95%+ for multi-source verification</li>
                     <li>• 85%+ for single reliable source</li>
                     <li>• 75%+ for inferred intelligence</li>
-                    <li>• <75% flagged for review</li>
+                    <li>• &lt;75% flagged for review</li>
                   </ul>
                 </div>
                 
