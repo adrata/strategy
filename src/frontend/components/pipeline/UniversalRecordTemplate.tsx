@@ -431,7 +431,7 @@ export function UniversalRecordTemplate({
         // Combine size and growth stage for strategic context
                // Check if this is 5 Bars Services specifically
                if (record?.name?.toLowerCase().includes('5 bars')) {
-                 return 'Established, 40+ year telecom infrastructure specialist';
+                 return 'Small, growing telecom infrastructure specialist';
                } else if (sizeCategory === 'Small' && growthStage === 'growing') {
                  return 'Small, growing telecommunications company';
                } else if (sizeCategory === 'Small' && growthStage === 'startup') {
