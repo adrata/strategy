@@ -1520,5 +1520,4 @@ export class UnifiedEnrichmentFactory {
 }
 
 // Export main classes
-export { UnifiedEnrichmentFactory };
 export type { UnifiedEnrichmentConfig, EnrichmentRequest, EnrichmentResult };
