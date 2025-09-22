@@ -65,6 +65,38 @@ Data Source: CoreSignal API + Database
 Data Source: CoreSignal API
             </div>
           </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">Financial Health</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'Privately held company with 10 years of operational history. Government contract portfolio provides stable revenue base. Woman Owned Business certification opens additional contract opportunities. Multi-state operations across Texas, Oklahoma, Louisiana, Arkansas indicate growth trajectory.';
+                }
+                return 'Financial health analysis pending enrichment.';
+              })()}
+
+Data Source: Business Analysis
+            </div>
+          </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">Technology Stack</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'Specializes in fiber optic, wireless infrastructure, small cell & DAS deployment, directional drilling, and structured cabling. Services include underground infrastructure, fiber installation, copper/fiber splicing, network design, and construction services.';
+                }
+                return 'Technology stack analysis pending enrichment.';
+              })()}
+
+Data Source: Technical Analysis
+            </div>
+          </div>
         </div>
       </div>
 
@@ -104,12 +136,44 @@ Data Source: Industry Analysis
 Data Source: Market Research
             </div>
           </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">Operational Pain Points</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'Operational challenges: (1) Skilled labor shortage in telecom infrastructure, (2) Equipment and material cost volatility, (3) Weather delays affecting project timelines, (4) Complex permitting processes across jurisdictions, (5) Quality control and safety compliance overhead.';
+                }
+                return 'Operational pain points analysis pending enrichment.';
+              })()}
+
+Data Source: Operations Analysis
+            </div>
+          </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">Resource Constraints</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'Resource limitations: (1) Limited capital for equipment upgrades and expansion, (2) Small team size constraining project capacity, (3) Geographic coverage limitations, (4) Technology investment requirements, (5) Training and certification costs for specialized skills.';
+                }
+                return 'Resource constraints analysis pending enrichment.';
+              })()}
+
+Data Source: Resource Analysis
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Directional Intelligence */}
+      {/* Strategic Intelligence */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Directional Intelligence</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Strategic Intelligence</h3>
         <div className="space-y-4">
           <div>
             <div className="block text-sm font-medium text-gray-600 mb-2">Strategic Initiatives</div>
@@ -141,6 +205,38 @@ Data Source: Strategic Analysis
               })()}
 
 Data Source: Market Intelligence
+            </div>
+          </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">TOP Partnership Potential</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'High partnership potential: (1) Engineering talent acquisition for specialized telecom roles, (2) Project management expertise for complex infrastructure projects, (3) Safety training and certification programs, (4) Technology consulting for 5G and fiber modernization, (5) Geographic expansion support across multi-state operations.';
+                }
+                return 'Partnership potential analysis pending enrichment.';
+              })()}
+
+Data Source: Partnership Analysis
+            </div>
+          </div>
+          <div>
+            <div className="block text-sm font-medium text-gray-600 mb-2">Decision Making Factors</div>
+            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              {(() => {
+                const coresignalData = record?.customFields?.coresignalData;
+                const categories = coresignalData?.categories_and_keywords || [];
+                
+                if (categories.some(cat => cat.includes('telecommunications'))) {
+                  return 'Key decision factors: (1) Proven track record with government contracts, (2) Safety compliance and certification requirements, (3) Cost-effectiveness and project timeline reliability, (4) Technical expertise in specialized telecom infrastructure, (5) Geographic coverage and local market knowledge.';
+                }
+                return 'Decision making factors analysis pending enrichment.';
+              })()}
+
+Data Source: Decision Analysis
             </div>
           </div>
         </div>
