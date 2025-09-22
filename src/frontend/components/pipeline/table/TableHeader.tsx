@@ -12,7 +12,7 @@ interface TableHeaderProps {
   sortField?: string;
   sortDirection?: 'asc' | 'desc';
   onColumnSort?: (columnName: string) => void;
-  getColumnWidth: (index: number) => string;
+  getColumnWidth?: (index: number) => string;
 }
 
 // -------- Constants --------
@@ -61,6 +61,14 @@ export function TableHeader({
   // Debug: Log headers to see what's being passed
   console.log('🔍 [TableHeader] Headers received:', headers);
   
+  // Default column width function
+  const defaultGetColumnWidth = (index: number): string => {
+    const widths = ['80px', '200px', '150px', '120px', '120px', '120px'];
+    return widths[index] || '120px';
+  };
+  
+  const columnWidthFn = getColumnWidth || defaultGetColumnWidth;
+  
   return (
     <thead className="sticky top-0 z-10">
       <tr>
@@ -77,7 +85,7 @@ export function TableHeader({
                 !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-100 transition-colors group' : ''
               }`}
               style={{ 
-                width: getColumnWidth(index),
+                width: columnWidthFn(index),
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis'

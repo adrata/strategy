@@ -193,6 +193,28 @@ export async function GET(request: NextRequest) {
     // Combine both sources
     const allCompanies = [...companiesWithPeople, ...companiesFromLeads];
 
+    // Sort all companies by rank to ensure proper order
+    allCompanies.sort((a, b) => {
+      // Companies with ranks (from accounts) come first, sorted by rank
+      if (a.rank && b.rank) {
+        return a.rank - b.rank;
+      }
+      // Companies with ranks come before those without
+      if (a.rank && !b.rank) {
+        return -1;
+      }
+      if (!a.rank && b.rank) {
+        return 1;
+      }
+      // For companies without ranks (from leads), sort alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
+
+    // Re-assign sequential ranks to all companies
+    allCompanies.forEach((company, index) => {
+      company.rank = index + 1;
+    });
+
     console.log(`✅ [COMPANIES API] Found ${allCompanies.length} companies`);
 
     await prisma.$disconnect();

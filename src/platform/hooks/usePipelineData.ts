@@ -22,6 +22,7 @@ interface PipelineRecord {
 interface UsePipelineDataProps {
   data: PipelineRecord[];
   pageSize?: number;
+  disableSorting?: boolean; // Add option to disable sorting
 }
 
 interface UsePipelineDataReturn {
@@ -185,7 +186,8 @@ function sortData(
 // -------- Main Hook --------
 export function usePipelineData({ 
   data, 
-  pageSize = 50 
+  pageSize = 50,
+  disableSorting = false
 }: UsePipelineDataProps): UsePipelineDataReturn {
   // Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -228,8 +230,12 @@ export function usePipelineData({
   
   // Sorted data
   const sortedData = useMemo(() => {
+    if (disableSorting) {
+      // For companies, preserve the API ranking order
+      return filteredData;
+    }
     return sortData(filteredData, sortField, sortDirection);
-  }, [filteredData, sortField, sortDirection]);
+  }, [filteredData, sortField, sortDirection, disableSorting]);
   
   // Paginated data
   const paginatedData = useMemo(() => {

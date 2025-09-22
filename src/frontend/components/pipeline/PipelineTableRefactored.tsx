@@ -122,7 +122,11 @@ export function PipelineTable({
     setCurrentPage,
     setSortField,
     setSortDirection,
-  } = usePipelineData({ data, pageSize });
+  } = usePipelineData({ 
+    data, 
+    pageSize,
+    disableSorting: section === 'companies' // Disable sorting for companies to preserve API ranking
+  });
   
   console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {
     inputDataLength: data?.length,
@@ -130,7 +134,10 @@ export function PipelineTable({
     currentPage,
     totalPages,
     totalItems,
-    pageSize
+    pageSize,
+    section,
+    disableSorting: section === 'companies',
+    sampleRanks: paginatedData?.slice(0, 5).map(r => ({ name: r.name, rank: r.rank }))
   });
   
   // Action handling

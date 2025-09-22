@@ -85,15 +85,15 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   // Tab configuration matching the main record view
   const getModalTabs = () => {
     switch (recordType) {
-      case 'people':
-        return [
-          { id: 'overview', label: 'Overview' },
-          { id: 'company', label: 'Account' },
-          { id: 'profile', label: 'Profile' },
-          { id: 'engagement', label: 'Engagement' },
-          { id: 'timeline', label: 'Timeline' },
-          { id: 'notes', label: 'Notes' }
-        ];
+        case 'people':
+          return [
+            { id: 'overview', label: 'Overview' },
+            { id: 'company', label: 'Company' },
+            { id: 'intelligence', label: 'Intelligence' },
+            { id: 'buyer-groups', label: 'Buyer Group' },
+            { id: 'notes', label: 'Notes' },
+            { id: 'timeline', label: 'Timeline' }
+          ];
         case 'companies':
           return [
             { id: 'overview', label: 'Overview' },
@@ -102,17 +102,23 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];
-      case 'leads':
-        return [
-          { id: 'overview', label: 'Overview' },
-          { id: 'strategy', label: 'Strategy' },
-          { id: 'notes', label: 'Notes' }
-        ];
+        case 'leads':
+          return [
+            { id: 'overview', label: 'Overview' },
+            { id: 'company', label: 'Company' },
+            { id: 'intelligence', label: 'Intelligence' },
+            { id: 'buyer-groups', label: 'Buyer Group' },
+            { id: 'notes', label: 'Notes' },
+            { id: 'timeline', label: 'Timeline' }
+          ];
       case 'prospects':
         return [
           { id: 'overview', label: 'Overview' },
-          { id: 'strategy', label: 'Strategy' },
-          { id: 'notes', label: 'Notes' }
+          { id: 'company', label: 'Company' },
+          { id: 'intelligence', label: 'Intelligence' },
+          { id: 'buyer-groups', label: 'Buyer Group' },
+          { id: 'notes', label: 'Notes' },
+          { id: 'timeline', label: 'Timeline' }
         ];
       case 'opportunities':
         return [

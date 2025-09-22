@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { PipelineTable } from './PipelineTable';
+import { PipelineTable } from './PipelineTableRefactored';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
@@ -107,7 +107,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'speedrun':
         return ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['Overview', 'Intelligence', 'Buyer Group', 'Notes', 'Timeline'];
+        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
         return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
@@ -581,8 +581,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     const dataToFilter = sectionDataArray || [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
-    // For speedrun, don't sort - preserve API ranking order
-    if (section === 'speedrun') {
+    // For speedrun and companies, don't sort - preserve API ranking order
+    if (section === 'speedrun' || section === 'companies') {
       return dataToFilter;
     }
 

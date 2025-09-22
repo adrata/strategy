@@ -2155,33 +2155,17 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             { assignedUserId: null }
           ]
         },
-        orderBy: [{ updatedAt: 'desc' }],
+        orderBy: [{ rank: 'asc' }], // Sort by database rank instead of updatedAt
         take: 2000, // Load all companies for full pipeline view
-        select: { id: true, name: true, industry: true, updatedAt: true }
+        select: { id: true, name: true, industry: true, updatedAt: true, rank: true }
       }).then(companies => {
-        // Sort companies to put 5Bars Services first
-        const sortedCompanies = companies.sort((a, b) => {
-          const aIs5Bars = a.name.toLowerCase().includes('5bars') || a.name.toLowerCase().includes('5 bars');
-          const bIs5Bars = b.name.toLowerCase().includes('5bars') || b.name.toLowerCase().includes('5 bars');
-          
-          if (aIs5Bars && !bIs5Bars) return -1;
-          if (!aIs5Bars && bIs5Bars) return 1;
-          
-          // If both or neither are 5Bars, maintain original order (by updatedAt desc)
-          return 0;
-        });
-
-        // Assign ranks to companies (1-based indexing)
-        for (let i = 0; i < sortedCompanies.length; i++) {
-          sortedCompanies[i].rank = i + 1;
-        }
-
+        // Use database ranks - no need to reassign ranks
         console.log(`🔍 [UNIFIED API] Companies ranking debug:`, {
-          totalCompanies: sortedCompanies.length,
-          firstFewRanks: sortedCompanies.slice(0, 5).map(c => ({ name: c.name, rank: c.rank }))
+          totalCompanies: companies.length,
+          firstFewRanks: companies.slice(0, 10).map(c => ({ name: c.name, rank: c.rank }))
         });
 
-        return sortedCompanies;
+        return companies;
       }),
       prisma.people.findMany({ 
         where: { 

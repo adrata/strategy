@@ -100,22 +100,23 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
   const companyName = record?.company || record?.companyName || 'Company';
   
   switch (recordType) {
-      case 'leads':
-        return [
-          { id: 'overview', label: 'Overview' },
-          { id: 'strategy', label: 'Strategy' },
-          { id: 'buyer-groups', label: 'Buyer Group' },
-          { id: 'notes', label: 'Notes' },
-          { id: 'timeline', label: 'Timeline' }
-        ];
+        case 'leads':
+          return [
+            { id: 'overview', label: 'Overview' },
+            { id: 'company', label: 'Company' },
+            { id: 'intelligence', label: 'Intelligence' },
+            { id: 'buyer-groups', label: 'Buyer Group' },
+            { id: 'notes', label: 'Notes' },
+            { id: 'timeline', label: 'Timeline' }
+          ];
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Timeline' },
-        { id: 'strategy', label: 'Strategy' },
+        { id: 'company', label: 'Company' },
+        { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'industry', label: 'Industry' },
-        { id: 'competitive', label: 'Competitors' }
+        { id: 'notes', label: 'Notes' },
+        { id: 'timeline', label: 'Timeline' }
       ];
     case 'opportunities':
       return [
@@ -135,15 +136,15 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
-    case 'people':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'insights', label: 'Insights' },
-        { id: 'profile', label: 'Profile' },
-        { id: 'career', label: 'Career' },
-        { id: 'company', label: 'Company' },
-        { id: 'notes', label: 'Notes' }
-      ];
+        case 'people':
+          return [
+            { id: 'overview', label: 'Overview' },
+            { id: 'company', label: 'Company' },
+            { id: 'intelligence', label: 'Intelligence' },
+            { id: 'buyer-groups', label: 'Buyer Group' },
+            { id: 'notes', label: 'Notes' },
+            { id: 'timeline', label: 'Timeline' }
+          ];
     case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
@@ -1238,7 +1239,9 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+              recordType === 'people' ?
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'company':
           return renderTabWithErrorBoundary(

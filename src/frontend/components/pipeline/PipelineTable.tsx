@@ -153,8 +153,8 @@ export function PipelineTable({
   pageSize = DEFAULT_PAGE_SIZE,
   isLoading = false,
 }: PipelineTableProps) {
-  console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
-  console.log('🔍 [PipelineTableRefactored] Sample data:', data?.slice(0, 2));
+  console.log('🔍 [PipelineTable] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
+  console.log('🔍 [PipelineTable] Sample data:', data?.slice(0, 2));
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();
@@ -194,7 +194,7 @@ export function PipelineTable({
     setSortDirection,
   } = usePipelineData({ data, pageSize });
   
-  console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {
+  console.log('🔍 [PipelineTable] usePipelineData results:', {
     inputDataLength: data?.length,
     paginatedDataLength: paginatedData?.length,
     currentPage,
@@ -302,7 +302,7 @@ export function PipelineTable({
           {/* Table body */}
           <tbody>
             {paginatedData.map((record, index) => {
-              console.log(`🔍 [PipelineTableRefactored] Rendering row ${index}:`, {
+              console.log(`🔍 [PipelineTable] Rendering row ${index}:`, {
                 recordId: record.id,
                 recordName: record.name || record['fullName'],
                 recordCompany: record['company'],
@@ -334,6 +334,14 @@ export function PipelineTable({
                       case 'rank':
                         // Use rank from database if available, otherwise calculate global rank
                         const dbRank = record.rank;
+                        console.log(`🔍 [PipelineTable] Row ${index} rank debug:`, {
+                          recordName: record.name || record['fullName'],
+                          dbRank: dbRank,
+                          dbRankType: typeof dbRank,
+                          currentPage: currentPage,
+                          pageSize: pageSize,
+                          index: index
+                        });
                         if (dbRank && dbRank > 0) {
                           cellContent = String(dbRank);
                         } else {
