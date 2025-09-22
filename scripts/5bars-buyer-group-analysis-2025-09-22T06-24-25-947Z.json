@@ -1,0 +1,21 @@
+{
+  "companyId": "01K5D5VGQ35SXGBPK5F2WSMFM2",
+  "companyName": "5Bars Services",
+  "domain": "5bars.net",
+  "analysisDate": "2025-09-22T06:24:24.380Z",
+  "companyData": null,
+  "peopleData": [],
+  "buyerGroupAnalysis": null,
+  "databaseUpdates": {
+    "newPeople": 0,
+    "updatedPeople": 0,
+    "existingPeople": 0
+  },
+  "creditsUsed": {
+    "search": 0,
+    "collect": 0
+  },
+  "errors": [
+    "\nInvalid `this.prisma.companies.findUnique()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/analyze-5bars-buyer-group-comprehensive.js:107:49\n\n  104 async getCurrentCompanyData() {\n  105   console.log('📋 STEP 1: Getting current company data...');\n  106   \n→ 107   const company = await this.prisma.companies.findUnique(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"42809\", message: \"WITHIN GROUP is required for ordered-set aggregate rank\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })"
+  ]
+}

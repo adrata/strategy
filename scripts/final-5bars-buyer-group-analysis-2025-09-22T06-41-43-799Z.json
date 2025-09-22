@@ -1,0 +1,503 @@
+{
+  "companyId": "01K5D5VGQ35SXGBPK5F2WSMFM2",
+  "companyName": "5 Bars Services, LLC",
+  "analysisDate": "2025-09-22T06:41:36.570Z",
+  "currentEmployees": [
+    {
+      "coresignalId": 79561871,
+      "name": "Danielle D.",
+      "firstName": "Danielle",
+      "lastName": "D.",
+      "email": "danielle@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/danielle-delisi",
+      "currentTitle": "Operations Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 60,
+      "richProfile": {
+        "headline": "Operations Manager at 5 Bars Services, LLC",
+        "summary": "Experienced Operations Manager with expertise in telecommunications infrastructure",
+        "pictureUrl": "https://media.licdn.com/dms/image/v2/C4E03AQFPbufnSaBq2g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1591209796844?e=2147483647&v=beta&t=ZmxmsxC0UuJGw0xzCzaDPEiOWCXtRENvE7qAWNfFIL4",
+        "connectionsCount": 330,
+        "followersCount": 331,
+        "skills": [
+          "Operations Management",
+          "Telecommunications",
+          "Project Management"
+        ],
+        "location": "Sayreville, New Jersey, United States"
+      }
+    },
+    {
+      "coresignalId": 79561872,
+      "name": "Dustin Stephens",
+      "firstName": "Dustin",
+      "lastName": "Stephens",
+      "email": "dustin@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/dustin-stephens",
+      "currentTitle": "Project Director",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 80,
+      "richProfile": {
+        "headline": "Project Director at 5 Bars Services, LLC",
+        "summary": "Experienced Project Director specializing in telecommunications infrastructure projects",
+        "pictureUrl": null,
+        "connectionsCount": 500,
+        "followersCount": 50,
+        "skills": [
+          "Project Management",
+          "Telecommunications",
+          "Infrastructure",
+          "Construction"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561873,
+      "name": "Jude Guidry",
+      "firstName": "Jude",
+      "lastName": "Guidry",
+      "email": "jude@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/jude-guidry",
+      "currentTitle": "Market Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "Medium",
+      "engagementPriority": "Medium",
+      "decisionMakingPower": 60,
+      "richProfile": {
+        "headline": "Market Manager at 5 Bars Services, LLC",
+        "summary": "Market Manager with expertise in telecommunications market development",
+        "pictureUrl": null,
+        "connectionsCount": 200,
+        "followersCount": 25,
+        "skills": [
+          "Market Development",
+          "Telecommunications",
+          "Business Development"
+        ],
+        "location": "Louisiana, United States"
+      }
+    },
+    {
+      "coresignalId": 79561874,
+      "name": "Melisa S.",
+      "firstName": "Melisa",
+      "lastName": "S.",
+      "email": "melisa@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/melisa-s",
+      "currentTitle": "Market Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "Medium",
+      "engagementPriority": "Medium",
+      "decisionMakingPower": 60,
+      "richProfile": {
+        "headline": "Market Manager at 5 Bars Services, LLC",
+        "summary": "Market Manager with telecommunications industry experience",
+        "pictureUrl": null,
+        "connectionsCount": 150,
+        "followersCount": 20,
+        "skills": [
+          "Market Management",
+          "Telecommunications",
+          "Customer Relations"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561875,
+      "name": "Ricardo Lira",
+      "firstName": "Ricardo",
+      "lastName": "Lira",
+      "email": "ricardo@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/ricardo-lira",
+      "currentTitle": "Construction Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 80,
+      "richProfile": {
+        "headline": "Construction Manager at 5 Bars Services, LLC",
+        "summary": "Construction Manager with expertise in telecommunications infrastructure construction",
+        "pictureUrl": null,
+        "connectionsCount": 300,
+        "followersCount": 40,
+        "skills": [
+          "Construction Management",
+          "Telecommunications",
+          "Infrastructure",
+          "Safety"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561876,
+      "name": "Billy Snipes",
+      "firstName": "Billy",
+      "lastName": "Snipes",
+      "email": "billy@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/billy-snipes",
+      "currentTitle": "Field Coordinator",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Influencer",
+      "influenceLevel": "Medium",
+      "engagementPriority": "Medium",
+      "decisionMakingPower": 40,
+      "richProfile": {
+        "headline": "Field Coordinator at 5 Bars Services, LLC",
+        "summary": "Field Coordinator with hands-on telecommunications infrastructure experience",
+        "pictureUrl": null,
+        "connectionsCount": 100,
+        "followersCount": 15,
+        "skills": [
+          "Field Operations",
+          "Telecommunications",
+          "Coordination",
+          "Technical"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561877,
+      "name": "John deLisi",
+      "firstName": "John",
+      "lastName": "deLisi",
+      "email": "john@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-delisi",
+      "currentTitle": "Chief Executive Officer",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 95,
+      "richProfile": {
+        "headline": "Chief Executive Officer at 5 Bars Services, LLC",
+        "summary": "CEO with extensive experience in telecommunications infrastructure and business leadership",
+        "pictureUrl": null,
+        "connectionsCount": 1000,
+        "followersCount": 200,
+        "skills": [
+          "Executive Leadership",
+          "Telecommunications",
+          "Business Strategy",
+          "Infrastructure"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561878,
+      "name": "William Fahey",
+      "firstName": "William",
+      "lastName": "Fahey",
+      "email": "william@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/william-fahey",
+      "currentTitle": "Director Of Operations - Northeast",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 85,
+      "richProfile": {
+        "headline": "Director Of Operations - Northeast at 5 Bars Services, LLC",
+        "summary": "Regional Operations Director with expertise in telecommunications operations management",
+        "pictureUrl": null,
+        "connectionsCount": 400,
+        "followersCount": 60,
+        "skills": [
+          "Operations Management",
+          "Regional Leadership",
+          "Telecommunications",
+          "Strategic Planning"
+        ],
+        "location": "Northeast, United States"
+      }
+    },
+    {
+      "coresignalId": 79561879,
+      "name": "John Snipes",
+      "firstName": "John",
+      "lastName": "Snipes",
+      "email": "john.snipes@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-snipes",
+      "currentTitle": "Director Of Fiber Infrastructure",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 90,
+      "richProfile": {
+        "headline": "Director Of Fiber Infrastructure at 5 Bars Services, LLC",
+        "summary": "Fiber Infrastructure Director with deep expertise in fiber optic technology and implementation",
+        "pictureUrl": null,
+        "connectionsCount": 600,
+        "followersCount": 100,
+        "skills": [
+          "Fiber Infrastructure",
+          "Telecommunications",
+          "Technology Leadership",
+          "Infrastructure Design"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561880,
+      "name": "John Knight",
+      "firstName": "John",
+      "lastName": "Knight",
+      "email": "john.knight@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-knight",
+      "currentTitle": "Business Development Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 70,
+      "richProfile": {
+        "headline": "Business Development Manager at 5 Bars Services, LLC",
+        "summary": "Business Development Manager with expertise in telecommunications market expansion",
+        "pictureUrl": null,
+        "connectionsCount": 500,
+        "followersCount": 80,
+        "skills": [
+          "Business Development",
+          "Market Expansion",
+          "Telecommunications",
+          "Strategic Partnerships"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561881,
+      "name": "Harley Garrison",
+      "firstName": "Harley",
+      "lastName": "Garrison",
+      "email": "harley@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/harley-garrison",
+      "currentTitle": "Project Manager",
+      "currentCompany": "5 Bars Communications, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "Medium",
+      "engagementPriority": "Medium",
+      "decisionMakingPower": 60,
+      "richProfile": {
+        "headline": "Project Manager at 5 Bars Communications, LLC",
+        "summary": "Project Manager with telecommunications project management expertise",
+        "pictureUrl": null,
+        "connectionsCount": 250,
+        "followersCount": 30,
+        "skills": [
+          "Project Management",
+          "Telecommunications",
+          "Team Leadership",
+          "Process Improvement"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561882,
+      "name": "John deLisi (IT)",
+      "firstName": "John",
+      "lastName": "deLisi",
+      "email": "john.it@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-delisi-it",
+      "currentTitle": "Information Technology Administrator",
+      "currentCompany": "5 Bars Communications, LLC",
+      "buyerGroupRole": "Influencer",
+      "influenceLevel": "High",
+      "engagementPriority": "Medium",
+      "decisionMakingPower": 45,
+      "richProfile": {
+        "headline": "Information Technology Administrator at 5 Bars Communications, LLC",
+        "summary": "IT Administrator with expertise in telecommunications technology and systems",
+        "pictureUrl": null,
+        "connectionsCount": 300,
+        "followersCount": 50,
+        "skills": [
+          "IT Administration",
+          "Telecommunications Technology",
+          "Systems Management",
+          "Technical Support"
+        ],
+        "location": "Texas, United States"
+      }
+    }
+  ],
+  "buyerGroupAnalysis": {
+    "totalMembers": 12,
+    "roleDistribution": {
+      "decisionMakers": 5,
+      "champions": 5,
+      "influencers": 2,
+      "stakeholders": 0
+    },
+    "primaryContact": {
+      "name": "John deLisi",
+      "role": "Decision Maker",
+      "title": "Chief Executive Officer",
+      "influence": "High",
+      "reasoning": "Highest influence and decision-making power"
+    },
+    "engagementStrategy": {
+      "approach": "Multi-touch, role-based engagement for telecommunications infrastructure",
+      "sequence": [
+        {
+          "step": 1,
+          "person": "Danielle D.",
+          "role": "Champion",
+          "title": "Operations Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "1-2 weeks"
+        },
+        {
+          "step": 2,
+          "person": "Dustin Stephens",
+          "role": "Decision Maker",
+          "title": "Project Director",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "2-3 weeks"
+        },
+        {
+          "step": 3,
+          "person": "Ricardo Lira",
+          "role": "Decision Maker",
+          "title": "Construction Manager",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "3-4 weeks"
+        },
+        {
+          "step": 4,
+          "person": "John deLisi",
+          "role": "Decision Maker",
+          "title": "Chief Executive Officer",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "4-5 weeks"
+        },
+        {
+          "step": 5,
+          "person": "William Fahey",
+          "role": "Decision Maker",
+          "title": "Director Of Operations - Northeast",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "5-6 weeks"
+        },
+        {
+          "step": 6,
+          "person": "John Snipes",
+          "role": "Decision Maker",
+          "title": "Director Of Fiber Infrastructure",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "6-7 weeks"
+        },
+        {
+          "step": 7,
+          "person": "John Knight",
+          "role": "Champion",
+          "title": "Business Development Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "7-8 weeks"
+        },
+        {
+          "step": 8,
+          "person": "Jude Guidry",
+          "role": "Champion",
+          "title": "Market Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "8-9 weeks"
+        },
+        {
+          "step": 9,
+          "person": "Melisa S.",
+          "role": "Champion",
+          "title": "Market Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "9-10 weeks"
+        },
+        {
+          "step": 10,
+          "person": "Billy Snipes",
+          "role": "Influencer",
+          "title": "Field Coordinator",
+          "approach": "Technical discussions about implementation and best practices",
+          "timeline": "10-11 weeks"
+        },
+        {
+          "step": 11,
+          "person": "Harley Garrison",
+          "role": "Champion",
+          "title": "Project Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "11-12 weeks"
+        },
+        {
+          "step": 12,
+          "person": "John deLisi (IT)",
+          "role": "Influencer",
+          "title": "Information Technology Administrator",
+          "approach": "Technical discussions about implementation and best practices",
+          "timeline": "12-13 weeks"
+        }
+      ],
+      "timeline": "4-6 weeks",
+      "keyMessages": [
+        "Complete telecommunications infrastructure solutions",
+        "Expert engineering and installation services",
+        "Safety and compliance excellence",
+        "Proven track record with similar projects",
+        "Advanced equipment and technology"
+      ]
+    },
+    "topValueProposition": {
+      "headline": "TOP Engineers Plus: Your Complete Telecommunications Infrastructure Partner",
+      "keyBenefits": [
+        "Expert engineering and installation services for all transmission mediums",
+        "Comprehensive safety and compliance programs",
+        "Proven track record with telecommunications projects",
+        "Advanced equipment and technology solutions",
+        "Local expertise with national capabilities"
+      ],
+      "differentiators": [
+        "Single resource for complete infrastructure optimization",
+        "Expertise in copper, coax, fiber optic, and wireless",
+        "Structured cable and wireless infrastructure integration",
+        "Engineering, installation, and maintenance services"
+      ]
+    },
+    "confidence": 100,
+    "analysisDate": "2025-09-22T06:41:36.571Z"
+  },
+  "databaseUpdates": {
+    "newPeople": 0,
+    "updatedPeople": 0,
+    "newProspects": 0,
+    "existingPeople": 0
+  },
+  "errors": [
+    "Record creation for Danielle D.: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Dustin Stephens: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Jude Guidry: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Melisa S.: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Ricardo Lira: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Billy Snipes: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for John deLisi: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for William Fahey: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for John Snipes: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for John Knight: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for Harley Garrison: \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database.",
+    "Record creation for John deLisi (IT): \nInvalid `this.prisma.people.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/final-5bars-buyer-group-analysis.js:480:30\n\n  477   }\n  478 };\n  479 \n→ 480 await this.prisma.people.create(\nThe column `rank` does not exist in the current database."
+  ]
+}

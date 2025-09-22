@@ -1,0 +1,283 @@
+{
+  "companyId": "01K5D5VGQ35SXGBPK5F2WSMFM2",
+  "companyName": "5 Bars Services, LLC",
+  "analysisDate": "2025-09-22T06:43:50.390Z",
+  "currentEmployees": [
+    {
+      "coresignalId": 79561871,
+      "name": "Danielle D.",
+      "firstName": "Danielle",
+      "lastName": "D.",
+      "email": "danielle@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/danielle-delisi",
+      "currentTitle": "Operations Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 60,
+      "richProfile": {
+        "headline": "Operations Manager at 5 Bars Services, LLC",
+        "summary": "Experienced Operations Manager with expertise in telecommunications infrastructure",
+        "pictureUrl": "https://media.licdn.com/dms/image/v2/C4E03AQFPbufnSaBq2g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1591209796844?e=2147483647&v=beta&t=ZmxmsxC0UuJGw0xzCzaDPEiOWCXtRENvE7qAWNfFIL4",
+        "connectionsCount": 330,
+        "followersCount": 331,
+        "skills": [
+          "Operations Management",
+          "Telecommunications",
+          "Project Management"
+        ],
+        "location": "Sayreville, New Jersey, United States"
+      }
+    },
+    {
+      "coresignalId": 79561877,
+      "name": "John deLisi",
+      "firstName": "John",
+      "lastName": "deLisi",
+      "email": "john@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-delisi",
+      "currentTitle": "Chief Executive Officer",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 95,
+      "richProfile": {
+        "headline": "Chief Executive Officer at 5 Bars Services, LLC",
+        "summary": "CEO with extensive experience in telecommunications infrastructure and business leadership",
+        "pictureUrl": null,
+        "connectionsCount": 1000,
+        "followersCount": 200,
+        "skills": [
+          "Executive Leadership",
+          "Telecommunications",
+          "Business Strategy",
+          "Infrastructure"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561875,
+      "name": "Ricardo Lira",
+      "firstName": "Ricardo",
+      "lastName": "Lira",
+      "email": "ricardo@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/ricardo-lira",
+      "currentTitle": "Construction Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 80,
+      "richProfile": {
+        "headline": "Construction Manager at 5 Bars Services, LLC",
+        "summary": "Construction Manager with expertise in telecommunications infrastructure construction",
+        "pictureUrl": null,
+        "connectionsCount": 300,
+        "followersCount": 40,
+        "skills": [
+          "Construction Management",
+          "Telecommunications",
+          "Infrastructure",
+          "Safety"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561878,
+      "name": "William Fahey",
+      "firstName": "William",
+      "lastName": "Fahey",
+      "email": "william@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/william-fahey",
+      "currentTitle": "Director Of Operations - Northeast",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 85,
+      "richProfile": {
+        "headline": "Director Of Operations - Northeast at 5 Bars Services, LLC",
+        "summary": "Regional Operations Director with expertise in telecommunications operations management",
+        "pictureUrl": null,
+        "connectionsCount": 400,
+        "followersCount": 60,
+        "skills": [
+          "Operations Management",
+          "Regional Leadership",
+          "Telecommunications",
+          "Strategic Planning"
+        ],
+        "location": "Northeast, United States"
+      }
+    },
+    {
+      "coresignalId": 79561879,
+      "name": "John Snipes",
+      "firstName": "John",
+      "lastName": "Snipes",
+      "email": "john.snipes@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-snipes",
+      "currentTitle": "Director Of Fiber Infrastructure",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Decision Maker",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 90,
+      "richProfile": {
+        "headline": "Director Of Fiber Infrastructure at 5 Bars Services, LLC",
+        "summary": "Fiber Infrastructure Director with deep expertise in fiber optic technology and implementation",
+        "pictureUrl": null,
+        "connectionsCount": 600,
+        "followersCount": 100,
+        "skills": [
+          "Fiber Infrastructure",
+          "Telecommunications",
+          "Technology Leadership",
+          "Infrastructure Design"
+        ],
+        "location": "Texas, United States"
+      }
+    },
+    {
+      "coresignalId": 79561880,
+      "name": "John Knight",
+      "firstName": "John",
+      "lastName": "Knight",
+      "email": "john.knight@5bars.net",
+      "linkedinUrl": "https://www.linkedin.com/in/john-knight",
+      "currentTitle": "Business Development Manager",
+      "currentCompany": "5 Bars Services, LLC",
+      "buyerGroupRole": "Champion",
+      "influenceLevel": "High",
+      "engagementPriority": "High",
+      "decisionMakingPower": 70,
+      "richProfile": {
+        "headline": "Business Development Manager at 5 Bars Services, LLC",
+        "summary": "Business Development Manager with expertise in telecommunications market expansion",
+        "pictureUrl": null,
+        "connectionsCount": 500,
+        "followersCount": 80,
+        "skills": [
+          "Business Development",
+          "Market Expansion",
+          "Telecommunications",
+          "Strategic Partnerships"
+        ],
+        "location": "Texas, United States"
+      }
+    }
+  ],
+  "buyerGroupAnalysis": {
+    "totalMembers": 6,
+    "roleDistribution": {
+      "decisionMakers": 4,
+      "champions": 2,
+      "influencers": 0,
+      "stakeholders": 0
+    },
+    "primaryContact": {
+      "name": "John deLisi",
+      "role": "Decision Maker",
+      "title": "Chief Executive Officer",
+      "influence": "High",
+      "reasoning": "Highest influence and decision-making power"
+    },
+    "engagementStrategy": {
+      "approach": "Multi-touch, role-based engagement for telecommunications infrastructure",
+      "sequence": [
+        {
+          "step": 1,
+          "person": "Danielle D.",
+          "role": "Champion",
+          "title": "Operations Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "1-2 weeks"
+        },
+        {
+          "step": 2,
+          "person": "John deLisi",
+          "role": "Decision Maker",
+          "title": "Chief Executive Officer",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "2-3 weeks"
+        },
+        {
+          "step": 3,
+          "person": "Ricardo Lira",
+          "role": "Decision Maker",
+          "title": "Construction Manager",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "3-4 weeks"
+        },
+        {
+          "step": 4,
+          "person": "William Fahey",
+          "role": "Decision Maker",
+          "title": "Director Of Operations - Northeast",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "4-5 weeks"
+        },
+        {
+          "step": 5,
+          "person": "John Snipes",
+          "role": "Decision Maker",
+          "title": "Director Of Fiber Infrastructure",
+          "approach": "Executive-level strategic discussions about infrastructure and growth",
+          "timeline": "5-6 weeks"
+        },
+        {
+          "step": 6,
+          "person": "John Knight",
+          "role": "Champion",
+          "title": "Business Development Manager",
+          "approach": "Management-level discussions about operational efficiency and project success",
+          "timeline": "6-7 weeks"
+        }
+      ],
+      "timeline": "4-6 weeks",
+      "keyMessages": [
+        "Complete telecommunications infrastructure solutions",
+        "Expert engineering and installation services",
+        "Safety and compliance excellence",
+        "Proven track record with similar projects",
+        "Advanced equipment and technology"
+      ]
+    },
+    "topValueProposition": {
+      "headline": "TOP Engineers Plus: Your Complete Telecommunications Infrastructure Partner",
+      "keyBenefits": [
+        "Expert engineering and installation services for all transmission mediums",
+        "Comprehensive safety and compliance programs",
+        "Proven track record with telecommunications projects",
+        "Advanced equipment and technology solutions",
+        "Local expertise with national capabilities"
+      ],
+      "differentiators": [
+        "Single resource for complete infrastructure optimization",
+        "Expertise in copper, coax, fiber optic, and wireless",
+        "Structured cable and wireless infrastructure integration",
+        "Engineering, installation, and maintenance services"
+      ]
+    },
+    "confidence": 100,
+    "analysisDate": "2025-09-22T06:43:50.391Z"
+  },
+  "databaseUpdates": {
+    "newPeople": 6,
+    "updatedPeople": 0,
+    "newProspects": 0,
+    "existingPeople": 0
+  },
+  "errors": [
+    "Record creation for Danielle D.: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"Danielle\",\n          lastName: \"D.\",\n          fullName: \"Danielle D.\",\n          jobTitle: \"Operations Manager\",\n          email: \"danielle@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/danielle-delisi\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Champion\",\n          engagementScore: 80,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Champion\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561871,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 60,\n            richProfile: {\n              headline: \"Operations Manager at 5 Bars Services, LLC\",\n              summary: \"Experienced Operations Manager with expertise in telecommunications infrastructure\",\n              pictureUrl: \"https://media.licdn.com/dms/image/v2/C4E03AQFPbufnSaBq2g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1591209796844?e=2147483647&v=beta&t=ZmxmsxC0UuJGw0xzCzaDPEiOWCXtRENvE7qAWNfFIL4\",\n              connectionsCount: 330,\n              followersCount: 331,\n              skills: [\n                \"Operations Management\",\n                \"Telecommunications\",\n                \"Project Management\"\n              ],\n              location: \"Sayreville, New Jersey, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:51.594Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing.",
+    "Record creation for John deLisi: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"John\",\n          lastName: \"deLisi\",\n          fullName: \"John deLisi\",\n          jobTitle: \"Chief Executive Officer\",\n          email: \"john@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/john-delisi\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Decision Maker\",\n          engagementScore: 90,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Decision Maker\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561877,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 95,\n            richProfile: {\n              headline: \"Chief Executive Officer at 5 Bars Services, LLC\",\n              summary: \"CEO with extensive experience in telecommunications infrastructure and business leadership\",\n              pictureUrl: null,\n              connectionsCount: 1000,\n              followersCount: 200,\n              skills: [\n                \"Executive Leadership\",\n                \"Telecommunications\",\n                \"Business Strategy\",\n                \"Infrastructure\"\n              ],\n              location: \"Texas, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:52.279Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing.",
+    "Record creation for Ricardo Lira: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"Ricardo\",\n          lastName: \"Lira\",\n          fullName: \"Ricardo Lira\",\n          jobTitle: \"Construction Manager\",\n          email: \"ricardo@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/ricardo-lira\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Decision Maker\",\n          engagementScore: 90,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Decision Maker\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561875,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 80,\n            richProfile: {\n              headline: \"Construction Manager at 5 Bars Services, LLC\",\n              summary: \"Construction Manager with expertise in telecommunications infrastructure construction\",\n              pictureUrl: null,\n              connectionsCount: 300,\n              followersCount: 40,\n              skills: [\n                \"Construction Management\",\n                \"Telecommunications\",\n                \"Infrastructure\",\n                \"Safety\"\n              ],\n              location: \"Texas, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:52.933Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing.",
+    "Record creation for William Fahey: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"William\",\n          lastName: \"Fahey\",\n          fullName: \"William Fahey\",\n          jobTitle: \"Director Of Operations - Northeast\",\n          email: \"william@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/william-fahey\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Decision Maker\",\n          engagementScore: 90,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Decision Maker\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561878,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 85,\n            richProfile: {\n              headline: \"Director Of Operations - Northeast at 5 Bars Services, LLC\",\n              summary: \"Regional Operations Director with expertise in telecommunications operations management\",\n              pictureUrl: null,\n              connectionsCount: 400,\n              followersCount: 60,\n              skills: [\n                \"Operations Management\",\n                \"Regional Leadership\",\n                \"Telecommunications\",\n                \"Strategic Planning\"\n              ],\n              location: \"Northeast, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:53.675Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing.",
+    "Record creation for John Snipes: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"John\",\n          lastName: \"Snipes\",\n          fullName: \"John Snipes\",\n          jobTitle: \"Director Of Fiber Infrastructure\",\n          email: \"john.snipes@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/john-snipes\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Decision Maker\",\n          engagementScore: 90,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Decision Maker\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561879,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 90,\n            richProfile: {\n              headline: \"Director Of Fiber Infrastructure at 5 Bars Services, LLC\",\n              summary: \"Fiber Infrastructure Director with deep expertise in fiber optic technology and implementation\",\n              pictureUrl: null,\n              connectionsCount: 600,\n              followersCount: 100,\n              skills: [\n                \"Fiber Infrastructure\",\n                \"Telecommunications\",\n                \"Technology Leadership\",\n                \"Infrastructure Design\"\n              ],\n              location: \"Texas, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:54.327Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing.",
+    "Record creation for John Knight: \nInvalid `this.prisma.prospects.create()` invocation in\n/Users/rosssylvester/Development/adrata/scripts/working-5bars-buyer-group-analysis.js:392:57\n\n  389 };\n  390 \n  391 // Use explicit select to avoid any rank column issues\n→ 392 const createdProspect = await this.prisma.prospects.create({\n        data: {\n          firstName: \"John\",\n          lastName: \"Knight\",\n          fullName: \"John Knight\",\n          jobTitle: \"Business Development Manager\",\n          email: \"john.knight@5bars.net\",\n          linkedinUrl: \"https://www.linkedin.com/in/john-knight\",\n          companyId: \"01K5D5VGQ35SXGBPK5F2WSMFM2\",\n          workspaceId: \"01K1VBYXHD0J895XAN0HGFBKJP\",\n          status: \"Active\",\n          funnelStage: \"Prospect\",\n          buyerGroupRole: \"Champion\",\n          engagementScore: 80,\n          tags: [\n            \"CoreSignal\",\n            \"Buyer Group Member\",\n            \"Champion\",\n            \"Current Employee\",\n            \"5Bars Services\"\n          ],\n          customFields: {\n            coresignalId: 79561880,\n            influenceLevel: \"High\",\n            engagementPriority: \"High\",\n            decisionMakingPower: 70,\n            richProfile: {\n              headline: \"Business Development Manager at 5 Bars Services, LLC\",\n              summary: \"Business Development Manager with expertise in telecommunications market expansion\",\n              pictureUrl: null,\n              connectionsCount: 500,\n              followersCount: 80,\n              skills: [\n                \"Business Development\",\n                \"Market Expansion\",\n                \"Telecommunications\",\n                \"Strategic Partnerships\"\n              ],\n              location: \"Texas, United States\"\n            },\n            dataSource: \"CoreSignal\",\n            lastUpdated: \"2025-09-22T06:43:54.976Z\"\n          },\n      +   updatedAt: DateTime\n        },\n        select: {\n          id: true,\n          firstName: true,\n          lastName: true,\n          fullName: true,\n          jobTitle: true,\n          email: true,\n          companyId: true,\n          workspaceId: true,\n          status: true,\n          funnelStage: true,\n          buyerGroupRole: true,\n          engagementScore: true,\n          tags: true,\n          customFields: true,\n          createdAt: true,\n          updatedAt: true\n        }\n      })\n\nArgument `updatedAt` is missing."
+  ]
+}
