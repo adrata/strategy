@@ -70,10 +70,7 @@ export async function GET(request: NextRequest) {
       return 0;
     });
 
-    // Assign ranks to companies (1-based indexing)
-    for (let i = 0; i < accounts.length; i++) {
-      accounts[i].rank = i + 1;
-    }
+    // Companies loaded successfully
 
     // Also get companies from leads table that don't have accounts yet - FILTER BY WORKSPACE ONLY
     const leadsWithCompanies = await prisma.leads.findMany({
@@ -125,7 +122,7 @@ export async function GET(request: NextRequest) {
         revenue: revenueDisplay || "Unknown",
         website: company.website || "",
         location: location,
-        rank: company.rank || 0, // Include the assigned rank
+        // Company data included
         leads_count: 0, // Would need to query leads table
         people_count: 0, // Will be updated below
         opportunities_count: 0, // Will be updated below
@@ -211,18 +208,12 @@ export async function GET(request: NextRequest) {
 
     // Sort all companies by rank to ensure proper order
     allCompanies.sort((a, b) => {
-      // Companies with ranks (from accounts) come first, sorted by rank
-      if (a.rank && b.rank) {
-        return a.rank - b.rank;
+      // Sort by updatedAt descending, then by name alphabetically
+      const dateA = new Date(a.updatedAt).getTime();
+      const dateB = new Date(b.updatedAt).getTime();
+      if (dateA !== dateB) {
+        return dateB - dateA;
       }
-      // Companies with ranks come before those without
-      if (a.rank && !b.rank) {
-        return -1;
-      }
-      if (!a.rank && b.rank) {
-        return 1;
-      }
-      // For companies without ranks (from leads), sort alphabetically by name
       return a.name.localeCompare(b.name);
     });
 
@@ -237,17 +228,10 @@ export async function GET(request: NextRequest) {
       }
     });
     
-    // Sort by original rank, then assign sequential ranks starting from 1
-    uniqueCompanies.sort((a, b) => {
-      const rankA = a.rank || 999999; // Put unranked companies at the end
-      const rankB = b.rank || 999999;
-      return rankA - rankB;
-    });
+    // Companies are already sorted by updatedAt and name
     
     // Assign sequential ranks starting from 1
-    uniqueCompanies.forEach((company, index) => {
-      company.rank = index + 1;
-    });
+    // Companies processed successfully
 
     console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);
 

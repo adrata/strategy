@@ -915,9 +915,9 @@ async function getMultipleRecords(
   // Determine sorting order based on record type
   let orderBy: any[] = [];
   if (type === 'companies') {
-    orderBy = [{ rank: 'asc' }, { updatedAt: 'desc' }];
+    orderBy = [{ updatedAt: 'desc' }];
   } else if (type === 'prospects' || type === 'leads') {
-    orderBy = [{ rank: 'asc' }, { updatedAt: 'desc' }];
+    orderBy = [{ updatedAt: 'desc' }];
   } else {
     orderBy = [{ updatedAt: 'desc' }];
   }
@@ -2132,8 +2132,21 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             { assignedUserId: null }
           ]
         },
-        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: 1000 // Load all leads for full pipeline view
+        orderBy: [{ updatedAt: 'desc' }],
+        take: 1000, // Load all leads for full pipeline view
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          status: true,
+          priority: true,
+          estimatedValue: true,
+          createdAt: true,
+          updatedAt: true
+        }
       }),
       prisma.prospects.findMany({ 
         where: { 
@@ -2141,8 +2154,21 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null
           // Show all prospects in workspace regardless of assignment
         },
-        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: 1000 // Load all prospects for full pipeline view
+        orderBy: [{ updatedAt: 'desc' }],
+        take: 1000, // Load all prospects for full pipeline view
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          status: true,
+          priority: true,
+          estimatedValue: true,
+          createdAt: true,
+          updatedAt: true
+        }
       }),
       prisma.opportunities.findMany({ 
         where: { 
@@ -2154,7 +2180,18 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000 // Load all opportunities for full pipeline view
+        take: 1000, // Load all opportunities for full pipeline view
+        select: {
+          id: true,
+          name: true,
+          amount: true,
+          currency: true,
+          stage: true,
+          priority: true,
+          expectedCloseDate: true,
+          createdAt: true,
+          updatedAt: true
+        }
       }),
       prisma.companies.findMany({ 
         where: { 
@@ -2165,7 +2202,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             { assignedUserId: null }
           ]
         },
-        orderBy: [{ rank: 'asc' }], // Sort by database rank instead of updatedAt
+        orderBy: [{ updatedAt: 'desc' }], // Sort by updatedAt instead of rank
         take: 2000, // Load all companies for full pipeline view
         select: { 
           id: true, 
@@ -2180,13 +2217,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           country: true,
           customFields: true,
           updatedAt: true, 
-          rank: true 
         }
       }).then(companies => {
-        // Use database ranks - no need to reassign ranks
-        console.log(`🔍 [UNIFIED API] Companies ranking debug:`, {
+        // Companies loaded successfully
+        console.log(`🔍 [UNIFIED API] Companies loaded:`, {
           totalCompanies: companies.length,
-          firstFewRanks: companies.slice(0, 10).map(c => ({ name: c.name, rank: c.rank }))
+          firstFewCompanies: companies.slice(0, 10).map(c => ({ name: c.name, id: c.id }))
         });
 
         return companies;
@@ -2651,7 +2687,20 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         deletedAt: null
       },
       orderBy: { createdAt: 'desc' },
-      take: 50
+      take: 50,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        status: true,
+        priority: true,
+        estimatedValue: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospects.length} prospects from prospects table`);
