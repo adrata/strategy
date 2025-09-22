@@ -70,7 +70,7 @@ export class SpeedrunEngineSettingsService {
     if (typeof window === 'undefined') {
       return {
         weeklyTarget: 250,
-        dailyTarget: 50,
+        dailyTarget: 30,
         strategy: 'optimal',
         role: 'AE',
         quota: 1000000,
@@ -90,7 +90,7 @@ export class SpeedrunEngineSettingsService {
     // Return defaults
     return {
       weeklyTarget: 250,
-      dailyTarget: 50,
+      dailyTarget: 30,
       strategy: 'optimal',
       role: 'AE',
       quota: 1000000,

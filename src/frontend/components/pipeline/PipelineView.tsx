@@ -109,13 +109,13 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'companies':
         return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
-        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
-        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'opportunities':
         return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
       case 'people':
-        return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'clients':
         return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
       case 'partners':
@@ -453,11 +453,11 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   // Helper function to get data count based on timeframe
   const getTimeframeDataCount = (timeframe: string): number => {
     switch (timeframe) {
-      case 'now': return 50;    // Today's speedrun targets
+      case 'now': return 30;    // Today's speedrun targets
       case 'week': return 150;  // This week's targets  
       case 'month': return 300; // This month's targets
       case 'quarter': return 500; // This quarter's targets
-      default: return 50;
+      default: return 30;
     }
   };
 
@@ -1173,7 +1173,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   sortField={sortField}
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
-                  pageSize={50} // Speedrun shows 50 items per page
+                  pageSize={30} // Speedrun shows 30 items per page
                   isLoading={isLoading}
                 />
               ) : section === 'prospects' ? (

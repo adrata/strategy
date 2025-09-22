@@ -44,10 +44,10 @@ const DEFAULT_SETTINGS: SpeedrunOptimizationSettings = {
   competitionMode: 60,
   timeHorizon: 'week',
   methodology: 'adaptive',
-  dailyTarget: 50,
+  dailyTarget: 30,
   weeklyTarget: 250,
   autoProgressToNextBatch: true,
-  batchSize: 50,
+  batchSize: 30,
 };
 
 const METHODOLOGY_PRESETS: Record<string, Partial<SpeedrunOptimizationSettings>> = {
@@ -445,7 +445,7 @@ export function SpeedrunEngineOptimizer({ isOpen, onClose, onApplyChanges }: Spe
                     min="1"
                     max="200"
                     value={settings.dailyTarget}
-                    onChange={(e) => setSettings(prev => ({ ...prev, dailyTarget: parseInt(e.target.value) || 50 }))}
+                    onChange={(e) => setSettings(prev => ({ ...prev, dailyTarget: parseInt(e.target.value) || 30 }))}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white focus:border-transparent"
                   />
                   <p className="text-xs text-gray-500 mt-1">Leads to contact each day</p>

@@ -705,8 +705,8 @@ export class AIDataService {
         completedToday
       },
       performance: {
-        dailyTarget: 50, // This could be configurable
-        completionRate: Math.round((completedToday / 50) * 100)
+        dailyTarget: 30, // This could be configurable
+        completionRate: Math.round((completedToday / 30) * 100)
       }
     };
   }

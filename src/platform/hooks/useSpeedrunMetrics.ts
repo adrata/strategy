@@ -16,9 +16,9 @@ export interface SpeedrunMetrics {
 export function useSpeedrunMetrics(): SpeedrunMetrics {
   const [metrics, setMetrics] = useState<SpeedrunMetrics>({
     completedToday: 0,
-    people: 50,
+    people: 30,
     companies: 35,
-    dailyTarget: 50,
+    dailyTarget: 30,
     isLoading: true,
   });
 
@@ -58,7 +58,7 @@ export function useSpeedrunMetrics(): SpeedrunMetrics {
             completedToday,
             people: targetPeople,
             companies: targetCompanies,
-            dailyTarget: 50,
+            dailyTarget: 30,
             isLoading: false,
           });
         }

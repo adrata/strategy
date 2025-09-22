@@ -110,7 +110,7 @@ export async function sendMondayPrepEmail(user: Seller): Promise<boolean> {
           
           <h3 style="color: #2d3748;">Today's Priority Actions</h3>
           <ol style="padding-left: 20px;">
-            <li><strong>Review your Speedrun prospects</strong> - 50 high-priority contacts ready for outreach</li>
+            <li><strong>Review your Speedrun prospects</strong> - 30 high-priority contacts ready for outreach</li>
             <li><strong>Check buyer group intelligence</strong> - New signals detected for 3 accounts</li>
             <li><strong>Update your pipeline</strong> - 11 opportunities need attention</li>
           </ol>
@@ -153,7 +153,7 @@ HOT INTEL:
 • Your top competitor is having delivery issues
 
 TODAY'S PRIORITY ACTIONS:
-1. Review your Speedrun prospects - 50 high-priority contacts ready
+1. Review your Speedrun prospects - 30 high-priority contacts ready
 2. Check buyer group intelligence - New signals for 3 accounts
 3. Update your pipeline - 11 opportunities need attention
 

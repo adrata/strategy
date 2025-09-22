@@ -178,7 +178,7 @@ pub async fn get_outbox_settings(workspace_id: String, user_id: String) -> Resul
     // For now, return default settings
     // In a full implementation, this would be stored in the database
     Ok(serde_json::json!({
-        "dailyTarget": 50,
+        "dailyTarget": 30,
         "weeklyTarget": 250,
         "autoAdvance": true,
         "emailTemplate": "professional",

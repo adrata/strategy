@@ -46,8 +46,8 @@ export class AccurateTargetCalculator {
     
     return {
       completedToday,
-      people: 50, // Fixed to match daily target
-      dailyTarget: 50, // Fixed daily target
+      people: 30, // Fixed to match daily target
+      dailyTarget: 30, // Fixed daily target
       weeklyTarget: 0, // Removed weekly target
       dailyProgress,
       weeklyProgress: 0 // Removed weekly progress

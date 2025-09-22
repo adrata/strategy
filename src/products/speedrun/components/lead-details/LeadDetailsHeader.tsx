@@ -34,10 +34,10 @@ export function LeadDetailsHeader({
   // State for accurate targets - using dynamic values based on actual data
   const [accurateTargets, setAccurateTargets] = useState<AccurateTargets>({
     completedToday: 0, // Track completed contacts today
-    people: 50, // Match left panel Speedrun count
-    dailyTarget: 50, // Set to 50 as requested
+    people: 30, // Match left panel Speedrun count
+    dailyTarget: 30, // Set to 30 as requested
     weeklyTarget: 0, // Remove weekly target as requested
-    dailyProgress: 50, // Match daily target
+    dailyProgress: 30, // Match daily target
     weeklyProgress: 0 // Remove weekly progress
   });
 

@@ -108,7 +108,28 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         where: demoScenarioFilter
       }),
       prisma.companies.findMany({
-        where: { workspaceId: workspaceId }
+        where: { workspaceId: workspaceId },
+        select: {
+          id: true,
+          name: true,
+          industry: true,
+          website: true,
+          description: true,
+          size: true,
+          address: true,
+          city: true,
+          state: true,
+          country: true,
+          customFields: true,
+          updatedAt: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          actionStatus: true,
+          assignedUserId: true,
+          rank: true
+        }
       }),
       prisma.people.findMany({
         where: {
@@ -261,7 +282,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         leads: realLeads,
         prospects: realProspects,
         opportunities: realOpportunities,
-        companies: companiesFromLeads, // Use companies derived from leads data
+        companies: companiesData, // Use actual companies data from database with action fields
         people: people,
         partnerships: partnerships,
         clients: clients,
@@ -276,7 +297,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           leads: realLeads.length,
           prospects: realProspects.length,
           opportunities: realOpportunities.length,
-          companies: companiesFromLeads.length, // Use the correct count
+          companies: companiesData.length, // Use the correct count
           people: people.length,
           clients: clients.length,
           partners: partnerships.length,
@@ -2359,7 +2380,14 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           state: true,
           country: true,
           customFields: true,
-          updatedAt: true, 
+          updatedAt: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          actionStatus: true,
+          assignedUserId: true,
+          rank: true
         }
       }).then(companies => {
         // Companies loaded successfully
@@ -2412,8 +2440,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       // 🚀 PERFORMANCE: Load limited speedrun data for dashboard
       loadSpeedrunData(workspaceId, userId).then(result => {
         if (result.success) {
-          // Return first 50 items for speedrun
-          return result.data.speedrunItems.slice(0, 50);
+          // Return first 30 items for speedrun
+          return result.data.speedrunItems.slice(0, 30);
         } else {
           console.error('❌ [DASHBOARD] Failed to load speedrun data:', result.error);
           return [];
@@ -2699,7 +2727,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         clients: clientsData,
         partners: partnersData,
         speedrunItems: speedrunData,
-        // Use actual counts from database, but limit speedrun to 50 for display
+        // Use actual counts from database, but limit speedrun to 30 for display
         counts: { 
           leads: leadsCount, 
           prospects: prospectsCount, 
@@ -2708,7 +2736,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           people: peopleCount,
           clients: clientsCount,
           partners: partnersCount,
-          speedrun: Math.min(speedrunData.length, 50) // Limit speedrun count to 50 for dashboard performance
+          speedrun: Math.min(speedrunData.length, 30) // Limit speedrun count to 30 for dashboard performance
         },
         // 🚀 REAL METRICS: Calculated from actual database data
         metrics: {

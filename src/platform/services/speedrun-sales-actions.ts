@@ -21,7 +21,7 @@ export interface SalesAction {
 }
 
 export interface DailySalesGoals {
-  speedrunTarget: number; // 50 contacts per day
+  speedrunTarget: number; // 30 contacts per day
   meetingsTarget: number; // 3-5 meetings per day
   emailsTarget: number; // 25-30 emails per day
   callsTarget: number; // 15-20 calls per day
@@ -51,7 +51,7 @@ export class SpeedrunSalesActionsService {
     const today = new Date();
     const todayString = today.toDateString();
 
-    // Get daily goals based on 50 speedrun target
+    // Get daily goals based on 30 speedrun target
     const dailyGoals = this.getDailyGoals();
 
     // 1. CRITICAL: Prep for upcoming meetings (auto-tracked)
@@ -284,11 +284,11 @@ export class SpeedrunSalesActionsService {
   }
 
   /**
-   * Get daily goals based on 50 speedrun target
+   * Get daily goals based on 30 speedrun target
    */
   private getDailyGoals(): DailySalesGoals {
     return {
-      speedrunTarget: 50,
+      speedrunTarget: 30,
       meetingsTarget: 4,
       emailsTarget: 25,
       callsTarget: 15,
