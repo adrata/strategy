@@ -2263,9 +2263,49 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 
 function NotesTab({ record, recordType }: { record: any; recordType: string }) {
   const handleSaveNotes = async (field: string, value: string) => {
-    console.log(`💾 [NOTES-TAB] Saving ${field} for ${recordType}:`, record?.id, value);
-    // TODO: Implement actual notes save API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      console.log(`💾 [NOTES-TAB] Saving ${field} for ${recordType}:`, record?.id, value);
+      
+      // Get workspace and user context
+      const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Default to Dan's workspace
+      const userId = '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+      
+      // Call the unified API to update the record
+      const response = await fetch('/api/data/unified', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: recordType,
+          action: 'update',
+          id: record.id,
+          data: {
+            [field]: value
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save ${field}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to save notes');
+      }
+
+      console.log(`✅ [NOTES-TAB] Successfully saved ${field} for ${recordType}:`, result);
+      
+      // Update the local record to reflect the change
+      if (record) {
+        record[field] = value;
+      }
+      
+    } catch (error) {
+      console.error(`❌ [NOTES-TAB] Error saving ${field}:`, error);
+      throw error; // Re-throw to let InlineEditField handle the error display
+    }
   };
 
   return (
