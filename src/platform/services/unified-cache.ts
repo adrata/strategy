@@ -400,6 +400,80 @@ export class UnifiedCache {
   }
   
   /**
+   * 🗑️ DELETE: Remove specific key from cache
+   */
+  static async delete(key: string): Promise<boolean> {
+    // Client-side fallback
+    if (typeof window !== 'undefined') {
+      return this.deleteClientSide(key);
+    }
+
+    let deleted = false;
+    
+    // Delete from L1 cache
+    if (this.l1Cache.has(key)) {
+      this.l1Cache.delete(key);
+      deleted = true;
+    }
+    
+    // Delete from L2 cache (Redis)
+    if (this.isRedisConnected) {
+      try {
+        await this.deleteFromRedis(key);
+        deleted = true;
+      } catch (error) {
+        console.warn(`🔴 [CACHE DELETE] Redis delete error for ${key}:`, error);
+      }
+    }
+    
+    // Delete from L2 cache (memory)
+    if (this.l2Cache.has(key)) {
+      this.l2Cache.delete(key);
+      deleted = true;
+    }
+    
+    // Delete from L3 cache
+    if (this.l3Cache.has(key)) {
+      this.l3Cache.delete(key);
+      deleted = true;
+    }
+    
+    if (deleted) {
+      console.log(`🗑️ [CACHE DELETE] Deleted key: ${key}`);
+    }
+    
+    return deleted;
+  }
+
+  /**
+   * 🗑️ CLIENT-SIDE DELETE: Remove specific key from client-side cache
+   */
+  private static deleteClientSide(key: string): boolean {
+    let deleted = false;
+    
+    // Delete from L1 cache (client-side only has L1)
+    if (this.l1Cache.has(key)) {
+      this.l1Cache.delete(key);
+      deleted = true;
+    }
+    
+    // Also delete from SWR cache if available
+    if (typeof window !== 'undefined' && (window as any).__SWR_CACHE__) {
+      const swrCache = (window as any).__SWR_CACHE__;
+      if (swrCache.has(key)) {
+        swrCache.delete(key);
+        deleted = true;
+      }
+    }
+    
+    if (deleted) {
+      console.log(`🗑️ [CLIENT CACHE DELETE] Deleted key: ${key}`);
+    }
+    
+    return deleted;
+  }
+
+  /**
    * 🧹 INTELLIGENT INVALIDATION: Tag-based and pattern-based
    */
   static async invalidate(pattern: string | string[]): Promise<number> {
@@ -1128,6 +1202,7 @@ export const unifiedCache = UnifiedCache;
 export const cache = {
   get: UnifiedCache.get.bind(UnifiedCache),
   set: UnifiedCache.set.bind(UnifiedCache),
+  delete: UnifiedCache.delete.bind(UnifiedCache),
   invalidate: UnifiedCache.invalidate.bind(UnifiedCache),
   stats: UnifiedCache.getStats.bind(UnifiedCache),
   detailedStats: UnifiedCache.getDetailedStats.bind(UnifiedCache),

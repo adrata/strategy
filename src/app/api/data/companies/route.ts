@@ -54,6 +54,11 @@ export async function GET(request: NextRequest) {
       return 0;
     });
 
+    // Assign ranks to companies (1-based indexing)
+    for (let i = 0; i < accounts.length; i++) {
+      accounts[i].rank = i + 1;
+    }
+
     // Also get companies from leads table that don't have accounts yet - FILTER BY WORKSPACE ONLY
     const leadsWithCompanies = await prisma.leads.findMany({
       where: {

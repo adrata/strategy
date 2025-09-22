@@ -130,8 +130,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'intelligence', label: 'Intelligence' },
+        { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];

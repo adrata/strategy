@@ -2157,10 +2157,10 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 2000, // Load all companies for full pipeline view
-        select: { id: true, name: true, industry: true, updatedAt: true }
+        select: { id: true, name: true, industry: true, updatedAt: true, rank: true }
       }).then(companies => {
         // Sort companies to put 5Bars Services first
-        return companies.sort((a, b) => {
+        const sortedCompanies = companies.sort((a, b) => {
           const aIs5Bars = a.name.toLowerCase().includes('5bars') || a.name.toLowerCase().includes('5 bars');
           const bIs5Bars = b.name.toLowerCase().includes('5bars') || b.name.toLowerCase().includes('5 bars');
           
@@ -2170,6 +2170,13 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // If both or neither are 5Bars, maintain original order (by updatedAt desc)
           return 0;
         });
+
+        // Assign ranks to companies (1-based indexing)
+        for (let i = 0; i < sortedCompanies.length; i++) {
+          sortedCompanies[i].rank = i + 1;
+        }
+
+        return sortedCompanies;
       }),
       prisma.people.findMany({ 
         where: { 

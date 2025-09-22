@@ -89,18 +89,34 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
     const acquireData = acquisitionData?.acquireData || {};
+    let data = [];
     switch (section) {
-      case 'leads': return acquireData.leads || [];
-      case 'prospects': return acquireData.prospects || [];
-      case 'opportunities': return acquireData.opportunities || [];
-      case 'companies': return acquireData.companies || [];
-      case 'people': return acquireData.people || [];
-      case 'clients': return acquireData.clients || [];
-      case 'partners': return acquireData.partnerships || [];
-      case 'sellers': return acquireData.sellers || [];
-      case 'speedrun': return acquireData.speedrunItems || [];
-      default: return [];
+      case 'leads': data = acquireData.leads || []; break;
+      case 'prospects': data = acquireData.prospects || []; break;
+      case 'opportunities': data = acquireData.opportunities || []; break;
+      case 'companies': data = acquireData.companies || []; break;
+      case 'people': data = acquireData.people || []; break;
+      case 'clients': data = acquireData.clients || []; break;
+      case 'partners': data = acquireData.partnerships || []; break;
+      case 'sellers': data = acquireData.sellers || []; break;
+      case 'speedrun': data = acquireData.speedrunItems || []; break;
+      default: data = []; break;
     }
+    
+    // Sort companies to put 5Bars Services first
+    if (section === 'companies' && data.length > 0) {
+      data = [...data].sort((a, b) => {
+        const aIs5Bars = a.name?.toLowerCase().includes('5bars') || a.name?.toLowerCase().includes('5 bars');
+        const bIs5Bars = b.name?.toLowerCase().includes('5bars') || b.name?.toLowerCase().includes('5 bars');
+        
+        if (aIs5Bars && !bIs5Bars) return -1;
+        if (!aIs5Bars && bIs5Bars) return 1;
+        
+        return 0;
+      });
+    }
+    
+    return data;
   };
   
   const data = getSectionData(section);

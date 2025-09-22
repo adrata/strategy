@@ -97,8 +97,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'companies':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];

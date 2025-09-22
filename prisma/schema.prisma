@@ -479,6 +479,7 @@ model companies {
   vatNumber               String?             @db.VarChar(100)
   description             String?
   notes                   String?
+  rank                    Int?                @default(0)
   tags                    String[]            @default([])
   customFields            Json?
   preferredLanguage       String?             @db.VarChar(10)
