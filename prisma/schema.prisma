@@ -639,6 +639,7 @@ model people {
   engagementScore   Float?               @default(0)
   funnelStage       String?              @default("Prospect") @db.VarChar(50)
   buyerGroupRole    String?              @db.VarChar(50)
+  rank              Int?                 @default(0)
   
   buyerGroups       BuyerGroupToPerson[]
   actions           actions[]
@@ -1129,6 +1130,7 @@ model leads {
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
   lastAction          String?
+  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_leads_created_by")
   @@index([updatedBy], map: "idx_leads_updated_by")
@@ -1379,6 +1381,7 @@ model prospects {
   updatedBy           String?   @db.VarChar(30)
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
+  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_prospects_created_by")
   @@index([updatedBy], map: "idx_prospects_updated_by")
