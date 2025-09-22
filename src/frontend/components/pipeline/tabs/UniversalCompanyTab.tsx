@@ -164,8 +164,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                       href={linkedinUrl}
                       target="_blank" 
                       rel="noopener noreferrer"
-                      style={{ color: '#0171E4' }}
-                      className="hover:underline"
+                      className="text-blue-600 hover:underline"
+                      style={{ color: '#0171E4 !important' }}
                     >
                       {(() => {
                         // Clean LinkedIn URL to show just domain like website
@@ -180,21 +180,21 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
               </div>
             </div>
             <div>
-              <div className="block text-sm font-medium text-gray-600 mb-2">Market</div>
-              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              <div className="block text-sm font-medium text-gray-600 mb-1">Market</div>
+              <div className="text-sm text-gray-800 font-medium">
                 {(() => {
                   // Extract market from CoreSignal data or fallback to industry
                   const coresignalData = record?.customFields?.coresignalData;
                   if (coresignalData?.categories_and_keywords?.includes('telecommunications')) {
-                    return 'Telecommunications\n\nData Source: CoreSignal API';
+                    return 'Telecommunications';
                   }
-                  return `${record?.industry || 'Unknown'}\n\nData Source: Database`;
+                  return record?.industry || 'Unknown';
                 })()}
               </div>
             </div>
             <div>
-              <div className="block text-sm font-medium text-gray-600 mb-2">Category</div>
-              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              <div className="block text-sm font-medium text-gray-600 mb-1">Category</div>
+              <div className="text-sm text-gray-800 font-medium">
                 {(() => {
                   // Determine category based on services
                   const coresignalData = record?.customFields?.coresignalData;
@@ -207,15 +207,15 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                     cat.includes('excavating') ||
                     cat.includes('drilling')
                   )) {
-                    return 'Infrastructure & Construction\n\nData Source: CoreSignal API';
+                    return 'Infrastructure & Construction';
                   }
-                  return 'Unknown\n\nData Source: Database';
+                  return 'Unknown';
                 })()}
               </div>
             </div>
             <div>
-              <div className="block text-sm font-medium text-gray-600 mb-2">Segment</div>
-              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+              <div className="block text-sm font-medium text-gray-600 mb-1">Segment</div>
+              <div className="text-sm text-gray-800 font-medium">
                 {(() => {
                   // Determine segment based on specific services
                   const coresignalData = record?.customFields?.coresignalData;
@@ -227,9 +227,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                     cat.includes('small cell') ||
                     cat.includes('das')
                   )) {
-                    return 'Fiber & Wireless Infrastructure\n\nData Source: CoreSignal API';
+                    return 'Fiber & Wireless Infrastructure';
                   }
-                  return 'Unknown\n\nData Source: Database';
+                  return 'Unknown';
                 })()}
               </div>
             </div>
