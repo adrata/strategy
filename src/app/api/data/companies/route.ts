@@ -109,6 +109,7 @@ export async function GET(request: NextRequest) {
         revenue: revenueDisplay || "Unknown",
         website: company.website || "",
         location: location,
+        rank: company.rank || 0, // Include the assigned rank
         leads_count: 0, // Would need to query leads table
         people_count: 0, // Will be updated below
         opportunities_count: 0, // Will be updated below

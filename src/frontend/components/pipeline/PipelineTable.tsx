@@ -332,7 +332,15 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        cellContent = String(index + 1);
+                        // Use rank from database if available, otherwise calculate global rank
+                        const dbRank = record.rank;
+                        if (dbRank && dbRank > 0) {
+                          cellContent = String(dbRank);
+                        } else {
+                          // Fallback: Calculate global rank across all pages
+                          const globalRank = (currentPage - 1) * pageSize + index + 1;
+                          cellContent = String(globalRank);
+                        }
                         break;
                       case 'company':
                         // Handle both string and object company data
