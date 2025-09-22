@@ -271,8 +271,9 @@ export function AIRightPanel() {
     }
     
     const actions: string[] = [];
+    // For companies, name refers to the company name; for people/leads, it refers to the person's name
     const name = record.fullName || record.name || 'this prospect';
-    const company = record.company || record.companyName || 'their company';
+    const company = record.company || record.companyName || record.name || 'their company';
     const title = record.title || record.jobTitle || 'their role';
     const email = record.email || record.workEmail;
     const status = record.status?.toLowerCase() || 'new';
@@ -321,11 +322,14 @@ export function AIRightPanel() {
         break;
         
       case 'companies':
-        // Account-specific actions focused on expansion
+        // Account-specific actions focused on expansion and relationship building
         actions.push(`What's ${company}'s current relationship with us?`);
         actions.push(`Find expansion opportunities at ${company}`);
         actions.push(`Who else should I be talking to at ${company}?`);
-        actions.push(`What's ${name}'s influence on buying decisions?`);
+        actions.push(`What are ${company}'s biggest business challenges?`);
+        actions.push(`How can I build a relationship with ${company}?`);
+        actions.push(`What's ${company}'s growth strategy and priorities?`);
+        actions.push(`Who are the key decision makers at ${company}?`);
         break;
         
       case 'people':
@@ -344,15 +348,17 @@ export function AIRightPanel() {
         actions.push(`Draft a compelling message for ${name}`);
     }
     
-    // Role-specific intelligence gathering (applies to all types)
-    if (title?.toLowerCase().includes('vp') || title?.toLowerCase().includes('vice president')) {
-      actions.push(`How do VPs like ${name} typically evaluate solutions?`);
-    } else if (title?.toLowerCase().includes('director') || title?.toLowerCase().includes('manager')) {
-      actions.push(`What problems does a ${title} at ${company} face daily?`);
-    } else if (title?.toLowerCase().includes('cto') || title?.toLowerCase().includes('cio') || title?.toLowerCase().includes('technology')) {
-      actions.push(`What's ${company}'s current tech stack and roadmap?`);
-    } else if (title?.toLowerCase().includes('ceo') || title?.toLowerCase().includes('president')) {
-      actions.push(`What are ${name}'s strategic priorities for ${company}?`);
+    // Role-specific intelligence gathering (only applies to people/leads, not companies)
+    if (recordType !== 'companies' && title) {
+      if (title?.toLowerCase().includes('vp') || title?.toLowerCase().includes('vice president')) {
+        actions.push(`How do VPs like ${name} typically evaluate solutions?`);
+      } else if (title?.toLowerCase().includes('director') || title?.toLowerCase().includes('manager')) {
+        actions.push(`What problems does a ${title} at ${company} face daily?`);
+      } else if (title?.toLowerCase().includes('cto') || title?.toLowerCase().includes('cio') || title?.toLowerCase().includes('technology')) {
+        actions.push(`What's ${company}'s current tech stack and roadmap?`);
+      } else if (title?.toLowerCase().includes('ceo') || title?.toLowerCase().includes('president')) {
+        actions.push(`What are ${name}'s strategic priorities for ${company}?`);
+      }
     }
     
     // Industry-specific actions
@@ -437,7 +443,7 @@ export function AIRightPanel() {
                         (currentRecord['firstName'] && currentRecord.lastName ? `${currentRecord.firstName} ${currentRecord.lastName}` : '') ||
                         currentRecord.companyName || 'this record';
       
-      const company = currentRecord.company || currentRecord.companyName || 'their company';
+      const company = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? currentRecord.name : 'their company');
       const title = currentRecord.title || currentRecord.jobTitle || 'their role';
       const status = currentRecord.status || 'new';
       const priority = currentRecord.priority || 'medium';
@@ -451,7 +457,9 @@ export function AIRightPanel() {
         case 'opportunities':
           return `Great! You have an active opportunity with ${company}. ${recordName} (${title}) looks like they're ready to move forward. How can I help you close this deal?`;
         case 'companies':
-          return `Interesting company - ${company}. ${recordName} seems to be a key contact there as ${title}. What's your approach for building this relationship?`;
+          const employeeCount = currentRecord?.customFields?.coresignalData?.employees_count || currentRecord?.size || 'unknown';
+          const industry = currentRecord?.industry || currentRecord?.customFields?.coresignalData?.categories_and_keywords?.[0] || 'business';
+          return `Interesting company - ${company}. This looks like a ${industry} company with ${employeeCount} employees. What's your approach for building this relationship?`;
         case 'people':
           return `I can see you're focused on ${recordName} at ${company}. As a ${title}, they could be valuable for your business. What would you like to explore about this contact?`;
         default:

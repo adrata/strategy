@@ -19,6 +19,17 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     return <CompanyDetailSkeleton message="Loading company details..." />;
   }
 
+  // Debug: Log the record structure to see what's available
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [Company Data Debug] Record structure:', {
+      record: record,
+      customFields: record?.customFields,
+      website: record?.website,
+      linkedinUrl: record?.linkedinUrl,
+      linkedin: record?.linkedin
+    });
+  }
+
   // Use real company data from record
   const companyData = {
     name: record.name || 'Unknown Company',
@@ -27,6 +38,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown Revenue',
     location: record.city && record.state ? `${record.city}, ${record.state}` : record.address || 'Unknown Location',
     website: record.website || 'No website',
+    linkedin: record?.customFields?.linkedinUrl || 
+              record?.customFields?.linkedin || 
+              record?.linkedinUrl || 
+              record?.linkedin || 
+              'No LinkedIn',
     founded: record.founded || 'Unknown',
     ceo: record.ceo || 'Unknown',
     description: record.description || 'No description available',
@@ -157,50 +173,30 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
             <div>
               <div className="block text-sm font-medium text-gray-600 mb-1">LinkedIn</div>
               <div className="text-sm font-medium">
-                {(() => {
-                  // Try multiple possible field names for LinkedIn URL
-                  const linkedinUrl = record?.customFields?.linkedinUrl || 
-                                    record?.customFields?.linkedin || 
-                                    record?.linkedinUrl || 
-                                    record?.linkedin;
-                  
-                  // Debug: Log the record structure to see what's available
-                  if (process.env.NODE_ENV === 'development') {
-                    console.log('🔍 [LinkedIn Debug] Record structure:', {
-                      record: record,
-                      customFields: record?.customFields,
-                      linkedinUrl: record?.linkedinUrl,
-                      linkedin: record?.linkedin,
-                      foundLinkedinUrl: linkedinUrl
-                    });
-                  }
-                  
-                  // Temporary: Show test LinkedIn URL if no real data found
-                  const displayLinkedinUrl = linkedinUrl || 'linkedin.com/company/5-bars-services-llc';
-                  
-                  return (
-                    <a 
-                      href={displayLinkedinUrl.startsWith('http') ? displayLinkedinUrl : `https://${displayLinkedinUrl}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline hover:text-blue-800"
-                      style={{ color: '#0171E4' }}
-                    >
-                      {(() => {
-                        // Clean LinkedIn URL to show just domain like website
-                        const url = displayLinkedinUrl.replace(/^https?:\/\/(www\.)?/, '');
-                        return url.replace(/\/$/, ''); // Remove trailing slash
-                      })()}
-                    </a>
-                  );
-                })()}
+                {companyData.linkedin && companyData.linkedin !== 'No LinkedIn' ? (
+                  <a 
+                    href={companyData.linkedin.startsWith('http') ? companyData.linkedin : `https://${companyData.linkedin}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: '#0171E4' }}
+                    className="hover:underline"
+                  >
+                    {(() => {
+                      // Clean LinkedIn URL to show just domain without https://
+                      const url = companyData.linkedin.replace(/^https?:\/\/(www\.)?/, '');
+                      return url.replace(/\/$/, ''); // Remove trailing slash
+                    })()}
+                  </a>
+                ) : (
+                  <span className="text-gray-800">No LinkedIn</span>
+                )}
               </div>
             </div>
             <div>
               <div className="block text-sm font-medium text-gray-600 mb-1">Market</div>
               <div className="text-sm text-gray-800 font-medium">
                 {(() => {
-                  // Extract market from CoreSignal data or fallback to industry
+                  // Extract market from external data or fallback to industry
                   const coresignalData = record?.customFields?.coresignalData;
                   if (coresignalData?.categories_and_keywords?.includes('telecommunications')) {
                     return 'Telecommunications';

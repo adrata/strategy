@@ -51,6 +51,10 @@ import {
   UniversalSellerCompaniesTab
 } from './tabs';
 
+// Import new dedicated overview components
+import { ProspectOverviewTab } from './tabs/ProspectOverviewTab';
+import { PersonOverviewTab } from './tabs/PersonOverviewTab';
+
 // Import new comprehensive tab components
 import { UniversalInsightsTab as ComprehensiveInsightsTab } from './tabs/UniversalInsightsTab';
 import { UniversalCareerTab as ComprehensiveCareerTab } from './tabs/UniversalCareerTab';
@@ -1267,6 +1271,10 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
+            recordType === 'prospects' ?
+              <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
+            recordType === 'people' ?
+              <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
               <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'strategy':

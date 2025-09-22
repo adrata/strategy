@@ -341,7 +341,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
             <div key={event.id} className="flex items-start gap-4">
               {/* Timeline indicator */}
               <div className="flex flex-col items-center pt-1">
-                <div className={`w-8 h-8 rounded-full bg-white border-2 ${getEventColor(event.type)} flex items-center justify-center`}>
+                <div className="w-8 h-8 rounded bg-white border-2 border-gray-300 flex items-center justify-center">
                   {getEventIcon(event.type)}
                 </div>
                 {index < timelineEvents.length - 1 && (

@@ -912,9 +912,19 @@ async function getMultipleRecords(
     }
   } : {};
 
+  // Determine sorting order based on record type
+  let orderBy: any[] = [];
+  if (type === 'companies') {
+    orderBy = [{ rank: 'asc' }, { updatedAt: 'desc' }];
+  } else if (type === 'prospects' || type === 'leads') {
+    orderBy = [{ rank: 'asc' }, { updatedAt: 'desc' }];
+  } else {
+    orderBy = [{ updatedAt: 'desc' }];
+  }
+
   const records = await model.findMany({
     where: whereClause,
-    orderBy: [{ updatedAt: 'desc' }],
+    orderBy: orderBy,
     take: pagination?.limit || 1000,
     skip: pagination?.offset || 0,
     ...includeClause
@@ -2122,7 +2132,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             { assignedUserId: null }
           ]
         },
-        orderBy: [{ updatedAt: 'desc' }],
+        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
         take: 1000 // Load all leads for full pipeline view
       }),
       prisma.prospects.findMany({ 
@@ -2131,7 +2141,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null
           // Show all prospects in workspace regardless of assignment
         },
-        orderBy: [{ updatedAt: 'desc' }],
+        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
         take: 1000 // Load all prospects for full pipeline view
       }),
       prisma.opportunities.findMany({ 

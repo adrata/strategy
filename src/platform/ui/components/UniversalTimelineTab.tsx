@@ -320,7 +320,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
         timelineEvents.map((event, index) => (
           <div key={event.id} className="flex items-start gap-4">
             <div className="flex flex-col items-center pt-1">
-              <div className={`w-2 h-2 rounded-full ${getEventColor(event.type)}`} />
+              <div className="w-2 h-2 rounded bg-white border border-gray-300" />
               {index < timelineEvents.length - 1 && (
                 <div className="w-px h-8 bg-gray-200 mt-2" />
               )}

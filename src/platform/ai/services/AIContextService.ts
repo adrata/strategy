@@ -271,10 +271,29 @@ CRUD OPERATIONS CAPABILITY:
     }
 
     const recordName = currentRecord.fullName || currentRecord.name || 'Unknown';
-    const recordCompany = currentRecord.company || 'Unknown Company';
+    const recordCompany = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? recordName : 'Unknown Company');
     const recordTitle = currentRecord.title || currentRecord.jobTitle || 'Unknown Title';
     
-    let context = `CURRENT RECORD CONTEXT:
+    // Build context based on record type
+    let context;
+    if (recordType === 'companies') {
+      context = `CURRENT RECORD CONTEXT:
+- CURRENTLY VIEWING: Company ${recordName}
+- Industry: ${currentRecord.industry || 'Unknown'}
+- Size: ${currentRecord.size || currentRecord.employeeCount || 'Unknown'}
+- Record Type: ${recordType}
+- This is a LIVE company record in the user's system
+- The user can see this company's complete profile on their screen
+- Provide SPECIFIC, actionable advice about engaging with THIS exact company
+- Reference their industry, size, and any visible details when giving advice
+- Focus on practical next steps for building relationships with this company
+
+VISIBLE RECORD DATA:
+${JSON.stringify(currentRecord, null, 2)}
+
+CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses should be specific to this company and its business context.`;
+    } else {
+      context = `CURRENT RECORD CONTEXT:
 - CURRENTLY VIEWING: ${recordName} at ${recordCompany}
 - Title: ${recordTitle}
 - Record Type: ${recordType}
@@ -288,6 +307,7 @@ VISIBLE RECORD DATA:
 ${JSON.stringify(currentRecord, null, 2)}
 
 CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company.`;
+    }
 
     // Add enrichment context if available
     if (currentRecord.monacoEnrichment) {

@@ -36,7 +36,23 @@ export async function GET(request: NextRequest) {
         ],
         deletedAt: null
       },
-      // Note: No include needed since we'll fetch people separately
+      select: {
+        id: true,
+        name: true,
+        industry: true,
+        size: true,
+        revenue: true,
+        website: true,
+        city: true,
+        state: true,
+        country: true,
+        address: true,
+        description: true,
+        customFields: true,
+        updatedAt: true,
+        rank: true,
+        assignedUserId: true
+      },
       orderBy: {
         updatedAt: "desc",
       },

@@ -1205,7 +1205,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Company</label>
                   <p className="text-sm text-gray-800 font-medium">
-                    {record?.company || record?.companyName || 'No company assigned'}
+                    {record?.company?.name || record?.company || record?.companyName || 'No company assigned'}
                   </p>
                 </div>
               </div>
@@ -1715,7 +1715,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Account</label>
                     <div className="text-lg font-semibold text-gray-900">
-                      {record?.company || '-'}
+                      {record?.company?.name || record?.company || '-'}
                     </div>
                   </div>
 
