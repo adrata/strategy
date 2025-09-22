@@ -146,7 +146,16 @@ export class ClaudeAIService {
           currentRecordDetails = await prisma.people.findUnique({
             where: { id: recordId },
             include: {
-              company: { select: { name: true, industry: true } },
+              company: { 
+                select: { 
+                  name: true, 
+                  industry: true, 
+                  size: true,
+                  website: true,
+                  linkedin: true,
+                  description: true
+                } 
+              },
               actions: { orderBy: { createdAt: 'desc' }, take: 5 }
             }
           });
@@ -154,7 +163,66 @@ export class ClaudeAIService {
           currentRecordDetails = await prisma.prospects.findUnique({
             where: { id: recordId },
             include: {
-              company: { select: { name: true, industry: true } },
+              company: { 
+                select: { 
+                  name: true, 
+                  industry: true, 
+                  size: true,
+                  website: true,
+                  linkedin: true,
+                  description: true
+                } 
+              },
+              actions: { orderBy: { createdAt: 'desc' }, take: 5 }
+            }
+          });
+        } else if (request.recordType === 'companies') {
+          currentRecordDetails = await prisma.companies.findUnique({
+            where: { id: recordId },
+            include: {
+              people: { 
+                select: { 
+                  fullName: true, 
+                  title: true, 
+                  email: true,
+                  linkedin: true
+                },
+                take: 5
+              },
+              actions: { orderBy: { createdAt: 'desc' }, take: 5 }
+            }
+          });
+        } else if (request.recordType === 'leads') {
+          currentRecordDetails = await prisma.leads.findUnique({
+            where: { id: recordId },
+            include: {
+              company: { 
+                select: { 
+                  name: true, 
+                  industry: true, 
+                  size: true,
+                  website: true,
+                  linkedin: true,
+                  description: true
+                } 
+              },
+              actions: { orderBy: { createdAt: 'desc' }, take: 5 }
+            }
+          });
+        } else if (request.recordType === 'opportunities') {
+          currentRecordDetails = await prisma.opportunities.findUnique({
+            where: { id: recordId },
+            include: {
+              company: { 
+                select: { 
+                  name: true, 
+                  industry: true, 
+                  size: true,
+                  website: true,
+                  linkedin: true,
+                  description: true
+                } 
+              },
               actions: { orderBy: { createdAt: 'desc' }, take: 5 }
             }
           });
@@ -198,12 +266,26 @@ export class ClaudeAIService {
       const recordName = currentRecord.fullName || currentRecord.name || 'Unknown';
       const company = currentRecord.company?.name || currentRecord.company || 'Unknown Company';
       const title = currentRecord.title || currentRecord.jobTitle || 'Unknown Title';
+      const industry = currentRecord.company?.industry || 'Unknown Industry';
+      const companySize = currentRecord.company?.size || 'Unknown Size';
+      const website = currentRecord.company?.website || currentRecord.website || 'No website';
+      const linkedin = currentRecord.company?.linkedin || currentRecord.linkedin || 'No LinkedIn';
+      const description = currentRecord.company?.description || currentRecord.description || 'No description available';
+      const email = currentRecord.email || 'No email available';
+      const phone = currentRecord.phone || 'No phone available';
       
       contextInfo = `
 CURRENT RECORD CONTEXT:
 - Name: ${recordName}
 - Company: ${company}
 - Title: ${title}
+- Industry: ${industry}
+- Company Size: ${companySize}
+- Email: ${email}
+- Phone: ${phone}
+- Website: ${website}
+- LinkedIn: ${linkedin}
+- Description: ${description}
 - Record Type: ${recordType || 'Unknown'}
 - App Context: ${appType || 'General'}
 `;
@@ -234,50 +316,41 @@ ${dataContext.recentActivities.slice(0, 5).map(activity =>
 `;
     }
 
-    return `You are Adrata, an intelligent sales acceleration AI assistant with full access to your CRM data. You help sales professionals with:
+    return `You are Adrata, a friendly and knowledgeable sales acceleration AI assistant. You have full access to the user's CRM data and help sales professionals succeed.
 
-🎯 CORE CAPABILITIES:
-- Sales strategy and prospecting advice
-- Buyer group intelligence and stakeholder mapping
-- Pipeline analysis and optimization
-- Next action recommendations
-- Competitive intelligence
-- Industry insights and trends
-- Data-driven insights from your CRM
+🎯 YOUR ROLE:
+You're like a trusted sales consultant who's always available to help. You understand the user's business, their prospects, and their challenges. You provide practical, actionable advice in a conversational, supportive tone.
 
-📊 SALES EXPERTISE:
-- B2B sales methodologies (Challenger Sale, SPIN Selling, MEDDIC)
-- CRM and pipeline management
-- Lead qualification and nurturing
-- Account-based selling strategies
-- Revenue forecasting and analytics
-- Action model optimization
+📊 YOUR EXPERTISE:
+- B2B sales strategies and methodologies
+- CRM and pipeline optimization
+- Prospect research and buyer intelligence
+- Account-based selling and relationship building
+- Revenue growth and deal closing
+- Sales process improvement
 
 ${contextInfo}
 ${workspaceContext}
 ${activitiesContext}
 
-💡 RESPONSE GUIDELINES:
-- Be specific and actionable in your advice
-- Reference the current record context when relevant
-- Use actual data from the workspace to provide insights
-- Provide concrete next steps and recommendations
-- Use sales terminology appropriately
-- Be concise but comprehensive
-- Focus on revenue-generating activities
-- Consider the user's role and company context
-- Reference recent activities and patterns when relevant
+💬 CONVERSATION STYLE:
+- Be warm, professional, and encouraging
+- Use natural, conversational language (avoid corporate jargon)
+- Ask follow-up questions to understand their needs better
+- Provide specific, actionable advice
+- Reference their actual data and context when relevant
+- Be concise but thorough
+- Show genuine interest in their success
 
-🚀 SALES ACCELERATION FOCUS:
-Always aim to help the user:
-1. Close more deals faster
-2. Build stronger relationships
-3. Identify and engage key stakeholders
-4. Optimize their sales process
-5. Make data-driven decisions
-6. Leverage their CRM data effectively
+🚀 HOW TO HELP:
+- Listen to what they're trying to accomplish
+- Offer practical solutions based on their specific situation
+- Suggest concrete next steps they can take
+- Help them think through challenges and opportunities
+- Share insights from their CRM data when helpful
+- Be their sounding board for sales strategies
 
-Respond as a knowledgeable sales consultant who understands modern B2B sales challenges and has full visibility into your CRM data and activities.`;
+Remember: You're not just providing information - you're being a helpful partner in their sales success. Be encouraging, practical, and focused on helping them achieve their goals.`;
   }
 
   /**
@@ -383,24 +456,14 @@ Respond as a knowledgeable sales consultant who understands modern B2B sales cha
       const recordName = currentRecord.fullName || currentRecord.name || 'this contact';
       const company = currentRecord.company?.name || currentRecord.company || 'their company';
       
-      return `I'm here to help you with ${recordName} at ${company}. While I'm experiencing some technical difficulties, I can still assist you with:
+      return `Hi! I'm having a small technical hiccup right now, but I'm still here to help you with ${recordName} at ${company}. 
 
-• Sales strategy and next steps
-• Buyer group analysis
-• Pipeline optimization
-• Competitive intelligence
-
-What specific aspect of your sales process would you like to focus on?`;
+I can assist you with sales strategy, buyer research, pipeline optimization, and competitive intelligence. What would you like to focus on with this contact?`;
     }
     
-    return `I'm here to help you accelerate your sales process. While I'm experiencing some technical difficulties, I can still assist you with:
+    return `Hey there! I'm experiencing a brief technical issue, but I'm still ready to help you with your sales process.
 
-• Sales strategy and prospecting
-• Pipeline analysis and optimization
-• Buyer group intelligence
-• Next action recommendations
-
-What would you like to work on today?`;
+I can help with prospecting, pipeline analysis, buyer research, and closing strategies. What's on your mind today?`;
   }
 
   /**

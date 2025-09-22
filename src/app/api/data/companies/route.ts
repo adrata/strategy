@@ -210,19 +210,37 @@ export async function GET(request: NextRequest) {
       return a.name.localeCompare(b.name);
     });
 
-    // Re-assign sequential ranks to all companies
-    allCompanies.forEach((company, index) => {
+    // Remove duplicates and re-assign proper sequential ranks
+    const uniqueCompanies = [];
+    const seenNames = new Set();
+    
+    allCompanies.forEach((company) => {
+      if (!seenNames.has(company.name)) {
+        seenNames.add(company.name);
+        uniqueCompanies.push(company);
+      }
+    });
+    
+    // Sort by original rank, then assign sequential ranks starting from 1
+    uniqueCompanies.sort((a, b) => {
+      const rankA = a.rank || 999999; // Put unranked companies at the end
+      const rankB = b.rank || 999999;
+      return rankA - rankB;
+    });
+    
+    // Assign sequential ranks starting from 1
+    uniqueCompanies.forEach((company, index) => {
       company.rank = index + 1;
     });
 
-    console.log(`✅ [COMPANIES API] Found ${allCompanies.length} companies`);
+    console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);
 
     await prisma.$disconnect();
 
     return NextResponse.json({
       success: true,
-      companies: allCompanies,
-      count: allCompanies.length,
+      companies: uniqueCompanies,
+      count: uniqueCompanies.length,
     });
   } catch (error) {
     console.error("❌ [COMPANIES API] Error getting companies:", error);

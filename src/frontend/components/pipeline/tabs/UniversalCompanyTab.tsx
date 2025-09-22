@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
+import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 
 interface UniversalCompanyTabProps {
   recordType: string;
@@ -12,12 +13,10 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
   const { record: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
+
+  // Show skeleton loader while data is loading
   if (!record) {
-    return (
-      <div className="p-6">
-        <div className="text-center text-gray-500">No record data available</div>
-      </div>
-    );
+    return <CompanyDetailSkeleton message="Loading company details..." />;
   }
 
   // Use real company data from record
@@ -33,7 +32,22 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     description: record.description || 'No description available',
     marketCap: record.marketCap || 'Unknown',
     employees: record.employeeCount || record.size || 'Unknown',
-    headquarters: record.address || record.city || 'Unknown',
+    headquarters: (() => {
+      const address = record.address || '';
+      const city = record.city || '';
+      const state = record.state || '';
+      
+      if (address && city && state) {
+        return `${address}, ${city}, ${state}`;
+      } else if (city && state) {
+        return `${city}, ${state}`;
+      } else if (address) {
+        return address;
+      } else if (city) {
+        return city;
+      }
+      return 'Unknown';
+    })(),
     businessModel: record.businessModel || 'Unknown',
     keyProducts: record.keyProducts || [],
     competitors: record.competitors || [],
@@ -58,27 +72,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
       {/* Company Summary */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Company</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.name}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Industry</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.industry}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Size</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.size}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Revenue</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.revenue}</div>
-          </div>
-        </div>
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Description</label>
-          <div className="text-sm text-gray-800 font-medium">{companyData.description}</div>
+          <label className="block text-sm font-medium text-gray-600 mb-2">Description</label>
+          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">{companyData.description}</div>
         </div>
       </div>
 
@@ -86,63 +82,161 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Company Name</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.name}</div>
+          {/* Left Column */}
+          <div className="space-y-4">
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Company Name</div>
+              <div className="text-sm text-gray-800 font-medium">{companyData.name}</div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Size</div>
+              <div className="text-sm text-gray-800 font-medium">{companyData.size}</div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Headquarters</div>
+              <div className="text-sm text-gray-800 font-medium">{companyData.headquarters}</div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Founded</div>
+              <div className="text-sm text-gray-800 font-medium">
+                {(() => {
+                  const foundedYear = record?.customFields?.coresignalData?.founded_year || record?.founded;
+                  if (foundedYear) {
+                    const currentYear = new Date().getFullYear();
+                    const yearsInBusiness = currentYear - parseInt(foundedYear);
+                    return `${yearsInBusiness} years ago (${foundedYear})`;
+                  }
+                  return 'Unknown';
+                })()}
+              </div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Company Type</div>
+              <div className="text-sm text-gray-800 font-medium">
+                {record?.customFields?.coresignalData?.type || 'Unknown'}
+              </div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">Phone</div>
+              <div className="text-sm text-gray-800 font-medium">
+                {(() => {
+                  const phoneNumbers = record?.customFields?.coresignalData?.company_phone_numbers;
+                  if (phoneNumbers && phoneNumbers.length > 0) {
+                    return phoneNumbers[0]; // Show primary phone number
+                  }
+                  return 'Unknown';
+                })()}
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Industry</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.industry}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Size</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.size}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Founded</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.founded}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">CEO</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.ceo}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Headquarters</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.headquarters}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Website</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.website}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Business Model</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.businessModel}</div>
+
+          {/* Right Column */}
+          <div className="space-y-4">
+                   <div>
+                     <div className="block text-sm font-medium text-gray-600 mb-1">Website</div>
+                     <div className="text-sm font-medium">
+                       {companyData.website && companyData.website !== 'No website' ? (
+                         <a 
+                           href={companyData.website.startsWith('http') ? companyData.website : `https://${companyData.website}`}
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           style={{ color: '#0171E4' }}
+                           className="hover:underline"
+                         >
+                           {(() => {
+                             // Clean URL to show just domain without https://
+                             const url = companyData.website.replace(/^https?:\/\/(www\.)?/, '');
+                             return url.replace(/\/$/, ''); // Remove trailing slash
+                           })()}
+                         </a>
+                       ) : (
+                         <span className="text-gray-800">No website</span>
+                       )}
+                     </div>
+                   </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-1">LinkedIn</div>
+              <div className="text-sm font-medium">
+                {(() => {
+                  const linkedinUrl = record?.customFields?.linkedinUrl;
+                  return linkedinUrl ? (
+                    <a 
+                      href={linkedinUrl}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ color: '#0171E4' }}
+                      className="hover:underline"
+                    >
+                      {(() => {
+                        // Clean LinkedIn URL to show just domain like website
+                        const url = linkedinUrl.replace(/^https?:\/\/(www\.)?/, '');
+                        return url.replace(/\/$/, ''); // Remove trailing slash
+                      })()}
+                    </a>
+                  ) : (
+                    <span className="text-gray-800">No LinkedIn</span>
+                  );
+                })()}
+              </div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-2">Market</div>
+              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+                {(() => {
+                  // Extract market from CoreSignal data or fallback to industry
+                  const coresignalData = record?.customFields?.coresignalData;
+                  if (coresignalData?.categories_and_keywords?.includes('telecommunications')) {
+                    return 'Telecommunications\n\nData Source: CoreSignal API';
+                  }
+                  return `${record?.industry || 'Unknown'}\n\nData Source: Database`;
+                })()}
+              </div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-2">Category</div>
+              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+                {(() => {
+                  // Determine category based on services
+                  const coresignalData = record?.customFields?.coresignalData;
+                  const categories = coresignalData?.categories_and_keywords || [];
+                  
+                  if (categories.some(cat => 
+                    cat.includes('infrastructure') || 
+                    cat.includes('construction') || 
+                    cat.includes('installation') ||
+                    cat.includes('excavating') ||
+                    cat.includes('drilling')
+                  )) {
+                    return 'Infrastructure & Construction\n\nData Source: CoreSignal API';
+                  }
+                  return 'Unknown\n\nData Source: Database';
+                })()}
+              </div>
+            </div>
+            <div>
+              <div className="block text-sm font-medium text-gray-600 mb-2">Segment</div>
+              <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+                {(() => {
+                  // Determine segment based on specific services
+                  const coresignalData = record?.customFields?.coresignalData;
+                  const categories = coresignalData?.categories_and_keywords || [];
+                  
+                  if (categories.some(cat => 
+                    cat.includes('fiber') || 
+                    cat.includes('wireless') ||
+                    cat.includes('small cell') ||
+                    cat.includes('das')
+                  )) {
+                    return 'Fiber & Wireless Infrastructure\n\nData Source: CoreSignal API';
+                  }
+                  return 'Unknown\n\nData Source: Database';
+                })()}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Financial Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Financial Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Revenue</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.financials.revenue}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Growth</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.financials.growth}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Profit Margin</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.financials.profitMargin}</div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Market Cap</label>
-            <div className="text-sm text-gray-800 font-medium">{companyData.marketCap}</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

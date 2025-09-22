@@ -442,20 +442,20 @@ export function AIRightPanel() {
       const status = currentRecord.status || 'new';
       const priority = currentRecord.priority || 'medium';
       
-      // Generate contextual welcome message based on record type and data
+      // Generate more natural, conversational welcome messages based on record type and data
       switch (recordType) {
         case 'leads':
-          return `Ready to convert ${recordName} at ${company}? This ${title} is ${status} with ${priority} priority. Let's make it happen.`;
+          return `Hi! I can see you're looking at ${recordName} from ${company}. As a ${title}, they could be a great fit for your solution. What would you like to know about them or how can I help you move this forward?`;
         case 'prospects':
-          return `Time to advance ${recordName} at ${company}. This ${title} is engaged and ready to buy. Let's close it.`;
+          return `I see you're working with ${recordName} at ${company}. They seem like a promising prospect in the ${title} role. What's your strategy for engaging with them?`;
         case 'opportunities':
-          return `Closing time for ${company}. ${recordName} (${title}) is ready to sign. Let's seal the deal.`;
+          return `Great! You have an active opportunity with ${company}. ${recordName} (${title}) looks like they're ready to move forward. How can I help you close this deal?`;
         case 'companies':
-          return `Expanding ${company} with ${recordName}. This ${title} is your key to growth. Let's scale up.`;
+          return `Interesting company - ${company}. ${recordName} seems to be a key contact there as ${title}. What's your approach for building this relationship?`;
         case 'people':
-          return `Leveraging ${recordName} at ${company}. This ${title} opens doors. Let's unlock opportunities.`;
+          return `I can see you're focused on ${recordName} at ${company}. As a ${title}, they could be valuable for your business. What would you like to explore about this contact?`;
         default:
-          return `Working with ${recordName} at ${company}. This ${title} matters. Let's make it count.`;
+          return `I notice you're reviewing ${recordName} at ${company}. They look like they could be important for your sales efforts. How can I help you with this?`;
       }
     }
 
@@ -469,19 +469,19 @@ export function AIRightPanel() {
       
       switch (app) {
         case "Speedrun":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
+          return "Hi there! I'm Adrata, your sales acceleration assistant. I can help you with rapid prospecting, pipeline optimization, and closing deals faster. What's your biggest sales challenge right now?";
         case "pipeline":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
+          return "Hello! I'm here to help you accelerate your sales process. Whether you need help with pipeline analysis, prospect research, or closing strategies, I've got you covered. What would you like to work on?";
         case "monaco":
-          return "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
+          return "Hey! I'm Adrata, your AI sales partner. I can help you research prospects, craft compelling messages, and optimize your sales approach. What's on your mind today?";
         default:
           return isPipelineContext 
-            ? "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?"
-            : "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
+            ? "Hi! I'm Adrata, your sales acceleration assistant. I can help you with pipeline optimization, prospect research, and closing strategies. What would you like to focus on today?"
+            : "Hello! I'm here to help you with your sales process. I can assist with research, messaging, pipeline analysis, and more. What can I help you with?";
       }
     }
 
-    return activeConv?.welcomeMessage || "Welcome! My name is Adrata. I'm here to help you sell convincingly. I can help with:\n\n1. Pipeline optimization,\n2. Message crafting, and\n3. Sales analytics.\n\nWhat would you like to focus on?";
+    return activeConv?.welcomeMessage || "Hi! I'm Adrata, your sales acceleration assistant. I can help you with research, messaging, pipeline optimization, and closing strategies. What would you like to work on today?";
   };
 
   // Click outside handler

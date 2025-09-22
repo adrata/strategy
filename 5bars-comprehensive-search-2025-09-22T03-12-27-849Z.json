@@ -1,0 +1,37 @@
+{
+  "companyId": "01K5D5VGQ35SXGBPK5F2WSMFM2",
+  "companyName": "5Bars Services",
+  "website": "https://www.5bars.net/",
+  "enrichmentDate": "2025-09-22T03:10:45.478Z",
+  "searchResults": [],
+  "companyData": null,
+  "historicalData": null,
+  "creditsUsed": {
+    "search": 0,
+    "collect": 0
+  },
+  "errors": [
+    "Frisco companies search failed: API call failed after 3 attempts"
+  ],
+  "alternativeNames": [],
+  "potentialMatches": [],
+  "currentDatabaseData": {
+    "id": "01K5D5VGQ35SXGBPK5F2WSMFM2",
+    "name": "5Bars Services",
+    "website": "https://www.5bars.net/",
+    "industry": "Engineering",
+    "size": null,
+    "revenue": null,
+    "description": "Telecommunications services company",
+    "city": null,
+    "state": null,
+    "country": null,
+    "address": null,
+    "postalCode": null,
+    "tags": [
+      "TOP Engineering"
+    ],
+    "createdAt": "2025-09-18T01:44:37.623Z",
+    "updatedAt": "2025-09-22T02:20:18.295Z"
+  }
+}

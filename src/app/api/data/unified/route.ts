@@ -2157,7 +2157,21 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         },
         orderBy: [{ rank: 'asc' }], // Sort by database rank instead of updatedAt
         take: 2000, // Load all companies for full pipeline view
-        select: { id: true, name: true, industry: true, updatedAt: true, rank: true }
+        select: { 
+          id: true, 
+          name: true, 
+          industry: true, 
+          website: true,
+          description: true,
+          size: true,
+          address: true,
+          city: true,
+          state: true,
+          country: true,
+          customFields: true,
+          updatedAt: true, 
+          rank: true 
+        }
       }).then(companies => {
         // Use database ranks - no need to reassign ranks
         console.log(`🔍 [UNIFIED API] Companies ranking debug:`, {
