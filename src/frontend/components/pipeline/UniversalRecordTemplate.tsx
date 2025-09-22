@@ -1211,7 +1211,9 @@ export function UniversalRecordTemplate({
         case 'overview':
           console.log(`🏠 [UNIVERSAL] Rendering overview tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+            recordType === 'companies' ? 
+              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'strategy':
           console.log(`🎯 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
@@ -1234,7 +1236,9 @@ export function UniversalRecordTemplate({
         case 'intelligence':
           console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+            recordType === 'companies' ? 
+              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'company':
           return renderTabWithErrorBoundary(
@@ -1356,6 +1360,10 @@ export function UniversalRecordTemplate({
         case 'timeline':
           return renderTabWithErrorBoundary(
             <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
+          );
+        case 'notes':
+          return renderTabWithErrorBoundary(
+            <NotesTab key={activeTab} record={record} recordType={recordType} />
           );
         default:
           console.warn(`🔄 [UNIVERSAL] Unknown tab: ${activeTab}, falling back to overview`);
@@ -2261,19 +2269,22 @@ function NotesTab({ record, recordType }: { record: any; recordType: string }) {
   };
 
   return (
-    <div className="p-6">
+    <div className="space-y-8">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wide">Notes</h3>
-        <InlineEditField
-          value={record?.notes || ''}
-          field="notes"
-          recordId={record?.id || ''}
-          recordType="universal"
-          type="textarea"
-          placeholder="Add notes about this record..."
-          onSave={handleSaveNotes}
-          className="w-full h-32"
-        />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">Notes</label>
+          <InlineEditField
+            value={record?.notes || ''}
+            field="notes"
+            recordId={record?.id || ''}
+            recordType="universal"
+            type="textarea"
+            placeholder="Add notes about this record..."
+            onSave={handleSaveNotes}
+            className="w-full h-32 text-sm text-gray-800 font-medium"
+          />
+        </div>
       </div>
     </div>
   );
