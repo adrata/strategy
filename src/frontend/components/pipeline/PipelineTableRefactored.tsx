@@ -28,6 +28,7 @@ interface PipelineRecord {
   lastContactTime?: string;
   lastActionDescription?: string;
   nextAction?: string;
+  rank?: number;
   [key: string]: any;
 }
 
@@ -48,96 +49,25 @@ interface PipelineTableProps {
 const DEFAULT_PAGE_SIZE = 50;
 
 // -------- Helper Functions --------
-function getColumnWidth(index: number): string {
-  const widths = [
-    '80px',   // Rank
-    '200px',  // Company
-    '180px',  // Person/Name
-    '150px',  // Title
-    '120px',  // Status
-    '160px',  // Last Action (increased from 140px)
-    '180px',  // Next Action (increased from 160px)
-    '100px',  // Amount
-    '120px',  // Stage
-    '100px',  // Priority
-    '120px',  // Industry
-    '150px',  // Email
-    '120px',  // Phone
-    '80px',   // Actions
-  ];
-  
-  return widths[index] || '120px';
-}
-
-// -------- Timing Functions --------
-function getLastActionTiming(record: PipelineRecord) {
-  const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-  return getRealtimeActionTiming(lastActionDate);
-}
-
-function getNextActionTiming(record: PipelineRecord) {
-  // For next actions, we need to calculate timing based on when the next action should happen
-  const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
-  if (!nextActionDate) {
-    return { text: 'No date set', color: 'bg-gray-100 text-gray-800' };
-  }
-  
-  const now = new Date();
-  const actionDate = new Date(nextActionDate);
-  const diffMs = actionDate.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  
-  if (diffDays < 0) {
-    return { text: 'Overdue', color: 'bg-red-100 text-red-800' };
-  } else if (diffDays === 0) {
-    return { text: 'Today', color: 'bg-orange-100 text-orange-800' };
-  } else if (diffDays === 1) {
-    return { text: 'Tomorrow', color: 'bg-yellow-100 text-yellow-800' };
-  } else if (diffDays <= 7) {
-    return { text: 'This week', color: 'bg-navy-100 text-navy-800' };
-  } else if (diffDays <= 14) {
-    return { text: 'Next week', color: 'bg-navy-100 text-navy-800' };
-  } else if (diffDays <= 30) {
-    return { text: 'This month', color: 'bg-gray-100 text-gray-800' };
-  } else {
-    return { text: 'Future', color: 'bg-gray-100 text-gray-800' };
-  }
-}
-
 function getTableHeaders(visibleColumns?: string[], section?: string): string[] {
-  if (visibleColumns && visibleColumns.length > 0) {
-    return visibleColumns;
+  if (!visibleColumns || visibleColumns.length === 0) {
+    // Default headers based on section
+    const defaultHeaders: Record<string, string[]> = {
+      'leads': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'prospects': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'opportunities': ['Rank', 'Company', 'Stage', 'Value', 'Last Action', 'Next Action'],
+      'companies': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'people': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
+      'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
+      'speedrun': ['Rank', 'Company', 'Last Action', 'Next Action']
+    };
+    
+    return defaultHeaders[section || 'companies'] || defaultHeaders['companies'];
   }
   
-  // Section-specific headers
-  if (section === 'speedrun') {
-    return [
-      'Rank',
-      'Person',
-      'Stage',
-      'Last Action',
-      'Next Action'
-    ];
-  }
-  
-  // Default headers for other sections
-  const defaultHeaders = [
-    'Rank',
-    'Company',
-    'Person',
-    'Title',
-    'Status',
-    'Last Action',
-    'Next Action',
-    'Amount',
-    'Stage',
-    'Priority',
-    'Industry',
-    'Email',
-    'Phone',
-  ];
-  
-  return defaultHeaders;
+  return visibleColumns;
 }
 
 // -------- Main Component --------
@@ -164,23 +94,23 @@ export function PipelineTable({
   // Get table headers
   const headers = getTableHeaders(visibleColumns, section);
   
-  // Dynamic height calculation - align with AI chat panel bottom
+  // Dynamic height calculation - fit within viewport without overflow
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 187.5 : 600; // Reserve space below table to align with chat panel
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 250 : 500; // More conservative space reservation
   
-  // Dynamic height calculation - align with chat panel
+  // Dynamic height calculation - prevent overflow
   let tableHeight;
   if (data.length === 0) {
     // Empty state - use moderate height
     tableHeight = 200;
   } else if (data.length <= 10) {
-    // Small to medium datasets - use content height with small buffer to match AI panel
-    tableHeight = contentHeight + 20; // Slightly taller to match AI right panel
+    // Small to medium datasets - use content height with minimal buffer
+    tableHeight = Math.min(contentHeight + 24, maxViewportHeight);
   } else {
-    // Larger datasets - use viewport height to fill available space and align with chat panel
-    tableHeight = maxViewportHeight;
+    // Larger datasets - use viewport height to fill available space without overflow
+    tableHeight = maxViewportHeight + 4;
   }
   
   // Use custom hooks for data and actions
@@ -200,103 +130,79 @@ export function PipelineTable({
     currentPage,
     totalPages,
     totalItems,
-    samplePaginatedData: paginatedData?.slice(0, 2)
+    pageSize
   });
-
   
+  // Action handling
   const {
-    editModalOpen,
-    addActionModalOpen,
-    detailModalOpen,
-    selectedRecord,
-    isSubmitting,
-    handleEdit,
+    handleEditRecord,
     handleAddAction,
-    handleMarkComplete,
-    handleDelete,
-    handleCall,
-    handleEmail,
-    handleEditSubmit,
-    handleActionSubmit,
-    closeEditModal,
-    closeAddActionModal,
-    closeDetailModal,
-  } = usePipelineActions();
-
-  // Wrapper function to convert ActionLogData types
-  const handleActionSubmitWrapper = (actionData: any) => {
-    // Convert from AddActionModal format to usePipelineActions format
-    const convertedActionData = {
-      type: actionData.actionType || actionData.type,
-      description: actionData.notes || actionData.description,
-      date: actionData.actionDate || actionData.date,
-      outcome: actionData.nextAction || actionData.outcome
-    };
-    return handleActionSubmit(convertedActionData);
-  };
-
-  // Map section to recordType for RecordDetailModal
-  const getRecordType = (section: string): 'lead' | 'prospect' | 'opportunity' | 'account' | 'contact' | 'customer' | 'partner' => {
-    switch (section) {
-      case 'leads': return 'lead';
-      case 'prospects': return 'prospect';
-      case 'opportunities': return 'opportunity';
-      case 'companies': return 'account';
-      case 'people': return 'contact';
-      case 'clients': return 'customer';
-      case 'partners': return 'partner';
-      default: return 'lead';
-    }
+    handleDeleteRecord,
+    handleReorderRecords,
+    handleColumnSort
+  } = usePipelineActions({
+    section,
+    workspaceId,
+    onReorderRecords,
+    onColumnSort
+  });
+  
+  // Modal state
+  const [editingRecord, setEditingRecord] = useState<PipelineRecord | null>(null);
+  const [addingAction, setAddingAction] = useState<PipelineRecord | null>(null);
+  const [viewingRecord, setViewingRecord] = useState<PipelineRecord | null>(null);
+  
+  // Handle record click
+  const handleRecordClick = (record: PipelineRecord) => {
+    onRecordClick(record);
   };
   
-  // Handle column sort
-  const handleColumnSort = (columnName: string) => {
-    if (onColumnSort) {
-      onColumnSort(columnName);
-    } else {
-      // Use internal sorting
-      if (sortField === columnName) {
-        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-      } else {
-        setSortField(columnName);
-        setSortDirection('asc');
-      }
-    }
+  // Handle edit
+  const handleEdit = (record: PipelineRecord) => {
+    setEditingRecord(record);
   };
   
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  // Handle add action
+  const handleAddActionClick = (record: PipelineRecord) => {
+    setAddingAction(record);
   };
   
-  // Show skeleton loading state
+  // Handle view details
+  const handleViewDetails = (record: PipelineRecord) => {
+    setViewingRecord(record);
+  };
+  
+  // Close modals
+  const closeEditModal = () => setEditingRecord(null);
+  const closeAddActionModal = () => setAddingAction(null);
+  const closeDetailModal = () => setViewingRecord(null);
+  
+  // Loading state
   if (isLoading) {
+    return <TableSkeleton />;
+  }
+  
+  // Empty state
+  if (!data || data.length === 0) {
     return (
-      <TableSkeleton 
-        section={section}
-        visibleColumns={visibleColumns}
-        rowCount={pageSize}
-      />
+      <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+        <div className="text-lg font-medium mb-2">No {section} found</div>
+        <div className="text-sm">Try adjusting your filters or add new records</div>
+      </div>
     );
   }
   
   return (
-    <div 
-      key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
-      className="bg-white rounded-lg border border-gray-200 flex flex-col relative" 
-      style={{ height: `${tableHeight}px` }}
-    >
-      {/* Table container */}
-      <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
-        <table className="w-full table-auto border-collapse mb-0">
-          
-          {/* Table header */}
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {/* Table */}
+      <div className="overflow-x-auto" style={{ height: tableHeight }}>
+        <table className="w-full">
           <TableHeader
             headers={headers}
             sortField={sortField}
             sortDirection={sortDirection}
-            onColumnSort={handleColumnSort}
-            getColumnWidth={getColumnWidth}
+            onSort={handleColumnSort}
+            section={section}
           />
           
           {/* Table body */}
@@ -306,17 +212,11 @@ export function PipelineTable({
                 recordId: record.id,
                 recordName: record.name || record['fullName'],
                 recordCompany: record['company'],
+                recordRank: record.rank,
                 headersLength: headers.length,
                 visibleColumnsLength: visibleColumns?.length,
-                sampleRecordData: {
-                  name: record.name,
-                  company: record['company'],
-                  state: record['state'],
-                  title: record['title'],
-                  lastAction: record['lastAction'],
-                  nextAction: record['nextAction'],
-                  allKeys: Object.keys(record).slice(0, 10) // Show first 10 keys
-                }
+                // Show first 10 keys
+                recordKeys: Object.keys(record).slice(0, 10)
               });
               
               // Simple table row for debugging
@@ -332,7 +232,23 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        cellContent = String(index + 1);
+                        // Use rank from database if available, otherwise calculate global rank
+                        const dbRank = record.rank;
+                        console.log(`🔍 [PipelineTableRefactored] Row ${index} rank debug:`, {
+                          recordName: record.name || record['fullName'],
+                          dbRank: dbRank,
+                          dbRankType: typeof dbRank,
+                          currentPage: currentPage,
+                          pageSize: pageSize,
+                          index: index
+                        });
+                        if (dbRank && dbRank > 0) {
+                          cellContent = String(dbRank);
+                        } else {
+                          // Fallback: Calculate global rank across all pages
+                          const globalRank = (currentPage - 1) * pageSize + index + 1;
+                          cellContent = String(globalRank);
+                        }
                         break;
                       case 'company':
                         // Handle both string and object company data
@@ -340,7 +256,7 @@ export function PipelineTable({
                         if (typeof company === 'object' && company !== null) {
                           cellContent = company.name || company.companyName || 'Company';
                         } else {
-                          cellContent = company || record['companyName'] || record['organization'] || 'Company';
+                          cellContent = record['name'] || company || record['companyName'] || record['organization'] || 'Company';
                         }
                         break;
                       case 'person':
@@ -358,40 +274,19 @@ export function PipelineTable({
                       case 'next action':
                         cellContent = record['nextAction'] || record['nextActionDescription'] || 'No action planned';
                         break;
+                      case 'stage':
+                        cellContent = record['stage'] || record['status'] || 'Unknown';
+                        break;
+                      case 'value':
+                        cellContent = record['value'] || record['amount'] || record['revenue'] || 'Unknown';
+                        break;
                       default:
-                        const value = record[header.toLowerCase()] || record[header];
-                        cellContent = value ? String(value) : '';
+                        cellContent = record[header.toLowerCase()] || record[header] || '';
                     }
                     
                     return (
-                      <td
-                        key={`${record.id}-${header}`}
-                        className="px-6 py-3 whitespace-nowrap text-sm text-gray-900"
-                        style={{ width: getColumnWidth(headerIndex) }}
-                      >
-                        {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
-                          <div className="flex items-center gap-2">
-                            {(() => {
-                              const timing = header.toLowerCase() === 'last action' 
-                                ? getLastActionTiming(record)
-                                : getNextActionTiming(record);
-                              return (
-                                <>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
-                                    {timing.text}
-                                  </span>
-                                  <span className="text-sm text-gray-600 font-normal truncate max-w-32">
-                                    {cellContent}
-                                  </span>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        ) : (
-                          <div className="text-sm text-gray-900 truncate">
-                            {cellContent}
-                          </div>
-                        )}
+                      <td key={headerIndex} className="px-4 py-3 text-sm text-gray-900">
+                        {cellContent}
                       </td>
                     );
                   })}
@@ -403,42 +298,39 @@ export function PipelineTable({
       </div>
       
       {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalItems={totalItems}
-        onPageChange={handlePageChange}
-      />
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
+      )}
       
       {/* Modals */}
-      {editModalOpen && selectedRecord && (
+      {editingRecord && (
         <EditRecordModal
-          record={selectedRecord}
-          isOpen={editModalOpen}
+          record={editingRecord}
+          section={section}
           onClose={closeEditModal}
-          onSave={handleEditSubmit}
-          recordType={section}
-          isLoading={isSubmitting}
+          onSave={handleEditRecord}
         />
       )}
       
-      {addActionModalOpen && selectedRecord && (
+      {addingAction && (
         <AddActionModal
-          record={selectedRecord}
-          isOpen={addActionModalOpen}
+          record={addingAction}
+          section={section}
           onClose={closeAddActionModal}
-          onSubmit={handleActionSubmitWrapper}
-          recordType={section}
-          isLoading={isSubmitting}
+          onSave={handleAddAction}
         />
       )}
       
-      {detailModalOpen && selectedRecord && (
+      {viewingRecord && (
         <RecordDetailModal
-          record={selectedRecord}
-          recordType={getRecordType(section)}
-          isOpen={detailModalOpen}
+          record={viewingRecord}
+          section={section}
           onClose={closeDetailModal}
         />
       )}
