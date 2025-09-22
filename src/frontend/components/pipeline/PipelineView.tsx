@@ -685,11 +685,6 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     const dataToFilter = sectionDataArray || [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
-    // For speedrun and companies, don't sort - preserve API ranking order
-    if (section === 'speedrun' || section === 'companies') {
-      return dataToFilter;
-    }
-
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = dataToFilter;
     if (section === 'speedrun') {
@@ -779,8 +774,11 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       return matchesSearch && matchesVertical && matchesRevenue && matchesLastContacted && matchesStatus && matchesPriority && matchesTimezone;
     });
 
-    // Apply smart ranking or sorting
-    if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
+    // Apply smart ranking or sorting - but preserve API ranking for speedrun and companies
+    if (section === 'speedrun' || section === 'companies') {
+      // For speedrun and companies, preserve API ranking order - no additional sorting
+      // The search filter has already been applied above
+    } else if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
       // Smart combined ranking based on multiple criteria
       filtered = [...filtered].sort((a: any, b: any) => {
         // Calculate smart ranking score for each record
