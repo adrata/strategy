@@ -210,7 +210,7 @@ function PipelineSections({
     loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.people || []).length === 0,
-    count: finalCounts.people || 0
+    count: (acquisitionData?.acquireData?.people || []).length // Use actual data length instead of cached count
   };
   
   const clientsData = {
