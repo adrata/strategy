@@ -88,8 +88,11 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'people':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'company', label: 'Company' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'career', label: 'Career' },
+            { id: 'role', label: 'Role' },
+            { id: 'enablers', label: 'Enablers' },
+            { id: 'company', label: 'Company' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
@@ -105,8 +108,11 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'company', label: 'Company' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'career', label: 'Career' },
+            { id: 'role', label: 'Role' },
+            { id: 'enablers', label: 'Enablers' },
+            { id: 'company', label: 'Company' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
@@ -114,8 +120,11 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       case 'prospects':
         return [
           { id: 'overview', label: 'Overview' },
-          { id: 'company', label: 'Company' },
           { id: 'intelligence', label: 'Intelligence' },
+          { id: 'career', label: 'Career' },
+          { id: 'role', label: 'Role' },
+          { id: 'enablers', label: 'Enablers' },
+          { id: 'company', label: 'Company' },
           { id: 'buyer-groups', label: 'Buyer Group' },
           { id: 'notes', label: 'Notes' },
           { id: 'timeline', label: 'Timeline' }
@@ -361,6 +370,40 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     </div>
   );
 
+  const renderRoleTab = () => (
+    <div className="p-6 space-y-4">
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-sm">Role information is read-only in edit mode.</p>
+        <p className="text-xs text-gray-400 mt-2">Use the Overview tab to edit basic information.</p>
+      </div>
+    </div>
+  );
+
+  const renderEnablersTab = () => (
+    <div className="p-6 space-y-4">
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-sm">Enablers and reports are read-only in edit mode.</p>
+        <p className="text-xs text-gray-400 mt-2">Use the main record view to access reports and tools.</p>
+      </div>
+    </div>
+  );
+
+  const renderIntelligenceTab = () => (
+    <div className="p-6 space-y-4">
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-sm">Intelligence data will appear here when available.</p>
+      </div>
+    </div>
+  );
+
+  const renderBuyerGroupsTab = () => (
+    <div className="p-6 space-y-4">
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-sm">Buyer group information will appear here when available.</p>
+      </div>
+    </div>
+  );
+
   const renderWorkplaceTab = () => (
     <div className="p-6 space-y-4">
       <div className="text-center py-12 text-gray-500">
@@ -442,18 +485,22 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       switch (activeTab) {
         case 'overview':
           return renderHomeTab();
-        case 'strategy':
-          return renderStrategyTab();
+        case 'career':
+          return renderCareerTab();
+        case 'role':
+          return renderRoleTab();
+        case 'enablers':
+          return renderEnablersTab();
         case 'company':
           return renderCompanyTab();
-        case 'profile':
-          return renderProfileTab();
-        case 'engagement':
-          return renderEngagementTab();
-        case 'timeline':
-          return renderTimelineTab();
+        case 'intelligence':
+          return renderIntelligenceTab();
+        case 'buyer-groups':
+          return renderBuyerGroupsTab();
         case 'notes':
           return renderNotesTab();
+        case 'timeline':
+          return renderTimelineTab();
         default:
           return renderHomeTab();
       }
@@ -493,14 +540,18 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       switch (activeTab) {
         case 'overview':
           return renderHomeTab();
-        case 'strategy':
-          return renderStrategyTab();
-        case 'persona':
-          return renderPersonaTab();
         case 'career':
           return renderCareerTab();
-        case 'workplace':
-          return renderWorkplaceTab();
+        case 'role':
+          return renderRoleTab();
+        case 'enablers':
+          return renderEnablersTab();
+        case 'company':
+          return renderCompanyTab();
+        case 'intelligence':
+          return renderIntelligenceTab();
+        case 'buyer-groups':
+          return renderBuyerGroupsTab();
         case 'notes':
           return renderNotesTab();
         case 'timeline':

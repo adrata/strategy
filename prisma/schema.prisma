@@ -639,7 +639,6 @@ model people {
   engagementScore   Float?               @default(0)
   funnelStage       String?              @default("Prospect") @db.VarChar(50)
   buyerGroupRole    String?              @db.VarChar(50)
-  rank              Int?                 @default(0)
   
   buyerGroups       BuyerGroupToPerson[]
   actions           actions[]

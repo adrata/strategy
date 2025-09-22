@@ -154,10 +154,23 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const professionalGoals = customFields.goals || notes.professionalGoals || [];
 
   return (
-    <div className="p-6 space-y-8">
-      {/* Buyer Group Intelligence */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Intelligence</h3>
+    <div className="space-y-8">
+      {/* Individual Intelligence Summary */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Intelligence Summary</h3>
+        <div>
+          <div className="block text-sm font-medium text-gray-600 mb-2">Profile Overview</div>
+          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+            {record?.fullName || record?.name || 'This individual'} serves as a {buyerRole} with {influence}% influence and {decisionPower}% decision power in their organization. 
+            Their communication style is {communicationStyle.toLowerCase()} with a {decisionMakingStyle.toLowerCase()} approach to decision-making. 
+            Current engagement level is {engagement}, indicating {engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'} receptivity to outreach.
+          </div>
+        </div>
+      </div>
+
+      {/* Role & Influence Analysis */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Role & Influence Analysis</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Role Analysis</h4>
@@ -284,6 +297,32 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 <div className="text-sm text-gray-500">No professional goals identified</div>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Challenges & Opportunities */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Challenges & Opportunities</h3>
+        <div>
+          <div className="block text-sm font-medium text-gray-600 mb-2">Current Challenges</div>
+          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+            {record?.fullName || record?.name || 'This individual'} faces several professional challenges including {painPoints.length > 0 ? painPoints.slice(0, 2).join(', ') : 'operational efficiency, team productivity, and strategic decision-making'}. 
+            Their role as a {buyerRole} requires balancing {decisionMakingStyle.toLowerCase()} decision-making with {communicationStyle.toLowerCase()} communication preferences, 
+            while managing {influence}% influence within their organization and maintaining {engagement} engagement levels with external partners.
+          </div>
+        </div>
+      </div>
+
+      {/* Strategic Opportunities */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Strategic Opportunities</h3>
+        <div>
+          <div className="block text-sm font-medium text-gray-600 mb-2">Engagement Potential</div>
+          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+            {record?.fullName || record?.name || 'This individual'} presents significant partnership potential as a {buyerRole} with {decisionPower}% decision power and {influence}% organizational influence. 
+            Their {communicationStyle.toLowerCase()} communication style and {decisionMakingStyle.toLowerCase()} approach to decisions create opportunities for {engagement.includes('Interested') || engagement.includes('Warming') ? 'collaborative engagement and solution co-development' : 'relationship building and value demonstration'}. 
+            Key focus areas include {professionalGoals.length > 0 ? professionalGoals.slice(0, 2).join(', ') : 'professional development, strategic initiatives, and operational improvements'}.
           </div>
         </div>
       </div>

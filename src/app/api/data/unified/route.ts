@@ -912,13 +912,18 @@ async function getMultipleRecords(
         fullName: true,
         email: true,
         company: true,
+        companyId: true,
         jobTitle: true,
+        phone: true,
+        linkedinUrl: true,
+        customFields: true,
+        tags: true,
         status: true,
         createdAt: true,
         updatedAt: true
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 1000 // Load all people records
+      take: pagination?.limit || 2000 // Load all people records (increased for large workspaces)
     });
     
     return { success: true, data: people };
@@ -2376,7 +2381,21 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 2000, // Load all people for full pipeline view
-        select: { id: true, fullName: true, firstName: true, lastName: true, company: true, updatedAt: true }
+        select: { 
+          id: true, 
+          fullName: true, 
+          firstName: true, 
+          lastName: true, 
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          email: true,
+          phone: true,
+          linkedinUrl: true,
+          customFields: true,
+          tags: true,
+          updatedAt: true 
+        }
       }),
       prisma.clients.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },

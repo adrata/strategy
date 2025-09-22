@@ -51,6 +51,10 @@ import {
   UniversalSellerCompaniesTab
 } from './tabs';
 
+// Import new role and enablers tab components
+import { UniversalRoleTab } from './tabs/UniversalRoleTab';
+import { UniversalEnablersTab } from './tabs/UniversalEnablersTab';
+
 // Import new dedicated overview components
 import { ProspectOverviewTab } from './tabs/ProspectOverviewTab';
 import { PersonOverviewTab } from './tabs/PersonOverviewTab';
@@ -107,8 +111,11 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'company', label: 'Company' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'career', label: 'Career' },
+            { id: 'role', label: 'Role' },
+            { id: 'enablers', label: 'Enablers' },
+            { id: 'company', label: 'Company' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
@@ -116,8 +123,11 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'company', label: 'Company' },
         { id: 'intelligence', label: 'Intelligence' },
+        { id: 'career', label: 'Career' },
+        { id: 'role', label: 'Role' },
+        { id: 'enablers', label: 'Enablers' },
+        { id: 'company', label: 'Company' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
@@ -143,8 +153,11 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'people':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'company', label: 'Company' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'career', label: 'Career' },
+            { id: 'role', label: 'Role' },
+            { id: 'enablers', label: 'Enablers' },
+            { id: 'company', label: 'Company' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
@@ -1276,6 +1289,21 @@ export function UniversalRecordTemplate({
             recordType === 'people' ?
               <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
               <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
+        case 'career':
+          console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
+        case 'role':
+          console.log(`🎭 [UNIVERSAL] Rendering role tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalRoleTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
+        case 'enablers':
+          console.log(`🔧 [UNIVERSAL] Rendering enablers tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalEnablersTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'strategy':
           console.log(`🎯 [UNIVERSAL] Rendering strategy tab for ${recordType}`);

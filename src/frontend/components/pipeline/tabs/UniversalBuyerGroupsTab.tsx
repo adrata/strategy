@@ -66,26 +66,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         // ⚡ PERFORMANCE: Check if we already have people data in context
         // This avoids unnecessary API calls when data is already available
-        const workspaceId = record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
-        const userId = '01K1VBYZG41K9QA0D9CF06KNRG';
+        const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // Correct TOP workspace
+        const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Use record's assigned user or workspace ID
         
-        // Try to get people data from localStorage cache first
+        // Clear cache for correct workspace to force fresh data
         const cacheKey = `people-${workspaceId}-${userId}`;
-        const cachedData = localStorage.getItem(cacheKey);
+        localStorage.removeItem(cacheKey); // Clear cache to force fresh data
         
         let peopleData = [];
-        
-        if (cachedData) {
-          try {
-            const parsed = JSON.parse(cachedData);
-            if (parsed.timestamp && Date.now() - parsed.timestamp < 300000) { // 5 minute cache
-              peopleData = parsed.data || [];
-              console.log('⚡ [BUYER GROUPS] Using cached people data');
-            }
-          } catch (e) {
-            console.log('Cache parse error, fetching fresh data');
-          }
-        }
         
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
@@ -132,6 +120,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log(`🔍 [BUYER GROUPS] All people data:`, peopleData.slice(0, 3)); // Show first 3 people for debugging
         console.log(`🔍 [BUYER GROUPS] Company name being searched: "${companyName}"`);
         console.log(`🔍 [BUYER GROUPS] Record ID: "${record.id}"`);
+        console.log(`🔍 [BUYER GROUPS] Workspace ID: "${workspaceId}"`);
+        console.log(`🔍 [BUYER GROUPS] User ID: "${userId}"`);
+        console.log(`🔍 [BUYER GROUPS] Total people fetched: ${peopleData.length}`);
+        
+        // Debug: Show all people with their company IDs
+        peopleData.forEach((person, index) => {
+          console.log(`🔍 [BUYER GROUPS] Person ${index + 1}: ${person.fullName}, Company ID: ${person.companyId}, Company Name: ${person.company?.name || person.company}`);
+        });
 
         // If no people found in database, check for CoreSignal people data
         let coresignalPeople = [];
