@@ -86,7 +86,7 @@ async function createBackup() {
 async function performDataSwap() {
   console.log('🔄 Starting data swap migration...');
   
-  // Use transaction for atomicity
+  // Use transaction for atomicity with extended timeout for large dataset
   const result = await prisma.$transaction(async (tx) => {
     // Step 1: Fetch all current data
     console.log('📥 Fetching current data...');
@@ -103,7 +103,7 @@ async function performDataSwap() {
     await tx.leads.deleteMany({});
     await tx.prospects.deleteMany({});
     
-    // Step 3: Insert prospects data into leads table
+    // Step 3: Insert prospects data into leads table (in batches for performance)
     console.log('📝 Converting prospects → leads...');
     if (currentProspects.length > 0) {
       const prospectsAsLeads = currentProspects.map(prospect => ({
@@ -253,6 +253,9 @@ async function performDataSwap() {
       newLeads: currentProspects.length, // Prospects became leads
       newProspects: currentLeads.length  // Leads became prospects
     };
+  }, {
+    maxWait: 30000, // 30 seconds
+    timeout: 60000  // 60 seconds
   });
   
   console.log('✅ Data swap completed successfully!');
