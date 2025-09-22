@@ -327,7 +327,7 @@ export function PipelineTable({
                     }
                     
                     return (
-                      <td key={headerIndex} className="px-4 py-3 text-sm text-gray-900">
+                      <td key={headerIndex} className={`${header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? 'pl-2 pr-4' : 'px-4'} py-3 text-sm text-gray-900`}>
                         {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
                           <div className="flex items-center gap-2">
                             {(() => {
