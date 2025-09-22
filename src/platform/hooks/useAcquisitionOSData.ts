@@ -94,7 +94,7 @@ export function useAcquisitionOSData(
   // Simplified cache key - let useAdrataData handle workspace-specific caching
   // Add version to force cache refresh when data transformation is updated
   const cacheKey = authUser?.id && activeWorkspace?.id ? 
-    `acquisition-os:v3:${activeWorkspace.id}:${authUser.id}` : null;
+    `acquisition-os:v4:${activeWorkspace.id}:${authUser.id}` : null;
 
   // Helper function to map API data to acquisition format
   const mapApiDataToAcquisitionFormat = useCallback((apiData: any) => {
