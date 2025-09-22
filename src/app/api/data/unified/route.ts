@@ -2157,7 +2157,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 2000, // Load all companies for full pipeline view
-        select: { id: true, name: true, industry: true, updatedAt: true, rank: true }
+        select: { id: true, name: true, industry: true, updatedAt: true }
       }).then(companies => {
         // Sort companies to put 5Bars Services first
         const sortedCompanies = companies.sort((a, b) => {
@@ -2175,6 +2175,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         for (let i = 0; i < sortedCompanies.length; i++) {
           sortedCompanies[i].rank = i + 1;
         }
+
+        console.log(`🔍 [UNIFIED API] Companies ranking debug:`, {
+          totalCompanies: sortedCompanies.length,
+          firstFewRanks: sortedCompanies.slice(0, 5).map(c => ({ name: c.name, rank: c.rank }))
+        });
 
         return sortedCompanies;
       }),
