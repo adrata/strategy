@@ -30,9 +30,19 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
 
   // Extract career data from CoreSignal and other sources
   const coresignalData = record?.customFields?.coresignalData || {};
+  
+  // Safely extract company name - handle both string and object formats
+  const getCompanyName = (company: any): string => {
+    if (typeof company === 'string') return company;
+    if (company && typeof company === 'object') {
+      return company.name || company.companyName || 'Unknown Company';
+    }
+    return 'Unknown Company';
+  };
+  
   const careerData = {
     currentRole: record.jobTitle || record.title || 'Unknown Title',
-    currentCompany: record.company || 'Unknown Company',
+    currentCompany: getCompanyName(record.company),
     department: record.department || 'Unknown Department',
     seniority: record.seniority || 'Unknown',
     yearsInRole: coresignalData.years_in_current_role || 'Unknown',
@@ -138,7 +148,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <div>
                         <h4 className="font-medium text-gray-900">{role.title || 'Unknown Title'}</h4>
-                        <div className="text-sm text-gray-600">{role.company || 'Unknown Company'}</div>
+                        <div className="text-sm text-gray-600">{getCompanyName(role.company)}</div>
                       </div>
                     </div>
                     <div className="ml-6 space-y-1">
