@@ -894,7 +894,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       try {
         const companyData = await prisma.companies.findUnique({
           where: { id: record.companyId },
-          select: { id: true, name: true }
+          select: { id: true, name: true, industry: true, vertical: true }
         });
         record.company = companyData;
       } catch (error) {
@@ -1030,7 +1030,7 @@ async function getMultipleRecords(
           try {
             const companyData = await prisma.companies.findUnique({
               where: { id: person.companyId },
-              select: { id: true, name: true }
+              select: { id: true, name: true, industry: true, vertical: true }
             });
             return {
               ...person,

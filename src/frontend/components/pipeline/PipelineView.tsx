@@ -599,7 +599,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         (record['name'] && record.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['fullName'] && record.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['title'] && record.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (record['company'] && record.company && record.company.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (record['company'] && record.company && (typeof record.company === 'string' ? record.company : record.company.name) && (typeof record.company === 'string' ? record.company : record.company.name).toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['email'] && record.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (record['companyName'] && record.companyName.toLowerCase().includes(searchQuery.toLowerCase()));
 
