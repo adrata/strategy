@@ -43,6 +43,7 @@ interface PipelineTableProps {
   visibleColumns?: string[];
   pageSize?: number;
   isLoading?: boolean;
+  searchQuery?: string;
 }
 
 // -------- Constants --------
@@ -117,6 +118,7 @@ export function PipelineTable({
   visibleColumns,
   pageSize = DEFAULT_PAGE_SIZE,
   isLoading = false,
+  searchQuery,
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   console.log('🔍 [PipelineTableRefactored] Sample data:', data?.slice(0, 2));
@@ -160,7 +162,8 @@ export function PipelineTable({
   } = usePipelineData({ 
     data, 
     pageSize,
-    disableSorting: section === 'companies' // Disable sorting for companies to preserve API ranking
+    disableSorting: section === 'companies', // Disable sorting for companies to preserve API ranking
+    searchQuery // Pass search query to hook
   });
   
   console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {

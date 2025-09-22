@@ -176,7 +176,7 @@ export function TableRow({
               case 'rank':
                 return (
                   <td key="rank" className={textClasses}>
-                    <div className="text-left font-medium">{index + 1}</div>
+                    <div className="text-left font-medium">{record.rank || index + 1}</div>
                   </td>
                 );
               case 'company':

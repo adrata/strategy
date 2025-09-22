@@ -23,6 +23,7 @@ interface UsePipelineDataProps {
   data: PipelineRecord[];
   pageSize?: number;
   disableSorting?: boolean; // Add option to disable sorting
+  searchQuery?: string; // Allow external search query to be passed in
 }
 
 interface UsePipelineDataReturn {
@@ -187,10 +188,12 @@ function sortData(
 export function usePipelineData({ 
   data, 
   pageSize = 50,
-  disableSorting = false
+  disableSorting = false,
+  searchQuery: externalSearchQuery = ''
 }: UsePipelineDataProps): UsePipelineDataReturn {
-  // Filter state
-  const [searchQuery, setSearchQuery] = useState('');
+  // Filter state - use external search query if provided
+  const [internalSearchQuery, setSearchQuery] = useState('');
+  const searchQuery = externalSearchQuery || internalSearchQuery;
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [verticalFilter, setVerticalFilter] = useState('all');
@@ -207,6 +210,10 @@ export function usePipelineData({
   
   // Filtered data
   const filteredData = useMemo(() => {
+    // If external search query is provided, assume data is already filtered
+    if (externalSearchQuery) {
+      return data;
+    }
     return filterData(
       data,
       searchQuery,
@@ -226,6 +233,7 @@ export function usePipelineData({
     revenueFilter,
     lastContactedFilter,
     timezoneFilter,
+    externalSearchQuery,
   ]);
   
   // Sorted data

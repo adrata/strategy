@@ -1231,6 +1231,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  searchQuery={searchQuery}
                 />
               ) : section === 'sellers' ? (
                 // Buyer Group style design for Sellers

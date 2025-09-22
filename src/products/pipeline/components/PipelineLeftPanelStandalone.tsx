@@ -210,7 +210,7 @@ function PipelineSections({
     loading: loading || fallbackLoading,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.people || []).length === 0,
-    count: (acquisitionData?.acquireData?.people || []).length // Use actual data length instead of cached count
+    count: finalCounts.people || 0 // Use database count instead of limited array length
   };
   
   const clientsData = {
@@ -343,7 +343,7 @@ function PipelineSections({
       clients: clientsData.count,
       partners: partnersData.count,
       companies: companiesData.count, // Use actual companies count from database
-      people: peopleData.count, // Use actual people count from database
+      people: finalCounts.people || 0, // Use database count directly to ensure accuracy
       sellers: sellersData.count
     };
     
