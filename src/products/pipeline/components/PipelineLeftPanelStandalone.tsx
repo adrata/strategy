@@ -322,24 +322,8 @@ function PipelineSections({
              status !== 'closed';
     });
     
-    // Calculate people and companies from leads and prospects data
-    const allLeadsAndProspects = [...(leadsData.data || []), ...(prospectsData.data || [])];
-    
-    // Count unique people (from leads and prospects)
-    const uniquePeople = new Set();
-    allLeadsAndProspects.forEach((item: any) => {
-      if (item.fullName) {
-        uniquePeople.add(item.fullName);
-      }
-    });
-    
-    // Count unique companies (from leads and prospects)
-    const uniqueCompanies = new Set();
-    allLeadsAndProspects.forEach((item: any) => {
-      if (item.company) {
-        uniqueCompanies.add(item.company);
-      }
-    });
+    // Use actual people and companies data from hooks instead of calculating from leads/prospects
+    // This ensures we get the real counts from the database
     
     // Use real data from hooks
     const speedrunItems = acquisitionData?.acquireData?.speedrunItems || [];
@@ -358,8 +342,8 @@ function PipelineSections({
       prospects: prospectsData.count,
       clients: clientsData.count,
       partners: partnersData.count,
-      companies: uniqueCompanies.size, // Count unique companies from leads/prospects
-      people: uniquePeople.size, // Count unique people from leads/prospects
+      companies: companiesData.count, // Use actual companies count from database
+      people: peopleData.count, // Use actual people count from database
       sellers: sellersData.count
     };
     

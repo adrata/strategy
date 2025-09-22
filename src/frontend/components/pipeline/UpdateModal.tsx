@@ -90,10 +90,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'overview', label: 'Overview' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'role', label: 'Role' },
-            { id: 'enablers', label: 'Enablers' },
-            { id: 'company', label: 'Company' },
-            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];
@@ -110,10 +106,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'overview', label: 'Overview' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'role', label: 'Role' },
-            { id: 'enablers', label: 'Enablers' },
-            { id: 'company', label: 'Company' },
-            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];
@@ -122,10 +114,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'overview', label: 'Overview' },
           { id: 'intelligence', label: 'Intelligence' },
           { id: 'career', label: 'Career' },
-          { id: 'role', label: 'Role' },
-          { id: 'enablers', label: 'Enablers' },
-          { id: 'company', label: 'Company' },
-          { id: 'buyer-groups', label: 'Buyer Group' },
           { id: 'notes', label: 'Notes' },
           { id: 'timeline', label: 'Timeline' }
         ];

@@ -113,10 +113,6 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
             { id: 'overview', label: 'Overview' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'role', label: 'Role' },
-            { id: 'enablers', label: 'Enablers' },
-            { id: 'company', label: 'Company' },
-            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];
@@ -125,10 +121,6 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'overview', label: 'Overview' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'role', label: 'Role' },
-        { id: 'enablers', label: 'Enablers' },
-        { id: 'company', label: 'Company' },
-        { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
@@ -155,10 +147,6 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
             { id: 'overview', label: 'Overview' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'role', label: 'Role' },
-            { id: 'enablers', label: 'Enablers' },
-            { id: 'company', label: 'Company' },
-            { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' }
           ];
@@ -1292,16 +1280,6 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
-        case 'role':
-          console.log(`🎭 [UNIVERSAL] Rendering role tab for ${recordType}`);
-          return renderTabWithErrorBoundary(
-            <UniversalRoleTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
-          );
-        case 'enablers':
-          console.log(`🔧 [UNIVERSAL] Rendering enablers tab for ${recordType}`);
-          return renderTabWithErrorBoundary(
-            <UniversalEnablersTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
-          );
         case 'strategy':
           console.log(`🎯 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
           return renderTabWithErrorBoundary(
@@ -1310,8 +1288,8 @@ export function UniversalRecordTemplate({
         case 'buyer-groups':
           console.log(`👥 [UNIVERSAL] Rendering buyer groups tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            recordType === 'people' ? 
-              <UniversalBuyerGroupTab key={activeTab} recordType={recordType} /> :
+            recordType === 'companies' ? 
+              <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'insights':
@@ -1328,12 +1306,6 @@ export function UniversalRecordTemplate({
               recordType === 'people' ?
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
-          );
-        case 'company':
-          return renderTabWithErrorBoundary(
-            recordType === 'people' ? 
-              <ComprehensiveCompanyTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'companies':
           return renderTabWithErrorBoundary(

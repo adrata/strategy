@@ -1012,15 +1012,11 @@ async function getMultipleRecords(
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null,
+        deletedAt: null
         // Modified: Show all people in workspace, not just assigned ones
-        OR: [
-          { assignedUserId: userId }, // User's assigned people
-          { assignedUserId: null }    // Unassigned people in workspace
-        ]
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 2000 // Load all people records (increased for large workspaces)
+      take: pagination?.limit || 5000 // Load all people records (increased for large workspaces)
     });
     
     // Manually lookup company names for people that have companyId
@@ -2650,14 +2646,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.people.findMany({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
+          // Removed OR condition to show all people in workspace
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 2000, // Load all people for full pipeline view
+        take: 5000, // Load all people for full pipeline view (increased for large workspaces)
         select: { 
           id: true, 
           fullName: true, 
