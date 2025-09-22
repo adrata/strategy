@@ -526,44 +526,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const handleMemberClick = async (member: any) => {
     console.log('Clicking on member:', member);
     try {
-      const workspaceId = record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
-      const userId = '01K1VBYZG41K9QA0D9CF06KNRG';
-      
-      // First, try to find a lead record for this person using GET request
-      console.log('Looking for lead with personId:', member.id);
-      const leadResponse = await fetch(`/api/data/unified?type=leads&action=get&workspaceId=${workspaceId}&userId=${userId}&filters=${encodeURIComponent(JSON.stringify({ personId: member.id }))}`);
-
-      if (leadResponse.ok) {
-        const leadResult = await leadResponse.json();
-        console.log('Lead search result:', leadResult);
-        if (leadResult['success'] && leadResult.data.length > 0) {
-          const lead = leadResult['data'][0];
-          const leadSlug = `${lead.fullName.toLowerCase().replace(/\s+/g, '-')}-${lead.id}`;
-          console.log('Found lead, navigating to:', `/top/leads/${leadSlug}`);
-          router.push(`/top/leads/${leadSlug}`);
-          return;
-        }
-      }
-
-      // If no lead found, try to find a prospect record using GET request
-      console.log('Looking for prospect with personId:', member.id);
-      const prospectResponse = await fetch(`/api/data/unified?type=prospects&action=get&workspaceId=${workspaceId}&userId=${userId}&filters=${encodeURIComponent(JSON.stringify({ personId: member.id }))}`);
-
-      if (prospectResponse.ok) {
-        const prospectResult = await prospectResponse.json();
-        console.log('Prospect search result:', prospectResult);
-        if (prospectResult['success'] && prospectResult.data.length > 0) {
-          const prospect = prospectResult['data'][0];
-          const prospectSlug = `${prospect.fullName.toLowerCase().replace(/\s+/g, '-')}-${prospect.id}`;
-          console.log('Found prospect, navigating to:', `/top/prospects/${prospectSlug}`);
-          router.push(`/top/prospects/${prospectSlug}`);
-          return;
-        }
-      }
-
-      // If no lead or prospect found, navigate to people record with proper URL structure
+      // Navigate directly to people record
       const peopleSlug = `${member.name.toLowerCase().replace(/\s+/g, '-')}-${member.id}`;
-      console.log('No lead/prospect found, navigating to people record:', `/top/people/${peopleSlug}`);
+      console.log('Navigating directly to people record:', `/top/people/${peopleSlug}`);
       router.push(`/top/people/${peopleSlug}`);
     } catch (error) {
       console.error('Error navigating to member record:', error);
