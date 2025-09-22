@@ -1099,70 +1099,6 @@ async function getMultipleRecords(
   
   // Special handling for prospects and leads to include company data
   if (type === 'prospects') {
-    // SWAPPED: When requesting "prospects", return leads data
-    const leads = await prisma.leads.findMany({
-      where: {
-        workspaceId,
-        deletedAt: null
-      },
-      orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 1000,
-      skip: pagination?.offset || 0,
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        priority: true,
-        source: true,
-        createdAt: true,
-        updatedAt: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        workspaceId: true,
-        assignedUserId: true
-      }
-    });
-
-    // Lookup company names for leads that have companyId but no company name
-    const leadsWithCompanies = await Promise.all(
-      leads.map(async (lead) => {
-        if (lead.companyId && !lead.company) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: lead.companyId },
-              select: { name: true }
-            });
-            return {
-              ...lead,
-              company: companyData?.name || lead.company || null,
-              companyName: companyData?.name || lead.company || null
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for lead ${lead.id}:`, error);
-            return lead;
-          }
-        }
-        return {
-          ...lead,
-          companyName: lead.company
-        };
-      })
-    );
-
-    return { success: true, data: leadsWithCompanies };
-  }
-
-  if (type === 'leads') {
-    // SWAPPED: When requesting "leads", return prospects data
     const prospects = await prisma.prospects.findMany({
       where: {
         workspaceId,
@@ -1222,6 +1158,68 @@ async function getMultipleRecords(
     );
 
     return { success: true, data: prospectsWithCompanies };
+  }
+
+  if (type === 'leads') {
+    const leads = await prisma.leads.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
+      },
+      orderBy: [{ updatedAt: 'desc' }],
+      take: pagination?.limit || 1000,
+      skip: pagination?.offset || 0,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
+        status: true,
+        priority: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        workspaceId: true,
+        assignedUserId: true
+      }
+    });
+
+    // Lookup company names for leads that have companyId but no company name
+    const leadsWithCompanies = await Promise.all(
+      leads.map(async (lead) => {
+        if (lead.companyId && !lead.company) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: lead.companyId },
+              select: { name: true }
+            });
+            return {
+              ...lead,
+              company: companyData?.name || lead.company || null,
+              companyName: companyData?.name || lead.company || null
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for lead ${lead.id}:`, error);
+            return lead;
+          }
+        }
+        return {
+          ...lead,
+          companyName: lead.company
+        };
+      })
+    );
+
+    return { success: true, data: leadsWithCompanies };
   }
   
   const model = getPrismaModel(type);
@@ -1484,9 +1482,9 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     if (type === 'companies') {
       createData['id'] = `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'leads') {
-      createData['id'] = `prospect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // SWAPPED: leads create prospects
+      createData['id'] = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'prospects') {
-      createData['id'] = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`; // SWAPPED: prospects create leads
+      createData['id'] = `prospect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'opportunities') {
       createData['id'] = `opp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     } else if (type === 'people') {
@@ -2444,8 +2442,8 @@ async function searchSpecificType(
 // 🆕 PRISMA MODEL MAPPING
 function getPrismaModel(type: string): any {
   const modelMap: { [key: string]: any } = {
-    leads: prisma.prospects,    // SWAPPED: leads requests get prospects model
-    prospects: prisma.leads,    // SWAPPED: prospects requests get leads model
+    leads: prisma.leads,
+    prospects: prisma.prospects,
     opportunities: prisma.opportunities,
     companies: prisma.companies,
     people: prisma.people,

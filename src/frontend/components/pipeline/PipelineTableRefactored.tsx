@@ -277,17 +277,15 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // Use rank from database if available, otherwise calculate global rank
-                        const dbRank = record.rank;
-                        console.log(`🔍 [PipelineTableRefactored] Row ${index} rank debug:`, {
-                          recordName: record.name || record['fullName'],
-                          dbRank: dbRank,
-                          dbRankType: typeof dbRank,
-                          currentPage: currentPage,
-                          pageSize: pageSize,
-                          index: index
-                        });
-                        if (dbRank && dbRank > 0) {
+                        // 🎯 STRATEGIC RANKING: Prioritize winningScore.rank for alphanumeric display
+                        const winningRank = record['winningScore']?.['rank'];
+                        const dbRank = record['rank'];
+                        
+                        
+                        // Use alphanumeric winning rank if available (1A, 1B, 2A, etc.)
+                        if (winningRank && typeof winningRank === 'string' && winningRank !== 'TBD') {
+                          cellContent = winningRank;
+                        } else if (dbRank && dbRank > 0) {
                           cellContent = String(dbRank);
                         } else {
                           // Fallback: Calculate global rank across all pages

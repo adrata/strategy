@@ -226,12 +226,34 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'leads': 
       case 'prospects': 
       case 'opportunities': 
-      case 'companies': 
-      case 'people': 
       case 'clients': 
       case 'partners': 
       case 'sellers': 
         return acquireData[section] || [];
+      case 'companies': 
+        const companiesData = acquireData.companies || [];
+        console.log('🏢 [COMPANIES DEBUG] Companies data from API:', {
+          totalCompanies: companiesData.length,
+          sampleCompanies: companiesData.slice(0, 3).map(c => ({ id: c.id, name: c.name, rank: c.rank })),
+          ranksRange: {
+            firstRank: companiesData[0]?.rank,
+            lastRank: companiesData[companiesData.length - 1]?.rank,
+            maxRank: Math.max(...companiesData.map(c => c.rank || 0).filter(r => r > 0))
+          }
+        });
+        return companiesData;
+      case 'people': 
+        const peopleData = acquireData.people || [];
+        console.log('👥 [PEOPLE DEBUG] People data from API:', {
+          totalPeople: peopleData.length,
+          samplePeople: peopleData.slice(0, 3).map(p => ({ id: p.id, name: p.fullName || p.name, rank: p.rank })),
+          ranksRange: {
+            firstRank: peopleData[0]?.rank,
+            lastRank: peopleData[peopleData.length - 1]?.rank,
+            maxRank: Math.max(...peopleData.map(p => p.rank || 0).filter(r => r > 0))
+          }
+        });
+        return peopleData;
       case 'speedrun': 
         const speedrunData = acquireData.speedrunItems || [];
         console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
@@ -248,6 +270,72 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             jobTitle: speedrunData[0].jobTitle
           } : null
         });
+        
+        // 🎯 STRATEGIC RANKING: Apply UniversalRankingEngine to speedrun data for company-based alphanumeric ranks
+        if (speedrunData.length > 0) {
+          try {
+            // Import and apply the UniversalRankingEngine
+            const { UniversalRankingEngine } = require('@/products/speedrun/UniversalRankingEngine');
+            
+            // Transform data to SpeedrunPerson format for ranking
+            const transformedData = speedrunData.map((item: any) => ({
+              id: item.id || `speedrun-${Math.random()}`,
+              name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
+              email: item.email || '',
+              company: item.company || item.companyName || 'Unknown Company',
+              title: item.title || item.jobTitle || 'Unknown Title',
+              phone: item.phone || item.phoneNumber || '',
+              location: item.location || item.city || '',
+              industry: item.industry || 'Technology',
+              status: item.status || 'active',
+              priority: item.priority || 'medium',
+              lastContact: item.lastContact || item.updatedAt,
+              notes: item.notes || '',
+              tags: item.tags || [],
+              source: item.source || 'speedrun',
+              enrichmentScore: item.enrichmentScore || 0,
+              buyerGroupRole: item.buyerGroupRole || 'unknown',
+              currentStage: item.currentStage || 'initial',
+              nextAction: item.nextAction || '',
+              nextActionDate: item.nextActionDate || '',
+              createdAt: item.createdAt || new Date().toISOString(),
+              updatedAt: item.updatedAt || new Date().toISOString(),
+              assignedUser: item.assignedUser || null,
+              workspaceId: item.workspaceId || '',
+              relationship: item.relationship || 'prospect',
+              bio: item.bio || '',
+              interests: item.interests || [],
+              recentActivity: item.recentActivity || '',
+              commission: item.commission || '50K',
+              linkedin: item.linkedin || item.linkedinUrl || '',
+              photo: item.photo || null,
+              ...item // Include any additional fields
+            }));
+            
+            // Apply strategic ranking
+            const rankedData = UniversalRankingEngine.rankProspectsForWinning(
+              transformedData,
+              workspaceName || 'workspace'
+            );
+            
+            console.log('🏆 [SPEEDRUN RANKING] Applied strategic ranking:', {
+              originalCount: speedrunData.length,
+              rankedCount: rankedData.length,
+              sampleRanks: rankedData.slice(0, 5).map(p => ({
+                name: p.name,
+                company: p.company,
+                rank: p.winningScore?.rank,
+                totalScore: p.winningScore?.totalScore
+              }))
+            });
+            
+            return rankedData;
+          } catch (error) {
+            console.error('❌ [SPEEDRUN RANKING] Failed to apply strategic ranking:', error);
+            return speedrunData; // Fallback to original data
+          }
+        }
+        
         return speedrunData;
       default: return [];
     }
@@ -493,14 +581,30 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         return record.status || '';
       
       case 'rank':
-        // Handle rank field - could be numeric or string like "1A"
-        const rank = record.rank || record.stableIndex || 0;
-        if (typeof rank === 'string') {
-          // Extract numeric part from ranks like "1A", "2B"
-          const numMatch = rank.match(/^(\d+)/);
+        // Handle rank field - prioritize winningScore.rank for alphanumeric display
+        const winningRank = record.winningScore?.rank;
+        const fallbackRank = record.rank || record.stableIndex || 0;
+        
+        // 🎯 STRATEGIC RANKING: Use full alphanumeric rank for display and sorting
+        if (winningRank && typeof winningRank === 'string') {
+          // For sorting alphanumeric ranks (1A, 1B, 2A, 2B, etc.)
+          const numMatch = winningRank.match(/^(\d+)([A-Z])$/);
+          if (numMatch) {
+            const companyRank = parseInt(numMatch[1], 10);
+            const prospectLetter = numMatch[2];
+            // Convert to sortable number: Company rank * 100 + letter position
+            // 1A = 100, 1B = 101, 2A = 200, 2B = 201, etc.
+            const letterValue = prospectLetter.charCodeAt(0) - 64; // A=1, B=2, C=3
+            return companyRank * 100 + letterValue;
+          }
+        }
+        
+        // Fallback for numeric ranks
+        if (typeof fallbackRank === 'string') {
+          const numMatch = fallbackRank.match(/^(\d+)/);
           return numMatch?.[1] ? parseInt(numMatch[1], 10) : 0;
         }
-        return typeof rank === 'number' ? rank : 0;
+        return typeof fallbackRank === 'number' ? fallbackRank : 0;
       
       case 'email':
         return record.email || '';

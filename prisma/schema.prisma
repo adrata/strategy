@@ -479,7 +479,6 @@ model companies {
   vatNumber               String?             @db.VarChar(100)
   description             String?
   notes                   String?
-  rank                    Int?                @default(0)
   tags                    String[]            @default([])
   customFields            Json?
   preferredLanguage       String?             @db.VarChar(10)
@@ -533,8 +532,8 @@ model companies {
   targetSegments          String[]            @default([])
   technicalCapabilities   String[]            @default([])
   uniqueValuePropositions String[]            @default([])
+  rank                    Int?                @default(0)
   situationAnalysis       String?
-  
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])
@@ -639,7 +638,6 @@ model people {
   engagementScore   Float?               @default(0)
   funnelStage       String?              @default("Prospect") @db.VarChar(50)
   buyerGroupRole    String?              @db.VarChar(50)
-  
   buyerGroups       BuyerGroupToPerson[]
   actions           actions[]
   company           companies?           @relation(fields: [companyId], references: [id])
@@ -1129,7 +1127,6 @@ model leads {
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
   lastAction          String?
-  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_leads_created_by")
   @@index([updatedBy], map: "idx_leads_updated_by")
@@ -1380,7 +1377,6 @@ model prospects {
   updatedBy           String?   @db.VarChar(30)
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
-  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_prospects_created_by")
   @@index([updatedBy], map: "idx_prospects_updated_by")
