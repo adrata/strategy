@@ -48,6 +48,41 @@ interface PipelineTableProps {
 // -------- Constants --------
 const DEFAULT_PAGE_SIZE = 50;
 
+// -------- Timing Functions --------
+function getLastActionTiming(record: PipelineRecord) {
+  const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+  return getRealtimeActionTiming(lastActionDate);
+}
+
+function getNextActionTiming(record: PipelineRecord) {
+  // For next actions, we need to calculate timing based on when the next action should happen
+  const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
+  if (!nextActionDate) {
+    return { text: 'No date set', color: 'bg-gray-100 text-gray-800' };
+  }
+  
+  const now = new Date();
+  const actionDate = new Date(nextActionDate);
+  const diffMs = actionDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    return { text: 'Overdue', color: 'bg-red-100 text-red-800' };
+  } else if (diffDays === 0) {
+    return { text: 'Today', color: 'bg-orange-100 text-orange-800' };
+  } else if (diffDays === 1) {
+    return { text: 'Tomorrow', color: 'bg-yellow-100 text-yellow-800' };
+  } else if (diffDays <= 7) {
+    return { text: 'This week', color: 'bg-navy-100 text-navy-800' };
+  } else if (diffDays <= 14) {
+    return { text: 'Next week', color: 'bg-navy-100 text-navy-800' };
+  } else if (diffDays <= 30) {
+    return { text: 'This month', color: 'bg-gray-100 text-gray-800' };
+  } else {
+    return { text: 'Future', color: 'bg-gray-100 text-gray-800' };
+  }
+}
+
 // -------- Helper Functions --------
 function getTableHeaders(visibleColumns?: string[], section?: string): string[] {
   if (!visibleColumns || visibleColumns.length === 0) {
@@ -293,7 +328,29 @@ export function PipelineTable({
                     
                     return (
                       <td key={headerIndex} className="px-4 py-3 text-sm text-gray-900">
-                        {cellContent}
+                        {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const timing = header.toLowerCase() === 'last action' 
+                                ? getLastActionTiming(record)
+                                : getNextActionTiming(record);
+                              return (
+                                <>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
+                                    {timing.text}
+                                  </span>
+                                  <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                                    {cellContent}
+                                  </span>
+                                </>
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-900 truncate">
+                            {cellContent}
+                          </div>
+                        )}
                       </td>
                     );
                   })}
