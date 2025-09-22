@@ -131,8 +131,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           return matches;
         });
+
+        // Remove duplicates based on person ID
+        const uniqueCompanyPeople = companyPeople.filter((person: any, index: number, self: any[]) => 
+          index === self.findIndex((p: any) => p.id === person.id)
+        );
         
-        console.log(`🔍 [BUYER GROUPS] Filtered ${companyPeople.length} people for company ${companyName} (ID: ${record.id})`);
+        console.log(`🔍 [BUYER GROUPS] After deduplication: ${uniqueCompanyPeople.length} unique people (was ${companyPeople.length})`);
+        
+        console.log(`🔍 [BUYER GROUPS] Filtered ${uniqueCompanyPeople.length} people for company ${companyName} (ID: ${record.id})`);
         console.log(`🔍 [BUYER GROUPS] All people data:`, peopleData.slice(0, 3)); // Show first 3 people for debugging
         console.log(`🔍 [BUYER GROUPS] Company name being searched: "${companyName}"`);
         console.log(`🔍 [BUYER GROUPS] Record ID: "${record.id}"`);
@@ -148,7 +155,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // If no people found in database, check for CoreSignal people data
         let coresignalPeople = [];
         console.log('🔍 [BUYER GROUPS DEBUG] Checking CoreSignal data...');
-        console.log('🔍 [BUYER GROUPS DEBUG] companyPeople.length:', companyPeople.length);
+        console.log('🔍 [BUYER GROUPS DEBUG] uniqueCompanyPeople.length:', uniqueCompanyPeople.length);
         console.log('🔍 [BUYER GROUPS DEBUG] record?.customFields?.coresignalData?.key_executives:', record?.customFields?.coresignalData?.key_executives);
         
         // Define buyer group role function early
@@ -210,7 +217,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         };
 
         // If no people found, try to create them directly
-        if (companyPeople.length === 0) {
+        if (uniqueCompanyPeople.length === 0) {
           console.log('🔍 [BUYER GROUPS] No people found, attempting to create 5 Bars executives...');
           
           try {
@@ -279,7 +286,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                 });
                 
                 console.log(`🔍 [BUYER GROUPS] After refresh: ${refreshedCompanyPeople.length} people found`);
-                companyPeople.push(...refreshedCompanyPeople);
+                uniqueCompanyPeople.push(...refreshedCompanyPeople);
               }
             }
           } catch (error) {
@@ -287,7 +294,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           }
         }
 
-        if (companyPeople.length === 0 && record?.customFields?.coresignalData?.key_executives) {
+        if (uniqueCompanyPeople.length === 0 && record?.customFields?.coresignalData?.key_executives) {
           console.log('🔍 [BUYER GROUPS] Still no people, checking CoreSignal data');
           
           // Create people and prospect records for CoreSignal executives
@@ -389,16 +396,16 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               const newCompanyPeople = newPeopleData.filter((person: any) => person.companyId === record.id);
               console.log(`🔍 [BUYER GROUPS] Found ${newCompanyPeople.length} newly created people for this company`);
               
-              // Update the companyPeople array to include the newly created people
-              companyPeople.push(...newCompanyPeople);
-              console.log(`🔍 [BUYER GROUPS] Total company people after creation: ${companyPeople.length}`);
+              // Update the uniqueCompanyPeople array to include the newly created people
+              uniqueCompanyPeople.push(...newCompanyPeople);
+              console.log(`🔍 [BUYER GROUPS] Total company people after creation: ${uniqueCompanyPeople.length}`);
             }
           }
           
           // Force a re-render by updating the state immediately
-          if (companyPeople.length > 0) {
+          if (uniqueCompanyPeople.length > 0) {
             console.log('🔍 [BUYER GROUPS] Setting buyer groups immediately with created people');
-            const buyerGroupMembers = companyPeople.map((person: any) => {
+            const buyerGroupMembers = uniqueCompanyPeople.map((person: any) => {
               const jobTitle = person.title || person.jobTitle || '';
               const buyerRole = getBuyerGroupRole(jobTitle);
               
@@ -422,13 +429,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             return; // Exit early since we've set the buyer groups
           }
         } else {
-          console.log('🔍 [BUYER GROUPS DEBUG] Not using CoreSignal data - companyPeople.length:', companyPeople.length, 'key_executives exists:', !!record?.customFields?.coresignalData?.key_executives);
+          console.log('🔍 [BUYER GROUPS DEBUG] Not using CoreSignal data - uniqueCompanyPeople.length:', uniqueCompanyPeople.length, 'key_executives exists:', !!record?.customFields?.coresignalData?.key_executives);
         }
         
         // Transform people data to buyer group format
 
         // Use the database people (which now includes newly created records)
-        const allPeople = companyPeople;
+        const allPeople = uniqueCompanyPeople;
         
         const buyerGroupMembers = allPeople.map((person: any) => {
           // Check multiple possible ID matches
