@@ -2158,6 +2158,18 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         orderBy: [{ updatedAt: 'desc' }],
         take: 2000, // Load all companies for full pipeline view
         select: { id: true, name: true, industry: true, updatedAt: true }
+      }).then(companies => {
+        // Sort companies to put 5Bars Services first
+        return companies.sort((a, b) => {
+          const aIs5Bars = a.name.toLowerCase().includes('5bars') || a.name.toLowerCase().includes('5 bars');
+          const bIs5Bars = b.name.toLowerCase().includes('5bars') || b.name.toLowerCase().includes('5 bars');
+          
+          if (aIs5Bars && !bIs5Bars) return -1;
+          if (!aIs5Bars && bIs5Bars) return 1;
+          
+          // If both or neither are 5Bars, maintain original order (by updatedAt desc)
+          return 0;
+        });
       }),
       prisma.people.findMany({ 
         where: { 

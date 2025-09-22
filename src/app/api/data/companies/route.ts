@@ -42,6 +42,18 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Sort companies to put 5Bars Services first
+    accounts.sort((a, b) => {
+      const aIs5Bars = a.name.toLowerCase().includes('5bars') || a.name.toLowerCase().includes('5 bars');
+      const bIs5Bars = b.name.toLowerCase().includes('5bars') || b.name.toLowerCase().includes('5 bars');
+      
+      if (aIs5Bars && !bIs5Bars) return -1;
+      if (!aIs5Bars && bIs5Bars) return 1;
+      
+      // If both or neither are 5Bars, maintain original order (by updatedAt desc)
+      return 0;
+    });
+
     // Also get companies from leads table that don't have accounts yet - FILTER BY WORKSPACE ONLY
     const leadsWithCompanies = await prisma.leads.findMany({
       where: {
