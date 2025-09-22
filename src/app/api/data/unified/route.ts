@@ -1238,7 +1238,33 @@ async function getMultipleRecords(
     };
 
     // Add model-specific fields
-    if (type === 'opportunities') {
+    if (type === 'notes') {
+      selectFields = {
+        id: true,
+        workspaceId: true,
+        authorId: true,
+        leadId: true,
+        opportunityId: true,
+        accountId: true,
+        contactId: true,
+        title: true,
+        content: true,
+        summary: true,
+        type: true,
+        priority: true,
+        isPrivate: true,
+        isPinned: true,
+        format: true,
+        attachments: true,
+        tags: true,
+        createdAt: true,
+        updatedAt: true,
+        externalId: true,
+        prospectId: true,
+        companyId: true,
+        personId: true
+      };
+    } else if (type === 'opportunities') {
       selectFields = {
         ...selectFields,
         name: true,

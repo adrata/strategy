@@ -49,11 +49,27 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // Instant loading - no spinner needed
         
         // Get the company name from the record - try multiple sources
-        const companyName = record.name || 
-                           (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                           record.companyName ||
-                           'Company'; // Generic fallback
+        // For person records, we need to get the company from companyId or company object
+        let companyName = '';
+        let companyId = '';
+        
+        if (recordType === 'people') {
+          // For person records, get company from companyId or company object
+          companyId = record.companyId;
+          companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                       record.companyName || 'Company';
+        } else {
+          // For company records, use the record name as company name
+          companyName = record.name || 
+                       (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                       record.companyName ||
+                       'Company';
+          companyId = record.id; // For company records, the record ID is the company ID
+        }
+        
+        console.log('🔍 [BUYER GROUPS DEBUG] Record type:', recordType);
         console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
+        console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
         console.log('🔍 [BUYER GROUPS DEBUG] Record name:', record.name);
         console.log('🔍 [BUYER GROUPS DEBUG] Record company:', record.company);
         console.log('🔍 [BUYER GROUPS DEBUG] Record companyName:', record.companyName);
@@ -123,7 +139,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           const personCompanyId = person.companyId;
           
           // Match by company ID (most reliable) or company name
-          const matches = personCompanyId === record.id || personCompanyName === companyName;
+          const matches = personCompanyId === companyId || personCompanyName === companyName;
           
           if (matches) {
             console.log(`🔍 [BUYER GROUPS] Found matching person: ${person.fullName} (Company ID: ${personCompanyId}, Company Name: ${personCompanyName})`);
@@ -139,7 +155,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         console.log(`🔍 [BUYER GROUPS] After deduplication: ${uniqueCompanyPeople.length} unique people (was ${companyPeople.length})`);
         
-        console.log(`🔍 [BUYER GROUPS] Filtered ${uniqueCompanyPeople.length} people for company ${companyName} (ID: ${record.id})`);
+        console.log(`🔍 [BUYER GROUPS] Filtered ${uniqueCompanyPeople.length} people for company ${companyName} (ID: ${companyId})`);
         console.log(`🔍 [BUYER GROUPS] All people data:`, peopleData.slice(0, 3)); // Show first 3 people for debugging
         console.log(`🔍 [BUYER GROUPS] Company name being searched: "${companyName}"`);
         console.log(`🔍 [BUYER GROUPS] Record ID: "${record.id}"`);
@@ -235,7 +251,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                   title: 'Chief Executive Officer',
                   email: 'john.delisi@5bars.net',
                   phone: '800.905.7221',
-                  companyId: record.id,
+                  companyId: companyId,
                   workspaceId: record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
                   customFields: {
                     coresignalId: '770302196',
@@ -260,7 +276,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                   title: 'Project Director',
                   email: 'dustin.stephens@5bars.net',
                   phone: '800.905.7221',
-                  companyId: record.id,
+                  companyId: companyId,
                   workspaceId: record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
                   customFields: {
                     coresignalId: '770302197',
@@ -282,7 +298,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                 const refreshedCompanyPeople = refreshedPeople.filter((person: any) => {
                   const personCompanyName = person.company?.name || person.company;
                   const personCompanyId = person.companyId;
-                  return personCompanyId === record.id || personCompanyName === companyName;
+                  return personCompanyId === companyId || personCompanyName === companyName;
                 });
                 
                 console.log(`🔍 [BUYER GROUPS] After refresh: ${refreshedCompanyPeople.length} people found`);
@@ -348,7 +364,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                   title: personData.title,
                   email: personData.email,
                   company: companyName,
-                  companyId: record.id,
+                  companyId: companyId,
                   personId: personResult.data?.id,
                   workspaceId: record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1',
                   tags: ['External Data Source', 'Buyer Group Member', 'Cold Relationship'],
@@ -393,7 +409,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             const newPeopleResult = await newPeopleResponse.json();
             if (newPeopleResult.success) {
               const newPeopleData = newPeopleResult.data || [];
-              const newCompanyPeople = newPeopleData.filter((person: any) => person.companyId === record.id);
+              const newCompanyPeople = newPeopleData.filter((person: any) => person.companyId === companyId);
               console.log(`🔍 [BUYER GROUPS] Found ${newCompanyPeople.length} newly created people for this company`);
               
               // Update the uniqueCompanyPeople array to include the newly created people
