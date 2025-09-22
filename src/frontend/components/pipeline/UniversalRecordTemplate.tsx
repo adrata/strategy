@@ -39,7 +39,7 @@ import {
   UniversalCollaborationTab,
   UniversalPerformanceTab,
   UniversalIndustryTab,
-  UniversalCareerTab,
+  UniversalCareerTab as PlaceholderCareerTab,
   UniversalLandminesTab,
   UniversalStakeholdersTab,
   UniversalDocumentsTab,
@@ -1290,7 +1290,7 @@ export function UniversalRecordTemplate({
         case 'career':
           console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+            <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'role':
           console.log(`🎭 [UNIVERSAL] Rendering role tab for ${recordType}`);
@@ -1417,7 +1417,7 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
               <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalCareerTab key={activeTab} record={record} recordType={recordType} />
+              <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'workplace':
           return renderTabWithErrorBoundary(

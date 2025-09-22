@@ -33,16 +33,7 @@ export { UniversalSellerCompaniesTab } from './UniversalSellerCompaniesTab';
 
 // Placeholder components for tabs that don't exist yet
 
-export function UniversalCareerTab({ record, recordType }: { record: any; recordType: string }) {
-  return (
-    <div className="p-6">
-      <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Career Information</h3>
-        <p className="text-gray-600">Career history and professional background coming soon</p>
-      </div>
-    </div>
-  );
-}
+// UniversalCareerTab is now implemented in its own file
 
 export function UniversalLandminesTab({ record, recordType }: { record: any; recordType: string }) {
   return (
