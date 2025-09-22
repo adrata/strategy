@@ -30,18 +30,19 @@ const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
     },
     prospects: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details'] // Hide stage, status, and details columns
+      columns: ['Rank', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details', 'company'] // Hide company column
     },
     leads: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details'] // Hide stage, status, and details columns
+      columns: ['Rank', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details', 'company'] // Hide company column
     },
     speedrun: {
-      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['company'] // Hide company column
     }
   }
 };
@@ -61,18 +62,19 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
     },
     speedrun: {
-      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['company'] // Hide company column
     },
     prospects: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details']
+      columns: ['Rank', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details', 'company'] // Hide company column
     },
     leads: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details']
+      columns: ['Rank', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
+      hiddenColumns: ['stage', 'status', 'details', 'company'] // Hide company column
     }
   }
 };

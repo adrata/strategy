@@ -955,6 +955,131 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
+  // Special handling for prospects and leads to include company data
+  if (type === 'prospects') {
+    const prospects = await prisma.prospects.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
+      },
+      orderBy: [{ updatedAt: 'desc' }],
+      take: pagination?.limit || 1000,
+      skip: pagination?.offset || 0,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
+        status: true,
+        priority: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        workspaceId: true,
+        assignedUserId: true
+      }
+    });
+
+    // Lookup company names for prospects that have companyId but no company name
+    const prospectsWithCompanies = await Promise.all(
+      prospects.map(async (prospect) => {
+        if (prospect.companyId && !prospect.company) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: prospect.companyId },
+              select: { name: true }
+            });
+            return {
+              ...prospect,
+              company: companyData?.name || prospect.company || null,
+              companyName: companyData?.name || prospect.company || null
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
+            return prospect;
+          }
+        }
+        return {
+          ...prospect,
+          companyName: prospect.company
+        };
+      })
+    );
+
+    return { success: true, data: prospectsWithCompanies };
+  }
+
+  if (type === 'leads') {
+    const leads = await prisma.leads.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
+      },
+      orderBy: [{ updatedAt: 'desc' }],
+      take: pagination?.limit || 1000,
+      skip: pagination?.offset || 0,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
+        status: true,
+        priority: true,
+        source: true,
+        createdAt: true,
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        workspaceId: true,
+        assignedUserId: true
+      }
+    });
+
+    // Lookup company names for leads that have companyId but no company name
+    const leadsWithCompanies = await Promise.all(
+      leads.map(async (lead) => {
+        if (lead.companyId && !lead.company) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: lead.companyId },
+              select: { name: true }
+            });
+            return {
+              ...lead,
+              company: companyData?.name || lead.company || null,
+              companyName: companyData?.name || lead.company || null
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for lead ${lead.id}:`, error);
+            return lead;
+          }
+        }
+        return {
+          ...lead,
+          companyName: lead.company
+        };
+      })
+    );
+
+    return { success: true, data: leadsWithCompanies };
+  }
+  
   const model = getPrismaModel(type);
   if (!model) throw new Error(`Unsupported type: ${type}`);
   
@@ -2366,7 +2491,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             { assignedUserId: null }
           ]
         },
-        orderBy: [{ updatedAt: 'desc' }], // Sort by updatedAt instead of rank
+        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
         take: 2000, // Load all companies for full pipeline view
         select: { 
           id: true, 
@@ -2865,7 +2990,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🚀 SIMPLIFIED: Load prospects for speedrun with basic query
+    // 🚀 ENHANCED: Load prospects for speedrun with company data lookup
     const prospects = await prisma.prospects.findMany({
       where: {
         workspaceId,
@@ -2880,16 +3005,45 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         fullName: true,
         email: true,
         company: true,
+        companyId: true,
+        jobTitle: true,
+        title: true,
         status: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        lastContactDate: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true
       }
     });
+
+    // 🚀 ENHANCED: Lookup company names for prospects that have companyId but no company name
+    const prospectsWithCompanies = await Promise.all(
+      prospects.map(async (prospect) => {
+        if (prospect.companyId && !prospect.company) {
+          try {
+            const companyData = await prisma.companies.findUnique({
+              where: { id: prospect.companyId },
+              select: { name: true }
+            });
+            return {
+              ...prospect,
+              company: companyData?.name || prospect.company || 'Unknown Company'
+            };
+          } catch (error) {
+            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
+            return prospect;
+          }
+        }
+        return prospect;
+      })
+    );
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospects.length} prospects from prospects table`);
     
     // If no prospects, fallback to people table
-    let speedrunData = prospects;
+    let speedrunData = prospectsWithCompanies;
     let dataSource = 'prospects';
     
     if (prospects.length === 0) {
@@ -2911,7 +3065,19 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           jobTitle: true,
           status: true,
           createdAt: true,
-          updatedAt: true
+          updatedAt: true,
+          lastContactDate: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true
+        },
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
         },
         orderBy: { createdAt: 'desc' },
         take: 50
@@ -2922,7 +3088,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     }
     
     // Transform data to speedrun format with complete field mapping
-    const speedrunItems = speedrunData.map((record, index) => {
+    const speedrunItemsWithScores = speedrunData.map((record, index) => {
       // Calculate smart action data based on record status and dates
       const lastContactDate = record.lastContactDate || record.lastActionDate || record.updatedAt;
       const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
@@ -2976,14 +3142,16 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         email: record.email || record.workEmail,
         phone: record.phone || record.workPhone || record.mobilePhone,
         title: record.jobTitle || record.title || 'Title',
-        company: record.company || record.company?.name || 'Company',
+        company: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company',
         location: record.city || record.state || record.country,
         status: record.status || 'new',
         priority: record.priority || 'high',
         source: dataSource,
         createdAt: record.createdAt,
         updatedAt: record.updatedAt,
-        // Add ranking for speedrun
+        // Calculate priority score for ranking
+        priorityScore: calculateActionPriorityScore(record),
+        // Temporary rank - will be updated after sorting
         rank: index + 1,
         // Add complete action fields
         lastAction: lastAction,
@@ -2998,9 +3166,17 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         stage: currentStage,
         state: record.state || record.city || 'State',
         jobTitle: record.jobTitle || record.title || 'Title',
-        companyName: record.company || record.company?.name || 'Company'
+        companyName: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company'
       };
     });
+    
+    // Sort by priority score (highest first) and assign proper ranks
+    const speedrunItems = speedrunItemsWithScores
+      .sort((a, b) => b.priorityScore - a.priorityScore)
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);
     
