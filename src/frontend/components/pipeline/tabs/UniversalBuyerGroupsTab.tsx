@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from '../InlineEditField';
 import { useRouter } from 'next/navigation';
+import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
 
 interface UniversalBuyerGroupsTabProps {
   record: any;
@@ -69,11 +70,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // Correct TOP workspace
         const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Use record's assigned user or workspace ID
         
-        // Clear cache for correct workspace to force fresh data
         const cacheKey = `people-${workspaceId}-${userId}`;
-        localStorage.removeItem(cacheKey); // Clear cache to force fresh data
-        
         let peopleData = [];
+        
+        // Check cache first using safe localStorage
+        const cachedData = safeGetItem(cacheKey, 5 * 60 * 1000); // 5 minutes TTL
+        if (cachedData) {
+          peopleData = cachedData;
+          console.log('📦 [BUYER GROUPS] Using cached people data');
+        }
         
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
@@ -90,11 +95,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           if (result.success) {
             peopleData = result.data || [];
             
-            // Cache the data
-            localStorage.setItem(cacheKey, JSON.stringify({
-              data: peopleData,
-              timestamp: Date.now()
+            // Cache essential data using safe localStorage
+            const essentialData = peopleData.map(person => ({
+              id: person.id,
+              fullName: person.fullName,
+              firstName: person.firstName,
+              lastName: person.lastName,
+              company: person.company,
+              companyId: person.companyId,
+              jobTitle: person.jobTitle,
+              email: person.email
             }));
+            
+            const cacheSuccess = safeSetItem(cacheKey, essentialData);
+            if (!cacheSuccess) {
+              console.warn('Failed to cache people data, continuing without cache');
+            }
           } else {
             console.error('Error fetching people data:', result.error);
             throw new Error('Failed to fetch people data');
