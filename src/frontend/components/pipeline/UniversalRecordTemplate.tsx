@@ -130,7 +130,9 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
+        { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
     case 'people':
@@ -1228,6 +1230,11 @@ export function UniversalRecordTemplate({
             recordType === 'people' ? 
               <ComprehensiveInsightsTab key={activeTab} record={record} recordType={recordType} /> :
               <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+          );
+        case 'intelligence':
+          console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'company':
           return renderTabWithErrorBoundary(

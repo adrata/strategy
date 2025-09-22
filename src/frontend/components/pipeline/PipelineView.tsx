@@ -107,7 +107,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       case 'speedrun':
         return ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
+        return ['Overview', 'Intelligence', 'Buyer Group', 'Notes', 'Timeline'];
       case 'leads':
         return ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
