@@ -1570,7 +1570,7 @@ export function UniversalRecordTemplate({
                   />
                 ) : (
                   <span className="text-sm font-semibold text-gray-700">
-                    {record?.rank || (recordIndex !== undefined ? recordIndex + 1 : getFirstInitial())}
+                    {record?.rank !== undefined ? record.rank + 1 : (recordIndex !== undefined ? recordIndex + 1 : getFirstInitial())}
                   </span>
                 )}
               </div>

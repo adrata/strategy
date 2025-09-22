@@ -87,7 +87,19 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
 
     const [leads, prospects, opportunities, companies, people, clients, buyerGroups, workspaceUsers, partnerships] = await Promise.all([
       prisma.leads.findMany({
-        where: demoScenarioFilter
+        where: demoScenarioFilter,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          jobTitle: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true
+        }
       }),
       prisma.prospects.findMany({
         where: demoScenarioFilter
@@ -101,6 +113,19 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       prisma.people.findMany({
         where: {
           workspaceId: workspaceId
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true
         }
       }),
       prisma.clients.findMany({
@@ -751,18 +776,47 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   console.log(`🔍 [GET SINGLE] Looking for ${type} record with ID: ${id} in workspace: ${workspaceId}`);
   console.log(`🔍 [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
   
-  const record = await model.findFirst({
-    where: whereClause,
-    ...includeClause
-  });
-  
-  if (!record) {
-    console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id}`);
-    throw new Error(`${type} not found`);
+  try {
+    const record = await model.findFirst({
+      where: whereClause,
+      ...includeClause
+    });
+    
+    if (!record) {
+      console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id}`);
+      throw new Error(`${type} not found`);
+    }
+    
+    console.log(`✅ [GET SINGLE] Found ${type} record:`, record.id);
+    return { success: true, data: record };
+  } catch (dbError) {
+    console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
+    console.error(`❌ [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
+    console.error(`❌ [GET SINGLE] Include clause:`, JSON.stringify(includeClause, null, 2));
+    
+    // Try without include clause if it fails
+    if (includeClause && Object.keys(includeClause).length > 0) {
+      console.log(`🔄 [GET SINGLE] Retrying without include clause for ${type}`);
+      try {
+        const record = await model.findFirst({
+          where: whereClause
+        });
+        
+        if (!record) {
+          console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id} (retry)`);
+          throw new Error(`${type} not found`);
+        }
+        
+        console.log(`✅ [GET SINGLE] Found ${type} record (retry):`, record.id);
+        return { success: true, data: record };
+      } catch (retryError) {
+        console.error(`❌ [GET SINGLE] Retry also failed for ${type}:`, retryError);
+        throw new Error(`Database query failed for ${type}: ${retryError instanceof Error ? retryError.message : 'Unknown error'}`);
+      }
+    }
+    
+    throw new Error(`Database query failed for ${type}: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
   }
-  
-  console.log(`✅ [GET SINGLE] Found ${type} record:`, record.id);
-  return { success: true, data: record };
 }
 
 async function getMultipleRecords(
@@ -851,15 +905,17 @@ async function getMultipleRecords(
           { assignedUserId: null }    // Unassigned people in workspace
         ]
       },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            website: true
-          }
-        }
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        jobTitle: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
       },
       orderBy: [{ updatedAt: 'desc' }],
       take: pagination?.limit || 1000 // Load all people records
@@ -922,15 +978,102 @@ async function getMultipleRecords(
     orderBy = [{ updatedAt: 'desc' }];
   }
 
-  const records = await model.findMany({
-    where: whereClause,
-    orderBy: orderBy,
-    take: pagination?.limit || 1000,
-    skip: pagination?.offset || 0,
-    ...includeClause
-  });
-  
-  return { success: true, data: records };
+  try {
+    // Use explicit select to avoid any database view issues - different fields for different models
+    let selectFields: any = {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      workspaceId: true,
+      assignedUserId: true
+    };
+
+    // Add model-specific fields
+    if (type === 'opportunities') {
+      selectFields = {
+        ...selectFields,
+        name: true,
+        description: true,
+        amount: true,
+        currency: true,
+        stage: true,
+        expectedCloseDate: true,
+        probability: true,
+        companyId: true,
+        personId: true
+      };
+    } else if (type === 'companies') {
+      selectFields = {
+        ...selectFields,
+        name: true,
+        industry: true,
+        website: true,
+        description: true,
+        size: true,
+        address: true,
+        city: true,
+        state: true,
+        country: true
+      };
+    } else if (type === 'people') {
+      selectFields = {
+        ...selectFields,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        jobTitle: true,
+        companyId: true
+      };
+    } else {
+      // Default for leads, prospects, etc.
+      selectFields = {
+        ...selectFields,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        email: true,
+        company: true,
+        jobTitle: true,
+        status: true
+      };
+    }
+
+    const records = await model.findMany({
+      where: whereClause,
+      orderBy: orderBy,
+      take: pagination?.limit || 1000,
+      skip: pagination?.offset || 0,
+      select: selectFields,
+      ...includeClause
+    });
+    
+    return { success: true, data: records };
+  } catch (dbError) {
+    console.error(`❌ [GET MULTIPLE] Database error for ${type}:`, dbError);
+    console.error(`❌ [GET MULTIPLE] Where clause:`, JSON.stringify(whereClause, null, 2));
+    console.error(`❌ [GET MULTIPLE] Include clause:`, JSON.stringify(includeClause, null, 2));
+    
+    // Try without include clause if it fails
+    if (includeClause && Object.keys(includeClause).length > 0) {
+      console.log(`🔄 [GET MULTIPLE] Retrying without include clause for ${type}`);
+      try {
+        const records = await model.findMany({
+          where: whereClause,
+          orderBy: orderBy,
+          take: pagination?.limit || 1000,
+          skip: pagination?.offset || 0
+        });
+        
+        return { success: true, data: records };
+      } catch (retryError) {
+        console.error(`❌ [GET MULTIPLE] Retry also failed for ${type}:`, retryError);
+        throw new Error(`Database query failed for ${type}: ${retryError instanceof Error ? retryError.message : 'Unknown error'}`);
+      }
+    }
+    
+    throw new Error(`Database query failed for ${type}: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
+  }
 }
 
 // 🆕 GET BUYER GROUPS OPERATION
@@ -2142,8 +2285,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           email: true,
           company: true,
           status: true,
-          priority: true,
-          estimatedValue: true,
           createdAt: true,
           updatedAt: true
         }
@@ -2164,8 +2305,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           email: true,
           company: true,
           status: true,
-          priority: true,
-          estimatedValue: true,
           createdAt: true,
           updatedAt: true
         }
@@ -2187,7 +2326,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           amount: true,
           currency: true,
           stage: true,
-          priority: true,
           expectedCloseDate: true,
           createdAt: true,
           updatedAt: true
@@ -2696,8 +2834,6 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         email: true,
         company: true,
         status: true,
-        priority: true,
-        estimatedValue: true,
         createdAt: true,
         updatedAt: true
       }
@@ -2717,14 +2853,18 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           deletedAt: null,
           status: 'active'
         },
-        include: {
-          company: {
-            select: {
-              id: true,
-              name: true,
-              industry: true
-            }
-          }
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true
         },
         orderBy: { createdAt: 'desc' },
         take: 50
