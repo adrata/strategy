@@ -65,10 +65,6 @@ model BuyerGroupToPerson {
   @@map("_BuyerGroupToPerson")
 }
 
-
-
-
-
 model EmailToCompany {
   A String
   B String
@@ -76,8 +72,6 @@ model EmailToCompany {
   @@id([A, B], map: "_EmailToCompany_AB_pkey")
   @@map("_EmailToCompany")
 }
-
-
 
 model EmailToLead {
   A String
@@ -127,8 +121,6 @@ model EmailToProspect {
   @@map("_EmailToProspect")
 }
 
-
-
 model EventToCompany {
   A String
   B String
@@ -136,8 +128,6 @@ model EventToCompany {
   @@id([A, B], map: "_EventToCompany_AB_pkey")
   @@map("_EventToCompany")
 }
-
-
 
 model EventToLead {
   A String
@@ -180,12 +170,12 @@ model ProspectOpportunities {
 }
 
 model actions {
-  id             String    @id(map: "activities_pkey") @default(ulid())
-  workspaceId    String    @db.VarChar(30)
-  userId         String    @db.VarChar(30)
-  leadId         String?   @db.VarChar(30)
-  opportunityId  String?   @db.VarChar(30)
-  type           String    @db.VarChar(30)
+  id             String     @id(map: "activities_pkey") @default(ulid())
+  workspaceId    String     @db.VarChar(30)
+  userId         String     @db.VarChar(30)
+  leadId         String?    @db.VarChar(30)
+  opportunityId  String?    @db.VarChar(30)
+  type           String     @db.VarChar(30)
   subject        String
   description    String?
   outcome        String?
@@ -193,22 +183,20 @@ model actions {
   scheduledDate  DateTime?
   completedAt    DateTime?
   duration       Int?
-  status         String    @default("planned") @db.VarChar(20)
-  priority       String    @default("normal") @db.VarChar(10)
+  status         String     @default("planned") @db.VarChar(20)
+  priority       String     @default("normal") @db.VarChar(10)
   attachments    Json?
   metadata       Json?
-  createdAt      DateTime  @default(now())
+  createdAt      DateTime   @default(now())
   updatedAt      DateTime
   externalId     String?
-  prospectId     String?   @db.VarChar(30)
-  assignedUserId String?   @db.VarChar(30)
-  campaignType   String?   @db.VarChar(50)
-  companyId      String?   @db.VarChar(30)
-  personId       String?   @db.VarChar(30)
-
-  // Relations
-  person         people?   @relation(fields: [personId], references: [id])
+  prospectId     String?    @db.VarChar(30)
+  assignedUserId String?    @db.VarChar(30)
+  campaignType   String?    @db.VarChar(50)
+  companyId      String?    @db.VarChar(30)
+  personId       String?    @db.VarChar(30)
   company        companies? @relation(fields: [companyId], references: [id])
+  person         people?    @relation(fields: [personId], references: [id])
 }
 
 model agency_users {
@@ -465,93 +453,92 @@ model candidates {
 }
 
 model companies {
-  id                    String              @id @default(ulid()) @db.VarChar(30)
-  workspaceId           String              @db.VarChar(30)
-  assignedUserId        String?             @db.VarChar(30)
-  name                  String              @db.VarChar(255)
-  legalName             String?             @db.VarChar(255)
-  tradingName           String?             @db.VarChar(255)
-  localName             String?             @db.VarChar(255)
-  website               String?             @db.VarChar(500)
-  email                 String?             @db.VarChar(300)
-  phone                 String?             @db.VarChar(50)
-  fax                   String?             @db.VarChar(50)
-  address               String?
-  city                  String?             @db.VarChar(100)
-  state                 String?             @db.VarChar(100)
-  country               String?             @db.VarChar(100)
-  postalCode            String?             @db.VarChar(20)
-  industry              String?             @db.VarChar(100)
-  sector                String?             @db.VarChar(100)
-  size                  String?             @db.VarChar(100)
-  revenue               Decimal?            @db.Decimal(15, 2)
-  currency              String?             @default("USD") @db.VarChar(3)
-  registrationNumber    String?             @db.VarChar(100)
-  taxId                 String?             @db.VarChar(100)
-  vatNumber             String?             @db.VarChar(100)
-  description           String?
-  notes                 String?
-  tags                  String[]            @default([])
-  customFields          Json?
-  preferredLanguage     String?             @db.VarChar(10)
-  timezone              String?             @db.VarChar(50)
-  createdAt             DateTime?           @default(now()) @db.Timestamp(6)
-  updatedAt             DateTime?           @default(now()) @db.Timestamp(6)
-  deletedAt             DateTime?           @db.Timestamp(6)
-  accountType           String?             @db.VarChar(50)
-  primaryContact        String?             @db.VarChar(100)
-  tier                  String?             @db.VarChar(20)
-  externalId            String?             @db.VarChar(100)
-  vertical              String?             @db.VarChar(50)
-  zohoId                String?             @db.VarChar(50)
-  approvalProcess       String?             @default("Committee") @db.VarChar(30)
-  budgetCycle           String?             @default("Annual") @db.VarChar(20)
-  businessChallenges    String[]            @default([])
-  businessPriorities    String[]            @default([])
-  competitiveAdvantages String[]            @default([])
-  decisionTimeline      String?             @default("3-6 months") @db.VarChar(20)
-  growthOpportunities   String[]            @default([])
-  growthPotential       String?             @default("High") @db.VarChar(20)
-  keyInfluencers        String?             @default("C-Level") @db.VarChar(30)
-  marketPosition        String?             @default("Established") @db.VarChar(30)
-  marketThreats         String[]            @default([])
-  relationshipStrength  String?             @default("Good") @db.VarChar(20)
-  riskLevel             String?             @default("Low") @db.VarChar(20)
-  strategicInitiatives  String[]            @default([])
-  successMetrics        String[]            @default([])
-  createdBy             String?             @db.VarChar(30)
-  updatedBy             String?             @db.VarChar(30)
-  version               Int?                @default(1)
-  entity_id             String?             @db.VarChar(30)
-  lastAction            String?
-  lastActionDate        DateTime?           @db.Timestamp(6)
-  nextAction            String?
-  nextActionDate        DateTime?           @db.Timestamp(6)
-  actionStatus          String?
-  industryId            String?             @db.VarChar(30)
-  verticalId            String?             @db.VarChar(30)
+  id                      String              @id @default(ulid()) @db.VarChar(30)
+  workspaceId             String              @db.VarChar(30)
+  assignedUserId          String?             @db.VarChar(30)
+  name                    String              @db.VarChar(255)
+  legalName               String?             @db.VarChar(255)
+  tradingName             String?             @db.VarChar(255)
+  localName               String?             @db.VarChar(255)
+  website                 String?             @db.VarChar(500)
+  email                   String?             @db.VarChar(300)
+  phone                   String?             @db.VarChar(50)
+  fax                     String?             @db.VarChar(50)
+  address                 String?
+  city                    String?             @db.VarChar(100)
+  state                   String?             @db.VarChar(100)
+  country                 String?             @db.VarChar(100)
+  postalCode              String?             @db.VarChar(20)
+  industry                String?             @db.VarChar(100)
+  sector                  String?             @db.VarChar(100)
+  size                    String?             @db.VarChar(100)
+  revenue                 Decimal?            @db.Decimal(15, 2)
+  currency                String?             @default("USD") @db.VarChar(3)
+  registrationNumber      String?             @db.VarChar(100)
+  taxId                   String?             @db.VarChar(100)
+  vatNumber               String?             @db.VarChar(100)
+  description             String?
+  notes                   String?
+  tags                    String[]            @default([])
+  customFields            Json?
+  preferredLanguage       String?             @db.VarChar(10)
+  timezone                String?             @db.VarChar(50)
+  createdAt               DateTime?           @default(now()) @db.Timestamp(6)
+  updatedAt               DateTime?           @default(now()) @db.Timestamp(6)
+  deletedAt               DateTime?           @db.Timestamp(6)
+  accountType             String?             @db.VarChar(50)
+  primaryContact          String?             @db.VarChar(100)
+  tier                    String?             @db.VarChar(20)
+  externalId              String?             @db.VarChar(100)
+  vertical                String?             @db.VarChar(50)
+  zohoId                  String?             @db.VarChar(50)
+  approvalProcess         String?             @default("Committee") @db.VarChar(30)
+  budgetCycle             String?             @default("Annual") @db.VarChar(20)
+  businessChallenges      String[]            @default([])
+  businessPriorities      String[]            @default([])
+  competitiveAdvantages   String[]            @default([])
+  decisionTimeline        String?             @default("3-6 months") @db.VarChar(20)
+  growthOpportunities     String[]            @default([])
+  growthPotential         String?             @default("High") @db.VarChar(20)
+  keyInfluencers          String?             @default("C-Level") @db.VarChar(30)
+  marketPosition          String?             @default("Established") @db.VarChar(30)
+  marketThreats           String[]            @default([])
+  relationshipStrength    String?             @default("Good") @db.VarChar(20)
+  riskLevel               String?             @default("Low") @db.VarChar(20)
+  strategicInitiatives    String[]            @default([])
+  successMetrics          String[]            @default([])
+  createdBy               String?             @db.VarChar(30)
+  updatedBy               String?             @db.VarChar(30)
+  version                 Int?                @default(1)
+  entity_id               String?             @db.VarChar(30)
+  lastAction              String?
+  lastActionDate          DateTime?           @db.Timestamp(6)
+  nextAction              String?
+  nextActionDate          DateTime?           @db.Timestamp(6)
+  actionStatus            String?
+  industryId              String?             @db.VarChar(30)
+  verticalId              String?             @db.VarChar(30)
+  businessApproach        String?             @db.VarChar(200)
+  clientEngagementModel   String?             @db.VarChar(100)
+  communicationStyle      String?             @default("Professional") @db.VarChar(50)
+  deliveryCapabilities    String[]            @default([])
+  expertiseAreas          String[]            @default([])
+  industrySpecializations String[]            @default([])
+  marketPositioning       String?             @db.VarChar(100)
+  projectMethodology      String?             @db.VarChar(100)
+  qualityStandards        String[]            @default([])
+  serviceOfferings        String[]            @default([])
+  targetMarkets           String[]            @default([])
+  targetSegments          String[]            @default([])
+  technicalCapabilities   String[]            @default([])
+  uniqueValuePropositions String[]            @default([])
+  situationAnalysis       String?
   
-  // Enhanced context fields for TOP Engineers Plus
-  serviceOfferings      String[]            @default([])
-  technicalCapabilities String[]            @default([])
-  deliveryCapabilities  String[]            @default([])
-  expertiseAreas        String[]            @default([])
-  clientEngagementModel String?             @db.VarChar(100)
-  projectMethodology    String?             @db.VarChar(100)
-  communicationStyle    String?             @default("Professional") @db.VarChar(50)
-  uniqueValuePropositions String[]          @default([])
-  marketPositioning     String?             @db.VarChar(100)
-  targetSegments        String[]            @default([])
-  qualityStandards      String[]            @default([])
-  businessApproach      String?             @db.VarChar(200)
-  industrySpecializations String[]          @default([])
-  targetMarkets         String[]            @default([])
-  
-  buyerGroups           buyer_groups[]
-  industryData          industries?         @relation(fields: [industryId], references: [id])
-  verticalData          industry_verticals? @relation(fields: [verticalId], references: [id])
-  people                people[]
-  actions               actions[]
+  actions                 actions[]
+  buyerGroups             buyer_groups[]
+  industryData            industries?         @relation(fields: [industryId], references: [id])
+  verticalData            industry_verticals? @relation(fields: [verticalId], references: [id])
+  people                  people[]
 
   @@index([entity_id], map: "idx_companies_entity_id")
 }
@@ -648,14 +635,13 @@ model people {
   nextAction        String?
   nextActionDate    DateTime?            @db.Timestamp(6)
   actionStatus      String?
-  
-  // Enhanced context fields for engagement scoring
   engagementScore   Float?               @default(0)
   funnelStage       String?              @default("Prospect") @db.VarChar(50)
+  buyerGroupRole    String?              @db.VarChar(50)
   
   buyerGroups       BuyerGroupToPerson[]
-  company           companies?           @relation(fields: [companyId], references: [id])
   actions           actions[]
+  company           companies?           @relation(fields: [companyId], references: [id])
 
   @@index([entity_id], map: "idx_people_entity_id")
 }
@@ -1674,14 +1660,11 @@ model workspaces {
   createdBy            String?  @db.VarChar(30)
   updatedBy            String?  @db.VarChar(30)
   version              Int      @default(1)
-  
-  // Enhanced context fields for TOP Engineers Plus
-  companyContext       Json?
   businessModel        String?  @db.VarChar(100)
+  companyContext       Json?
+  projectDeliveryStyle String?  @default("Strategic Clarity") @db.VarChar(50)
   serviceFocus         String[] @default([])
   stakeholderApproach  String?  @default("Client-Centric") @db.VarChar(50)
-  projectDeliveryStyle String?  @default("Strategic Clarity") @db.VarChar(50)
-  
   users                users[]
 
   @@index([createdBy], map: "idx_workspaces_created_by")
@@ -1770,7 +1753,7 @@ model workspace_opportunity_stages {
 }
 
 model client_accounts {
-  id                String    @id(map: "client_accounts_pkey")
+  id                String    @id
   name              String    @db.VarChar(255)
   agencyWorkspaceId String
   workspaceId       String    @db.VarChar(30)
@@ -1787,18 +1770,18 @@ model client_accounts {
 }
 
 model client_users {
-  id                String   @id(map: "client_users_pkey")
-  userId            String   @db.VarChar(30)
-  clientAccountId   String
-  role              String   @default("hiring_manager") @db.VarChar(50)
-  permissions       Json?
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime
+  id              String   @id
+  userId          String   @db.VarChar(30)
+  clientAccountId String
+  role            String   @default("hiring_manager") @db.VarChar(50)
+  permissions     Json?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
 }
 
 model clients {
-  id                       String    @id(map: "clients_pkey")
+  id                       String    @id
   workspaceId              String    @db.VarChar(30)
   customerSince            DateTime
   customerStatus           String    @default("active") @db.VarChar(20)
@@ -1883,8 +1866,8 @@ model clients {
   entity_id                String?   @db.VarChar(30)
 
   @@index([entity_id], map: "idx_clients_entity_id")
-  @@index([assignedUserId], map: "clients_assignedUserId_idx")
-  @@index([workspaceId], map: "clients_workspaceId_idx")
+  @@index([assignedUserId])
+  @@index([workspaceId])
 }
 
 model company {
@@ -2056,28 +2039,28 @@ model industry_vertical_intelligence {
 }
 
 model competitors {
-  id                String   @id @default(ulid())
-  workspaceId       String   @db.VarChar(30)
-  name              String   @unique @db.VarChar(255)
-  description       String?  @db.VarChar(1000)
-  website           String?  @db.VarChar(500)
-  services          String[] @default([])
-  strengths         String[] @default([])
-  weaknesses        String[] @default([])
-  marketShare       String?  @db.VarChar(20)
-  founded           Int?
-  employees         String?  @db.VarChar(50)
-  funding           String?  @db.VarChar(100)
-  headquarters      String?  @db.VarChar(255)
-  revenue           String?  @db.VarChar(100)
-  keyProducts       String[] @default([])
-  targetMarkets     String[] @default([])
-  pricingModel      String?  @db.VarChar(100)
-  competitiveAdvantage String? @db.VarChar(500)
-  threatLevel       String?  @default("medium") @db.VarChar(20)
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now())
+  id                   String   @id @default(ulid())
+  workspaceId          String   @db.VarChar(30)
+  name                 String   @unique @db.VarChar(255)
+  description          String?  @db.VarChar(1000)
+  website              String?  @db.VarChar(500)
+  services             String[] @default([])
+  strengths            String[] @default([])
+  weaknesses           String[] @default([])
+  marketShare          String?  @db.VarChar(20)
+  founded              Int?
+  employees            String?  @db.VarChar(50)
+  funding              String?  @db.VarChar(100)
+  headquarters         String?  @db.VarChar(255)
+  revenue              String?  @db.VarChar(100)
+  keyProducts          String[] @default([])
+  targetMarkets        String[] @default([])
+  pricingModel         String?  @db.VarChar(100)
+  competitiveAdvantage String?  @db.VarChar(500)
+  threatLevel          String?  @default("medium") @db.VarChar(20)
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
 
   @@index([workspaceId])
   @@index([threatLevel])
@@ -2085,17 +2068,17 @@ model competitors {
 }
 
 model marketIntelligence {
-  id                 String   @id @default(ulid())
-  workspaceId        String   @db.VarChar(30)
-  title              String   @db.VarChar(255)
-  description        String?  @db.VarChar(1000)
-  insights           String[] @default([])
-  source             String?  @db.VarChar(100)
-  relevance          String?  @default("medium") @db.VarChar(20)
-  tags               String[] @default([])
-  isActive           Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
+  id          String   @id @default(ulid())
+  workspaceId String   @db.VarChar(30)
+  title       String   @db.VarChar(255)
+  description String?  @db.VarChar(1000)
+  insights    String[] @default([])
+  source      String?  @db.VarChar(100)
+  relevance   String?  @default("medium") @db.VarChar(20)
+  tags        String[] @default([])
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
   @@index([workspaceId])
   @@index([relevance])

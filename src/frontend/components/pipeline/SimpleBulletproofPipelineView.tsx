@@ -51,7 +51,7 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
         <div className="text-center">
           <div className="text-red-500 text-2xl mb-4">⚠️</div>
           <h4 className="text-lg font-medium text-gray-900 mb-2">Error loading data</h4>
-          <p className="text-sm text-gray-600">{error}</p>
+          <p className="text-sm text-gray-600">{error instanceof Error ? error.message : String(error)}</p>
         </div>
       </div>
     );

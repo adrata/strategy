@@ -1056,7 +1056,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Error Loading {section}
           </h3>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 mb-4">{error instanceof Error ? error.message : String(error)}</p>
           <div className="space-x-3">
             <button
               onClick={handleRefresh}

@@ -297,7 +297,7 @@ export function SpeedrunSprintView() {
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Error Loading Sprint
           </h3>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 mb-4">{error instanceof Error ? error.message : String(error)}</p>
           <button
             onClick={refresh}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
