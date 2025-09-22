@@ -474,14 +474,28 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               record={recordToShow}
               recordType={section === 'speedrun' ? 'prospects' : section as any}
               recordIndex={(() => {
-                const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                console.log(`🔍 [NAVIGATION] Calculating recordIndex:`, {
-                  recordId: recordToShow?.id,
-                  dataLength: data.length,
-                  foundIndex: index,
-                  calculatedRecordIndex: index >= 0 ? index + 1 : 0
-                });
-                return index >= 0 ? index + 1 : 0;
+                // Use rank from database if available, otherwise calculate from index
+                const dbRank = recordToShow?.rank;
+                if (dbRank && dbRank > 0) {
+                  console.log(`🔍 [NAVIGATION] Using database rank:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    databaseRank: dbRank
+                  });
+                  return dbRank;
+                } else {
+                  // Fallback: Calculate from index
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  console.log(`🔍 [NAVIGATION] Calculating recordIndex from position:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: index >= 0 ? index + 1 : 0,
+                    firstFewRecords: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+                  });
+                  return index >= 0 ? index + 1 : 0;
+                }
               })()}
               totalRecords={data.length}
               onBack={handleBack}
@@ -600,7 +614,16 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               <UniversalRecordTemplate
                 record={selectedRecord}
                 recordType={section}
-                recordIndex={(data.findIndex(r => r['id'] === selectedRecord.id) + 1)}
+                recordIndex={(() => {
+                  // Use rank from database if available, otherwise calculate from index
+                  const dbRank = selectedRecord?.rank;
+                  if (dbRank && dbRank > 0) {
+                    return dbRank;
+                  } else {
+                    const index = data.findIndex(r => r['id'] === selectedRecord.id);
+                    return index >= 0 ? index + 1 : 0;
+                  }
+                })()}
                 totalRecords={data.length}
                 onBack={() => navigateToPipeline(section)}
                 onNavigatePrevious={handleNavigatePrevious}
