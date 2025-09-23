@@ -641,6 +641,11 @@ model people {
   buyerGroups       BuyerGroupToPerson[]
   actions           actions[]
   company           companies?           @relation(fields: [companyId], references: [id])
+  painIntelligence    String?
+  wants               String[]
+  needs               String[]
+  psychographicProfile String?
+  communicationStyleRecommendations String?
 
   @@index([entity_id], map: "idx_people_entity_id")
 }
@@ -1127,6 +1132,11 @@ model leads {
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
   lastAction          String?
+  painIntelligence    String?
+  wants               String[]
+  needs               String[]
+  psychographicProfile String?
+  communicationStyleRecommendations String?
 
   @@index([createdBy], map: "idx_leads_created_by")
   @@index([updatedBy], map: "idx_leads_updated_by")
@@ -1377,6 +1387,11 @@ model prospects {
   updatedBy           String?   @db.VarChar(30)
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
+  painIntelligence    String?
+  wants               String[]
+  needs               String[]
+  psychographicProfile String?
+  communicationStyleRecommendations String?
 
   @@index([createdBy], map: "idx_prospects_created_by")
   @@index([updatedBy], map: "idx_prospects_updated_by")

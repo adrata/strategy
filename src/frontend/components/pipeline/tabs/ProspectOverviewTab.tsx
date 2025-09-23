@@ -53,7 +53,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     tags: record.tags || [],
     estimatedValue: record.estimatedValue || 0,
     currency: record.currency || 'USD',
-    source: record.source || 'Unknown'
+    source: record.source || 'Unknown',
+    painIntelligence: record.painIntelligence || 'No pain intelligence available',
+    wants: record.wants || [],
+    needs: record.needs || [],
+    psychographicProfile: record.psychographicProfile || 'No psychographic profile available',
+    communicationStyleRecommendations: record.communicationStyleRecommendations || 'No communication style recommendations available'
   };
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {

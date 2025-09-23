@@ -612,7 +612,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : "Today",
-      visible: !isDemoMode // Show in production, hide in demo mode
+      visible: false // Hidden for this release
     },
     // New order as requested by user
     {
