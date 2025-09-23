@@ -348,6 +348,69 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
               </div>
             </div>
 
+            {/* Company Intelligence Data */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Intelligence</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.linkedinUrl ? (
+                        <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          View LinkedIn Profile
+                        </a>
+                      ) : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Founded Year</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.foundedYear || 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Employee Count</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.employeeCount ? record.employeeCount.toLocaleString() : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Active Job Postings</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.activeJobPostings || 'Not available'}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Followers</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.linkedinFollowers ? record.linkedinFollowers.toLocaleString() : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">NAICS Codes</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.naicsCodes?.length > 0 ? record.naicsCodes.join(', ') : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Technologies Used</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.technologiesUsed?.length > 0 ? record.technologiesUsed.slice(0, 3).join(', ') + (record.technologiesUsed.length > 3 ? '...' : '') : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Competitors</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.competitors?.length > 0 ? record.competitors.slice(0, 3).join(', ') + (record.competitors.length > 3 ? '...' : '') : 'Not available'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Summary Information */}
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -784,6 +847,69 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                       onSave={handleInlineSave}
                       className="text-sm text-gray-900"
                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Company Intelligence Data */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Intelligence</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.linkedinUrl ? (
+                        <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          View LinkedIn Profile
+                        </a>
+                      ) : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Founded Year</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.foundedYear || 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Employee Count</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.employeeCount ? record.employeeCount.toLocaleString() : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Active Job Postings</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.activeJobPostings || 'Not available'}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Followers</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.linkedinFollowers ? record.linkedinFollowers.toLocaleString() : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">NAICS Codes</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.naicsCodes?.length > 0 ? record.naicsCodes.join(', ') : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Technologies Used</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.technologiesUsed?.length > 0 ? record.technologiesUsed.slice(0, 3).join(', ') + (record.technologiesUsed.length > 3 ? '...' : '') : 'Not available'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Competitors</label>
+                    <div className="text-sm text-gray-600">
+                      {record?.competitors?.length > 0 ? record.competitors.slice(0, 3).join(', ') + (record.competitors.length > 3 ? '...' : '') : 'Not available'}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -534,6 +534,36 @@ model companies {
   uniqueValuePropositions String[]            @default([])
   rank                    Int?                @default(0)
   situationAnalysis       String?
+  
+  // Intelligence Fields - Overview Tab
+  linkedinUrl             String?             @db.VarChar(500)
+  foundedYear             Int?
+  employeeCount           Int?
+  activeJobPostings       Int?
+  linkedinFollowers       Int?
+  
+  // Intelligence Fields - Industry Classification
+  naicsCodes              String[]
+  sicCodes                String[]
+  
+  // Intelligence Fields - Social Media
+  facebookUrl             String?             @db.VarChar(500)
+  twitterUrl              String?             @db.VarChar(500)
+  instagramUrl            String?             @db.VarChar(500)
+  youtubeUrl              String?             @db.VarChar(500)
+  githubUrl               String?             @db.VarChar(500)
+  
+  // Intelligence Fields - Business Intelligence
+  technologiesUsed        String[]
+  competitors             String[]
+  revenueCurrency         String?             @db.VarChar(3)
+  lastFundingAmount       BigInt?
+  lastFundingDate         DateTime?           @db.Date
+  
+  // Intelligence Fields - Strategic Intelligence
+  complications           String?
+  strategicIntelligence   String?
+  
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])
@@ -638,16 +668,14 @@ model people {
   engagementScore   Float?               @default(0)
   funnelStage       String?              @default("Prospect") @db.VarChar(50)
   buyerGroupRole    String?              @db.VarChar(50)
+  rank              Int?                 @default(0)
   buyerGroups       BuyerGroupToPerson[]
   actions           actions[]
   company           companies?           @relation(fields: [companyId], references: [id])
-  painIntelligence    String?
-  wants               String[]
-  needs               String[]
-  psychographicProfile String?
-  communicationStyleRecommendations String?
 
   @@index([entity_id], map: "idx_people_entity_id")
+  @@index([rank], map: "idx_people_rank")
+  @@index([workspaceId, rank], map: "idx_people_workspace_rank")
 }
 
 model custom_attributes {
@@ -1132,17 +1160,15 @@ model leads {
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
   lastAction          String?
-  painIntelligence    String?
-  wants               String[]
-  needs               String[]
-  psychographicProfile String?
-  communicationStyleRecommendations String?
+  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_leads_created_by")
   @@index([updatedBy], map: "idx_leads_updated_by")
   @@index([workspaceId, assignedUserId], map: "idx_leads_workspace_assigned")
   @@index([workspaceId, status], map: "idx_leads_workspace_status")
   @@index([entity_id], map: "idx_leads_entity_id")
+  @@index([rank], map: "idx_leads_rank")
+  @@index([workspaceId, rank], map: "idx_leads_workspace_rank")
 }
 
 model notes {
@@ -1387,17 +1413,15 @@ model prospects {
   updatedBy           String?   @db.VarChar(30)
   version             Int       @default(1)
   entity_id           String?   @db.VarChar(30)
-  painIntelligence    String?
-  wants               String[]
-  needs               String[]
-  psychographicProfile String?
-  communicationStyleRecommendations String?
+  rank                Int?      @default(0)
 
   @@index([createdBy], map: "idx_prospects_created_by")
   @@index([updatedBy], map: "idx_prospects_updated_by")
   @@index([workspaceId, assignedUserId], map: "idx_prospects_workspace_assigned")
   @@index([workspaceId, status], map: "idx_prospects_workspace_status")
   @@index([entity_id], map: "idx_prospects_entity_id")
+  @@index([rank], map: "idx_prospects_rank")
+  @@index([workspaceId, rank], map: "idx_prospects_workspace_rank")
 }
 
 model realtime_subscriptions {

@@ -28,10 +28,15 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
     
     // Get enrichment data if available
     const coresignalData = record?.customFields?.coresignalData;
-    const employeeCount = coresignalData?.employees_count || 'Unknown';
-    const foundedYear = coresignalData?.founded_year;
+    const employeeCount = coresignalData?.employees_count || record?.employeeCount || 'Unknown';
+    const foundedYear = coresignalData?.founded_year || record?.foundedYear;
     const age = foundedYear ? new Date().getFullYear() - parseInt(foundedYear) : null;
     const categories = coresignalData?.categories_and_keywords || [];
+    
+    // Get strategic intelligence from database fields
+    const situationAnalysis = record?.situationAnalysis || record?.customFields?.intelligenceTabFields?.situationAnalysis;
+    const complications = record?.complications || record?.customFields?.intelligenceTabFields?.complications;
+    const strategicIntelligence = record?.strategicIntelligence || record?.customFields?.intelligenceTabFields?.strategicIntelligence;
     
     return {
       companyName,
@@ -43,7 +48,10 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
       location,
       employeeCount,
       age,
-      categories
+      categories,
+      situationAnalysis,
+      complications,
+      strategicIntelligence
     };
   };
 
@@ -53,13 +61,15 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
     <div className="space-y-8">
       {/* Situation */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Situation</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Situation Analysis</h3>
         <div>
           <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
           <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {intelligence.description && intelligence.description.trim() !== '' 
-              ? intelligence.description
-              : `${intelligence.companyName} operates in the ${intelligence.industry} industry${intelligence.location !== 'Unknown Location' ? `, located in ${intelligence.location}` : ''}. ${intelligence.employeeCount !== 'Unknown' ? `The company has ${intelligence.employeeCount} employees` : 'Company size information is not available'}. ${intelligence.revenue !== 'Unknown Revenue' ? `Revenue is estimated at ${intelligence.revenue}` : 'Financial information is not available'}. ${intelligence.website !== 'No website available' ? `More information can be found at ${intelligence.website}` : ''}.`
+            {intelligence.situationAnalysis 
+              ? intelligence.situationAnalysis
+              : intelligence.description && intelligence.description.trim() !== '' 
+                ? intelligence.description
+                : `${intelligence.companyName} operates in the ${intelligence.industry} industry${intelligence.location !== 'Unknown Location' ? `, located in ${intelligence.location}` : ''}. ${intelligence.employeeCount !== 'Unknown' ? `The company has ${intelligence.employeeCount} employees` : 'Company size information is not available'}. ${intelligence.revenue !== 'Unknown Revenue' ? `Revenue is estimated at ${intelligence.revenue}` : 'Financial information is not available'}. ${intelligence.website !== 'No website available' ? `More information can be found at ${intelligence.website}` : ''}.`
             }
           </div>
         </div>
@@ -67,11 +77,14 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
 
       {/* Complications */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{intelligence.companyName} Complications</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Complications</h3>
         <div>
           <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
           <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {intelligence.companyName} operates in the competitive {intelligence.industry} industry, facing typical challenges including market competition, regulatory compliance, technology adoption, and operational efficiency. {intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees, the company must balance growth with resource management.` : 'The company must effectively manage resources and operations.'} Key challenges may include staying competitive in the evolving {intelligence.industry} landscape, maintaining quality standards, and adapting to changing market conditions and customer expectations.
+            {intelligence.complications 
+              ? intelligence.complications
+              : `${intelligence.companyName} operates in the competitive ${intelligence.industry} industry, facing typical challenges including market competition, regulatory compliance, technology adoption, and operational efficiency. ${intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees, the company must balance growth with resource management.` : 'The company must effectively manage resources and operations.'} Key challenges may include staying competitive in the evolving ${intelligence.industry} landscape, maintaining quality standards, and adapting to changing market conditions and customer expectations.`
+            }
           </div>
         </div>
       </div>
@@ -82,7 +95,10 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
         <div>
           <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
           <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {intelligence.companyName} represents a strategic opportunity in the {intelligence.industry} sector. {intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees,` : 'The company'} demonstrates established market presence and operational capability. Key strategic considerations include understanding their business priorities, decision-making processes, and growth objectives. Partnership potential exists in areas such as technology solutions, operational improvements, and market expansion. The company's focus on {intelligence.industry} suggests opportunities for collaboration in industry-specific solutions, process optimization, and strategic initiatives that align with their business goals and market position.
+            {intelligence.strategicIntelligence 
+              ? intelligence.strategicIntelligence
+              : `${intelligence.companyName} represents a strategic opportunity in the ${intelligence.industry} sector. ${intelligence.employeeCount !== 'Unknown' ? `With ${intelligence.employeeCount} employees,` : 'The company'} demonstrates established market presence and operational capability. Key strategic considerations include understanding their business priorities, decision-making processes, and growth objectives. Partnership potential exists in areas such as technology solutions, operational improvements, and market expansion. The company's focus on ${intelligence.industry} suggests opportunities for collaboration in industry-specific solutions, process optimization, and strategic initiatives that align with their business goals and market position.`
+            }
           </div>
         </div>
       </div>
