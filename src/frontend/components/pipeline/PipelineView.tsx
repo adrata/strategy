@@ -88,14 +88,15 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
+  
+  // Get workspace context at component level
+  const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
+  
   // Section-specific default visible columns with workspace-specific configuration
   const getDefaultVisibleColumns = (section: string): string[] => {
-    // Get workspace context
-    const workspaceId = user?.activeWorkspaceId || '';
-    const workspaceName = user?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
-    
     // Get workspace-specific column configuration
-    const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+    const currentWorkspaceId = user?.activeWorkspaceId || '';
+    const sectionConfig = getSectionColumns(currentWorkspaceId, section, workspaceName);
     
     // Use workspace-specific column display names if available, otherwise use defaults
     if (sectionConfig.columns) {

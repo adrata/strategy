@@ -95,7 +95,7 @@ export default function SignInPage() {
                 console.log("✅ [SIGN-IN PAGE] Auto-login successful!");
                 
                 // Determine redirect URL
-                let redirectUrl = "/dashboard"; // Default to Dashboard
+                let redirectUrl = "/speedrun"; // Default to Speedrun
                 
                 if (result.redirectTo) {
                   redirectUrl = result.redirectTo;
@@ -105,8 +105,8 @@ export default function SignInPage() {
                   if (lastLocation) {
                     redirectUrl = lastLocation;
                   } else {
-                    // First time login - default all users to Pipeline Dashboard
-                    redirectUrl = "/dashboard";  // All users go to Dashboard by default
+                    // First time login - default all users to Speedrun
+                    redirectUrl = "/speedrun";  // All users go to Speedrun by default
                     
                     localStorage.setItem("adrata_last_location", redirectUrl);
                   }
@@ -186,7 +186,7 @@ export default function SignInPage() {
         }
 
         // Determine redirect URL based on platform routing
-        let redirectUrl = "/dashboard"; // Default to Dashboard
+        let redirectUrl = "/speedrun"; // Default to Speedrun
         
         if (result.redirectTo) {
           // Use platform-specific route from authentication response
@@ -213,7 +213,7 @@ export default function SignInPage() {
               if (isDemo) {
                 redirectUrl = "/monaco";
               } else {
-                redirectUrl = "/dashboard";  // All non-demo users go to Dashboard by default
+                redirectUrl = "/speedrun";  // All non-demo users go to Speedrun by default
               }
               
               localStorage.setItem("adrata_last_location", redirectUrl);

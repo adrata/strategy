@@ -75,12 +75,12 @@ export class PlatformAccessRouter {
   }
 
   /**
-   * Production user route - Pipeline Dashboard (Default)
+   * Production user route - Speedrun (Default)
    */
   static getAOSRoute(): PlatformRoute {
     return {
-      path: "/dashboard",
-      component: "PipelineDashboard",
+      path: "/speedrun",
+      component: "SpeedrunDashboard",
       title: "Adrata Action Platform",
       description: "Complete business platform with Monaco, Pipeline, and more"
     };
@@ -91,10 +91,10 @@ export class PlatformAccessRouter {
    */
   static getPipelineRoute(): PlatformRoute {
     return {
-      path: "/dashboard",
-      component: "PipelineDashboard",
-      title: "Retail Product Solutions - Pipeline Dashboard",
-      description: "Pipeline dashboard management for retail product solutions"
+      path: "/speedrun",
+      component: "SpeedrunDashboard",
+      title: "Retail Product Solutions - Speedrun Dashboard",
+      description: "Speedrun dashboard management for retail product solutions"
     };
   }
 

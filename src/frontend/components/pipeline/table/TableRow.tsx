@@ -174,8 +174,8 @@ export function TableRow({
             
             switch (column) {
               case 'rank':
-                // 🎯 STRATEGIC RANKING: Display full alphanumeric rank for company-based strategy
-                const displayRank = record['winningScore']?.['rank'] || record['rank'] || (index + 1);
+                // Use simple numeric rank for consistent design across all sections
+                const displayRank = record['rank'] || (index + 1);
                 return (
                   <td key="rank" className={textClasses}>
                     <div className="text-left font-medium">{displayRank}</div>

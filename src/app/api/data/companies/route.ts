@@ -241,9 +241,9 @@ export async function GET(request: NextRequest) {
     
     // Companies are already sorted by updatedAt and name
     
-    // Assign sequential ranks starting from 0
+    // Assign sequential ranks starting from 1
     uniqueCompanies.forEach((company, index) => {
-      company.rank = index;
+      company.rank = index + 1;
     });
 
     console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);

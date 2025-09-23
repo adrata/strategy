@@ -18,6 +18,7 @@ import { Prisma } from '@prisma/client';
 import { cache } from '@/platform/services';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
+import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
 
 // 🚀 PERFORMANCE: Aggressive caching for instant loading
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes

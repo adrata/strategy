@@ -346,9 +346,9 @@ export function PipelineHeader({
   // Handle button action
   const handleAction = useCallback(() => {
     if (section === 'speedrun') {
-      console.log('Starting speedrun sprint...');
+      console.log('Starting speedrun...');
       // Use workspace-aware navigation
-      navigateToPipeline('speedrun/sprint');
+      navigateToPipeline('speedrun/start');
     } else {
       console.log(`Creating new ${section.slice(0, -1)}`);
       onAddRecord?.();
@@ -434,7 +434,7 @@ export function PipelineHeader({
           title: 'Speedrun',
           subtitle: 'Win more, faster',
           actionButton: 'Add Person',
-          secondaryActionButton: 'Add Action',
+          secondaryActionButton: 'Start Speedrun',
           showStartSpeedrun: true
         };
       case 'dashboard':
@@ -936,9 +936,14 @@ export function PipelineHeader({
                       {(sectionInfo as any).secondaryActionButton && (
                         <button 
                           onClick={() => {
-                            // Handle secondary action (Add Action for prospects and speedrun)
-                            setSelectedRecord(null);
-                            setShowAddActionModal(true);
+                            // Handle secondary action - Start Speedrun for speedrun section, Add Action for others
+                            if (section === 'speedrun') {
+                              console.log('Starting speedrun...');
+                              navigateToPipeline('speedrun/start');
+                            } else {
+                              setSelectedRecord(null);
+                              setShowAddActionModal(true);
+                            }
                           }}
                           disabled={loading}
                           className="bg-navy-50 text-navy-900 border border-navy-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

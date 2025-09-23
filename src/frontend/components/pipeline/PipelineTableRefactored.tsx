@@ -277,15 +277,10 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // 🎯 STRATEGIC RANKING: Prioritize winningScore.rank for alphanumeric display
-                        const winningRank = record['winningScore']?.['rank'];
+                        // Use simple numeric rank for consistent design across all sections
                         const dbRank = record['rank'];
                         
-                        
-                        // Use alphanumeric winning rank if available (1A, 1B, 2A, etc.)
-                        if (winningRank && typeof winningRank === 'string' && winningRank !== 'TBD') {
-                          cellContent = winningRank;
-                        } else if (dbRank && dbRank > 0) {
+                        if (dbRank && dbRank > 0) {
                           cellContent = String(dbRank);
                         } else {
                           // Fallback: Calculate global rank across all pages
@@ -364,15 +359,13 @@ export function PipelineTable({
       </div>
       
       {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={totalItems}
-          pageSize={pageSize}
-          onPageChange={setCurrentPage}
-        />
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+      />
       
       {/* Modals */}
       {editingRecord && (

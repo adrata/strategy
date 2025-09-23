@@ -86,8 +86,8 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
 
       // Authenticated user on root or bare /aos -> redirect to main app
       if (isAuthenticated && (isRoot || pathname === "/aos")) {
-        console.log("🛡️ Fast redirect to /dashboard");
-        router.replace("/dashboard");
+        console.log("🛡️ Fast redirect to /speedrun");
+        router.replace("/speedrun");
         return;
       }
 

@@ -52,10 +52,10 @@ export function SpeedrunSprintView() {
   // Use single data source from useAcquisitionOS instead
   const { data: acquisitionData } = useAcquisitionOS();
   
-  const allData = acquisitionData.data?.speedrunItems || [];
-  const loading = acquisitionData.isLoading;
-  const error = acquisitionData.error;
-  const refresh = acquisitionData.refreshData;
+  const allData = acquisitionData?.acquireData?.speedrunItems || [];
+  const loading = acquisitionData?.isLoading || false;
+  const error = acquisitionData?.error || null;
+  const refresh = acquisitionData?.refreshData || (() => {});
 
   // Dynamic sprint size based on available data
     const calculateOptimalSprintSize = (totalRecords: number): number => {
@@ -412,7 +412,19 @@ export function SpeedrunSprintView() {
     <UniversalRecordTemplate
       record={selectedRecord}
       recordType="prospects"
-      recordIndex={(data.findIndex(r => r['id'] === selectedRecord.id) + 1)}
+      recordIndex={(() => {
+        const index = data.findIndex(r => r['id'] === selectedRecord.id);
+        const recordIndex = index >= 0 ? index + 1 : 1;
+        console.log('🔍 [SPRINT VIEW] RecordIndex calculation:', {
+          selectedRecordId: selectedRecord.id,
+          selectedRecordName: selectedRecord.name || selectedRecord.fullName,
+          dataLength: data.length,
+          foundIndex: index,
+          calculatedRecordIndex: recordIndex,
+          dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
+        });
+        return recordIndex;
+      })()}
       totalRecords={data.length}
       onBack={() => {
         // Go back to speedrun list
