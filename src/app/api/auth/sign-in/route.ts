@@ -427,6 +427,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         } else if (platformRoute.path.startsWith('/monaco')) {
           // Monaco routes get workspace query parameter  
           platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
+        } else if (platformRoute.path.startsWith('/speedrun')) {
+          // Speedrun routes stay as /speedrun (no workspace prefix needed)
+          platformRoute['path'] = platformRoute.path;
         } else {
           // Default to workspace-specific pipeline dashboard for authenticated users
           platformRoute['path'] = `/${workspaceSlug}/dashboard`;
