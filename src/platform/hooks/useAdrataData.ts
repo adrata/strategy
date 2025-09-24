@@ -249,6 +249,8 @@ export function usePipelineData(
       throw new Error('Workspace ID and User ID are required');
     }
 
+    console.log(`🔍 [usePipelineData] Fetching ${section} data for workspace: ${workspaceId}, user: ${userId}`);
+    
     const response = await fetch(
       `/api/data/unified?type=${section}&workspaceId=${workspaceId}&userId=${userId}`
     );
@@ -258,7 +260,17 @@ export function usePipelineData(
     }
     
     const result = await response.json();
-    return result.data?.[section] || [];
+    
+    // 🔍 DEBUG: Log the API response structure
+    console.log(`🔍 [usePipelineData] API response for ${section}:`, {
+      success: result.success,
+      dataKeys: result.data ? Object.keys(result.data) : [],
+      sectionData: result.data?.[section]?.slice(0, 2) || [],
+      fullResponse: result
+    });
+    
+    // The API returns data directly in result.data, not nested under section
+    return result.data || [];
   }, [section, workspaceId, userId]);
 
   const cacheKey = `pipeline:${section}`;

@@ -1192,6 +1192,17 @@ async function getMultipleRecords(
       companyData: person.company
     }));
 
+    // 🔍 DEBUG: Log the first few records to see what we're returning
+    console.log(`🔍 [PROSPECTS API DEBUG] Returning ${prospectsWithCompanies.length} prospects`);
+    console.log(`🔍 [PROSPECTS API DEBUG] First 3 records:`, prospectsWithCompanies.slice(0, 3).map(p => ({
+      id: p.id,
+      name: p.fullName,
+      company: p.company,
+      companyId: p.companyId,
+      industry: p.industry,
+      companyData: p.companyData
+    })));
+
     return { success: true, data: prospectsWithCompanies };
   }
 
@@ -1252,6 +1263,17 @@ async function getMultipleRecords(
       // Add company data for better relationships
       companyData: person.company
     }));
+
+    // 🔍 DEBUG: Log the first few records to see what we're returning
+    console.log(`🔍 [LEADS API DEBUG] Returning ${leadsWithCompanies.length} leads`);
+    console.log(`🔍 [LEADS API DEBUG] First 3 records:`, leadsWithCompanies.slice(0, 3).map(l => ({
+      id: l.id,
+      name: l.fullName,
+      company: l.company,
+      companyId: l.companyId,
+      industry: l.industry,
+      companyData: l.companyData
+    })));
 
     return { success: true, data: leadsWithCompanies };
   }
