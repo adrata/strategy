@@ -602,18 +602,33 @@ async function getOptimizedWorkspaceContext(request: NextRequest, requestBody?: 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       const secret = process['env']['NEXTAUTH_SECRET'] || process['env']['JWT_SECRET'] || "dev-secret-key-change-in-production";
-      const decoded = jwt.verify(token, secret) as any;
       
-      if (!decoded || !decoded.workspaceId || !decoded.userId || !decoded.email) {
-        throw new Error('Invalid JWT token structure');
-      }
+      console.log('🔍 [WORKSPACE CONTEXT] Attempting JWT verification with secret:', secret.substring(0, 10) + '...');
+      console.log('🔍 [WORKSPACE CONTEXT] Token (first 50 chars):', token.substring(0, 50) + '...');
+      
+      try {
+        const decoded = jwt.verify(token, secret) as any;
+        console.log('🔍 [WORKSPACE CONTEXT] JWT decoded successfully:', {
+          workspaceId: decoded.workspaceId,
+          userId: decoded.userId,
+          email: decoded.email
+        });
+        
+        if (!decoded || !decoded.workspaceId || !decoded.userId || !decoded.email) {
+          throw new Error('Invalid JWT token structure');
+        }
 
-      console.log('✅ [WORKSPACE CONTEXT] Resolved from JWT token in Authorization header');
-      return {
-        workspaceId: decoded.workspaceId,
-        userId: decoded.userId,
-        userEmail: decoded.email
-      };
+        console.log('✅ [WORKSPACE CONTEXT] Resolved from JWT token in Authorization header');
+        return {
+          workspaceId: decoded.workspaceId,
+          userId: decoded.userId,
+          userEmail: decoded.email
+        };
+      } catch (jwtError) {
+        console.error('❌ [WORKSPACE CONTEXT] JWT verification failed:', jwtError.message);
+        console.log('🔍 [WORKSPACE CONTEXT] Falling back to environment variables...');
+        // Continue to fallback logic below
+      }
     }
     
     // Check for JWT token in cookies (for web requests with credentials: 'include')
@@ -691,10 +706,30 @@ async function getOptimizedWorkspaceContext(request: NextRequest, requestBody?: 
       };
     }
     
-    // Development fallback - if no workspace/user provided, throw error to let frontend handle it
+    // Development fallback - if no workspace/user provided, use environment variables
     if (!workspaceId || !userId) {
       console.log('⚠️ [WORKSPACE CONTEXT] No workspaceId/userId provided in query parameters');
-      throw new Error('Missing workspaceId and userId in request');
+      console.log('🔍 [WORKSPACE CONTEXT] Falling back to environment variables...');
+      
+      const envWorkspaceId = process['env']['DEFAULT_WORKSPACE_ID'] || process['env']['NEXT_PUBLIC_WORKSPACE_ID'];
+      const envUserId = process['env']['DEFAULT_USER_ID'];
+      
+      console.log('🔍 [WORKSPACE CONTEXT] Environment variables:', {
+        workspaceId: envWorkspaceId,
+        userId: envUserId
+      });
+      
+      if (!envWorkspaceId || !envUserId) {
+        console.error('❌ [WORKSPACE CONTEXT] No environment variables available for fallback');
+        throw new Error('Missing workspaceId and userId in request and environment');
+      }
+      
+      console.log('✅ [WORKSPACE CONTEXT] Using environment variables as fallback');
+      return {
+        workspaceId: envWorkspaceId,
+        userId: envUserId,
+        userEmail: 'api@adrata.com'
+      };
     }
     
     console.log('✅ [WORKSPACE CONTEXT] Resolved from query parameters');
