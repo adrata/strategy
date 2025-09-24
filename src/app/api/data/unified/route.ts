@@ -2509,51 +2509,31 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.leads.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       prisma.prospects.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       prisma.opportunities.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       prisma.companies.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       prisma.people.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       prisma.clients.count({ 
