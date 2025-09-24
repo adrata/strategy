@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     console.log(`👥 Existing people: ${company.people.length}`);
 
     // Import and run the analysis script
-    const FiveBarsBuyerGroupAnalyzer = require('../../../scripts/analyze-5bars-buyer-group-comprehensive.js');
+    const FiveBarsBuyerGroupAnalyzer = require('../../../../scripts/analyze-5bars-buyer-group-comprehensive.js');
     const analyzer = new FiveBarsBuyerGroupAnalyzer();
     
     // Run the analysis

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { PasswordProtection } from '../../PasswordProtection';
+import PasswordProtection from '../../PasswordProtection';
 import { WorkflowVisualization } from './components/WorkflowVisualization';
 import { RealTimeMonitoring } from './components/RealTimeMonitoring';
 
