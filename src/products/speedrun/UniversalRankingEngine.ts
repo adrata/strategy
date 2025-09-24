@@ -18,7 +18,7 @@ import { TodayActivityTracker } from "./TodayActivityTracker";
 
 export interface WinningScore {
   totalScore: number;
-  rank: string; // 1A, 1B, 2A, etc.
+  rank: string; // 1, 2, 3, 4, 5, etc. (simple 1-30 numbering)
   confidence: number; // 0-1 confidence in ranking
   winFactors: string[]; // Human-readable factors contributing to ranking
   urgencyLevel: "Critical" | "High" | "Medium" | "Low";
@@ -463,12 +463,13 @@ export class UniversalRankingEngine {
   }
   
   /**
-   * Generate final ranking with 1A, 1B, 2A, 2B pattern
+   * Generate final ranking with simple 1-30 numbering
    */
   private static generateCompanyBasedRanking(
     rankedCompanies: Array<[string, RankedSpeedrunPerson[]]>
   ): RankedSpeedrunPerson[] {
     const finalRanking: RankedSpeedrunPerson[] = [];
+    let globalRank = 1;
     
     rankedCompanies.forEach(([company, prospects], companyIndex) => {
       // Sort prospects within company by winning score
@@ -476,13 +477,14 @@ export class UniversalRankingEngine {
         b.winningScore.totalScore - a.winningScore.totalScore
       );
       
-      // Assign ranks: 1A, 1B, 1C, 2A, 2B, 2C, etc.
+      // Assign simple numerical ranks: 1, 2, 3, 4, 5, etc. (up to 30)
       sortedProspects.forEach((prospect, prospectIndex) => {
-        const companyRank = companyIndex + 1;
-        const prospectLetter = String.fromCharCode(65 + prospectIndex); // A, B, C, etc.
-        
-        prospect['winningScore']['rank'] = `${companyRank}${prospectLetter}`;
-        finalRanking.push(prospect);
+        // Only assign ranks 1-30 to match daily target
+        if (globalRank <= 30) {
+          prospect['winningScore']['rank'] = globalRank.toString();
+          finalRanking.push(prospect);
+          globalRank++;
+        }
       });
     });
     

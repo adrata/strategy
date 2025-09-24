@@ -44,7 +44,7 @@ export interface SpeedrunPerson {
   // 🏆 Dano's Winning Score (optional - only present after ranking)
   winningScore?: {
     totalScore: number;
-    rank: string; // 1A, 1B, 2A, etc.
+    rank: string; // 1, 2, 3, 4, 5, etc. (simple 1-30 numbering)
     confidence: number;
     winFactors: string[];
     urgencyLevel: "Critical" | "High" | "Medium" | "Low";
