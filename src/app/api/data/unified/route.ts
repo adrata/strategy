@@ -3297,13 +3297,83 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       };
     });
     
-    // Sort by priority score (highest first) and assign proper ranks
-    const speedrunItems = speedrunItemsWithScores
-      .sort((a, b) => b.priorityScore - a.priorityScore)
-      .map((item, index) => ({
-        ...item,
-        rank: index + 1
+    // 🏆 ENHANCED: Use UniversalRankingEngine for proper 1-30 ranking
+    let speedrunItems: any[] = [];
+    
+    try {
+      // Import UniversalRankingEngine
+      const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
+      
+      // Transform data to SpeedrunPerson format for ranking
+      const transformedData = speedrunItemsWithScores.map((item: any) => ({
+        id: item.id || `speedrun-${Math.random()}`,
+        name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
+        email: item.email || '',
+        company: item.company || item.companyName || 'Unknown Company',
+        title: item.title || item.jobTitle || 'Unknown Title',
+        phone: item.phone || '',
+        location: item.location || '',
+        industry: 'Technology',
+        status: item.status || 'active',
+        priority: item.priority || 'medium',
+        lastContact: item.lastActionDate || item.updatedAt,
+        notes: '',
+        tags: [],
+        source: item.source || 'speedrun',
+        enrichmentScore: item.priorityScore || 0,
+        buyerGroupRole: 'unknown',
+        currentStage: item.currentStage || 'initial',
+        nextAction: item.nextAction || '',
+        nextActionDate: item.nextActionDate || '',
+        createdAt: item.createdAt || new Date().toISOString(),
+        updatedAt: item.updatedAt || new Date().toISOString(),
+        assignedUser: null,
+        workspaceId: workspaceId,
+        relationship: 'prospect',
+        bio: '',
+        interests: [],
+        recentActivity: '',
+        engagementScore: 0,
+        dealPotential: 0,
+        urgencyLevel: 'Medium',
+        bestContactTime: 'Morning',
+        valueDriver: '',
+        buyerGroupRole: 'unknown',
+        decisionMakingPower: 'medium',
+        relationshipWarmth: 'cold',
+        timingUrgency: 'medium',
+        dealValue: 0,
+        strategicAccountValue: 0,
+        engagementReadiness: 'low'
       }));
+      
+      // Apply UniversalRankingEngine for proper 1-30 ranking
+      const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
+      
+      // Transform back to speedrun format with proper rankings
+      speedrunItems = rankedProspects.map((prospect: any) => ({
+        ...speedrunItemsWithScores.find(item => item.id === prospect.id),
+        rank: prospect.winningScore?.rank || '1',
+        winningScore: prospect.winningScore?.totalScore || 0,
+        winFactors: prospect.winningScore?.winFactors || [],
+        urgencyLevel: prospect.winningScore?.urgencyLevel || 'Medium',
+        bestContactTime: prospect.winningScore?.bestContactTime || 'Morning',
+        dealPotential: prospect.winningScore?.dealPotential || 0
+      }));
+      
+      console.log(`🏆 [SPEEDRUN] Applied UniversalRankingEngine: ${speedrunItems.length} prospects ranked`);
+      
+    } catch (error) {
+      console.warn('⚠️ [SPEEDRUN] UniversalRankingEngine failed, falling back to simple ranking:', error);
+      
+      // Fallback to simple ranking
+      speedrunItems = speedrunItemsWithScores
+        .sort((a, b) => b.priorityScore - a.priorityScore)
+        .map((item, index) => ({
+          ...item,
+          rank: index + 1
+        }));
+    }
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);
     
