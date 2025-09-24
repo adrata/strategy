@@ -42,12 +42,27 @@ export async function getSession(): Promise<UnifiedSession | null> {
     }
 
     const stored = localStorage.getItem(AUTH_CONFIG.sessionKey);
-    if (!stored) return null;
+    console.log("🔐 [GET SESSION] Stored session exists:", !!stored);
+    console.log("🔐 [GET SESSION] Session key:", AUTH_CONFIG.sessionKey);
+    console.log("🔐 [GET SESSION] Current domain:", typeof window !== "undefined" ? window.location.hostname : "server");
+    
+    if (!stored) {
+      console.log("🔐 [GET SESSION] No session found in localStorage");
+      return null;
+    }
 
     const session: UnifiedSession = JSON.parse(stored);
+    console.log("🔐 [GET SESSION] Session parsed successfully:", {
+      userId: session.user?.id,
+      email: session.user?.email,
+      activeWorkspaceId: session.user?.activeWorkspaceId,
+      hasAccessToken: !!session.accessToken,
+      expires: session.expires
+    });
 
     // Check expiry
     if (new Date(session.expires) < new Date()) {
+      console.log("🔐 [GET SESSION] Session expired, clearing...");
       await clearSession();
       return null;
     }
@@ -55,6 +70,7 @@ export async function getSession(): Promise<UnifiedSession | null> {
     // Update last activity timestamp in memory only (don't trigger storage events)
     session['lastActivity'] = new Date().toISOString();
 
+    console.log("✅ [GET SESSION] Session retrieved successfully");
     return session;
   } catch (error) {
     console.error("❌ [SESSION] Error getting session:", error);

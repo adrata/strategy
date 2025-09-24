@@ -34,6 +34,13 @@ export async function authFetch(
 
   // Web mode - normal authenticated fetch
   const session = await UnifiedAuthService.getSession();
+  console.log("🔐 [AUTH-FETCH] Session retrieved:", {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    email: session?.user?.email,
+    activeWorkspaceId: session?.user?.activeWorkspaceId,
+    hasAccessToken: !!session?.accessToken
+  });
 
   // Prepare headers
   const headers: Record<string, string> = {
@@ -44,6 +51,9 @@ export async function authFetch(
   // Add authentication if available
   if (session?.accessToken) {
     headers["Authorization"] = `Bearer ${session.accessToken}`;
+    console.log("🔐 [AUTH-FETCH] Authorization header added");
+  } else {
+    console.log("⚠️ [AUTH-FETCH] No access token available - request will be unauthenticated");
   }
 
   // Also set session as cookie for compatibility
