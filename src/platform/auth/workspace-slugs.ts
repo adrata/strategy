@@ -61,7 +61,7 @@ export function getWorkspaceBySlug(workspaces: Array<{ id: string; name: string 
 /**
  * Generate workspace URL
  */
-export function getWorkspaceUrl(workspace: { id: string; name: string }, path: string = 'dashboard'): string {
+export function getWorkspaceUrl(workspace: { id: string; name: string }, path: string = 'speedrun'): string {
   const slug = generateWorkspaceSlug(workspace.name);
   return `/${slug}/${path}`;
 }

@@ -431,8 +431,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           // Speedrun routes stay as /speedrun (no workspace prefix needed)
           platformRoute['path'] = platformRoute.path;
         } else {
-          // Default to workspace-specific pipeline dashboard for authenticated users
-          platformRoute['path'] = `/${workspaceSlug}/dashboard`;
+          // Default to workspace-specific speedrun for authenticated users
+          platformRoute['path'] = `/${workspaceSlug}/speedrun`;
         }
         
         console.log("🎯 [AUTH API] Workspace-aware route determined:", platformRoute.path, "for workspace:", activeWorkspace.name);

@@ -215,7 +215,7 @@ export default function WorkspacesPage() {
       // 🆕 CRITICAL FIX: Use hard reload to ensure fresh data and session
       console.log("🔄 Navigating to new workspace with hard reload:", result.redirectUrl);
       // Use the getWorkspaceUrl function to generate the correct URL
-      const redirectUrl = result.redirectUrl || getWorkspaceUrl(workspace, 'dashboard');
+      const redirectUrl = result.redirectUrl || getWorkspaceUrl(workspace, 'speedrun');
       
       // Clear all possible caches before hard reload
       try {
