@@ -3124,7 +3124,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         deletedAt: null
       },
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      take: 200, // Load enough prospects for proper speedrun ranking
       select: {
         id: true,
         firstName: true,
