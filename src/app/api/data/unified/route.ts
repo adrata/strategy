@@ -1161,16 +1161,20 @@ async function getMultipleRecords(
       }
     });
 
-    // Transform people data to prospects format
+    // Transform people data to prospects format with proper company mapping
     const prospectsWithCompanies = people.map(person => ({
       id: person.id,
       firstName: person.firstName,
       lastName: person.lastName,
       fullName: person.fullName,
       email: person.email,
+      // Map company data to the fields the UI expects
       company: person.company?.name || 'Unknown Company',
       companyId: person.companyId,
       companyName: person.company?.name || 'Unknown Company',
+      industry: person.company?.industry || 'Unknown Industry',
+      vertical: person.company?.vertical || 'Unknown Vertical',
+      companySize: person.company?.size || 'Unknown Size',
       jobTitle: person.jobTitle,
       title: person.title,
       status: person.status,
@@ -1218,16 +1222,20 @@ async function getMultipleRecords(
       }
     });
 
-    // Transform people data to leads format
+    // Transform people data to leads format with proper company mapping
     const leadsWithCompanies = people.map(person => ({
       id: person.id,
       firstName: person.firstName,
       lastName: person.lastName,
       fullName: person.fullName,
       email: person.email,
+      // Map company data to the fields the UI expects
       company: person.company?.name || 'Unknown Company',
       companyId: person.companyId,
       companyName: person.company?.name || 'Unknown Company',
+      industry: person.company?.industry || 'Unknown Industry',
+      vertical: person.company?.vertical || 'Unknown Vertical',
+      companySize: person.company?.size || 'Unknown Size',
       jobTitle: person.jobTitle,
       title: person.title,
       status: person.status,
@@ -3132,15 +3140,20 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       }
     });
 
-    // Transform people data to speedrun format
+    // Transform people data to speedrun format with proper company mapping
     const prospectsWithCompanies = people.map(person => ({
       id: person.id,
       firstName: person.firstName,
       lastName: person.lastName,
       fullName: person.fullName,
       email: person.email,
+      // Map company data to the fields the UI expects
       company: person.company?.name || 'Unknown Company',
       companyId: person.companyId,
+      companyName: person.company?.name || 'Unknown Company',
+      industry: person.company?.industry || 'Unknown Industry',
+      vertical: person.company?.vertical || 'Unknown Vertical',
+      companySize: person.company?.size || 'Unknown Size',
       jobTitle: person.jobTitle,
       title: person.title,
       status: person.status,
