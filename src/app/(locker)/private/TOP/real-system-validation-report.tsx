@@ -193,7 +193,7 @@ export default function RealSystemValidationReport() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
                         <div className="text-2xl font-bold text-green-600">12</div>
-                        <div className="text-sm text-green-700">High Confidence (>90%)</div>
+                        <div className="text-sm text-green-700">High Confidence (&gt;90%)</div>
                     </div>
                     
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
@@ -203,7 +203,7 @@ export default function RealSystemValidationReport() {
                     
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
                         <div className="text-2xl font-bold text-red-600">1</div>
-                        <div className="text-sm text-red-700">Low Confidence (<70%)</div>
+                        <div className="text-sm text-red-700">Low Confidence (&lt;70%)</div>
                     </div>
                 </div>
                 

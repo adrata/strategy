@@ -390,11 +390,11 @@ export default function PipelineValidationChecklistReport() {
                   </div>
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
-                    <span>Response Time: <3s avg</span>
+                    <span>Response Time: &lt;3s avg</span>
                   </div>
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
-                    <span>Data Freshness: <30 days</span>
+                    <span>Data Freshness: &lt;30 days</span>
                   </div>
                 </div>
                 
@@ -402,7 +402,7 @@ export default function PipelineValidationChecklistReport() {
                   <p className="text-xs text-gray-600 mb-2">Performance Metrics:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Average API Response: ✅ 2.8 seconds</li>
-                    <li>• Database Query Time: ✅ <500ms</li>
+                    <li>• Database Query Time: ✅ &lt;500ms</li>
                     <li>• Success Rate: ✅ 96.2% across all operations</li>
                     <li>• Error Handling: ✅ Graceful degradation implemented</li>
                   </ul>

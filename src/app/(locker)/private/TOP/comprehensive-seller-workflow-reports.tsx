@@ -338,9 +338,9 @@ export default function ComprehensiveSellerWorkflowReports() {
               <ul className="text-sm space-y-1">
                 <li>• Average Response: 3.2 seconds</li>
                 <li>• API Success Rate: 96%</li>
-                <li>• Data Freshness: <30 days</li>
+                <li>• Data Freshness: &lt;30 days</li>
                 <li>• System Uptime: 99.8%</li>
-                <li>• Error Rate: <2%</li>
+                <li>• Error Rate: &lt;2%</li>
               </ul>
             </div>
           </div>

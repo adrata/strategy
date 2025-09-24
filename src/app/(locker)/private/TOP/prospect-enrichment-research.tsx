@@ -117,10 +117,10 @@ export default function ProspectEnrichmentResearchReport() {
               <span className="font-medium">Data Sources Used:</span> Internal DB, Perplexity verification
             </div>
             <div>
-              <span className="font-medium">Employment Verified:</span> Yes (Current)</span>
+              <span className="font-medium">Employment Verified:</span> Yes (Current)
             </div>
             <div>
-              <span className="font-medium">Context Accuracy:</span> 92% (utility industry match)</span>
+              <span className="font-medium">Context Accuracy:</span> 92% (utility industry match)
             </div>
           </div>
         </div>
