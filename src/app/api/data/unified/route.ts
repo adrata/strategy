@@ -1135,125 +1135,115 @@ async function getMultipleRecords(
   
   // Special handling for prospects and leads to include company data
   if (type === 'prospects') {
-    const prospects = await prisma.prospects.findMany({
+    // 🚀 ENHANCED: Load people with proper company relationships for prospects
+    const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null
+        deletedAt: null,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ]
       },
       orderBy: [{ updatedAt: 'desc' }],
       take: pagination?.limit || 1000,
       skip: pagination?.offset || 0,
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        priority: true,
-        source: true,
-        createdAt: true,
-        updatedAt: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        workspaceId: true,
-        assignedUserId: true
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            vertical: true,
+            size: true
+          }
+        }
       }
     });
 
-    // Lookup company names for prospects that have companyId but no company name
-    const prospectsWithCompanies = await Promise.all(
-      prospects.map(async (prospect) => {
-        if (prospect.companyId && !prospect.company) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: prospect.companyId },
-              select: { name: true }
-            });
-            return {
-              ...prospect,
-              company: companyData?.name || prospect.company || null,
-              companyName: companyData?.name || prospect.company || null
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
-            return prospect;
-          }
-        }
-        return {
-          ...prospect,
-          companyName: prospect.company
-        };
-      })
-    );
+    // Transform people data to prospects format
+    const prospectsWithCompanies = people.map(person => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      fullName: person.fullName,
+      email: person.email,
+      company: person.company?.name || 'Unknown Company',
+      companyId: person.companyId,
+      companyName: person.company?.name || 'Unknown Company',
+      jobTitle: person.jobTitle,
+      title: person.title,
+      status: person.status,
+      priority: 'medium',
+      source: 'people',
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt,
+      lastContactDate: person.lastActionDate,
+      lastActionDate: person.lastActionDate,
+      nextAction: person.nextAction,
+      nextActionDate: person.nextActionDate,
+      workspaceId: person.workspaceId,
+      assignedUserId: person.assignedUserId,
+      // Add company data for better relationships
+      companyData: person.company
+    }));
 
     return { success: true, data: prospectsWithCompanies };
   }
 
   if (type === 'leads') {
-    const leads = await prisma.leads.findMany({
+    // 🚀 ENHANCED: Load people with proper company relationships for leads
+    const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null
+        deletedAt: null,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ]
       },
       orderBy: [{ updatedAt: 'desc' }],
       take: pagination?.limit || 1000,
       skip: pagination?.offset || 0,
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        priority: true,
-        source: true,
-        createdAt: true,
-        updatedAt: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        workspaceId: true,
-        assignedUserId: true
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            vertical: true,
+            size: true
+          }
+        }
       }
     });
 
-    // Lookup company names for leads that have companyId but no company name
-    const leadsWithCompanies = await Promise.all(
-      leads.map(async (lead) => {
-        if (lead.companyId && !lead.company) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: lead.companyId },
-              select: { name: true }
-            });
-            return {
-              ...lead,
-              company: companyData?.name || lead.company || null,
-              companyName: companyData?.name || lead.company || null
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for lead ${lead.id}:`, error);
-            return lead;
-          }
-        }
-        return {
-          ...lead,
-          companyName: lead.company
-        };
-      })
-    );
+    // Transform people data to leads format
+    const leadsWithCompanies = people.map(person => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      fullName: person.fullName,
+      email: person.email,
+      company: person.company?.name || 'Unknown Company',
+      companyId: person.companyId,
+      companyName: person.company?.name || 'Unknown Company',
+      jobTitle: person.jobTitle,
+      title: person.title,
+      status: person.status,
+      priority: 'medium',
+      source: 'people',
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt,
+      lastContactDate: person.lastActionDate,
+      lastActionDate: person.lastActionDate,
+      nextAction: person.nextAction,
+      nextActionDate: person.nextActionDate,
+      workspaceId: person.workspaceId,
+      assignedUserId: person.assignedUserId,
+      // Add company data for better relationships
+      companyData: person.company
+    }));
 
     return { success: true, data: leadsWithCompanies };
   }
@@ -3117,102 +3107,58 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🚀 ENHANCED: Load prospects for speedrun with company data lookup
-    const prospects = await prisma.prospects.findMany({
+    // 🚀 ENHANCED: Load people for speedrun with proper company relationships
+    const people = await prisma.people.findMany({
       where: {
         workspaceId,
-        deletedAt: null
+        deletedAt: null,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ]
       },
-      orderBy: { createdAt: 'desc' },
-      take: 200, // Load enough prospects for proper speedrun ranking
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true
+      orderBy: { updatedAt: 'desc' },
+      take: 200, // Load enough people for proper speedrun ranking
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            vertical: true,
+            size: true
+          }
+        }
       }
     });
 
-    // 🚀 ENHANCED: Lookup company names for prospects that have companyId but no company name
-    const prospectsWithCompanies = await Promise.all(
-      prospects.map(async (prospect) => {
-        if (prospect.companyId && !prospect.company) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: prospect.companyId },
-              select: { name: true }
-            });
-            return {
-              ...prospect,
-              company: companyData?.name || prospect.company || 'Unknown Company'
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for prospect ${prospect.id}:`, error);
-            return prospect;
-          }
-        }
-        return prospect;
-      })
-    );
+    // Transform people data to speedrun format
+    const prospectsWithCompanies = people.map(person => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      fullName: person.fullName,
+      email: person.email,
+      company: person.company?.name || 'Unknown Company',
+      companyId: person.companyId,
+      jobTitle: person.jobTitle,
+      title: person.title,
+      status: person.status,
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt,
+      lastContactDate: person.lastActionDate,
+      lastActionDate: person.lastActionDate,
+      nextAction: person.nextAction,
+      nextActionDate: person.nextActionDate,
+      // Add company data for ranking
+      companyData: person.company
+    }));
     
-    console.log(`📊 [SPEEDRUN] Loaded ${prospects.length} prospects from prospects table`);
+    console.log(`📊 [SPEEDRUN] Loaded ${prospectsWithCompanies.length} people with company data`);
     
-    // If no prospects, fallback to people table
+    // Use people data as speedrun data
     let speedrunData = prospectsWithCompanies;
-    let dataSource = 'prospects';
-    
-    if (prospects.length === 0) {
-      console.log(`🔄 [SPEEDRUN] No prospects found, trying people table...`);
-      const people = await prisma.people.findMany({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          status: 'active'
-        },
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          fullName: true,
-          email: true,
-          company: true,
-          companyId: true,
-          jobTitle: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-          lastContactDate: true,
-          lastActionDate: true,
-          nextAction: true,
-          nextActionDate: true
-        },
-        include: {
-          company: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 50
-      });
-      speedrunData = people;
-      dataSource = 'people';
-      console.log(`📊 [SPEEDRUN] Loaded ${people.length} people as fallback`);
-    }
+    let dataSource = 'people';
     
     // Transform data to speedrun format with complete field mapping
     const speedrunItemsWithScores = speedrunData.map((record, index) => {
