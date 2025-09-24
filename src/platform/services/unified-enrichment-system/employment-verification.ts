@@ -607,5 +607,3 @@ Focus on official company sources. Do not rely solely on LinkedIn.`;
   }
 }
 
-// Export only the class
-export { EmploymentVerificationPipeline };

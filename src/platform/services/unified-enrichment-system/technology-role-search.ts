@@ -438,5 +438,3 @@ export class TechnologyRoleSearch {
   }
 }
 
-// Export only the class
-export { TechnologyRoleSearch };

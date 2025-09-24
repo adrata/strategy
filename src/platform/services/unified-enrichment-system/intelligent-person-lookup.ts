@@ -659,5 +659,3 @@ export class IntelligentPersonLookup {
   }
 }
 
-// Export only the class
-export { IntelligentPersonLookup };
