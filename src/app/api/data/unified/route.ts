@@ -2611,7 +2611,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000, // Load all leads for full pipeline view
+        take: 50, // Load only recent leads for dashboard
         select: {
           id: true,
           firstName: true,
@@ -2631,7 +2631,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000, // Load all prospects for full pipeline view
+        take: 50, // Load only recent prospects for dashboard
         select: {
           id: true,
           firstName: true,
@@ -2654,7 +2654,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 1000, // Load all opportunities for full pipeline view
+        take: 50, // Load only recent opportunities for dashboard
         select: {
           id: true,
           name: true,
@@ -2676,7 +2676,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
-        take: 2000, // Load all companies for full pipeline view
+        take: 50, // Load only recent companies for dashboard
         select: { 
           id: true, 
           name: true, 
@@ -2717,7 +2717,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 5000, // Load all people for full pipeline view (increased for large workspaces)
+        take: 50, // Load only recent people for dashboard
         select: { 
           id: true, 
           fullName: true, 
@@ -2760,41 +2760,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     
     console.log(`✅ [DASHBOARD] Loaded data: leads=${leadsData.length}, prospects=${prospectsData.length}, opportunities=${opportunitiesData.length}, speedrun=${speedrunData.length}`);
     
-    // Debug: Log sample speedrun data to verify names
-    if (speedrunData.length > 0) {
-      console.log(`🔍 [DASHBOARD DEBUG] Sample speedrun data:`, speedrunData.slice(0, 3).map(item => ({
-        id: item.id,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        company: item.company
-      })));
-    } else {
-      console.log(`⚠️ [DASHBOARD DEBUG] No speedrun data loaded`);
-    }
-    
-    // Debug: Log sample leads and prospects data before transformation
-    if (leadsData.length > 0) {
-      console.log(`🔍 [DASHBOARD DEBUG] Sample leads data (before transformation):`, leadsData.slice(0, 2).map(item => ({
-        id: item.id,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        name: item.name,
-        company: item.company
-      })));
-    }
-    
-    if (prospectsData.length > 0) {
-      console.log(`🔍 [DASHBOARD DEBUG] Sample prospects data (before transformation):`, prospectsData.slice(0, 2).map(item => ({
-        id: item.id,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        name: item.name,
-        company: item.company
-      })));
-    }
     
     // Transform data to ensure consistent field mapping
     const transformedLeads = leadsData.map(lead => ({
@@ -2872,28 +2837,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       };
     });
     
-    // Debug: Log transformed data
-    if (transformedLeads.length > 0) {
-      console.log(`🔍 [DASHBOARD DEBUG] Sample transformed leads data:`, transformedLeads.slice(0, 2).map(item => ({
-        id: item.id,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        name: item.name,
-        company: item.company
-      })));
-    }
-    
-    if (transformedProspects.length > 0) {
-      console.log(`🔍 [DASHBOARD DEBUG] Sample transformed prospects data:`, transformedProspects.slice(0, 2).map(item => ({
-        id: item.id,
-        fullName: item.fullName,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        name: item.name,
-        company: item.company
-      })));
-    }
 
     // 🚀 PERFORMANCE: Calculate real dashboard metrics from database
     console.log('📊 [DASHBOARD] Calculating real metrics from database...');
