@@ -35,12 +35,6 @@ export function PipelineMiddlePanel() {
   const getSectionData = (section: string) => {
     // The useAcquisitionOSData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
-    console.log(`🔍 [PIPELINE MIDDLE PANEL] Getting data for section ${section}:`, {
-      hasAcquisitionData: !!acquisitionData,
-      hasAcquireData: !!acquisitionData?.acquireData,
-      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
-      sectionData: acquireData[section] || []
-    });
     
     switch (section) {
       case 'leads': return acquireData.leads || [];
@@ -96,7 +90,6 @@ export function PipelineMiddlePanel() {
         return;
       }
       
-      console.log(`🔄 [NAVIGATION] Loading data for ${activeSection}...`);
       setIsLoadingNavigation(true);
       
       try {

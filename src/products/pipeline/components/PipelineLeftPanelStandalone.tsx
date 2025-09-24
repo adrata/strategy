@@ -161,13 +161,6 @@ function PipelineSections({
   // Use fallback counts if acquisitionData counts are not available
   const finalCounts = actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts;
   
-  console.log('🔍 [LEFT PANEL] Counts debug:', {
-    actualCounts,
-    fallbackCounts,
-    finalCounts,
-    hasActualCounts: Object.keys(actualCounts).length > 0,
-    speedrunCount: finalCounts.speedrun
-  });
   
   // 🚀 CONSISTENT LOADING: Use the same loading state as the middle panel
   const loading = acquisitionData?.loading?.isLoading || authLoading || false;

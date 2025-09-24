@@ -85,24 +85,9 @@ export function PipelineMiddlePanelStandalone({
     }
   };
 
-  // DEBUG: Log middle panel data
-  console.log(`🚨🚨🚨 [MIDDLE PANEL CACHE BUST v2.0] Section: ${activeSection}, Data: ${pipelineData.data.length} records`);
-  console.log(`🚨🚨🚨 [MIDDLE PANEL CACHE BUST v2.0] Pipeline data:`, pipelineData);
-  console.log(`🚨🚨🚨 [MIDDLE PANEL CACHE BUST v2.0] Prospects data from hook:`, prospectsData);
-  console.log(`🚨🚨🚨 [MIDDLE PANEL CACHE BUST v2.0] Acquisition data structure:`, {
-    hasAcquisitionData: !!acquisitionData,
-    hasData: !!acquisitionData?.data,
-    hasAcquireData: !!acquisitionData?.acquireData,
-    workspaceId: acquisitionData?.auth?.authUser?.activeWorkspaceId,
-    prospectsFromAcquisition: acquisitionData?.acquireData?.prospects?.length || 0,
-    prospectsFromHook: prospectsData.data?.length || 0,
-    prospectsDataLoading: prospectsData.loading,
-    prospectsDataError: prospectsData.error
-  });
 
   // Show skeleton loading state instead of empty message
   if (pipelineData['loading'] && pipelineData['data']['length'] === 0) {
-    console.log(`⏳ [MIDDLE PANEL] Loading ${activeSection} data...`);
     return (
       <div className="h-full flex flex-col bg-white">
         {/* Header skeleton */}
