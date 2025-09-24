@@ -1,17 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient();
 
-const TOP_WORKSPACE_ID = '01K5D01YCQJ9TJ7CT4DZDE79T1';
-
 async function checkCompaniesNeedingEnrichment() {
-  console.log('🔍 CHECKING COMPANIES THAT NEED ENRICHMENT');
-  console.log('==========================================\n');
-
   try {
-    await prisma.$connect();
-    console.log('✅ Connected to database\n');
+    console.log('🔍 CHECKING COMPANIES THAT NEED ENRICHMENT');
+    console.log('==========================================');
 
-    // Get companies that need enrichment
+    const TOP_WORKSPACE_ID = '01K5D01YCQJ9TJ7CT4DZDE79T1';
+
+    // Use the same logic as the working script
     const companies = await prisma.$queryRawUnsafe(`
       SELECT id, name, website, description, size, industry, "linkedinUrl"
       FROM companies
@@ -21,35 +19,40 @@ async function checkCompaniesNeedingEnrichment() {
       ORDER BY 
         CASE WHEN website IS NOT NULL AND website != '' THEN 0 ELSE 1 END,
         name
-      LIMIT 10
+      LIMIT 50
     `, TOP_WORKSPACE_ID);
 
-    console.log(`📊 Found ${companies.length} companies that need enrichment:\n`);
+    console.log(`📊 Companies needing enrichment: ${companies.length}`);
+    
+    if (companies.length > 0) {
+      console.log('\n📋 Sample companies needing enrichment:');
+      companies.slice(0, 10).forEach((company, i) => {
+        console.log(`${i+1}. ${company.name}`);
+        console.log(`   Description: ${company.description ? '✅' : '❌'}`);
+        console.log(`   Size: ${company.size ? '✅' : '❌'}`);
+        console.log(`   LinkedIn: ${company.linkedinUrl ? '✅' : '❌'}`);
+        console.log(`   Website: ${company.website || 'None'}`);
+      });
+    } else {
+      console.log('\n🎉 NO COMPANIES NEED ENRICHMENT!');
+      console.log('All companies that can be enriched have been enriched.');
+    }
 
-    companies.forEach((company, index) => {
-      console.log(`${index + 1}. ${company.name}`);
-      console.log(`   Website: ${company.website || 'N/A'}`);
-      console.log(`   Description: ${company.description ? 'Has description' : 'No description'}`);
-      console.log(`   Size: ${company.size || 'No size'}`);
-      console.log(`   LinkedIn: ${company.linkedinUrl || 'No LinkedIn'}`);
-      console.log(`   Industry: ${company.industry || 'No industry'}`);
-      console.log('');
-    });
-
-    // Also check total companies in workspace
-    const totalCompanies = await prisma.companies.count({
+    // Also check total companies with CoreSignal data
+    const coresignalCount = await prisma.companies.count({
       where: {
         workspaceId: TOP_WORKSPACE_ID,
-        deletedAt: null
+        customFields: {
+          path: ['coresignalData'],
+          not: null
+        }
       }
     });
 
-    console.log(`📊 Total companies in TOP workspace: ${totalCompanies}`);
-    console.log(`📊 Companies needing enrichment: ${companies.length}`);
-    console.log(`📊 Companies already enriched: ${totalCompanies - companies.length}`);
+    console.log(`\n📊 Total companies with CoreSignal data: ${coresignalCount}`);
 
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Error:', error.message);
   } finally {
     await prisma.$disconnect();
   }

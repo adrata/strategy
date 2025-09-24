@@ -162,9 +162,16 @@ async function getRealPeopleFromCoreSignal(companyName: string): Promise<any[]> 
                 path: 'experience',
                 query: {
                   bool: {
-                    should: [
-                      { match: { 'experience.company_name': companyName } },
-                      { match_phrase: { 'experience.company_name': companyName } }
+                    must: [
+                      { term: { 'experience.active_experience': 1 } }, // ACTIVE experience only
+                      {
+                        bool: {
+                          should: [
+                            { match: { 'experience.company_name': companyName } },
+                            { match_phrase: { 'experience.company_name': companyName } }
+                          ]
+                        }
+                      }
                     ]
                   }
                 }

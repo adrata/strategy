@@ -1,136 +1,155 @@
+const { PrismaClient } = require('@prisma/client');
 const https = require('https');
 
+const prisma = new PrismaClient();
 const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY;
 const CORESIGNAL_BASE_URL = 'https://api.coresignal.com/cdapi/v2';
 
-async function makeCoreSignalRequest(url, method = 'GET', data = null) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      method: method,
-      headers: {
-        'apikey': CORESIGNAL_API_KEY,
-        'Content-Type': 'application/json'
+class CoreSignalAPI {
+  constructor() {
+    this.apiKey = CORESIGNAL_API_KEY;
+    this.baseUrl = CORESIGNAL_BASE_URL;
+  }
+
+  async makeRequest(url, method = 'GET', data = null) {
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: method,
+        headers: {
+          'apikey': this.apiKey,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      const req = https.request(url, options, (res) => {
+        let responseData = '';
+
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            const parsedData = JSON.parse(responseData);
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve(parsedData);
+            } else {
+              reject(new Error(`CoreSignal API Error ${res.statusCode}: ${parsedData.message || responseData}`));
+            }
+          } catch (error) {
+            reject(new Error(`CoreSignal JSON Parse Error: ${error.message}`));
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(error);
+      });
+
+      if (data) {
+        req.write(JSON.stringify(data));
+      }
+
+      req.end();
+    });
+  }
+
+  async searchCompany(query, searchField = "company_name") {
+    const searchQuery = {
+      query: {
+        query_string: {
+          query: query,
+          default_field: searchField,
+          default_operator: "and"
+        }
       }
     };
 
-    const req = https.request(url, options, (res) => {
-      let responseData = '';
-      
-      res.on('data', (chunk) => {
-        responseData += chunk;
-      });
-      
-      res.on('end', () => {
-        try {
-          const parsedData = JSON.parse(responseData);
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            resolve(parsedData);
-          } else {
-            reject(new Error(`CoreSignal API Error ${res.statusCode}: ${parsedData.message || responseData}`));
-          }
-        } catch (error) {
-          reject(new Error(`CoreSignal JSON Parse Error: ${error.message}`));
-        }
-      });
-    });
+    const url = `${this.baseUrl}/company_multi_source/search/es_dsl`;
 
-    req.on('error', (error) => {
-      reject(error);
-    });
+    try {
+      const response = await this.makeRequest(url, 'POST', searchQuery);
+      console.log(`🔍 Search response for "${query}":`, JSON.stringify(response, null, 2));
 
-    if (data) {
-      req.write(JSON.stringify(data));
+      if (Array.isArray(response) && response.length > 0) {
+        return response[0].company_id || response[0];
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error searching for company "${query}" in field "${searchField}":`, error.message);
+      return null;
     }
-    
-    req.end();
-  });
+  }
+
+  async getCompanyData(companyId) {
+    const url = `${this.baseUrl}/company_multi_source/collect/${companyId}`;
+    try {
+      return await this.makeRequest(url);
+    } catch (error) {
+      console.error(`Error getting company data for ID ${companyId}:`, error.message);
+      return null;
+    }
+  }
 }
 
 async function testCoreSignalAPI() {
   console.log('🧪 TESTING CORESIGNAL API');
-  console.log('=========================\n');
+  console.log('==========================');
 
-  if (!CORESIGNAL_API_KEY) {
-    console.error('❌ CORESIGNAL_API_KEY not configured');
-    return;
-  }
+  try {
+    if (!CORESIGNAL_API_KEY) {
+      console.error('❌ CORESIGNAL_API_KEY is not set');
+      return;
+    }
 
-  console.log('🔑 API Key configured');
-  console.log(`🌐 Base URL: ${CORESIGNAL_BASE_URL}\n`);
+    console.log('✅ API Key is set');
+    console.log(`🔗 Base URL: ${CORESIGNAL_BASE_URL}`);
 
-  // Test 1: Search for Lockard & White (we know this worked before)
-  console.log('🔍 Test 1: Searching for "Lockard & White"');
-  const searchQuery = {
-    query: {
-      query_string: {
-        query: 'Lockard & White',
-        default_field: "company_name",
-        default_operator: "and"
+    const coresignal = new CoreSignalAPI();
+
+    // Test with a well-known company
+    const testCompanies = [
+      'Microsoft',
+      'Apple',
+      'Google',
+      'Amazon',
+      'AT&T'
+    ];
+
+    for (const companyName of testCompanies) {
+      console.log(`\n🔍 Testing with: ${companyName}`);
+      console.log('='.repeat(50));
+
+      try {
+        const companyId = await coresignal.searchCompany(companyName, "company_name");
+        
+        if (companyId) {
+          console.log(`✅ Found company ID: ${companyId}`);
+          
+          const companyData = await coresignal.getCompanyData(companyId);
+          if (companyData) {
+            console.log(`✅ Retrieved company data`);
+            console.log(`   Company: ${companyData.company_name || 'N/A'}`);
+            console.log(`   Industry: ${companyData.industry || 'N/A'}`);
+            console.log(`   Size: ${companyData.size_range || 'N/A'}`);
+            console.log(`   LinkedIn: ${companyData.linkedin_url || 'N/A'}`);
+            break; // Stop after first successful test
+          } else {
+            console.log(`❌ Failed to get company data for ID: ${companyId}`);
+          }
+        } else {
+          console.log(`❌ Company not found: ${companyName}`);
+        }
+      } catch (error) {
+        console.log(`❌ Error testing ${companyName}: ${error.message}`);
       }
     }
-  };
 
-  try {
-    const response = await makeCoreSignalRequest(`${CORESIGNAL_BASE_URL}/company_multi_source/search/es_dsl`, 'POST', searchQuery);
-    console.log('✅ Search successful');
-    console.log(`📊 Response type: ${typeof response}`);
-    console.log(`📊 Response length: ${Array.isArray(response) ? response.length : 'Not an array'}`);
-    
-    if (Array.isArray(response) && response.length > 0) {
-      console.log('📋 First result:');
-      console.log(JSON.stringify(response[0], null, 2));
-    } else {
-      console.log('❌ No results found');
-    }
   } catch (error) {
-    console.log(`❌ Search failed: ${error.message}`);
-  }
-
-  console.log('\n');
-
-  // Test 2: Try a broader search
-  console.log('🔍 Test 2: Broader search for "Lockard"');
-  const broadSearchQuery = {
-    query: {
-      query_string: {
-        query: 'Lockard',
-        default_field: "company_name",
-        default_operator: "or"
-      }
-    }
-  };
-
-  try {
-    const response = await makeCoreSignalRequest(`${CORESIGNAL_BASE_URL}/company_multi_source/search/es_dsl`, 'POST', broadSearchQuery);
-    console.log('✅ Broader search successful');
-    console.log(`📊 Found ${Array.isArray(response) ? response.length : 0} results`);
-    
-    if (Array.isArray(response) && response.length > 0) {
-      console.log('📋 First few results:');
-      response.slice(0, 3).forEach((result, index) => {
-        console.log(`   ${index + 1}. ${result.company_name || 'No name'} (ID: ${result.company_id || 'No ID'})`);
-      });
-    }
-  } catch (error) {
-    console.log(`❌ Broader search failed: ${error.message}`);
-  }
-
-  console.log('\n');
-
-  // Test 3: Try to get specific company data (using the ID we found before)
-  console.log('🔍 Test 3: Getting company data for ID 8453124 (Lockard & White)');
-  try {
-    const response = await makeCoreSignalRequest(`${CORESIGNAL_BASE_URL}/company_multi_source/collect/8453124`);
-    console.log('✅ Company data retrieval successful');
-    console.log(`📊 Company name: ${response.company_name || 'No name'}`);
-    console.log(`📊 Website: ${response.website || 'No website'}`);
-    console.log(`📊 Industry: ${response.industry || 'No industry'}`);
-    console.log(`📊 Employee count: ${response.employees_count || 'No count'}`);
-    console.log(`📊 LinkedIn URL: ${response.linkedin_url || 'No LinkedIn'}`);
-    console.log(`📊 Founded year: ${response.founded_year || 'No founded year'}`);
-  } catch (error) {
-    console.log(`❌ Company data retrieval failed: ${error.message}`);
+    console.error('❌ Test failed:', error.message);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-testCoreSignalAPI().catch(console.error);
+testCoreSignalAPI();

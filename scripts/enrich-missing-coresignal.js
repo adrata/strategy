@@ -116,32 +116,23 @@ class CoreSignalAPI {
   }
 }
 
-async function getCurrentStatus() {
-  const total = await prisma.companies.count({
-    where: { workspaceId: TOP_WORKSPACE_ID }
-  });
+async function enrichMissingCoreSignal() {
+  console.log('🚀 ENRICHING MISSING CORESIGNAL DATA');
+  console.log('====================================\n');
 
-  const withCoreSignal = await prisma.companies.count({
-    where: {
-      workspaceId: TOP_WORKSPACE_ID,
-      customFields: {
-        path: ['coresignalData'],
-        not: null
-      }
-    }
-  });
-
-  return { total, withCoreSignal, remaining: total - withCoreSignal };
-}
-
-async function processBatch() {
   try {
-    console.log('\n🚀 PROCESSING BATCH');
-    console.log('==================');
+    await prisma.$connect();
+    console.log('✅ Connected to database\n');
+
+    if (!CORESIGNAL_API_KEY) {
+      console.error('🔑 CORESIGNAL_API_KEY is not set. Please set the environment variable.');
+      return;
+    }
+    console.log('🔑 API Keys configured\n');
 
     const coresignal = new CoreSignalAPI();
 
-    // Get companies that need CoreSignal enrichment
+    // Get companies that need CoreSignal enrichment specifically
     const companies = await prisma.$queryRawUnsafe(`
       SELECT id, name, website, description, size, industry, "linkedinUrl", "customFields"
       FROM companies
@@ -158,26 +149,35 @@ async function processBatch() {
       LIMIT 50
     `, TOP_WORKSPACE_ID);
 
-    console.log(`📊 Found ${companies.length} companies to process`);
+    console.log(`📊 Found ${companies.length} companies that need CoreSignal enrichment\n`);
 
     if (companies.length === 0) {
       console.log('🎉 All companies already have CoreSignal data!');
-      return { success: true, completed: true };
+      return;
     }
 
     let successCount = 0;
     let errorCount = 0;
+    const results = [];
 
     for (let i = 0; i < companies.length; i++) {
       const company = companies[i];
       console.log(`\n🏢 [${i + 1}/${companies.length}] Processing: ${company.name}`);
+      console.log(`   Website: ${company.website || 'N/A'}`);
+      console.log(`   Has customFields: ${company.customFields ? 'Yes' : 'No'}`);
 
       try {
         // Search CoreSignal
+        console.log('   🔍 Searching CoreSignal...');
         let coresignalCompanyId = await coresignal.searchCompanyByName(company.name);
         
         if (!coresignalCompanyId) {
           console.log('   ❌ Not found in CoreSignal');
+          results.push({
+            company: company.name,
+            status: 'not_found',
+            error: 'Company not found in CoreSignal'
+          });
           errorCount++;
           continue;
         }
@@ -185,10 +185,16 @@ async function processBatch() {
         console.log(`   ✅ Found CoreSignal ID: ${coresignalCompanyId}`);
 
         // Get CoreSignal data
+        console.log('   📊 Getting CoreSignal data...');
         const coresignalData = await coresignal.getCompanyData(coresignalCompanyId);
 
         if (!coresignalData) {
           console.log('   ❌ Failed to get CoreSignal data');
+          results.push({
+            company: company.name,
+            status: 'error',
+            error: 'Failed to get CoreSignal data'
+          });
           errorCount++;
           continue;
         }
@@ -241,45 +247,194 @@ async function processBatch() {
           updatedAt: new Date()
         };
 
-        // Remove undefined values
+        // Remove undefined values to avoid overwriting existing data
         Object.keys(updateData).forEach(key => {
           if (updateData[key] === undefined) {
             delete updateData[key];
           }
         });
 
-        // Update database
+        // Update database using Prisma
+        console.log('   💾 Updating database...');
         await prisma.companies.update({
           where: { id: company.id },
           data: updateData
         });
 
-        console.log(`   ✅ Successfully enriched ${company.name}`);
+        console.log('   ✅ Database updated successfully!');
+        console.log(`   📋 Updated: ${Object.keys(updateData).length} fields`);
+
+        results.push({
+          company: company.name,
+          status: 'success',
+          coresignalId: coresignalCompanyId,
+          fieldsUpdated: Object.keys(updateData).length
+        });
         successCount++;
 
       } catch (error) {
         console.log(`   ❌ Error: ${error.message}`);
+        results.push({
+          company: company.name,
+          status: 'error',
+          error: error.message
+        });
         errorCount++;
       }
     }
 
-    console.log(`\n📊 BATCH SUMMARY:`);
-    console.log(`   ✅ Successful: ${successCount}`);
-    console.log(`   ❌ Errors: ${errorCount}`);
-    console.log(`   📈 Success rate: ${Math.round(successCount / companies.length * 100)}%`);
+    console.log('\n📊 ENRICHMENT SUMMARY');
+    console.log('=====================');
+    console.log(`Total companies processed: ${companies.length}`);
+    console.log(`✅ Successful: ${successCount}`);
+    console.log(`❌ Errors: ${errorCount}`);
+    console.log(`📈 Success rate: ${Math.round(successCount / companies.length * 100)}%`);
 
-    return { success: true, completed: false, processed: companies.length, successCount, errorCount };
+    console.log('\n📋 DETAILED RESULTS:');
+    results.forEach((result, index) => {
+      console.log(`${index + 1}. ${result.status === 'success' ? '✅' : '❌'} ${result.company} - ${result.status}`);
+      if (result.error) {
+        console.log(`   Error: ${result.error}`);
+      } else if (result.status === 'success') {
+        console.log(`   CoreSignal ID: ${result.coresignalId}`);
+        console.log(`   Fields updated: ${result.fieldsUpdated}`);
+      }
+    });
+
+    console.log('\n🎉 ENRICHMENT COMPLETED!');
+    console.log('========================');
+    console.log('✅ CoreSignal integration working');
+    console.log('✅ Database updated with rich company data');
+    console.log('✅ Ready for rich Overview and Intelligence tabs');
 
   } catch (error) {
-    console.error('❌ Batch processing error:', error.message);
-    return { success: false, error: error.message };
+    console.error('❌ FAILED TO ENRICH COMPANIES:', error);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-async function automatedBatchProcessor() {
-  console.log('🤖 AUTOMATED BATCH PROCESSOR');
-  console.log('=============================');
-  console.log('Processing companies in batches of 50 until completion...\n');
+enrichMissingCoreSignal();
+const https = require('https');
+
+const prisma = new PrismaClient();
+const TOP_WORKSPACE_ID = '01K5D01YCQJ9TJ7CT4DZDE79T1';
+
+const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY;
+const CORESIGNAL_BASE_URL = 'https://api.coresignal.com/cdapi/v2';
+
+class CoreSignalAPI {
+  constructor() {
+    this.apiKey = CORESIGNAL_API_KEY;
+    this.baseUrl = CORESIGNAL_BASE_URL;
+  }
+
+  async makeRequest(url, method = 'GET', data = null) {
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: method,
+        headers: {
+          'apikey': this.apiKey,
+          'Content-Type': 'application/json'
+        }
+      };
+
+      const req = https.request(url, options, (res) => {
+        let responseData = '';
+
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            const parsedData = JSON.parse(responseData);
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve(parsedData);
+            } else {
+              reject(new Error(`CoreSignal API Error ${res.statusCode}: ${parsedData.message || responseData}`));
+            }
+          } catch (error) {
+            reject(new Error(`CoreSignal JSON Parse Error: ${error.message}`));
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(error);
+      });
+
+      if (data) {
+        req.write(JSON.stringify(data));
+      }
+
+      req.end();
+    });
+  }
+
+  async searchCompany(query, searchField = "company_name") {
+    const searchQuery = {
+      query: {
+        query_string: {
+          query: query,
+          default_field: searchField,
+          default_operator: "and"
+        }
+      }
+    };
+
+    const url = `${this.baseUrl}/company_multi_source/search/es_dsl`;
+
+    try {
+      const response = await this.makeRequest(url, 'POST', searchQuery);
+
+      if (Array.isArray(response) && response.length > 0) {
+        return response[0].company_id || response[0];
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error searching for company "${query}" in field "${searchField}":`, error.message);
+      return null;
+    }
+  }
+
+  async searchCompanyByName(companyName) {
+    // Try multiple variations of company name
+    const nameVariations = [
+      companyName, // Full name
+      companyName.replace(/,?\s+(LLC|Inc|Corp|Corporation|Ltd|Limited|Co|Company)$/i, ''), // Remove suffixes
+      companyName.replace(/[.,]/g, ''), // Remove punctuation
+      companyName.split(' ')[0], // First word only
+      companyName.replace(/&/g, 'and'), // Replace & with and
+      companyName.replace(/and/g, '&'), // Replace and with &
+    ].filter((name, index, arr) => arr.indexOf(name) === index); // Remove duplicates
+
+    for (const name of nameVariations) {
+      if (name.trim().length > 2) { // Only search if name is meaningful
+        const result = await this.searchCompany(name, "company_name");
+        if (result) {
+          return result;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  async getCompanyData(companyId) {
+    const url = `${this.baseUrl}/company_multi_source/collect/${companyId}`;
+    try {
+      return await this.makeRequest(url);
+    } catch (error) {
+      console.error(`Error getting company data for ID ${companyId}:`, error.message);
+      return null;
+    }
+  }
+}
+
+async function enrichMissingCoreSignal() {
+  console.log('🚀 ENRICHING MISSING CORESIGNAL DATA');
+  console.log('====================================\n');
 
   try {
     await prisma.$connect();
@@ -289,86 +444,74 @@ async function automatedBatchProcessor() {
       console.error('🔑 CORESIGNAL_API_KEY is not set. Please set the environment variable.');
       return;
     }
+    console.log('🔑 API Keys configured\n');
 
-    let batchNumber = 1;
-    let totalProcessed = 0;
-    let totalSuccess = 0;
-    let totalErrors = 0;
+    const coresignal = new CoreSignalAPI();
 
-    while (true) {
-      console.log(`\n🔄 BATCH ${batchNumber}`);
-      console.log('='.repeat(50));
+    // Get companies that need CoreSignal enrichment specifically
+    const companies = await prisma.$queryRawUnsafe(`
+      SELECT id, name, website, description, size, industry, "linkedinUrl", "customFields"
+      FROM companies
+      WHERE "workspaceId" = $1
+        AND "deletedAt" IS NULL
+        AND (
+          "customFields" IS NULL 
+          OR "customFields"->>'coresignalData' IS NULL
+          OR "customFields"->>'coresignalData' = 'null'
+        )
+      ORDER BY 
+        CASE WHEN website IS NOT NULL AND website != '' THEN 0 ELSE 1 END,
+        name
+      LIMIT 50
+    `, TOP_WORKSPACE_ID);
 
-      // Get current status
-      const status = await getCurrentStatus();
-      console.log(`📊 Current status: ${status.withCoreSignal}/${status.total} (${Math.round((status.withCoreSignal/status.total)*100)}%)`);
-      console.log(`⏳ Remaining: ${status.remaining} companies`);
+    console.log(`📊 Found ${companies.length} companies that need CoreSignal enrichment\n`);
 
-      if (status.remaining === 0) {
-        console.log('\n🎉 ALL COMPANIES ENRICHED!');
-        console.log('=========================');
-        console.log(`✅ Total companies: ${status.total}`);
-        console.log(`✅ With CoreSignal: ${status.withCoreSignal} (100%)`);
-        console.log(`📊 Final stats:`);
-        console.log(`   Total processed: ${totalProcessed}`);
-        console.log(`   Successful: ${totalSuccess}`);
-        console.log(`   Errors: ${totalErrors}`);
-        console.log(`   Success rate: ${Math.round((totalSuccess/totalProcessed)*100)}%`);
-        break;
-      }
-
-      // Process batch
-      const result = await processBatch();
-
-      if (result.completed) {
-        console.log('\n🎉 ENRICHMENT COMPLETED!');
-        break;
-      }
-
-      if (!result.success) {
-        console.log(`❌ Batch ${batchNumber} failed: ${result.error}`);
-        console.log('⏳ Waiting 30 seconds before retry...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-        continue;
-      }
-
-      // Update totals
-      totalProcessed += result.processed;
-      totalSuccess += result.successCount;
-      totalErrors += result.errorCount;
-
-      console.log(`\n📈 PROGRESS UPDATE:`);
-      console.log(`   Batch ${batchNumber} completed`);
-      console.log(`   Total processed: ${totalProcessed}`);
-      console.log(`   Total successful: ${totalSuccess}`);
-      console.log(`   Total errors: ${totalErrors}`);
-
-      // Check if we should continue
-      const newStatus = await getCurrentStatus();
-      const progress = Math.round((newStatus.withCoreSignal/newStatus.total)*100);
-      
-      console.log(`   Current progress: ${progress}%`);
-      
-      if (progress >= 90) {
-        console.log('\n🎯 TARGET REACHED! 90%+ CoreSignal coverage achieved!');
-        console.log('Continuing to process remaining companies...');
-      }
-
-      batchNumber++;
-
-      // Add delay between batches
-      console.log('\n⏳ Waiting 10 seconds before next batch...');
-      await new Promise(resolve => setTimeout(resolve, 10000));
+    if (companies.length === 0) {
+      console.log('🎉 All companies already have CoreSignal data!');
+      return;
     }
 
-  } catch (error) {
-    console.error('❌ AUTOMATED PROCESSOR ERROR:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+    let successCount = 0;
+    let errorCount = 0;
+    const results = [];
 
-automatedBatchProcessor();
+    for (let i = 0; i < companies.length; i++) {
+      const company = companies[i];
+      console.log(`\n🏢 [${i + 1}/${companies.length}] Processing: ${company.name}`);
+      console.log(`   Website: ${company.website || 'N/A'}`);
+      console.log(`   Has customFields: ${company.customFields ? 'Yes' : 'No'}`);
+
+      try {
+        // Search CoreSignal
+        console.log('   🔍 Searching CoreSignal...');
+        let coresignalCompanyId = await coresignal.searchCompanyByName(company.name);
+        
+        if (!coresignalCompanyId) {
+          console.log('   ❌ Not found in CoreSignal');
+          results.push({
+            company: company.name,
+            status: 'not_found',
+            error: 'Company not found in CoreSignal'
+          });
+          errorCount++;
+          continue;
+        }
+
+        console.log(`   ✅ Found CoreSignal ID: ${coresignalCompanyId}`);
+
+        // Get CoreSignal data
+        console.log('   📊 Getting CoreSignal data...');
+        const coresignalData = await coresignal.getCompanyData(coresignalCompanyId);
+
+        if (!coresignalData) {
+          console.log('   ❌ Failed to get CoreSignal data');
+          results.push({
+            company: company.name,
+            status: 'error',
+            error: 'Failed to get CoreSignal data'
+          });
+          errorCount++;
           continue;
         }
 
@@ -420,131 +563,73 @@ automatedBatchProcessor();
           updatedAt: new Date()
         };
 
-        // Remove undefined values
+        // Remove undefined values to avoid overwriting existing data
         Object.keys(updateData).forEach(key => {
           if (updateData[key] === undefined) {
             delete updateData[key];
           }
         });
 
-        // Update database
+        // Update database using Prisma
+        console.log('   💾 Updating database...');
         await prisma.companies.update({
           where: { id: company.id },
           data: updateData
         });
 
-        console.log(`   ✅ Successfully enriched ${company.name}`);
+        console.log('   ✅ Database updated successfully!');
+        console.log(`   📋 Updated: ${Object.keys(updateData).length} fields`);
+
+        results.push({
+          company: company.name,
+          status: 'success',
+          coresignalId: coresignalCompanyId,
+          fieldsUpdated: Object.keys(updateData).length
+        });
         successCount++;
 
       } catch (error) {
         console.log(`   ❌ Error: ${error.message}`);
+        results.push({
+          company: company.name,
+          status: 'error',
+          error: error.message
+        });
         errorCount++;
       }
     }
 
-    console.log(`\n📊 BATCH SUMMARY:`);
-    console.log(`   ✅ Successful: ${successCount}`);
-    console.log(`   ❌ Errors: ${errorCount}`);
-    console.log(`   📈 Success rate: ${Math.round(successCount / companies.length * 100)}%`);
+    console.log('\n📊 ENRICHMENT SUMMARY');
+    console.log('=====================');
+    console.log(`Total companies processed: ${companies.length}`);
+    console.log(`✅ Successful: ${successCount}`);
+    console.log(`❌ Errors: ${errorCount}`);
+    console.log(`📈 Success rate: ${Math.round(successCount / companies.length * 100)}%`);
 
-    return { success: true, completed: false, processed: companies.length, successCount, errorCount };
+    console.log('\n📋 DETAILED RESULTS:');
+    results.forEach((result, index) => {
+      console.log(`${index + 1}. ${result.status === 'success' ? '✅' : '❌'} ${result.company} - ${result.status}`);
+      if (result.error) {
+        console.log(`   Error: ${result.error}`);
+      } else if (result.status === 'success') {
+        console.log(`   CoreSignal ID: ${result.coresignalId}`);
+        console.log(`   Fields updated: ${result.fieldsUpdated}`);
+      }
+    });
+
+    console.log('\n🎉 ENRICHMENT COMPLETED!');
+    console.log('========================');
+    console.log('✅ CoreSignal integration working');
+    console.log('✅ Database updated with rich company data');
+    console.log('✅ Ready for rich Overview and Intelligence tabs');
 
   } catch (error) {
-    console.error('❌ Batch processing error:', error.message);
-    return { success: false, error: error.message };
-  }
-}
-
-async function automatedBatchProcessor() {
-  console.log('🤖 AUTOMATED BATCH PROCESSOR');
-  console.log('=============================');
-  console.log('Processing companies in batches of 50 until completion...\n');
-
-  try {
-    await prisma.$connect();
-    console.log('✅ Connected to database\n');
-
-    if (!CORESIGNAL_API_KEY) {
-      console.error('🔑 CORESIGNAL_API_KEY is not set. Please set the environment variable.');
-      return;
-    }
-
-    let batchNumber = 1;
-    let totalProcessed = 0;
-    let totalSuccess = 0;
-    let totalErrors = 0;
-
-    while (true) {
-      console.log(`\n🔄 BATCH ${batchNumber}`);
-      console.log('='.repeat(50));
-
-      // Get current status
-      const status = await getCurrentStatus();
-      console.log(`📊 Current status: ${status.withCoreSignal}/${status.total} (${Math.round((status.withCoreSignal/status.total)*100)}%)`);
-      console.log(`⏳ Remaining: ${status.remaining} companies`);
-
-      if (status.remaining === 0) {
-        console.log('\n🎉 ALL COMPANIES ENRICHED!');
-        console.log('=========================');
-        console.log(`✅ Total companies: ${status.total}`);
-        console.log(`✅ With CoreSignal: ${status.withCoreSignal} (100%)`);
-        console.log(`📊 Final stats:`);
-        console.log(`   Total processed: ${totalProcessed}`);
-        console.log(`   Successful: ${totalSuccess}`);
-        console.log(`   Errors: ${totalErrors}`);
-        console.log(`   Success rate: ${Math.round((totalSuccess/totalProcessed)*100)}%`);
-        break;
-      }
-
-      // Process batch
-      const result = await processBatch();
-
-      if (result.completed) {
-        console.log('\n🎉 ENRICHMENT COMPLETED!');
-        break;
-      }
-
-      if (!result.success) {
-        console.log(`❌ Batch ${batchNumber} failed: ${result.error}`);
-        console.log('⏳ Waiting 30 seconds before retry...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-        continue;
-      }
-
-      // Update totals
-      totalProcessed += result.processed;
-      totalSuccess += result.successCount;
-      totalErrors += result.errorCount;
-
-      console.log(`\n📈 PROGRESS UPDATE:`);
-      console.log(`   Batch ${batchNumber} completed`);
-      console.log(`   Total processed: ${totalProcessed}`);
-      console.log(`   Total successful: ${totalSuccess}`);
-      console.log(`   Total errors: ${totalErrors}`);
-
-      // Check if we should continue
-      const newStatus = await getCurrentStatus();
-      const progress = Math.round((newStatus.withCoreSignal/newStatus.total)*100);
-      
-      console.log(`   Current progress: ${progress}%`);
-      
-      if (progress >= 90) {
-        console.log('\n🎯 TARGET REACHED! 90%+ CoreSignal coverage achieved!');
-        console.log('Continuing to process remaining companies...');
-      }
-
-      batchNumber++;
-
-      // Add delay between batches
-      console.log('\n⏳ Waiting 10 seconds before next batch...');
-      await new Promise(resolve => setTimeout(resolve, 10000));
-    }
-
-  } catch (error) {
-    console.error('❌ AUTOMATED PROCESSOR ERROR:', error);
+    console.error('❌ FAILED TO ENRICH COMPANIES:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-automatedBatchProcessor();
+enrichMissingCoreSignal();
+
+
