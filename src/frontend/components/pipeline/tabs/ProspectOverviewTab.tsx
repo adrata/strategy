@@ -24,6 +24,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       record: record,
       customFields: record?.customFields,
       company: record?.company,
+      companyData: record?.companyData,
+      industry: record?.industry,
       buyerGroupRole: record?.customFields?.buyerGroupRole
     });
   }
@@ -39,9 +41,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     seniority: record.seniority || 'Unknown',
     status: record.status || 'active',
     priority: record.priority || 'medium',
-    company: record.company || 'No company assigned',
+    company: record.company || record.companyData?.name || 'No company assigned',
     companyId: record.companyId || null,
-    industry: record.industry || 'Unknown Industry',
+    industry: record.industry || record.companyData?.industry || 'Unknown Industry',
     location: record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location',
     buyerGroupRole: record?.customFields?.buyerGroupRole || record?.buyerGroupRole || 'Stakeholder',
     influenceLevel: record?.customFields?.influenceLevel || record?.influenceLevel || 'Medium',
