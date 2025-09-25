@@ -45,7 +45,7 @@ interface PipelineTableProps {
 }
 
 // -------- Constants --------
-const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE_SIZE = 100; // Show more data by default
 
 // -------- Helper Functions --------
 function getColumnWidth(index: number): string {

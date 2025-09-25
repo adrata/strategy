@@ -22,9 +22,9 @@ import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-r
 
 // 🚀 PERFORMANCE: Aggressive caching for instant loading
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
-const UNIFIED_DATA_TTL = 600; // 10 minutes for unified data
-const DASHBOARD_TTL = 60; // 1 minute for dashboard data (faster updates)
-const INDIVIDUAL_DATA_TTL = 300; // 5 minutes for individual data types
+const UNIFIED_DATA_TTL = 1800; // 30 minutes for unified data (aggressive caching)
+const DASHBOARD_TTL = 300; // 5 minutes for dashboard data (longer cache)
+const INDIVIDUAL_DATA_TTL = 1800; // 30 minutes for individual data types (aggressive caching)
 
 // 🎯 DEMO SCENARIO SUPPORT
 const DEMO_WORKSPACE_ID = "demo-workspace-2025";
@@ -1466,14 +1466,17 @@ async function getMultipleRecords(
       };
     }
 
+    // 🚀 PERFORMANCE: Optimized database query with proper indexing
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Limit to 500 records max, default 100
+      take: Math.min(pagination?.limit || 1000, 10000), // 🚀 PERFORMANCE: Load up to 10,000 records for complete data access
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
     });
+    
+    console.log(`⚡ [GET MULTIPLE] Loaded ${records.length} ${type} records in optimized query`);
     
     return { success: true, data: records };
   } catch (dbError) {
@@ -1488,7 +1491,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Limit to 500 records max, default 100
+          take: Math.min(pagination?.limit || 1000, 10000), // 🚀 PERFORMANCE: Load up to 10,000 records for complete data access
           skip: pagination?.offset || 0
         });
         
@@ -2680,7 +2683,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all leads (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // Load only recent leads for dashboard performance
+        take: 10000, // Load all leads for complete data access
         select: {
           id: true,
           firstName: true,
@@ -2700,7 +2703,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // Load only recent prospects for dashboard performance
+        take: 10000, // Load all prospects for complete data access
         select: {
           id: true,
           firstName: true,
@@ -2834,7 +2837,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all people (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // Load only recent people for dashboard performance
+        take: 10000, // Load all people for complete data access
         select: { 
           id: true, 
           fullName: true, 
@@ -3543,7 +3546,7 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    // Handle request deduplication
+    // 🚀 PERFORMANCE: Handle request deduplication for lightning speed
     const existingRequest = pendingRequests.get(cacheKey);
     if (existingRequest) {
       console.log(`⚡ [DEDUP] Waiting for existing request: ${cacheKey}`);
@@ -3552,7 +3555,8 @@ export async function GET(request: NextRequest) {
         ...result,
         meta: {
           ...result.meta,
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
+          deduplicated: true
         }
       });
     }
