@@ -13,6 +13,7 @@ import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
 import { TableSkeleton } from './table/TableSkeleton';
+import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
 import { AddActionModal, ActionLogData } from './AddActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
@@ -222,9 +223,9 @@ export function PipelineTable({
   const closeAddActionModal = () => setAddingAction(null);
   const closeDetailModal = () => setViewingRecord(null);
   
-  // Loading state
+  // Loading state - only show skeleton for table data, keep header and filters visible
   if (isLoading) {
-    return <TableSkeleton />;
+    return <TableDataSkeleton rowCount={8} visibleColumns={visibleColumns} />;
   }
   
   // Empty state

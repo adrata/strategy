@@ -1251,13 +1251,14 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                  section === 'clients' ? 'Track your successful relationships and client success.' :
                  section === 'people' ? 'Build your network by adding people to your database.' :
                  section === 'companies' ? 'Expand your company intelligence by adding organizations.' :
+                 section === 'speedrun' ? 'Add your first speedrun to get started.' :
                  `Add your first ${section.slice(0, -1)} to get started.`}
               </p>
               <button
                 onClick={handleAddRecord}
                 className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
               >
-                Add {section === 'people' ? 'Person' : section === 'companies' ? 'Company' : section.slice(0, -1)}
+                Add {section === 'people' ? 'Person' : section === 'companies' ? 'Company' : section === 'speedrun' ? 'Speedrun' : section.slice(0, -1)}
               </button>
             </div>
           </div>
