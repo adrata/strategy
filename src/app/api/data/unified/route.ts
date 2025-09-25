@@ -24,6 +24,7 @@ import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-r
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
 const UNIFIED_DATA_TTL = 600; // 10 minutes for unified data
 const DASHBOARD_TTL = 60; // 1 minute for dashboard data (faster updates)
+const INDIVIDUAL_DATA_TTL = 300; // 5 minutes for individual data types
 
 // 🎯 DEMO SCENARIO SUPPORT
 const DEMO_WORKSPACE_ID = "demo-workspace-2025";
@@ -1468,7 +1469,7 @@ async function getMultipleRecords(
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: pagination?.limit || 1000,
+      take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Limit to 500 records max, default 100
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
@@ -1487,7 +1488,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: pagination?.limit || 1000,
+          take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Limit to 500 records max, default 100
           skip: pagination?.offset || 0
         });
         
@@ -2679,7 +2680,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all leads (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 5000, // Load all leads for dashboard (increased from 50 to match sidebar count)
+        take: 100, // Load only recent leads for dashboard performance
         select: {
           id: true,
           firstName: true,
@@ -2699,7 +2700,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 5000, // Load all prospects for dashboard (increased from 50 to match sidebar count)
+        take: 100, // Load only recent prospects for dashboard performance
         select: {
           id: true,
           firstName: true,
@@ -2833,7 +2834,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all people (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 5000, // Load all people for dashboard (increased from 50 to match sidebar count)
+        take: 100, // Load only recent people for dashboard performance
         select: { 
           id: true, 
           fullName: true, 
@@ -3521,11 +3522,16 @@ export async function GET(request: NextRequest) {
       }, { status: 400 });
     }
     
-    // Check cache first
+    // Check cache first with optimized TTL for different data types
     const cacheKey = `unified-${type}-${action}-${workspaceId}-${userId}-${id || 'list'}-${JSON.stringify(filters || {})}-${JSON.stringify(pagination || {})}`;
     const memoryCached = unifiedDataMemoryCache.get(cacheKey);
     
-    if (memoryCached && Date.now() - memoryCached.timestamp < UNIFIED_DATA_TTL * 1000) {
+    // 🚀 PERFORMANCE: Use different TTL for different data types
+    const cacheTTL = (type === 'leads' || type === 'prospects' || type === 'people' || type === 'companies') 
+      ? INDIVIDUAL_DATA_TTL * 1000 
+      : UNIFIED_DATA_TTL * 1000;
+    
+    if (memoryCached && Date.now() - memoryCached.timestamp < cacheTTL) {
       console.log(`⚡ [CACHE HIT] ${cacheKey}`);
       return NextResponse.json({
         ...memoryCached.data,
