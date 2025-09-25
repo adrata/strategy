@@ -33,12 +33,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
   // Use real prospect data from record
   const prospectData = {
     name: record.fullName || record.name || 'Unknown Prospect',
-    title: record.jobTitle || record.title || 'Unknown Title',
-    email: record.email || record.workEmail || 'No email',
-    phone: record.phone || record.mobilePhone || record.workPhone || 'No phone',
-    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || 'No LinkedIn',
-    department: record.department || record?.customFields?.enrichedData?.overview?.department || 'Unknown Department',
-    seniority: record.seniority || record?.customFields?.enrichedData?.overview?.seniority || 'Unknown',
+    title: record.jobTitle || record.title || '-',
+    email: record.email || record.workEmail || '-',
+    phone: record.phone || record.mobilePhone || record.workPhone || '-',
+    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-',
+    department: record.department || record?.customFields?.enrichedData?.overview?.department || '-',
+    seniority: record.seniority || record?.customFields?.enrichedData?.overview?.seniority || '-',
     status: record.status || 'active',
     priority: record.priority || 'medium',
     company: record.company || record.companyData?.name || 'No company assigned',
@@ -249,7 +249,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Email:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {prospectData.email !== 'No email' ? (
+                  {prospectData.email !== '-' ? (
                     <a href={`mailto:${prospectData.email}`} className="text-blue-600 hover:underline">
                       {prospectData.email}
                     </a>
@@ -261,7 +261,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Phone:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {prospectData.phone !== 'No phone' ? (
+                  {prospectData.phone !== '-' ? (
                     <a href={`tel:${prospectData.phone}`} className="text-blue-600 hover:underline">
                       {prospectData.phone}
                     </a>
@@ -273,7 +273,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">LinkedIn:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {prospectData.linkedin !== 'No LinkedIn' ? (
+                  {prospectData.linkedin !== '-' ? (
                     <a 
                       href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
                       target="_blank" 

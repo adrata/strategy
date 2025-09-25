@@ -280,8 +280,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               id: item.id || `speedrun-${Math.random()}`,
               name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
               email: item.email || '',
-              company: item.company || item.companyName || 'Unknown Company',
-              title: item.title || item.jobTitle || 'Unknown Title',
+              company: item.company || item.companyName || '-',
+              title: item.title || item.jobTitle || '-',
               phone: item.phone || item.phoneNumber || '',
               location: item.location || item.city || '',
               industry: item.industry || 'Technology',
@@ -567,7 +567,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                record.jobTitle || 
                record?.customFields?.enrichedData?.overview?.title ||
                record?.customFields?.rawData?.active_experience_title ||
-               '';
+               '-';
       
       case 'lastContact':
       case 'lastContactDate':

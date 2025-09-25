@@ -39,9 +39,9 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
 
   // Extract role-related data
   const roleData = {
-    jobTitle: record.jobTitle || record.title || 'Unknown Title',
-    department: record.department || 'Unknown Department',
-    seniority: record.seniority || 'Unknown',
+    jobTitle: record.jobTitle || record.title || '-',
+    department: record.department || '-',
+    seniority: record.seniority || '-',
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || 'Stakeholder',
     influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || 'Medium',
     engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || 'Medium',

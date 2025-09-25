@@ -37,16 +37,16 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
   const getCompanyName = (company: any): string => {
     if (typeof company === 'string') return company;
     if (company && typeof company === 'object') {
-      return company.name || company.companyName || 'Unknown Company';
+      return company.name || company.companyName || '-';
     }
-    return 'Unknown Company';
+    return '-';
   };
   
   const careerData = {
-    currentRole: enrichedData.currentRole || record.jobTitle || record.title || 'Unknown Title',
+    currentRole: enrichedData.currentRole || record.jobTitle || record.title || '-',
     currentCompany: enrichedData.currentCompany || getCompanyName(record.company),
-    department: enrichedData.department || record.department || 'Unknown Department',
-    seniority: enrichedData.seniority || record.seniority || 'Unknown',
+    department: enrichedData.department || record.department || '-',
+    seniority: enrichedData.seniority || record.seniority || '-',
     yearsInRole: enrichedData.yearsInRole || coresignalData.years_in_current_role || 'Unknown',
     yearsAtCompany: enrichedData.yearsAtCompany || coresignalData.years_at_company || 'Unknown',
     totalExperience: enrichedData.totalExperience || coresignalData.total_years_experience || 'Unknown',
@@ -212,7 +212,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{role.title || 'Unknown Title'}</h4>
+                        <h4 className="font-medium text-gray-900">{role.title || '-'}</h4>
                         <div className="text-sm text-gray-600">{getCompanyName(role.company)}</div>
                       </div>
                     </div>
@@ -357,7 +357,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
               <div className="space-y-2">
                 {careerData.publications.map((pub: any, index: number) => (
                   <div key={index} className="text-sm text-gray-700">
-                    <div className="font-medium">{pub.title || 'Unknown Title'}</div>
+                    <div className="font-medium">{pub.title || '-'}</div>
                     {pub.publication && <div className="text-gray-600">{pub.publication}</div>}
                     {pub.date && <div className="text-gray-500">{formatDate(pub.date)}</div>}
                   </div>

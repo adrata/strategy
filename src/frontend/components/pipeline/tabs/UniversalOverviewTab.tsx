@@ -418,7 +418,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Created</label>
                     <div className="text-sm text-gray-600">
-                      {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : 'Unknown'}
+                      {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : '-'}
                     </div>
                   </div>
                   <div>
@@ -438,7 +438,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Last Updated</label>
                     <div className="text-sm text-gray-600">
-                      {record?.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : 'Unknown'}
+                      {record?.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : '-'}
                     </div>
                   </div>
                 </div>
@@ -936,13 +936,13 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Created</label>
                     <div className="text-sm text-gray-600">
-                      {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : 'Unknown'}
+                      {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : '-'}
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Last Updated</label>
                     <div className="text-sm text-gray-600">
-                      {record?.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : 'Unknown'}
+                      {record?.updatedAt ? new Date(record.updatedAt).toLocaleDateString() : '-'}
                     </div>
                   </div>
                 </div>
@@ -1243,7 +1243,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Created</label>
-                    <p className="text-sm text-gray-800 font-medium">{record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : 'Unknown'}</p>
+                    <p className="text-sm text-gray-800 font-medium">{record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : '-'}</p>
                   </div>
                 </div>
               </div>

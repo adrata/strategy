@@ -240,7 +240,7 @@ export function TableRow({
                        record['jobTitle'] || 
                        record?.['customFields']?.enrichedData?.overview?.title ||
                        record?.['customFields']?.rawData?.active_experience_title ||
-                       'Title'}
+                       '-'}
                     </div>
                   </td>
                 );

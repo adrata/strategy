@@ -32,9 +32,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
 
   // Use real company data from record
   const companyData = {
-    name: record.name || 'Unknown Company',
-    industry: record.industry || 'Unknown Industry',
-    size: record.size || record.employeeCount || 'Unknown Size',
+    name: record.name || '-',
+    industry: record.industry || '-',
+    size: record.size || record.employeeCount || '-',
     revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : 'Unknown Revenue',
     location: record.city && record.state ? `${record.city}, ${record.state}` : record.address || 'Unknown Location',
     website: record.website || 'No website',
@@ -42,9 +42,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
               record?.customFields?.linkedin || 
               record?.linkedinUrl || 
               record?.linkedin || 
-              'No LinkedIn',
-    founded: record.founded || 'Unknown',
-    ceo: record.ceo || 'Unknown',
+              '-',
+    founded: record.founded || '-',
+    ceo: record.ceo || '-',
     description: record.description || 'No description available',
     marketCap: record.marketCap || 'Unknown',
     employees: record.employeeCount || record.size || 'Unknown',
@@ -236,7 +236,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">LinkedIn:</span>
                 <span className="text-sm font-medium">
-                  {companyData.linkedin && companyData.linkedin !== 'No LinkedIn' ? (
+                  {companyData.linkedin && companyData.linkedin !== '-' ? (
                     <a 
                       href={companyData.linkedin.startsWith('http') ? companyData.linkedin : `https://${companyData.linkedin}`}
                       target="_blank" 
@@ -250,7 +250,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                       })()}
                     </a>
                   ) : (
-                    <span className="text-gray-800">No LinkedIn</span>
+                    <span className="text-gray-800">-</span>
                   )}
                 </span>
               </div>

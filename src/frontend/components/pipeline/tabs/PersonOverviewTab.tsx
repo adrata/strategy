@@ -36,12 +36,12 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
   // Use real person data from record - ensure all values are strings or arrays
   const personData = {
     name: String(record.fullName || record.name || 'Unknown Person'),
-    title: String(record.jobTitle || record.title || 'Unknown Title'),
-    email: String(record.email || record.workEmail || 'No email'),
-    phone: String(record.phone || record.mobilePhone || record.workPhone || 'No phone'),
-    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || 'No LinkedIn'),
-    department: String(record.department || record?.customFields?.enrichedData?.overview?.department || 'Unknown Department'),
-    seniority: String(record.seniority || record?.customFields?.enrichedData?.overview?.seniority || 'Unknown'),
+    title: String(record.jobTitle || record.title || '-'),
+    email: String(record.email || record.workEmail || '-'),
+    phone: String(record.phone || record.mobilePhone || record.workPhone || '-'),
+    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-'),
+    department: String(record.department || record?.customFields?.enrichedData?.overview?.department || '-'),
+    seniority: String(record.seniority || record?.customFields?.enrichedData?.overview?.seniority || '-'),
     status: String(record.status || 'active'),
     company: String(record.company || record?.company?.name || record.companyData?.name || 'No company assigned'),
     companyId: record.companyId || null,
@@ -243,7 +243,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Email:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {personData.email !== 'No email' ? (
+                  {personData.email !== '-' ? (
                     <a href={`mailto:${personData.email}`} className="text-blue-600 hover:underline">
                       {personData.email}
                     </a>
@@ -255,7 +255,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Phone:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {personData.phone !== 'No phone' ? (
+                  {personData.phone !== '-' ? (
                     <a href={`tel:${personData.phone}`} className="text-blue-600 hover:underline">
                       {personData.phone}
                     </a>
@@ -267,7 +267,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">LinkedIn:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {personData.linkedin !== 'No LinkedIn' ? (
+                  {personData.linkedin !== '-' ? (
                     <a 
                       href={personData.linkedin.startsWith('http') ? personData.linkedin : `https://${personData.linkedin}`} 
                       target="_blank" 

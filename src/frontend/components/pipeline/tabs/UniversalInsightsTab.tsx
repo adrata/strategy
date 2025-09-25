@@ -157,9 +157,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   // Generate intelligent insights based on role and data
   const generateIntelligenceInsights = () => {
     const name = record?.fullName || record?.name || 'This individual';
-    const title = record?.jobTitle || record?.title || 'Unknown Title';
-    const company = record?.company || record?.companyName || 'Unknown Company';
-    const industry = record?.industry || 'Unknown Industry';
+    const title = record?.jobTitle || record?.title || '-';
+    const company = record?.company || record?.companyName || '-';
+    const industry = record?.industry || '-';
     
     // Generate pain points based on role and industry
     const generatePainPoints = () => {
