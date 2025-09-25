@@ -10,7 +10,7 @@ interface UniversalCompanyTabProps {
 }
 
 export function UniversalCompanyTab({ recordType, record: recordProp }: UniversalCompanyTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
 

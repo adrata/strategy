@@ -9,7 +9,7 @@ interface UniversalInsightsTabProps {
 }
 
 export function UniversalInsightsTab({ recordType, record: recordProp }: UniversalInsightsTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   if (!record) {

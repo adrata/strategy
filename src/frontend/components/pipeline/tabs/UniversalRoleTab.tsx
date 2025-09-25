@@ -12,7 +12,7 @@ interface UniversalRoleTabProps {
 }
 
 export function UniversalRoleTab({ recordType, record: recordProp, onSave }: UniversalRoleTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   // Show skeleton loader while data is loading

@@ -11,7 +11,7 @@ interface UniversalEnablersTabProps {
 }
 
 export function UniversalEnablersTab({ recordType, record: recordProp, onSave }: UniversalEnablersTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   // Show skeleton loader while data is loading

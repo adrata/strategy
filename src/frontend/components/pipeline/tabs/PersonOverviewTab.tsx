@@ -10,7 +10,7 @@ interface PersonOverviewTabProps {
 }
 
 export function PersonOverviewTab({ recordType, record: recordProp }: PersonOverviewTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   // Show skeleton loader while data is loading
@@ -18,38 +18,43 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     return <CompanyDetailSkeleton message="Loading person details..." />;
   }
 
+  // Safety check: ensure record is an object and not being rendered directly
+  if (typeof record !== 'object' || record === null) {
+    return <CompanyDetailSkeleton message="Invalid record data..." />;
+  }
+
   // Debug: Log the record structure to see what's available
   if (process.env.NODE_ENV === 'development') {
     console.log('🔍 [Person Data Debug] Record structure:', {
-      record: record,
+      recordKeys: Object.keys(record || {}),
       customFields: record?.customFields,
       company: record?.company,
       buyerGroupRole: record?.customFields?.buyerGroupRole
     });
   }
 
-  // Use real person data from record
+  // Use real person data from record - ensure all values are strings or arrays
   const personData = {
-    name: record.fullName || record.name || 'Unknown Person',
-    title: record.jobTitle || record.title || 'Unknown Title',
-    email: record.email || record.workEmail || 'No email',
-    phone: record.phone || record.mobilePhone || record.workPhone || 'No phone',
-    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || 'No LinkedIn',
-    department: record.department || 'Unknown Department',
-    seniority: record.seniority || 'Unknown',
-    status: record.status || 'active',
-    company: record.company || record?.company?.name || record.companyData?.name || 'No company assigned',
+    name: String(record.fullName || record.name || 'Unknown Person'),
+    title: String(record.jobTitle || record.title || 'Unknown Title'),
+    email: String(record.email || record.workEmail || 'No email'),
+    phone: String(record.phone || record.mobilePhone || record.workPhone || 'No phone'),
+    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || 'No LinkedIn'),
+    department: String(record.department || 'Unknown Department'),
+    seniority: String(record.seniority || 'Unknown'),
+    status: String(record.status || 'active'),
+    company: String(record.company || record?.company?.name || record.companyData?.name || 'No company assigned'),
     companyId: record.companyId || null,
-    industry: record.industry || record?.company?.industry || record.companyData?.industry || 'Unknown Industry',
-    location: record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location',
-    buyerGroupRole: record?.customFields?.buyerGroupRole || record?.buyerGroupRole || 'Stakeholder',
-    influenceLevel: record?.customFields?.influenceLevel || record?.influenceLevel || 'Medium',
-    engagementPriority: record?.customFields?.engagementPriority || record?.engagementPriority || 'Medium',
-    lastContact: record.lastContactDate || record.lastContact || 'Never',
-    nextAction: record.nextAction || 'No action planned',
+    industry: String(record.industry || record?.company?.industry || record.companyData?.industry || 'Unknown Industry'),
+    location: String(record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location'),
+    buyerGroupRole: String(record?.customFields?.buyerGroupRole || record?.buyerGroupRole || 'Stakeholder'),
+    influenceLevel: String(record?.customFields?.influenceLevel || record?.influenceLevel || 'Medium'),
+    engagementPriority: String(record?.customFields?.engagementPriority || record?.engagementPriority || 'Medium'),
+    lastContact: String(record.lastContactDate || record.lastContact || 'Never'),
+    nextAction: String(record.nextAction || 'No action planned'),
     nextActionDate: record.nextActionDate || null,
-    notes: record.notes || 'No notes available',
-    tags: record.tags || []
+    notes: String(record.notes || 'No notes available'),
+    tags: Array.isArray(record.tags) ? record.tags : []
   };
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {

@@ -9,7 +9,7 @@ interface UniversalProfileTabProps {
 }
 
 export function UniversalProfileTab({ recordType, record: recordProp }: UniversalProfileTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   if (!record) {

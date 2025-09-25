@@ -11,7 +11,7 @@ interface UniversalCareerTabProps {
 }
 
 export function UniversalCareerTab({ recordType, record: recordProp, onSave }: UniversalCareerTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   // Show skeleton loader while data is loading

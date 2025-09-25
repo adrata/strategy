@@ -9,7 +9,7 @@ interface UniversalHistoryTabProps {
 }
 
 export function UniversalHistoryTab({ recordType, record: recordProp }: UniversalHistoryTabProps) {
-  const { record: contextRecord } = useRecordContext();
+  const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
   if (!record) {
