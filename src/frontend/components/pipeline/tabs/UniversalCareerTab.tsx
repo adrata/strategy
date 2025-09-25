@@ -102,33 +102,96 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
 
   return (
     <div className="space-y-8">
-      {/* Career Summary */}
+      {/* Current Position */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Summary</h3>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h4 className="font-medium text-blue-900 mb-2">Current Position</h4>
-              <div className="text-sm text-blue-800">
-                <div className="font-medium">{careerData.currentRole}</div>
-                <div className="text-blue-600">{careerData.currentCompany}</div>
-                <div className="text-blue-600">{careerData.department}</div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Position</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Current Role Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Current Role</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Title:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.currentRole}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Company:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.currentCompany}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Department:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.department}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Seniority:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.seniority}</span>
               </div>
             </div>
-            <div>
-              <h4 className="font-medium text-blue-900 mb-2">Experience</h4>
-              <div className="text-sm text-blue-800 space-y-1">
-                <div>Years in Role: {careerData.yearsInRole}</div>
-                <div>Years at Company: {careerData.yearsAtCompany}</div>
-                <div>Total Experience: {careerData.totalExperience}</div>
+          </div>
+
+          {/* Experience Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Experience</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Years in Role:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.yearsInRole}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Years at Company:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.yearsAtCompany}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Total Experience:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.totalExperience}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Industry Experience:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.industryExperience}</span>
               </div>
             </div>
-            <div>
-              <h4 className="font-medium text-blue-900 mb-2">Leadership</h4>
-              <div className="text-sm text-blue-800 space-y-1">
-                <div>Team Size: {careerData.teamSize}</div>
-                <div>Budget: {careerData.budgetResponsibility}</div>
-                <div>Leadership: {careerData.leadershipExperience}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Leadership & Management */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Leadership & Management</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Leadership Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Leadership Profile</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Leadership Experience:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.leadershipExperience}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Team Size:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.teamSize}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Budget Responsibility:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.budgetResponsibility}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Management Style Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Management Style</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Management Approach:</span>
+                <span className="text-sm font-medium text-gray-900">Collaborative</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Decision Making:</span>
+                <span className="text-sm font-medium text-gray-900">Data-driven</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Communication Style:</span>
+                <span className="text-sm font-medium text-gray-900">Direct</span>
               </div>
             </div>
           </div>
@@ -246,7 +309,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievements & Recognition</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Achievements</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Key Achievements</h4>
             {careerData.achievements.length > 0 ? (
               <div className="space-y-2">
                 {careerData.achievements.map((achievement: string, index: number) => (
@@ -262,7 +325,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
           </div>
 
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Awards</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Awards & Recognition</h4>
             {careerData.awards.length > 0 ? (
               <div className="space-y-2">
                 {careerData.awards.map((award: any, index: number) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { UpdateModal } from './UpdateModal';
@@ -219,6 +219,9 @@ export function UniversalRecordTemplate({
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
   const [activeTab, setActiveTab] = useState((customTabs || DEFAULT_TABS)[0]?.id || 'overview');
   const [loading, setLoading] = useState(false);
+  
+  // Ref for content container to reset scroll position
+  const contentRef = useRef<HTMLDivElement>(null);
   
   // Use universal inline edit hook
   const {
@@ -1603,6 +1606,10 @@ export function UniversalRecordTemplate({
               onClick={() => {
                 console.log(`🔄 [UNIVERSAL] Tab clicked: ${tab.id}, was: ${activeTab}`);
                 setActiveTab(tab.id);
+                // Reset scroll position to top when switching tabs
+                if (contentRef.current) {
+                  contentRef.current.scrollTop = 0;
+                }
               }}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                 activeTab === tab.id
@@ -1617,7 +1624,7 @@ export function UniversalRecordTemplate({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-auto scrollbar-hide" ref={contentRef}>
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <Loader size="lg" />

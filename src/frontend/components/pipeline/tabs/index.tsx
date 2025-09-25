@@ -30,10 +30,9 @@ export { UniversalBuyerGroupTab } from './UniversalBuyerGroupTab';
 export { UniversalCompetitorsTab } from './UniversalCompetitorsTab';
 export { UniversalIndustryTab } from './UniversalIndustryTab';
 export { UniversalSellerCompaniesTab } from './UniversalSellerCompaniesTab';
+export { UniversalCareerTab } from './UniversalCareerTab';
 
 // Placeholder components for tabs that don't exist yet
-
-// UniversalCareerTab is now implemented in its own file
 
 export function UniversalLandminesTab({ record, recordType }: { record: any; recordType: string }) {
   return (
