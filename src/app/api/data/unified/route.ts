@@ -2675,14 +2675,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.leads.findMany({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
+          // Removed assignedUserId filter to show all leads (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50, // Load only recent leads for dashboard
+        take: 5000, // Load all leads for dashboard (increased from 50 to match sidebar count)
         select: {
           id: true,
           firstName: true,
@@ -2702,7 +2699,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50, // Load only recent prospects for dashboard
+        take: 5000, // Load all prospects for dashboard (increased from 50 to match sidebar count)
         select: {
           id: true,
           firstName: true,
@@ -2832,14 +2829,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       prisma.people.findMany({ 
         where: { 
           workspaceId, 
-          deletedAt: null,
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
+          // Removed assignedUserId filter to show all people (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 50, // Load only recent people for dashboard
+        take: 5000, // Load all people for dashboard (increased from 50 to match sidebar count)
         select: { 
           id: true, 
           fullName: true, 
