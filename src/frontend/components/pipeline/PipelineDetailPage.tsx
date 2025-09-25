@@ -103,24 +103,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       default: data = []; break;
     }
     
-    // Sort companies by rank (API already provides proper ranking)
-    if (section === 'companies' && data.length > 0) {
-      data = [...data].sort((a, b) => {
-        // Sort by rank if both have ranks
-        if (a.rank && b.rank) {
-          return a.rank - b.rank;
-        }
-        // Companies with ranks come first
-        if (a.rank && !b.rank) {
-          return -1;
-        }
-        if (!a.rank && b.rank) {
-          return 1;
-        }
-        // For companies without ranks, sort alphabetically
-        return a.name?.localeCompare(b.name) || 0;
-      });
-    }
+    // Companies are already properly ranked by the API - no additional sorting needed
     
     return data;
   };
