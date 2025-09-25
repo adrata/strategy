@@ -178,13 +178,12 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
   return (
     <div className="space-y-8">
-      {/* Basic Information */}
+      {/* Who are they */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Contact Information Card */}
+          {/* Basic Information Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Name:</span>
@@ -202,6 +201,45 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                 <span className="text-sm text-gray-600">Department:</span>
                 <span className="text-sm font-medium text-gray-900">{personData.department}</span>
               </div>
+            </div>
+          </div>
+
+          {/* Role & Influence Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Role:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
+                  personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
+                  personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
+                  personData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.buyerGroupRole}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Engagement Priority:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementPriority}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How do I reach them */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Contact Information Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+            <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Email:</span>
                 <span className="text-sm font-medium text-gray-900">
@@ -246,30 +284,10 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
             </div>
           </div>
 
-          {/* Role & Influence Card */}
+          {/* Engagement History Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Role:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                  personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
-                  personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                  personData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {personData.buyerGroupRole}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Priority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementPriority}</span>
-              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Last Contact:</span>
                 <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.lastContact)}</span>
@@ -293,34 +311,35 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
-      {/* Wants & Needs */}
+      {/* What do they care about */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Wants & Needs</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Wants Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Wants</h4>
-            <ul className="space-y-1">
-              {wants.map((want, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-start">
-                  <span className="text-gray-400 mr-2">•</span>
-                  {want}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Needs Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Needs</h4>
-            <ul className="space-y-1">
-              {needs.map((need, index) => (
-                <li key={index} className="text-sm text-gray-600 flex items-start">
-                  <span className="text-gray-400 mr-2">•</span>
-                  {need}
-                </li>
-              ))}
-            </ul>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h4 className="font-medium text-gray-900 mb-3">
+            Wants & Needs: Based on their role as {personData.title} at {personData.company}, they likely care about:
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
+              <ul className="space-y-1">
+                {wants.map((want, index) => (
+                  <li key={index} className="text-sm text-gray-600 flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    {want}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
+              <ul className="space-y-1">
+                {needs.map((need, index) => (
+                  <li key={index} className="text-sm text-gray-600 flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    {need}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
