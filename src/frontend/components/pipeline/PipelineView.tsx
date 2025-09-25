@@ -658,7 +658,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   // CRITICAL FIX: Define sectionDataArray before using it in filteredData
   // The acquisition data is what populates the left panel counts and should be used for the middle panel too
   const sectionDataArray = (sectionData && sectionData.length > 0) ? sectionData : (pipelineData.data || []);
-  const hasData = sectionDataArray && sectionDataArray.length > 0;
+  const hasData = Array.isArray(sectionDataArray) && sectionDataArray.length > 0;
   
   // Calculate isEmpty based on actual data
   const isEmpty = !hasData;
@@ -666,8 +666,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   // CRITICAL DEBUG: Log the final data state with source information
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
     hasData,
-    dataLength: sectionDataArray?.length || 0,
-    data: sectionDataArray?.slice(0, 3) || [],
+    dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
+    data: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 3) : [],
     error,
     isEmpty,
     workspaceId,
@@ -683,7 +683,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
     // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of pipelineData.data
-    const dataToFilter = sectionDataArray || [];
+    const dataToFilter = Array.isArray(sectionDataArray) ? sectionDataArray : [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
     // Apply timeframe filtering for speedrun section
@@ -1139,9 +1139,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       workspaceId,
       userId,
       error,
-      dataExists: !!sectionDataArray,
-      dataLength: sectionDataArray?.length || 0,
-      rawData: sectionDataArray?.slice(0, 2), // Show first 2 records for debugging
+      dataExists: Array.isArray(sectionDataArray),
+      dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
+      rawData: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 2) : [], // Show first 2 records for debugging
       filteredDataLength: filteredData?.length || 0,
       isEmpty
     });
@@ -1198,14 +1198,14 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         onRefresh={handleRefresh}
         onClearCache={handleClearCache}
         onAddRecord={handleAddRecord}
-        recordCount={sectionDataArray?.length || 0}
+        recordCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
       />
 
       {/* Filters */}
       <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
         <PipelineFilters 
           section={section}
-          totalCount={sectionDataArray?.length || 0}
+          totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
           onSearchChange={setSearchQuery}
           onVerticalChange={setVerticalFilter}
           onStatusChange={setStatusFilter}
@@ -1222,7 +1222,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
       {/* Main content */}
       <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`}>
-        {sectionDataArray && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
+        {Array.isArray(sectionDataArray) && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-500 p-6">
