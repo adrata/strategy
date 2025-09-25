@@ -35,16 +35,22 @@ interface PipelineFiltersProps {
 }
 
 export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns }: PipelineFiltersProps) {
-  // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
-  // const { data } = usePipelineData(section as any, 'default', 'default');
-  
-  // Use single data source from useAcquisitionOS instead
+  // 🚀 PERFORMANCE: Use single data source from useAcquisitionOS with aggressive caching
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
+  // 🚀 PERFORMANCE: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // The useAcquisitionOSData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
+    
+    // 🚀 PERFORMANCE: Log data consistency for debugging
+    console.log(`🔍 [PIPELINE FILTERS] Getting data for section ${section}:`, {
+      hasAcquisitionData: !!acquisitionData,
+      hasAcquireData: !!acquisitionData?.acquireData,
+      sectionDataLength: acquireData[section]?.length || 0,
+      isLoading: acquisitionData?.loading?.isLoading,
+      dataSource: 'acquisitionData'
+    });
+    
     switch (section) {
       case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];

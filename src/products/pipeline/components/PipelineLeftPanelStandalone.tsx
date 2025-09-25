@@ -129,17 +129,20 @@ function PipelineSections({
     isPartnersVisible: false
   };
   
-  // 🆕 FALLBACK: Direct API call for dashboard data if acquisitionData is not loaded
+  // 🚀 PERFORMANCE: Use cached acquisition data only - no fallback API calls
+  // The acquisition data should already contain all the counts we need
   const [fallbackCounts, setFallbackCounts] = useState<any>({});
   const [fallbackLoading, setFallbackLoading] = useState(false);
   
+  // 🚀 PERFORMANCE: Only use fallback if absolutely necessary and with aggressive caching
   useEffect(() => {
-    // If we don't have counts from acquisitionData, fetch them directly
-    if (!actualCounts || Object.keys(actualCounts).length === 0) {
+    // Only fetch if we have no counts AND acquisition data is not loading
+    if ((!actualCounts || Object.keys(actualCounts).length === 0) && !acquisitionData?.loading?.isLoading) {
       const fetchDashboardData = async () => {
         setFallbackLoading(true);
         try {
-          const response = await fetch(`/api/data/unified?type=dashboard&action=get&workspaceId=${workspaceId}&userId=${userId}`);
+          // 🚀 PERFORMANCE: Use cached dashboard data with longer TTL
+          const response = await fetch(`/api/data/unified?type=dashboard&action=get&workspaceId=${workspaceId}&userId=${userId}&_cache=true`);
           if (response.ok) {
             const data = await response.json();
             if (data['success'] && data.data?.counts) {
@@ -154,9 +157,11 @@ function PipelineSections({
         }
       };
       
-      fetchDashboardData();
+      // 🚀 PERFORMANCE: Debounce the fallback call
+      const timeoutId = setTimeout(fetchDashboardData, 1000);
+      return () => clearTimeout(timeoutId);
     }
-  }, [workspaceId, userId, actualCounts]);
+  }, [workspaceId, userId, actualCounts, acquisitionData?.loading?.isLoading]);
   
   // Use fallback counts if acquisitionData counts are not available
   const finalCounts = actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts;

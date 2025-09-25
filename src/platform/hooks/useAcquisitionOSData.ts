@@ -361,7 +361,7 @@ export function useAcquisitionOSData(
     refresh,
     clearCache 
   } = useAdrataData(cacheKey, fetchAcquisitionData, {
-    ttl: 300000, // 5 minutes
+    ttl: 1800000, // 🚀 PERFORMANCE: 30 minutes aggressive caching for lightning speed
     priority: 'high',
     tags: ['acquisition-os', activeWorkspace?.id || '', authUser?.id || ''],
     revalidateOnReconnect: true,

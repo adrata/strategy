@@ -206,21 +206,18 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     acquisitionDataExists: !!acquisitionData
   });
   
-  // CRITICAL FIX: Use full data for list views, dashboard data for dashboard
+  // 🚀 PERFORMANCE: Use consistent data source with proper loading states
   const getSectionData = (section: string) => {
-    // For dashboard, use acquisition data (limited for performance)
-    if (section === 'dashboard') {
-      const acquireData = acquisitionData?.acquireData || {};
-      return acquireData[section] || [];
-    }
-    
-    // For all other sections, use acquisition data directly
     const acquireData = acquisitionData?.acquireData || {};
+    
+    // 🚀 PERFORMANCE: Log data consistency for debugging
     console.log(`🔍 [PIPELINE VIEW] Getting data for section ${section}:`, {
       hasAcquisitionData: !!acquisitionData,
       hasAcquireData: !!acquisitionData?.acquireData,
       acquireDataKeys: Object.keys(acquireData),
-      sectionData: acquireData[section] || []
+      sectionDataLength: acquireData[section]?.length || 0,
+      isLoading: acquisitionData?.loading?.isLoading,
+      dataSource: 'acquisitionData'
     });
     
     switch (section) {
