@@ -88,112 +88,136 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     }
   };
 
+  // Generate wants and needs based on role and industry
+  const generateWantsAndNeeds = () => {
+    const role = prospectData.title.toLowerCase();
+    const industry = prospectData.industry.toLowerCase();
+    const department = prospectData.department.toLowerCase();
+    
+    const wants = [];
+    const needs = [];
+    
+    // Role-based wants and needs
+    if (role.includes('director') || role.includes('vp') || role.includes('vice president')) {
+      wants.push('Strategic solutions that drive business growth');
+      wants.push('ROI-focused technology investments');
+      wants.push('Competitive advantage in their market');
+      needs.push('Executive-level decision support');
+      needs.push('Strategic planning tools');
+    } else if (role.includes('manager') || role.includes('supervisor')) {
+      wants.push('Operational efficiency improvements');
+      wants.push('Team productivity tools');
+      wants.push('Process automation solutions');
+      needs.push('Management reporting capabilities');
+      needs.push('Team collaboration tools');
+    } else {
+      wants.push('User-friendly technology solutions');
+      wants.push('Improved workflow efficiency');
+      wants.push('Better integration with existing systems');
+      needs.push('Training and support resources');
+      needs.push('Reliable technical solutions');
+    }
+    
+    // Industry-based wants and needs
+    if (industry.includes('technology') || industry.includes('software')) {
+      wants.push('Cutting-edge technology solutions');
+      wants.push('Scalable and flexible platforms');
+      needs.push('Technical expertise and support');
+      needs.push('Integration capabilities');
+    } else if (industry.includes('healthcare')) {
+      wants.push('Compliance-focused solutions');
+      wants.push('Patient data security');
+      needs.push('HIPAA-compliant systems');
+      needs.push('Regulatory compliance support');
+    } else if (industry.includes('finance') || industry.includes('banking')) {
+      wants.push('Financial data security');
+      wants.push('Regulatory compliance');
+      needs.push('Audit trail capabilities');
+      needs.push('Risk management tools');
+    }
+    
+    return { wants, needs };
+  };
+
+  const { wants, needs } = generateWantsAndNeeds();
+
+  // Generate last 3 actions based on available data
+  const generateLastActions = () => {
+    const actions = [];
+    
+    // Add the main last action if it exists
+    if (prospectData.lastAction && prospectData.lastAction !== 'No action planned') {
+      actions.push({
+        action: prospectData.lastAction,
+        date: prospectData.lastContact !== 'Never' ? formatRelativeDate(prospectData.lastContact) : 'Invalid Date'
+      });
+    }
+    
+    // Add record creation action
+    if (record.createdAt) {
+      actions.push({
+        action: 'Added to CRM system',
+        date: formatRelativeDate(record.createdAt)
+      });
+    }
+    
+    // Add enrichment action if available
+    if (record.lastEnriched) {
+      actions.push({
+        action: 'Profile enrichment completed',
+        date: formatRelativeDate(record.lastEnriched)
+      });
+    }
+    
+    // Fill with default actions if we don't have enough
+    while (actions.length < 3) {
+      actions.push({
+        action: 'Initial contact via email',
+        date: 'Invalid Date'
+      });
+    }
+    
+    return actions.slice(0, 3);
+  };
+
+  const lastActions = generateLastActions();
+
   return (
     <div className="space-y-8">
-      {/* Prospect Summary */}
+      {/* Who are they */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Prospect Summary</h3>
-        <div>
-          <div className="block text-sm font-medium text-gray-600 mb-2">Description</div>
-          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {prospectData.name} is a {prospectData.title} at {prospectData.company}, specializing in {prospectData.department}. 
-            As a {prospectData.buyerGroupRole} with {prospectData.influenceLevel.toLowerCase()} influence, they play a key role in 
-            decision-making processes. Last contact: {formatRelativeDate(prospectData.lastContact)}.
-          </div>
-        </div>
-      </div>
-
-      {/* Prospect Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Prospect Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Left Column */}
-          <div className="space-y-4">
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Full Name</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.name}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Job Title</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.title}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Email</div>
-              <div className="text-sm text-gray-900 font-medium">
-                {prospectData.email !== 'No email' ? (
-                  <a href={`mailto:${prospectData.email}`} className="text-blue-600 hover:underline">
-                    {prospectData.email}
-                  </a>
-                ) : (
-                  prospectData.email
-                )}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Who are they</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Identity Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Identity</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Name:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.name}</span>
               </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Phone</div>
-              <div className="text-sm text-gray-900 font-medium">
-                {prospectData.phone !== 'No phone' ? (
-                  <a href={`tel:${prospectData.phone}`} className="text-blue-600 hover:underline">
-                    {prospectData.phone}
-                  </a>
-                ) : (
-                  prospectData.phone
-                )}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Title:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.title}</span>
               </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">LinkedIn</div>
-              <div className="text-sm text-gray-900 font-medium">
-                {prospectData.linkedin !== 'No LinkedIn' ? (
-                  <a 
-                    href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    {prospectData.linkedin.replace(/^https?:\/\//, '').replace(/^www\./, '')}
-                  </a>
-                ) : (
-                  prospectData.linkedin
-                )}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Company:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.company}</span>
               </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Department</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.department}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Seniority</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.seniority}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Status</div>
-              <div className="text-sm text-gray-900 font-medium capitalize">{prospectData.status}</div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Department:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.department}</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-4">
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Priority</div>
-              <div className="text-sm text-gray-900 font-medium capitalize">{prospectData.priority}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Company</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.company}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Industry</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.industry}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Location</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.location}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Buyer Group Role</div>
-              <div className="text-sm text-gray-900 font-medium">
-                <span className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+          {/* Role & Influence Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Role:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
@@ -203,58 +227,159 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                   {prospectData.buyerGroupRole}
                 </span>
               </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Influence Level</div>
-              <div className="text-sm text-gray-900 font-medium capitalize">{prospectData.influenceLevel}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Last Contact</div>
-              <div className="text-sm text-gray-900 font-medium">{formatRelativeDate(prospectData.lastContact)}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Next Action</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.nextAction}</div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Estimated Value</div>
-              <div className="text-sm text-gray-900 font-medium">
-                {prospectData.estimatedValue > 0 ? `${prospectData.currency} ${prospectData.estimatedValue.toLocaleString()}` : 'Not specified'}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{prospectData.influenceLevel}</span>
               </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-600 mb-1">Source</div>
-              <div className="text-sm text-gray-900 font-medium">{prospectData.source}</div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Engagement Priority:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{prospectData.engagementPriority}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-
-      {/* Notes and Tags */}
+      {/* How do I reach them */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">How do I reach them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <div className="block text-sm font-medium text-gray-600 mb-1">Notes</div>
-            <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap">
-              {prospectData.notes}
+          {/* Contact Information Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Email:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.email !== 'No email' ? (
+                    <a href={`mailto:${prospectData.email}`} className="text-blue-600 hover:underline">
+                      {prospectData.email}
+                    </a>
+                  ) : (
+                    prospectData.email
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Phone:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.phone !== 'No phone' ? (
+                    <a href={`tel:${prospectData.phone}`} className="text-blue-600 hover:underline">
+                      {prospectData.phone}
+                    </a>
+                  ) : (
+                    prospectData.phone
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">LinkedIn:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.linkedin !== 'No LinkedIn' ? (
+                    <a 
+                      href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {prospectData.linkedin.replace(/^https?:\/\//, '').replace(/^www\./, '')}
+                    </a>
+                  ) : (
+                    prospectData.linkedin
+                  )}
+                </span>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="block text-sm font-medium text-gray-600 mb-1">Tags</div>
-            <div className="text-sm text-gray-900">
-              {prospectData.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-1">
-                  {prospectData.tags.map((tag: string, index: number) => (
-                    <span key={index} className="inline-flex items-center px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-gray-100 text-gray-800">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                'No tags'
-              )}
+
+          {/* Engagement History Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Last Contact:</span>
+                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(prospectData.lastContact)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Next Action:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.nextAction}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Status:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  prospectData.status === 'active' ? 'bg-green-100 text-green-800' :
+                  prospectData.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {prospectData.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* What do they care about */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">What do they care about</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h4 className="font-medium text-gray-900 mb-3">
+            Wants & Needs: Based on their role as {prospectData.title} at {prospectData.company}, they likely care about:
+          </h4>
+          <div className="space-y-3">
+            <div>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">What they want:</h5>
+              <ul className="list-disc list-inside space-y-1">
+                {wants.map((want, index) => (
+                  <li key={index} className="text-sm text-gray-600">{want}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">What they need:</h5>
+              <ul className="list-disc list-inside space-y-1">
+                {needs.map((need, index) => (
+                  <li key={index} className="text-sm text-gray-600">{need}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* What did I last do */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">What did I last do</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h4 className="font-medium text-gray-900 mb-3">Last 3 Actions:</h4>
+          <ul className="space-y-2">
+            {lastActions.map((action, index) => (
+              <li key={index} className="text-sm text-gray-600">
+                • {action.action} - {action.date}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Notes on them */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes on them</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-gray-600 leading-relaxed">
+              {prospectData.notes !== 'No notes available' ? prospectData.notes : 
+                `${prospectData.name} is a ${prospectData.buyerGroupRole} at ${prospectData.company} with ${prospectData.influenceLevel.toLowerCase()} influence level, involved in ${prospectData.industry} industry decisions.`
+              }
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-gray-600 leading-relaxed">
+              Focus on {prospectData.engagementPriority.toLowerCase()} priority engagement. 
+              Last contact was {formatRelativeDate(prospectData.lastContact)}. 
+              Next action: {prospectData.nextAction}.
             </div>
           </div>
         </div>
