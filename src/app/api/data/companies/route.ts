@@ -217,9 +217,20 @@ export async function GET(request: NextRequest) {
     // Combine both sources
     const allCompanies = [...companiesWithPeople, ...companiesFromLeads];
 
-    // Sort all companies by rank to ensure proper order
+    // Sort all companies by existing rank first, then by updatedAt and name
     allCompanies.sort((a, b) => {
-      // Sort by updatedAt descending, then by name alphabetically
+      // First, sort by existing rank (if both have ranks)
+      if (a.rank && b.rank) {
+        return a.rank - b.rank;
+      }
+      // Companies with ranks come first
+      if (a.rank && !b.rank) {
+        return -1;
+      }
+      if (!a.rank && b.rank) {
+        return 1;
+      }
+      // For companies without ranks, sort by updatedAt descending, then by name alphabetically
       const dateA = new Date(a.updatedAt).getTime();
       const dateB = new Date(b.updatedAt).getTime();
       if (dateA !== dateB) {
@@ -239,11 +250,19 @@ export async function GET(request: NextRequest) {
       }
     });
     
-    // Companies are already sorted by updatedAt and name
+    // Companies are already sorted by existing rank, then by updatedAt and name
     
-    // Assign sequential ranks starting from 1
-    uniqueCompanies.forEach((company, index) => {
-      company.rank = index + 1;
+    // Assign sequential ranks, preserving existing ranks
+    let nextRank = 1;
+    uniqueCompanies.forEach((company) => {
+      if (!company.rank) {
+        // Find the next available rank that doesn't conflict with existing ranks
+        while (uniqueCompanies.some(c => c.rank === nextRank)) {
+          nextRank++;
+        }
+        company.rank = nextRank;
+        nextRank++;
+      }
     });
 
     console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);
