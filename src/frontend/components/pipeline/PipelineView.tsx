@@ -137,7 +137,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       setSortDirection('asc'); // Oldest first
     } else {
       setSortField('rank');
-      setSortDirection('desc'); // Highest rank first
+      setSortDirection('asc'); // Lowest rank first (1, 2, 3...)
     }
   }, [section]);
   

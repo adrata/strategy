@@ -162,7 +162,7 @@ export function PipelineTable({
   } = usePipelineData({ 
     data, 
     pageSize,
-    disableSorting: section === 'companies', // Disable sorting for companies to preserve API ranking
+    disableSorting: section === 'companies' || section === 'speedrun', // Disable sorting for companies and speedrun to preserve API ranking
     searchQuery // Pass search query to hook
   });
   
