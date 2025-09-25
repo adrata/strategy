@@ -177,7 +177,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
           <div>
             <div className="block text-sm font-medium text-gray-600 mb-1">Buyer Group Role</div>
             <div className="text-sm text-gray-900 font-medium">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              <span className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                 personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                 personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
                 personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
@@ -309,7 +309,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               {personData.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-1">
                   {personData.tags.map((tag: string, index: number) => (
-                    <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span key={index} className="inline-flex items-center px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-gray-100 text-gray-800">
                       {tag}
                     </span>
                   ))}

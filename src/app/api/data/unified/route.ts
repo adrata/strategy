@@ -3233,10 +3233,11 @@ const SPEEDRUN_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {
-    // 🚀 PERFORMANCE: Check cache first
+    // 🚀 PERFORMANCE: Check cache first (TEMPORARILY DISABLED FOR DEBUGGING)
     const cacheKey = `speedrun:${workspaceId}:${userId}`;
     const cached = speedrunCache.get(cacheKey);
     
+    // TEMPORARILY DISABLE CACHE TO FORCE FRESH DATA
     if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL) {
       console.log('⚡ [SPEEDRUN] Cache hit for workspace:', workspaceId);
       return cached.data;
@@ -3245,10 +3246,12 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🚀 ENHANCED: Load people for speedrun with proper company relationships
+    // PRIORITIZE people with company relationships first
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
         deletedAt: null,
+        companyId: { not: null }, // Only load people with company relationships
         OR: [
           { assignedUserId: userId },
           { assignedUserId: null }
@@ -3298,6 +3301,31 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospectsWithCompanies.length} people with company data`);
     
+    // DEBUG: Log first few records to see company data
+    console.log('🔍 [SPEEDRUN DEBUG] First 3 records:');
+    prospectsWithCompanies.slice(0, 3).forEach((person, index) => {
+      console.log(`  ${index + 1}. ${person.fullName} -> Company: "${person.company}"`);
+    });
+    
+    // DEBUG: Log raw database company data
+    console.log('🔍 [SPEEDRUN DEBUG] Raw database company data (first 3):');
+    people.slice(0, 3).forEach((person, index) => {
+      console.log(`  ${index + 1}. ${person.fullName}:`);
+      console.log(`    - company object:`, person.company);
+      console.log(`    - company.name: ${person.company?.name}`);
+      console.log(`    - companyId: ${person.companyId}`);
+    });
+    
+    // DEBUG: Log raw database data
+    console.log('🔍 [SPEEDRUN DEBUG] Raw database data (first 3):');
+    people.slice(0, 3).forEach((person, index) => {
+      console.log(`  ${index + 1}. ${person.fullName}:`);
+      console.log(`    - workspaceId: ${person.workspaceId}`);
+      console.log(`    - companyId: ${person.companyId}`);
+      console.log(`    - company string: "${person.company}"`);
+      console.log(`    - company relationship:`, person.company);
+    });
+    
     // Use people data as speedrun data
     let speedrunData = prospectsWithCompanies;
     let dataSource = 'people';
@@ -3309,10 +3337,12 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
       
       // Determine last action based on record data
-      let lastAction = 'Initial Contact';
+      let lastAction = 'Added record to Adrata';
       let lastActionTime = 'Never';
       
-      if (lastContactDate) {
+      // Only show real last actions if they exist, otherwise show when data was added
+      if (lastContactDate && record.lastAction) {
+        // Real last action exists
         const daysSince = Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
         if (daysSince === 0) lastActionTime = 'Today';
         else if (daysSince === 1) lastActionTime = 'Yesterday';
@@ -3320,24 +3350,46 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
         else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         
-        // Determine action type based on status
-        if (record.status === 'responded') lastAction = 'Email Response';
-        else if (record.status === 'contacted') lastAction = 'Phone Call';
-        else if (record.status === 'engaged') lastAction = 'Meeting Scheduled';
-        else lastAction = 'Initial Outreach';
+        lastAction = record.lastAction || 'Added record to Adrata';
+      } else if (record.createdAt) {
+        // No real last action, show when data was added
+        const daysSince = Math.floor((new Date().getTime() - new Date(record.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSince === 0) lastActionTime = 'Today';
+        else if (daysSince === 1) lastActionTime = 'Yesterday';
+        else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+        else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+        else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+        
+        lastAction = 'Added record to Adrata';
       }
       
-      // Determine next action and timing
+      // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
       let nextAction = 'Schedule Discovery Call';
       let nextActionTiming = 'This Week';
       
+      // Override with Speedrun ranking logic
+      if (index === 0) {
+        // Rank 1: Immediate action
+        nextActionTiming = 'Now';
+      } else if (index < 10) {
+        // Rank 2-10: Today
+        nextActionTiming = 'Today';
+      } else if (index < 20) {
+        // Rank 11-20: This week
+        nextActionTiming = 'This Week';
+      } else {
+        // Rank 21+: Next week
+        nextActionTiming = 'Next Week';
+      }
+      
+      // Only use database timing if it's more urgent than our ranking
       if (nextFollowUpDate) {
         const daysUntil = Math.floor((new Date(nextFollowUpDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-        if (daysUntil <= 0) nextActionTiming = 'Overdue';
-        else if (daysUntil === 1) nextActionTiming = 'Tomorrow';
-        else if (daysUntil <= 7) nextActionTiming = 'This Week';
-        else if (daysUntil <= 14) nextActionTiming = 'Next Week';
-        else nextActionTiming = 'Future';
+        if (daysUntil <= 0) {
+          nextActionTiming = 'Overdue';
+        } else if (daysUntil === 1 && index >= 10) {
+          nextActionTiming = 'Tomorrow';
+        }
       }
       
       // Determine stage based on status and engagement
@@ -3439,15 +3491,31 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
       
       // Transform back to speedrun format with proper rankings
-      speedrunItems = rankedProspects.map((prospect: any) => ({
-        ...speedrunItemsWithScores.find(item => item.id === prospect.id),
-        rank: prospect.winningScore?.rank || '1',
-        winningScore: prospect.winningScore?.totalScore || 0,
-        winFactors: prospect.winningScore?.winFactors || [],
-        urgencyLevel: prospect.winningScore?.urgencyLevel || 'Medium',
-        bestContactTime: prospect.winningScore?.bestContactTime || 'Morning',
-        dealPotential: prospect.winningScore?.dealPotential || 0
-      }));
+      speedrunItems = rankedProspects.map((prospect: any, index: number) => {
+        const originalItem = speedrunItemsWithScores.find(item => item.id === prospect.id);
+        const finalRank = prospect.winningScore?.rank || (index + 1);
+        
+        // 🚀 SPEEDRUN LOGIC: Set next action timing based on final ranking
+        let nextActionTiming = 'Today';
+        const rankNum = parseInt(finalRank) || (index + 1);
+        if (rankNum === 1) {
+          nextActionTiming = 'Now';
+        } else {
+          // All ranks 2-30 should be "Today"
+          nextActionTiming = 'Today';
+        }
+        
+        return {
+          ...originalItem,
+          rank: finalRank,
+          nextActionTiming, // Override with Speedrun logic
+          winningScore: prospect.winningScore?.totalScore || 0,
+          winFactors: prospect.winningScore?.winFactors || [],
+          urgencyLevel: prospect.winningScore?.urgencyLevel || 'Medium',
+          bestContactTime: prospect.winningScore?.bestContactTime || 'Morning',
+          dealPotential: prospect.winningScore?.dealPotential || 0
+        };
+      });
       
       console.log(`🏆 [SPEEDRUN] Applied UniversalRankingEngine: ${speedrunItems.length} prospects ranked`);
       
@@ -3457,10 +3525,24 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       // Fallback to simple ranking
       speedrunItems = speedrunItemsWithScores
         .sort((a, b) => b.priorityScore - a.priorityScore)
-        .map((item, index) => ({
-          ...item,
-          rank: index + 1
-        }));
+        .map((item, index) => {
+          const rank = index + 1;
+          
+          // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
+          let nextActionTiming = 'Today';
+          if (rank === 1) {
+            nextActionTiming = 'Now';
+          } else {
+            // All ranks 2-30 should be "Today"
+            nextActionTiming = 'Today';
+          }
+          
+          return {
+            ...item,
+            rank,
+            nextActionTiming // Override with Speedrun logic
+          };
+        });
     }
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);

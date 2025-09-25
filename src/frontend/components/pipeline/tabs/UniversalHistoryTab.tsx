@@ -294,7 +294,7 @@ export function UniversalHistoryTab({ recordType, record: recordProp }: Universa
                   </div>
                   
                   <div className="flex items-center gap-4 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                    <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(activity.status)}`}>
                       {activity.status}
                     </span>
                     {activity['duration'] && (
@@ -352,7 +352,7 @@ export function UniversalHistoryTab({ recordType, record: recordProp }: Universa
                   </div>
                   
                   <div className="flex items-center gap-4 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                    <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(activity.status)}`}>
                       {activity.status}
                     </span>
                     {activity['duration'] && (

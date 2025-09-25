@@ -40,9 +40,8 @@ const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
       hiddenColumns: ['stage', 'status', 'details', 'company'] // Hide company column
     },
     speedrun: {
-      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['company'] // Hide company column
+      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
     }
   }
 };
@@ -62,9 +61,8 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
     },
     speedrun: {
-      columns: ['Rank', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'person', 'stage', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['company'] // Hide company column
+      columns: ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'company', 'person', 'stage', 'lastAction', 'nextAction', 'actions']
     },
     prospects: {
       columns: ['Rank', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],

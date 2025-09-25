@@ -386,12 +386,12 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-sm font-medium text-gray-900">{event.title}</h4>
                       {!isPastEvent(event.date) && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        <span className="px-4 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
                           Scheduled
                         </span>
                       )}
                       {event.metadata?.status && (
-                        <span className={`px-2 py-1 text-xs rounded-full ${
+                        <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
                           event.metadata.status === 'completed' ? 'bg-green-100 text-green-800' :
                           event.metadata.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
                           'bg-gray-100 text-gray-800'

@@ -177,7 +177,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Primary Role</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                   buyerRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   buyerRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   buyerRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :

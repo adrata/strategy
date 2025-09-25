@@ -69,11 +69,11 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
               <div className="flex items-start justify-between mb-3">
                 <h4 className="font-medium text-gray-900">{opp.name || 'Untitled Opportunity'}</h4>
                 <div className="flex flex-col items-end space-y-1">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                  <span className="px-4 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
                     {opp.stage || 'Discovery'}
                   </span>
                   {opp['priority'] && (
-                    <span className={`px-2 py-1 text-xs rounded-full ${
+                    <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
                       opp['priority'] === 'high' ? 'bg-red-100 text-red-800' :
                       opp['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                       'bg-green-100 text-green-800'

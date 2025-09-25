@@ -1460,7 +1460,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                               <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
                                 {data.name}
                               </h4>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                                 data['pacing'] === 'Ahead' 
                                   ? 'bg-green-100 text-green-800' 
                                   : data['pacing'] === 'Behind'

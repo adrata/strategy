@@ -240,7 +240,7 @@ export function TableRow({
                         const nextAction = getLeadsNextAction(record, index);
                         return (
                           <>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${nextAction.timingColor}`}>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
                               {nextAction.timing}
                             </span>
                             <span className="text-sm text-gray-600 font-normal truncate max-w-32">
@@ -263,7 +263,7 @@ export function TableRow({
                         
                         return (
                           <>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${timing.color}`}>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
                               {timing.text}
                             </span>
                             <span className="text-sm text-gray-600 font-normal truncate max-w-32">
