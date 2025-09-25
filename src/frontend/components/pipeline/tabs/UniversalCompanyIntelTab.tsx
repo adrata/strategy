@@ -26,17 +26,21 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
     const description = record?.description || 'No description available';
     const location = record?.city && record?.state ? `${record.city}, ${record.state}` : record?.address || 'Unknown Location';
     
-    // Get enrichment data if available
+    // Get enrichment data from multiple sources
     const coresignalData = record?.customFields?.coresignalData;
-    const employeeCount = coresignalData?.employees_count || record?.employeeCount || 'Unknown';
-    const foundedYear = coresignalData?.founded_year || record?.foundedYear;
-    const age = foundedYear ? new Date().getFullYear() - parseInt(foundedYear) : null;
-    const categories = coresignalData?.categories_and_keywords || [];
+    const enrichedData = record?.customFields?.enrichedData?.intelligence;
+    const rawData = record?.customFields?.rawData;
     
-    // Get strategic intelligence from database fields
-    const situationAnalysis = record?.situationAnalysis || record?.customFields?.intelligenceTabFields?.situationAnalysis;
-    const complications = record?.complications || record?.customFields?.intelligenceTabFields?.complications;
-    const strategicIntelligence = record?.strategicIntelligence || record?.customFields?.intelligenceTabFields?.strategicIntelligence;
+    // Company intelligence from enriched data
+    const employeeCount = enrichedData?.employeeCount || coresignalData?.employees_count || record?.employeeCount || 'Unknown';
+    const foundedYear = enrichedData?.foundedYear || coresignalData?.founded_year || record?.foundedYear;
+    const age = foundedYear ? new Date().getFullYear() - parseInt(foundedYear) : null;
+    const categories = enrichedData?.categories || coresignalData?.categories_and_keywords || [];
+    
+    // Get strategic intelligence from enriched data
+    const situationAnalysis = enrichedData?.situationAnalysis || record?.situationAnalysis || record?.customFields?.intelligenceTabFields?.situationAnalysis;
+    const complications = enrichedData?.complications || record?.complications || record?.customFields?.intelligenceTabFields?.complications;
+    const strategicIntelligence = enrichedData?.strategicIntelligence || record?.strategicIntelligence || record?.customFields?.intelligenceTabFields?.strategicIntelligence;
     
     return {
       companyName,

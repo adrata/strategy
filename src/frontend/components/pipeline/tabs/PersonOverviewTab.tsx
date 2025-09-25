@@ -39,17 +39,17 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     title: String(record.jobTitle || record.title || 'Unknown Title'),
     email: String(record.email || record.workEmail || 'No email'),
     phone: String(record.phone || record.mobilePhone || record.workPhone || 'No phone'),
-    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || 'No LinkedIn'),
-    department: String(record.department || 'Unknown Department'),
-    seniority: String(record.seniority || 'Unknown'),
+    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || 'No LinkedIn'),
+    department: String(record.department || record?.customFields?.enrichedData?.overview?.department || 'Unknown Department'),
+    seniority: String(record.seniority || record?.customFields?.enrichedData?.overview?.seniority || 'Unknown'),
     status: String(record.status || 'active'),
     company: String(record.company || record?.company?.name || record.companyData?.name || 'No company assigned'),
     companyId: record.companyId || null,
     industry: String(record.industry || record?.company?.industry || record.companyData?.industry || 'Unknown Industry'),
     location: String(record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location'),
-    buyerGroupRole: String(record?.customFields?.buyerGroupRole || record?.buyerGroupRole || 'Stakeholder'),
-    influenceLevel: String(record?.customFields?.influenceLevel || record?.influenceLevel || 'Medium'),
-    engagementPriority: String(record?.customFields?.engagementPriority || record?.engagementPriority || 'Medium'),
+    buyerGroupRole: String(record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || 'Stakeholder'),
+    influenceLevel: String(record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || 'Medium'),
+    engagementPriority: String(record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || 'Medium'),
     lastContact: String(record.lastContactDate || record.lastContact || 'Never'),
     nextAction: String(record.nextAction || 'No action planned'),
     nextActionDate: record.nextActionDate || null,
@@ -178,13 +178,13 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
   return (
     <div className="space-y-8">
-      {/* Who are they */}
+      {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Who are they</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Basic Information Card */}
+          {/* Contact Information Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Name:</span>
@@ -202,46 +202,6 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                 <span className="text-sm text-gray-600">Department:</span>
                 <span className="text-sm font-medium text-gray-900">{personData.department}</span>
               </div>
-            </div>
-          </div>
-
-          {/* Role & Influence Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Role:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                  personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
-                  personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                  personData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {personData.buyerGroupRole}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Priority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementPriority}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How do I reach them */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">How do I reach them</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Contact Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
-            <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Email:</span>
                 <span className="text-sm font-medium text-gray-900">
@@ -286,10 +246,30 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
             </div>
           </div>
 
-          {/* Engagement History Card */}
+          {/* Role & Influence Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
             <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Role:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
+                  personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
+                  personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
+                  personData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.buyerGroupRole}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Engagement Priority:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementPriority}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Last Contact:</span>
                 <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.lastContact)}</span>
@@ -313,30 +293,34 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
-      {/* What do they care about */}
+      {/* Wants & Needs */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">What do they care about</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">
-            Wants & Needs: Based on their role as {personData.title} at {personData.company}, they likely care about:
-          </h4>
-          <div className="space-y-3">
-            <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">What they want:</h5>
-              <ul className="list-disc list-inside space-y-1">
-                {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-gray-600">{want}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">What they need:</h5>
-              <ul className="list-disc list-inside space-y-1">
-                {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-gray-600">{need}</li>
-                ))}
-              </ul>
-            </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Wants & Needs</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Wants Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Wants</h4>
+            <ul className="space-y-1">
+              {wants.map((want, index) => (
+                <li key={index} className="text-sm text-gray-600 flex items-start">
+                  <span className="text-gray-400 mr-2">•</span>
+                  {want}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Needs Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Needs</h4>
+            <ul className="space-y-1">
+              {needs.map((need, index) => (
+                <li key={index} className="text-sm text-gray-600 flex items-start">
+                  <span className="text-gray-400 mr-2">•</span>
+                  {need}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

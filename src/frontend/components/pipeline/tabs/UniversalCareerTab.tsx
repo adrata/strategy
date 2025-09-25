@@ -28,8 +28,10 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
     });
   }
 
-  // Extract career data from CoreSignal and other sources
+  // Extract career data from enriched data and CoreSignal
   const coresignalData = record?.customFields?.coresignalData || {};
+  const enrichedData = record?.customFields?.enrichedData?.career || {};
+  const rawData = record?.customFields?.rawData || {};
   
   // Safely extract company name - handle both string and object formats
   const getCompanyName = (company: any): string => {
@@ -41,26 +43,26 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
   };
   
   const careerData = {
-    currentRole: record.jobTitle || record.title || 'Unknown Title',
-    currentCompany: getCompanyName(record.company),
-    department: record.department || 'Unknown Department',
-    seniority: record.seniority || 'Unknown',
-    yearsInRole: coresignalData.years_in_current_role || 'Unknown',
-    yearsAtCompany: coresignalData.years_at_company || 'Unknown',
-    totalExperience: coresignalData.total_years_experience || 'Unknown',
-    education: coresignalData.education || [],
-    skills: coresignalData.skills || [],
-    certifications: coresignalData.certifications || [],
-    careerTimeline: coresignalData.career_timeline || [],
-    previousRoles: coresignalData.previous_roles || [],
-    industryExperience: coresignalData.industry_experience || 'Unknown',
-    leadershipExperience: coresignalData.leadership_experience || 'Unknown',
-    teamSize: coresignalData.team_size_managed || 'Unknown',
-    budgetResponsibility: coresignalData.budget_responsibility || 'Unknown',
-    achievements: coresignalData.achievements || [],
-    publications: coresignalData.publications || [],
-    speakingEngagements: coresignalData.speaking_engagements || [],
-    awards: coresignalData.awards || []
+    currentRole: enrichedData.currentRole || record.jobTitle || record.title || 'Unknown Title',
+    currentCompany: enrichedData.currentCompany || getCompanyName(record.company),
+    department: enrichedData.department || record.department || 'Unknown Department',
+    seniority: enrichedData.seniority || record.seniority || 'Unknown',
+    yearsInRole: enrichedData.yearsInRole || coresignalData.years_in_current_role || 'Unknown',
+    yearsAtCompany: enrichedData.yearsAtCompany || coresignalData.years_at_company || 'Unknown',
+    totalExperience: enrichedData.totalExperience || coresignalData.total_years_experience || 'Unknown',
+    education: enrichedData.education || coresignalData.education || rawData.education || [],
+    skills: enrichedData.skills || coresignalData.skills || rawData.inferred_skills || [],
+    certifications: enrichedData.certifications || coresignalData.certifications || rawData.courses || [],
+    careerTimeline: enrichedData.careerTimeline || coresignalData.career_timeline || rawData.experience || [],
+    previousRoles: enrichedData.previousRoles || coresignalData.previous_roles || rawData.experience || [],
+    industryExperience: enrichedData.industryExperience || coresignalData.industry_experience || 'Unknown',
+    leadershipExperience: enrichedData.leadershipExperience || coresignalData.leadership_experience || 'Unknown',
+    teamSize: enrichedData.teamSize || coresignalData.team_size_managed || 'Unknown',
+    budgetResponsibility: enrichedData.budgetResponsibility || coresignalData.budget_responsibility || 'Unknown',
+    achievements: enrichedData.achievements || coresignalData.achievements || rawData.awards || [],
+    publications: enrichedData.publications || coresignalData.publications || rawData.publications || [],
+    speakingEngagements: enrichedData.speakingEngagements || coresignalData.speaking_engagements || [],
+    awards: enrichedData.awards || coresignalData.awards || rawData.awards || []
   };
 
   const formatDate = (dateString: string | Date | null | undefined): string => {
