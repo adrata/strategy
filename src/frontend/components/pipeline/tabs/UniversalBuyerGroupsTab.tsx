@@ -565,8 +565,47 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   // No loading spinner - instant display
 
+  // Calculate stats from buyer groups
+  const totalMembers = buyerGroups.length;
+  const decisionMakers = buyerGroups.filter(p => p.role === 'Decision Maker').length;
+  const champions = buyerGroups.filter(p => p.role === 'Champion').length;
+  const stakeholders = buyerGroups.filter(p => p.role === 'Stakeholder').length;
+  const blockers = buyerGroups.filter(p => p.role === 'Blocker').length;
+  const introducers = buyerGroups.filter(p => p.role === 'Introducer').length;
+
   return (
     <div className="space-y-8">
+      {/* Overview Stats */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Overview</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{totalMembers}</div>
+            <div className="text-sm text-gray-600">Total</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{decisionMakers}</div>
+            <div className="text-sm text-gray-600">Decision Makers</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{champions}</div>
+            <div className="text-sm text-gray-600">Champions</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{stakeholders}</div>
+            <div className="text-sm text-gray-600">Stakeholders</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{blockers}</div>
+            <div className="text-sm text-gray-600">Blockers</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{introducers}</div>
+            <div className="text-sm text-gray-600">Introducers</div>
+          </div>
+        </div>
+      </div>
+
       {/* Buyer Group Members */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Members</h3>
@@ -577,32 +616,23 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {buyerGroups.map((person) => {
               return (
-                <div 
-                  key={person.id} 
-                  className="flex items-center justify-between p-3 border border-gray-200 rounded cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleMemberClick(person)}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-700">
-                        {person.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{person.name}</div>
-                      <div className="text-sm text-gray-600">{person.title}</div>
-                      <div className="text-xs text-gray-500">
-                        {person.email && `${person.email}`}
-                        {person.email && person.phone && ' • '}
-                        {person.phone && `${person.phone}`}
+                <div key={person.id} className="bg-white p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-medium text-gray-700">
+                          {person.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{person.name}</div>
+                        <div className="text-sm text-gray-600">{person.title}</div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                       person.role === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                       person.role === 'Champion' ? 'bg-green-100 text-green-800' :
                       person.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
@@ -611,6 +641,49 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                       'bg-gray-100 text-gray-800'
                     }`}>
                       {person.role}
+                    </div>
+                  </div>
+
+                  {/* Directional Intelligence */}
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-gray-900">Directional Intelligence</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Engagement</div>
+                        <div className="text-sm font-medium text-green-600">High</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Influence</div>
+                        <div className="text-sm font-medium text-green-600">High</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Budget Authority</div>
+                        <div className="text-sm font-medium text-orange-600">Medium</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Timeline</div>
+                        <div className="text-sm font-medium text-red-600">Immediate</div>
+                      </div>
+                    </div>
+
+                    {/* Pain Points */}
+                    <div className="mb-4">
+                      <div className="text-xs text-gray-600 mb-2">Pain Points</div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Budget constraints</span>
+                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">ROI justification</span>
+                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Implementation timing</span>
+                      </div>
+                    </div>
+
+                    {/* Interests */}
+                    <div>
+                      <div className="text-xs text-gray-600 mb-2">Interests</div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Cost savings</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Efficiency gains</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Competitive advantage</span>
+                      </div>
                     </div>
                   </div>
                 </div>
