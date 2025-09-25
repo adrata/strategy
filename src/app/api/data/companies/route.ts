@@ -253,13 +253,16 @@ export async function GET(request: NextRequest) {
     // Companies are already sorted by existing rank, then by updatedAt and name
     
     // Assign sequential ranks, preserving existing ranks
-    let nextRank = 1;
+    // Find the highest existing rank to continue from there
+    const existingRanks = uniqueCompanies
+      .filter(c => c.rank)
+      .map(c => c.rank)
+      .sort((a, b) => b - a); // Sort descending to get highest first
+    
+    let nextRank = existingRanks.length > 0 ? existingRanks[0] + 1 : 1;
+    
     uniqueCompanies.forEach((company) => {
       if (!company.rank) {
-        // Find the next available rank that doesn't conflict with existing ranks
-        while (uniqueCompanies.some(c => c.rank === nextRank)) {
-          nextRank++;
-        }
         company.rank = nextRank;
         nextRank++;
       }

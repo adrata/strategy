@@ -1130,7 +1130,58 @@ async function getMultipleRecords(
       sampleCompanies: companies.slice(0, 5).map(c => ({ name: c.name, rank: c.rank }))
     });
     
-    return { success: true, data: companies };
+    // Fix ranking to be sequential (1, 2, 3, 4, 5...)
+    const sortedCompanies = companies.sort((a, b) => {
+      // First, sort by existing rank (if both have ranks)
+      if (a.rank && b.rank) {
+        return a.rank - b.rank;
+      }
+      // Companies with ranks come first
+      if (a.rank && !b.rank) {
+        return -1;
+      }
+      if (!a.rank && b.rank) {
+        return 1;
+      }
+      // For companies without ranks, sort by updatedAt descending, then by name alphabetically
+      const dateA = new Date(a.updatedAt).getTime();
+      const dateB = new Date(b.updatedAt).getTime();
+      if (dateA !== dateB) {
+        return dateB - dateA;
+      }
+      return a.name.localeCompare(b.name);
+    });
+    
+    // Remove duplicates and re-assign proper sequential ranks
+    const uniqueCompanies = [];
+    const seenNames = new Set();
+    
+    sortedCompanies.forEach((company) => {
+      if (!seenNames.has(company.name)) {
+        seenNames.add(company.name);
+        uniqueCompanies.push(company);
+      }
+    });
+    
+    // Assign sequential ranks, preserving existing ranks
+    // Find the highest existing rank to continue from there
+    const existingRanks = uniqueCompanies
+      .filter(c => c.rank)
+      .map(c => c.rank)
+      .sort((a, b) => b - a); // Sort descending to get highest first
+    
+    let nextRank = existingRanks.length > 0 ? existingRanks[0] + 1 : 1;
+    
+    uniqueCompanies.forEach((company) => {
+      if (!company.rank) {
+        company.rank = nextRank;
+        nextRank++;
+      }
+    });
+    
+    console.log(`✅ [COMPANIES API] Fixed ranking - ${uniqueCompanies.length} companies with sequential ranks`);
+    
+    return { success: true, data: uniqueCompanies };
   }
   
   // Special handling for prospects and leads to include company data
@@ -2725,7 +2776,58 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           firstFewCompanies: companies.slice(0, 10).map(c => ({ name: c.name, id: c.id }))
         });
 
-        return companies;
+        // Fix ranking to be sequential (1, 2, 3, 4, 5...)
+        const sortedCompanies = companies.sort((a, b) => {
+          // First, sort by existing rank (if both have ranks)
+          if (a.rank && b.rank) {
+            return a.rank - b.rank;
+          }
+          // Companies with ranks come first
+          if (a.rank && !b.rank) {
+            return -1;
+          }
+          if (!a.rank && b.rank) {
+            return 1;
+          }
+          // For companies without ranks, sort by updatedAt descending, then by name alphabetically
+          const dateA = new Date(a.updatedAt).getTime();
+          const dateB = new Date(b.updatedAt).getTime();
+          if (dateA !== dateB) {
+            return dateB - dateA;
+          }
+          return a.name.localeCompare(b.name);
+        });
+        
+        // Remove duplicates and re-assign proper sequential ranks
+        const uniqueCompanies = [];
+        const seenNames = new Set();
+        
+        sortedCompanies.forEach((company) => {
+          if (!seenNames.has(company.name)) {
+            seenNames.add(company.name);
+            uniqueCompanies.push(company);
+          }
+        });
+        
+        // Assign sequential ranks, preserving existing ranks
+        // Find the highest existing rank to continue from there
+        const existingRanks = uniqueCompanies
+          .filter(c => c.rank)
+          .map(c => c.rank)
+          .sort((a, b) => b - a); // Sort descending to get highest first
+        
+        let nextRank = existingRanks.length > 0 ? existingRanks[0] + 1 : 1;
+        
+        uniqueCompanies.forEach((company) => {
+          if (!company.rank) {
+            company.rank = nextRank;
+            nextRank++;
+          }
+        });
+        
+        console.log(`✅ [DASHBOARD COMPANIES] Fixed ranking - ${uniqueCompanies.length} companies with sequential ranks`);
+        
+        return uniqueCompanies;
       }),
       prisma.people.findMany({ 
         where: { 
