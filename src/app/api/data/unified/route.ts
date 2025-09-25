@@ -20,11 +20,11 @@ import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
 
-// 🚀 PERFORMANCE: Aggressive caching for instant loading
+// 🚀 PERFORMANCE: Ultra-aggressive caching for lightning speed
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
-const UNIFIED_DATA_TTL = 1800; // 30 minutes for unified data (aggressive caching)
-const DASHBOARD_TTL = 300; // 5 minutes for dashboard data (longer cache)
-const INDIVIDUAL_DATA_TTL = 1800; // 30 minutes for individual data types (aggressive caching)
+const UNIFIED_DATA_TTL = 3600; // 60 minutes for unified data (ultra-aggressive caching)
+const DASHBOARD_TTL = 1800; // 30 minutes for dashboard data (ultra-aggressive caching)
+const INDIVIDUAL_DATA_TTL = 3600; // 60 minutes for individual data types (ultra-aggressive caching)
 
 // 🎯 DEMO SCENARIO SUPPORT
 const DEMO_WORKSPACE_ID = "demo-workspace-2025";
@@ -1466,17 +1466,24 @@ async function getMultipleRecords(
       };
     }
 
-    // 🚀 PERFORMANCE: Optimized database query with proper indexing
+    // 🚀 PERFORMANCE: Optimized database query with proper indexing and timing
+    const queryStartTime = Date.now();
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || 1000, 10000), // 🚀 PERFORMANCE: Load up to 10,000 records for complete data access
+      take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Load up to 500 records max, default 100
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
     });
     
-    console.log(`⚡ [GET MULTIPLE] Loaded ${records.length} ${type} records in optimized query`);
+    const queryTime = Date.now() - queryStartTime;
+    console.log(`⚡ [GET MULTIPLE] Loaded ${records.length} ${type} records in ${queryTime}ms`);
+    
+    // 🚀 PERFORMANCE: Log slow queries for optimization
+    if (queryTime > 1000) {
+      console.warn(`🐌 [SLOW QUERY] ${type} query took ${queryTime}ms - consider optimization`);
+    }
     
     return { success: true, data: records };
   } catch (dbError) {
@@ -1491,7 +1498,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || 1000, 10000), // 🚀 PERFORMANCE: Load up to 10,000 records for complete data access
+          take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Load up to 500 records max, default 100
           skip: pagination?.offset || 0
         });
         
@@ -2683,7 +2690,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all leads (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10000, // Load all leads for complete data access
+        take: 100, // 🚀 PERFORMANCE: Load only recent leads for dashboard (was 10000)
         select: {
           id: true,
           firstName: true,
@@ -2703,7 +2710,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10000, // Load all prospects for complete data access
+        take: 100, // 🚀 PERFORMANCE: Load only recent prospects for dashboard (was 10000)
         select: {
           id: true,
           firstName: true,
@@ -2837,7 +2844,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all people (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 10000, // Load all people for complete data access
+        take: 100, // 🚀 PERFORMANCE: Load only recent people for dashboard (was 10000)
         select: { 
           id: true, 
           fullName: true, 
@@ -3535,7 +3542,7 @@ export async function GET(request: NextRequest) {
       : UNIFIED_DATA_TTL * 1000;
     
     if (memoryCached && Date.now() - memoryCached.timestamp < cacheTTL) {
-      console.log(`⚡ [CACHE HIT] ${cacheKey}`);
+      console.log(`⚡ [CACHE HIT] ${cacheKey} - returning cached data in ${Date.now() - startTime}ms`);
       return NextResponse.json({
         ...memoryCached.data,
         meta: {
@@ -3585,6 +3592,13 @@ export async function GET(request: NextRequest) {
       });
       
       console.log(`✅ [SUCCESS] ${action.toUpperCase()} ${type} completed in ${response.meta.responseTime}ms`);
+      
+      // 🚀 PERFORMANCE: Log performance metrics for optimization
+      if (response.meta.responseTime > 5000) {
+        console.warn(`🐌 [SLOW API] ${action.toUpperCase()} ${type} took ${response.meta.responseTime}ms - consider optimization`);
+      } else if (response.meta.responseTime < 1000) {
+        console.log(`⚡ [FAST API] ${action.toUpperCase()} ${type} completed in ${response.meta.responseTime}ms`);
+      }
       
       return NextResponse.json(response);
       
