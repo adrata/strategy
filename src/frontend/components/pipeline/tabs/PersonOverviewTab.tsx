@@ -182,9 +182,9 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Who are they</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Identity Card */}
+          {/* Basic Information Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Identity</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Name:</span>

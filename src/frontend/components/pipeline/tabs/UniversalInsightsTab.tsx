@@ -153,14 +153,150 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const personalGoals = customFields.personalGoals || notes.personalGoals || [];
   const professionalGoals = customFields.goals || notes.professionalGoals || [];
 
+  // Generate intelligent insights based on role and data
+  const generateIntelligenceInsights = () => {
+    const name = record?.fullName || record?.name || 'This individual';
+    const title = record?.jobTitle || record?.title || 'Unknown Title';
+    const company = record?.company || record?.companyName || 'Unknown Company';
+    const industry = record?.industry || 'Unknown Industry';
+    
+    // Generate pain points based on role and industry
+    const generatePainPoints = () => {
+      const role = title.toLowerCase();
+      const industryLower = industry.toLowerCase();
+      
+      const painPoints = [];
+      
+      // Role-based pain points
+      if (role.includes('director') || role.includes('vp') || role.includes('vice president')) {
+        painPoints.push('Strategic decision-making under pressure');
+        painPoints.push('Balancing multiple stakeholder interests');
+        painPoints.push('Driving organizational change and adoption');
+      } else if (role.includes('manager') || role.includes('supervisor')) {
+        painPoints.push('Team productivity and performance management');
+        painPoints.push('Resource allocation and budget constraints');
+        painPoints.push('Cross-departmental coordination challenges');
+      } else {
+        painPoints.push('Workload management and efficiency');
+        painPoints.push('Skill development and career growth');
+        painPoints.push('Technology adoption and training');
+      }
+      
+      // Industry-based pain points
+      if (industryLower.includes('technology') || industryLower.includes('software')) {
+        painPoints.push('Keeping up with rapid technological changes');
+        painPoints.push('Cybersecurity and data protection concerns');
+      } else if (industryLower.includes('healthcare')) {
+        painPoints.push('Regulatory compliance and patient data security');
+        painPoints.push('Cost containment while maintaining quality');
+      } else if (industryLower.includes('finance')) {
+        painPoints.push('Regulatory compliance and risk management');
+        painPoints.push('Digital transformation and customer expectations');
+      }
+      
+      return painPoints;
+    };
+
+    // Generate goals based on role
+    const generateGoals = () => {
+      const role = title.toLowerCase();
+      
+      if (role.includes('director') || role.includes('vp') || role.includes('vice president')) {
+        return [
+          'Drive organizational growth and profitability',
+          'Enhance competitive positioning in the market',
+          'Improve operational efficiency and cost reduction',
+          'Build strategic partnerships and alliances'
+        ];
+      } else if (role.includes('manager') || role.includes('supervisor')) {
+        return [
+          'Improve team performance and productivity',
+          'Streamline processes and reduce operational costs',
+          'Enhance team collaboration and communication',
+          'Develop and retain top talent'
+        ];
+      } else {
+        return [
+          'Enhance professional skills and expertise',
+          'Improve work efficiency and productivity',
+          'Advance career opportunities',
+          'Contribute to team and organizational success'
+        ];
+      }
+    };
+
+    // Generate challenges and opportunities
+    const generateChallenges = () => {
+      return [
+        'Adapting to changing market conditions',
+        'Managing stakeholder expectations',
+        'Balancing innovation with operational stability',
+        'Building and maintaining competitive advantage'
+      ];
+    };
+
+    const generateOpportunities = () => {
+      return [
+        'Digital transformation initiatives',
+        'Strategic partnership development',
+        'Market expansion and growth',
+        'Operational efficiency improvements'
+      ];
+    };
+
+    return {
+      painPoints: generatePainPoints(),
+      goals: generateGoals(),
+      challenges: generateChallenges(),
+      opportunities: generateOpportunities()
+    };
+  };
+
+  const insights = generateIntelligenceInsights();
+
   return (
     <div className="space-y-8">
-      {/* Individual Intelligence Summary */}
+      {/* Engagement Strategy - Moved to top */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Intelligence Summary</h3>
-        <div>
-          <div className="block text-sm font-medium text-gray-600 mb-2">Profile Overview</div>
-          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Strategy</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Approach</h4>
+              <p className="text-sm text-gray-600">
+                {buyerRole === 'Decision Maker' ? 'Direct, data-driven approach with ROI focus' :
+                 buyerRole === 'Champion' ? 'Collaborative approach with solution benefits' :
+                 buyerRole === 'Stakeholder' ? 'Educational approach with use cases' :
+                 'Relationship-building approach with value demonstration'}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Key Messages</h4>
+              <p className="text-sm text-gray-600">
+                {buyerRole === 'Decision Maker' ? 'Focus on business impact and competitive advantage' :
+                 buyerRole === 'Champion' ? 'Emphasize innovation and team success' :
+                 buyerRole === 'Stakeholder' ? 'Highlight efficiency and process improvement' :
+                 'Build trust and demonstrate value'}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Next Steps</h4>
+              <p className="text-sm text-gray-600">
+                {engagement.includes('Interested') ? 'Schedule technical demo and stakeholder meeting' :
+                 engagement.includes('Warming') ? 'Provide case studies and reference calls' :
+                 engagement.includes('Neutral') ? 'Identify pain points and build urgency' :
+                 'Continue relationship building and value demonstration'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Summary</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="text-sm text-gray-900 leading-relaxed">
             {record?.fullName || record?.name || 'This individual'} serves as a {buyerRole} with {influence}% influence and {decisionPower}% decision power in their organization. 
             Their communication style is {communicationStyle.toLowerCase()} with a {decisionMakingStyle.toLowerCase()} approach to decision-making. 
             Current engagement level is {engagement}, indicating {engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'} receptivity to outreach.
@@ -226,22 +362,18 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       </div>
 
       {/* Pain Points & Interests */}
-      <div>
+      <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Pain Points & Interests</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Pain Points</h4>
             <div className="space-y-2">
-              {painPoints.length > 0 ? (
-                painPoints.map((point: string, index: number) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span className="text-sm text-gray-700">{point}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm text-gray-500">No pain points identified</div>
-              )}
+              {insights.painPoints.map((point: string, index: number) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{point}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -256,7 +388,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                   </div>
                 ))
               ) : (
-                <div className="text-sm text-gray-500">No interests identified</div>
+                <div className="text-sm text-gray-500">No specific interests identified</div>
               )}
             </div>
           </div>
@@ -264,38 +396,18 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       </div>
 
       {/* Goals & Objectives */}
-      <div>
+      <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Goals & Objectives</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Personal Goals</h4>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-900 mb-2">Professional Goals</h4>
             <div className="space-y-2">
-              {personalGoals.length > 0 ? (
-                personalGoals.map((goal: string, index: number) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-700">{goal}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm text-gray-500">No personal goals identified</div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Professional Goals</h4>
-            <div className="space-y-2">
-              {professionalGoals.length > 0 ? (
-                professionalGoals.map((goal: string, index: number) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-700">{goal}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm text-gray-500">No professional goals identified</div>
-              )}
+              {insights.goals.map((goal: string, index: number) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{goal}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -304,60 +416,118 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       {/* Challenges & Opportunities */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Challenges & Opportunities</h3>
-        <div>
-          <div className="block text-sm font-medium text-gray-600 mb-2">Current Challenges</div>
-          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {record?.fullName || record?.name || 'This individual'} faces several professional challenges including {painPoints.length > 0 ? painPoints.slice(0, 2).join(', ') : 'operational efficiency, team productivity, and strategic decision-making'}. 
-            Their role as a {buyerRole} requires balancing {decisionMakingStyle.toLowerCase()} decision-making with {communicationStyle.toLowerCase()} communication preferences, 
-            while managing {influence}% influence within their organization and maintaining {engagement} engagement levels with external partners.
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Current Challenges</h4>
+            <div className="space-y-2">
+              {insights.challenges.map((challenge: string, index: number) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{challenge}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Strategic Opportunities</h4>
+            <div className="space-y-2">
+              {insights.opportunities.map((opportunity: string, index: number) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{opportunity}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Strategic Opportunities */}
+      {/* Deep Value Reports */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Strategic Opportunities</h3>
-        <div>
-          <div className="block text-sm font-medium text-gray-600 mb-2">Engagement Potential</div>
-          <div className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
-            {record?.fullName || record?.name || 'This individual'} presents significant partnership potential as a {buyerRole} with {decisionPower}% decision power and {influence}% organizational influence. 
-            Their {communicationStyle.toLowerCase()} communication style and {decisionMakingStyle.toLowerCase()} approach to decisions create opportunities for {engagement.includes('Interested') || engagement.includes('Warming') ? 'collaborative engagement and solution co-development' : 'relationship building and value demonstration'}. 
-            Key focus areas include {professionalGoals.length > 0 ? professionalGoals.slice(0, 2).join(', ') : 'professional development, strategic initiatives, and operational improvements'}.
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Deep Value Reports</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Competitive Reports */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Competitive Intelligence</h4>
+            <div className="space-y-2">
+              <a 
+                href="/demo/zeropoint/paper/adp-competitive-deep-value-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">ADP Competitive Deep Value Report</div>
+                <div className="text-xs text-gray-500 mt-1">52-page competitive intelligence analysis</div>
+              </a>
+              <a 
+                href="/demo/zeropoint/paper/workday-market-analysis-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">Workday Market Analysis Report</div>
+                <div className="text-xs text-gray-500 mt-1">Market positioning and growth opportunities</div>
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Engagement Strategy */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Strategy</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Approach</h4>
-              <p className="text-sm text-gray-600">
-                {buyerRole === 'Decision Maker' ? 'Direct, data-driven approach with ROI focus' :
-                 buyerRole === 'Champion' ? 'Collaborative approach with solution benefits' :
-                 buyerRole === 'Stakeholder' ? 'Educational approach with use cases' :
-                 'Relationship-building approach with value demonstration'}
-              </p>
+          {/* Market Reports */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Market Intelligence</h4>
+            <div className="space-y-2">
+              <a 
+                href="/demo/zeropoint/paper/hr-tech-market-trends-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">HR Tech Market Trends</div>
+                <div className="text-xs text-gray-500 mt-1">Industry growth and emerging technologies</div>
+              </a>
+              <a 
+                href="/demo/zeropoint/paper/enterprise-hr-landscape-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">Enterprise HR Landscape</div>
+                <div className="text-xs text-gray-500 mt-1">Market segmentation and opportunities</div>
+              </a>
             </div>
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Key Messages</h4>
-              <p className="text-sm text-gray-600">
-                {buyerRole === 'Decision Maker' ? 'Focus on business impact and competitive advantage' :
-                 buyerRole === 'Champion' ? 'Emphasize innovation and team success' :
-                 buyerRole === 'Stakeholder' ? 'Highlight efficiency and process improvement' :
-                 'Build trust and demonstrate value'}
-              </p>
+          </div>
+
+          {/* Buyer Group Reports */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Buyer Group Intelligence</h4>
+            <div className="space-y-2">
+              <a 
+                href="/demo/zeropoint/paper/adp-buyer-group-intel-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">ADP Buyer Group Intelligence</div>
+                <div className="text-xs text-gray-500 mt-1">Key decision makers and influencers</div>
+              </a>
+              <a 
+                href="/demo/zeropoint/paper/enterprise-procurement-process-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">Enterprise Procurement Process</div>
+                <div className="text-xs text-gray-500 mt-1">Decision-making workflow analysis</div>
+              </a>
             </div>
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Next Steps</h4>
-              <p className="text-sm text-gray-600">
-                {engagement.includes('Interested') ? 'Schedule technical demo and stakeholder meeting' :
-                 engagement.includes('Warming') ? 'Provide case studies and reference calls' :
-                 engagement.includes('Neutral') ? 'Identify pain points and build urgency' :
-                 'Continue relationship building and value demonstration'}
-              </p>
+          </div>
+
+          {/* Industry Analysis */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Industry Analysis</h4>
+            <div className="space-y-2">
+              <a 
+                href="/demo/zeropoint/paper/hr-technology-industry-trends-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">HR Technology Industry Trends</div>
+                <div className="text-xs text-gray-500 mt-1">Latest trends and developments</div>
+              </a>
+              <a 
+                href="/demo/zeropoint/paper/ai-automation-impact-01K4VM894JE1BWD2TA3FZCNKCK"
+                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <div className="text-sm font-medium text-gray-900">AI & Automation Impact</div>
+                <div className="text-xs text-gray-500 mt-1">Technology disruption analysis</div>
+              </a>
             </div>
           </div>
         </div>
