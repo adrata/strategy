@@ -1339,7 +1339,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   sortField={sortField}
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
-                  pageSize={500}
+                  pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
                 />
