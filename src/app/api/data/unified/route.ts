@@ -2696,7 +2696,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
-        take: 50, // Load only recent companies for dashboard
+        take: 100, // Load more companies for dashboard to show proper ranking
         select: { 
           id: true, 
           name: true, 
