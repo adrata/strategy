@@ -775,9 +775,16 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       return matchesSearch && matchesVertical && matchesRevenue && matchesLastContacted && matchesStatus && matchesPriority && matchesTimezone;
     });
 
-    // Apply smart ranking or sorting - but preserve API ranking for speedrun and companies
-    if (section === 'speedrun' || section === 'companies') {
-      // For speedrun and companies, preserve API ranking order - no additional sorting
+    // Apply smart ranking or sorting
+    if (section === 'speedrun') {
+      // For speedrun, sort by rank to show 1, 2, 3, 4, 5... in order
+      filtered = [...filtered].sort((a: any, b: any) => {
+        const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
+        const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
+        return aRank - bRank; // Lower rank number first (1, 2, 3...)
+      });
+    } else if (section === 'companies') {
+      // For companies, preserve API ranking order - no additional sorting
       // The search filter has already been applied above
     } else if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
       // Smart combined ranking based on multiple criteria
