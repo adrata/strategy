@@ -175,7 +175,7 @@ export function TableRow({
             switch (column) {
               case 'rank':
                 // Use alphanumeric rank (1A, 1B, 2A) if available, fallback to numeric rank
-                const winningRank = record.winningScore?.rank;
+                const winningRank = record['winningScore']?.rank;
                 const numericRank = record['rank'] || (index + 1);
                 const displayRank = winningRank || numericRank;
                 return (
@@ -187,22 +187,28 @@ export function TableRow({
                 // Handle both string company names and company objects
                 let companyName = '';
                 
-                // First try to get company from various fields
-                if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
-                  companyName = record['company'];
-                } else if (record['company']?.name) {
-                  companyName = record['company'].name;
-                } else if (record['companyName']) {
-                  companyName = record['companyName'];
+                // For companies section, the record itself IS the company, so use record.name
+                if (section === 'companies' as any) {
+                  companyName = record.name || record['companyName'] || 'Company';
                 } else {
-                  // If no company data is available, show a placeholder instead of person name
-                  companyName = 'No Company';
-                }
-                
-                // Make sure we're not showing the person's name as company name
-                const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
-                if (companyName === personName) {
-                  companyName = 'No Company';
+                  // For other sections (leads, prospects, etc.), look for company field
+                  // First try to get company from various fields
+                  if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
+                    companyName = record['company'];
+                  } else if (record['company']?.name) {
+                    companyName = record['company'].name;
+                  } else if (record['companyName']) {
+                    companyName = record['companyName'];
+                  } else {
+                    // If no company data is available, show a placeholder instead of person name
+                    companyName = 'No Company';
+                  }
+                  
+                  // Make sure we're not showing the person's name as company name
+                  const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
+                  if (companyName === personName) {
+                    companyName = 'No Company';
+                  }
                 }
                 
                 const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
@@ -229,7 +235,13 @@ export function TableRow({
               case 'title':
                 return (
                   <td key="title" className={textClasses}>
-                    <div className="truncate max-w-32">{record['title'] || record['jobTitle'] || 'Title'}</div>
+                    <div className="truncate max-w-32">
+                      {record['title'] || 
+                       record['jobTitle'] || 
+                       record?.['customFields']?.enrichedData?.overview?.title ||
+                       record?.['customFields']?.rawData?.active_experience_title ||
+                       'Title'}
+                    </div>
                   </td>
                 );
               case 'nextAction':

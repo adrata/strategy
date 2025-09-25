@@ -305,11 +305,17 @@ export function PipelineTable({
                         break;
                       case 'company':
                         // Handle both string and object company data
-                        const company = record['company'];
-                        if (typeof company === 'object' && company !== null) {
-                          cellContent = company.name || company.companyName || 'Company';
+                        // For companies section, the record itself IS the company, so use record.name
+                        if (section === 'companies') {
+                          cellContent = record.name || record.companyName || 'Company';
                         } else {
-                          cellContent = company || record['companyName'] || 'Company';
+                          // For other sections (leads, prospects, etc.), look for company field
+                          const company = record['company'];
+                          if (typeof company === 'object' && company !== null) {
+                            cellContent = company.name || company.companyName || 'Company';
+                          } else {
+                            cellContent = company || record['companyName'] || 'Company';
+                          }
                         }
                         break;
                       case 'person':
@@ -320,7 +326,12 @@ export function PipelineTable({
                         cellContent = record['state'] || record['status'] || record['location'] || 'State';
                         break;
                       case 'title':
-                        cellContent = record['title'] || record['jobTitle'] || record['position'] || 'Title';
+                        cellContent = record['title'] || 
+                                     record['jobTitle'] || 
+                                     record['position'] || 
+                                     record?.customFields?.enrichedData?.overview?.title ||
+                                     record?.customFields?.rawData?.active_experience_title ||
+                                     'Title';
                         break;
                       case 'last action':
                         cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';

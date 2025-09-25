@@ -138,20 +138,21 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     );
   }
 
-  // Get data from customFields or fallback to notes parsing
+  // Get data from enriched data, customFields, or fallback to notes parsing
   const customFields = record.customFields || {};
+  const enrichedData = customFields.enrichedData?.intelligence || {};
   const notes = record.notes ? (typeof record['notes'] === 'string' ? JSON.parse(record.notes) : record.notes) : {};
   
-  const buyerRole = customFields.buyerGroupRole || notes.buyerRole || 'Stakeholder';
-  const engagement = customFields.engagement || notes.engagement || 'Neutral 1/5';
-  const influence = customFields.influenceScore || notes.influence || 50;
-  const decisionPower = customFields.decisionPower || notes.decisionPower || 50;
-  const communicationStyle = customFields.communicationStyle || notes.communicationStyle || 'Professional';
-  const decisionMakingStyle = customFields.decisionMakingStyle || notes.decisionMakingStyle || 'Collaborative';
-  const painPoints = customFields.painPoints || notes.painPoints || [];
-  const interests = customFields.interests || notes.interests || [];
-  const personalGoals = customFields.personalGoals || notes.personalGoals || [];
-  const professionalGoals = customFields.goals || notes.professionalGoals || [];
+  const buyerRole = enrichedData.buyerGroupRole || customFields.buyerGroupRole || notes.buyerRole || 'Stakeholder';
+  const engagement = enrichedData.engagement || customFields.engagement || notes.engagement || 'Neutral 1/5';
+  const influence = enrichedData.influenceLevel || customFields.influenceScore || notes.influence || 50;
+  const decisionPower = enrichedData.decisionPower || customFields.decisionPower || notes.decisionPower || 50;
+  const communicationStyle = enrichedData.communicationStyle || customFields.communicationStyle || notes.communicationStyle || 'Professional';
+  const decisionMakingStyle = enrichedData.decisionMakingStyle || customFields.decisionMakingStyle || notes.decisionMakingStyle || 'Collaborative';
+  const painPoints = enrichedData.painPoints || customFields.painPoints || notes.painPoints || [];
+  const interests = enrichedData.interests || customFields.interests || notes.interests || [];
+  const personalGoals = enrichedData.personalGoals || customFields.personalGoals || notes.personalGoals || [];
+  const professionalGoals = enrichedData.professionalGoals || customFields.goals || notes.professionalGoals || [];
 
   // Generate intelligent insights based on role and data
   const generateIntelligenceInsights = () => {

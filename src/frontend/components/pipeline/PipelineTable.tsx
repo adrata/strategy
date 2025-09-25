@@ -374,7 +374,12 @@ export function PipelineTable({
                         cellContent = record['state'] || record['status'] || record['location'] || 'State';
                         break;
                       case 'title':
-                        cellContent = record['title'] || record['jobTitle'] || record['position'] || 'Title';
+                        cellContent = record['title'] || 
+                                     record['jobTitle'] || 
+                                     record['position'] || 
+                                     record?.customFields?.enrichedData?.overview?.title ||
+                                     record?.customFields?.rawData?.active_experience_title ||
+                                     'Title';
                         break;
                       case 'last action':
                         cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';

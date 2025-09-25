@@ -563,7 +563,11 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         return record.company || record.companyName || '';
       
       case 'title':
-        return record.title || record.jobTitle || '';
+        return record.title || 
+               record.jobTitle || 
+               record?.customFields?.enrichedData?.overview?.title ||
+               record?.customFields?.rawData?.active_experience_title ||
+               '';
       
       case 'lastContact':
       case 'lastContactDate':

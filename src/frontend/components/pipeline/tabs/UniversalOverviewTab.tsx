@@ -356,7 +356,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
                     <div className="text-sm text-gray-600">
-                      {record?.linkedinUrl ? (
+                      {record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin ? (
                         <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                           View LinkedIn Profile
                         </a>
@@ -501,7 +501,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
                   <InlineEditField
-                    value={record?.linkedinUrl || ''}
+                    value={record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || ''}
                     field="linkedinUrl"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -526,7 +526,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
                   <InlineEditField
-                    value={record?.department || ''}
+                    value={record?.department || record?.customFields?.enrichedData?.overview?.department || ''}
                     field="department"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -860,7 +860,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
                     <div className="text-sm text-gray-600">
-                      {record?.linkedinUrl ? (
+                      {record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin ? (
                         <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                           View LinkedIn Profile
                         </a>
@@ -1005,7 +1005,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn Profile</label>
                   <InlineEditField
-                    value={record?.linkedinUrl || ''}
+                    value={record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || ''}
                     field="linkedinUrl"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -1030,7 +1030,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
                   <InlineEditField
-                    value={record?.department || ''}
+                    value={record?.department || record?.customFields?.enrichedData?.overview?.department || ''}
                     field="department"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -1287,7 +1287,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">LinkedIn</label>
                   <InlineEditField
-                    value={record?.linkedinUrl || ''}
+                    value={record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || ''}
                     field="linkedinUrl"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -1319,7 +1319,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
                   <InlineEditField
-                    value={record?.department || ''}
+                    value={record?.department || record?.customFields?.enrichedData?.overview?.department || ''}
                     field="department"
                     recordId={record?.id || ''}
                     recordType="universal"
@@ -1548,7 +1548,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <span className="text-sm text-gray-600">LinkedIn:</span>
                     <InlineEditField
-                      value={record?.linkedinUrl || ''}
+                      value={record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || ''}
                       field="linkedinUrl"
                       recordId={record?.id || ''}
                       recordType="universal"
@@ -1579,7 +1579,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <span className="text-sm text-gray-600">Department:</span>
                     <InlineEditField
-                      value={record?.department || ''}
+                      value={record?.department || record?.customFields?.enrichedData?.overview?.department || ''}
                       field="department"
                       recordId={record?.id || ''}
                       recordType="universal"
@@ -1766,7 +1766,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <span className="text-sm text-gray-600">LinkedIn:</span>
                     <span className="ml-2 text-sm font-medium text-blue-600">
-                      {record?.linkedinUrl ? (
+                      {record?.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin ? (
                         <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
                           View Profile
                         </a>
@@ -1788,7 +1788,7 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
                   <div>
                     <span className="text-sm text-gray-600">Department:</span>
                     <span className="ml-2 text-sm font-medium text-gray-900">
-                      {record?.department || '-'}
+                      {record?.department || record?.customFields?.enrichedData?.overview?.department || '-'}
                     </span>
                   </div>
                   <div>
