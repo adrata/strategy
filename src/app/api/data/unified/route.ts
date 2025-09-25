@@ -3337,7 +3337,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
       
       // Determine last action based on record data
-      let lastAction = 'Added record to Adrata';
+      let lastAction = 'Start outreach';
       let lastActionTime = 'Never';
       
       // Only show real last actions if they exist, otherwise show when data was added
@@ -3350,7 +3350,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
         else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         
-        lastAction = record.lastAction || 'Added record to Adrata';
+        lastAction = record.lastAction || 'Start outreach';
       } else if (record.createdAt) {
         // No real last action, show when data was added
         const daysSince = Math.floor((new Date().getTime() - new Date(record.createdAt).getTime()) / (1000 * 60 * 60 * 24));
@@ -3360,7 +3360,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
         else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         
-        lastAction = 'Added record to Adrata';
+        lastAction = 'Start outreach';
       }
       
       // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
