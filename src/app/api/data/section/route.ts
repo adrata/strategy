@@ -137,13 +137,27 @@ export async function GET(request: NextRequest) {
         
       case 'leads':
         // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
-        const leadsData = await prisma.leads.findMany({
+        // 🚀 CONSISTENT RANKING: Use people table as source of truth for 1:1 consistency
+        // Filter people by lead stage/status
+        const leadsPeopleData = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null,
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
+            ],
+            // Filter for people who are leads - use more inclusive filter
+            AND: [
+              {
+                OR: [
+                  { funnelStage: 'Lead' },
+                  { status: 'new' },
+                  { status: 'lead' },
+                  { status: 'active' }, // Include active people as leads
+                  { funnelStage: null } // Include people without specific funnel stage
+                ]
+              }
             ]
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
@@ -154,7 +168,14 @@ export async function GET(request: NextRequest) {
             lastName: true,
             fullName: true,
             email: true,
-            company: true,
+            company: {
+              select: {
+                id: true,
+                name: true,
+                industry: true,
+                size: true
+              }
+            },
             status: true,
             createdAt: true,
             updatedAt: true,
@@ -166,30 +187,43 @@ export async function GET(request: NextRequest) {
           }
         });
         
-        // Apply consistent ranking logic
-        sectionData = leadsData.map((lead, index) => ({
-          id: lead.id,
+        // Apply consistent ranking logic using people data
+        sectionData = leadsPeopleData.map((person, index) => ({
+          id: person.id,
           rank: index + 1,
-          name: lead.fullName || `${lead.firstName} ${lead.lastName}`,
-          company: lead.company || 'Unknown Company',
-          email: lead.email || 'Unknown Email',
-          status: lead.status || 'Unknown',
-          lastAction: lead.lastAction || 'Never No action',
-          nextAction: lead.nextAction || 'No date set No action planned',
-          createdAt: lead.createdAt,
-          updatedAt: lead.updatedAt
+          name: person.fullName || `${person.firstName} ${person.lastName}`,
+          company: person.company?.name || 'Unknown Company',
+          email: person.email || 'Unknown Email',
+          status: person.status || 'Unknown',
+          lastAction: person.lastAction || 'Never No action',
+          nextAction: person.nextAction || 'No date set No action planned',
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt
         }));
         break;
         
       case 'prospects':
-        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
-        const prospectsData = await prisma.prospects.findMany({
+        // 🚀 CONSISTENT RANKING: Use people table as source of truth for 1:1 consistency
+        // Filter people by prospect stage/status
+        const prospectsPeopleData = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null,
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
+            ],
+            // Filter for people who are prospects - use more inclusive filter
+            AND: [
+              {
+                OR: [
+                  { funnelStage: 'Prospect' },
+                  { status: 'engaged' },
+                  { status: 'prospect' },
+                  { status: 'active' }, // Include active people as prospects
+                  { funnelStage: null } // Include people without specific funnel stage
+                ]
+              }
             ]
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
@@ -200,26 +234,37 @@ export async function GET(request: NextRequest) {
             lastName: true,
             fullName: true,
             email: true,
-            company: true,
+            company: {
+              select: {
+                id: true,
+                name: true,
+                industry: true,
+                size: true
+              }
+            },
             status: true,
             createdAt: true,
             updatedAt: true,
-            rank: true
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true
           }
         });
         
-        // Apply consistent ranking logic
-        sectionData = prospectsData.map((prospect, index) => ({
-          id: prospect.id,
+        // Apply consistent ranking logic using people data
+        sectionData = prospectsPeopleData.map((person, index) => ({
+          id: person.id,
           rank: index + 1,
-          name: prospect.fullName || `${prospect.firstName} ${prospect.lastName}`,
-          company: prospect.company || 'Unknown Company',
-          email: prospect.email || 'Unknown Email',
-          status: prospect.status || 'Unknown',
-          lastAction: prospect.lastAction || 'Never No action',
-          nextAction: prospect.nextAction || 'No date set No action planned',
-          createdAt: prospect.createdAt,
-          updatedAt: prospect.updatedAt
+          name: person.fullName || `${person.firstName} ${person.lastName}`,
+          company: person.company?.name || 'Unknown Company',
+          email: person.email || 'Unknown Email',
+          status: person.status || 'Unknown',
+          lastAction: person.lastAction || 'Never No action',
+          nextAction: person.nextAction || 'No date set No action planned',
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt
         }));
         break;
         

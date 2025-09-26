@@ -116,6 +116,18 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     setLoadedSections(new Set());
   }, [workspaceId, userId]);
 
+  // 🔧 DEBUG: Force refresh for people section to fix caching issue
+  useEffect(() => {
+    if (section === 'people') {
+      console.log(`🔧 [FAST SECTION DATA] Force clearing cache for people section`);
+      setLoadedSections(prev => {
+        const newSet = new Set(prev);
+        newSet.delete('people');
+        return newSet;
+      });
+    }
+  }, [section]);
+
   return {
     data,
     loading,
