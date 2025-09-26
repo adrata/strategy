@@ -1290,7 +1290,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               </p>
             </div>
           </div>
-        ) : finalLoading && (finalData?.length || 0) === 0 ? (
+        ) : finalLoading ? (
           // 🚀 PERFORMANCE: Show XL loading skeleton while fast section data loads
           <div className="h-full flex flex-col bg-white">
             {/* Top header skeleton - includes title, count, and action buttons */}
