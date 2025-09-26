@@ -20,7 +20,7 @@ interface UseFastSectionDataReturn {
 
 /**
  * 🚀 FAST SECTION DATA HOOK
- * Provides instant section data for middle panel
+ * Provides instant section data for middle panel with smart caching
  */
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
   console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
@@ -30,6 +30,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
+  const [loadedSections, setLoadedSections] = useState<Set<string>>(new Set());
 
   const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const userId = authUser?.id;
@@ -40,7 +41,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       userId: !!userId,
       authLoading,
       hasWorkspaceId: !!workspaceId,
-      hasUserId: !!userId
+      hasUserId: !!userId,
+      alreadyLoaded: loadedSections.has(section)
     });
     
     if (!workspaceId || !userId || authLoading) {
@@ -49,6 +51,14 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         userId: !!userId,
         authLoading
       });
+      setLoading(false);
+      return;
+    }
+
+    // 🚀 PERFORMANCE: Skip if we already loaded this section
+    if (loadedSections.has(section)) {
+      console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+      setLoading(false);
       return;
     }
 
@@ -69,6 +79,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       if (result.success && result.data) {
         setData(result.data.data || []);
         setCount(result.data.count || 0);
+        setLoadedSections(prev => new Set(prev).add(section));
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: result.data.count,
           items: result.data.data?.length,
@@ -84,12 +95,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     } finally {
       setLoading(false);
     }
-  }, [section, limit, workspaceId, userId, authLoading]);
+  }, [section, limit, workspaceId, userId, authLoading, loadedSections]);
 
-  // Load section data when section/workspace/user changes
+  // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
   useEffect(() => {
-    fetchSectionData();
-  }, [fetchSectionData]);
+    if (workspaceId && userId && !authLoading && !loadedSections.has(section)) {
+      fetchSectionData();
+    }
+  }, [section, workspaceId, userId, authLoading, loadedSections, fetchSectionData]);
+
+  // 🚀 PERFORMANCE: Reset loaded sections when workspace changes
+  useEffect(() => {
+    setLoadedSections(new Set());
+  }, [workspaceId, userId]);
 
   return {
     data,

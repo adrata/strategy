@@ -30,7 +30,7 @@ interface UseFastCountsReturn {
 
 /**
  * 🚀 FAST COUNTS HOOK
- * Provides instant navigation counts for left panel
+ * Provides instant navigation counts for left panel with smart caching
  */
 export function useFastCounts(): UseFastCountsReturn {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
@@ -46,12 +46,20 @@ export function useFastCounts(): UseFastCountsReturn {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const userId = authUser?.id;
 
   const fetchCounts = useCallback(async () => {
     if (!workspaceId || !userId || authLoading) {
+      setLoading(false);
+      return;
+    }
+
+    // 🚀 PERFORMANCE: Only fetch if we haven't loaded counts yet
+    if (hasLoaded) {
+      console.log('⚡ [FAST COUNTS] Skipping fetch - already loaded');
       return;
     }
 
@@ -71,6 +79,7 @@ export function useFastCounts(): UseFastCountsReturn {
       
       if (data.success && data.data) {
         setCounts(data.data);
+        setHasLoaded(true);
         console.log('⚡ [FAST COUNTS] Loaded counts:', data.data);
       } else {
         throw new Error(data.error || 'Failed to load counts');
@@ -82,12 +91,19 @@ export function useFastCounts(): UseFastCountsReturn {
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, userId, authLoading]);
+  }, [workspaceId, userId, authLoading, hasLoaded]);
 
-  // Load counts when workspace/user changes
+  // 🚀 PERFORMANCE: Only load counts once when workspace/user is available
   useEffect(() => {
-    fetchCounts();
-  }, [fetchCounts]);
+    if (workspaceId && userId && !authLoading && !hasLoaded) {
+      fetchCounts();
+    }
+  }, [workspaceId, userId, authLoading, hasLoaded, fetchCounts]);
+
+  // 🚀 PERFORMANCE: Reset loaded state when workspace changes
+  useEffect(() => {
+    setHasLoaded(false);
+  }, [workspaceId, userId]);
 
   return {
     counts,
