@@ -1228,7 +1228,7 @@ async function getMultipleRecords(
       vertical: person.company?.vertical || 'Unknown Vertical',
       companySize: person.company?.size || 'Unknown Size',
       jobTitle: person.jobTitle,
-      title: person.title,
+      title: person.title || person.jobTitle || null,
       status: person.status,
       priority: 'medium',
       source: 'people',
