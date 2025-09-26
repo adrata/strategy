@@ -3410,21 +3410,17 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       
       // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
       let nextAction = 'Schedule Discovery Call';
-      let nextActionTiming = 'This Week';
+      let nextActionTiming = 'Today'; // Default to Today for most items
       
       // Override with Speedrun ranking logic
       if (index === 0) {
         // Rank 1: Immediate action
         nextActionTiming = 'Now';
-      } else if (index < 10) {
-        // Rank 2-10: Today
-        nextActionTiming = 'Today';
-      } else if (index < 20) {
-        // Rank 11-20: This week
-        nextActionTiming = 'This Week';
+        nextAction = 'Call immediately - highest priority';
       } else {
-        // Rank 21+: Next week
-        nextActionTiming = 'Next Week';
+        // All other ranks: Today
+        nextActionTiming = 'Today';
+        nextAction = 'Schedule Discovery Call';
       }
       
       // Only use database timing if it's more urgent than our ranking
