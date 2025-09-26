@@ -145,10 +145,20 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Use record's assigned user or workspace ID
         
         const cacheKey = `people-${workspaceId}-${userId}`;
+        const buyerGroupCacheKey = `buyer-groups-${companyId}-${workspaceId}`;
         let peopleData = [];
         
-        // Check cache first using safe localStorage (reduced TTL for testing)
-        const cachedData = safeGetItem(cacheKey, 30 * 1000); // 30 seconds TTL for testing
+        // ⚡ PERFORMANCE: Check buyer group specific cache first (faster)
+        const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 5 * 60 * 1000); // 5 minutes TTL
+        if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData) && buyerGroupCachedData.length > 0) {
+          console.log('📦 [BUYER GROUPS] Using cached buyer group data');
+          setBuyerGroups(buyerGroupCachedData);
+          setLoading(false);
+          return;
+        }
+        
+        // Check general people cache
+        const cachedData = safeGetItem(cacheKey, 2 * 60 * 1000); // 2 minutes TTL
         if (cachedData) {
           peopleData = cachedData;
           console.log('📦 [BUYER GROUPS] Using cached people data');
@@ -487,20 +497,20 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         };
 
         const sortedBuyerGroups = buyerGroupMembers.sort((a, b) => {
-          // Primary sort: by rank (like companies table)
-          const aRank = a.rank || 999;
-          const bRank = b.rank || 999;
-          
-          if (aRank !== bRank) {
-            return aRank - bRank;
-          }
-          
-          // Secondary sort: by role priority (fallback if no rank)
+          // Primary sort: by role priority (Decision Maker first, then Champion, etc.)
           const aRolePriority = rolePriority[a.role] || 8;
           const bRolePriority = rolePriority[b.role] || 8;
           
           if (aRolePriority !== bRolePriority) {
             return aRolePriority - bRolePriority;
+          }
+          
+          // Secondary sort: by rank (if roles are the same)
+          const aRank = a.rank || 999;
+          const bRank = b.rank || 999;
+          
+          if (aRank !== bRank) {
+            return aRank - bRank;
           }
           
           // Tertiary sort: by influence level
@@ -517,6 +527,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         console.log('🔍 [BUYER GROUPS DEBUG] Final buyer groups before setting:', sortedBuyerGroups);
         console.log('🔍 [BUYER GROUPS DEBUG] Setting buyer groups with length:', sortedBuyerGroups.length);
+        
+        // ⚡ PERFORMANCE: Cache the processed buyer group data for faster future loads
+        const cacheSuccess = safeSetItem(buyerGroupCacheKey, sortedBuyerGroups);
+        if (!cacheSuccess) {
+          console.warn('Failed to cache buyer group data, continuing without cache');
+        }
+        
         setBuyerGroups(sortedBuyerGroups);
         setLoading(false);
         console.log(`Found ${sortedBuyerGroups.length} people from ${companyName}:`, sortedBuyerGroups);
@@ -691,6 +708,17 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                       <div>
                         <div className="text-sm font-medium text-gray-900">{person.name}</div>
                         <div className="text-sm text-gray-600">{person.title}</div>
+                        {/* Buyer Group Role under the name */}
+                        <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${
+                          person.role === 'Decision Maker' ? 'bg-gray-100 text-gray-800' :
+                          person.role === 'Champion' ? 'bg-gray-100 text-gray-800' :
+                          person.role === 'Blocker' ? 'bg-gray-100 text-gray-800' :
+                          person.role === 'Stakeholder' ? 'bg-gray-100 text-gray-800' :
+                          person.role === 'Introducer' ? 'bg-gray-100 text-gray-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {person.role}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -703,16 +731,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                           {riskAssessment.riskLevel} Risk
                         </div>
                       )}
-                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        person.role === 'Decision Maker' ? 'bg-gray-100 text-gray-800' :
-                        person.role === 'Champion' ? 'bg-gray-100 text-gray-800' :
-                        person.role === 'Blocker' ? 'bg-gray-100 text-gray-800' :
-                        person.role === 'Stakeholder' ? 'bg-gray-100 text-gray-800' :
-                        person.role === 'Introducer' ? 'bg-gray-100 text-gray-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {person.role}
-                      </div>
                     </div>
                   </div>
 
