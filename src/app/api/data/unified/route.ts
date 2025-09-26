@@ -1496,7 +1496,7 @@ async function getMultipleRecords(
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
+      take: Math.min(pagination?.limit || (type === 'people' ? 5000 : 5000), type === 'people' ? 20000 : 5000), // 🚀 PERFORMANCE: Load up to 20000 records max for people, 5000 for others
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
@@ -1510,7 +1510,24 @@ async function getMultipleRecords(
       console.warn(`🐌 [SLOW QUERY] ${type} query took ${queryTime}ms - consider optimization`);
     }
     
-    return { success: true, data: records };
+    // 🆕 SERVER-SIDE PAGINATION: Get total count for proper pagination
+    const totalCount = await model.count({
+      where: whereClause
+    });
+    
+    console.log(`📊 [PAGINATION] Total ${type} records: ${totalCount}, loaded: ${records.length}, offset: ${pagination?.offset || 0}`);
+    
+    return { 
+      success: true, 
+      data: records,
+      totalCount: totalCount,
+      pagination: {
+        offset: pagination?.offset || 0,
+        limit: pagination?.limit || 100,
+        totalCount: totalCount,
+        hasMore: (pagination?.offset || 0) + records.length < totalCount
+      }
+    };
   } catch (dbError) {
     console.error(`❌ [GET MULTIPLE] Database error for ${type}:`, dbError);
     console.error(`❌ [GET MULTIPLE] Where clause:`, JSON.stringify(whereClause, null, 2));
@@ -1523,7 +1540,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
+          take: Math.min(pagination?.limit || (type === 'people' ? 5000 : 5000), type === 'people' ? 20000 : 5000), // 🚀 PERFORMANCE: Load up to 20000 records max for people, 5000 for others
           skip: pagination?.offset || 0
         });
         
@@ -3277,8 +3294,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🚀 ENHANCED: Load people for speedrun with proper company relationships
-    // PRIORITIZE people with company relationships first
+    // 🚀 ENHANCED: Load people for speedrun with proper company ranking
+    // PRIORITIZE people from companies with better ranks first
     const people = await prisma.people.findMany({
       where: {
         workspaceId,
@@ -3289,7 +3306,10 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           { assignedUserId: null }
         ]
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: [
+        { company: { rank: 'asc' } }, // Use company rank first
+        { updatedAt: 'desc' } // Then by person update time
+      ],
       take: 200, // Load enough people for proper speedrun ranking
       include: {
         company: {
@@ -3298,7 +3318,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
             name: true,
             industry: true,
             vertical: true,
-            size: true
+            size: true,
+            rank: true // Include company rank for proper ordering
           }
         }
       }

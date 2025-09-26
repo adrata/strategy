@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // Load speedrun data (people with company relationships)
+        // Load speedrun data (people with company relationships) - FIXED: Use company ranking
         const people = await prisma.people.findMany({
           where: {
             workspaceId,
@@ -106,7 +106,10 @@ export async function GET(request: NextRequest) {
               { assignedUserId: null }
             ]
           },
-          orderBy: { updatedAt: 'desc' },
+          orderBy: [
+            { company: { rank: 'asc' } }, // Use company rank first
+            { updatedAt: 'desc' } // Then by person update time
+          ],
           take: 200,
           include: {
             company: {
@@ -115,7 +118,8 @@ export async function GET(request: NextRequest) {
                 name: true,
                 industry: true,
                 vertical: true,
-                size: true
+                size: true,
+                rank: true // Include company rank for proper ordering
               }
             }
           }
@@ -465,17 +469,21 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // For speedrun, use the same logic as the data fetch
+          // For speedrun, use the same logic as the data fetch - FIXED: Use company ranking
           const speedrunPeople = await prisma.people.findMany({
             where: {
               workspaceId,
               deletedAt: null,
+              companyId: { not: null }, // Only people with company relationships
               OR: [
                 { assignedUserId: userId },
                 { assignedUserId: null }
               ]
             },
-            orderBy: { updatedAt: 'desc' },
+            orderBy: [
+              { company: { rank: 'asc' } }, // Use company rank first
+              { updatedAt: 'desc' } // Then by person update time
+            ],
             take: 200,
             include: {
               company: {
@@ -483,7 +491,8 @@ export async function GET(request: NextRequest) {
                   id: true,
                   name: true,
                   industry: true,
-                  size: true
+                  size: true,
+                  rank: true // Include company rank for proper ordering
                 }
               }
             }

@@ -540,7 +540,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             // Use UniversalRecordTemplate for ALL sections including leads for consistency
             <UniversalRecordTemplate
               record={recordToShow}
-              recordType={section === 'speedrun' ? 'prospects' : section as any}
+              recordType={section as any}
               recordIndex={(() => {
                 // Use rank from database if available, otherwise calculate from index
                 const dbRank = recordToShow?.rank;

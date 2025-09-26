@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTableRefactored';
+import { ServerSidePipelineTable } from './ServerSidePipelineTable';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
@@ -1038,6 +1039,31 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     refresh();
   };
 
+  // 🆕 FORCE REFRESH: Add force refresh mechanism for pagination issues
+  const handleForceRefresh = async () => {
+    console.log(`🔄 Force refreshing ${section} data...`);
+    // Clear all caches and force fresh data load
+    clearCache();
+    // Force refresh with timestamp to bypass cache
+    const timestamp = Date.now();
+    await refresh();
+    console.log(`✅ Force refresh completed for ${section} at ${timestamp}`);
+  };
+
+  // 🆕 AUTO FORCE REFRESH: Automatically force refresh when page changes
+  useEffect(() => {
+    const handlePageChange = () => {
+      console.log(`🔄 [AUTO REFRESH] Page changed, force refreshing ${section} data...`);
+      handleForceRefresh();
+    };
+
+    // Listen for page changes
+    if (typeof window !== 'undefined') {
+      window.addEventListener('popstate', handlePageChange);
+      return () => window.removeEventListener('popstate', handlePageChange);
+    }
+  }, [section]);
+
   // Handle add record
   const handleAddRecord = () => {
     // Set the active section and open the modal
@@ -1440,10 +1466,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'companies' ? (
-                // Companies table with same design as prospects
-                <PipelineTable
+                // Companies table with SERVER-SIDE PAGINATION
+                <ServerSidePipelineTable
                   section={section}
-                  data={filteredData || []}
                   onRecordClick={handleRecordClick}
                   onReorderRecords={handleReorderRecords}
                   onColumnSort={handleColumnSort}
@@ -1451,9 +1476,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={isLoading}
-                  searchQuery={searchQuery}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  workspaceId={workspaceId}
+                  userId={userId}
                 />
               ) : section === 'sellers' ? (
                 // Buyer Group style design for Sellers

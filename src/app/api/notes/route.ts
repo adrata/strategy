@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
     const notes = await prisma.notes.findMany({
       where: whereClause,
       orderBy: { createdAt: 'desc' },
-      take: 100 // Limit to 100 most recent notes
+      take: 2000 // Increased limit to prevent pagination issues
     });
 
     console.log(`✅ [NOTES API] Retrieved ${notes.length} notes for ${recordType} ${recordId}`);

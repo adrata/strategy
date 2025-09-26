@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         updatedAt: 'desc'
       },
-      take: 100 // Limit to prevent large responses
+      take: 2000 // Increased limit to prevent pagination issues
     });
 
     console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);
