@@ -205,32 +205,73 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'companies':
-        sectionData = await prisma.companies.findMany({
+        // 🚀 CONSISTENT RANKING: Get companies from people relationships (same as speedrun)
+        const peopleWithCompanies = await prisma.people.findMany({
           where: {
             workspaceId,
-            deletedAt: null
+            deletedAt: null,
+            companyId: { not: null }, // Only people with company relationships
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
           },
           orderBy: { updatedAt: 'desc' },
-          take: limit,
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            vertical: true,
-            size: true,
-            createdAt: true,
-            updatedAt: true
+          take: 200, // Load enough people for proper company ranking
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                industry: true,
+                vertical: true,
+                size: true,
+                createdAt: true,
+                updatedAt: true,
+                rank: true,
+                lastAction: true,
+                lastActionDate: true,
+                nextAction: true,
+                nextActionDate: true
+              }
+            }
           }
         });
+        
+        // Extract unique companies and apply consistent ranking
+        const uniqueCompanies = new Map();
+        peopleWithCompanies.forEach(person => {
+          if (person.company && !uniqueCompanies.has(person.company.id)) {
+            uniqueCompanies.set(person.company.id, person.company);
+          }
+        });
+        
+        const companiesList = Array.from(uniqueCompanies.values());
+        sectionData = companiesList.slice(0, limit).map((company, index) => ({
+          id: company.id,
+          rank: index + 1,
+          name: company.name,
+          industry: company.industry || 'Unknown',
+          size: company.size || 'Unknown',
+          lastAction: company.lastAction || 'Never No action',
+          nextAction: company.nextAction || 'No date set No action planned',
+          createdAt: company.createdAt,
+          updatedAt: company.updatedAt
+        }));
         break;
         
       case 'people':
-        sectionData = await prisma.people.findMany({
+        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
+        const peopleData = await prisma.people.findMany({
           where: {
             workspaceId,
-            deletedAt: null
+            deletedAt: null,
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
           },
-          orderBy: { updatedAt: 'desc' },
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
           take: limit,
           select: {
             id: true,
@@ -241,9 +282,28 @@ export async function GET(request: NextRequest) {
             company: true,
             status: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true
           }
         });
+        
+        // Apply consistent ranking logic
+        sectionData = peopleData.map((person, index) => ({
+          id: person.id,
+          rank: index + 1,
+          name: person.fullName || `${person.firstName} ${person.lastName}`,
+          company: person.company || 'Unknown Company',
+          title: person.title || 'Unknown Title',
+          status: person.status || 'Unknown',
+          lastAction: person.lastAction || 'Never No action',
+          nextAction: person.nextAction || 'No date set No action planned',
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt
+        }));
         break;
         
       default:
