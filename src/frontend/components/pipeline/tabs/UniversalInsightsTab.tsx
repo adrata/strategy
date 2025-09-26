@@ -143,16 +143,17 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const enrichedData = customFields.enrichedData?.intelligence || {};
   const notes = record.notes ? (typeof record['notes'] === 'string' ? JSON.parse(record.notes) : record.notes) : {};
   
-  const buyerRole = enrichedData.buyerGroupRole || customFields.buyerGroupRole || notes.buyerRole || 'Stakeholder';
-  const engagement = enrichedData.engagement || customFields.engagement || notes.engagement || 'Neutral 1/5';
-  const influence = enrichedData.influenceLevel || customFields.influenceScore || notes.influence || 50;
-  const decisionPower = enrichedData.decisionPower || customFields.decisionPower || notes.decisionPower || 50;
-  const communicationStyle = enrichedData.communicationStyle || customFields.communicationStyle || notes.communicationStyle || 'Professional';
-  const decisionMakingStyle = enrichedData.decisionMakingStyle || customFields.decisionMakingStyle || notes.decisionMakingStyle || 'Collaborative';
-  const painPoints = enrichedData.painPoints || customFields.painPoints || notes.painPoints || [];
-  const interests = enrichedData.interests || customFields.interests || notes.interests || [];
-  const personalGoals = enrichedData.personalGoals || customFields.personalGoals || notes.personalGoals || [];
-  const professionalGoals = enrichedData.professionalGoals || customFields.goals || notes.professionalGoals || [];
+  // Use actual database fields first, then fall back to enriched data
+  const buyerRole = record.buyerGroupRole || enrichedData.buyerGroupRole || customFields.buyerGroupRole || notes.buyerRole || 'Stakeholder';
+  const engagement = record.engagementLevel || enrichedData.engagement || customFields.engagement || notes.engagement || 'Neutral 1/5';
+  const influence = record.influenceLevel || enrichedData.influenceLevel || customFields.influenceScore || notes.influence || 50;
+  const decisionPower = record.decisionPower || enrichedData.decisionPower || customFields.decisionPower || notes.decisionPower || 50;
+  const communicationStyle = record.communicationStyle || enrichedData.communicationStyle || customFields.communicationStyle || notes.communicationStyle || 'Professional';
+  const decisionMakingStyle = record.decisionMakingStyle || enrichedData.decisionMakingStyle || customFields.decisionMakingStyle || notes.decisionMakingStyle || 'Collaborative';
+  const painPoints = record.painPoints || enrichedData.painPoints || customFields.painPoints || notes.painPoints || [];
+  const interests = record.interests || enrichedData.interests || customFields.interests || notes.interests || [];
+  const personalGoals = record.personalGoals || enrichedData.personalGoals || customFields.personalGoals || notes.personalGoals || [];
+  const professionalGoals = record.professionalGoals || enrichedData.professionalGoals || customFields.goals || notes.professionalGoals || [];
 
   // Generate intelligent insights based on role and data
   const generateIntelligenceInsights = () => {
@@ -444,91 +445,67 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         </div>
       </div>
 
-      {/* Deep Value Reports */}
+      {/* Deep Value Reports - AI Generated Based on Real Data */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Deep Value Reports</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Competitive Reports */}
+          {/* Company-Specific Reports */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Competitive Intelligence</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Company Intelligence</h4>
             <div className="space-y-2">
-              <a 
-                href="/demo/zeropoint/paper/adp-competitive-deep-value-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">ADP Competitive Deep Value Report</div>
-                <div className="text-xs text-gray-500 mt-1">52-page competitive intelligence analysis</div>
-              </a>
-              <a 
-                href="/demo/zeropoint/paper/workday-market-analysis-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">Workday Market Analysis Report</div>
-                <div className="text-xs text-gray-500 mt-1">Market positioning and growth opportunities</div>
-              </a>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{company} Competitive Analysis</div>
+                <div className="text-xs text-gray-500 mt-1">AI-generated competitive intelligence for {company}</div>
+              </div>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{company} Market Position Report</div>
+                <div className="text-xs text-gray-500 mt-1">Strategic positioning and growth opportunities</div>
+              </div>
             </div>
           </div>
 
-          {/* Market Reports */}
+          {/* Role-Specific Reports */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Market Intelligence</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Role Intelligence</h4>
             <div className="space-y-2">
-              <a 
-                href="/demo/zeropoint/paper/hr-tech-market-trends-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">HR Tech Market Trends</div>
-                <div className="text-xs text-gray-500 mt-1">Industry growth and emerging technologies</div>
-              </a>
-              <a 
-                href="/demo/zeropoint/paper/enterprise-hr-landscape-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">Enterprise HR Landscape</div>
-                <div className="text-xs text-gray-500 mt-1">Market segmentation and opportunities</div>
-              </a>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{title} Decision Framework</div>
+                <div className="text-xs text-gray-500 mt-1">AI-analyzed decision-making patterns for {title} role</div>
+              </div>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{buyerRole} Engagement Strategy</div>
+                <div className="text-xs text-gray-500 mt-1">Personalized engagement approach for {buyerRole}</div>
+              </div>
             </div>
           </div>
 
-          {/* Buyer Group Reports */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Buyer Group Intelligence</h4>
-            <div className="space-y-2">
-              <a 
-                href="/demo/zeropoint/paper/adp-buyer-group-intel-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">ADP Buyer Group Intelligence</div>
-                <div className="text-xs text-gray-500 mt-1">Key decision makers and influencers</div>
-              </a>
-              <a 
-                href="/demo/zeropoint/paper/enterprise-procurement-process-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">Enterprise Procurement Process</div>
-                <div className="text-xs text-gray-500 mt-1">Decision-making workflow analysis</div>
-              </a>
-            </div>
-          </div>
-
-          {/* Industry Analysis */}
+          {/* Industry Reports */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Industry Analysis</h4>
             <div className="space-y-2">
-              <a 
-                href="/demo/zeropoint/paper/hr-technology-industry-trends-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">HR Technology Industry Trends</div>
-                <div className="text-xs text-gray-500 mt-1">Latest trends and developments</div>
-              </a>
-              <a 
-                href="/demo/zeropoint/paper/ai-automation-impact-01K4VM894JE1BWD2TA3FZCNKCK"
-                className="block p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                <div className="text-sm font-medium text-gray-900">AI & Automation Impact</div>
-                <div className="text-xs text-gray-500 mt-1">Technology disruption analysis</div>
-              </a>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{industry} Market Trends</div>
+                <div className="text-xs text-gray-500 mt-1">AI-generated industry insights and trends</div>
+              </div>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{industry} Technology Landscape</div>
+                <div className="text-xs text-gray-500 mt-1">Technology adoption and disruption analysis</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Buyer Group Intelligence */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Buyer Group Intelligence</h4>
+            <div className="space-y-2">
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">{company} Buyer Group Map</div>
+                <div className="text-xs text-gray-500 mt-1">AI-mapped decision makers and influencers</div>
+              </div>
+              <div className="block p-3 bg-gray-50 rounded-md">
+                <div className="text-sm font-medium text-gray-900">Decision Process Analysis</div>
+                <div className="text-xs text-gray-500 mt-1">AI-analyzed procurement and decision workflow</div>
+              </div>
             </div>
           </div>
         </div>
