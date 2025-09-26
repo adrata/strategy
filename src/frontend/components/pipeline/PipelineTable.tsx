@@ -72,6 +72,22 @@ function getColumnWidth(index: number): string {
 
 // -------- Timing Functions --------
 function getLastActionTiming(record: PipelineRecord) {
+  // 🚀 SPEEDRUN LOGIC: Use the API's lastActionTime field directly
+  const lastActionTime = record['lastActionTime'];
+  if (lastActionTime) {
+    // Color coding for Speedrun timing
+    if (lastActionTime === '(Never)') {
+      return { text: lastActionTime, color: 'bg-gray-100 text-gray-800' };
+    } else if (lastActionTime === 'Today') {
+      return { text: lastActionTime, color: 'bg-green-100 text-green-800' };
+    } else if (lastActionTime === 'Yesterday') {
+      return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
+    } else {
+      return { text: lastActionTime, color: 'bg-gray-100 text-gray-800' };
+    }
+  }
+  
+  // Fallback: Calculate timing from date
   const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
   const timing = getRealtimeActionTiming(lastActionDate);
   return { ...timing, color: 'bg-gray-100 text-gray-800' };
