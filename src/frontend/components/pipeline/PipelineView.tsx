@@ -3,7 +3,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PipelineTable } from './PipelineTableRefactored';
-import { ServerSidePipelineTable } from './ServerSidePipelineTable';
 import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
@@ -196,7 +195,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 PERFORMANCE: Use fast section data hook for instant loading
-  const fastSectionData = useFastSectionData(section, 100);
+  // Load all data at once for client-side pagination
+  const fastSectionData = useFastSectionData(section, 1000);
   
   // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
@@ -1466,9 +1466,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'companies' ? (
-                // Companies table with SERVER-SIDE PAGINATION
-                <ServerSidePipelineTable
+                // Companies table with same design as prospects
+                <PipelineTable
                   section={section}
+                  data={filteredData || []}
                   onRecordClick={handleRecordClick}
                   onReorderRecords={handleReorderRecords}
                   onColumnSort={handleColumnSort}
@@ -1476,8 +1477,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  workspaceId={workspaceId}
-                  userId={userId}
+                  isLoading={isLoading}
+                  searchQuery={searchQuery}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
                 // Buyer Group style design for Sellers

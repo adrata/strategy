@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
             industry: person.company?.industry || 'Unknown',
             size: person.company?.size || 'Unknown',
             stage: 'Prospect',
-            lastAction: '(Never) No action taken',
+            lastAction: 'No action taken',
             nextAction: 'No action planned'
           }));
 

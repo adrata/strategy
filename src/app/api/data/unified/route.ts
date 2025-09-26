@@ -1496,7 +1496,7 @@ async function getMultipleRecords(
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || (type === 'people' ? 5000 : 5000), type === 'people' ? 20000 : 5000), // 🚀 PERFORMANCE: Load up to 20000 records max for people, 5000 for others
+      take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
@@ -1510,24 +1510,7 @@ async function getMultipleRecords(
       console.warn(`🐌 [SLOW QUERY] ${type} query took ${queryTime}ms - consider optimization`);
     }
     
-    // 🆕 SERVER-SIDE PAGINATION: Get total count for proper pagination
-    const totalCount = await model.count({
-      where: whereClause
-    });
-    
-    console.log(`📊 [PAGINATION] Total ${type} records: ${totalCount}, loaded: ${records.length}, offset: ${pagination?.offset || 0}`);
-    
-    return { 
-      success: true, 
-      data: records,
-      totalCount: totalCount,
-      pagination: {
-        offset: pagination?.offset || 0,
-        limit: pagination?.limit || 100,
-        totalCount: totalCount,
-        hasMore: (pagination?.offset || 0) + records.length < totalCount
-      }
-    };
+    return { success: true, data: records };
   } catch (dbError) {
     console.error(`❌ [GET MULTIPLE] Database error for ${type}:`, dbError);
     console.error(`❌ [GET MULTIPLE] Where clause:`, JSON.stringify(whereClause, null, 2));
@@ -1540,7 +1523,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || (type === 'people' ? 5000 : 5000), type === 'people' ? 20000 : 5000), // 🚀 PERFORMANCE: Load up to 20000 records max for people, 5000 for others
+          take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
           skip: pagination?.offset || 0
         });
         
@@ -3660,6 +3643,7 @@ export async function GET(request: NextRequest) {
     const filters = url.searchParams.get('filters') ? JSON.parse(url.searchParams.get('filters')!) : undefined;
     const pagination = url.searchParams.get('pagination') ? JSON.parse(url.searchParams.get('pagination')!) : undefined;
     const search = url.searchParams.get('search') ? JSON.parse(url.searchParams.get('search')!) : undefined;
+    
     
     // Validate request
     if (!SUPPORTED_TYPES.includes(type as any)) {

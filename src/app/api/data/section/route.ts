@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
             size: person.company?.size || 'Unknown',
             stage: 'Prospect',
             lastAction: 'No action taken',
-            lastActionTime: '(Never)',
+            lastActionTime: 'Never',
             nextAction: nextAction,
             nextActionTiming: nextActionTiming
           };
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest) {
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || '(Never) No action taken',
+          lastAction: person.lastAction || 'No action taken',
           nextAction: person.nextAction || 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
@@ -274,7 +274,7 @@ export async function GET(request: NextRequest) {
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || '(Never) No action taken',
+          lastAction: person.lastAction || 'No action taken',
           nextAction: person.nextAction || 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
@@ -301,6 +301,8 @@ export async function GET(request: NextRequest) {
             currency: true,
             stage: true,
             expectedCloseDate: true,
+            lastActivityDate: true,
+            nextActivityDate: true,
             createdAt: true,
             updatedAt: true
           }
@@ -315,8 +317,8 @@ export async function GET(request: NextRequest) {
           currency: opportunity.currency || 'USD',
           stage: opportunity.stage || 'Unknown',
           expectedCloseDate: opportunity.expectedCloseDate,
-          lastAction: opportunity.lastAction || '(Never) No action taken',
-          nextAction: opportunity.nextAction || 'No action planned',
+          lastAction: opportunity.lastActivityDate ? 'Activity recorded' : 'No action taken',
+          nextAction: opportunity.nextActivityDate ? 'Activity planned' : 'No action planned',
           createdAt: opportunity.createdAt,
           updatedAt: opportunity.updatedAt
         }));
@@ -375,7 +377,7 @@ export async function GET(request: NextRequest) {
             workspaceId,
             deletedAt: null
           },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          orderBy: { updatedAt: 'desc' },
           take: limit,
           select: {
             id: true,
@@ -383,15 +385,11 @@ export async function GET(request: NextRequest) {
             lastName: true,
             fullName: true,
             email: true,
+            jobTitle: true,
             company: true,
             status: true,
             createdAt: true,
-            updatedAt: true,
-            rank: true,
-            lastAction: true,
-            lastActionDate: true,
-            nextAction: true,
-            nextActionDate: true
+            updatedAt: true
           }
         });
         
@@ -400,11 +398,11 @@ export async function GET(request: NextRequest) {
           id: person.id,
           rank: index + 1,
           name: person.fullName || `${person.firstName} ${person.lastName}`,
-          company: person.company || 'Unknown Company',
-          title: person.title || 'Unknown Title',
+          company: person.company?.name || 'Unknown Company',
+          title: person.jobTitle || 'Unknown Title',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || '(Never) No action taken',
-          nextAction: person.nextAction || 'No action planned',
+          lastAction: 'No action taken',
+          nextAction: 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
         }));

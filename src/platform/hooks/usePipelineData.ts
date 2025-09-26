@@ -268,9 +268,9 @@ export function usePipelineData({
     return result;
   }, [sortedData, currentPage, pageSize, data.length, filteredData.length]);
   
-  // Pagination info - FIXED: Use actual data length instead of totalCount to prevent blank pages
-  const totalPages = Math.ceil(sortedData.length / pageSize);
-  const totalItems = sortedData.length;
+  // Pagination info
+  const totalPages = Math.ceil((totalCount || sortedData.length) / pageSize);
+  const totalItems = totalCount || sortedData.length;
   
   // Actions
   const clearFilters = useCallback(() => {
