@@ -346,26 +346,24 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // Use simple numeric rank for consistent design across all sections
-                        // For People section, use masterRank; for others use rank
-                        const dbRank = section === 'people' ? record.masterRank : record.rank;
-                        
-                        if (dbRank && dbRank > 0) {
-                          cellContent = String(dbRank);
-                        } else {
-                          // Fallback: Calculate global rank across all pages
-                          const globalRank = (currentPage - 1) * pageSize + index + 1;
-                          cellContent = String(globalRank);
-                        }
+                        // Use sequential ranking for consistent display across all sections
+                        // Calculate global rank across all pages for proper sequential display
+                        const globalRank = (currentPage - 1) * pageSize + index + 1;
+                        cellContent = String(globalRank);
                         break;
                       case 'company':
                         // Handle both string and object company data
                         const company = record['company'];
+                        let companyName = '';
+                        
                         if (typeof company === 'object' && company !== null) {
-                          cellContent = company.name || company.companyName || '-';
+                          companyName = company.name || company.companyName || '';
                         } else {
-                          cellContent = company || record['companyName'] || '-';
+                          companyName = company || record['companyName'] || '';
                         }
+                        
+                        // Show dash for "Unknown Company" or empty values
+                        cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                         break;
                       case 'person':
                       case 'name':
@@ -375,12 +373,14 @@ export function PipelineTable({
                         cellContent = record['state'] || record['status'] || record['location'] || 'State';
                         break;
                       case 'title':
-                        cellContent = record['title'] || 
+                        const title = record['title'] || 
                                      record['jobTitle'] || 
                                      record['position'] || 
                                      record?.customFields?.enrichedData?.overview?.title ||
-                                     record?.customFields?.rawData?.active_experience_title ||
-                                     '-';
+                                     record?.customFields?.rawData?.active_experience_title;
+                        
+                        // Show dash for "Unknown Title" or empty values
+                        cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
                         break;
                       case 'last action':
                         cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';
