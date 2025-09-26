@@ -290,85 +290,16 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           return 'Stakeholder';
         };
 
-        // If no people found, try to create them directly
+        // If no people found, show empty state (no hardcoded fallbacks)
         if (uniqueCompanyPeople.length === 0) {
-          console.log('🔍 [BUYER GROUPS] No people found, attempting to create 5 Bars executives...');
-          
-          try {
-            // Create John Delisi
-            const johnResponse = await fetch('/api/data/unified', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                type: 'people',
-                action: 'create',
-                data: {
-                  firstName: 'John',
-                  lastName: 'Delisi',
-                  fullName: 'John Delisi',
-                  title: 'Chief Executive Officer',
-                  email: 'john.delisi@5bars.net',
-                  phone: '800.905.7221',
-                  companyId: companyId,
-                  workspaceId: record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
-                  customFields: {
-                    coresignalId: '770302196',
-                    buyerGroupRole: 'Decision Maker',
-                    dataSource: 'External'
-                  }
-                }
-              })
-            });
-            
-            // Create Dustin Stephens
-            const dustinResponse = await fetch('/api/data/unified', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                type: 'people',
-                action: 'create',
-                data: {
-                  firstName: 'Dustin',
-                  lastName: 'Stephens',
-                  fullName: 'Dustin Stephens',
-                  title: 'Project Director',
-                  email: 'dustin.stephens@5bars.net',
-                  phone: '800.905.7221',
-                  companyId: companyId,
-                  workspaceId: record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
-                  customFields: {
-                    coresignalId: '770302197',
-                    buyerGroupRole: 'Champion',
-                    dataSource: 'External'
-                  }
-                }
-              })
-            });
-            
-            console.log('🔍 [BUYER GROUPS] Created people records, refreshing data...');
-            
-            // Refresh the people data
-            const refreshResponse = await fetch(`/api/data/unified?type=people&action=get&workspaceId=${record.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP'}&userId=${record.userId || '01K1VBYZG41K9QA0D9CF06KNRG'}`);
-            if (refreshResponse.ok) {
-              const refreshResult = await refreshResponse.json();
-              if (refreshResult.success) {
-                const refreshedPeople = refreshResult.data || [];
-                const refreshedCompanyPeople = refreshedPeople.filter((person: any) => {
-                  const personCompanyName = person.company?.name || person.company;
-                  const personCompanyId = person.companyId;
-                  return personCompanyId === companyId || personCompanyName === companyName;
-                });
-                
-                console.log(`🔍 [BUYER GROUPS] After refresh: ${refreshedCompanyPeople.length} people found`);
-                uniqueCompanyPeople.push(...refreshedCompanyPeople);
-              }
-            }
-          } catch (error) {
-            console.error('🔍 [BUYER GROUPS] Error creating people:', error);
-          }
+          console.log('🔍 [BUYER GROUPS] No people found in database for this company');
+          setBuyerGroups([]);
+          setLoading(false);
+          return;
         }
 
-        if (uniqueCompanyPeople.length === 0 && record?.customFields?.coresignalData?.key_executives) {
+        // Only use real database data - no fallback creation
+        if (false && uniqueCompanyPeople.length === 0 && record?.customFields?.coresignalData?.key_executives) {
           console.log('🔍 [BUYER GROUPS] Still no people, checking CoreSignal data');
           
           // Create people and prospect records for CoreSignal executives
