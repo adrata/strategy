@@ -700,7 +700,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center">
                         <span className="text-sm font-medium text-gray-700">
                           {person.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                         </span>
