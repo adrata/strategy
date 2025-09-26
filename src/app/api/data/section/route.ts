@@ -121,18 +121,31 @@ export async function GET(request: NextRequest) {
           }
         });
         
-        // Transform to speedrun format
-        sectionData = people.slice(0, limit).map((person, index) => ({
-          id: person.id,
-          rank: index + 1,
-          name: person.fullName || `${person.firstName} ${person.lastName}`,
-          company: person.company?.name || 'Unknown Company',
-          industry: person.company?.industry || 'Unknown',
-          size: person.company?.size || 'Unknown',
-          stage: 'Prospect',
-          lastAction: '(Never) No action taken',
-          nextAction: 'No action planned'
-        }));
+        // Transform to speedrun format with proper action structure
+        sectionData = people.slice(0, limit).map((person, index) => {
+          // Determine next action timing based on ranking
+          let nextAction = 'Schedule Discovery Call';
+          let nextActionTiming = 'Today';
+          
+          if (index === 0) {
+            nextActionTiming = 'Now';
+            nextAction = 'Call immediately - highest priority';
+          }
+          
+          return {
+            id: person.id,
+            rank: index + 1,
+            name: person.fullName || `${person.firstName} ${person.lastName}`,
+            company: person.company?.name || 'Unknown Company',
+            industry: person.company?.industry || 'Unknown',
+            size: person.company?.size || 'Unknown',
+            stage: 'Prospect',
+            lastAction: 'No action taken',
+            lastActionTime: '(Never)',
+            nextAction: nextAction,
+            nextActionTiming: nextActionTiming
+          };
+        });
         break;
         
       case 'leads':

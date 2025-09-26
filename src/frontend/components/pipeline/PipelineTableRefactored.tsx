@@ -57,7 +57,7 @@ function getLastActionTiming(record: PipelineRecord) {
   const lastActionTime = record['lastActionTime'];
   if (lastActionTime) {
     // Color coding for Speedrun timing
-    if (lastActionTime === '(Never)') {
+    if (lastActionTime === 'Never') {
       return { text: lastActionTime, color: 'bg-gray-100 text-gray-800' };
     } else if (lastActionTime === 'Today') {
       return { text: lastActionTime, color: 'bg-green-100 text-green-800' };

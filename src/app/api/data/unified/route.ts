@@ -3383,7 +3383,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       
       // Determine last action based on record data
       let lastAction = 'No action taken';
-      let lastActionTime = '(Never)';
+      let lastActionTime = 'Never';
       
       // Only show real last actions if they exist, otherwise show when data was added
       if (lastContactDate && record.lastAction) {
