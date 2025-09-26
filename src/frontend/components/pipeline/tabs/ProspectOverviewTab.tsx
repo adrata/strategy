@@ -28,6 +28,30 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       industry: record?.industry,
       buyerGroupRole: record?.customFields?.buyerGroupRole
     });
+    
+    // Enhanced debug logging for Shannon Hegland specifically
+    if (record?.fullName?.includes('Shannon Hegland') || record?.name?.includes('Shannon Hegland')) {
+      console.log('🔍 [SHANNON DEBUG] Full record data for Shannon Hegland:', {
+        id: record.id,
+        fullName: record.fullName,
+        firstName: record.firstName,
+        lastName: record.lastName,
+        jobTitle: record.jobTitle,
+        title: record.title,
+        department: record.department,
+        email: record.email,
+        workEmail: record.workEmail,
+        phone: record.phone,
+        mobilePhone: record.mobilePhone,
+        workPhone: record.workPhone,
+        linkedinUrl: record.linkedinUrl,
+        company: record.company,
+        companyId: record.companyId,
+        companyData: record.companyData,
+        customFields: record.customFields,
+        allKeys: Object.keys(record || {})
+      });
+    }
   }
 
   // Use real prospect data from record - Focus on existing Overview fields
@@ -72,6 +96,25 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     psychographicProfile: record.psychographicProfile || 'No psychographic profile available',
     communicationStyleRecommendations: record.communicationStyleRecommendations || 'No communication style recommendations available'
   };
+
+  // Debug: Log the final prospectData values for Shannon Hegland
+  if (process.env.NODE_ENV === 'development' && (record?.fullName?.includes('Shannon Hegland') || record?.name?.includes('Shannon Hegland'))) {
+    console.log('🔍 [SHANNON PROSPECT DATA] Final values being displayed:', {
+      name: prospectData.name,
+      title: prospectData.title,
+      department: prospectData.department,
+      email: prospectData.email,
+      phone: prospectData.phone,
+      linkedin: prospectData.linkedin,
+      company: prospectData.company,
+      buyerGroupRole: prospectData.buyerGroupRole,
+      influenceLevel: prospectData.influenceLevel,
+      engagementPriority: prospectData.engagementPriority,
+      lastContact: prospectData.lastContact,
+      nextAction: prospectData.nextAction,
+      status: prospectData.status
+    });
+  }
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
     if (!dateString) return 'Never';
