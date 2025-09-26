@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
     const companiesFromAccounts = accounts.map((company) => {
       // Build location string from city, state, country
       const locationParts = [company.city, company.state, company.country].filter(Boolean);
-      const location = locationParts.length > 0 ? locationParts.join(', ') : "Unknown";
+      const location = locationParts.length > 0 ? locationParts.join(', ') : null;
       
       // Generate revenue estimate if no actual revenue data
       let revenueDisplay = company.revenue ? `$${company.revenue.toLocaleString()}` : null;
@@ -122,10 +122,10 @@ export async function GET(request: NextRequest) {
       return {
         id: company.id,
         name: company.name,
-        industry: company.industry || "Unknown",
-        employees: company.size || "Unknown Size", // Use actual size data
-        revenue: revenueDisplay || "Unknown",
-        website: company.website || "",
+        industry: company.industry || null,
+        employees: company.size || null, // Use actual size data
+        revenue: revenueDisplay || null,
+        website: company.website || null,
         location: location,
         // Action data included
         lastAction: company.lastAction || null,
