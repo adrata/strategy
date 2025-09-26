@@ -191,8 +191,8 @@ export async function GET(request: NextRequest) {
             industry: person.company?.industry || 'Unknown',
             size: person.company?.size || 'Unknown',
             stage: 'Prospect',
-            lastAction: 'Never No action',
-            nextAction: 'No date set No action planned'
+            lastAction: '(Never) No action taken',
+            nextAction: 'No action planned'
           }));
 
           return Math.min(speedrunItems.length, 30);

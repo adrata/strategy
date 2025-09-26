@@ -130,8 +130,8 @@ export async function GET(request: NextRequest) {
           industry: person.company?.industry || 'Unknown',
           size: person.company?.size || 'Unknown',
           stage: 'Prospect',
-          lastAction: 'Never No action',
-          nextAction: 'No date set No action planned'
+          lastAction: '(Never) No action taken',
+          nextAction: 'No action planned'
         }));
         break;
         
@@ -193,8 +193,8 @@ export async function GET(request: NextRequest) {
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'Never No action',
-          nextAction: person.nextAction || 'No date set No action planned',
+          lastAction: person.lastAction || '(Never) No action taken',
+          nextAction: person.nextAction || 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
         }));
@@ -257,8 +257,8 @@ export async function GET(request: NextRequest) {
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'Never No action',
-          nextAction: person.nextAction || 'No date set No action planned',
+          lastAction: person.lastAction || '(Never) No action taken',
+          nextAction: person.nextAction || 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
         }));
@@ -298,8 +298,8 @@ export async function GET(request: NextRequest) {
           currency: opportunity.currency || 'USD',
           stage: opportunity.stage || 'Unknown',
           expectedCloseDate: opportunity.expectedCloseDate,
-          lastAction: opportunity.lastAction || 'Never No action',
-          nextAction: opportunity.nextAction || 'No date set No action planned',
+          lastAction: opportunity.lastAction || '(Never) No action taken',
+          nextAction: opportunity.nextAction || 'No action planned',
           createdAt: opportunity.createdAt,
           updatedAt: opportunity.updatedAt
         }));
@@ -354,8 +354,8 @@ export async function GET(request: NextRequest) {
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
-          lastAction: company.lastAction || 'Never No action',
-          nextAction: company.nextAction || 'No date set No action planned',
+          lastAction: company.lastAction || '(Never) No action taken',
+          nextAction: company.nextAction || 'No action planned',
           createdAt: company.createdAt,
           updatedAt: company.updatedAt
         }));
@@ -396,8 +396,8 @@ export async function GET(request: NextRequest) {
           company: person.company || 'Unknown Company',
           title: person.title || 'Unknown Title',
           status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'Never No action',
-          nextAction: person.nextAction || 'No date set No action planned',
+          lastAction: person.lastAction || '(Never) No action taken',
+          nextAction: person.nextAction || 'No action planned',
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
         }));
