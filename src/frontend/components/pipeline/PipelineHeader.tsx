@@ -385,14 +385,14 @@ export function PipelineHeader({
       case 'leads':
         return {
           title: 'Leads',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Warm relationships',
+          subtitle: 'Cold relationships',
           actionButton: 'Add Lead',
           secondaryActionButton: 'Add Action'
         };
       case 'prospects':
         return {
           title: 'Prospects',
-          subtitle: 'Cold relationships',
+          subtitle: 'Warm relationships',
           actionButton: 'Add Prospect',
           secondaryActionButton: 'Add Action'
         };
@@ -406,14 +406,14 @@ export function PipelineHeader({
       case 'companies':
         return {
           title: 'Companies',
-          subtitle: 'Business entities',
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
           actionButton: 'Add Company',
           secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
           title: 'People',
-          subtitle: 'Individual entities',
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Individual entities',
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'
         };

@@ -657,7 +657,7 @@ function PipelineSections({
     {
       id: "prospects",
       name: "Prospects",
-      description: "Cold Relationships",
+      description: "Warm relationships",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),

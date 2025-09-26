@@ -1254,7 +1254,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         onRefresh={handleRefresh}
         onClearCache={handleClearCache}
         onAddRecord={handleAddRecord}
-        recordCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
+        recordCount={fastSectionData.count || (Array.isArray(sectionDataArray) ? sectionDataArray.length : 0)}
       />
 
       {/* Filters */}
