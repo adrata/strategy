@@ -5,6 +5,7 @@ import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from '../InlineEditField';
 import { useRouter } from 'next/navigation';
 import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
+import { calculateRiskAssessment, getRiskPillStyles, generateRiskDescription, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
 
 interface UniversalBuyerGroupsTabProps {
   record: any;
@@ -28,7 +29,57 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [buyerGroups, setBuyerGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [riskAssessments, setRiskAssessments] = useState<Record<string, RiskAssessment>>({});
   const router = useRouter();
+
+  // Handle person click navigation
+  const handlePersonClick = (person: any) => {
+    console.log('🔗 [BUYER GROUPS] Navigating to person:', person);
+    
+    // Get current workspace from URL
+    const currentPath = window.location.pathname;
+    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+    
+    if (workspaceMatch) {
+      const workspaceSlug = workspaceMatch[1];
+      const personUrl = `/${workspaceSlug}/people/${person.id}`;
+      console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
+      router.push(personUrl);
+    } else {
+      // Fallback to non-workspace URL
+      const personUrl = `/people/${person.id}`;
+      console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
+      router.push(personUrl);
+    }
+  };
+
+  // Calculate risk assessment for a person
+  const calculatePersonRisk = (person: any): RiskAssessment => {
+    // Mock career data - in real implementation, this would come from the person's profile
+    const careerData: CareerData = {
+      currentRoleStartDate: person.currentRoleStartDate || '2023-01-01',
+      previousRoles: person.previousRoles || [
+        { title: 'Senior Manager', startDate: '2021-06-01', endDate: '2022-12-31', duration: 18 },
+        { title: 'Manager', startDate: '2020-01-01', endDate: '2021-05-31', duration: 17 },
+        { title: 'Senior Analyst', startDate: '2018-03-01', endDate: '2019-12-31', duration: 22 }
+      ],
+      totalCareerDuration: person.totalCareerDuration || 60,
+      averageRoleDuration: person.averageRoleDuration || 19
+    };
+
+    return calculateRiskAssessment(careerData);
+  };
+
+  // Calculate risk assessments when buyer groups change
+  useEffect(() => {
+    if (buyerGroups.length > 0) {
+      const assessments: Record<string, RiskAssessment> = {};
+      buyerGroups.forEach(person => {
+        assessments[person.id] = calculatePersonRisk(person);
+      });
+      setRiskAssessments(assessments);
+    }
+  }, [buyerGroups]);
 
   useEffect(() => {
     const fetchBuyerGroups = async () => {
@@ -618,8 +669,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         ) : (
           <div className="space-y-4">
             {buyerGroups.map((person) => {
+              const riskAssessment = riskAssessments[person.id];
               return (
-                <div key={person.id} className="bg-white p-4 rounded-lg border border-gray-200">
+                <div 
+                  key={person.id} 
+                  onClick={() => handlePersonClick(person)}
+                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md cursor-pointer transition-all duration-200"
+                >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
@@ -632,15 +688,26 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                         <div className="text-sm text-gray-600">{person.title}</div>
                       </div>
                     </div>
-                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                      person.role === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                      person.role === 'Champion' ? 'bg-green-100 text-green-800' :
-                      person.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                      person.role === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                      person.role === 'Introducer' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {person.role}
+                    <div className="flex items-center gap-2">
+                      {/* Risk Assessment Pill */}
+                      {riskAssessment && riskAssessment.riskLevel !== 'LOW' && (
+                        <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getRiskPillStyles(riskAssessment.riskLevel)}`}>
+                          {riskAssessment.riskLevel === 'CRITICAL' ? '🚨' : 
+                           riskAssessment.riskLevel === 'HIGH' ? '⚠️' : 
+                           riskAssessment.riskLevel === 'MEDIUM' ? '⚡' : ''}
+                          {riskAssessment.riskLevel} Risk
+                        </div>
+                      )}
+                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        person.role === 'Decision Maker' ? 'bg-gray-100 text-gray-800' :
+                        person.role === 'Champion' ? 'bg-gray-100 text-gray-800' :
+                        person.role === 'Blocker' ? 'bg-gray-100 text-gray-800' :
+                        person.role === 'Stakeholder' ? 'bg-gray-100 text-gray-800' :
+                        person.role === 'Introducer' ? 'bg-gray-100 text-gray-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {person.role}
+                      </div>
                     </div>
                   </div>
 
@@ -650,29 +717,48 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                       <div>
                         <div className="text-xs text-gray-600 mb-1">Engagement</div>
-                        <div className="text-sm font-medium text-green-600">High</div>
+                        <div className="text-sm font-medium text-gray-600">High</div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-600 mb-1">Influence</div>
-                        <div className="text-sm font-medium text-green-600">High</div>
+                        <div className="text-sm font-medium text-gray-600">High</div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-600 mb-1">Budget Authority</div>
-                        <div className="text-sm font-medium text-orange-600">Medium</div>
+                        <div className="text-sm font-medium text-gray-600">Medium</div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-600 mb-1">Timeline</div>
-                        <div className="text-sm font-medium text-red-600">Immediate</div>
+                        <div className="text-sm font-medium text-gray-600">Immediate</div>
                       </div>
                     </div>
+
+                    {/* Risk Assessment Details */}
+                    {riskAssessment && riskAssessment.riskLevel !== 'LOW' && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-medium text-gray-700">Risk Assessment</span>
+                          <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskPillStyles(riskAssessment.riskLevel)}`}>
+                            {riskAssessment.riskLevel} Risk ({riskAssessment.riskScore}%)
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-2">{riskAssessment.description}</p>
+                        {riskAssessment.factors.length > 0 && (
+                          <div className="text-xs text-gray-500">
+                            <strong>Factors:</strong> {riskAssessment.factors.slice(0, 2).join(', ')}
+                            {riskAssessment.factors.length > 2 && ` +${riskAssessment.factors.length - 2} more`}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Pain Points */}
                     <div className="mb-4">
                       <div className="text-xs text-gray-600 mb-2">Pain Points</div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Budget constraints</span>
-                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">ROI justification</span>
-                        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Implementation timing</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Budget constraints</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">ROI justification</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Implementation timing</span>
                       </div>
                     </div>
 
@@ -680,9 +766,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <div>
                       <div className="text-xs text-gray-600 mb-2">Interests</div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Cost savings</span>
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Efficiency gains</span>
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Competitive advantage</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Cost savings</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Efficiency gains</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Competitive advantage</span>
                       </div>
                     </div>
                   </div>
