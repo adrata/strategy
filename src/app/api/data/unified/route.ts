@@ -3382,8 +3382,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
       
       // Determine last action based on record data
-      let lastAction = 'Start outreach';
-      let lastActionTime = 'Never';
+      let lastAction = 'No action taken';
+      let lastActionTime = '(Never)';
       
       // Only show real last actions if they exist, otherwise show when data was added
       if (lastContactDate && record.lastAction) {
@@ -3405,7 +3405,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
         else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         
-        lastAction = 'Start outreach';
+        lastAction = 'No action taken';
       }
       
       // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
