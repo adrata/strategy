@@ -319,55 +319,45 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'companies':
-        // 🚀 CONSISTENT RANKING: Get companies from people relationships (same as speedrun)
-        const peopleWithCompanies = await prisma.people.findMany({
+        // 🚀 PROPER COMPANY RANKING: Use actual company ranks from database
+        const companiesData = await prisma.companies.findMany({
           where: {
             workspaceId,
             deletedAt: null,
-            companyId: { not: null }, // Only people with company relationships
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
             ]
           },
-          orderBy: { updatedAt: 'desc' },
-          take: 200, // Load enough people for proper company ranking
-          include: {
-            company: {
-              select: {
-                id: true,
-                name: true,
-                industry: true,
-                vertical: true,
-                size: true,
-                createdAt: true,
-                updatedAt: true,
-                rank: true,
-                lastAction: true,
-                lastActionDate: true,
-                nextAction: true,
-                nextActionDate: true
-              }
-            }
+          orderBy: [
+            { rank: 'asc' }, // Use actual company ranks first
+            { updatedAt: 'desc' } // Then by update time for companies without ranks
+          ],
+          take: limit,
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            vertical: true,
+            size: true,
+            createdAt: true,
+            updatedAt: true,
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true
           }
         });
         
-        // Extract unique companies and apply consistent ranking
-        const uniqueCompanies = new Map();
-        peopleWithCompanies.forEach(person => {
-          if (person.company && !uniqueCompanies.has(person.company.id)) {
-            uniqueCompanies.set(person.company.id, person.company);
-          }
-        });
-        
-        const companiesList = Array.from(uniqueCompanies.values());
-        sectionData = companiesList.slice(0, limit).map((company, index) => ({
+        // Apply proper sequential ranking based on database ranks
+        sectionData = companiesData.map((company, index) => ({
           id: company.id,
-          rank: index + 1,
+          rank: company.rank || (index + 1), // Use database rank or sequential fallback
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
-          lastAction: company.lastAction || '(Never) No action taken',
+          lastAction: company.lastAction || 'Never',
           nextAction: company.nextAction || 'No action planned',
           createdAt: company.createdAt,
           updatedAt: company.updatedAt
