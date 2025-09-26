@@ -488,7 +488,7 @@ export function SpeedrunSprintView() {
       
       <UniversalRecordTemplate
         record={selectedRecord}
-        recordType="prospects"
+        recordType="speedrun"
         recordIndex={(() => {
           const index = data.findIndex(r => r['id'] === selectedRecord.id);
           const recordIndex = index >= 0 ? index + 1 : 1;
