@@ -136,12 +136,17 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'leads':
-        sectionData = await prisma.leads.findMany({
+        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
+        const leadsData = await prisma.leads.findMany({
           where: {
             workspaceId,
-            deletedAt: null
+            deletedAt: null,
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
           },
-          orderBy: { updatedAt: 'desc' },
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
           take: limit,
           select: {
             id: true,
@@ -152,18 +157,42 @@ export async function GET(request: NextRequest) {
             company: true,
             status: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true
           }
         });
+        
+        // Apply consistent ranking logic
+        sectionData = leadsData.map((lead, index) => ({
+          id: lead.id,
+          rank: index + 1,
+          name: lead.fullName || `${lead.firstName} ${lead.lastName}`,
+          company: lead.company || 'Unknown Company',
+          email: lead.email || 'Unknown Email',
+          status: lead.status || 'Unknown',
+          lastAction: lead.lastAction || 'Never No action',
+          nextAction: lead.nextAction || 'No date set No action planned',
+          createdAt: lead.createdAt,
+          updatedAt: lead.updatedAt
+        }));
         break;
         
       case 'prospects':
-        sectionData = await prisma.prospects.findMany({
+        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
+        const prospectsData = await prisma.prospects.findMany({
           where: {
             workspaceId,
-            deletedAt: null
+            deletedAt: null,
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
           },
-          orderBy: { updatedAt: 'desc' },
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
           take: limit,
           select: {
             id: true,
@@ -174,13 +203,29 @@ export async function GET(request: NextRequest) {
             company: true,
             status: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            rank: true
           }
         });
+        
+        // Apply consistent ranking logic
+        sectionData = prospectsData.map((prospect, index) => ({
+          id: prospect.id,
+          rank: index + 1,
+          name: prospect.fullName || `${prospect.firstName} ${prospect.lastName}`,
+          company: prospect.company || 'Unknown Company',
+          email: prospect.email || 'Unknown Email',
+          status: prospect.status || 'Unknown',
+          lastAction: prospect.lastAction || 'Never No action',
+          nextAction: prospect.nextAction || 'No date set No action planned',
+          createdAt: prospect.createdAt,
+          updatedAt: prospect.updatedAt
+        }));
         break;
         
       case 'opportunities':
-        sectionData = await prisma.opportunities.findMany({
+        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
+        const opportunitiesData = await prisma.opportunities.findMany({
           where: {
             workspaceId,
             deletedAt: null,
@@ -202,6 +247,21 @@ export async function GET(request: NextRequest) {
             updatedAt: true
           }
         });
+        
+        // Apply consistent ranking logic
+        sectionData = opportunitiesData.map((opportunity, index) => ({
+          id: opportunity.id,
+          rank: index + 1,
+          name: opportunity.name || 'Unknown Opportunity',
+          amount: opportunity.amount || 0,
+          currency: opportunity.currency || 'USD',
+          stage: opportunity.stage || 'Unknown',
+          expectedCloseDate: opportunity.expectedCloseDate,
+          lastAction: opportunity.lastAction || 'Never No action',
+          nextAction: opportunity.nextAction || 'No date set No action planned',
+          createdAt: opportunity.createdAt,
+          updatedAt: opportunity.updatedAt
+        }));
         break;
         
       case 'companies':
