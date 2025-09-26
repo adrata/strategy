@@ -416,26 +416,20 @@ export async function GET(request: NextRequest) {
     try {
       switch (section) {
         case 'leads':
+          // Use same logic as counts API (leads table without user filters)
           totalCount = await prisma.leads.count({
             where: {
               workspaceId,
-              deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              deletedAt: null
             }
           });
           break;
         case 'prospects':
+          // Use same logic as counts API (prospects table without user filters)
           totalCount = await prisma.prospects.count({
             where: {
               workspaceId,
-              deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              deletedAt: null
             }
           });
           break;
