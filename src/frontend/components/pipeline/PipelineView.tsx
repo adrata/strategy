@@ -366,6 +366,44 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const finalError = fastSectionData.error || pipelineData.error;
   const finalIsEmpty = (fastSectionData.data || []).length === 0;
   
+  // 🔍 DEBUG: Log data sources for People section
+  if (section === 'people') {
+    console.log('🔍 [PEOPLE DEBUG] Data sources:', {
+      section,
+      fastSectionData: {
+        hasData: !!fastSectionData.data,
+        dataLength: fastSectionData.data?.length || 0,
+        loading: fastSectionData.loading,
+        error: fastSectionData.error,
+        firstPerson: fastSectionData.data?.[0] ? {
+          rank: fastSectionData.data[0].rank,
+          name: fastSectionData.data[0].name,
+          company: fastSectionData.data[0].company?.name || fastSectionData.data[0].company
+        } : null
+      },
+      pipelineData: {
+        hasData: !!pipelineData.data,
+        dataLength: pipelineData.data?.length || 0,
+        loading: pipelineData.loading,
+        error: pipelineData.error,
+        firstPerson: pipelineData.data?.[0] ? {
+          rank: pipelineData.data[0].rank,
+          name: pipelineData.data[0].name,
+          company: pipelineData.data[0].company?.name || pipelineData.data[0].company
+        } : null
+      },
+      finalData: {
+        hasData: !!finalData,
+        dataLength: finalData?.length || 0,
+        firstPerson: finalData?.[0] ? {
+          rank: finalData[0].rank,
+          name: finalData[0].name,
+          company: finalData[0].company?.name || finalData[0].company
+        } : null
+      }
+    });
+  }
+  
   // Set loading to false when data is actually loaded
   useEffect(() => {
     if (finalData !== undefined && !finalError) {

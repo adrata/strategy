@@ -42,7 +42,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       authLoading,
       hasWorkspaceId: !!workspaceId,
       hasUserId: !!userId,
-      alreadyLoaded: loadedSections.has(section)
+      alreadyLoaded: loadedSections.has(section),
+      loadedSections: Array.from(loadedSections)
     });
     
     if (!workspaceId || !userId || authLoading) {
@@ -83,7 +84,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: result.data.count,
           items: result.data.data?.length,
-          responseTime: result.meta?.responseTime
+          responseTime: result.meta?.responseTime,
+          firstItem: result.data.data?.[0] ? {
+            rank: result.data.data[0].rank,
+            name: result.data.data[0].name,
+            company: result.data.data[0].company?.name || result.data.data[0].company
+          } : null
         });
       } else {
         throw new Error(result.error || 'Failed to load section data');
@@ -106,6 +112,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
   // 🚀 PERFORMANCE: Reset loaded sections when workspace changes
   useEffect(() => {
+    console.log(`🔄 [FAST SECTION DATA] Resetting loaded sections for ${section} due to workspace/user change`);
     setLoadedSections(new Set());
   }, [workspaceId, userId]);
 
