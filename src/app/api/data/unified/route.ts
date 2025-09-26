@@ -1044,44 +1044,64 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
-  // Special handling for people - show people assigned to user or unassigned
+  // Special handling for people - use unified master ranking system
   if (type === 'people') {
-    const people = await prisma.people.findMany({
-      where: {
-        workspaceId,
-        deletedAt: null,
-        OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
-        ]
-      },
-      orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 5000 // Load all people records (increased for large workspaces)
-    });
-    
-    // Manually lookup company names for people that have companyId
-    const peopleWithCompanies = await Promise.all(
-      people.map(async (person) => {
-        if (person.companyId) {
-          try {
-            const companyData = await prisma.companies.findUnique({
-              where: { id: person.companyId },
-              select: { id: true, name: true, industry: true, vertical: true }
-            });
-            return {
-              ...person,
-              company: companyData
-            };
-          } catch (error) {
-            console.warn(`Failed to lookup company for person ${person.id}:`, error);
-            return person;
+    try {
+      // Use the unified master ranking system for consistent ranking
+      const unifiedRanking = await UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId);
+      
+      console.log(`👥 [PEOPLE API] Using unified master ranking:`, {
+        totalPeople: unifiedRanking.people.length,
+        samplePeople: unifiedRanking.people.slice(0, 5).map(p => ({ 
+          id: p.id, 
+          name: p.name, 
+          company: p.company, 
+          masterRank: p.masterRank 
+        }))
+      });
+      
+      return { success: true, data: unifiedRanking.people };
+    } catch (error) {
+      console.error('❌ [PEOPLE API] Error using unified ranking, falling back to basic query:', error);
+      
+      // Fallback to basic query if unified ranking fails
+      const people = await prisma.people.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
+        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+        take: pagination?.limit || 5000
+      });
+      
+      // Manually lookup company names for people that have companyId
+      const peopleWithCompanies = await Promise.all(
+        people.map(async (person) => {
+          if (person.companyId) {
+            try {
+              const companyData = await prisma.companies.findUnique({
+                where: { id: person.companyId },
+                select: { id: true, name: true, industry: true, vertical: true }
+              });
+              return {
+                ...person,
+                company: companyData
+              };
+            } catch (error) {
+              console.warn(`Failed to lookup company for person ${person.id}:`, error);
+              return person;
+            }
           }
-        }
-        return person;
-      })
-    );
-    
-    return { success: true, data: peopleWithCompanies };
+          return person;
+        })
+      );
+      
+      return { success: true, data: peopleWithCompanies };
+    }
   }
   
   // Handle speedrun case for non-demo workspaces
@@ -2837,29 +2857,36 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         
         return uniqueCompanies;
       }),
-      prisma.people.findMany({ 
-        where: { 
-          workspaceId, 
-          deletedAt: null
-          // Removed assignedUserId filter to show all people (matching sidebar count)
-        },
-        orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // 🚀 PERFORMANCE: Load only recent people for dashboard (was 10000)
-        select: { 
-          id: true, 
-          fullName: true, 
-          firstName: true, 
-          lastName: true, 
-          company: true,
-          companyId: true,
-          jobTitle: true,
-          email: true,
-          phone: true,
-          linkedinUrl: true,
-          customFields: true,
-          tags: true,
-          updatedAt: true 
-        }
+      // Use unified master ranking for people in dashboard
+      UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId).then(result => {
+        // Return first 100 people from unified ranking for dashboard performance
+        return result.people.slice(0, 100);
+      }).catch(error => {
+        console.error('❌ [DASHBOARD PEOPLE] Error using unified ranking, falling back to basic query:', error);
+        // Fallback to basic query if unified ranking fails
+        return prisma.people.findMany({ 
+          where: { 
+            workspaceId, 
+            deletedAt: null
+          },
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          take: 100,
+          select: { 
+            id: true, 
+            fullName: true, 
+            firstName: true, 
+            lastName: true, 
+            company: true,
+            companyId: true,
+            jobTitle: true,
+            email: true,
+            phone: true,
+            linkedinUrl: true,
+            customFields: true,
+            tags: true,
+            updatedAt: true 
+          }
+        });
       }),
       prisma.clients.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },

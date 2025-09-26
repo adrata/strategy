@@ -89,8 +89,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         const cacheKey = `people-${workspaceId}-${userId}`;
         let peopleData = [];
         
-        // Check cache first using safe localStorage
-        const cachedData = safeGetItem(cacheKey, 5 * 60 * 1000); // 5 minutes TTL
+        // Check cache first using safe localStorage (reduced TTL for testing)
+        const cachedData = safeGetItem(cacheKey, 30 * 1000); // 30 seconds TTL for testing
         if (cachedData) {
           peopleData = cachedData;
           console.log('📦 [BUYER GROUPS] Using cached people data');
@@ -99,7 +99,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
           console.log('🔍 [BUYER GROUPS] Fetching fresh people data');
-          const response = await fetch(`/api/data/unified?type=people&action=get&workspaceId=${workspaceId}&userId=${userId}`);
+          const response = await fetch(`/api/data/unified?type=people&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true&timestamp=${Date.now()}`);
 
           if (!response.ok) {
             const errorText = await response.text();

@@ -257,8 +257,8 @@ export function useAcquisitionOSData(
     const url = new URL('/api/data/unified', window.location.origin);
     url.searchParams.set('type', 'dashboard');
     url.searchParams.set('action', 'get');
-    // Remove forceRefresh to use cache for better performance
-    // url.searchParams.set('forceRefresh', 'true');
+    // Force refresh to get updated people ranking data
+    url.searchParams.set('forceRefresh', 'true');
     url.searchParams.set('timestamp', Date.now().toString()); // Cache busting
     url.searchParams.set('workspaceId', activeWorkspace.id);
     
@@ -361,7 +361,7 @@ export function useAcquisitionOSData(
     refresh,
     clearCache 
   } = useAdrataData(cacheKey, fetchAcquisitionData, {
-    ttl: 1800000, // 🚀 PERFORMANCE: 30 minutes aggressive caching for lightning speed
+    ttl: 30000, // 🚀 PERFORMANCE: 30 seconds cache for testing updated people ranking
     priority: 'high',
     tags: ['acquisition-os', activeWorkspace?.id || '', authUser?.id || ''],
     revalidateOnReconnect: true,

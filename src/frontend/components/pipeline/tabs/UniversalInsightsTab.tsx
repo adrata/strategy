@@ -157,8 +157,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
   // Extract basic record information
   const name = record?.fullName || record?.name || 'This individual';
-  const title = record?.jobTitle || record?.title || '-';
-  const company = record?.company || record?.companyName || record?.companyData?.name || '-';
+  const title = typeof record?.jobTitle === 'string' ? record?.jobTitle : 
+                typeof record?.title === 'string' ? record?.title : 
+                record?.jobTitle || record?.title || '-';
+  const company = typeof record?.company === 'string' ? record?.company : 
+                  typeof record?.company === 'object' ? record?.company?.name || record?.companyName || record?.companyData?.name || '-' :
+                  record?.companyName || record?.companyData?.name || '-';
   const industry = record?.industry || record?.companyData?.industry || '-';
 
   // Generate intelligent insights based on role and data

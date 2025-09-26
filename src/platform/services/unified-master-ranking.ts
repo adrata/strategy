@@ -343,7 +343,7 @@ export class UnifiedMasterRankingEngine {
     // Group by company
     const peopleByCompany: Record<string, any[]> = {};
     allPeople.forEach(person => {
-      const company = person.company || person.companyName || 'Unknown Company';
+      const company = person.company || person.companyName || '-';
       if (!peopleByCompany[company]) {
         peopleByCompany[company] = [];
       }

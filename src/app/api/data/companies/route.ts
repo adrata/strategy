@@ -58,22 +58,10 @@ export async function GET(request: NextRequest) {
         nextActionDate: true,
         actionStatus: true
       },
-      orderBy: {
-        updatedAt: "desc",
-      },
+      orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
     });
 
-    // Sort companies to put 5Bars Services first
-    accounts.sort((a, b) => {
-      const aIs5Bars = a.name.toLowerCase().includes('5bars') || a.name.toLowerCase().includes('5 bars');
-      const bIs5Bars = b.name.toLowerCase().includes('5bars') || b.name.toLowerCase().includes('5 bars');
-      
-      if (aIs5Bars && !bIs5Bars) return -1;
-      if (!aIs5Bars && bIs5Bars) return 1;
-      
-      // If both or neither are 5Bars, maintain original order (by updatedAt desc)
-      return 0;
-    });
+    // Companies are already sorted by rank first, then updatedAt desc from the database query
 
     // Companies loaded successfully
 

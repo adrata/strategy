@@ -227,7 +227,7 @@ export function UniversalCompanyIntelTab({ record, recordType }: UniversalCompan
 
       {/* AI-Generated Alignment Strategy */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">AI-Generated Alignment Strategy</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Adrata Strategy</h3>
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="text-sm text-gray-900 leading-relaxed">
             Based on analysis of {intelligence.companyName}'s business units and industry position, the company's wants and needs align with solutions that address operational efficiency, technology modernization, and regulatory compliance. Key positioning opportunities include emphasizing how our solutions directly support their water supply operations, engineering infrastructure needs, and customer service improvements while ensuring regulatory compliance and administrative efficiency.
