@@ -374,9 +374,9 @@ export function getDynamicGoals(): { daily: number; weekly: number; weeklyWorkin
   const today = new Date();
   const workingDaysThisWeek = getWorkingDaysInWeek(today);
   
-  // Base goal is 50 per day, 250 per week (5 days)
-  const baseDailyGoal = 50;
-  const baseWeeklyGoal = 250;
+  // Base goal is 30 per day, 150 per week (5 days)
+  const baseDailyGoal = 30;
+  const baseWeeklyGoal = 150;
   
   // Adjust weekly goal based on working days
   const adjustedWeeklyGoal = Math.round((baseWeeklyGoal / 5) * workingDaysThisWeek);

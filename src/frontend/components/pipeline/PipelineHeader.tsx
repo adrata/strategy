@@ -83,7 +83,7 @@ export function PipelineHeader({
       ...data,
       hoursLeft: data.hoursLeft || 6.5, // Realistic work day remaining
       todayProgress: data.todayProgress || 12, // Some progress made
-      todayTarget: data.todayTarget || 50,
+      todayTarget: data.todayTarget || 30,
       weekProgress: data.weekProgress || 47, // This week progress
       weekTarget: data.weekTarget || 250,
       allTimeRecord: data.allTimeRecord || 285 // All time record
