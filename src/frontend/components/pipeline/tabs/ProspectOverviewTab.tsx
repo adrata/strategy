@@ -30,37 +30,96 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     });
   }
 
-  // Use real prospect data from record
+  // Use real prospect data from record - Enhanced with all available fields
   const prospectData = {
+    // Basic Information
     name: record.fullName || record.name || 'Unknown Prospect',
+    firstName: record.firstName || '-',
+    lastName: record.lastName || '-',
+    middleName: record.middleName || '-',
+    displayName: record.displayName || '-',
+    salutation: record.salutation || '-',
+    suffix: record.suffix || '-',
     title: record.jobTitle || record.title || '-',
-    email: record.email || record.workEmail || '-',
-    phone: record.phone || record.mobilePhone || record.workPhone || '-',
-    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-',
     department: record.department || record?.customFields?.enrichedData?.overview?.department || '-',
     seniority: record.seniority || record?.customFields?.enrichedData?.overview?.seniority || '-',
+    
+    // Contact Information
+    email: record.email || record.workEmail || '-',
+    workEmail: record.workEmail || '-',
+    personalEmail: record.personalEmail || '-',
+    secondaryEmail: record.secondaryEmail || '-',
+    phone: record.phone || record.mobilePhone || record.workPhone || '-',
+    mobilePhone: record.mobilePhone || '-',
+    workPhone: record.workPhone || '-',
+    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-',
+    twitterHandle: record.twitterHandle || '-',
+    
+    // Location Information
+    address: record.address || '-',
+    city: record.city || '-',
+    state: record.state || '-',
+    country: record.country || '-',
+    postalCode: record.postalCode || '-',
+    location: record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location',
+    
+    // Personal Information
+    dateOfBirth: record.dateOfBirth || null,
+    gender: record.gender || '-',
+    preferredLanguage: record.preferredLanguage || '-',
+    timezone: record.timezone || '-',
+    bio: record.bio || '-',
+    
+    // Status and Metadata
     status: record.status || 'active',
     priority: record.priority || 'medium',
     company: record.company || record.companyData?.name || 'No company assigned',
     companyId: record.companyId || null,
     industry: record.industry || record.companyData?.industry || 'Unknown Industry',
-    location: record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location',
+    
+    // Buyer Group and Influence
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || 'Stakeholder',
     influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || 'Medium',
     engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || 'Medium',
+    
+    // Engagement History
     lastContact: record.lastContactDate || record.lastContact || 'Never',
     nextAction: record.nextAction || 'No action planned',
     nextActionDate: record.nextActionDate || null,
+    
+    // Notes and Tags
     notes: record.notes || 'No notes available',
     tags: record.tags || [],
+    
+    // Business Information
     estimatedValue: record.estimatedValue || 0,
     currency: record.currency || 'USD',
     source: record.source || 'Unknown',
+    
+    // Intelligence and Insights
     painIntelligence: record.painIntelligence || 'No pain intelligence available',
     wants: record.wants || [],
     needs: record.needs || [],
     psychographicProfile: record.psychographicProfile || 'No psychographic profile available',
-    communicationStyleRecommendations: record.communicationStyleRecommendations || 'No communication style recommendations available'
+    communicationStyleRecommendations: record.communicationStyleRecommendations || 'No communication style recommendations available',
+    
+    // Enrichment Metadata
+    lastEnriched: record.lastEnriched || null,
+    enrichmentSources: record.enrichmentSources || [],
+    enrichmentScore: record.enrichmentScore || null,
+    emailConfidence: record.emailConfidence || null,
+    phoneConfidence: record.phoneConfidence || null,
+    dataCompleteness: record.dataCompleteness || null,
+    emailVerified: record.emailVerified || false,
+    phoneVerified: record.phoneVerified || false,
+    mobileVerified: record.mobileVerified || false,
+    
+    // Custom Fields (Raw Data)
+    customFields: record.customFields || {},
+    
+    // Timestamps
+    createdAt: record.createdAt || null,
+    updatedAt: record.updatedAt || null
   };
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
@@ -394,6 +453,223 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Enrichment Data Section */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Enrichment Metadata Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Data Quality & Enrichment</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Last Enriched:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.lastEnriched ? formatRelativeDate(prospectData.lastEnriched) : 'Never'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Enrichment Score:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.enrichmentScore ? `${prospectData.enrichmentScore}%` : 'N/A'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Data Completeness:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.dataCompleteness ? `${prospectData.dataCompleteness}%` : 'N/A'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Email Confidence:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.emailConfidence ? `${prospectData.emailConfidence}%` : 'N/A'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Phone Confidence:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.phoneConfidence ? `${prospectData.phoneConfidence}%` : 'N/A'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Email Verified:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  prospectData.emailVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {prospectData.emailVerified ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Phone Verified:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  prospectData.phoneVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {prospectData.phoneVerified ? 'Yes' : 'No'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Contact Information Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Additional Contact Information</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Work Email:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.workEmail !== '-' ? (
+                    <a href={`mailto:${prospectData.workEmail}`} className="text-blue-600 hover:underline">
+                      {prospectData.workEmail}
+                    </a>
+                  ) : (
+                    prospectData.workEmail
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Personal Email:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.personalEmail !== '-' ? (
+                    <a href={`mailto:${prospectData.personalEmail}`} className="text-blue-600 hover:underline">
+                      {prospectData.personalEmail}
+                    </a>
+                  ) : (
+                    prospectData.personalEmail
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Mobile Phone:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.mobilePhone !== '-' ? (
+                    <a href={`tel:${prospectData.mobilePhone}`} className="text-blue-600 hover:underline">
+                      {prospectData.mobilePhone}
+                    </a>
+                  ) : (
+                    prospectData.mobilePhone
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Work Phone:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.workPhone !== '-' ? (
+                    <a href={`tel:${prospectData.workPhone}`} className="text-blue-600 hover:underline">
+                      {prospectData.workPhone}
+                    </a>
+                  ) : (
+                    prospectData.workPhone
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Twitter:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.twitterHandle !== '-' ? (
+                    <a 
+                      href={`https://twitter.com/${prospectData.twitterHandle.replace('@', '')}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {prospectData.twitterHandle}
+                    </a>
+                  ) : (
+                    prospectData.twitterHandle
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Location Information Card */}
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h4 className="font-medium text-gray-900 mb-3">Location Information</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Address:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.address}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">City:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.city}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">State:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.state}</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Country:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.country}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Postal Code:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.postalCode}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Timezone:</span>
+                <span className="text-sm font-medium text-gray-900">{prospectData.timezone}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Custom Fields and Raw Data */}
+        {Object.keys(prospectData.customFields).length > 0 && (
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Enriched Data & Custom Fields</h4>
+            <div className="space-y-2">
+              <div className="text-sm text-gray-600">
+                <strong>Enrichment Sources:</strong> {prospectData.enrichmentSources.join(', ') || 'None'}
+              </div>
+              <div className="text-sm text-gray-600">
+                <strong>Custom Fields Available:</strong> {Object.keys(prospectData.customFields).length} fields
+              </div>
+              {Object.keys(prospectData.customFields).length > 0 && (
+                <details className="mt-2">
+                  <summary className="text-sm font-medium text-gray-700 cursor-pointer hover:text-gray-900">
+                    View Custom Fields ({Object.keys(prospectData.customFields).length} fields)
+                  </summary>
+                  <div className="mt-2 p-3 bg-gray-50 rounded border">
+                    <pre className="text-xs text-gray-600 whitespace-pre-wrap overflow-auto max-h-40">
+                      {JSON.stringify(prospectData.customFields, null, 2)}
+                    </pre>
+                  </div>
+                </details>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Bio and Personal Information */}
+        {(prospectData.bio !== '-' || prospectData.preferredLanguage !== '-' || prospectData.gender !== '-') && (
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Personal Information</h4>
+            <div className="space-y-2">
+              {prospectData.bio !== '-' && (
+                <div>
+                  <span className="text-sm text-gray-600">Bio:</span>
+                  <p className="text-sm text-gray-900 mt-1">{prospectData.bio}</p>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Preferred Language:</span>
+                  <span className="text-sm font-medium text-gray-900">{prospectData.preferredLanguage}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Gender:</span>
+                  <span className="text-sm font-medium text-gray-900">{prospectData.gender}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
