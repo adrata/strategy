@@ -7,12 +7,10 @@ interface SpeedrunLeadDetailsTabNavigationProps {
 
 const tabs = [
   "Overview",
-  "Insights",
-  "Profile",
+  "Intelligence",
   "Career",
-  "Workspace",
-  "History",
   "Notes",
+  "Timeline",
 ];
 
 export function SpeedrunLeadDetailsTabNavigation({

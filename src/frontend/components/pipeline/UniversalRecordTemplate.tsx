@@ -142,14 +142,22 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
-        case 'people':
-          return [
-            { id: 'overview', label: 'Overview' },
-            { id: 'intelligence', label: 'Intelligence' },
-            { id: 'career', label: 'Career' },
-            { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
-          ];
+    case 'people':
+      return [
+        { id: 'overview', label: 'Overview' },
+        { id: 'intelligence', label: 'Intelligence' },
+        { id: 'career', label: 'Career' },
+        { id: 'notes', label: 'Notes' },
+        { id: 'timeline', label: 'Timeline' }
+      ];
+    case 'speedrun':
+      return [
+        { id: 'overview', label: 'Overview' },
+        { id: 'intelligence', label: 'Intelligence' },
+        { id: 'career', label: 'Career' },
+        { id: 'notes', label: 'Notes' },
+        { id: 'timeline', label: 'Timeline' }
+      ];
     case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
@@ -1272,7 +1280,7 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
-            recordType === 'prospects' || recordType === 'leads' ?
+            recordType === 'prospects' || recordType === 'leads' || recordType === 'speedrun' ?
               <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
             recordType === 'people' ?
               <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :

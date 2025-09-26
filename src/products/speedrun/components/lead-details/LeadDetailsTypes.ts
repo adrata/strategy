@@ -131,12 +131,9 @@ export interface LeadDetailsReportServiceProps {
 
 export const TABS = [
   "Overview",
-  "Insights",
-  // "Buyer Group", // Hidden per user request
-  "Profile",
+  "Intelligence",
   "Career",
-  "Workspace",
-  "History",
   "Notes",
+  "Timeline",
 ] as const;
 export type TabType = (typeof TABS)[number];
