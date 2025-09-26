@@ -67,6 +67,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     if (!dateString) return 'Never';
     
     const date = new Date(dateString);
+    
+    // Check if the date is invalid
+    if (isNaN(date.getTime())) {
+      return 'Never';
+    }
+    
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
     const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
@@ -300,7 +306,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Next Action:</span>
-                <span className="text-sm font-medium text-gray-900">{prospectData.nextAction}</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {prospectData.nextActionDate ? formatRelativeDate(prospectData.nextActionDate) : prospectData.nextAction}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Status:</span>
