@@ -182,7 +182,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             if (sectionResponse.ok) {
               const sectionResult = await sectionResponse.json();
               if (sectionResult.success && sectionResult.data) {
-                peopleData = sectionResult.data;
+                peopleData = Array.isArray(sectionResult.data) ? sectionResult.data : [];
+                console.log('📊 [BUYER GROUPS] Section API returned:', peopleData.length, 'people');
                 console.log('⚡ [BUYER GROUPS] Using fast section API');
                 
                 // Cache the data immediately
@@ -217,7 +218,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
             const result = await response.json();
             if (result.success) {
-              peopleData = result.data || [];
+              peopleData = Array.isArray(result.data) ? result.data : [];
+              console.log('📊 [BUYER GROUPS] Unified API returned:', peopleData.length, 'people');
               
               // Cache essential data using safe localStorage
               const essentialData = peopleData.map(person => ({
@@ -240,6 +242,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               throw new Error('Failed to fetch people data');
             }
           }
+        }
+        
+        // Ensure peopleData is an array before filtering
+        if (!Array.isArray(peopleData)) {
+          console.error('❌ [BUYER GROUPS] peopleData is not an array:', typeof peopleData, peopleData);
+          peopleData = [];
         }
         
         // Filter people by company ID or company name
