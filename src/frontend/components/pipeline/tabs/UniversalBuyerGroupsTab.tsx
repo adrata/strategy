@@ -101,8 +101,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         return;
       }
       
-      // Set loading to true when starting to fetch
+      // ⚡ PERFORMANCE: Set loading to true but with shorter timeout for better UX
       setLoading(true);
+      
+      // ⚡ PERFORMANCE: Set a timeout to prevent infinite loading
+      const loadingTimeout = setTimeout(() => {
+        console.log('⚠️ [BUYER GROUPS] Loading timeout reached, showing empty state');
+        setLoading(false);
+        setBuyerGroups([]);
+      }, 10000); // 10 second timeout
       
       try {
         
@@ -149,11 +156,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         let peopleData = [];
         
         // ⚡ PERFORMANCE: Check buyer group specific cache first (faster)
-        const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 5 * 60 * 1000); // 5 minutes TTL
+        const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 10 * 60 * 1000); // 10 minutes TTL for better performance
         if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData) && buyerGroupCachedData.length > 0) {
           console.log('📦 [BUYER GROUPS] Using cached buyer group data');
           setBuyerGroups(buyerGroupCachedData);
           setLoading(false);
+          clearTimeout(loadingTimeout);
           return;
         }
         
@@ -167,37 +175,70 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
           console.log('🔍 [BUYER GROUPS] Fetching fresh people data');
-          const response = await fetch(`/api/data/unified?type=people&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true&timestamp=${Date.now()}`);
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('API Error:', errorText);
-            throw new Error(`Failed to fetch company people: ${response.status} ${errorText}`);
-          }
-
-          const result = await response.json();
-          if (result.success) {
-            peopleData = result.data || [];
-            
-            // Cache essential data using safe localStorage
-            const essentialData = peopleData.map(person => ({
-              id: person.id,
-              fullName: person.fullName,
-              firstName: person.firstName,
-              lastName: person.lastName,
-              company: person.company,
-              companyId: person.companyId,
-              jobTitle: person.jobTitle,
-              email: person.email
-            }));
-            
-            const cacheSuccess = safeSetItem(cacheKey, essentialData);
-            if (!cacheSuccess) {
-              console.warn('Failed to cache people data, continuing without cache');
+          
+          // ⚡ PERFORMANCE: Try lightweight section API first (faster)
+          try {
+            const sectionResponse = await fetch(`/api/data/section?section=people&limit=100&workspaceId=${workspaceId}&userId=${userId}`);
+            if (sectionResponse.ok) {
+              const sectionResult = await sectionResponse.json();
+              if (sectionResult.success && sectionResult.data) {
+                peopleData = sectionResult.data;
+                console.log('⚡ [BUYER GROUPS] Using fast section API');
+                
+                // Cache the data immediately
+                const essentialData = peopleData.map(person => ({
+                  id: person.id,
+                  fullName: person.fullName,
+                  firstName: person.firstName,
+                  lastName: person.lastName,
+                  company: person.company,
+                  companyId: person.companyId,
+                  jobTitle: person.jobTitle,
+                  email: person.email
+                }));
+                
+                safeSetItem(cacheKey, essentialData);
+                console.log('📦 [BUYER GROUPS] Cached section API data');
+              }
             }
-          } else {
-            console.error('Error fetching people data:', result.error);
-            throw new Error('Failed to fetch people data');
+          } catch (sectionError) {
+            console.log('⚠️ [BUYER GROUPS] Section API failed, falling back to unified API');
+          }
+          
+          // Fallback to unified API if section API failed or returned no data
+          if (peopleData.length === 0) {
+            const response = await fetch(`/api/data/unified?type=people&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true&timestamp=${Date.now()}`);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('API Error:', errorText);
+              throw new Error(`Failed to fetch company people: ${response.status} ${errorText}`);
+            }
+
+            const result = await response.json();
+            if (result.success) {
+              peopleData = result.data || [];
+              
+              // Cache essential data using safe localStorage
+              const essentialData = peopleData.map(person => ({
+                id: person.id,
+                fullName: person.fullName,
+                firstName: person.firstName,
+                lastName: person.lastName,
+                company: person.company,
+                companyId: person.companyId,
+                jobTitle: person.jobTitle,
+                email: person.email
+              }));
+              
+              const cacheSuccess = safeSetItem(cacheKey, essentialData);
+              if (!cacheSuccess) {
+                console.warn('Failed to cache people data, continuing without cache');
+              }
+            } else {
+              console.error('Error fetching people data:', result.error);
+              throw new Error('Failed to fetch people data');
+            }
           }
         }
         
@@ -536,11 +577,13 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         setBuyerGroups(sortedBuyerGroups);
         setLoading(false);
+        clearTimeout(loadingTimeout); // Clear the timeout since we got data
         console.log(`Found ${sortedBuyerGroups.length} people from ${companyName}:`, sortedBuyerGroups);
       } catch (error) {
         console.error('Error fetching buyer groups:', error);
         setBuyerGroups([]);
         setLoading(false);
+        clearTimeout(loadingTimeout); // Clear the timeout on error too
       } finally {
         // Loading complete
       }
