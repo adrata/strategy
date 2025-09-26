@@ -147,15 +147,13 @@ export async function GET(request: NextRequest) {
               { assignedUserId: userId },
               { assignedUserId: null }
             ],
-            // Filter for people who are leads - use more inclusive filter
+            // Filter for people who are leads - use specific lead filters
             AND: [
               {
                 OR: [
                   { funnelStage: 'Lead' },
                   { status: 'new' },
-                  { status: 'lead' },
-                  { status: 'active' }, // Include active people as leads
-                  { funnelStage: null } // Include people without specific funnel stage
+                  { status: 'lead' }
                 ]
               }
             ]
@@ -213,15 +211,13 @@ export async function GET(request: NextRequest) {
               { assignedUserId: userId },
               { assignedUserId: null }
             ],
-            // Filter for people who are prospects - use more inclusive filter
+            // Filter for people who are prospects - use specific prospect filters
             AND: [
               {
                 OR: [
                   { funnelStage: 'Prospect' },
                   { status: 'engaged' },
-                  { status: 'prospect' },
-                  { status: 'active' }, // Include active people as prospects
-                  { funnelStage: null } // Include people without specific funnel stage
+                  { status: 'prospect' }
                 ]
               }
             ]

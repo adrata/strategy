@@ -194,7 +194,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 PERFORMANCE: Use fast section data hook for instant loading
-  const fastSectionData = useFastSectionData(section, 30);
+  const fastSectionData = useFastSectionData(section, 100);
   
   // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
