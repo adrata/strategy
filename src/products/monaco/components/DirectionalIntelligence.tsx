@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -12,6 +12,7 @@ import {
   DirectionalIntelligence,
   PersonalityAssessment,
 } from "@/platform/services/intelligenceOrchestrator";
+import { OpenAIService } from "@/platform/ai/services/openaiService";
 
 interface DirectionalIntelligenceProps {
   insights: DirectionalIntelligence[];
@@ -28,46 +29,31 @@ export function DirectionalIntelligenceComponent({
   const [expandedPersonality, setExpandedPersonality] = useState<string | null>(
     null,
   );
+  const [aiDescriptions, setAiDescriptions] = useState<Record<string, string>>({});
+  const [loadingDescriptions, setLoadingDescriptions] = useState<Set<string>>(new Set());
+  const openaiService = new OpenAIService();
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "critical":
-        return <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-gray-600" />;
       case "high":
-        return <InformationCircleIcon className="w-5 h-5 text-gray-500" />;
+        return <InformationCircleIcon className="w-5 h-5 text-gray-600" />;
       case "medium":
-        return <LightBulbIcon className="w-5 h-5 text-blue-500" />;
+        return <LightBulbIcon className="w-5 h-5 text-gray-600" />;
       default:
-        return <InformationCircleIcon className="w-5 h-5 text-gray-500" />;
+        return <InformationCircleIcon className="w-5 h-5 text-gray-600" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "critical":
-        return "border-l-red-500 bg-red-50 dark:bg-red-900/20";
-      case "high":
-        return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/20";
-      case "medium":
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20";
-      default:
-        return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/20";
-    }
+    // Neutral colors for all priorities
+    return "border-l-gray-400 bg-gray-50 dark:bg-gray-900/20";
   };
 
   const getPersonalityColor = (trait: string) => {
-    switch (trait) {
-      case "Direct":
-        return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300";
-      case "Chatty":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
-      case "Rule-Follower":
-        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
-      case "Friendly":
-        return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300";
-      default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300";
-    }
+    // Neutral colors for all personality traits
+    return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300";
   };
 
   const getConfidenceText = (confidence: number) => {
@@ -76,6 +62,59 @@ export function DirectionalIntelligenceComponent({
     if (confidence >= 0.4) return "Low Confidence";
     return "Very Low Confidence";
   };
+
+  // Generate AI description for an insight
+  const generateAIDescription = async (insight: DirectionalIntelligence, index: number) => {
+    const insightKey = `${index}`;
+    
+    // Don't regenerate if already exists or is loading
+    if (aiDescriptions[insightKey] || loadingDescriptions.has(insightKey)) {
+      return;
+    }
+
+    setLoadingDescriptions(prev => new Set(prev).add(insightKey));
+
+    try {
+      const prompt = `Generate a concise 1-3 sentence AI description for this business insight about ${companyName}:
+
+Insight: "${insight.insight}"
+Category: ${insight.category}
+Priority: ${insight.priority}
+Confidence: ${Math.round(insight.confidence * 100)}%
+
+Provide a professional, actionable description that explains what this insight means for the business and why it matters. Keep it concise and business-focused.`;
+
+      const description = await openaiService.generateContent(prompt, {
+        temperature: 0.7,
+        maxTokens: 150,
+        optimizeForCost: true
+      });
+
+      setAiDescriptions(prev => ({
+        ...prev,
+        [insightKey]: description
+      }));
+    } catch (error) {
+      console.error('Failed to generate AI description:', error);
+      setAiDescriptions(prev => ({
+        ...prev,
+        [insightKey]: "AI description unavailable"
+      }));
+    } finally {
+      setLoadingDescriptions(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(insightKey);
+        return newSet;
+      });
+    }
+  };
+
+  // Generate descriptions for all insights on component mount
+  useEffect(() => {
+    insights.forEach((insight, index) => {
+      generateAIDescription(insight, index);
+    });
+  }, [insights, companyName]);
 
   if (!insights || insights['length'] === 0) {
     return (
@@ -121,10 +160,10 @@ export function DirectionalIntelligenceComponent({
                       <span className="text-xs px-2 py-1 rounded-full bg-[var(--background)] border border-[var(--border)]">
                         {insight.priority} priority
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
                         {Math.round(insight.confidence * 100)}% confidence
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
                         {insight.uniquenessScore}% unique
                       </span>
                     </div>
@@ -132,6 +171,29 @@ export function DirectionalIntelligenceComponent({
                     <p className="text-[var(--foreground)] font-medium mb-2">
                       {insight.insight}
                     </p>
+
+                    {/* AI Description */}
+                    <div className="mt-3 p-3 bg-[var(--hover-bg)] rounded-lg border border-[var(--border)]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-medium text-[var(--muted)]">🤖 AI Analysis</span>
+                        {loadingDescriptions.has(`${index}`) && (
+                          <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                        )}
+                      </div>
+                      {aiDescriptions[`${index}`] ? (
+                        <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                          {aiDescriptions[`${index}`]}
+                        </p>
+                      ) : loadingDescriptions.has(`${index}`) ? (
+                        <p className="text-sm text-[var(--muted)] italic">
+                          Generating AI analysis...
+                        </p>
+                      ) : (
+                        <p className="text-sm text-[var(--muted)] italic">
+                          AI analysis unavailable
+                        </p>
+                      )}
+                    </div>
 
                     {expandedInsight === `${index}` && (
                       <div className="mt-4 p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg">
@@ -145,7 +207,7 @@ export function DirectionalIntelligenceComponent({
                           {insight.sources.map((source, sourceIndex) => (
                             <span
                               key={sourceIndex}
-                              className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                              className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300"
                             >
                               📊 {source}
                             </span>
@@ -232,7 +294,7 @@ export function DirectionalIntelligenceComponent({
                                 <span className="font-semibold text-[var(--foreground)]">
                                   {trait.level} {trait.trait}
                                 </span>
-                                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
                                   {Math.round(trait.confidence * 100)}%
                                   confidence
                                 </span>
@@ -244,7 +306,7 @@ export function DirectionalIntelligenceComponent({
                                 {trait.sources.map((source, sourceIndex) => (
                                   <span
                                     key={sourceIndex}
-                                    className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                    className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300"
                                   >
                                     {source}
                                   </span>
