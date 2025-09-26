@@ -52,7 +52,7 @@ export function SpeedrunSprintView() {
   // Use single data source from useAcquisitionOS instead
   const { data: acquisitionData } = useAcquisitionOS();
   
-  const allData = acquisitionData?.acquireData?.speedrunItems || [];
+  const allData = acquisitionData?.speedrunItems || [];
   const loading = acquisitionData?.isLoading || false;
   const error = acquisitionData?.error || null;
   const refresh = acquisitionData?.refreshData || (() => {});
