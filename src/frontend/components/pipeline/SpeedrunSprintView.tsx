@@ -22,6 +22,7 @@ import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { CompleteActionModal, ActionLogData } from '@/products/speedrun/components/CompleteActionModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
@@ -49,13 +50,13 @@ export function SpeedrunSprintView() {
   //   refresh 
   // } = usePipelineData('speedrun', workspaceId, userId);
   
-  // Use single data source from useAcquisitionOS instead
-  const { data: acquisitionData } = useAcquisitionOS();
+  // Use fast section data loading system (same as PipelineView)
+  const fastSectionData = useFastSectionData('speedrun', 30, workspaceId, userId);
   
-  const allData = acquisitionData?.speedrunItems || [];
-  const loading = acquisitionData?.isLoading || false;
-  const error = acquisitionData?.error || null;
-  const refresh = acquisitionData?.refreshData || (() => {});
+  const allData = fastSectionData.data || [];
+  const loading = fastSectionData.loading || false;
+  const error = fastSectionData.error || null;
+  const refresh = fastSectionData.refreshData || (() => {});
 
   // Dynamic sprint size based on available data
     const calculateOptimalSprintSize = (totalRecords: number): number => {
