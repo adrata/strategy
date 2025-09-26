@@ -264,18 +264,73 @@ export function SpeedrunSprintView() {
     }
   };
 
-  // Loading state
+  // Enhanced loading state with better skeletons
   if (loading && (!data || data['length'] === 0)) {
     return (
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] h-full bg-white border-r border-gray-100 p-4">
-            <PipelineSkeleton message="Loading sprint data..." />
+          <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] h-full bg-white border-r border-gray-100">
+            {/* Left Panel Skeleton */}
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-2">
+                <div className="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-12 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
+              <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            
+            {/* Sprint Cards Skeleton */}
+            <div className="flex-1 overflow-auto p-3 space-y-2">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="p-3 rounded-lg border border-gray-100 bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 bg-gray-200 rounded-xl animate-pulse"></div>
+                        <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mb-1"></div>
+                      <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Footer Skeleton */}
+            <div className="p-3 border-t border-gray-100">
+              <div className="flex justify-between items-center">
+                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
           </div>
         }
         middlePanel={
-          <PipelineSkeleton message="Preparing sprint..." />
+          <div className="h-full flex flex-col bg-white">
+            {/* Middle Panel Header Skeleton */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                <div className="flex gap-2">
+                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+            
+            {/* Middle Panel Content Skeleton */}
+            <div className="flex-1 p-6">
+              <div className="text-center max-w-md mx-auto">
+                <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 animate-pulse"></div>
+                <div className="h-6 w-48 bg-gray-200 rounded mx-auto mb-2 animate-pulse"></div>
+                <div className="h-4 w-64 bg-gray-200 rounded mx-auto mb-4 animate-pulse"></div>
+                <div className="h-10 w-32 bg-gray-200 rounded mx-auto animate-pulse"></div>
+              </div>
+            </div>
+          </div>
         }
         rightPanel={<AIRightPanel />}
         zoom={zoom}
@@ -352,6 +407,16 @@ export function SpeedrunSprintView() {
 
       {/* Card list */}
       <div className="flex-1 overflow-auto p-3 space-y-2">
+        {/* Loading indicator for data refresh */}
+        {loading && data.length > 0 && (
+          <div className="flex items-center justify-center py-2">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+              <span>Updating sprint data...</span>
+            </div>
+          </div>
+        )}
+        
         {data.map((record: any, index: number) => {
           const isSelected = selectedRecord?.id === record.id;
           const displayName = record.fullName || 
@@ -410,46 +475,58 @@ export function SpeedrunSprintView() {
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
-    <UniversalRecordTemplate
-      record={selectedRecord}
-      recordType="prospects"
-      recordIndex={(() => {
-        const index = data.findIndex(r => r['id'] === selectedRecord.id);
-        const recordIndex = index >= 0 ? index + 1 : 1;
-        console.log('🔍 [SPRINT VIEW] RecordIndex calculation:', {
-          selectedRecordId: selectedRecord.id,
-          selectedRecordName: selectedRecord.name || selectedRecord.fullName,
-          dataLength: data.length,
-          foundIndex: index,
-          calculatedRecordIndex: recordIndex,
-          dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
-        });
-        return recordIndex;
-      })()}
-      totalRecords={data.length}
-      onBack={() => {
-        // Go back to speedrun list
-        navigateToPipeline('speedrun');
-      }}
-      onNavigatePrevious={() => {
-        const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
-        if (currentIndex > 0) {
-          setSelectedRecord(data[currentIndex - 1]);
-        }
-      }}
-      onNavigateNext={() => {
-        const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
-        const nextRecord = data[currentIndex + 1];
-        if (nextRecord) {
-          setSelectedRecord(nextRecord);
-        } else if (hasNextSprint) {
-          // Current sprint done, move to next sprint
-          setCurrentSprintIndex(currentSprintIndex + 1);
-        }
-      }}
-      onComplete={() => setShowCompleteModal(true)}
-      onSnooze={handleSnooze}
-    />
+    <div className="h-full flex flex-col bg-white">
+      {/* Loading overlay for action submission */}
+      {isSubmittingAction && (
+        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
+          <div className="flex items-center gap-3 bg-white rounded-lg shadow-lg px-6 py-4">
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+            <span className="text-sm font-medium text-gray-700">Saving action...</span>
+          </div>
+        </div>
+      )}
+      
+      <UniversalRecordTemplate
+        record={selectedRecord}
+        recordType="prospects"
+        recordIndex={(() => {
+          const index = data.findIndex(r => r['id'] === selectedRecord.id);
+          const recordIndex = index >= 0 ? index + 1 : 1;
+          console.log('🔍 [SPRINT VIEW] RecordIndex calculation:', {
+            selectedRecordId: selectedRecord.id,
+            selectedRecordName: selectedRecord.name || selectedRecord.fullName,
+            dataLength: data.length,
+            foundIndex: index,
+            calculatedRecordIndex: recordIndex,
+            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
+          });
+          return recordIndex;
+        })()}
+        totalRecords={data.length}
+        onBack={() => {
+          // Go back to speedrun list
+          navigateToPipeline('speedrun');
+        }}
+        onNavigatePrevious={() => {
+          const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
+          if (currentIndex > 0) {
+            setSelectedRecord(data[currentIndex - 1]);
+          }
+        }}
+        onNavigateNext={() => {
+          const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
+          const nextRecord = data[currentIndex + 1];
+          if (nextRecord) {
+            setSelectedRecord(nextRecord);
+          } else if (hasNextSprint) {
+            // Current sprint done, move to next sprint
+            setCurrentSprintIndex(currentSprintIndex + 1);
+          }
+        }}
+        onComplete={() => setShowCompleteModal(true)}
+        onSnooze={handleSnooze}
+      />
+    </div>
   ) : (
     <div className="h-full flex items-center justify-center bg-white">
       <div className="text-center">
