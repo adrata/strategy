@@ -38,9 +38,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
         lastName: record.lastName,
         jobTitle: record.jobTitle,
         title: record.title,
+        role: record.role,
         department: record.department,
         email: record.email,
         workEmail: record.workEmail,
+        personalEmail: record.personalEmail,
+        secondaryEmail: record.secondaryEmail,
         phone: record.phone,
         mobilePhone: record.mobilePhone,
         workPhone: record.workPhone,
@@ -51,50 +54,100 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
         customFields: record.customFields,
         allKeys: Object.keys(record || {})
       });
+      
+      // Debug customFields structure
+      if (record.customFields) {
+        console.log('🔍 [SHANNON CUSTOM FIELDS] Custom fields structure:', {
+          customFieldsKeys: Object.keys(record.customFields),
+          customFields: record.customFields,
+          enrichedData: record.customFields?.enrichedData,
+          enrichedDataKeys: record.customFields?.enrichedData ? Object.keys(record.customFields.enrichedData) : null
+        });
+      }
+      
+      // Debug specific field mappings
+      console.log('🔍 [SHANNON FIELD MAPPING] Field mapping analysis:', {
+        title: {
+          jobTitle: record.jobTitle,
+          title: record.title,
+          role: record.role,
+          customFieldsTitle: record?.customFields?.title,
+          customFieldsJobTitle: record?.customFields?.jobTitle,
+          enrichedTitle: record?.customFields?.enrichedData?.overview?.title,
+          enrichedJobTitle: record?.customFields?.enrichedData?.overview?.jobTitle
+        },
+        email: {
+          email: record.email,
+          workEmail: record.workEmail,
+          personalEmail: record.personalEmail,
+          secondaryEmail: record.secondaryEmail,
+          customFieldsEmail: record?.customFields?.email,
+          customFieldsWorkEmail: record?.customFields?.workEmail,
+          enrichedEmail: record?.customFields?.enrichedData?.overview?.email,
+          enrichedWorkEmail: record?.customFields?.enrichedData?.overview?.workEmail
+        },
+        phone: {
+          phone: record.phone,
+          mobilePhone: record.mobilePhone,
+          workPhone: record.workPhone,
+          customFieldsPhone: record?.customFields?.phone,
+          customFieldsMobilePhone: record?.customFields?.mobilePhone,
+          customFieldsWorkPhone: record?.customFields?.workPhone,
+          enrichedPhone: record?.customFields?.enrichedData?.overview?.phone,
+          enrichedMobilePhone: record?.customFields?.enrichedData?.overview?.mobilePhone
+        },
+        linkedin: {
+          linkedinUrl: record.linkedinUrl,
+          customFieldsLinkedinUrl: record?.customFields?.linkedinUrl,
+          customFieldsLinkedin: record?.customFields?.linkedin,
+          enrichedLinkedin: record?.customFields?.enrichedData?.overview?.linkedin,
+          enrichedLinkedinUrl: record?.customFields?.enrichedData?.overview?.linkedinUrl
+        }
+      });
     }
   }
 
-  // Use real prospect data from record - Focus on existing Overview fields
+  // Use real prospect data from record - Enhanced mapping with ALL possible data sources
   const prospectData = {
-    // Basic Information (existing fields)
+    // Basic Information (existing fields) - Enhanced mapping
     name: record.fullName || record.name || 'Unknown Prospect',
-    title: record.jobTitle || record.title || '-',
-    department: record.department || record?.customFields?.enrichedData?.overview?.department || '-',
+    title: record.jobTitle || record.title || record.role || record?.customFields?.title || record?.customFields?.jobTitle || record?.customFields?.enrichedData?.overview?.title || record?.customFields?.enrichedData?.overview?.jobTitle || '-',
+    department: record.department || record?.customFields?.department || record?.customFields?.enrichedData?.overview?.department || record?.customFields?.enrichedData?.overview?.department || '-',
     
-    // Contact Information (existing fields)
-    email: record.email || record.workEmail || '-',
-    phone: record.phone || record.mobilePhone || record.workPhone || '-',
-    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-',
+    // Contact Information (existing fields) - Enhanced mapping
+    email: record.email || record.workEmail || record.personalEmail || record.secondaryEmail || record?.customFields?.email || record?.customFields?.workEmail || record?.customFields?.enrichedData?.overview?.email || record?.customFields?.enrichedData?.overview?.workEmail || '-',
+    phone: record.phone || record.mobilePhone || record.workPhone || record?.customFields?.phone || record?.customFields?.mobilePhone || record?.customFields?.workPhone || record?.customFields?.enrichedData?.overview?.phone || record?.customFields?.enrichedData?.overview?.mobilePhone || '-',
+    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.linkedin || record?.customFields?.enrichedData?.overview?.linkedin || record?.customFields?.enrichedData?.overview?.linkedinUrl || '-',
     
-    // Company Information (existing fields)
-    company: record.company || record.companyData?.name || 'No company assigned',
-    companyId: record.companyId || null,
-    industry: record.industry || record.companyData?.industry || 'Unknown Industry',
+    // Company Information (existing fields) - Enhanced mapping
+    company: record.company || record.companyData?.name || record?.customFields?.company || record?.customFields?.companyName || record?.customFields?.enrichedData?.overview?.company || 'No company assigned',
+    companyId: record.companyId || record?.customFields?.companyId || null,
+    industry: record.industry || record.companyData?.industry || record?.customFields?.industry || record?.customFields?.enrichedData?.overview?.industry || 'Unknown Industry',
     
-    // Buyer Group and Influence (existing fields)
-    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || 'Stakeholder',
-    influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || 'Medium',
-    engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || 'Medium',
+    // Buyer Group and Influence (existing fields) - Enhanced mapping
+    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || 'Stakeholder',
+    influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || record?.customFields?.influence || 'Medium',
+    engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || record?.customFields?.priority || 'Medium',
     
-    // Engagement History (existing fields)
-    lastContact: record.lastContactDate || record.lastContact || 'Never',
-    nextAction: record.nextAction || 'No action planned',
-    nextActionDate: record.nextActionDate || null,
+    // Engagement History (existing fields) - Enhanced mapping
+    lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || 'Never',
+    nextAction: record.nextAction || record?.customFields?.nextAction || 'No action planned',
+    nextActionDate: record.nextActionDate || record?.customFields?.nextActionDate || null,
     
-    // Status (existing fields)
-    status: record.status || 'active',
-    priority: record.priority || 'medium',
+    // Status (existing fields) - Enhanced mapping
+    status: record.status || record?.customFields?.status || 'active',
+    priority: record.priority || record?.customFields?.priority || 'medium',
     
-    // Notes and Tags (existing fields)
-    notes: record.notes || 'No notes available',
-    tags: record.tags || [],
+    // Notes and Tags (existing fields) - Enhanced mapping
+    notes: record.notes || record?.customFields?.notes || 'No notes available',
+    tags: record.tags || record?.customFields?.tags || [],
     
-    // Intelligence and Insights (existing fields)
-    painIntelligence: record.painIntelligence || 'No pain intelligence available',
-    wants: record.wants || [],
-    needs: record.needs || [],
-    psychographicProfile: record.psychographicProfile || 'No psychographic profile available',
-    communicationStyleRecommendations: record.communicationStyleRecommendations || 'No communication style recommendations available'
+    // Intelligence and Insights (existing fields) - Enhanced mapping
+    painIntelligence: record.painIntelligence || record?.customFields?.painIntelligence || 'No pain intelligence available',
+    wants: record.wants || record?.customFields?.wants || [],
+    needs: record.needs || record?.customFields?.needs || [],
+    psychographicProfile: record.psychographicProfile || record?.customFields?.psychographicProfile || 'No psychographic profile available',
+    communicationStyleRecommendations: record.communicationStyleRecommendations || record?.customFields?.communicationStyleRecommendations || 'No communication style recommendations available'
   };
 
   // Debug: Log the final prospectData values for Shannon Hegland
