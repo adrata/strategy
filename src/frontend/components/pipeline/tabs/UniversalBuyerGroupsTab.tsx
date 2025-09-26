@@ -6,6 +6,7 @@ import { InlineEditField } from '../InlineEditField';
 import { useRouter } from 'next/navigation';
 import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
 import { calculateRiskAssessment, getRiskPillStyles, generateRiskDescription, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
+import { generateSlug } from '@/platform/utils/url-utils';
 
 interface UniversalBuyerGroupsTabProps {
   record: any;
@@ -36,18 +37,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const handlePersonClick = (person: any) => {
     console.log('🔗 [BUYER GROUPS] Navigating to person:', person);
     
+    // Generate proper slug with person's name
+    const personName = person.name || person.fullName || 'person';
+    const personSlug = generateSlug(personName, person.id);
+    
     // Get current workspace from URL
     const currentPath = window.location.pathname;
     const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
     
     if (workspaceMatch) {
       const workspaceSlug = workspaceMatch[1];
-      const personUrl = `/${workspaceSlug}/people/${person.id}`;
+      const personUrl = `/${workspaceSlug}/people/${personSlug}`;
       console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
       router.push(personUrl);
     } else {
       // Fallback to non-workspace URL
-      const personUrl = `/people/${person.id}`;
+      const personUrl = `/people/${personSlug}`;
       console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
       router.push(personUrl);
     }
