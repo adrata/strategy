@@ -24,6 +24,7 @@ interface UsePipelineDataProps {
   pageSize?: number;
   disableSorting?: boolean; // Add option to disable sorting
   searchQuery?: string; // Allow external search query to be passed in
+  totalCount?: number; // Add totalCount for correct pagination
 }
 
 interface UsePipelineDataReturn {
@@ -189,7 +190,8 @@ export function usePipelineData({
   data, 
   pageSize = 50,
   disableSorting = false,
-  searchQuery: externalSearchQuery = ''
+  searchQuery: externalSearchQuery = '',
+  totalCount
 }: UsePipelineDataProps): UsePipelineDataReturn {
   // Filter state - use external search query if provided
   const [internalSearchQuery, setSearchQuery] = useState('');
@@ -267,8 +269,8 @@ export function usePipelineData({
   }, [sortedData, currentPage, pageSize, data.length, filteredData.length]);
   
   // Pagination info
-  const totalPages = Math.ceil(sortedData.length / pageSize);
-  const totalItems = sortedData.length;
+  const totalPages = Math.ceil((totalCount || sortedData.length) / pageSize);
+  const totalItems = totalCount || sortedData.length;
   
   // Actions
   const clearFilters = useCallback(() => {

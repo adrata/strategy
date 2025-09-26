@@ -79,10 +79,11 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       
       if (result.success && result.data) {
         setData(result.data.data || []);
-        setCount(result.data.count || 0);
+        setCount(result.data.totalCount || result.data.count || 0); // Use totalCount for pagination
         setLoadedSections(prev => new Set(prev).add(section));
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: result.data.count,
+          totalCount: result.data.totalCount,
           items: result.data.data?.length,
           responseTime: result.meta?.responseTime,
           firstItem: result.data.data?.[0] ? {

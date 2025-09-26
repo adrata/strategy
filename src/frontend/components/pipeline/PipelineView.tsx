@@ -22,6 +22,7 @@ import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
+import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -1289,6 +1290,63 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               </p>
             </div>
           </div>
+        ) : finalLoading && (finalData?.length || 0) === 0 ? (
+          // 🚀 PERFORMANCE: Show XL loading skeleton while fast section data loads
+          <div className="h-full flex flex-col bg-white">
+            {/* Top header skeleton - includes title, count, and action buttons */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Search and filters skeleton - includes search bar, filter buttons, and count */}
+            <div className="flex-shrink-0 px-6 py-3 border-b border-gray-200">
+              <div className="flex gap-4 items-center justify-between">
+                <div className="flex gap-4 items-center">
+                  <div className="h-10 bg-gray-200 rounded w-80 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
+                </div>
+                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+              </div>
+            </div>
+            
+            {/* Table skeleton */}
+            <div className="flex-1 p-6">
+              <div className="space-y-4">
+                {/* Table header skeleton */}
+                <div className="grid grid-cols-6 gap-4 py-3 border-b border-gray-200">
+                  <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                </div>
+                
+                {/* Table rows skeleton */}
+                {[...Array(15)].map((_, i) => (
+                  <div key={i} className="grid grid-cols-6 gap-4 py-3">
+                    <div className="h-4 bg-gray-200 rounded w-8 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-36 animate-pulse"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         ) : !hasData && !error && section !== 'opportunities' && workspaceId && userId ? (
           // Show simple centered empty state instead of table with placeholder
           <div className="h-full flex items-center justify-center">
@@ -1324,17 +1382,18 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
             ) : section === 'speedrun' ? (
               // Speedrun table with same design as other sections
               <PipelineTable
-                  section={section}
-                  data={filteredData || []}
-                  onRecordClick={handleRecordClick}
-                  onReorderRecords={handleReorderRecords}
-                  onColumnSort={handleColumnSort}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  visibleColumns={visibleColumns}
-                  pageSize={30} // Speedrun shows 30 items per page
-                  isLoading={isLoading}
-                />
+                section={section}
+                data={filteredData || []}
+                onRecordClick={handleRecordClick}
+                onReorderRecords={handleReorderRecords}
+                onColumnSort={handleColumnSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                visibleColumns={visibleColumns}
+                pageSize={30} // Speedrun shows 30 items per page
+                isLoading={isLoading}
+                totalCount={fastSectionData.count} // Pass total count for correct pagination
+              />
               ) : section === 'prospects' ? (
                 // Prospects table with same design as other sections
                 <PipelineTable
@@ -1348,6 +1407,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'leads' ? (
                 // Leads table with same design as prospects
@@ -1362,6 +1422,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
@@ -1376,6 +1437,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'companies' ? (
                 // Companies table with same design as prospects
@@ -1391,6 +1453,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
                 // Buyer Group style design for Sellers
@@ -1571,6 +1634,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
+              totalCount={fastSectionData.count} // Pass total count for correct pagination
             />
           )}
           </>

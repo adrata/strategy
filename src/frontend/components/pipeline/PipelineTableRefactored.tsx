@@ -45,6 +45,7 @@ interface PipelineTableProps {
   pageSize?: number;
   isLoading?: boolean;
   searchQuery?: string;
+  totalCount?: number; // Add totalCount prop for correct pagination
 }
 
 // -------- Constants --------
@@ -134,6 +135,7 @@ export function PipelineTable({
   pageSize = DEFAULT_PAGE_SIZE,
   isLoading = false,
   searchQuery,
+  totalCount,
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   console.log('🔍 [PipelineTableRefactored] Sample data:', data?.slice(0, 2));
@@ -178,7 +180,8 @@ export function PipelineTable({
     data, 
     pageSize,
     disableSorting: section === 'companies' || section === 'speedrun', // Disable sorting for companies and speedrun to preserve API ranking
-    searchQuery // Pass search query to hook
+    searchQuery, // Pass search query to hook
+    totalCount // Pass totalCount for correct pagination
   });
   
   console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {

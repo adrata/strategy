@@ -411,9 +411,108 @@ export async function GET(request: NextRequest) {
         sectionData = [];
     }
     
+    // Get the total count for the section (without limit)
+    let totalCount = 0;
+    try {
+      switch (section) {
+        case 'leads':
+          totalCount = await prisma.leads.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            }
+          });
+          break;
+        case 'prospects':
+          totalCount = await prisma.prospects.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            }
+          });
+          break;
+        case 'people':
+          totalCount = await prisma.people.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            }
+          });
+          break;
+        case 'companies':
+          totalCount = await prisma.companies.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            }
+          });
+          break;
+        case 'opportunities':
+          totalCount = await prisma.opportunities.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            }
+          });
+          break;
+        case 'speedrun':
+          // For speedrun, use the same logic as the data fetch
+          const speedrunPeople = await prisma.people.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            },
+            orderBy: { updatedAt: 'desc' },
+            take: 200,
+            include: {
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  industry: true,
+                  size: true
+                }
+              }
+            }
+          });
+          totalCount = Math.min(speedrunPeople.length, 30); // Speedrun is capped at 30
+          break;
+        default:
+          totalCount = sectionData.length;
+      }
+    } catch (error) {
+      console.error(`Error getting total count for ${section}:`, error);
+      totalCount = sectionData.length;
+    }
+
     const result = {
       data: sectionData,
       count: sectionData.length,
+      totalCount,
       section,
       limit
     };
