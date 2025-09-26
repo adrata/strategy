@@ -1068,11 +1068,7 @@ async function getMultipleRecords(
       const people = await prisma.people.findMany({
         where: {
           workspaceId,
-          deletedAt: null,
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
         take: pagination?.limit || 5000
@@ -1370,12 +1366,14 @@ async function getMultipleRecords(
   }
   
   // Add workspace-level visibility for most types (show assigned + unassigned)
-  if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
+  // NOTE: For people, we want to show ALL people in the workspace, not just assigned ones
+  if (['leads', 'prospects', 'opportunities', 'companies'].includes(type)) {
     whereClause['OR'] = [
       { assignedUserId: userId }, // User's assigned records
       { assignedUserId: null }    // Unassigned records in workspace
     ];
   }
+  // For people, don't filter by assignedUserId - show all people in workspace
   
   // Apply additional filters
   if (filters) {

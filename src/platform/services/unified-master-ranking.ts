@@ -106,7 +106,6 @@ export class UnifiedMasterRankingEngine {
       prisma.people.findMany({
         where: {
           workspaceId: workspaceId,
-          assignedUserId: userId,
           deletedAt: null
         },
         orderBy: { updatedAt: 'desc' }
