@@ -366,11 +366,7 @@ export async function GET(request: NextRequest) {
         const peopleData = await prisma.people.findMany({
           where: {
             workspaceId,
-            deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ]
+            deletedAt: null
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
           take: limit,
@@ -437,11 +433,7 @@ export async function GET(request: NextRequest) {
           totalCount = await prisma.people.count({
             where: {
               workspaceId,
-              deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              deletedAt: null
             }
           });
           break;
