@@ -503,7 +503,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           console.log(`Checking if ${person.fullName || person.firstName} (${person.id}) is primary against record.id (${record.id}), record.personId (${record.personId}), record.fullName (${record.fullName}): ${isPrimary}`);
           
           const jobTitle = person.title || person.jobTitle || '';
-          const buyerRole = getBuyerGroupRole(jobTitle);
+          
+          // Use database-stored role first, then fallback to client-side assignment
+          const storedRole = person.customFields?.buyerGroupRole || person.buyerGroupRole;
+          const buyerRole = storedRole || getBuyerGroupRole(jobTitle);
           
           return {
             id: person.id,
@@ -520,6 +523,22 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             rank: person.rank || 999 // Include rank field for sorting
           };
         });
+
+        // Ensure every company has at least one Decision Maker
+        const hasDecisionMaker = buyerGroupMembers.some(member => member.role === 'Decision Maker');
+        if (!hasDecisionMaker && buyerGroupMembers.length > 0) {
+          console.log('🔍 [BUYER GROUPS] No Decision Maker found, assigning first person as Decision Maker');
+          // Assign the first person (highest rank) as Decision Maker
+          buyerGroupMembers[0].role = 'Decision Maker';
+          buyerGroupMembers[0].influence = 'high';
+        }
+
+        // 🎯 IMPROVE BUYER GROUP STRUCTURE
+        // Create proper buyer group hierarchy based on actual employment data and job titles
+        const improvedBuyerGroups = createProperBuyerGroupStructure(buyerGroupMembers, companyName);
+        
+        // Update the buyer group members with improved structure
+        buyerGroupMembers.splice(0, buyerGroupMembers.length, ...improvedBuyerGroups);
 
         // Rank buyer groups: Decision Makers > Champions > Blockers > Stakeholders > Introducers
         const rolePriority = {
@@ -624,6 +643,160 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const stakeholders = buyerGroups.filter(p => p.role === 'Stakeholder').length;
   const blockers = buyerGroups.filter(p => p.role === 'Blocker').length;
   const introducers = buyerGroups.filter(p => p.role === 'Introducer').length;
+
+  /**
+   * 🎯 CREATE PROPER BUYER GROUP STRUCTURE
+   * 
+   * Creates a proper buyer group hierarchy based on actual employment data and job titles
+   */
+  const createProperBuyerGroupStructure = (buyerGroupMembers: any[], companyName: string) => {
+    console.log('🎯 [BUYER GROUPS] Creating proper buyer group structure for', companyName);
+    
+    const improvedMembers = [...buyerGroupMembers];
+    
+    // Step 1: Verify employment and filter out people who don't actually work at this company
+    const verifiedMembers = improvedMembers.filter(member => {
+      // Check if person actually works at the company based on employment data
+      const actualCompany = member.customFields?.coresignalData?.active_experience_company_name || 
+                           member.customFields?.enrichedData?.career?.currentCompany ||
+                           member.company;
+      
+      const emailDomain = member.email?.split('@')[1];
+      const companyEmailDomain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
+      
+      // Verify employment through multiple data points
+      const isEmployedHere = actualCompany === companyName || 
+                            emailDomain === companyEmailDomain ||
+                            member.company === companyName;
+      
+      if (!isEmployedHere) {
+        console.log('⚠️ [BUYER GROUPS] Removing person who does not work at', companyName, ':', {
+          name: member.name,
+          actualCompany: actualCompany,
+          emailDomain: emailDomain,
+          assignedCompany: member.company
+        });
+        return false;
+      }
+      
+      return true;
+    });
+    
+    console.log('✅ [BUYER GROUPS] Employment verification complete:', {
+      originalCount: improvedMembers.length,
+      verifiedCount: verifiedMembers.length,
+      removedCount: improvedMembers.length - verifiedMembers.length
+    });
+    
+    // Step 2: Identify Decision Makers (C-level, VPs, Directors) based on actual job titles
+    const decisionMakers = verifiedMembers.filter(member => {
+      const title = (member.title || member.customFields?.enrichedData?.career?.currentRole || '').toLowerCase();
+      const managementLevel = member.customFields?.coresignalData?.active_experience_management_level || '';
+      
+      return title.includes('ceo') || title.includes('president') || 
+             title.includes('vp') || title.includes('vice president') ||
+             title.includes('director') || title.includes('head of') ||
+             title.includes('cfo') || title.includes('cto') || 
+             title.includes('cmo') || title.includes('coo') ||
+             managementLevel.includes('executive') || managementLevel.includes('senior');
+    });
+    
+    // Step 3: Identify Champions (Engineers, Technical roles) based on actual experience
+    const champions = verifiedMembers.filter(member => {
+      const title = (member.title || member.customFields?.enrichedData?.career?.currentRole || '').toLowerCase();
+      const skills = member.customFields?.enrichedData?.career?.skills || [];
+      const department = member.customFields?.enrichedData?.career?.department || '';
+      
+      return title.includes('engineer') || title.includes('developer') ||
+             title.includes('architect') || title.includes('consultant') ||
+             title.includes('advisor') || title.includes('expert') ||
+             title.includes('technical') || title.includes('telecommunications') ||
+             title.includes('electrician') || title.includes('technician') ||
+             skills.some(skill => skill.includes('solar') || skill.includes('energy')) ||
+             department.includes('trades') || department.includes('technical');
+    });
+    
+    // Step 4: Identify Blockers (Legal, Compliance, Security) based on actual roles
+    const blockers = verifiedMembers.filter(member => {
+      const title = (member.title || member.customFields?.enrichedData?.career?.currentRole || '').toLowerCase();
+      const department = member.customFields?.enrichedData?.career?.department || '';
+      
+      return title.includes('legal') || title.includes('compliance') ||
+             title.includes('security') || title.includes('procurement') ||
+             title.includes('purchasing') || title.includes('regulatory') ||
+             department.includes('legal') || department.includes('compliance');
+    });
+    
+    // Step 5: Identify Introducers (Sales, Marketing, Business Development) based on actual experience
+    const introducers = verifiedMembers.filter(member => {
+      const title = (member.title || member.customFields?.enrichedData?.career?.currentRole || '').toLowerCase();
+      const department = member.customFields?.enrichedData?.career?.department || '';
+      const experience = member.customFields?.coresignalData?.total_experience_duration_months_breakdown_department || [];
+      
+      return title.includes('sales') || title.includes('marketing') ||
+             title.includes('business development') || title.includes('partnership') ||
+             title.includes('account') || title.includes('relationship') ||
+             department.includes('sales') || department.includes('marketing') ||
+             experience.some(exp => exp.department === 'Sales');
+    });
+    
+    // Step 6: Assign roles based on comprehensive analysis
+    verifiedMembers.forEach(member => {
+      if (decisionMakers.includes(member)) {
+        member.role = 'Decision Maker';
+        member.influence = 'high';
+      } else if (champions.includes(member)) {
+        member.role = 'Champion';
+        member.influence = 'high';
+      } else if (blockers.includes(member)) {
+        member.role = 'Blocker';
+        member.influence = 'medium';
+      } else if (introducers.includes(member)) {
+        member.role = 'Introducer';
+        member.influence = 'medium';
+      } else {
+        // Default to Stakeholder for others
+        member.role = 'Stakeholder';
+        member.influence = 'low';
+      }
+    });
+    
+    // Step 7: Ensure at least one Decision Maker (promote highest-ranking person)
+    const hasDecisionMaker = verifiedMembers.some(member => member.role === 'Decision Maker');
+    if (!hasDecisionMaker && verifiedMembers.length > 0) {
+      console.log('🎯 [BUYER GROUPS] No Decision Maker found, promoting highest-ranking person');
+      const highestRanking = verifiedMembers.sort((a, b) => (a.rank || 999) - (b.rank || 999))[0];
+      highestRanking.role = 'Decision Maker';
+      highestRanking.influence = 'high';
+    }
+    
+    // Step 8: Ensure at least one Champion (promote technical person)
+    const hasChampion = verifiedMembers.some(member => member.role === 'Champion');
+    if (!hasChampion && verifiedMembers.length > 1) {
+      console.log('🎯 [BUYER GROUPS] No Champion found, promoting technical person');
+      const technicalPerson = verifiedMembers.find(member => 
+        member.role !== 'Decision Maker' && 
+        (member.title?.toLowerCase().includes('engineer') || 
+         member.title?.toLowerCase().includes('electrician') ||
+         member.title?.toLowerCase().includes('technician'))
+      );
+      if (technicalPerson) {
+        technicalPerson.role = 'Champion';
+        technicalPerson.influence = 'high';
+      }
+    }
+    
+    console.log('🎯 [BUYER GROUPS] Final structure for', companyName, ':', {
+      totalMembers: verifiedMembers.length,
+      decisionMakers: verifiedMembers.filter(m => m.role === 'Decision Maker').length,
+      champions: verifiedMembers.filter(m => m.role === 'Champion').length,
+      stakeholders: verifiedMembers.filter(m => m.role === 'Stakeholder').length,
+      blockers: verifiedMembers.filter(m => m.role === 'Blocker').length,
+      introducers: verifiedMembers.filter(m => m.role === 'Introducer').length
+    });
+    
+    return verifiedMembers;
+  };
 
   return (
     <div className="space-y-8">
