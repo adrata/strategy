@@ -101,8 +101,10 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         return;
       }
       
+      // Set loading to true when starting to fetch
+      setLoading(true);
+      
       try {
-        // Instant loading - no spinner needed
         
         // Get the company name from the record - try multiple sources
         // For person records, we need to get the company from companyId or company object
@@ -498,6 +500,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             });
             
             setBuyerGroups(buyerGroupMembers);
+            setLoading(false);
             return; // Exit early since we've set the buyer groups
           }
         } else {
@@ -584,10 +587,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         console.log('🔍 [BUYER GROUPS DEBUG] Final buyer groups before setting:', sortedBuyerGroups);
         console.log('🔍 [BUYER GROUPS DEBUG] Setting buyer groups with length:', sortedBuyerGroups.length);
         setBuyerGroups(sortedBuyerGroups);
+        setLoading(false);
         console.log(`Found ${sortedBuyerGroups.length} people from ${companyName}:`, sortedBuyerGroups);
       } catch (error) {
         console.error('Error fetching buyer groups:', error);
         setBuyerGroups([]);
+        setLoading(false);
       } finally {
         // Loading complete
       }
@@ -665,7 +670,71 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {/* Buyer Group Members */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Members</h3>
-        {buyerGroups['length'] === 0 ? (
+        {loading ? (
+          <div className="space-y-4">
+            {/* Loading Skeleton for Buyer Group Members */}
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                    <div>
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-2"></div>
+                      <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                    <div className="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                
+                {/* Directional Intelligence Skeleton */}
+                <div className="space-y-4">
+                  <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="text-center">
+                        <div className="h-3 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Risk Assessment Skeleton */}
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-5 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="h-3 w-full bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-3 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  
+                  {/* Pain Points and Interests Skeleton */}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="h-3 w-20 bg-gray-200 rounded animate-pulse mb-2"></div>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <div key={i} className="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mb-2"></div>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : buyerGroups['length'] === 0 ? (
           <div className="text-center py-8">
             <div className="text-sm text-gray-500">
               No people found for {(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || record.companyName || 'this company'}.
