@@ -3296,7 +3296,20 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       nextAction: person.nextAction,
       nextActionDate: person.nextActionDate,
       // Add company data for ranking
-      companyData: person.company
+      companyData: person.company,
+      // CRITICAL: Include customFields with buyer group data
+      customFields: person.customFields,
+      // Map buyer group data from customFields to top level for easy access
+      buyerGroupRole: person.customFields?.buyerGroupRole || person.buyerGroupRole,
+      influenceLevel: person.customFields?.influenceLevel || person.influenceLevel,
+      engagementPriority: person.customFields?.engagementPriority || person.engagementPriority,
+      decisionPower: person.customFields?.decisionPower || person.decisionPower,
+      communicationStyle: person.customFields?.communicationStyle || person.communicationStyle,
+      decisionMakingStyle: person.customFields?.decisionMakingStyle || person.decisionMakingStyle,
+      painPoints: person.customFields?.painPoints || person.painPoints,
+      interests: person.customFields?.interests || person.interests,
+      personalGoals: person.customFields?.personalGoals || person.personalGoals,
+      professionalGoals: person.customFields?.professionalGoals || person.professionalGoals
     }));
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospectsWithCompanies.length} people with company data`);
