@@ -398,6 +398,7 @@ export function UniversalRecordTemplate({
     switch (recordType) {
       case 'leads':
       case 'prospects':
+      case 'speedrun':
         const title = record?.title || record?.jobTitle;
         const company = record?.company || record?.companyName || 'Company';
         return title ? `${title} • ${company}` : company;

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
 import { calculateRiskAssessment, getRiskPillStyles, generateRiskDescription, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
 import { generateSlug } from '@/platform/utils/url-utils';
+import { BuyerGroupOptimizer } from '@/platform/services/buyer-group/buyer-group-optimizer';
 
 interface UniversalBuyerGroupsTabProps {
   record: any;
