@@ -10,6 +10,7 @@ import { useUnifiedAuth } from "@/platform/auth-unified";
 // CRITICAL FIX: Re-enable PipelineDataStore for proper data loading
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useFastCounts } from "@/platform/hooks/useFastCounts";
 
 // Import holiday detection function
 function isFederalHoliday(date: Date): boolean {
@@ -70,7 +71,9 @@ function PipelineSections({
   isProspectsVisible,
   isLeadsVisible,
   isCustomersVisible,
-  isPartnersVisible
+  isPartnersVisible,
+  fastCounts,
+  fastCountsLoading
 }: { 
   activeSection: string;
   handleSectionClick: (section: string) => void;
@@ -80,6 +83,8 @@ function PipelineSections({
   isLeadsVisible?: boolean;
   isCustomersVisible?: boolean;
   isPartnersVisible?: boolean;
+  fastCounts?: any;
+  fastCountsLoading?: boolean;
 }) {
   // Get auth context in this component
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
@@ -134,32 +139,31 @@ function PipelineSections({
   const [fallbackCounts, setFallbackCounts] = useState<any>({});
   const [fallbackLoading, setFallbackLoading] = useState(false);
   
-  // 🚀 PERFORMANCE: Only use fallback if absolutely necessary and with aggressive caching
+  // 🚀 PERFORMANCE: Use fast counts API instead of heavy dashboard API
   useEffect(() => {
     // Only fetch if we have no counts AND acquisition data is not loading
     if ((!actualCounts || Object.keys(actualCounts).length === 0) && !acquisitionData?.loading?.isLoading) {
-      const fetchDashboardData = async () => {
+      const fetchFastCounts = async () => {
         setFallbackLoading(true);
         try {
-          // 🚀 PERFORMANCE: Use cached dashboard data with longer TTL
-          const response = await fetch(`/api/data/unified?type=dashboard&action=get&workspaceId=${workspaceId}&userId=${userId}&_cache=true`);
+          // 🚀 PERFORMANCE: Use fast counts API instead of heavy dashboard API
+          const response = await fetch(`/api/data/counts?workspaceId=${workspaceId}&userId=${userId}`);
           if (response.ok) {
             const data = await response.json();
-            if (data['success'] && data.data?.counts) {
-              setFallbackCounts(data.data.counts);
-              console.log('✅ [LEFT PANEL] Fallback dashboard data loaded:', data.data.counts);
+            if (data['success'] && data.data) {
+              setFallbackCounts(data.data);
+              console.log('✅ [LEFT PANEL] Fast counts loaded:', data.data);
             }
           }
         } catch (error) {
-          console.error('❌ [LEFT PANEL] Failed to load fallback dashboard data:', error);
+          console.error('❌ [LEFT PANEL] Failed to load fast counts:', error);
         } finally {
           setFallbackLoading(false);
         }
       };
       
-      // 🚀 PERFORMANCE: Debounce the fallback call
-      const timeoutId = setTimeout(fetchDashboardData, 1000);
-      return () => clearTimeout(timeoutId);
+      // 🚀 PERFORMANCE: Immediate call - no debounce needed for fast API
+      fetchFastCounts();
     }
   }, [workspaceId, userId, actualCounts, acquisitionData?.loading?.isLoading]);
   
@@ -167,8 +171,8 @@ function PipelineSections({
   const finalCounts = actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts;
   
   
-  // 🚀 CONSISTENT LOADING: Use the same loading state as the middle panel
-  const loading = acquisitionData?.loading?.isLoading || authLoading || false;
+  // 🚀 PERFORMANCE: Use fast counts loading state for instant feedback
+  const loading = fastCountsLoading || authLoading || false;
   
   // Use acquisitionData counts that were working before
   const leadsData = {
@@ -374,7 +378,8 @@ function PipelineSections({
   acquisitionData?.acquireData?.speedrunItems // Add speedrun data dependency
 ]);
   
-  const productionCounts = finalCounts;
+  // 🚀 PERFORMANCE: Use fast counts for instant navigation
+  const productionCounts = fastCounts && Object.keys(fastCounts).length > 0 ? fastCounts : finalCounts;
   
   console.log('⚡ [LEFT PANEL] Displaying counts:', productionCounts, '(FROM HOOKS)');
   console.log('🔍 [LEFT PANEL] Debug info:', {
@@ -809,7 +814,7 @@ export function PipelineLeftPanelStandalone({
   setIsProspectsVisible,
   isLeadsVisible = true,
   setIsLeadsVisible,
-  isCustomersVisible = true,
+  isCustomersVisible = false, // Hidden by default
   setIsCustomersVisible,
   isPartnersVisible = true,
   setIsPartnersVisible
@@ -821,6 +826,9 @@ export function PipelineLeftPanelStandalone({
   
   // Get acquisition data for dashboard stats
   const { data: acquisitionData } = useAcquisitionOS();
+  
+  // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
+  const { counts: fastCounts, loading: fastCountsLoading } = useFastCounts();
 
   // Pipeline context for profile functionality (not Monaco)
   const {
@@ -1103,6 +1111,8 @@ export function PipelineLeftPanelStandalone({
           isLeadsVisible={isLeadsVisible}
           isCustomersVisible={isCustomersVisible}
           isPartnersVisible={isPartnersVisible}
+          fastCounts={fastCounts}
+          fastCountsLoading={fastCountsLoading}
         />
       </div>
 

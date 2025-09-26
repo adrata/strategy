@@ -1100,7 +1100,14 @@ async function getMultipleRecords(
         })
       );
       
-      return { success: true, data: peopleWithCompanies };
+      // Assign sequential ranks if people don't have proper ranking
+      const peopleWithRanks = peopleWithCompanies.map((person, index) => ({
+        ...person,
+        rank: person.rank && person.rank > 0 ? person.rank : index + 1,
+        masterRank: person.rank && person.rank > 0 ? person.rank : index + 1
+      }));
+      
+      return { success: true, data: peopleWithRanks };
     }
   }
   
@@ -1491,7 +1498,7 @@ async function getMultipleRecords(
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Load up to 500 records max, default 100
+      take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
@@ -1518,7 +1525,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || 100, 500), // 🚀 PERFORMANCE: Load up to 500 records max, default 100
+          take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
           skip: pagination?.offset || 0
         });
         
@@ -2859,8 +2866,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       }),
       // Use unified master ranking for people in dashboard
       UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId).then(result => {
-        // Return first 100 people from unified ranking for dashboard performance
-        return result.people.slice(0, 100);
+        // Return all people from unified ranking for dashboard
+        return result.people;
       }).catch(error => {
         console.error('❌ [DASHBOARD PEOPLE] Error using unified ranking, falling back to basic query:', error);
         // Fallback to basic query if unified ranking fails
@@ -2870,7 +2877,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             deletedAt: null
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-          take: 100,
+          take: 5000,
           select: { 
             id: true, 
             fullName: true, 

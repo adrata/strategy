@@ -21,6 +21,7 @@ import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
+import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -192,7 +193,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // CRITICAL FIX: Use individual section data for full records instead of dashboard data
+  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
+  const fastSectionData = useFastSectionData(section, 30);
+  
+  // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
   
   console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
@@ -356,29 +360,18 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
-  // Use the pipelineData from usePipelineData hook above
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
+  const finalData = fastSectionData.data || pipelineData.data || [];
+  const finalLoading = fastSectionData.loading || pipelineData.loading;
+  const finalError = fastSectionData.error || pipelineData.error;
+  const finalIsEmpty = (fastSectionData.data || []).length === 0;
   
   // Set loading to false when data is actually loaded
   useEffect(() => {
-    if (pipelineData.data !== undefined && !pipelineData.error) {
+    if (finalData !== undefined && !finalError) {
       setIsLoading(false);
     }
-  }, [pipelineData.data, pipelineData.error]);
-  
-  // Show data immediately - no loading states
-  console.log(`🔍 [PIPELINE VIEW] Data state:`, {
-    section,
-    dataLength: pipelineData.data?.length || 0,
-    error: pipelineData.error,
-    isEmpty: pipelineData.isEmpty,
-    isLoading,
-    acquisitionDataStructure: {
-      hasAcquireData: !!acquisitionData?.acquireData,
-      hasDirectData: !!acquisitionData && !acquisitionData.acquireData,
-      dataKeys: acquisitionData ? Object.keys(acquisitionData) : [],
-      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : []
-    }
-  });
+  }, [finalData, finalError]);
   
   // Speedrun signals hook for automatic Monaco Signal popup (only for speedrun section)
   console.log('🔍 [Pipeline Speedrun] About to initialize useSpeedrunSignals hook for section:', section);
@@ -395,6 +388,22 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       setIsSlideUpVisible(false);
     }
   );
+  
+
+  // Show data immediately - no loading states
+  console.log(`🔍 [PIPELINE VIEW] Data state:`, {
+    section,
+    dataLength: finalData?.length || 0,
+    error: finalError,
+    isEmpty: finalIsEmpty,
+    isLoading,
+    acquisitionDataStructure: {
+      hasAcquireData: !!acquisitionData?.acquireData,
+      hasDirectData: !!acquisitionData && !acquisitionData.acquireData,
+      dataKeys: acquisitionData ? Object.keys(acquisitionData) : [],
+      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : []
+    }
+  });
   
   // Debug Pusher connection for speedrun section
   useEffect(() => {
@@ -657,8 +666,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   }, []);
 
   // CRITICAL FIX: Define sectionDataArray before using it in filteredData
-  // The acquisition data is what populates the left panel counts and should be used for the middle panel too
-  const sectionDataArray = (sectionData && sectionData.length > 0) ? sectionData : (pipelineData.data || []);
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
+  const sectionDataArray = finalData;
   const hasData = Array.isArray(sectionDataArray) && sectionDataArray.length > 0;
   
   // Calculate isEmpty based on actual data
@@ -674,10 +683,10 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     workspaceId,
     userId,
     dataSource: {
-      sectionDataLength: sectionData?.length || 0,
+      fastSectionDataLength: fastSectionData.data?.length || 0,
       pipelineDataLength: pipelineData.data?.length || 0,
-      usingSectionData: (sectionData && sectionData.length > 0),
-      usingPipelineData: !(sectionData && sectionData.length > 0)
+      usingFastSectionData: (fastSectionData.data && fastSectionData.data.length > 0),
+      usingPipelineData: !(fastSectionData.data && fastSectionData.data.length > 0)
     }
   });
 

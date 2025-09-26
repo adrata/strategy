@@ -347,7 +347,8 @@ export function PipelineTable({
                     switch (header.toLowerCase()) {
                       case 'rank':
                         // Use simple numeric rank for consistent design across all sections
-                        const dbRank = record.rank;
+                        // For People section, use masterRank; for others use rank
+                        const dbRank = section === 'people' ? record.masterRank : record.rank;
                         
                         if (dbRank && dbRank > 0) {
                           cellContent = String(dbRank);
@@ -361,9 +362,9 @@ export function PipelineTable({
                         // Handle both string and object company data
                         const company = record['company'];
                         if (typeof company === 'object' && company !== null) {
-                          cellContent = company.name || company.companyName || 'Company';
+                          cellContent = company.name || company.companyName || '-';
                         } else {
-                          cellContent = company || record['companyName'] || 'Company';
+                          cellContent = company || record['companyName'] || '-';
                         }
                         break;
                       case 'person':

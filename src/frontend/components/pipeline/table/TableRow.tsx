@@ -176,7 +176,8 @@ export function TableRow({
               case 'rank':
                 // Use alphanumeric rank (1A, 1B, 2A) if available, fallback to numeric rank
                 const winningRank = record['winningScore']?.rank;
-                const numericRank = record['rank'] || (index + 1);
+                // For People section, use masterRank; for others use rank
+                const numericRank = section === 'people' ? record['masterRank'] : record['rank'] || (index + 1);
                 const displayRank = winningRank || numericRank;
                 return (
                   <td key="rank" className={textClasses}>
@@ -189,7 +190,7 @@ export function TableRow({
                 
                 // For companies section, the record itself IS the company, so use record.name
                 if (section === 'companies' as any) {
-                  companyName = record.name || record['companyName'] || 'Company';
+                  companyName = record.name || record['companyName'] || '-';
                 } else {
                   // For other sections (leads, prospects, etc.), look for company field
                   // First try to get company from various fields
@@ -200,14 +201,14 @@ export function TableRow({
                   } else if (record['companyName']) {
                     companyName = record['companyName'];
                   } else {
-                    // If no company data is available, show a placeholder instead of person name
-                    companyName = 'No Company';
+                    // If no company data is available, show a dash
+                    companyName = '-';
                   }
                   
                   // Make sure we're not showing the person's name as company name
                   const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
                   if (companyName === personName) {
-                    companyName = 'No Company';
+                    companyName = '-';
                   }
                 }
                 

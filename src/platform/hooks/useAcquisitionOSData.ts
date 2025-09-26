@@ -253,7 +253,30 @@ export function useAcquisitionOSData(
       useAuthenticatedRequest = false;
     }
 
-    // Build URL with parameters
+    // 🚀 PERFORMANCE: Load fast counts first, then full data in background
+    const fastCountsUrl = new URL('/api/data/counts', window.location.origin);
+    fastCountsUrl.searchParams.set('workspaceId', activeWorkspace.id);
+    
+    // In demo mode, use a demo user ID, otherwise use the authenticated user ID
+    const userId = isDemoMode ? 'demo-user-2025' : authUser.id;
+    fastCountsUrl.searchParams.set('userId', userId);
+    
+    console.log('🚀 [ACQUISITION OS DATA] Loading fast counts first:', fastCountsUrl.toString());
+    
+    // Load fast counts immediately
+    const fastCountsResult = await fetch(fastCountsUrl.toString(), requestOptions);
+    if (!fastCountsResult.ok) {
+      console.warn('⚠️ [FAST COUNTS] Failed to load fast counts, proceeding with full data load');
+    } else {
+      const fastCountsData = await fastCountsResult.json();
+      if (fastCountsData.success && fastCountsData.data) {
+        console.log('⚡ [FAST COUNTS] Loaded counts in background:', fastCountsData.data);
+        // Store fast counts for immediate use
+        // This will be used by the left panel while full data loads
+      }
+    }
+    
+    // Now load full data in background
     const url = new URL('/api/data/unified', window.location.origin);
     url.searchParams.set('type', 'dashboard');
     url.searchParams.set('action', 'get');
@@ -261,9 +284,6 @@ export function useAcquisitionOSData(
     url.searchParams.set('forceRefresh', 'true');
     url.searchParams.set('timestamp', Date.now().toString()); // Cache busting
     url.searchParams.set('workspaceId', activeWorkspace.id);
-    
-    // In demo mode, use a demo user ID, otherwise use the authenticated user ID
-    const userId = isDemoMode ? 'demo-user-2025' : authUser.id;
     url.searchParams.set('userId', userId);
     
     console.log('🔍 [ACQUISITION OS DATA] API request details:', {

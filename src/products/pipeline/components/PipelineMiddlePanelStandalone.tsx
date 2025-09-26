@@ -9,6 +9,7 @@ import { SellersView } from "./SellersView";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
+import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 
 interface PipelineMiddlePanelStandaloneProps {
   activeSection: string;
@@ -21,67 +22,31 @@ export function PipelineMiddlePanelStandalone({
   console.log(`🚨🚨🚨 [MIDDLE PANEL EXTREME DEBUG] Component is executing! Section: ${activeSection}`);
   console.log(`🚨🚨🚨 [MIDDLE PANEL EXTREME DEBUG] Component timestamp: ${new Date().toISOString()}`);
   
-  // 🆕 CRITICAL FIX: Use useAcquisitionOS for consistent data source (no hardcoded IDs)
-  console.log(`🚨🚨🚨 [MIDDLE PANEL EXTREME DEBUG] Using useAcquisitionOS data source`);
+  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
+  console.log(`🚀 [MIDDLE PANEL] Using fast section data for: ${activeSection}`);
   
-  // Use the same data source as the left panel for consistency
+  // Use fast section data hook for the active section only
+  const fastSectionData = useFastSectionData(activeSection, 30);
+  
+  console.log(`🔍 [MIDDLE PANEL] Fast section data result:`, {
+    data: fastSectionData.data?.length || 0,
+    loading: fastSectionData.loading,
+    error: fastSectionData.error,
+    count: fastSectionData.count
+  });
+  
+  // 🚀 PERFORMANCE: Only use fast section data - no fallback to heavy acquisition data
   const { user: authUser } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
   
-  // Get workspace and user IDs
-  const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;
-  const userId = authUser?.id;
-  
-  // Use individual pipeline data hooks like the left panel
-  const safeWorkspaceId = (workspaceId && workspaceId !== 'default') ? workspaceId : undefined;
-  const safeUserId = (userId && userId !== 'default') ? userId : undefined;
-  
-  const leadsData = usePipelineData('leads', safeWorkspaceId, safeUserId);
-  const prospectsData = usePipelineData('prospects', safeWorkspaceId, safeUserId);
-  const opportunitiesData = usePipelineData('opportunities', safeWorkspaceId, safeUserId);
-  const companiesData = usePipelineData('companies', safeWorkspaceId, safeUserId);
-  const peopleData = usePipelineData('people', safeWorkspaceId, safeUserId);
-  const clientsData = usePipelineData('clients', safeWorkspaceId, safeUserId);
-  const partnersData = usePipelineData('partners', safeWorkspaceId, safeUserId);
-  
-  // CRITICAL FIX: Use the same data source as left panel
-  const getSectionData = (section: string) => {
-    switch (section) {
-      case 'leads': return leadsData.data || [];
-      case 'prospects': return prospectsData.data || [];
-      case 'opportunities': return opportunitiesData.data || [];
-      case 'companies': return companiesData.data || [];
-      case 'people': return peopleData.data || [];
-      case 'clients': return clientsData.data || [];
-      case 'partners': return partnersData.data || [];
-      case 'speedrun': return acquisitionData?.acquireData?.speedrunItems || [];
-      default: return [];
-    }
-  };
-  
-  // Get the correct loading state for the active section
-  const getLoadingState = (section: string) => {
-    switch (section) {
-      case 'leads': return leadsData.loading;
-      case 'prospects': return prospectsData.loading;
-      case 'opportunities': return opportunitiesData.loading;
-      case 'companies': return companiesData.loading;
-      case 'people': return peopleData.loading;
-      case 'clients': return clientsData.loading;
-      case 'partners': return partnersData.loading;
-      case 'speedrun': return acquisitionData?.loading?.isLoading || false;
-      default: return false;
-    }
-  };
-
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
   const pipelineData = {
-    data: getSectionData(activeSection),
-    loading: getLoadingState(activeSection),
-    error: null, // Individual hooks handle their own errors
-    isEmpty: getSectionData(activeSection).length === 0,
+    data: fastSectionData.data || [],
+    loading: fastSectionData.loading,
+    error: fastSectionData.error,
+    isEmpty: (fastSectionData.data || []).length === 0,
     metrics: {
-      totalCount: getSectionData(activeSection).length,
-      activeCount: getSectionData(activeSection).filter((item: any) => item.status !== 'inactive').length
+      totalCount: fastSectionData.count || 0,
+      activeCount: (fastSectionData.data || []).filter((item: any) => item.status !== 'inactive').length
     }
   };
 
