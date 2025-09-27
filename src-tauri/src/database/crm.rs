@@ -314,13 +314,36 @@ impl HybridDatabaseManager {
                 let lead_id = uuid::Uuid::new_v4().to_string();
                 let now = chrono::Utc::now();
                 
+                // Create entity record first (2025 best practice)
+                let entity_id = crate::entity::generate_entity_id();
+                let entity_metadata = serde_json::json!({
+                    "fullName": lead_data.name,
+                    "company": lead_data.company,
+                    "type": "lead"
+                });
+                
+                let entity_insert_sql = r#"
+                    INSERT INTO entities (id, type, workspace_id, created_at, updated_at, metadata)
+                    VALUES ($1, 'lead', $2, $3, $4, $5)
+                "#;
+                
+                sqlx::query(entity_insert_sql)
+                    .bind(&entity_id)
+                    .bind(&lead_data.workspace_id)
+                    .bind(now)
+                    .bind(now)
+                    .bind(&entity_metadata)
+                    .execute(postgres)
+                    .await?;
+                
                 let insert_sql = r#"
-                    INSERT INTO leads (id, "fullName", "jobTitle", company, email, phone, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
-                    VALUES ($1, $2, $3, $4, $5, $6, 'new', 'manual', '', 'medium', $7, $8, $9, $10)
+                    INSERT INTO leads (id, entity_id, "fullName", "jobTitle", company, email, phone, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, 'new', 'manual', '', 'medium', $8, $9, $10, $11)
                 "#;
                 
                 sqlx::query(insert_sql)
                     .bind(&lead_id)
+                    .bind(&entity_id) // Link to entity record
                     .bind(&lead_data.name)
                     .bind(&lead_data.title)
                     .bind(&lead_data.company)
@@ -476,13 +499,36 @@ impl HybridDatabaseManager {
                 let company_id = uuid::Uuid::new_v4().to_string();
                 let now = chrono::Utc::now();
                 
+                // Create entity record first (2025 best practice)
+                let entity_id = crate::entity::generate_entity_id();
+                let entity_metadata = serde_json::json!({
+                    "name": company_data.name,
+                    "industry": company_data.industry,
+                    "type": "company"
+                });
+                
+                let entity_insert_sql = r#"
+                    INSERT INTO entities (id, type, workspace_id, created_at, updated_at, metadata)
+                    VALUES ($1, 'company', $2, $3, $4, $5)
+                "#;
+                
+                sqlx::query(entity_insert_sql)
+                    .bind(&entity_id)
+                    .bind(&company_data.workspace_id)
+                    .bind(now)
+                    .bind(now)
+                    .bind(&entity_metadata)
+                    .execute(postgres)
+                    .await?;
+                
                 let insert_sql = r#"
-                    INSERT INTO accounts (id, name, website, industry, size, employees, revenue, address, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                    INSERT INTO accounts (id, entity_id, name, website, industry, size, employees, revenue, address, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
                 "#;
                 
                 sqlx::query(insert_sql)
                     .bind(&company_id)
+                    .bind(&entity_id) // Link to entity record
                     .bind(&company_data.name)
                     .bind(&company_data.domain)
                     .bind(&company_data.industry)

@@ -1,155 +1,104 @@
-const { PrismaClient } = require('@prisma/client');
-const https = require('https');
+#!/usr/bin/env node
 
-const prisma = new PrismaClient();
-const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY;
-const CORESIGNAL_BASE_URL = 'https://api.coresignal.com/cdapi/v2';
+/**
+ * 🔍 CORESIGNAL API TEST
+ * 
+ * Test CoreSignal API endpoints and authentication
+ */
 
-class CoreSignalAPI {
+require('dotenv').config();
+
+class CoreSignalAPITest {
   constructor() {
-    this.apiKey = CORESIGNAL_API_KEY;
-    this.baseUrl = CORESIGNAL_BASE_URL;
+    this.apiKey = process.env.CORESIGNAL_API_KEY;
+    this.baseUrl = 'https://api.coresignal.com/cdapi/v2';
   }
 
-  async makeRequest(url, method = 'GET', data = null) {
-    return new Promise((resolve, reject) => {
-      const options = {
-        method: method,
+  async testAPI() {
+    console.log('🔍 TESTING CORESIGNAL API');
+    console.log('=========================');
+    
+    if (!this.apiKey) {
+      console.log('❌ CORESIGNAL_API_KEY not found in environment');
+      return;
+    }
+    
+    console.log('API Key loaded:', this.apiKey ? 'Yes' : 'No');
+    console.log('API Key length:', this.apiKey.length);
+    console.log('');
+    
+    // Test different endpoints
+    await this.testEndpoint('/companies/search?name=test&limit=1', 'Company Search');
+    await this.testEndpoint('/people/search?name=test&limit=1', 'People Search');
+    await this.testEndpoint('/people/search?linkedin_url=https://linkedin.com/in/test&limit=1', 'LinkedIn Search');
+    
+    // Test with a real person
+    console.log('\\n🔍 TESTING WITH REAL PERSON:');
+    console.log('=============================');
+    await this.testRealPerson();
+  }
+
+  async testEndpoint(endpoint, description) {
+    try {
+      console.log(`Testing ${description}...`);
+      const url = `${this.baseUrl}${endpoint}`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
         headers: {
           'apikey': this.apiKey,
           'Content-Type': 'application/json'
         }
-      };
-
-      const req = https.request(url, options, (res) => {
-        let responseData = '';
-
-        res.on('data', (chunk) => {
-          responseData += chunk;
-        });
-
-        res.on('end', () => {
-          try {
-            const parsedData = JSON.parse(responseData);
-            if (res.statusCode >= 200 && res.statusCode < 300) {
-              resolve(parsedData);
-            } else {
-              reject(new Error(`CoreSignal API Error ${res.statusCode}: ${parsedData.message || responseData}`));
-            }
-          } catch (error) {
-            reject(new Error(`CoreSignal JSON Parse Error: ${error.message}`));
-          }
-        });
       });
-
-      req.on('error', (error) => {
-        reject(error);
-      });
-
-      if (data) {
-        req.write(JSON.stringify(data));
+      
+      console.log(`   Status: ${response.status} ${response.statusText}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`   ✅ Success: ${JSON.stringify(data).substring(0, 100)}...`);
+        return true;
+      } else {
+        const errorText = await response.text();
+        console.log(`   ❌ Error: ${errorText.substring(0, 100)}...`);
+        return false;
       }
-
-      req.end();
-    });
-  }
-
-  async searchCompany(query, searchField = "company_name") {
-    const searchQuery = {
-      query: {
-        query_string: {
-          query: query,
-          default_field: searchField,
-          default_operator: "and"
-        }
-      }
-    };
-
-    const url = `${this.baseUrl}/company_multi_source/search/es_dsl`;
-
-    try {
-      const response = await this.makeRequest(url, 'POST', searchQuery);
-      console.log(`🔍 Search response for "${query}":`, JSON.stringify(response, null, 2));
-
-      if (Array.isArray(response) && response.length > 0) {
-        return response[0].company_id || response[0];
-      }
-      return null;
     } catch (error) {
-      console.error(`Error searching for company "${query}" in field "${searchField}":`, error.message);
-      return null;
+      console.log(`   ❌ Exception: ${error.message}`);
+      return false;
     }
   }
 
-  async getCompanyData(companyId) {
-    const url = `${this.baseUrl}/company_multi_source/collect/${companyId}`;
-    try {
-      return await this.makeRequest(url);
-    } catch (error) {
-      console.error(`Error getting company data for ID ${companyId}:`, error.message);
-      return null;
-    }
+  async testRealPerson() {
+    // Test with Jeffrey Sexton from our database
+    const testLinkedIn = 'https://www.linkedin.com/in/jeffrey-sexton-362b6829';
+    const testName = 'Jeffrey Sexton';
+    const testCompany = 'Dairyland Power Cooperative';
+    
+    console.log('Testing with Jeffrey Sexton...');
+    console.log('LinkedIn:', testLinkedIn);
+    console.log('Name:', testName);
+    console.log('Company:', testCompany);
+    console.log('');
+    
+    // Test LinkedIn URL search
+    await this.testEndpoint(`/people/search?linkedin_url=${encodeURIComponent(testLinkedIn)}&limit=1`, 'LinkedIn URL Search');
+    
+    // Test name + company search
+    await this.testEndpoint(`/people/search?name=${encodeURIComponent(testName)}&company=${encodeURIComponent(testCompany)}&limit=1`, 'Name + Company Search');
+    
+    // Test name only search
+    await this.testEndpoint(`/people/search?name=${encodeURIComponent(testName)}&limit=1`, 'Name Only Search');
   }
 }
 
-async function testCoreSignalAPI() {
-  console.log('🧪 TESTING CORESIGNAL API');
-  console.log('==========================');
-
-  try {
-    if (!CORESIGNAL_API_KEY) {
-      console.error('❌ CORESIGNAL_API_KEY is not set');
-      return;
-    }
-
-    console.log('✅ API Key is set');
-    console.log(`🔗 Base URL: ${CORESIGNAL_BASE_URL}`);
-
-    const coresignal = new CoreSignalAPI();
-
-    // Test with a well-known company
-    const testCompanies = [
-      'Microsoft',
-      'Apple',
-      'Google',
-      'Amazon',
-      'AT&T'
-    ];
-
-    for (const companyName of testCompanies) {
-      console.log(`\n🔍 Testing with: ${companyName}`);
-      console.log('='.repeat(50));
-
-      try {
-        const companyId = await coresignal.searchCompany(companyName, "company_name");
-        
-        if (companyId) {
-          console.log(`✅ Found company ID: ${companyId}`);
-          
-          const companyData = await coresignal.getCompanyData(companyId);
-          if (companyData) {
-            console.log(`✅ Retrieved company data`);
-            console.log(`   Company: ${companyData.company_name || 'N/A'}`);
-            console.log(`   Industry: ${companyData.industry || 'N/A'}`);
-            console.log(`   Size: ${companyData.size_range || 'N/A'}`);
-            console.log(`   LinkedIn: ${companyData.linkedin_url || 'N/A'}`);
-            break; // Stop after first successful test
-          } else {
-            console.log(`❌ Failed to get company data for ID: ${companyId}`);
-          }
-        } else {
-          console.log(`❌ Company not found: ${companyName}`);
-        }
-      } catch (error) {
-        console.log(`❌ Error testing ${companyName}: ${error.message}`);
-      }
-    }
-
-  } catch (error) {
-    console.error('❌ Test failed:', error.message);
-  } finally {
-    await prisma.$disconnect();
-  }
+// Run the test
+async function main() {
+  const tester = new CoreSignalAPITest();
+  await tester.testAPI();
 }
 
-testCoreSignalAPI();
+if (require.main === module) {
+  main().catch(console.error);
+}
+
+module.exports = CoreSignalAPITest;

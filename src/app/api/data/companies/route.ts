@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
 import { RevenueEstimationService } from "@/platform/services/revenue-estimation-service";
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 // Required for dynamic API functionality
 export const dynamic = "force-dynamic";
@@ -298,10 +299,22 @@ export async function POST(request: NextRequest) {
 
     await prisma.$connect();
 
-    // Create company as an Account record
+    // Create entity record first (2025 best practice)
+    const entityRecord = await createEntityRecord({
+      type: 'company',
+      workspaceId: workspaceId,
+      metadata: {
+        name: companyData.name,
+        industry: companyData.industry,
+        website: companyData.domain || companyData.website
+      }
+    });
+
+    // Create company as an Account record with entity_id
     const newAccount = await prisma.companies.create({
       data: {
         id: `acc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        entity_id: entityRecord.id, // Link to entity record
         name: companyData.name,
         website: companyData.domain || companyData.website || null,
         industry: companyData.industry || null,
@@ -317,7 +330,7 @@ export async function POST(request: NextRequest) {
     });
 
     console.log(
-      `✅ [COMPANIES API] Company created: ${newAccount.name} (ID: ${newAccount.id})`,
+      `✅ [COMPANIES API] Company created: ${newAccount.name} (ID: ${newAccount.id}, Entity ID: ${entityRecord.id})`,
     );
 
     await prisma.$disconnect();

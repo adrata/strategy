@@ -25,6 +25,7 @@ mod email;
 mod webhooks;
 mod email_scanning;
 mod demo_scenarios;
+mod entity;
 
 // Import modules for command generation
 // (Commands are referenced as module::command in the invoke_handler)

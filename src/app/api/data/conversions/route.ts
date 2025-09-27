@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 // Required for static export compatibility
 export const dynamic = "force-static";
@@ -167,10 +168,22 @@ async function convertLeadToOpportunity(
     );
   }
 
-  // Create simplified opportunity
+  // Create entity record first for opportunity (2025 best practice)
+  const entityRecord = await createEntityRecord({
+    type: 'opportunity',
+    workspaceId: workspaceId,
+    metadata: {
+      name: opportunityName || `Opportunity from ${lead.fullName}`,
+      source: 'lead_conversion',
+      leadId: leadId
+    }
+  });
+
+  // Create simplified opportunity with entity_id
   const opportunity = await prisma.opportunities.create({
     data: {
       id: `opp_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      entity_id: entityRecord.id, // Link to entity record
       name: opportunityName || `Opportunity from ${lead.fullName}`,
       currency: "USD",
       description: `Converted from lead: ${lead.fullName}`,

@@ -19,6 +19,7 @@ import { cache } from '@/platform/services';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for lightning speed
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
@@ -1753,10 +1754,22 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
         companyId = existingCompany.id;
         console.log(`✅ [CREATE_PERSON_RELATED] Found existing company: ${existingCompany.id}`);
       } else {
-        // Create new company record
+        // Create entity record first for company (2025 best practice)
+        const companyEntityRecord = await createEntityRecord({
+          type: 'company',
+          workspaceId: workspaceId,
+          metadata: {
+            name: createData.company,
+            industry: createData.industry,
+            website: createData.companyDomain || createData.website
+          }
+        });
+
+        // Create new company record with entity_id
         const newCompany = await prisma.companies.create({
           data: {
             id: `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            entity_id: companyEntityRecord.id, // Link to entity record
             workspaceId,
             name: createData.company,
             website: createData.companyDomain || createData.website || null,
@@ -1768,15 +1781,27 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
           }
         });
         companyId = newCompany.id;
-        console.log(`✅ [CREATE_PERSON_RELATED] Created new company: ${newCompany.id}`);
+        console.log(`✅ [CREATE_PERSON_RELATED] Created new company: ${newCompany.id} (Entity ID: ${companyEntityRecord.id})`);
       }
     }
     
-    // Step 2: Create person record
+    // Step 2: Create entity record first (2025 best practice)
+    const personEntityRecord = await createEntityRecord({
+      type: 'person',
+      workspaceId: workspaceId,
+      metadata: {
+        fullName: createData.fullName,
+        jobTitle: createData.jobTitle || createData.title,
+        email: createData.email || createData.workEmail
+      }
+    });
+
+    // Step 3: Create person record with entity_id
     console.log(`👤 [CREATE_PERSON_RELATED] Creating person record for ${createData.fullName}`);
     
     const personData = {
       id: `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      entity_id: personEntityRecord.id, // Link to entity record
       workspaceId,
       companyId,
       assignedUserId: userId,
@@ -1801,18 +1826,30 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
     personId = newPerson.id;
     console.log(`✅ [CREATE_PERSON_RELATED] Created person record: ${newPerson.id}`);
     
-    // Step 3: Create the main record (lead, prospect, or partner) with proper linking
+    // Step 4: Create entity record for the main record (lead, prospect, or partner)
+    const mainEntityRecord = await createEntityRecord({
+      type: type === 'leads' ? 'lead' : type === 'prospects' ? 'prospect' : 'person',
+      workspaceId: workspaceId,
+      metadata: {
+        fullName: createData.fullName,
+        company: createData.company,
+        type: type
+      }
+    });
+
+    // Step 5: Create the main record (lead, prospect, or partner) with proper linking
     const model = getPrismaModel(type);
     if (!model) throw new Error(`Unsupported type: ${type}`);
     
-    // Add the personId and companyId to the create data
+    // Add the personId, companyId, and entity_id to the create data
     const linkedCreateData = {
       ...createData,
       personId,
-      companyId
+      companyId,
+      entity_id: mainEntityRecord.id // Link to entity record
     };
     
-    console.log(`🔗 [CREATE_PERSON_RELATED] Creating ${type} with personId: ${personId}, companyId: ${companyId}`);
+    console.log(`🔗 [CREATE_PERSON_RELATED] Creating ${type} with personId: ${personId}, companyId: ${companyId}, entityId: ${mainEntityRecord.id}`);
     
     const record = await model.create({
       data: linkedCreateData
@@ -1834,10 +1871,22 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
 // Special function to handle client creation (account + client records)
 async function handleClientCreate(workspaceId: string, userId: string, data: any): Promise<any> {
   try {
-    // First create the account record
+    // Create entity record first for company (2025 best practice)
+    const companyEntityRecord = await createEntityRecord({
+      type: 'company',
+      workspaceId: workspaceId,
+      metadata: {
+        name: data.name,
+        website: data.website,
+        type: 'client'
+      }
+    });
+
+    // First create the account record with entity_id
     const account = await prisma.companies.create({
       data: {
         id: `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        entity_id: companyEntityRecord.id, // Link to entity record
         name: data.name,
         website: data.website || null,
         notes: data.notes || null,
@@ -3906,3 +3955,4 @@ export async function DELETE(request: NextRequest) {
     }, { status: 500 });
   }
 }
+

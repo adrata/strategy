@@ -22,6 +22,21 @@ model Chat {
   @@index([workspaceId, type])
 }
 
+model entities {
+  id          String    @id @default(ulid())
+  type        String    @db.VarChar(50)
+  workspace_id String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @default(now())
+  metadata    Json?
+
+  @@index([workspace_id])
+  @@index([type])
+  @@index([workspace_id, type])
+  @@index([created_at])
+  @@map("entities")
+}
+
 model ChatMember {
   id       String   @id @default(ulid())
   chatId   String

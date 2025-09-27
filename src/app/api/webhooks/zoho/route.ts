@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { PusherServerService } from '@/platform/services/pusher-real-time-service';
 import { storeSignal } from '@/platform/services/signal-storage';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 // import { zohoNotificationService } from '@/platform/services/zoho-notification-service';
 
 export const dynamic = 'force-dynamic';
@@ -207,12 +208,25 @@ async function processLeadData(leadData: any) {
     // FIRST: Save the lead to our database
     try {
       
+      // Create entity record first (2025 best practice)
+      const entityRecord = await createEntityRecord({
+        type: 'lead',
+        workspaceId: workspaceId,
+        metadata: {
+          fullName: fullName,
+          company: leadData.Company || '',
+          source: 'Zoho CRM',
+          zohoId: leadData.id
+        }
+      });
+
       const leadRecord = await prisma.leads.upsert({
         where: {
           id: `zoho_lead_${leadData.id || Date.now()}`
         },
         create: {
           id: `zoho_lead_${leadData.id || Date.now()}`,
+          entity_id: entityRecord.id, // Link to entity record
           workspaceId: workspaceId,
           firstName: firstName,
           lastName: lastName,
@@ -563,10 +577,23 @@ async function processContactWebhook(operation: string, data: any) {
           });
           console.log(`✅ [ZOHO WEBHOOK] Updated existing contact: ${contactData.First_Name} ${contactData.Last_Name}`);
         } else {
+          // Create entity record first (2025 best practice)
+          const entityRecord = await createEntityRecord({
+            type: 'person',
+            workspaceId: workspaceId,
+            metadata: {
+              fullName: contactData.Full_Name || `${contactData.First_Name || ''} ${contactData.Last_Name || ''}`.trim() || 'Unknown',
+              email: contactData.Email || '',
+              source: 'Zoho CRM',
+              zohoId: contactData.id
+            }
+          });
+
           // Create new contact
           await prisma.people.create({
             data: {
               id: `zoho_contact_${contactData.id || Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              entity_id: entityRecord.id, // Link to entity record
               workspaceId: workspaceId,
               firstName: contactData.First_Name || '',
               lastName: contactData.Last_Name || '',

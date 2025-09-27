@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 const prisma = new PrismaClient();
 
@@ -76,10 +77,22 @@ export async function POST(request: NextRequest) {
 
     await prisma.$connect();
 
-    // Create new opportunity
+    // Create entity record first (2025 best practice)
+    const entityRecord = await createEntityRecord({
+      type: 'opportunity',
+      workspaceId: workspaceId,
+      metadata: {
+        name: name,
+        stage: stage || 'prospecting',
+        estimatedValue: estimatedValue || 0
+      }
+    });
+
+    // Create new opportunity with entity_id
     const opportunity = await prisma.opportunities.create({
       data: {
         id: `opp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        entity_id: entityRecord.id, // Link to entity record
         name: name,
         description: description || '',
         currency: currency || 'USD',
