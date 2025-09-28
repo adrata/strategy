@@ -29,42 +29,83 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       recordKeys: Object.keys(record || {}),
       customFields: record?.customFields,
       company: record?.company,
-      buyerGroupRole: record?.customFields?.buyerGroupRole
+      buyerGroupRole: record?.customFields?.buyerGroupRole,
+      coresignal: record?.customFields?.coresignal,
+      coresignalData: record?.customFields?.coresignalData,
+      coresignalProfile: record?.customFields?.coresignalProfile,
+      // Debug the actual values
+      influenceLevel: record?.customFields?.influenceLevel,
+      engagementStrategy: record?.customFields?.engagementStrategy,
+      employeeId: record?.customFields?.coresignal?.employeeId,
+      followersCount: record?.customFields?.coresignal?.followersCount,
+      connectionsCount: record?.customFields?.coresignal?.connectionsCount,
+      totalFields: record?.customFields?.totalFields
     });
   }
 
-  // Use real person data from record - ensure all values are strings or arrays
+  // Extract CoreSignal data from the correct location
+  const coresignalData = record?.customFields?.coresignal || {};
+  const coresignalProfile = record?.customFields?.coresignalProfile || {};
+  const enrichedData = record?.customFields?.enrichedData || {};
+  
+  // Extract comprehensive person data from CoreSignal and record
   const personData = {
-    name: String(record.fullName || record.name || 'Unknown Person'),
+    // Basic info
+    name: String(record.fullName || record.name || '-'),
     title: String(record.jobTitle || record.title || '-'),
-    email: String(record.email || record.workEmail || '-'),
-    phone: String(record.phone || record.mobilePhone || record.workPhone || '-'),
-    linkedin: String(record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.enrichedData?.overview?.linkedin || '-'),
-    department: String(record.department || record?.customFields?.enrichedData?.overview?.department || '-'),
-    seniority: String(record.seniority || record?.customFields?.enrichedData?.overview?.seniority || '-'),
-    status: String(record.status || 'active'),
-    company: String(record.company || record?.company?.name || record.companyData?.name || 'No company assigned'),
-    companyId: record.companyId || null,
-    industry: String(record.industry || record?.company?.industry || record.companyData?.industry || 'Unknown Industry'),
-    location: String(record.city && record.state ? `${record.city}, ${record.state}` : record.city || record.address || 'Unknown Location'),
-    buyerGroupRole: String(record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || 'Stakeholder'),
-    influenceLevel: String(record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || 'Medium'),
-    engagementPriority: String(record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || 'Medium'),
-    lastContact: String(record.lastContactDate || record.lastContact || 'Never'),
-    nextAction: String(record.nextAction || 'No action planned'),
-    nextActionDate: record.nextActionDate || null,
-    notes: String(record.notes || 'No notes available'),
-    tags: Array.isArray(record.tags) ? record.tags : []
+    email: String(record.email || '-'),
+    phone: String(record.phone || '-'),
+    linkedin: String(record.linkedinUrl || '-'),
+    
+    // Company info - use CoreSignal experience data for company details
+    company: String(coresignalData.experience?.[0]?.company_name || record.company?.name || record.companyName || '-'),
+    industry: String(coresignalData.experience?.[0]?.company_industry || record.company?.industry || record.industry || '-'),
+    department: String(coresignalData.experience?.[0]?.department || record.customFields?.department || '-'),
+    
+    // CoreSignal intelligence - use customFields directly
+    influenceLevel: String(record.customFields?.influenceLevel || '-'),
+    engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
+    isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
+    buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
+    
+    // Experience and skills - use CoreSignal data
+    totalExperience: coresignalData.totalExperienceMonths || 0,
+    skills: coresignalData.skills || [],
+    experience: coresignalData.experience || [],
+    education: coresignalData.education || [],
+    
+    // CoreSignal profile data
+    employeeId: coresignalData.employeeId || '-',
+    followersCount: coresignalData.followersCount || 0,
+    connectionsCount: coresignalData.connectionsCount || 0,
+    isDecisionMaker: coresignalData.isDecisionMaker || 0,
+    enrichedAt: coresignalData.enrichedAt || '-',
+    
+    // Contact history
+    lastContact: record.lastActionDate || record.updatedAt || '-',
+    lastAction: record.lastAction || '-',
+    nextAction: record.nextAction || '-',
+    nextActionDate: record.nextActionDate || '-',
+    
+    // Metadata
+    lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || '-',
+    totalFields: record.customFields?.totalFields || 0,
+    status: record.status || '-',
+    source: record.customFields?.source || '-',
+    seniority: record.customFields?.seniority || '-'
   };
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
-    if (!dateString) return 'Never';
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
     
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Never';
+      
+      const now = new Date();
+      const diffInMs = now.getTime() - date.getTime();
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
     
     if (diffInHours < 1) {
       return 'Just now';
@@ -80,13 +121,16 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     } else {
       return date.toLocaleDateString();
     }
+    } catch {
+      return 'Never';
+    }
   };
 
   // Generate wants and needs based on role and industry
   const generateWantsAndNeeds = () => {
-    const role = personData.title.toLowerCase();
-    const industry = personData.industry.toLowerCase();
-    const department = personData.department.toLowerCase();
+    const role = (personData.title || '').toLowerCase();
+    const industry = (personData.industry || '').toLowerCase();
+    const department = (personData.department || '').toLowerCase();
     
     const wants = [];
     const needs = [];
@@ -204,29 +248,41 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
             </div>
           </div>
 
-          {/* Role & Influence Card */}
+          {/* Intelligence Data Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Intelligence Profile</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Role:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                  personData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
-                  personData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                  personData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {personData.buyerGroupRole}
-                </span>
-              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Influence Level:</span>
                 <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Priority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementPriority}</span>
+                <span className="text-sm text-gray-600">Engagement Strategy:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementStrategy}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.isBuyerGroupMember ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Optimized:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.buyerGroupOptimized ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.buyerGroupOptimized ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Seniority:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.seniority}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Source:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.source}</span>
               </div>
             </div>
           </div>
@@ -311,11 +367,102 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
+      {/* Profile Data */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Data</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Profile Metrics</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Employee ID:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.employeeId}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Followers:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.followersCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Connections:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.connectionsCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Decision Maker:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.isDecisionMaker ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.isDecisionMaker ? 'Yes' : 'No'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Enrichment Data</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Total Fields:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.totalFields}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Last Enriched:</span>
+                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.lastEnrichedAt)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">CoreSignal Enriched:</span>
+                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.enrichedAt)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Skills & Experience */}
+      {personData.skills.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {personData.skills.map((skill: string, index: number) => (
+                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Experience Summary */}
+      {personData.experience.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Experience Summary</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Total Experience:</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {personData.totalExperience > 0 ? `${Math.floor(personData.totalExperience / 12)} years` : '-'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Experience Records:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.experience.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Education Records:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.education.length}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* What do they care about */}
       <div className="space-y-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <h4 className="font-medium text-gray-900 mb-3">
-            Wants & Needs: Based on their role as {personData.title} at {personData.company}, they likely care about:
+            Professional Insights: Based on their role as {personData.title} at {personData.company}, they likely care about:
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -367,14 +514,14 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
             <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
               {personData.notes !== 'No notes available' ? personData.notes : 
-                `${personData.name} is a ${personData.buyerGroupRole} at ${personData.company} with ${personData.influenceLevel.toLowerCase()} influence level, involved in ${personData.industry} industry decisions.`
+                `${personData.name} is a ${personData.buyerGroupRole} at ${personData.company} with ${(personData.influenceLevel || '').toLowerCase()} influence level, involved in ${personData.industry} industry decisions.`
               }
             </div>
           </div>
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Engagement Strategy</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
-              Focus on {personData.engagementPriority.toLowerCase()} priority engagement. 
+              Focus on {(personData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(personData.lastContact)}. 
               Next action: {personData.nextAction}.
             </div>

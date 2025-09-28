@@ -7,10 +7,9 @@ import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 interface UniversalCareerTabProps {
   recordType: string;
   record?: any;
-  onSave?: (field: string, value: any, recordId: string) => Promise<void>;
 }
 
-export function UniversalCareerTab({ recordType, record: recordProp, onSave }: UniversalCareerTabProps) {
+export function UniversalCareerTab({ recordType, record: recordProp }: UniversalCareerTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
 
@@ -24,49 +23,54 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
     console.log('🔍 [Career Tab Debug] Record structure:', {
       record: record,
       customFields: record?.customFields,
-      coresignalData: record?.customFields?.coresignalData
+      coresignal: record?.customFields?.coresignal,
+      coresignalData: record?.customFields?.coresignalData,
+      coresignalProfile: record?.customFields?.coresignalProfile
     });
   }
 
-  // Extract career data from enriched data and CoreSignal
-  const coresignalData = record?.customFields?.coresignalData || {};
+  // Extract career data from the correct CoreSignal data structure
+  const coresignalData = record?.customFields?.coresignal || {};
+  const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData?.career || {};
   const rawData = record?.customFields?.rawData || {};
   
-  // Safely extract company name - handle both string and object formats
-  const getCompanyName = (company: any): string => {
-    if (typeof company === 'string') return company;
-    if (company && typeof company === 'object') {
-      return company.name || company.companyName || '-';
-    }
-    return '-';
-  };
+  // Extract CoreSignal data from the correct location
+  const coresignalExperience = coresignalData?.experience || coresignalProfile?.experience || [];
+  const coresignalSkills = coresignalData?.skills || coresignalProfile?.skills || [];
+  const coresignalEducation = coresignalData?.education || coresignalProfile?.education || [];
+  const coresignalTotalExperience = coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
   
+  // Use CoreSignal data with fallbacks to record data
   const careerData = {
-    currentRole: enrichedData.currentRole || record.jobTitle || record.title || '-',
-    currentCompany: enrichedData.currentCompany || getCompanyName(record.company),
-    department: enrichedData.department || record.department || '-',
-    seniority: enrichedData.seniority || record.seniority || '-',
-    yearsInRole: enrichedData.yearsInRole || coresignalData.years_in_current_role || 'Unknown',
-    yearsAtCompany: enrichedData.yearsAtCompany || coresignalData.years_at_company || 'Unknown',
-    totalExperience: enrichedData.totalExperience || coresignalData.total_years_experience || 'Unknown',
-    education: enrichedData.education || coresignalData.education || rawData.education || [],
-    skills: enrichedData.skills || coresignalData.skills || rawData.inferred_skills || [],
-    certifications: enrichedData.certifications || coresignalData.certifications || rawData.courses || [],
-    careerTimeline: enrichedData.careerTimeline || coresignalData.career_timeline || rawData.experience || [],
-    previousRoles: enrichedData.previousRoles || coresignalData.previous_roles || rawData.experience || [],
-    industryExperience: enrichedData.industryExperience || coresignalData.industry_experience || 'Unknown',
-    leadershipExperience: enrichedData.leadershipExperience || coresignalData.leadership_experience || 'Unknown',
-    teamSize: enrichedData.teamSize || coresignalData.team_size_managed || 'Unknown',
-    budgetResponsibility: enrichedData.budgetResponsibility || coresignalData.budget_responsibility || 'Unknown',
-    achievements: enrichedData.achievements || coresignalData.achievements || rawData.awards || [],
-    publications: enrichedData.publications || coresignalData.publications || rawData.publications || [],
-    speakingEngagements: enrichedData.speakingEngagements || coresignalData.speaking_engagements || [],
-    awards: enrichedData.awards || coresignalData.awards || rawData.awards || []
+    department: coresignalData.department || record?.department || '-',
+    companyName: coresignalData.companyName || record?.company?.name || record?.companyName || '-',
+    totalExperience: coresignalTotalExperience > 0 ? `${Math.floor(coresignalTotalExperience / 12)} years` : '-',
+    education: coresignalEducation || [],
+    skills: coresignalSkills || [],
+    experience: coresignalExperience || [],
+    totalFields: coresignalData.totalFields || 0,
+    lastEnrichedAt: coresignalData.lastEnrichedAt || record?.updatedAt || '-'
   };
 
+  // Debug: Log the actual CoreSignal data structure
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [Career Tab Debug] Full record structure:', {
+      record: record,
+      customFields: record?.customFields,
+      coresignalData: coresignalData,
+      coresignalProfile: coresignalProfile,
+      enrichedData: enrichedData,
+      rawData: rawData,
+      careerData: careerData,
+      experienceArray: coresignalExperience,
+      experienceLength: coresignalExperience.length,
+      firstExperience: coresignalExperience[0]
+    });
+  }
+
   const formatDate = (dateString: string | Date | null | undefined): string => {
-    if (!dateString) return 'Unknown';
+    if (!dateString) return '-';
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('en-US', { 
@@ -74,19 +78,21 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
         month: 'short' 
       });
     } catch {
-      return 'Unknown';
+      return '-';
     }
   };
 
   const formatDuration = (startDate: string, endDate?: string): string => {
-    if (!startDate) return 'Unknown';
+    if (!startDate) return '-';
     
     try {
       const start = new Date(startDate);
       const end = endDate ? new Date(endDate) : new Date();
       const diffInMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-      
-      if (diffInMonths < 12) {
+
+      if (diffInMonths < 1) {
+        return 'Less than a month';
+      } else if (diffInMonths < 12) {
         return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''}`;
       } else {
         const years = Math.floor(diffInMonths / 12);
@@ -98,294 +104,279 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
         }
       }
     } catch {
-      return 'Unknown';
+      return '-';
     }
   };
 
   return (
     <div className="space-y-8">
-      {/* Current Position */}
+      {/* Career Overview */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Position</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Overview</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Current Role Card */}
+          {/* Career Overview Card */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Current Role</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Career Overview</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Title:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.currentRole}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.currentCompany}</span>
-              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Department:</span>
                 <span className="text-sm font-medium text-gray-900">{careerData.department}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Seniority:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.seniority}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Experience Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Experience</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Years in Role:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.yearsInRole}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Years at Company:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.yearsAtCompany}</span>
+                <span className="text-sm text-gray-600">Company:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.companyName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Total Experience:</span>
                 <span className="text-sm font-medium text-gray-900">{careerData.totalExperience}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Industry Experience:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.industryExperience}</span>
+                <span className="text-sm text-gray-600">Data Fields:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.totalFields}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Enrichment Info Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Enrichment Info</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Last Enriched:</span>
+                <span className="text-sm font-medium text-gray-900">{formatDate(careerData.lastEnrichedAt)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Skills Available:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.skills.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Education Records:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.education.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Experience Records:</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.experience.length}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Leadership & Management */}
+      {/* Current Position */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Leadership & Management</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Leadership Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Leadership Profile</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Leadership Experience:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.leadershipExperience}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Team Size:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.teamSize}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Budget Responsibility:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.budgetResponsibility}</span>
-              </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Position</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Title:</span>
+              <span className="text-sm font-medium text-gray-900">{record?.jobTitle || record?.title || '-'}</span>
             </div>
-          </div>
-
-          {/* Management Style Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Management Style</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Management Approach:</span>
-                <span className="text-sm font-medium text-gray-900">Collaborative</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Making:</span>
-                <span className="text-sm font-medium text-gray-900">Data-driven</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Communication Style:</span>
-                <span className="text-sm font-medium text-gray-900">Direct</span>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Company:</span>
+              <span className="text-sm font-medium text-gray-900">{careerData.companyName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Department:</span>
+              <span className="text-sm font-medium text-gray-900">{careerData.department}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Total Experience:</span>
+              <span className="text-sm font-medium text-gray-900">{careerData.totalExperience}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Career Timeline */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Timeline</h3>
-        {careerData.careerTimeline.length > 0 ? (
-          <div className="space-y-4">
-            {careerData.careerTimeline.map((role: any, index: number) => (
-              <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">{role.title || '-'}</h4>
-                        <div className="text-sm text-gray-600">{getCompanyName(role.company)}</div>
-                      </div>
+      {/* Company Intelligence */}
+      {coresignalExperience.length > 0 && coresignalExperience[0].company_name && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Intelligence</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            {(() => {
+              const exp = coresignalExperience[0];
+              return (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-sm text-gray-600">Industry:</span>
+                      <p className="text-sm font-medium text-gray-900">{exp.company_industry || '-'}</p>
                     </div>
-                    <div className="ml-6 space-y-1">
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Duration:</span> {formatDuration(role.start_date, role.end_date)}
-                      </div>
-                      {role.description && (
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium">Description:</span> {role.description}
-                        </div>
-                      )}
-                      {role.location && (
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium">Location:</span> {role.location}
-                        </div>
-                      )}
+                    <div>
+                      <span className="text-sm text-gray-600">Company Size:</span>
+                      <p className="text-sm font-medium text-gray-900">{exp.company_size_range || '-'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Employees:</span>
+                      <p className="text-sm font-medium text-gray-900">{exp.company_employees_count ? exp.company_employees_count.toLocaleString() : '-'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Founded:</span>
+                      <p className="text-sm font-medium text-gray-900">{exp.company_founded_year || '-'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Revenue:</span>
+                      <p className="text-sm font-medium text-gray-900">
+                        {exp.company_annual_revenue_source_1 ? `$${(exp.company_annual_revenue_source_1 / 1000000).toFixed(1)}M` : '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Location:</span>
+                      <p className="text-sm font-medium text-gray-900">{exp.company_hq_city}, {exp.company_hq_state}</p>
                     </div>
                   </div>
-                  <div className="text-right text-sm text-gray-500">
-                    <div>{formatDate(role.start_date)}</div>
-                    <div>{role.end_date ? formatDate(role.end_date) : 'Present'}</div>
-                  </div>
+                  
+                  {exp.company_categories_and_keywords && exp.company_categories_and_keywords.length > 0 && (
+                    <div>
+                      <span className="text-sm text-gray-600 mb-2 block">Company Focus Areas:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {exp.company_categories_and_keywords.slice(0, 10).map((keyword: string, index: number) => (
+                          <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                            {keyword}
+                          </span>
+                        ))}
+                        {exp.company_categories_and_keywords.length > 10 && (
+                          <span className="text-xs text-gray-400">+{exp.company_categories_and_keywords.length - 10} more</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p className="text-sm">No career timeline data available</p>
-            <p className="text-xs text-gray-400 mt-1">Career history will appear here when available</p>
-          </div>
-        )}
-      </div>
-
-      {/* Education & Certifications */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Education & Certifications</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Education</h4>
-            {careerData.education.length > 0 ? (
-              <div className="space-y-3">
-                {careerData.education.map((edu: any, index: number) => (
-                  <div key={index} className="text-sm">
-                    <div className="font-medium text-gray-900">{edu.degree || 'Unknown Degree'}</div>
-                    <div className="text-gray-600">{edu.institution || 'Unknown Institution'}</div>
-                    {edu.year && <div className="text-gray-500">{edu.year}</div>}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No education data available</div>
-            )}
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Certifications</h4>
-            {careerData.certifications.length > 0 ? (
-              <div className="space-y-3">
-                {careerData.certifications.map((cert: any, index: number) => (
-                  <div key={index} className="text-sm">
-                    <div className="font-medium text-gray-900">{cert.name || 'Unknown Certification'}</div>
-                    <div className="text-gray-600">{cert.issuer || 'Unknown Issuer'}</div>
-                    {cert.date && <div className="text-gray-500">{formatDate(cert.date)}</div>}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No certifications available</div>
-            )}
+              );
+            })()}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Skills & Expertise */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          {careerData.skills.length > 0 ? (
+      {careerData.skills.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
             <div className="flex flex-wrap gap-2">
               {careerData.skills.map((skill: string, index: number) => (
-                <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                   {skill}
                 </span>
               ))}
             </div>
-          ) : (
-            <div className="text-sm text-gray-500">No skills data available</div>
-          )}
-        </div>
-      </div>
-
-      {/* Achievements & Recognition */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievements & Recognition</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Key Achievements</h4>
-            {careerData.achievements.length > 0 ? (
-              <div className="space-y-2">
-                {careerData.achievements.map((achievement: string, index: number) => (
-                  <div key={index} className="text-sm text-gray-700 flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    {achievement}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No achievements data available</div>
-            )}
           </div>
+        </div>
+      )}
 
+      {/* Experience Timeline */}
+      {(careerData.experience.length > 0 || coresignalExperience.length > 0) && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Timeline</h3>
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Awards & Recognition</h4>
-            {careerData.awards.length > 0 ? (
-              <div className="space-y-2">
-                {careerData.awards.map((award: any, index: number) => (
-                  <div key={index} className="text-sm text-gray-700 flex items-start">
-                    <span className="text-yellow-500 mr-2">🏆</span>
-                    <div>
-                      <div className="font-medium">{award.name || 'Unknown Award'}</div>
-                      {award.year && <div className="text-gray-500">{award.year}</div>}
+            <div className="space-y-4">
+              {(careerData.experience.length > 0 ? careerData.experience : coresignalExperience).slice(0, 5).map((exp: any, index: number) => (
+                <div key={index} className="border-l-2 border-gray-200 pl-4 pb-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">{exp.position_title || exp.title || exp.position || '-'}</h4>
+                      <p className="text-sm text-gray-600">{exp.company_name || exp.company || exp.organization || '-'}</p>
+                      {exp.department && exp.department !== 'Other' && (
+                        <p className="text-xs text-gray-500">Department: {exp.department}</p>
+                      )}
+                      {exp.management_level && (
+                        <p className="text-xs text-gray-500">Level: {exp.management_level}</p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">
+                        {exp.date_from ? formatDate(exp.date_from) : 'Unknown'} - {exp.date_to ? formatDate(exp.date_to) : 'Present'}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {formatDuration(exp.date_from, exp.date_to)}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No awards data available</div>
-            )}
+                  
+                  {/* Company Details */}
+                  {exp.company_industry && (
+                    <div className="mt-2 text-xs text-gray-500">
+                      <span className="font-medium">Industry:</span> {exp.company_industry}
+                    </div>
+                  )}
+                  {exp.company_size_range && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Company Size:</span> {exp.company_size_range}
+                    </div>
+                  )}
+                  {exp.company_employees_count && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Employees:</span> {exp.company_employees_count.toLocaleString()}
+                    </div>
+                  )}
+                  {exp.company_annual_revenue_source_1 && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Revenue:</span> ${(exp.company_annual_revenue_source_1 / 1000000).toFixed(1)}M
+                    </div>
+                  )}
+                  {exp.company_hq_full_address && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Location:</span> {exp.company_hq_full_address}
+                    </div>
+                  )}
+                  {exp.company_founded_year && (
+                    <div className="text-xs text-gray-500">
+                      <span className="font-medium">Founded:</span> {exp.company_founded_year}
+                    </div>
+                  )}
+                  
+                  {/* Company Keywords/Tags */}
+                  {exp.company_categories_and_keywords && exp.company_categories_and_keywords.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs font-medium text-gray-500 mb-1">Company Focus:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {exp.company_categories_and_keywords.slice(0, 8).map((keyword: string, keyIndex: number) => (
+                          <span key={keyIndex} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                            {keyword}
+                          </span>
+                        ))}
+                        {exp.company_categories_and_keywords.length > 8 && (
+                          <span className="text-xs text-gray-400">+{exp.company_categories_and_keywords.length - 8} more</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {exp.description && (
+                    <p className="text-sm text-gray-600 mt-2">{exp.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Professional Activities */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Activities</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Education */}
+      {careerData.education.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Education</h3>
           <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Publications</h4>
-            {careerData.publications.length > 0 ? (
-              <div className="space-y-2">
-                {careerData.publications.map((pub: any, index: number) => (
-                  <div key={index} className="text-sm text-gray-700">
-                    <div className="font-medium">{pub.title || '-'}</div>
-                    {pub.publication && <div className="text-gray-600">{pub.publication}</div>}
-                    {pub.date && <div className="text-gray-500">{formatDate(pub.date)}</div>}
+            <div className="space-y-3">
+              {careerData.education.map((edu: any, index: number) => (
+                <div key={index} className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">{edu.degree || edu.qualification || '-'}</h4>
+                    <p className="text-sm text-gray-600">{edu.institution || edu.school || '-'}</p>
+                    {edu.field_of_study && (
+                      <p className="text-sm text-gray-500">{edu.field_of_study}</p>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No publications available</div>
-            )}
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Speaking Engagements</h4>
-            {careerData.speakingEngagements.length > 0 ? (
-              <div className="space-y-2">
-                {careerData.speakingEngagements.map((event: any, index: number) => (
-                  <div key={index} className="text-sm text-gray-700">
-                    <div className="font-medium">{event.title || 'Unknown Event'}</div>
-                    {event.organization && <div className="text-gray-600">{event.organization}</div>}
-                    {event.date && <div className="text-gray-500">{formatDate(event.date)}</div>}
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
+                      {formatDate(edu.start_date)} - {edu.end_date ? formatDate(edu.end_date) : 'Present'}
+                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No speaking engagements available</div>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
