@@ -22,6 +22,7 @@ import { PipelineProgress } from "@/platform/shared/components/ui/PipelineProgre
 import { PainIntelligence, PainIntelligenceData, ExamplePainData } from "./PainIntelligence";
 import { useCompanyIntelligence } from "@/platform/hooks/useCompanyIntelligence";
 import { useUnifiedAuth } from "@/platform/auth-unified";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 
 // Import report components
@@ -705,6 +706,43 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     }
   };
 
+  // Handle inline field save for Monaco person records
+  const handlePersonSave = async (field: string, value: string, recordId: string, recordType: string) => {
+    try {
+      console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
+      
+      // Use the unified API for updates
+      const response = await fetch('/api/data/unified', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'people',
+          action: 'update',
+          id: recordId,
+          data: { [field]: value }
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          console.log(`✅ [MONACO PERSON] Successfully updated ${field} for person ${recordId}`);
+          return true;
+        } else {
+          throw new Error(result.error || 'Update failed');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('❌ [MONACO PERSON] Error updating person record:', error);
+      throw error;
+    }
+  };
+
   // If showing a report, render the report component
   if (activeReport) {
     // Find the original report title from dynamicReports
@@ -872,54 +910,83 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     <label className="block text-sm font-medium text-[var(--muted)]">
                       Name
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
-                      {enhancedPerson.fullName || enhancedPerson.name || "-"}
-                    </p>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.fullName || enhancedPerson.name || ""}
+                        field="fullName"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        placeholder="Enter full name"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--muted)]">
                       Title
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
-                      {enhancedPerson.jobTitle || enhancedPerson.title || "Technology Executive"}
-                    </p>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.jobTitle || enhancedPerson.title || ""}
+                        field="jobTitle"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        placeholder="Enter job title"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--muted)]">
                       Email
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
-                      {enhancedPerson.workEmail || enhancedPerson.email || "-"}
-                    </p>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.workEmail || enhancedPerson.email || ""}
+                        field="email"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        inputType="email"
+                        placeholder="Enter email address"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--muted)]">
                       Phone
                     </label>
-                    <p className="mt-1 text-lg text-[var(--muted)]">
-                      {enhancedPerson.phone
-                        ? enhancedPerson.phone.startsWith("+1")
-                          ? enhancedPerson.phone
-                          : `+1 ${enhancedPerson.phone.replace(/[\\(\\)\\s-]/g, "")}`
-                        : "-"}
-                    </p>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.phone || ""}
+                        field="phone"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        inputType="tel"
+                        placeholder="Enter phone number"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--muted)]">
                       LinkedIn Profile
                     </label>
-                    {enhancedPerson.linkedinUrl ? (
-                      <a
-                        href={enhancedPerson.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 text-lg text-gray-500 hover:text-gray-700 hover:underline transition-colors"
-                      >
-                        View LinkedIn Profile
-                      </a>
-                    ) : (
-                      <p className="mt-1 text-lg text-[var(--muted)]">-</p>
-                    )}
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.linkedinUrl || ""}
+                        field="linkedinUrl"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        placeholder="Enter LinkedIn URL"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[var(--muted)]">

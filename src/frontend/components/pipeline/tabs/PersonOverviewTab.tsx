@@ -91,7 +91,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || new Date().toISOString(),
     totalFields: record.customFields?.totalFields || 13,
     status: record.status || 'active',
-    source: record.customFields?.source || 'CoreSignal API',
+    source: record.customFields?.source || 'Data Enrichment',
     seniority: record.customFields?.seniority || 'Mid-level'
   };
 
@@ -367,96 +367,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
-      {/* Profile Data */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Data</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Profile Metrics</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Employee ID:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.employeeId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Followers:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.followersCount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Connections:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.connectionsCount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Maker:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isDecisionMaker ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {personData.isDecisionMaker ? 'Yes' : 'No'}
-                </span>
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Enrichment Data</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Total Fields:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.totalFields}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Enriched:</span>
-                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.lastEnrichedAt)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">CoreSignal Enriched:</span>
-                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.enrichedAt)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Skills & Experience */}
-      {personData.skills.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex flex-wrap gap-2">
-              {personData.skills.map((skill: string, index: number) => (
-                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Experience Summary */}
-      {personData.experience.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Experience Summary</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Total Experience:</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {personData.totalExperience > 0 ? `${Math.floor(personData.totalExperience / 12)} years` : '-'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Experience Records:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.experience.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Education Records:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.education.length}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* What do they care about */}
       <div className="space-y-4">

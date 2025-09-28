@@ -1,16 +1,19 @@
 import React from "react";
 import { Person } from "../../types";
+import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 interface PersonDetailOverviewProps {
   person: Person;
   getStatusColor: (status: string) => string;
   onCompanyClick?: (companyName: string) => void;
+  onSave?: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
 }
 
 export function PersonDetailOverview({
   person,
   getStatusColor,
   onCompanyClick,
+  onSave,
 }: PersonDetailOverviewProps) {
   // Extract enriched data from customFields
   const customFields = (person as any).customFields || {};
@@ -46,6 +49,12 @@ export function PersonDetailOverview({
     });
   };
 
+  // Default save handler if none provided
+  const handleSave = onSave || (async (field: string, value: string, recordId: string, recordType: string) => {
+    console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
+    // TODO: Implement actual save logic for Monaco person records
+  });
+
   return (
     <div className="space-y-6">
       {/* Person Summary */}
@@ -65,52 +74,75 @@ export function PersonDetailOverview({
           <div className="space-y-3">
             <div>
               <label className="text-sm text-gray-500">Full Name</label>
-              <div className="font-medium">{fullName}</div>
+              <div className="font-medium">
+                <InlineEditField
+                  value={fullName}
+                  field="fullName"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter full name"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
+              </div>
             </div>
             <div>
               <label className="text-sm text-gray-500">Email</label>
               <div className="font-medium">
-                {email !== 'No email' ? (
-                  <a href={`mailto:${email}`} className="text-blue-600 hover:underline">
-                    {email}
-                  </a>
-                ) : (
-                  email
-                )}
+                <InlineEditField
+                  value={email}
+                  field="email"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  inputType="email"
+                  placeholder="Enter email address"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
               </div>
             </div>
             <div>
               <label className="text-sm text-gray-500">Phone</label>
               <div className="font-medium">
-                {phone !== 'No phone' ? (
-                  <a href={`tel:${phone}`} className="text-blue-600 hover:underline">
-                    {phone}
-                  </a>
-                ) : (
-                  phone
-                )}
+                <InlineEditField
+                  value={phone}
+                  field="phone"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  inputType="tel"
+                  placeholder="Enter phone number"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
               </div>
             </div>
             <div>
               <label className="text-sm text-gray-500">LinkedIn</label>
               <div className="font-medium">
-                {linkedinUrl !== 'No LinkedIn' ? (
-                  <a 
-                    href={linkedinUrl.startsWith('http') ? linkedinUrl : `https://${linkedinUrl}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    View Profile
-                  </a>
-                ) : (
-                  linkedinUrl
-                )}
+                <InlineEditField
+                  value={linkedinUrl}
+                  field="linkedinUrl"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter LinkedIn URL"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
               </div>
             </div>
             <div>
               <label className="text-sm text-gray-500">Location</label>
-              <div className="font-medium">{location}</div>
+              <div className="font-medium">
+                <InlineEditField
+                  value={location}
+                  field="city"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter location"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -121,21 +153,30 @@ export function PersonDetailOverview({
           <div className="space-y-3">
             <div>
               <label className="text-sm text-gray-500">Job Title</label>
-              <div className="font-medium">{jobTitle}</div>
+              <div className="font-medium">
+                <InlineEditField
+                  value={jobTitle}
+                  field="jobTitle"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter job title"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
+              </div>
             </div>
             <div>
               <label className="text-sm text-gray-500">Company</label>
               <div className="font-medium">
-                {onCompanyClick ? (
-                  <button 
-                    onClick={() => onCompanyClick(companyName)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {companyName}
-                  </button>
-                ) : (
-                  companyName
-                )}
+                <InlineEditField
+                  value={companyName}
+                  field="company"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter company name"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
               </div>
             </div>
             <div>
