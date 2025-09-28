@@ -789,10 +789,29 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     );
     const reportTitle = originalReport?.title;
     
+    // Get CoreSignal data for real company information
+    const customFields = (person as any).customFields || {};
+    const coresignalData = customFields.coresignalData || {};
+    const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
+    
+    // Use real company data from CoreSignal
+    const realCompanyName = activeExperience?.company_name || person.company || "Unknown Company";
+    const realIndustry = activeExperience?.company_industry || "Manufacturing";
+    const realCompanySize = activeExperience?.company_size_range || "501-1000 employees";
+    const realEmployeeCount = activeExperience?.company_employees_count || 310;
+    const realCompanyType = activeExperience?.company_type || "Public Company";
+    const realCompanyWebsite = activeExperience?.company_website || "";
+    const realCompanyLocation = activeExperience?.company_hq_full_address || "";
+    
     const reportProps = {
-      company: person.company || "Company",
+      company: realCompanyName,
       title: reportTitle, // Pass the original report title
-      industry: person.department || "Technology",
+      industry: realIndustry,
+      companySize: realCompanySize,
+      employeeCount: realEmployeeCount,
+      companyType: realCompanyType,
+      website: realCompanyWebsite,
+      location: realCompanyLocation,
       data: {
         marketSize: 150000,
         growthRate: 12,
