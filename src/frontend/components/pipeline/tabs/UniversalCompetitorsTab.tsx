@@ -3,14 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  BuildingOfficeIcon, 
-  ChartBarIcon, 
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  UserGroupIcon
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline';
 
 interface UniversalCompetitorsTabProps {
@@ -37,16 +30,29 @@ export function UniversalCompetitorsTab({ record, recordType }: UniversalCompeti
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // No helper functions - using only real CoreSignal data
+
   useEffect(() => {
     const fetchCompetitors = async () => {
       setLoading(true);
       try {
-        // Get competitor mentions from the record
-        const competitorMentions = record?.competitorMentions || record?.competitors || [];
+        // Get competitor data from CoreSignal
+        const coreSignalCompetitors = record?.competitors || [];
         
-        // Generate competitor data based on mentions
-        const competitorData = generateCompetitorData(competitorMentions);
-        setCompetitors(competitorData);
+        if (coreSignalCompetitors.length > 0) {
+          // Use ONLY real CoreSignal competitor data - no fake descriptions or threat levels
+          const competitorData = coreSignalCompetitors.map((competitorName: string, index: number) => ({
+            id: `competitor-${index}`,
+            name: competitorName, // Use original CoreSignal name
+            description: null, // No fake descriptions
+            threat: null // No fake threat levels
+          }));
+          
+          setCompetitors(competitorData);
+        } else {
+          // No competitors if no CoreSignal data
+          setCompetitors([]);
+        }
       } catch (error) {
         console.error('Error fetching competitors:', error);
       } finally {
@@ -56,29 +62,6 @@ export function UniversalCompetitorsTab({ record, recordType }: UniversalCompeti
 
     fetchCompetitors();
   }, [record]);
-
-  const getThreatColor = (threat: string) => {
-    switch (threat) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const getThreatIcon = (threat: string) => {
-    switch (threat) {
-      case 'high': return <XCircleIcon className="w-4 h-4" />;
-      case 'medium': return <ExclamationTriangleIcon className="w-4 h-4" />;
-      case 'low': return <CheckCircleIcon className="w-4 h-4" />;
-      default: return <ClockIcon className="w-4 h-4" />;
-    }
-  };
-
-  const handleCompetitorClick = (competitor: Competitor) => {
-    // Navigate to competitor detail page or open modal
-    console.log('Navigate to competitor:', competitor.name);
-  };
 
   if (loading) {
     return (
@@ -90,88 +73,31 @@ export function UniversalCompetitorsTab({ record, recordType }: UniversalCompeti
 
   return (
     <div className="space-y-6">
-
-      {/* Competitors Grid */}
+      {/* Simple Header */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Competitors</h3>
-        {competitors.length === 0 ? (
-          <div className="text-center py-8">
-            <BuildingOfficeIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No competitors identified yet</p>
-            <p className="text-sm text-gray-400 mt-1">Add competitor mentions to see them here</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {competitors.map((competitor) => (
-              <div
-                key={competitor.id}
-                onClick={() => handleCompetitorClick(competitor)}
-                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <BuildingOfficeIcon className="w-6 h-6 text-gray-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 text-sm">{competitor.name}</h4>
-                      {competitor.website && (
-                        <p className="text-xs text-gray-500">{competitor.website}</p>
-                      )}
-                    </div>
-                  </div>
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getThreatColor(competitor.threat || 'low')}`}>
-                    {getThreatIcon(competitor.threat || 'low')}
-                    {competitor.threat || 'low'} threat
-                  </span>
-                </div>
-
-                {competitor.description && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{competitor.description}</p>
-                )}
-
-                <div className="space-y-2">
-                  {competitor.marketShare && (
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-gray-500">Market Share</span>
-                      <span className="font-medium text-gray-900">{competitor.marketShare}%</span>
-                    </div>
-                  )}
-                  
-                  {competitor.winRate && (
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-gray-500">Win Rate</span>
-                      <span className="font-medium text-gray-900">{competitor.winRate}%</span>
-                    </div>
-                  )}
-                  
-                  {competitor.strength && (
-                    <div className="text-xs">
-                      <span className="text-gray-500">Strength: </span>
-                      <span className="text-gray-900">{competitor.strength}</span>
-                    </div>
-                  )}
-                  
-                  {competitor.weakness && (
-                    <div className="text-xs">
-                      <span className="text-gray-500">Weakness: </span>
-                      <span className="text-gray-900">{competitor.weakness}</span>
-                    </div>
-                  )}
-                </div>
-
-                {competitor.lastEncounter && (
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <p className="text-xs text-gray-500">
-                      Last encounter: {competitor.lastEncounter}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{competitors.length} Competitors</h3>
       </div>
+
+      {/* Simple Competitors List */}
+      {competitors.length === 0 ? (
+        <div className="text-center py-8">
+          <BuildingOfficeIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500">No competitors identified</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {competitors.map((competitor) => (
+            <div
+              key={competitor.id}
+              className="bg-white border border-gray-200 rounded-lg p-4 text-center"
+            >
+              <h4 className="font-medium text-gray-900">{competitor.name.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+              ).join(' ')}</h4>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

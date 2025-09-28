@@ -14,9 +14,9 @@ async function generateOptimizedContent(prompt: string): Promise<string> {
       });
 
       const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 500,
-        temperature: 0.7,
+        model: 'claude-3-5-sonnet-20241022', // Latest Claude 3.5 Sonnet - best for business intelligence
+        max_tokens: 1000, // Increased for more comprehensive analysis
+        temperature: 0.3, // Lower temperature for more consistent, factual output
         messages: [
           {
             role: 'user',
@@ -94,75 +94,126 @@ async function generateSophisticatedIntelligence(company: any, coresignalData: C
       
       // Only show business units if we have enough CoreSignal data
       if (company.technologiesUsed?.length > 10 || company.companyUpdates?.length > 20) {
-        if (isUtility) {
-          businessUnits.push(
-            {
-              name: 'Power Generation',
-              functions: ['Electricity production', 'Renewable energy', 'Nuclear operations', 'Grid management'],
-              color: 'bg-blue-100 border-blue-200'
-            },
-            {
-              name: 'Distribution & Transmission',
-              functions: ['Power distribution', 'Grid infrastructure', 'Substation operations', 'Line maintenance'],
-              color: 'bg-green-100 border-green-200'
-            },
-            {
-              name: 'Customer Operations',
-              functions: ['Customer service', 'Billing systems', 'Outage management', 'Energy efficiency programs'],
-              color: 'bg-purple-100 border-purple-200'
-            },
-            {
-              name: 'Engineering & Planning',
-              functions: ['System planning', 'Infrastructure design', 'Technology integration', 'Regulatory compliance'],
-              color: 'bg-orange-100 border-orange-200'
+        // Extract business units from company updates and technologies
+        const detectedUnits = new Set();
+        const unitFunctions = new Map();
+        
+        // Analyze company updates for business unit mentions
+        if (company.companyUpdates && company.companyUpdates.length > 0) {
+          company.companyUpdates.forEach(update => {
+            const description = update.description || '';
+            
+            // Detect business units from content
+            if (description.includes('Engineering') || description.includes('System Planning')) {
+              detectedUnits.add('Engineering & System Planning');
+              if (!unitFunctions.has('Engineering & System Planning')) {
+                unitFunctions.set('Engineering & System Planning', new Set());
+              }
+              unitFunctions.get('Engineering & System Planning').add('System planning');
+              unitFunctions.get('Engineering & System Planning').add('Infrastructure design');
             }
-          );
-        } else if (company.industry?.toLowerCase().includes('telecommunications')) {
-          businessUnits.push(
-            {
-              name: 'Network Operations',
-              functions: ['Network infrastructure', 'Fiber optic systems', 'Wireless communications', 'Network maintenance'],
-              color: 'bg-blue-100 border-blue-200'
-            },
-            {
-              name: 'Customer Services',
-              functions: ['Customer support', 'Service delivery', 'Billing systems', 'Account management'],
-              color: 'bg-green-100 border-green-200'
-            },
-            {
-              name: 'Engineering & Technology',
-              functions: ['System design', 'Technology integration', 'Network planning', 'Technical support'],
-              color: 'bg-purple-100 border-purple-200'
-            },
-            {
-              name: 'Business Operations',
-              functions: ['Strategic planning', 'Regulatory compliance', 'Partnership management', 'Market development'],
-              color: 'bg-orange-100 border-orange-200'
+            
+            if (description.includes('Grid') || description.includes('Power') || description.includes('Electricity')) {
+              detectedUnits.add('Grid Operations');
+              if (!unitFunctions.has('Grid Operations')) {
+                unitFunctions.set('Grid Operations', new Set());
+              }
+              unitFunctions.get('Grid Operations').add('Grid management');
+              unitFunctions.get('Grid Operations').add('Power distribution');
             }
-          );
+            
+            if (description.includes('Customer') || description.includes('Service')) {
+              detectedUnits.add('Customer Operations');
+              if (!unitFunctions.has('Customer Operations')) {
+                unitFunctions.set('Customer Operations', new Set());
+              }
+              unitFunctions.get('Customer Operations').add('Customer service');
+              unitFunctions.get('Customer Operations').add('Billing systems');
+            }
+            
+            if (description.includes('Clean Energy') || description.includes('Renewable') || description.includes('Solar') || description.includes('Wind')) {
+              detectedUnits.add('Clean Energy');
+              if (!unitFunctions.has('Clean Energy')) {
+                unitFunctions.set('Clean Energy', new Set());
+              }
+              unitFunctions.get('Clean Energy').add('Renewable energy');
+              unitFunctions.get('Clean Energy').add('Clean energy programs');
+            }
+            
+            if (description.includes('Technology') || description.includes('Innovation') || description.includes('Digital')) {
+              detectedUnits.add('Technology & Innovation');
+              if (!unitFunctions.has('Technology & Innovation')) {
+                unitFunctions.set('Technology & Innovation', new Set());
+              }
+              unitFunctions.get('Technology & Innovation').add('Technology integration');
+              unitFunctions.get('Technology & Innovation').add('Digital transformation');
+            }
+          });
+        }
+        
+        // If we detected business units from company updates, use those
+        if (detectedUnits.size > 0) {
+          const colors = ['bg-blue-100 border-blue-200', 'bg-green-100 border-green-200', 'bg-purple-100 border-purple-200', 'bg-orange-100 border-orange-200', 'bg-red-100 border-red-200'];
+          let colorIndex = 0;
+          
+          detectedUnits.forEach(unitName => {
+            const functions = Array.from(unitFunctions.get(unitName) || []);
+            businessUnits.push({
+              name: unitName,
+              functions: functions.length > 0 ? functions : ['Operations', 'Strategic planning'],
+              color: colors[colorIndex % colors.length]
+            });
+            colorIndex++;
+          });
         } else {
-          businessUnits.push(
-            {
-              name: 'Technology & IT',
-              functions: ['Software development', 'IT infrastructure', 'Data management', 'Security systems'],
-              color: 'bg-blue-100 border-blue-200'
-            },
-            {
-              name: 'Operations',
-              functions: ['Process management', 'Quality control', 'Performance monitoring', 'Operational excellence'],
-              color: 'bg-green-100 border-green-200'
-            },
-            {
-              name: 'Sales & Marketing',
-              functions: ['Customer acquisition', 'Brand management', 'Market research', 'Lead generation'],
-              color: 'bg-purple-100 border-purple-200'
-            },
-            {
-              name: 'Finance & Administration',
-              functions: ['Financial planning', 'Budget management', 'HR operations', 'Compliance'],
-              color: 'bg-orange-100 border-orange-200'
-            }
-          );
+          // Fallback to industry-specific business units if no data detected
+          if (isUtility) {
+            businessUnits.push(
+              {
+                name: 'Power Generation',
+                functions: ['Electricity production', 'Renewable energy', 'Nuclear operations', 'Grid management'],
+                color: 'bg-blue-100 border-blue-200'
+              },
+              {
+                name: 'Distribution & Transmission',
+                functions: ['Power distribution', 'Grid infrastructure', 'Substation operations', 'Line maintenance'],
+                color: 'bg-green-100 border-green-200'
+              },
+              {
+                name: 'Customer Operations',
+                functions: ['Customer service', 'Billing systems', 'Outage management', 'Energy efficiency programs'],
+                color: 'bg-purple-100 border-purple-200'
+              },
+              {
+                name: 'Engineering & Planning',
+                functions: ['System planning', 'Infrastructure design', 'Technology integration', 'Regulatory compliance'],
+                color: 'bg-orange-100 border-orange-200'
+              }
+            );
+          } else {
+            businessUnits.push(
+              {
+                name: 'Technology & IT',
+                functions: ['Software development', 'IT infrastructure', 'Data management', 'Security systems'],
+                color: 'bg-blue-100 border-blue-200'
+              },
+              {
+                name: 'Operations',
+                functions: ['Process management', 'Quality control', 'Performance monitoring', 'Operational excellence'],
+                color: 'bg-green-100 border-green-200'
+              },
+              {
+                name: 'Sales & Marketing',
+                functions: ['Customer acquisition', 'Brand management', 'Market research', 'Lead generation'],
+                color: 'bg-purple-100 border-purple-200'
+              },
+              {
+                name: 'Finance & Administration',
+                functions: ['Financial planning', 'Budget management', 'HR operations', 'Compliance'],
+                color: 'bg-orange-100 border-orange-200'
+              }
+            );
+          }
         }
       }
 

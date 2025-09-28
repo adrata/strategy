@@ -141,6 +141,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
+        { id: 'competitors', label: 'Competitors' },
         { id: 'notes', label: 'Notes' },
         { id: 'timeline', label: 'Timeline' }
       ];
@@ -1305,6 +1306,11 @@ export function UniversalRecordTemplate({
             recordType === 'companies' ? 
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
+        case 'competitors':
+          console.log(`🏢 [UNIVERSAL] Rendering competitors tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'insights':
           return renderTabWithErrorBoundary(

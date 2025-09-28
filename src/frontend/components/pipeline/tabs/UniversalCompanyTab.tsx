@@ -46,27 +46,21 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     founded: record.foundedYear || record.founded || '-',
     ceo: record.ceo || '-',
     description: (() => {
-      // Use enriched CoreSignal description if available, otherwise generate AI description
-      if (record.descriptionEnriched) {
-        return record.descriptionEnriched;
+      // Prioritize the longer, more detailed description for better seller context
+      const originalDesc = record.description && record.description.trim() !== '' ? record.description : '';
+      const enrichedDesc = record.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched : '';
+      
+      // Use the longer description for better context, or enriched if original is not available
+      if (originalDesc && enrichedDesc) {
+        return originalDesc.length > enrichedDesc.length ? originalDesc : enrichedDesc;
+      } else if (originalDesc) {
+        return originalDesc;
+      } else if (enrichedDesc) {
+        return enrichedDesc;
       }
       
-      // Generate AI description based on CoreSignal data
-      const industry = record.industry || 'Unknown';
-      const employeeCount = record.employeeCount || 0;
-      const foundedYear = record.foundedYear || 0;
-      const isPublic = record.isPublic;
-      const stockSymbol = record.stockSymbol;
-      
-      if (industry.toLowerCase().includes('utility') || industry.toLowerCase().includes('utilities')) {
-        const companyType = isPublic ? 'publicly traded' : 'privately held';
-        const yearsInBusiness = foundedYear ? new Date().getFullYear() - foundedYear : 0;
-        const sizeDescription = employeeCount > 10000 ? 'major' : employeeCount > 1000 ? 'large' : 'mid-size';
-        
-        return `${record.name} is a ${sizeDescription} ${companyType} utility company serving ${employeeCount.toLocaleString()} customers across Southern California. Founded in ${foundedYear}, the company has been providing reliable electricity service for ${yearsInBusiness} years. As one of the nation's largest electric utilities, SCE is leading the transition to clean energy through innovative projects in energy storage, transportation electrification, and renewable energy integration. The company operates critical infrastructure that powers homes, businesses, and communities while advancing environmental sustainability and grid modernization initiatives.`;
-      } else {
-        return record.description || 'No description available';
-      }
+      // Fallback to basic description if no data
+      return 'No description available';
     })(),
     marketCap: record.marketCap || '-',
     employees: record.employeeCount || record.size || '-',
@@ -391,61 +385,84 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
         </div>
       </div>
 
-      {/* Company Business Intelligence */}
+      {/* Seller Intelligence - Key Metrics */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Business Intelligence</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Market Position</h4>
-            <div className="text-2xl font-bold text-blue-600">{record?.isPublic ? 'Public' : 'Private'}</div>
-            <div className="text-xs text-gray-500 mt-1">
-              {record?.stockSymbol ? `Ticker: ${record.stockSymbol}` : 'Company type'}
-            </div>
-          </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Seller Intelligence</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Technology Stack</h4>
             <div className="text-2xl font-bold text-green-600">{record?.technologiesUsed?.length || 0}</div>
             <div className="text-xs text-gray-500 mt-1">Systems in use</div>
+            <div className="text-xs text-gray-400 mt-1">Complexity indicator</div>
           </div>
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Hiring Activity</h4>
             <div className="text-2xl font-bold text-purple-600">{record?.activeJobPostings || 0}</div>
             <div className="text-xs text-gray-500 mt-1">Active job postings</div>
+            <div className="text-xs text-gray-400 mt-1">Growth indicator</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Social Reach</h4>
+            <div className="text-2xl font-bold text-blue-600">
+              {record?.linkedinFollowers ? `${(record.linkedinFollowers / 1000).toFixed(0)}K` : '-'}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">LinkedIn followers</div>
+            <div className="text-xs text-gray-400 mt-1">Brand strength</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Competitive Landscape</h4>
+            <div className="text-2xl font-bold text-orange-600">{record?.competitors?.length || 0}</div>
+            <div className="text-xs text-gray-500 mt-1">Competitors identified</div>
+            <div className="text-xs text-gray-400 mt-1">Market positioning</div>
           </div>
         </div>
       </div>
 
-      {/* Company Social Media Presence */}
+      {/* Strategic Seller Insights */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Social Media Presence</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">LinkedIn Followers:</span>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Strategic Seller Insights</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Technology Complexity</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Total Technologies:</span>
+                <span className="text-sm font-medium text-gray-900">{record?.technologiesUsed?.length || 0}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Integration Complexity:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {record?.linkedinFollowers ? record.linkedinFollowers.toLocaleString() : '-'}
+                  {(record?.technologiesUsed?.length || 0) > 200 ? 'High' : (record?.technologiesUsed?.length || 0) > 50 ? 'Medium' : 'Low'}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Recent Posts:</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {record?.companyUpdates?.length || 0} updates
-                </span>
+              <div className="text-xs text-gray-500 mt-2">
+                {(record?.technologiesUsed?.length || 0) > 200 ? 'Complex integration challenges - TOP\'s expertise valuable' : 
+                 (record?.technologiesUsed?.length || 0) > 50 ? 'Moderate complexity - strategic planning needed' : 
+                 'Simple stack - focus on efficiency gains'}
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Competitors:</span>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Market Position</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Company Type:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {record?.competitors?.length || 0} identified
+                  {record?.isPublic ? 'Public Company' : 'Private Company'}
+                  {record?.stockSymbol && ` (${record.stockSymbol})`}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Founded:</span>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Competitive Pressure:</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {record?.foundedYear || '-'}
+                  {(record?.competitors?.length || 0) > 15 ? 'High' : (record?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
                 </span>
+              </div>
+              <div className="text-xs text-gray-500 mt-2">
+                {(record?.competitors?.length || 0) > 15 ? 'Highly competitive market - differentiation key' : 
+                 (record?.competitors?.length || 0) > 5 ? 'Moderate competition - value proposition important' : 
+                 'Less competitive - relationship building crucial'}
               </div>
             </div>
           </div>
@@ -479,52 +496,6 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
         </div>
       </div>
 
-      {/* Company Analysis Summary */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Analysis Summary</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company Size:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.employeeCount?.toLocaleString() || '-'} employees</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Industry:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.industry || '-'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company Type:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.isPublic ? 'Public Company' : 'Private Company'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Founded:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.foundedYear || '-'}</span>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Technologies:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.technologiesUsed?.length || 0} systems</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Active Jobs:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.activeJobPostings || 0} postings</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Competitors:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.competitors?.length || 0} identified</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Social Reach:</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {record?.linkedinFollowers ? `${(record.linkedinFollowers / 1000).toFixed(0)}K followers` : '-'}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
     </div>
   );
