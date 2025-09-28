@@ -24,17 +24,26 @@ export function PersonDetailOverview({
   
   // Get CoreSignal profile data
   const fullName = coresignalData.full_name || person.fullName || 'Unknown';
-  const jobTitle = coresignalData.active_experience_title || coresignalData.title || person.jobTitle || 'Unknown Title';
-  const email = coresignalData.primary_professional_email || coresignalData.email || person.email || 'No email';
+  const jobTitle = coresignalData.active_experience_title || coresignalData.headline || person.jobTitle || 'Unknown Title';
+  const email = coresignalData.primary_professional_email || person.email || 'No email';
   const phone = coresignalData.phone || person.phone || 'No phone';
   const linkedinUrl = coresignalData.linkedin_url || person.linkedinUrl || 'No LinkedIn';
-  const location = coresignalData.location || person.city || 'Unknown Location';
-  const companyName = coresignalData.active_experience_company || person.company || 'Unknown Company';
+  const location = coresignalData.location_full || coresignalData.location || person.city || 'Unknown Location';
+  
+  // Get company name from active experience
+  const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
+  const companyName = activeExperience?.company_name || person.company || 'Unknown Company';
+  
+  // Get department from active experience
+  const department = activeExperience?.department || person.department || 'Unknown Department';
+  
+  // Get seniority from active experience
+  const seniority = activeExperience?.management_level || person.seniority || 'Unknown';
   
   // Get experience and education data
   const experience = coresignalData.experience || [];
   const education = coresignalData.education || [];
-  const skills = coresignalData.skills || [];
+  const skills = coresignalData.inferred_skills || [];
   
   // Get enrichment metadata
   const lastEnriched = customFields.lastEnriched;
@@ -180,6 +189,34 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
+              <label className="text-sm text-gray-500">Department</label>
+              <div className="font-medium">
+                <InlineEditField
+                  value={department}
+                  field="department"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter department"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-sm text-gray-500">Seniority Level</label>
+              <div className="font-medium">
+                <InlineEditField
+                  value={seniority}
+                  field="seniority"
+                  recordId={person.id || ''}
+                  recordType="people"
+                  placeholder="Enter seniority level"
+                  onSave={handleSave}
+                  className="text-sm font-medium"
+                />
+              </div>
+            </div>
+            <div>
               <label className="text-sm text-gray-500">Buyer Group Role</label>
               <div className="font-medium">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(buyerGroupRole)}`}>
@@ -214,14 +251,19 @@ export function PersonDetailOverview({
           <div className="space-y-3">
             {experience.slice(0, 3).map((exp: any, index: number) => (
               <div key={index} className="border-l-2 border-blue-200 pl-4">
-                <div className="font-medium">{exp.title || 'Unknown Title'}</div>
+                <div className="font-medium">{exp.position_title || exp.title || 'Unknown Title'}</div>
                 <div className="text-sm text-gray-600">{exp.company_name || 'Unknown Company'}</div>
                 <div className="text-xs text-gray-500">
-                  {exp.start_date && exp.end_date 
-                    ? `${exp.start_date} - ${exp.end_date}`
-                    : exp.start_date || 'Current'
+                  {exp.date_from && exp.date_to 
+                    ? `${exp.date_from} - ${exp.date_to}`
+                    : exp.date_from || 'Current'
                   }
                 </div>
+                {exp.description && (
+                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                    {exp.description}
+                  </div>
+                )}
               </div>
             ))}
           </div>

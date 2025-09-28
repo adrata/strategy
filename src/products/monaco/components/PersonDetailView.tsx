@@ -554,6 +554,14 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
   // Extract custom fields data for enhanced display
   const customFields = (person as any).customFields || {};
+  const coresignalData = customFields.coresignalData || {};
+  
+  // Get company name from active experience
+  const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
+  const companyName = activeExperience?.company_name || person.company || 'Unknown Company';
+  const department = activeExperience?.department || person.department || 'Unknown Department';
+  const seniority = activeExperience?.management_level || person.seniority || 'Unknown';
+  
   const enhancedPerson = {
     ...person,
     // Map custom fields to person properties for easier access
@@ -581,14 +589,18 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     budget: customFields.budget || "Unknown",
     timeline: customFields.timeline || "Unknown",
     decisionFactors: customFields.decisionFactors || [],
-    // Ensure all person properties are available
-    fullName: (person as any).fullName || person.name,
-    jobTitle: (person as any).jobTitle || person.title,
-    workEmail: (person as any).workEmail || person.email,
-    linkedinUrl: (person as any).linkedinUrl || person.linkedin,
+    // Ensure all person properties are available with CoreSignal data
+    fullName: coresignalData.full_name || (person as any).fullName || person.name,
+    jobTitle: coresignalData.active_experience_title || coresignalData.headline || (person as any).jobTitle || person.title,
+    workEmail: coresignalData.primary_professional_email || (person as any).workEmail || person.email,
+    linkedinUrl: coresignalData.linkedin_url || (person as any).linkedinUrl || person.linkedin,
     city: (person as any).city,
     state: (person as any).state,
-    notes: (person as any).notes
+    notes: (person as any).notes,
+    // Use CoreSignal data for company, department, and seniority
+    company: companyName,
+    department: department,
+    seniority: seniority
   };
 
   // Function to get the back button text based on source section

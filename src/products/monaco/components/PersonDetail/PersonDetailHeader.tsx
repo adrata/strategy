@@ -53,7 +53,11 @@ export function PersonDetailHeader({
   isCompleted,
   onCompanyClick,
 }: PersonDetailHeaderProps) {
-  const hasEmailContact = person['email'] && person.email !== "Not Available";
+  const hasEmailContact = person['email'] && 
+    person.email !== "Not Available" && 
+    person.email !== "Unknown" && 
+    person.email !== "-" && 
+    person.email.trim() !== '';
   const hasPhoneContact = person['phone'] && person.phone !== "Not Available";
   const hasValidTitle = person['title'] && 
     person.title.toLowerCase() !== 'unknown' && 
@@ -137,16 +141,18 @@ export function PersonDetailHeader({
                 </p>
               )}
 
-              <button
-                onClick={() => onCompanyClick?.(person.company || "")}
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors mb-3"
-              >
-                <BuildingOfficeIcon className="w-4 h-4" />
-                <span className="font-medium">{person.company}</span>
-              </button>
-
-              {/* Contact Info */}
-              <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+              {/* Contact Info with Company */}
+              <div className="flex items-center gap-4 text-sm text-[var(--muted)] mb-3">
+                {person.company && person.company !== "-" && person.company.trim() !== '' && (
+                  <button
+                    onClick={() => onCompanyClick?.(person.company || "")}
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    <BuildingOfficeIcon className="w-4 h-4" />
+                    <span className="font-medium">{person.company}</span>
+                  </button>
+                )}
+                
                 {hasEmailContact && (
                   <div className="flex items-center gap-1">
                     <EnvelopeIcon className="w-4 h-4" />
@@ -154,12 +160,10 @@ export function PersonDetailHeader({
                   </div>
                 )}
                 
-                {hasPhoneContact && (
-                  <div className="flex items-center gap-1">
-                    <PhoneIcon className="w-4 h-4" />
-                    <span>{person.phone}</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-1">
+                  <PhoneIcon className="w-4 h-4" />
+                  <span>{hasPhoneContact ? person.phone : '-'}</span>
+                </div>
                 
                 {person['location'] && (
                   <div className="flex items-center gap-1">

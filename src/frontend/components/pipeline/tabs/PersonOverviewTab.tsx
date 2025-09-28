@@ -273,10 +273,6 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                 <span className="text-sm text-gray-600">Seniority:</span>
                 <span className="text-sm font-medium text-gray-900 capitalize">{personData.seniority}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Source:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.source}</span>
-              </div>
             </div>
           </div>
         </div>
