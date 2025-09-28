@@ -1,0 +1,429 @@
+{
+  "timestamp": "2025-09-28T02:20:41.033Z",
+  "stats": {
+    "totalFound": 42,
+    "duplicatesRemoved": 18,
+    "processed": 23,
+    "successful": 23,
+    "failed": 0,
+    "skipped": 0,
+    "apiErrors": 0
+  },
+  "auditLog": [
+    {
+      "timestamp": "2025-09-28T02:20:23.575Z",
+      "personId": "per_1757909238479_uzm55n",
+      "fullName": "Bob Johnson",
+      "email": "bob.johnson@prospect-test.com",
+      "company": "Prospect Test Inc",
+      "batchNumber": 1,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:23.575Z",
+      "personId": "01K4SG3NCCTPKXS3YXYXNW25Z3",
+      "fullName": "David Beitler",
+      "email": "d.beitler@winningvariant.com",
+      "company": "Winning Variant",
+      "batchNumber": 1,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:23.575Z",
+      "personId": "01K4SGR1ANP5QSB39CGFY56T2D",
+      "fullName": "Derek Cummings",
+      "email": "derek@retailproductsolutions.com",
+      "company": "Retail Product Solutions",
+      "batchNumber": 1,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:23.575Z",
+      "personId": "per_1757909237555_4qqmy8",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@advancement-test.com",
+      "company": "Advancement Test Corp",
+      "batchNumber": 1,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:23.575Z",
+      "personId": "per_1757908919432_1deya8",
+      "fullName": "John Doe",
+      "email": "john.doe@testcompany.com",
+      "company": "Test Company Inc",
+      "batchNumber": 1,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:24.454Z",
+      "personId": "per_1757909238479_uzm55n",
+      "fullName": "Bob Johnson",
+      "email": "bob.johnson@prospect-test.com",
+      "company": "Prospect Test Inc",
+      "batchNumber": 1,
+      "action": "enrichment_success",
+      "matchQuality": 90
+    },
+    {
+      "timestamp": "2025-09-28T02:20:24.811Z",
+      "personId": "01K4SGR1ANP5QSB39CGFY56T2D",
+      "fullName": "Derek Cummings",
+      "email": "derek@retailproductsolutions.com",
+      "company": "Retail Product Solutions",
+      "batchNumber": 1,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:24.813Z",
+      "personId": "per_1757908919432_1deya8",
+      "fullName": "John Doe",
+      "email": "john.doe@testcompany.com",
+      "company": "Test Company Inc",
+      "batchNumber": 1,
+      "action": "enrichment_success",
+      "matchQuality": 90
+    },
+    {
+      "timestamp": "2025-09-28T02:20:25.182Z",
+      "personId": "per_1757909237555_4qqmy8",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@advancement-test.com",
+      "company": "Advancement Test Corp",
+      "batchNumber": 1,
+      "action": "enrichment_success",
+      "matchQuality": 90
+    },
+    {
+      "timestamp": "2025-09-28T02:20:25.196Z",
+      "personId": "01K4SG3NCCTPKXS3YXYXNW25Z3",
+      "fullName": "David Beitler",
+      "email": "d.beitler@winningvariant.com",
+      "company": "Winning Variant",
+      "batchNumber": 1,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:28.197Z",
+      "personId": "per_1757908728149_o81kka",
+      "fullName": "John Doe",
+      "email": "john@test.com",
+      "company": "Test Corp",
+      "batchNumber": 2,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:28.197Z",
+      "personId": "per_1757908920449_oezx09",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@testcompany.com",
+      "batchNumber": 2,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:28.197Z",
+      "personId": "01K4SB2SGDHZY5B96P95XFDXE8",
+      "fullName": "Kirk Morales",
+      "email": "kirk@winningvariant.com",
+      "company": "Winning Variant",
+      "batchNumber": 2,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:28.197Z",
+      "personId": "01K4D91PPETX7VQ7DBWMMDHFMX",
+      "fullName": "Adam Lohmann",
+      "email": "adam@thetresgroup.com",
+      "batchNumber": 2,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:28.197Z",
+      "personId": "01K4D91KC0QHAFVC4R0PJWMN2Z",
+      "fullName": "Nicole Montgomery",
+      "email": "nicole@closingteamfl.com",
+      "batchNumber": 2,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:29.005Z",
+      "personId": "01K4D91PPETX7VQ7DBWMMDHFMX",
+      "fullName": "Adam Lohmann",
+      "email": "adam@thetresgroup.com",
+      "batchNumber": 2,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:29.005Z",
+      "personId": "01K4D91KC0QHAFVC4R0PJWMN2Z",
+      "fullName": "Nicole Montgomery",
+      "email": "nicole@closingteamfl.com",
+      "batchNumber": 2,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:29.047Z",
+      "personId": "per_1757908728149_o81kka",
+      "fullName": "John Doe",
+      "email": "john@test.com",
+      "company": "Test Corp",
+      "batchNumber": 2,
+      "action": "enrichment_success",
+      "matchQuality": 90
+    },
+    {
+      "timestamp": "2025-09-28T02:20:29.100Z",
+      "personId": "01K4SB2SGDHZY5B96P95XFDXE8",
+      "fullName": "Kirk Morales",
+      "email": "kirk@winningvariant.com",
+      "company": "Winning Variant",
+      "batchNumber": 2,
+      "action": "enrichment_success",
+      "matchQuality": 90
+    },
+    {
+      "timestamp": "2025-09-28T02:20:29.130Z",
+      "personId": "per_1757908920449_oezx09",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@testcompany.com",
+      "batchNumber": 2,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.133Z",
+      "personId": "01K4D91F927CM8C98YZAFXV5G8",
+      "fullName": "Edina McGuire",
+      "email": "edina@somerstitle.com",
+      "batchNumber": 3,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.133Z",
+      "personId": "01K4D91AKJ849JSAWSXEHHR2BX",
+      "fullName": "Barry Miller",
+      "email": "barry@theclosingagent.com",
+      "batchNumber": 3,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.133Z",
+      "personId": "01K4D916X9VAKRP8K41HWBBN3J",
+      "fullName": "Dennis Egan",
+      "email": "dennis@closewithsun.com",
+      "batchNumber": 3,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.133Z",
+      "personId": "01K4D912J1BY0VHEWZRY60XAGW",
+      "fullName": "Randy Cruz",
+      "email": "rcruz@gorequire.com",
+      "batchNumber": 3,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.133Z",
+      "personId": "01K4D90YW6HF7PW2B7KWYY1RVA",
+      "fullName": "Tami Sturdevant",
+      "email": "tsturdevant@professionaltitle.com",
+      "batchNumber": 3,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.939Z",
+      "personId": "01K4D912J1BY0VHEWZRY60XAGW",
+      "fullName": "Randy Cruz",
+      "email": "rcruz@gorequire.com",
+      "batchNumber": 3,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.940Z",
+      "personId": "01K4D90YW6HF7PW2B7KWYY1RVA",
+      "fullName": "Tami Sturdevant",
+      "email": "tsturdevant@professionaltitle.com",
+      "batchNumber": 3,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:32.987Z",
+      "personId": "01K4D916X9VAKRP8K41HWBBN3J",
+      "fullName": "Dennis Egan",
+      "email": "dennis@closewithsun.com",
+      "batchNumber": 3,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:33.042Z",
+      "personId": "01K4D91AKJ849JSAWSXEHHR2BX",
+      "fullName": "Barry Miller",
+      "email": "barry@theclosingagent.com",
+      "batchNumber": 3,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:33.073Z",
+      "personId": "01K4D91F927CM8C98YZAFXV5G8",
+      "fullName": "Edina McGuire",
+      "email": "edina@somerstitle.com",
+      "batchNumber": 3,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.075Z",
+      "personId": "01K4D9097RSHEDZ6XFQTHS2EZY",
+      "fullName": "Armando Romero",
+      "email": "armando@brokernation.net",
+      "batchNumber": 4,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.075Z",
+      "personId": "01K4D905J36R011YT3BWRFDEJA",
+      "fullName": "Alison Nazarowski",
+      "email": "alison@brightlinetitle.com",
+      "batchNumber": 4,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.075Z",
+      "personId": "01K4D8Z8B94EYP2ZQ9D1RW23DX",
+      "fullName": "Shari Roll",
+      "email": "shariroll@ftgagency.com",
+      "batchNumber": 4,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.075Z",
+      "personId": "01K48QDQJVD25SQK3M99KAM1F1",
+      "fullName": "Kathleen OReilly",
+      "email": "kathleen.oreilly@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 4,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.075Z",
+      "personId": "01K48QDPH7DSA6D26KHZ28R64W",
+      "fullName": "Manish Sharma",
+      "email": "manish.sharma@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 4,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.883Z",
+      "personId": "01K48QDPH7DSA6D26KHZ28R64W",
+      "fullName": "Manish Sharma",
+      "email": "manish.sharma@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 4,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.883Z",
+      "personId": "01K48QDQJVD25SQK3M99KAM1F1",
+      "fullName": "Kathleen OReilly",
+      "email": "kathleen.oreilly@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 4,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.928Z",
+      "personId": "01K4D8Z8B94EYP2ZQ9D1RW23DX",
+      "fullName": "Shari Roll",
+      "email": "shariroll@ftgagency.com",
+      "batchNumber": 4,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:36.981Z",
+      "personId": "01K4D905J36R011YT3BWRFDEJA",
+      "fullName": "Alison Nazarowski",
+      "email": "alison@brightlinetitle.com",
+      "batchNumber": 4,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:37.013Z",
+      "personId": "01K4D9097RSHEDZ6XFQTHS2EZY",
+      "fullName": "Armando Romero",
+      "email": "armando@brokernation.net",
+      "batchNumber": 4,
+      "action": "enrichment_success",
+      "matchQuality": 80
+    },
+    {
+      "timestamp": "2025-09-28T02:20:40.014Z",
+      "personId": "01K48QDNK6WSSXQ4KPB82FAHH7",
+      "fullName": "Penelope Prett",
+      "email": "penelope.prett@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:40.014Z",
+      "personId": "01K48QDMH4VYFHHPDFPR0C200K",
+      "fullName": "KC McClure",
+      "email": "kc.mcclure@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:40.014Z",
+      "personId": "01K48QDKFSY3ZRX819FX3ZNC70",
+      "fullName": "Julie Sweet",
+      "email": "julie.sweet@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_attempt"
+    },
+    {
+      "timestamp": "2025-09-28T02:20:40.936Z",
+      "personId": "01K48QDKFSY3ZRX819FX3ZNC70",
+      "fullName": "Julie Sweet",
+      "email": "julie.sweet@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:40.998Z",
+      "personId": "01K48QDMH4VYFHHPDFPR0C200K",
+      "fullName": "KC McClure",
+      "email": "kc.mcclure@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    },
+    {
+      "timestamp": "2025-09-28T02:20:41.032Z",
+      "personId": "01K48QDNK6WSSXQ4KPB82FAHH7",
+      "fullName": "Penelope Prett",
+      "email": "penelope.prett@accenture.com",
+      "company": "Accenture",
+      "batchNumber": 5,
+      "action": "enrichment_success",
+      "matchQuality": 100
+    }
+  ]
+}

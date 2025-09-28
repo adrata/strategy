@@ -1101,66 +1101,59 @@ async function getMultipleRecords(
     return await loadSpeedrunData(workspaceId, userId);
   }
   
-  // Special handling for people - use unified master ranking system
+  // Special handling for people - use direct query for better performance
   if (type === 'people') {
     try {
-      // Use the unified master ranking system for consistent ranking
-      const unifiedRanking = await UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId);
+      console.log(`👥 [PEOPLE API] Starting people data load for workspace: ${workspaceId}, user: ${userId}`);
       
-      console.log(`👥 [PEOPLE API] Using unified master ranking:`, {
-        totalPeople: unifiedRanking.people.length,
-        samplePeople: unifiedRanking.people.slice(0, 5).map(p => ({ 
-          id: p.id, 
-          name: p.name, 
-          company: p.company, 
-          masterRank: p.masterRank 
-        }))
-      });
-      
-      return { success: true, data: unifiedRanking.people };
-    } catch (error) {
-      console.error('❌ [PEOPLE API] Error using unified ranking, falling back to basic query:', error);
-      
-      // Fallback to basic query if unified ranking fails
+      // Use direct query for better performance and reliability
       const people = await prisma.people.findMany({
         where: {
           workspaceId,
           deletedAt: null
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: pagination?.limit || 5000
+        take: 10000, // Increased limit to ensure we get all people
+        select: {
+          id: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          title: true,
+          email: true,
+          phone: true,
+          linkedinUrl: true,
+          customFields: true,
+          tags: true,
+          updatedAt: true,
+          createdAt: true,
+          rank: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          assignedUserId: true,
+          workspaceId: true
+        }
       });
       
-      // Manually lookup company names for people that have companyId
-      const peopleWithCompanies = await Promise.all(
-        people.map(async (person) => {
-          if (person.companyId) {
-            try {
-              const companyData = await prisma.companies.findUnique({
-                where: { id: person.companyId },
-                select: { id: true, name: true, industry: true, vertical: true }
-              });
-              return {
-                ...person,
-                company: companyData
-              };
-            } catch (error) {
-              console.warn(`Failed to lookup company for person ${person.id}:`, error);
-              return person;
-            }
-          }
-          return person;
-        })
-      );
+      console.log(`👥 [PEOPLE API] Direct query returned ${people.length} people`);
       
-      // Assign sequential ranks if people don't have proper ranking
-      const peopleWithRanks = peopleWithCompanies.map((person, index) => ({
+      // Add basic ranking and formatting
+      const peopleWithRanking = people.map((person, index) => ({
         ...person,
-        rank: person.rank && person.rank > 0 ? person.rank : index + 1,
-        masterRank: person.rank && person.rank > 0 ? person.rank : index + 1
+        masterRank: person.rank || (index + 1),
+        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+        company: person.company || 'Unknown Company'
       }));
       
-      return { success: true, data: peopleWithRanks };
+      return { success: true, data: peopleWithRanking };
+    } catch (error) {
+      console.error('❌ [PEOPLE API] Error loading people:', error);
+      return { success: false, data: [], error: error.message };
     }
   }
   
@@ -1346,7 +1339,37 @@ async function getMultipleRecords(
     
     console.log(`✅ [COMPANIES API] Fixed ranking - ${uniqueCompanies.length} companies with sequential ranks`);
     
-    return { success: true, data: uniqueCompanies };
+    // Calculate nextActionTiming for companies
+    const companiesWithTiming = uniqueCompanies.map(company => {
+      const nextActionDate = company.nextActionDate;
+      let nextActionTiming = 'No date set';
+      
+      if (nextActionDate) {
+        const daysUntil = Math.floor((new Date(nextActionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        if (daysUntil < 0) {
+          nextActionTiming = 'Overdue';
+        } else if (daysUntil === 0) {
+          nextActionTiming = 'Today';
+        } else if (daysUntil === 1) {
+          nextActionTiming = 'Tomorrow';
+        } else if (daysUntil <= 7) {
+          nextActionTiming = 'This week';
+        } else if (daysUntil <= 14) {
+          nextActionTiming = 'Next week';
+        } else if (daysUntil <= 30) {
+          nextActionTiming = 'This month';
+        } else {
+          nextActionTiming = 'Future';
+        }
+      }
+      
+      return {
+        ...company,
+        nextActionTiming
+      };
+    });
+    
+    return { success: true, data: companiesWithTiming };
   }
   
   // Special handling for prospects and leads to include company data
@@ -1362,7 +1385,7 @@ async function getMultipleRecords(
         ]
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 1000,
+      take: pagination?.limit || 10000,
       skip: pagination?.offset || 0,
       include: {
         company: {
@@ -1434,7 +1457,7 @@ async function getMultipleRecords(
         ]
       },
       orderBy: [{ updatedAt: 'desc' }],
-      take: pagination?.limit || 1000,
+      take: pagination?.limit || 10000,
       skip: pagination?.offset || 0,
       include: {
         company: {
@@ -1659,7 +1682,7 @@ async function getMultipleRecords(
     const records = await model.findMany({
       where: whereClause,
       orderBy: orderBy,
-      take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
+      take: Math.min(pagination?.limit || (type === 'people' ? 10000 : 100), type === 'people' ? 10000 : 500), // 🚀 PERFORMANCE: Load up to 10000 records max for people, 500 for others
       skip: pagination?.offset || 0,
       select: selectFields,
       ...includeClause
@@ -1686,7 +1709,7 @@ async function getMultipleRecords(
         const records = await model.findMany({
           where: whereClause,
           orderBy: orderBy,
-          take: Math.min(pagination?.limit || (type === 'people' ? 1000 : 100), type === 'people' ? 5000 : 500), // 🚀 PERFORMANCE: Load up to 5000 records max for people, 500 for others
+          take: Math.min(pagination?.limit || (type === 'people' ? 10000 : 100), type === 'people' ? 10000 : 500), // 🚀 PERFORMANCE: Load up to 10000 records max for people, 500 for others
           skip: pagination?.offset || 0
         });
         
@@ -2926,7 +2949,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Removed assignedUserId filter to show all leads (matching sidebar count)
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // 🚀 PERFORMANCE: Load only recent leads for dashboard (was 10000)
+        take: 10000, // 🚀 PERFORMANCE: Load all leads for dashboard to support pagination
         select: {
           id: true,
           firstName: true,
@@ -2946,7 +2969,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           // Show all prospects in workspace regardless of assignment
         },
         orderBy: [{ updatedAt: 'desc' }],
-        take: 100, // 🚀 PERFORMANCE: Load only recent prospects for dashboard (was 10000)
+        take: 10000, // 🚀 PERFORMANCE: Load all prospects for dashboard to support pagination
         select: {
           id: true,
           firstName: true,
@@ -3073,36 +3096,46 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         
         return uniqueCompanies;
       }),
-      // Use unified master ranking for people in dashboard
-      UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId).then(result => {
-        // Return all people from unified ranking for dashboard
-        return result.people;
-      }).catch(error => {
-        console.error('❌ [DASHBOARD PEOPLE] Error using unified ranking, falling back to basic query:', error);
-        // Fallback to basic query if unified ranking fails
-        return prisma.people.findMany({ 
-          where: { 
-            workspaceId, 
-            deletedAt: null
-          },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-          take: 5000,
-          select: { 
-            id: true, 
-            fullName: true, 
-            firstName: true, 
-            lastName: true, 
-            company: true,
-            companyId: true,
-            jobTitle: true,
-            email: true,
-            phone: true,
-            linkedinUrl: true,
-            customFields: true,
-            tags: true,
-            updatedAt: true 
-          }
-        });
+      // Use direct query for people in dashboard for better performance
+      prisma.people.findMany({ 
+        where: { 
+          workspaceId, 
+          deletedAt: null
+        },
+        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+        take: 10000, // Increased limit to ensure we get all people
+        select: { 
+          id: true, 
+          fullName: true, 
+          firstName: true, 
+          lastName: true, 
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          title: true,
+          email: true,
+          phone: true,
+          linkedinUrl: true,
+          customFields: true,
+          tags: true,
+          updatedAt: true,
+          createdAt: true,
+          rank: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          assignedUserId: true,
+          workspaceId: true
+        }
+      }).then(people => {
+        // Add basic ranking and formatting
+        return people.map((person, index) => ({
+          ...person,
+          masterRank: person.rank || (index + 1),
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          company: person.company || 'Unknown Company'
+        }));
       }),
       prisma.clients.findMany({ 
         where: { workspaceId, deletedAt: null, assignedUserId: userId },

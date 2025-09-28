@@ -5,7 +5,7 @@ interface UniversalIndustryIntelTabProps {
 
 export function UniversalIndustryIntelTab({ record, recordType }: UniversalIndustryIntelTabProps) {
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-6">
       {/* Industry Overview */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Industry Intelligence</h3>

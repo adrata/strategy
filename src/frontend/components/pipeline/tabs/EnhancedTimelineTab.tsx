@@ -357,7 +357,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                       <div className="flex items-center gap-2 mb-2">
                         <h4 className="text-sm font-medium text-gray-900">{event.title}</h4>
                         {!isPastEvent(event.date) && (
-                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                          <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
                             Scheduled
                           </span>
                         )}

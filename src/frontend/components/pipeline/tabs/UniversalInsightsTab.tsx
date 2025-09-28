@@ -12,7 +12,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
   if (!record) {
     return (
-      <div className="p-6">
+      <div className="space-y-6">
         <div className="text-center text-gray-500">No record data available</div>
       </div>
     );
@@ -102,7 +102,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const insights = generateIntelligenceInsights();
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-6">
       {/* Engagement Strategy */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Strategy</h3>

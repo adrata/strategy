@@ -540,7 +540,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
 
       default:
         return (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Strategy Information</h3>
               <p className="text-gray-600">Strategy information is available for prospects and opportunities.</p>
@@ -551,7 +551,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {getRecordFields()}
     </div>
   );

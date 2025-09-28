@@ -115,7 +115,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Intelligence & Insights</h3>
+      <h3 className="text-lg font-semibold text-gray-900">Intelligence & Insights</h3>
       
       {/* AI-Generated Insights */}
       {insights.length > 0 && (

@@ -386,7 +386,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-sm font-medium text-gray-900">{event.title}</h4>
                       {!isPastEvent(event.date) && (
-                        <span className="px-4 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
+                        <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
                           Scheduled
                         </span>
                       )}

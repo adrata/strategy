@@ -14,7 +14,7 @@ export function UniversalDealIntelTab({ record, recordType }: UniversalDealIntel
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-6">
       {/* Deal Overview */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Deal Intelligence</h3>
