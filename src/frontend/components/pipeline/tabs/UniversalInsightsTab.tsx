@@ -426,7 +426,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             {reports.find(r => r.id === activeReport)?.isGenerating ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-3 text-gray-600">Generating report with Claude AI...</span>
+                <span className="ml-3 text-gray-600">Adrata is generating report...</span>
               </div>
             ) : (
               <div className="prose max-w-none">
@@ -440,23 +440,19 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           // Show report grid
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {reports.map((report) => (
-              <div key={report.id} className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">{report.category}</h4>
-                <div className="space-y-2">
-                  <div 
-                    className="block p-3 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleReportClick(report.id)}
-                  >
-                    <div className="text-sm font-medium text-gray-900">{report.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">{report.description}</div>
-                    {report.isGenerating && (
-                      <div className="flex items-center mt-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        <span className="ml-2 text-xs text-blue-600">Generating...</span>
-                      </div>
-                    )}
+              <div 
+                key={report.id} 
+                className="bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => handleReportClick(report.id)}
+              >
+                <div className="text-sm font-medium text-gray-900 mb-1">{report.title}</div>
+                <div className="text-xs text-gray-500">{report.description}</div>
+                {report.isGenerating && (
+                  <div className="flex items-center mt-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span className="ml-2 text-xs text-blue-600">Generating...</span>
                   </div>
-                </div>
+                )}
               </div>
             ))}
           </div>

@@ -207,15 +207,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       });
     }
     
-    // Fill with default actions if we don't have enough
-    while (actions.length < 3) {
-      actions.push({
-        action: 'Initial contact via email',
-        date: 'Invalid Date'
-      });
-    }
-    
-    return actions.slice(0, 3);
+    // Only return real actions, no template data
+    return actions;
   };
 
   const lastActions = generateLastActions();
@@ -403,20 +396,19 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
-      {/* What did I last do */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">What did I last do</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">Last 3 Actions:</h4>
-          <ul className="space-y-2">
-            {lastActions.map((action, index) => (
-              <li key={index} className="text-sm text-gray-600">
-                • {action.action} - {action.date}
-              </li>
-            ))}
-          </ul>
+        {/* Last Actions */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Last Actions</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <ul className="space-y-2">
+              {lastActions.map((action, index) => (
+                <li key={index} className="text-sm text-gray-600">
+                  • {action.action} - {action.date}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
 
       {/* Notes on them */}
       <div className="space-y-4">
