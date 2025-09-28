@@ -389,7 +389,6 @@ export async function GET(request: NextRequest) {
               fullName: true,
               email: true,
               jobTitle: true,
-              company: true,
               companyId: true,
               phone: true,
               linkedinUrl: true,
@@ -404,7 +403,14 @@ export async function GET(request: NextRequest) {
               assignedUserId: true,
               workspaceId: true,
               createdAt: true,
-              updatedAt: true
+              updatedAt: true,
+              // Include company relationship to get company name
+              company: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
               // Remove notes and bio from select to avoid string length issues
             }
           });
@@ -424,7 +430,7 @@ export async function GET(request: NextRequest) {
               id: person.id,
               rank: person.rank || (index + 1),
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
-              company: safeString(person.company || 'Unknown Company', 200),
+              company: safeString(person.company?.name || 'Unknown Company', 200),
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
