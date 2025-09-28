@@ -710,7 +710,15 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
   const handleReportClick = (reportType: string) => {
     console.log("📊 Opening Deep Value Report:", reportType);
-    setActiveReport(reportType);
+    
+    // Generate unique report URL
+    const reportId = `${person.id}-${reportType.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    const workspaceSlug = window.location.pathname.split('/')[1]; // Extract workspace from current URL
+    
+    // Navigate to the report page
+    const reportUrl = `/${workspaceSlug}/paper/${reportId}`;
+    console.log("🔗 Navigating to report URL:", reportUrl);
+    window.location.href = reportUrl;
   };
 
   const handleBackFromReport = () => {
