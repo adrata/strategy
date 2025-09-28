@@ -188,6 +188,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano
       case 'cmezxb1ez0001pc94yry3ntjk': // NE (Notary Everyday) workspace
         return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano (same user in both workspaces)
+      case '01K5D01YCQJ9TJ7CT4DZDE79T1': // TOP Engineering Plus workspace
+        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
       default:
         return user?.id;
     }

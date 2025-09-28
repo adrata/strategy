@@ -80,6 +80,8 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
       case '01K1VBYV8ETM2RCQA4GNN9EG72': // RPS workspace
         return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano
+      case '01K5D01YCQJ9TJ7CT4DZDE79T1': // TOP Engineering Plus workspace
+        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
       default:
         return user?.id;
     }
@@ -184,8 +186,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // ⚡ PERFORMANCE MONITORING: Track API call timing
       const startTime = performance.now();
       
-      // 🚀 UNIFIED API: Use new consolidated API format
-      const response = await fetch(`/api/data/unified?type=${section}&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true`);
+      // 🚀 UNIFIED API: Use new consolidated API format with cache busting
+      const timestamp = Date.now();
+      const response = await fetch(`/api/data/unified?type=${section}&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true&timestamp=${timestamp}`);
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       
@@ -209,7 +212,13 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         const record = sectionData.find((r: any) => r['id'] === recordId);
         
         if (record) {
-          console.log(`✅ [DIRECT LOAD] Successfully loaded ${section} record from unified API:`, record.name || record.fullName || recordId);
+          console.log(`✅ [DIRECT LOAD] Successfully loaded ${section} record from unified API:`, {
+            id: record.id,
+            name: record.name,
+            description: record.description ? 'Yes' : 'No',
+            website: record.website ? 'Yes' : 'No',
+            source: 'direct_api'
+          });
           setSelectedRecord(record);
         } else {
           // If not found in the list, try to load the specific record directly
@@ -245,19 +254,76 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     // Extract ID from slug
     const recordId = extractIdFromSlug(slug);
     
+    // MODERATE FIX: For companies, clear cache but still check cached data first
+    if (section === 'companies') {
+      console.log(`🔄 [COMPANY CACHE FIX] Clearing cache for company: ${recordId}`);
+      // Clear company-related cache
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(`cached-companies-${recordId}`);
+        sessionStorage.removeItem(`current-record-companies`);
+      }
+    }
+    
     // If we have data loaded, try to find the record in it
     if (data.length > 0) {
+      console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
+      console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
+      
       // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
       const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
       
       if (record) {
-        console.log(`🔗 [Direct URL] Found ${section} record in data:`, record.name || record.fullName || recordId);
-        // Keep the previous record in case we need to fall back
-        if (selectedRecord && selectedRecord.id !== record.id) {
-          setPreviousRecord(selectedRecord);
+        console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
+          id: record.id,
+          name: record.name,
+          description: record.description ? 'Yes' : 'No',
+          website: record.website ? 'Yes' : 'No',
+          source: 'cached'
+        });
+        
+        // CRITICAL FIX: For companies, always verify the cached record is complete
+        // Check multiple fields to determine if the record is truly complete
+        const isIncomplete = section === 'companies' && (
+          !record.description || 
+          !record.website || 
+          !record.industry ||
+          !record.size ||
+          !record.city ||
+          !record.state ||
+          record.description === 'No description available' ||
+          record.website === 'No website'
+        );
+        
+        if (isIncomplete) {
+          console.log(`⚠️ [COMPANY FIX] Cached company record is incomplete, forcing direct load for better data:`, {
+            hasDescription: !!record.description,
+            hasWebsite: !!record.website,
+            hasIndustry: !!record.industry,
+            hasSize: !!record.size,
+            hasLocation: !!(record.city || record.state),
+            description: record.description,
+            website: record.website
+          });
+          
+          // Clear any cached data for this company to force fresh load
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem(`cached-${section}-${record.id}`);
+            sessionStorage.removeItem(`current-record-${section}`);
+            console.log(`🧹 [COMPANY FIX] Cleared cached data for company: ${record.id}`);
+          }
+          
+          // Don't return - continue to direct load
+        } else {
+          console.log(`✅ [COMPANY FIX] Cached company record is complete, using cached data`);
+          // Keep the previous record in case we need to fall back
+          if (selectedRecord && selectedRecord.id !== record.id) {
+            setPreviousRecord(selectedRecord);
+          }
+          setSelectedRecord(record);
+          return;
         }
-        setSelectedRecord(record);
-        return;
+      } else {
+        console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
       }
     }
     

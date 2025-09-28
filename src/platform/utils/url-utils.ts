@@ -29,6 +29,7 @@ export function generateSlug(name: string, id: string): string {
   const truncatedName = cleanName.substring(0, 50);
   
   // Format: name-id (human-readable name first, then unique ID)
+  // Use the full ID to ensure uniqueness even with similar names
   return `${truncatedName}-${id}`;
 }
 
@@ -110,6 +111,36 @@ export function validateSlug(
 ): boolean {
   const extractedId = extractIdFromSlug(slug);
   return extractedId === record.id;
+}
+
+/**
+ * Generate a more robust slug that prevents conflicts
+ * @param name - The human-readable name
+ * @param id - The database ID
+ * @returns A URL-safe slug with conflict prevention
+ */
+export function generateRobustSlug(name: string, id: string): string {
+  if (!name || !id) {
+    return id || 'unknown';
+  }
+
+  // Clean the name more aggressively to prevent conflicts
+  const cleanName = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
+  // Limit name length to keep URLs reasonable
+  const truncatedName = cleanName.substring(0, 40);
+  
+  // Add a hash of the ID to prevent conflicts with similar names
+  const idHash = id.substring(0, 8); // Use first 8 characters of ID for uniqueness
+  
+  // Format: name-idhash-fullid for maximum uniqueness
+  return `${truncatedName}-${idHash}-${id}`;
 }
 
 /**

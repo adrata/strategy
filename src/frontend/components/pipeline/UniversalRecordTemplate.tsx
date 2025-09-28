@@ -50,6 +50,7 @@ import {
   UniversalCompetitorsTab,
   UniversalSellerCompaniesTab
 } from './tabs';
+import { UniversalNewsTab } from './tabs/UniversalNewsTab';
 
 // Import new role and enablers tab components
 import { UniversalRoleTab } from './tabs/UniversalRoleTab';
@@ -137,6 +138,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' },
@@ -1319,6 +1321,11 @@ export function UniversalRecordTemplate({
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
+        case 'news':
+          console.log(`📰 [UNIVERSAL] Rendering news tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalNewsTab key={activeTab} record={record} recordType={recordType} />
+          );
         case 'companies':
           return renderTabWithErrorBoundary(
             <UniversalSellerCompaniesTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
@@ -1579,7 +1586,10 @@ export function UniversalRecordTemplate({
                   />
                 ) : (
                   <span className="text-sm font-semibold text-gray-700">
-                    {record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial())}
+                    {(() => {
+                      console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'Record:', record);
+                      return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
+                    })()}
                   </span>
                 )}
               </div>

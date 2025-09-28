@@ -579,6 +579,39 @@ model companies {
   complications           String?
   strategicIntelligence   String?
   
+  // CoreSignal Enrichment Fields - Company Status
+  isPublic                Boolean?
+  stockSymbol             String?             @db.VarChar(20)
+  logoUrl                 String?             @db.VarChar(500)
+  
+  // CoreSignal Enrichment Fields - Domain and Website
+  domain                  String?             @db.VarChar(255)
+  
+  // CoreSignal Enrichment Fields - Headquarters Location
+  hqLocation              String?             @db.VarChar(255)
+  hqFullAddress           String?             @db.VarChar(500)
+  hqCity                  String?             @db.VarChar(100)
+  hqState                 String?             @db.VarChar(100)
+  hqStreet                String?             @db.VarChar(255)
+  hqZipcode               String?             @db.VarChar(20)
+  
+  // CoreSignal Enrichment Fields - Social Media Followers
+  twitterFollowers        Int?
+  owlerFollowers          Int?
+  
+  // CoreSignal Enrichment Fields - Company Updates and Activity
+  companyUpdates          Json?
+  numTechnologiesUsed     Int?
+  
+  // CoreSignal Enrichment Fields - Enhanced Descriptions
+  descriptionEnriched     String?
+  descriptionMetadataRaw  String?
+  
+  // CoreSignal Enrichment Fields - Regional Information
+  hqRegion                String[]
+  hqCountryIso2           String?             @db.VarChar(2)
+  hqCountryIso3           String?             @db.VarChar(3)
+  
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])

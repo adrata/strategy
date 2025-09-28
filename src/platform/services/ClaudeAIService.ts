@@ -7,6 +7,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { prisma } from '@/platform/database/prisma-client';
+import { EnhancedWorkspaceContextService } from '@/platform/ai/services/EnhancedWorkspaceContextService';
 
 export interface ClaudeChatRequest {
   message: string;
@@ -115,6 +116,9 @@ export class ClaudeAIService {
       }
 
       const workspaceId = request.workspaceId;
+      
+      // Get workspace context first
+      const workspaceContext = await EnhancedWorkspaceContextService.buildWorkspaceContext(workspaceId);
       
       // Get key metrics and data for context
       const [peopleCount, companiesCount, prospectsCount, leadsCount, opportunitiesCount] = await Promise.all([
@@ -230,6 +234,7 @@ export class ClaudeAIService {
       }
 
       return {
+        workspaceContext,
         workspaceMetrics: {
           people: peopleCount,
           companies: companiesCount,
@@ -305,6 +310,12 @@ WORKSPACE DATA CONTEXT:
 `;
     }
 
+    // Add rich workspace context if available
+    let workspaceBusinessContext = '';
+    if (dataContext.workspaceContext) {
+      workspaceBusinessContext = EnhancedWorkspaceContextService.buildAIContextString(dataContext.workspaceContext);
+    }
+
     // Add recent activities context
     let activitiesContext = '';
     if (dataContext.recentActivities && dataContext.recentActivities.length > 0) {
@@ -331,6 +342,7 @@ You're like a trusted sales consultant who's always available to help. You under
 
 ${contextInfo}
 ${workspaceContext}
+${workspaceBusinessContext}
 ${activitiesContext}
 
 💬 CONVERSATION STYLE:

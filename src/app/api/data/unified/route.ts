@@ -887,7 +887,63 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
         nextActionDate: true,
         actionStatus: true,
         assignedUserId: true,
-        rank: true
+        rank: true,
+        // CoreSignal Enrichment Fields - Basic Information
+        legalName: true,
+        tradingName: true,
+        localName: true,
+        email: true,
+        phone: true,
+        fax: true,
+        postalCode: true,
+        // CoreSignal Enrichment Fields - Business Information
+        sector: true,
+        employeeCount: true,
+        foundedYear: true,
+        currency: true,
+        // CoreSignal Enrichment Fields - Intelligence Overview
+        linkedinUrl: true,
+        linkedinFollowers: true,
+        activeJobPostings: true,
+        // CoreSignal Enrichment Fields - Industry Classification
+        naicsCodes: true,
+        sicCodes: true,
+        // CoreSignal Enrichment Fields - Social Media
+        facebookUrl: true,
+        twitterUrl: true,
+        instagramUrl: true,
+        youtubeUrl: true,
+        githubUrl: true,
+        // CoreSignal Enrichment Fields - Business Intelligence
+        technologiesUsed: true,
+        competitors: true,
+        tags: true,
+        // CoreSignal Enrichment Fields - Company Status
+        isPublic: true,
+        stockSymbol: true,
+        logoUrl: true,
+        // CoreSignal Enrichment Fields - Domain and Website
+        domain: true,
+        // CoreSignal Enrichment Fields - Headquarters Location
+        hqLocation: true,
+        hqFullAddress: true,
+        hqCity: true,
+        hqState: true,
+        hqStreet: true,
+        hqZipcode: true,
+        // CoreSignal Enrichment Fields - Social Media Followers
+        twitterFollowers: true,
+        owlerFollowers: true,
+        // CoreSignal Enrichment Fields - Company Updates and Activity
+        companyUpdates: true,
+        numTechnologiesUsed: true,
+        // CoreSignal Enrichment Fields - Enhanced Descriptions
+        descriptionEnriched: true,
+        descriptionMetadataRaw: true,
+        // CoreSignal Enrichment Fields - Regional Information
+        hqRegion: true,
+        hqCountryIso2: true,
+        hqCountryIso3: true
       };
     } else if (type === 'leads' || type === 'prospects') {
       selectFields = {
@@ -1115,6 +1171,23 @@ async function getMultipleRecords(
   
   // Special handling for companies - show all companies in workspace
   if (type === 'companies') {
+    // Check for force refresh and bypass cache
+    const forceRefresh = false; // TODO: Pass searchParams to this function
+    const bypassCache = false; // TODO: Pass searchParams to this function
+    
+    if (forceRefresh || bypassCache) {
+      console.log(`🔄 [COMPANIES API] Force refresh requested, bypassing cache for workspace: ${workspaceId}`);
+      
+      // Clear any existing cache for this workspace
+      try {
+        await cache.del(`unified-companies-${workspaceId}`);
+        await cache.del(`companies-${workspaceId}`);
+        console.log(`🧹 [COMPANIES API] Cleared cache for workspace: ${workspaceId}`);
+      } catch (error) {
+        console.warn(`⚠️ [COMPANIES API] Failed to clear cache:`, error);
+      }
+    }
+    
     const companies = await prisma.companies.findMany({
       where: {
         workspaceId,
@@ -1124,7 +1197,17 @@ async function getMultipleRecords(
           { assignedUserId: null }
         ]
       },
-      orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
+      // Add distinct to prevent duplicates by name, but get the most complete record
+      distinct: ['name'],
+      orderBy: [
+        { description: { sort: 'desc', nulls: 'last' } }, // Prefer records with descriptions
+        { website: { sort: 'desc', nulls: 'last' } },   // Prefer records with websites
+        { industry: { sort: 'desc', nulls: 'last' } },   // Prefer records with industry
+        { size: { sort: 'desc', nulls: 'last' } },       // Prefer records with size
+        { city: { sort: 'desc', nulls: 'last' } },       // Prefer records with location
+        { rank: 'desc' },                                // Prefer higher ranks (more complete data)
+        { updatedAt: 'desc' }                           // Most recently updated
+      ],
       take: pagination?.limit || 5000, // Load all companies (same limit as people)
       select: { 
         id: true, 
@@ -1137,6 +1220,7 @@ async function getMultipleRecords(
         city: true,
         state: true,
         country: true,
+        rank: true,
         customFields: true,
         updatedAt: true,
         lastAction: true,
@@ -1145,7 +1229,63 @@ async function getMultipleRecords(
         nextActionDate: true,
         actionStatus: true,
         assignedUserId: true,
-        rank: true
+        rank: true,
+        // CoreSignal Enrichment Fields - Basic Information
+        legalName: true,
+        tradingName: true,
+        localName: true,
+        email: true,
+        phone: true,
+        fax: true,
+        postalCode: true,
+        // CoreSignal Enrichment Fields - Business Information
+        sector: true,
+        employeeCount: true,
+        foundedYear: true,
+        currency: true,
+        // CoreSignal Enrichment Fields - Intelligence Overview
+        linkedinUrl: true,
+        linkedinFollowers: true,
+        activeJobPostings: true,
+        // CoreSignal Enrichment Fields - Industry Classification
+        naicsCodes: true,
+        sicCodes: true,
+        // CoreSignal Enrichment Fields - Social Media
+        facebookUrl: true,
+        twitterUrl: true,
+        instagramUrl: true,
+        youtubeUrl: true,
+        githubUrl: true,
+        // CoreSignal Enrichment Fields - Business Intelligence
+        technologiesUsed: true,
+        competitors: true,
+        tags: true,
+        // CoreSignal Enrichment Fields - Company Status
+        isPublic: true,
+        stockSymbol: true,
+        logoUrl: true,
+        // CoreSignal Enrichment Fields - Domain and Website
+        domain: true,
+        // CoreSignal Enrichment Fields - Headquarters Location
+        hqLocation: true,
+        hqFullAddress: true,
+        hqCity: true,
+        hqState: true,
+        hqStreet: true,
+        hqZipcode: true,
+        // CoreSignal Enrichment Fields - Social Media Followers
+        twitterFollowers: true,
+        owlerFollowers: true,
+        // CoreSignal Enrichment Fields - Company Updates and Activity
+        companyUpdates: true,
+        numTechnologiesUsed: true,
+        // CoreSignal Enrichment Fields - Enhanced Descriptions
+        descriptionEnriched: true,
+        descriptionMetadataRaw: true,
+        // CoreSignal Enrichment Fields - Regional Information
+        hqRegion: true,
+        hqCountryIso2: true,
+        hqCountryIso3: true
       }
     });
     
@@ -3769,6 +3909,34 @@ export async function GET(request: NextRequest) {
       });
       
       console.log(`✅ [SUCCESS] ${action.toUpperCase()} ${type} completed in ${response.meta.responseTime}ms`);
+      
+      // Debug: Log Southern Company records for debugging
+      if (type === 'companies' && response.data) {
+        try {
+          const companiesData = Array.isArray(response.data) ? response.data : response.data.companies || [];
+          const southernCompanies = companiesData.filter((company: any) => 
+            company && company.name && company.name.toLowerCase().includes('southern company')
+          );
+          if (southernCompanies.length > 0) {
+            console.log(`🔍 [SOUTHERN COMPANY DEBUG] Found ${southernCompanies.length} Southern Company records:`, 
+              southernCompanies.map((c: any) => ({
+                id: c.id,
+                name: c.name,
+                rank: c.rank,
+                hasDescription: !!c.description,
+                hasWebsite: !!c.website,
+                hasIndustry: !!c.industry,
+                hasSize: !!c.size,
+                hasLocation: !!(c.city || c.state),
+                description: c.description?.substring(0, 50) + '...',
+                website: c.website
+              }))
+            );
+          }
+        } catch (error) {
+          console.warn('Failed to debug Southern Company records:', error);
+        }
+      }
       
       // 🚀 PERFORMANCE: Log performance metrics for optimization
       if (response.meta.responseTime > 5000) {

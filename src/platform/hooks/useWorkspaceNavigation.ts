@@ -71,7 +71,7 @@ export function useWorkspaceNavigation() {
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     
     // Save last location for workspace switching
-    if (typeof window !== 'undefined' && authUser.activeWorkspaceId) {
+    if (typeof window !== 'undefined' && authUser?.activeWorkspaceId) {
       localStorage.setItem(`lastLocation-${authUser.activeWorkspaceId}`, cleanPath);
       console.log(`💾 [WORKSPACE NAV] Saved last location: ${cleanPath} for workspace: ${authUser.activeWorkspaceId}`);
     }

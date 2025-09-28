@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     await prisma.$connect();
 
     // Get companies from accounts table (represents companies in the schema) - WORKSPACE-LEVEL VISIBILITY
+    // Add deduplication by company name to prevent duplicates, but get the most complete record
     const accounts = await prisma.companies.findMany({
       where: {
         workspaceId: workspaceId,
@@ -37,6 +38,17 @@ export async function GET(request: NextRequest) {
         ],
         deletedAt: null
       },
+      // Add distinct to prevent duplicates by name, but order by most complete record first
+      distinct: ['name'],
+        orderBy: [
+          { description: { sort: 'desc', nulls: 'last' } }, // Prefer records with descriptions
+          { website: { sort: 'desc', nulls: 'last' } },   // Prefer records with websites
+          { industry: { sort: 'desc', nulls: 'last' } },   // Prefer records with industry
+          { size: { sort: 'desc', nulls: 'last' } },       // Prefer records with size
+          { city: { sort: 'desc', nulls: 'last' } },       // Prefer records with location
+          { rank: 'desc' },                                // Prefer higher ranks (more complete data)
+          { updatedAt: 'desc' }                           // Most recently updated
+        ],
       select: {
         id: true,
         name: true,
@@ -57,7 +69,63 @@ export async function GET(request: NextRequest) {
         lastActionDate: true,
         nextAction: true,
         nextActionDate: true,
-        actionStatus: true
+        actionStatus: true,
+        // CoreSignal Enrichment Fields - Basic Information
+        legalName: true,
+        tradingName: true,
+        localName: true,
+        email: true,
+        phone: true,
+        fax: true,
+        postalCode: true,
+        // CoreSignal Enrichment Fields - Business Information
+        sector: true,
+        employeeCount: true,
+        foundedYear: true,
+        currency: true,
+        // CoreSignal Enrichment Fields - Intelligence Overview
+        linkedinUrl: true,
+        linkedinFollowers: true,
+        activeJobPostings: true,
+        // CoreSignal Enrichment Fields - Industry Classification
+        naicsCodes: true,
+        sicCodes: true,
+        // CoreSignal Enrichment Fields - Social Media
+        facebookUrl: true,
+        twitterUrl: true,
+        instagramUrl: true,
+        youtubeUrl: true,
+        githubUrl: true,
+        // CoreSignal Enrichment Fields - Business Intelligence
+        technologiesUsed: true,
+        competitors: true,
+        tags: true,
+        // CoreSignal Enrichment Fields - Company Status
+        isPublic: true,
+        stockSymbol: true,
+        logoUrl: true,
+        // CoreSignal Enrichment Fields - Domain and Website
+        domain: true,
+        // CoreSignal Enrichment Fields - Headquarters Location
+        hqLocation: true,
+        hqFullAddress: true,
+        hqCity: true,
+        hqState: true,
+        hqStreet: true,
+        hqZipcode: true,
+        // CoreSignal Enrichment Fields - Social Media Followers
+        twitterFollowers: true,
+        owlerFollowers: true,
+        // CoreSignal Enrichment Fields - Company Updates and Activity
+        companyUpdates: true,
+        numTechnologiesUsed: true,
+        // CoreSignal Enrichment Fields - Enhanced Descriptions
+        descriptionEnriched: true,
+        descriptionMetadataRaw: true,
+        // CoreSignal Enrichment Fields - Regional Information
+        hqRegion: true,
+        hqCountryIso2: true,
+        hqCountryIso3: true
       },
       orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
     });

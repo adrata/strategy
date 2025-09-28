@@ -675,6 +675,31 @@ button[class*="linkedin"]:hover:not(.no-override) {
   color: inherit !important;
 }
 
+/* Force blue color for LinkedIn links in company details */
+.linkedin-link-blue {
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+.linkedin-link-blue:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+}
+
+/* Override any LinkedIn-specific rules for our custom class */
+a.linkedin-link-blue,
+a.linkedin-link-blue:visited,
+a.linkedin-link-blue:hover,
+a.linkedin-link-blue:focus {
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+a.linkedin-link-blue:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+}
+
 /* Custom scrollbar styling for pipeline table */
 .pipeline-table-scroll::-webkit-scrollbar:horizontal {
   height: 8px; /* Match typical vertical scroll bar thickness */
@@ -724,6 +749,31 @@ button[class*="linkedin"]:hover:not(.no-override) {
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover:horizontal {
   background: #3a3a3a;
+}
+
+/* ULTRA-SPECIFIC LinkedIn link override - must be at the end */
+a.linkedin-link-blue {
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+a.linkedin-link-blue:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+}
+
+/* Override any global link rules for LinkedIn links */
+a[href*="linkedin"].linkedin-link-blue,
+a[href*="linkedin"].linkedin-link-blue:visited,
+a[href*="linkedin"].linkedin-link-blue:hover,
+a[href*="linkedin"].linkedin-link-blue:focus {
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+a[href*="linkedin"].linkedin-link-blue:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
 }
 
 /* Hide scrollbar while maintaining scroll functionality */

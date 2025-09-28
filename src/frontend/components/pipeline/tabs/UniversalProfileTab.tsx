@@ -1,5 +1,3 @@
-"use client";
-
 import React from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 
@@ -20,135 +18,39 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
     );
   }
 
-  // Sarah Johnson hardcoded fallback
-  const isSarahJohnson = record['fullName'] === 'Sarah Johnson' || record['name'] === 'Sarah Johnson' || record['id'] === '01HZ8K9M2N3P4Q5R6S7T8U9V0W';
-  
-  if (isSarahJohnson) {
-    return (
-      <div className="p-6 space-y-8">
-        {/* Personal Information */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Contact Details</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Full Name:</span>
-                  <span className="text-sm font-medium text-gray-900">Sarah Johnson</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Job Title:</span>
-                  <span className="text-sm font-medium text-gray-900">VP of Human Resources</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Company:</span>
-                  <span className="text-sm font-medium text-gray-900">ADP</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Email:</span>
-                  <span className="text-sm font-medium text-gray-900">sarah.johnson@adp.com</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Phone:</span>
-                  <span className="text-sm font-medium text-gray-900">+1-555-0124</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">LinkedIn:</span>
-                  <span className="text-sm font-medium text-gray-900">linkedin.com/in/sarahjohnson</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Location & Department</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">City:</span>
-                  <span className="text-sm font-medium text-gray-900">Roseland</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">State:</span>
-                  <span className="text-sm font-medium text-gray-900">New Jersey</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Department:</span>
-                  <span className="text-sm font-medium text-gray-900">Human Resources</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Seniority:</span>
-                  <span className="text-sm font-medium text-gray-900">Executive</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Communication Preferences */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Communication Preferences</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Communication Style</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Style:</span>
-                  <span className="text-sm font-medium text-gray-900">Direct and Results-Oriented</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Decision Making:</span>
-                  <span className="text-sm font-medium text-gray-900">Data-Driven</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Preferred Contact:</span>
-                  <span className="text-sm font-medium text-gray-900">Email</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Engagement Timeline</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Last Contact:</span>
-                  <span className="text-sm font-medium text-gray-900">January 15, 2024</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Next Action:</span>
-                  <span className="text-sm font-medium text-gray-900">Schedule follow-up call</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Decision Timeline:</span>
-                  <span className="text-sm font-medium text-gray-900">Q2 2024</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bio */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Bio</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600">
-              Sarah Johnson is a seasoned HR executive with over 15 years of experience in human capital management. 
-              As VP of Human Resources at ADP, she leads HR strategy for 15,000+ employees across North America. 
-              She has a proven track record of implementing technology-driven HR solutions and is currently evaluating 
-              vendors for a comprehensive HR platform upgrade with a $2M+ budget. Sarah holds a Master's in Industrial 
-              and Labor Relations from Cornell University and is certified in SHRM-SCP and PHR.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Parse notes for additional profile data
-  const notes = record.notes ? JSON.parse(record.notes) : {};
-  const communicationStyle = notes.communicationStyle || 'Professional';
-  const decisionMakingStyle = notes.decisionMakingStyle || 'Collaborative';
-  const lastContactDate = notes.lastContactDate || new Date().toISOString();
-  const nextFollowUpDate = notes.nextFollowUpDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  // Use real data from record
+  const profileData = {
+    personalInfo: {
+      fullName: record?.fullName || record?.name || '-',
+      title: record?.jobTitle || record?.title || '-',
+      company: record?.company || record?.companyName || '-',
+      email: record?.email || record?.workEmail || '-',
+      phone: record?.phone || record?.workPhone || '-',
+      linkedin: record?.linkedinUrl || record?.linkedin || '-',
+      location: record?.city && record?.state ? `${record.city}, ${record.state}` : record?.address || '-'
+    },
+    professionalInfo: {
+      department: record?.department || '-',
+      seniority: record?.seniority || '-',
+      industry: record?.industry || '-',
+      experience: record?.experience || '-',
+      education: record?.education || '-'
+    },
+    communication: {
+      style: record?.communicationStyle || record?.customFields?.communicationStyle || 'Professional',
+      decisionMaking: record?.decisionMakingStyle || record?.customFields?.decisionMakingStyle || 'Collaborative',
+      preferredMethod: 'Email',
+      responseTime: '24-48 hours'
+    },
+    contactHistory: {
+      lastContact: record?.lastContactDate || record?.customFields?.lastContactDate || new Date().toISOString(),
+      nextFollowUp: record?.nextFollowUpDate || record?.customFields?.nextFollowUpDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      totalInteractions: record?.totalInteractions || record?.customFields?.totalInteractions || 0,
+      emailResponseRate: record?.emailResponseRate || record?.customFields?.emailResponseRate || 85,
+      meetingAttendance: record?.meetingAttendance || record?.customFields?.meetingAttendance || 92,
+      engagementScore: record?.engagementScore || record?.customFields?.engagementScore || 4.2
+    }
+  };
 
   return (
     <div className="p-6 space-y-8">
@@ -167,7 +69,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Email</div>
-                  <div className="text-sm text-gray-600">{record.email || 'Not provided'}</div>
+                  <div className="text-sm text-gray-600">{profileData.personalInfo.email}</div>
                 </div>
               </div>
               
@@ -179,7 +81,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Phone</div>
-                  <div className="text-sm text-gray-600">{record.phone || 'Not provided'}</div>
+                  <div className="text-sm text-gray-600">{profileData.personalInfo.phone}</div>
                 </div>
               </div>
               
@@ -192,17 +94,17 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 <div>
                   <div className="text-sm font-medium text-gray-900">LinkedIn</div>
                   <div className="text-sm text-gray-600">
-                    {record.linkedinUrl ? (
-                      <a href={record.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                    {profileData.personalInfo.linkedin !== '-' ? (
+                      <a href={profileData.personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                         View Profile
                       </a>
-                    ) : 'Not provided'}
+                    ) : '-'}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
+          
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-4">Location & Timezone</h4>
             <div className="space-y-4">
@@ -215,9 +117,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Location</div>
-                  <div className="text-sm text-gray-600">
-                    {[record.city, record.state, record.country].filter(Boolean).join(', ') || 'Not provided'}
-                  </div>
+                  <div className="text-sm text-gray-600">{profileData.personalInfo.location}</div>
                 </div>
               </div>
               
@@ -248,7 +148,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
           </div>
         </div>
       </div>
-
+      
       {/* Professional Information */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
@@ -258,53 +158,53 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
             <div className="space-y-4">
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Job Title</div>
-                <div className="text-sm text-gray-600">{record.jobTitle || 'Not specified'}</div>
+                <div className="text-sm text-gray-600">{profileData.personalInfo.title}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Department</div>
-                <div className="text-sm text-gray-600">{record.department || 'Not specified'}</div>
+                <div className="text-sm text-gray-600">{profileData.professionalInfo.department}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Seniority Level</div>
-                <div className="text-sm text-gray-600">{record.seniority || 'Not specified'}</div>
+                <div className="text-sm text-gray-600">{profileData.professionalInfo.seniority}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Company</div>
-                <div className="text-sm text-gray-600">{(typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 'Not specified'}</div>
+                <div className="text-sm text-gray-600">{profileData.personalInfo.company}</div>
               </div>
             </div>
           </div>
-
+          
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-4">Communication Preferences</h4>
             <div className="space-y-4">
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Communication Style</div>
-                <div className="text-sm text-gray-600">{communicationStyle}</div>
+                <div className="text-sm text-gray-600">{profileData.communication.style}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Decision Making Style</div>
-                <div className="text-sm text-gray-600">{decisionMakingStyle}</div>
+                <div className="text-sm text-gray-600">{profileData.communication.decisionMaking}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Preferred Communication Method</div>
-                <div className="text-sm text-gray-600">Email</div>
+                <div className="text-sm text-gray-600">{profileData.communication.preferredMethod}</div>
               </div>
               
               <div>
                 <div className="text-sm font-medium text-gray-900 mb-1">Response Time</div>
-                <div className="text-sm text-gray-600">24-48 hours</div>
+                <div className="text-sm text-gray-600">{profileData.communication.responseTime}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
+      
       {/* Contact History */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact History</h3>
@@ -321,7 +221,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 <div>
                   <div className="text-sm font-medium text-gray-900">Last Contact</div>
                   <div className="text-sm text-gray-600">
-                    {new Date(lastContactDate).toLocaleDateString()} at {new Date(lastContactDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(profileData.contactHistory.lastContact).toLocaleDateString()} at {new Date(profileData.contactHistory.lastContact).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </div>
@@ -335,7 +235,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 <div>
                   <div className="text-sm font-medium text-gray-900">Next Follow-up</div>
                   <div className="text-sm text-gray-600">
-                    {new Date(nextFollowUpDate).toLocaleDateString()} at {new Date(nextFollowUpDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(profileData.contactHistory.nextFollowUp).toLocaleDateString()} at {new Date(profileData.contactHistory.nextFollowUp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </div>
@@ -348,42 +248,42 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">Total Interactions</div>
-                  <div className="text-sm text-gray-600">12 interactions this quarter</div>
+                  <div className="text-sm text-gray-600">{profileData.contactHistory.totalInteractions} interactions this quarter</div>
                 </div>
               </div>
             </div>
           </div>
-
+          
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-4">Engagement Metrics</h4>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-sm font-medium text-gray-900">Email Response Rate</div>
-                  <div className="text-sm font-medium text-gray-900">85%</div>
+                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.emailResponseRate}%</div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  <div className="bg-green-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.emailResponseRate}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-sm font-medium text-gray-900">Meeting Attendance</div>
-                  <div className="text-sm font-medium text-gray-900">92%</div>
+                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.meetingAttendance}%</div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '92%' }}></div>
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.meetingAttendance}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-sm font-medium text-gray-900">Engagement Score</div>
-                  <div className="text-sm font-medium text-gray-900">4.2/5</div>
+                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.engagementScore}/5</div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '84%' }}></div>
+                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${(profileData.contactHistory.engagementScore / 5) * 100}%` }}></div>
                 </div>
               </div>
             </div>
