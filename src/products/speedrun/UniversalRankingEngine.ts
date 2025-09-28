@@ -43,20 +43,30 @@ export class UniversalRankingEngine {
     const workspace = workspaceName || 'workspace';
     console.log(`🏆 UniversalRanking: Ranking ${prospects.length} prospects for maximum success in ${workspace}...`);
     
-    // Step 0: 🚨 FILTER OUT COMPANIES CONTACTED TODAY
+    // Step 0: 🚨 SMART COMPANY FILTERING - Prioritize other people at same company
     const companiesContactedToday = TodayActivityTracker.getCompaniesContactedToday();
     const availableProspects = prospects.filter(prospect => {
       const company = prospect.company || "Unknown Company";
       const isCompanyContactedToday = companiesContactedToday.has(company);
       
-      if (isCompanyContactedToday) {
-        console.log(`⏭️ Skipping ${prospect.name} at ${company} - company already contacted today`);
+      // Only filter out if THIS SPECIFIC PERSON was contacted today
+      const wasThisPersonContactedToday = this.wasContactedToday(prospect);
+      
+      if (wasThisPersonContactedToday) {
+        console.log(`⏭️ Skipping ${prospect.name} at ${company} - this person already contacted today`);
         return false;
       }
+      
+      // If company was contacted but this person wasn't, prioritize them!
+      if (isCompanyContactedToday && !wasThisPersonContactedToday) {
+        console.log(`🎯 PRIORITIZING ${prospect.name} at ${company} - company contacted but this person wasn't`);
+        // Don't filter out - this is exactly who we want to contact next!
+      }
+      
       return true;
     });
     
-    console.log(`🚨 Filtered out ${prospects.length - availableProspects.length} prospects from companies contacted today`);
+    console.log(`🚨 Filtered out ${prospects.length - availableProspects.length} prospects who were personally contacted today`);
     console.log(`📋 Available prospects for ${workspace}: ${availableProspects.length}`);
     
     // Step 1: Calculate winning scores for each prospect
@@ -302,7 +312,7 @@ export class UniversalRankingEngine {
   }
   
   /**
-   * Calculate deal value potential score
+   * Calculate deal value potential score using REAL CoreSignal data
    */
   private static calculateValueScore(prospect: SpeedrunPerson): { score: number; factors: string[] } {
     let score = 0;
@@ -312,6 +322,13 @@ export class UniversalRankingEngine {
     const company = (prospect.company || "").toLowerCase();
     const title = (prospect.title || "").toLowerCase();
     const monacoData = prospect.customFields?.monacoEnrichment;
+    
+    // 🎯 USE REAL CORESIGNAL DATA for company intelligence
+    const coresignalData = prospect.customFields?.coresignalData;
+    const companySize = coresignalData?.size_range || coresignalData?.employees_count;
+    const companyRevenue = coresignalData?.revenue_annual_range?.annual_revenue_range_from;
+    const companyIndustry = coresignalData?.industry;
+    const companyGrowth = coresignalData?.employees_count_change?.change_yearly_percentage;
     
     // Commission/deal value
     const dealValue = parseInt(commission.replace(/[^\d]/g, "")) || 50000;
@@ -330,10 +347,64 @@ export class UniversalRankingEngine {
       factors.push("💰 Entry opportunity");
     }
     
-    // Company size indicators
-    if (company.includes("enterprise") || company.includes("fortune")) {
-      score += 3;
-      factors.push("🏢 Enterprise account");
+    // 🏢 REAL COMPANY SIZE from CoreSignal (not fake data!)
+    if (companySize) {
+      if (companySize.includes("1000+") || companySize.includes("5000+") || companySize.includes("10000+")) {
+        score += 5;
+        factors.push("🏢 Enterprise company (CoreSignal verified)");
+      } else if (companySize.includes("500+") || companySize.includes("1000+")) {
+        score += 4;
+        factors.push("🏢 Large company (CoreSignal verified)");
+      } else if (companySize.includes("100+") || companySize.includes("500+")) {
+        score += 3;
+        factors.push("🏢 Mid-market company (CoreSignal verified)");
+      } else if (companySize.includes("50+") || companySize.includes("100+")) {
+        score += 2;
+        factors.push("🏢 Growing company (CoreSignal verified)");
+      }
+    }
+    
+    // 💰 REAL REVENUE DATA from CoreSignal
+    if (companyRevenue) {
+      if (companyRevenue >= 100000000) { // $100M+
+        score += 4;
+        factors.push("💰 High revenue company (CoreSignal verified)");
+      } else if (companyRevenue >= 10000000) { // $10M+
+        score += 3;
+        factors.push("💰 Significant revenue (CoreSignal verified)");
+      } else if (companyRevenue >= 1000000) { // $1M+
+        score += 2;
+        factors.push("💰 Established revenue (CoreSignal verified)");
+      }
+    }
+    
+    // 📈 REAL GROWTH DATA from CoreSignal
+    if (companyGrowth && companyGrowth > 0) {
+      if (companyGrowth >= 50) {
+        score += 3;
+        factors.push("📈 High growth company (CoreSignal verified)");
+      } else if (companyGrowth >= 20) {
+        score += 2;
+        factors.push("📈 Growing company (CoreSignal verified)");
+      } else if (companyGrowth >= 5) {
+        score += 1;
+        factors.push("📈 Stable growth (CoreSignal verified)");
+      }
+    }
+    
+    // 🎯 REAL INDUSTRY DATA from CoreSignal
+    if (companyIndustry) {
+      const highValueIndustries = ['technology', 'software', 'fintech', 'healthcare', 'finance', 'enterprise'];
+      if (highValueIndustries.some(industry => companyIndustry.toLowerCase().includes(industry))) {
+        score += 2;
+        factors.push(`🎯 High-value industry: ${companyIndustry} (CoreSignal verified)`);
+      }
+    }
+    
+    // Fallback to basic company indicators if no CoreSignal data
+    if (!coresignalData && (company.includes("enterprise") || company.includes("fortune"))) {
+      score += 2;
+      factors.push("🏢 Enterprise account (basic data)");
     }
     
     // Senior title value multiplier
@@ -378,7 +449,7 @@ export class UniversalRankingEngine {
   }
   
   /**
-   * Calculate strategic account value score
+   * Calculate strategic account value score using REAL CoreSignal data
    */
   private static calculateStrategicAccountScore(prospect: SpeedrunPerson): { score: number; factors: string[] } {
     let score = 0;
@@ -387,6 +458,15 @@ export class UniversalRankingEngine {
     const company = (prospect.company || "").toLowerCase();
     const interests = prospect.interests || [];
     const status = (prospect.status || "").toLowerCase();
+    
+    // 🎯 USE REAL CORESIGNAL DATA for strategic assessment
+    const coresignalData = prospect.customFields?.coresignalData;
+    const companySize = coresignalData?.size_range || coresignalData?.employees_count;
+    const companyRevenue = coresignalData?.revenue_annual_range?.annual_revenue_range_from;
+    const companyIndustry = coresignalData?.industry;
+    const companyGrowth = coresignalData?.employees_count_change?.change_yearly_percentage;
+    const fundingRounds = coresignalData?.funding_rounds;
+    const jobPostings = coresignalData?.active_job_postings_count;
     
     // 🏆 EXISTING CUSTOMERS GET PRIORITY - Easier to expand than acquire new
     const isCustomer = status.includes("customer") || 
@@ -399,15 +479,89 @@ export class UniversalRankingEngine {
       factors.push("💰 Existing customer (expansion opportunity)");
     }
     
-    // Target company types for account expansion
-    const strategicCompanyTypes = [
-      "technology", "enterprise", "fortune", "global", "corp", "inc",
-      "solutions", "systems", "consulting", "services"
-    ];
+    // 🏢 REAL COMPANY SIZE from CoreSignal for strategic value
+    if (companySize) {
+      if (companySize.includes("1000+") || companySize.includes("5000+") || companySize.includes("10000+")) {
+        score += 4;
+        factors.push("🏢 Enterprise strategic account (CoreSignal verified)");
+      } else if (companySize.includes("500+") || companySize.includes("1000+")) {
+        score += 3;
+        factors.push("🏢 Large strategic account (CoreSignal verified)");
+      } else if (companySize.includes("100+") || companySize.includes("500+")) {
+        score += 2;
+        factors.push("🏢 Mid-market strategic account (CoreSignal verified)");
+      }
+    }
     
-    if (strategicCompanyTypes.some(type => company.includes(type))) {
-      score += 6;
-      factors.push("🎯 Strategic account type");
+    // 💰 REAL REVENUE DATA from CoreSignal for strategic value
+    if (companyRevenue) {
+      if (companyRevenue >= 100000000) { // $100M+
+        score += 3;
+        factors.push("💰 High revenue strategic account (CoreSignal verified)");
+      } else if (companyRevenue >= 10000000) { // $10M+
+        score += 2;
+        factors.push("💰 Significant revenue strategic account (CoreSignal verified)");
+      }
+    }
+    
+    // 📈 REAL GROWTH DATA from CoreSignal for expansion potential
+    if (companyGrowth && companyGrowth > 0) {
+      if (companyGrowth >= 50) {
+        score += 3;
+        factors.push("📈 High growth expansion potential (CoreSignal verified)");
+      } else if (companyGrowth >= 20) {
+        score += 2;
+        factors.push("📈 Growing expansion potential (CoreSignal verified)");
+      }
+    }
+    
+    // 🎯 REAL INDUSTRY DATA from CoreSignal for strategic value
+    if (companyIndustry) {
+      const strategicIndustries = ['technology', 'software', 'fintech', 'healthcare', 'finance', 'enterprise', 'consulting'];
+      if (strategicIndustries.some(industry => companyIndustry.toLowerCase().includes(industry))) {
+        score += 2;
+        factors.push(`🎯 Strategic industry: ${companyIndustry} (CoreSignal verified)`);
+      }
+    }
+    
+    // 💼 REAL HIRING DATA from CoreSignal for expansion potential
+    if (jobPostings && jobPostings > 0) {
+      if (jobPostings >= 20) {
+        score += 2;
+        factors.push("💼 High hiring activity (CoreSignal verified)");
+      } else if (jobPostings >= 5) {
+        score += 1;
+        factors.push("💼 Active hiring (CoreSignal verified)");
+      }
+    }
+    
+    // 💰 REAL FUNDING DATA from CoreSignal for strategic value
+    if (fundingRounds && fundingRounds.length > 0) {
+      const recentFunding = fundingRounds.filter(round => {
+        const fundingDate = new Date(round.announced_date);
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        return fundingDate > oneYearAgo;
+      });
+      
+      if (recentFunding.length > 0) {
+        score += 2;
+        factors.push("💰 Recent funding activity (CoreSignal verified)");
+      }
+    }
+    
+    // Fallback to basic company indicators if no CoreSignal data
+    if (!coresignalData) {
+      // Target company types for account expansion
+      const strategicCompanyTypes = [
+        "technology", "enterprise", "fortune", "global", "corp", "inc",
+        "solutions", "systems", "consulting", "services"
+      ];
+      
+      if (strategicCompanyTypes.some(type => company.includes(type))) {
+        score += 3;
+        factors.push("🎯 Strategic account type (basic data)");
+      }
     }
     
     // Interest alignment for expansion potential
@@ -416,7 +570,7 @@ export class UniversalRankingEngine {
       interest.toLowerCase().includes("business") ||
       interest.toLowerCase().includes("strategy")
     )) {
-      score += 4;
+      score += 1;
       factors.push("🔄 Expansion potential");
     }
     

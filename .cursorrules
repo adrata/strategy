@@ -30,6 +30,24 @@ npm run db:reset       # 💀 NUCLEAR OPTION
 npm run db:seed        # 💀 DATA DESTRUCTION
 ```
 
+#### **🚫 FORBIDDEN FALLBACK DATA PATTERNS**
+```typescript
+// 💀 NEVER CREATE FALLBACK/SAMPLE DATA
+const samplePeople = await prisma.people.findMany({ take: 5 }); // 💀 FALLBACK DATA
+const demoData = generateMockData(); // 💀 MOCK DATA
+const fallbackUsers = getDefaultUsers(); // 💀 FALLBACK USERS
+const sampleCompanies = createSampleCompanies(); // 💀 SAMPLE DATA
+
+// 💀 NEVER SHOW "No data found" with fallback creation
+if (people.length === 0) {
+  return getSamplePeople(); // 💀 FALLBACK DATA
+}
+
+// 💀 NEVER CREATE DEMO/PLACEHOLDER DATA
+const placeholderData = createPlaceholderData(); // 💀 PLACEHOLDER DATA
+const mockBuyerGroups = generateMockBuyerGroups(); // 💀 MOCK DATA
+```
+
 #### **🚫 FORBIDDEN SCRIPT PATTERNS**
 - **Seed Scripts**: Any file named `seed.js`, `seed.ts`, `*seed*` - DELETE ON SIGHT
 - **Reset Scripts**: Any file containing `reset`, `clean`, `clear` database operations

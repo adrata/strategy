@@ -18,9 +18,7 @@
  * - Company size and strategic importance
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/platform/database/prisma-client';
 
 export interface MasterRankedCompany {
   id: string;
@@ -89,15 +87,14 @@ export class UnifiedMasterRankingEngine {
     
     // Step 1: Get ALL data from database
     const [companies, people, leads, prospects, opportunities, contacts] = await Promise.all([
-      // Companies
+      // Companies - Fixed schema issues
       prisma.companies.findMany({
         where: { 
           workspaceId: workspaceId,
           deletedAt: null 
         },
         include: {
-          people: true,
-          opportunities: true
+          people: true
         },
         orderBy: { updatedAt: 'desc' }
       }),
@@ -132,7 +129,7 @@ export class UnifiedMasterRankingEngine {
         orderBy: { updatedAt: 'desc' }
       }),
       
-      // Opportunities
+      // Opportunities - Fixed schema issues
       prisma.opportunities.findMany({
         where: { 
           workspaceId: workspaceId,
@@ -140,15 +137,11 @@ export class UnifiedMasterRankingEngine {
           stage: { notIn: ['closed-won', 'closed-lost', 'closed-lost-to-competition'] },
           deletedAt: null 
         },
-        include: {
-          account: true,
-          contact: true
-        },
         orderBy: { amount: 'desc' }
       }),
       
-      // Contacts
-      prisma.contacts.findMany({
+      // Contacts - Use people table instead of contacts (contacts table may not exist)
+      prisma.people.findMany({
         where: {
           workspaceId: workspaceId,
           assignedUserId: userId,
@@ -159,6 +152,18 @@ export class UnifiedMasterRankingEngine {
     ]);
     
     console.log(`📊 [UNIFIED MASTER RANKING] Loaded data: ${companies.length} companies, ${people.length} people, ${leads.length} leads, ${prospects.length} prospects, ${opportunities.length} opportunities, ${contacts.length} contacts`);
+    
+    // Debug: Log first few companies to see what we're working with
+    console.log(`🔍 [UNIFIED MASTER RANKING] First 3 companies:`);
+    companies.slice(0, 3).forEach((company, index) => {
+      console.log(`  ${index + 1}. ${company.name} (ID: ${company.id})`);
+    });
+    
+    // Debug: Log first few people to see what we're working with
+    console.log(`🔍 [UNIFIED MASTER RANKING] First 3 people:`);
+    people.slice(0, 3).forEach((person, index) => {
+      console.log(`  ${index + 1}. ${person.fullName} at ${person.companyId ? 'company ' + person.companyId : 'no company'}`);
+    });
     
     // Step 2: Calculate company rankings
     const rankedCompanies = await this.calculateCompanyRankings(companies, opportunities, workspaceId);
@@ -177,6 +182,17 @@ export class UnifiedMasterRankingEngine {
     };
     
     console.log(`🏆 [UNIFIED MASTER RANKING] Generated unified ranking: ${unifiedRanking.companies.length} companies, ${unifiedRanking.people.length} people, ${unifiedRanking.leads.length} leads, ${unifiedRanking.prospects.length} prospects, ${unifiedRanking.speedrun.length} speedrun`);
+    
+    // Debug: Log the final ranking
+    console.log(`🏆 [UNIFIED MASTER RANKING] Final company ranking (first 5):`);
+    unifiedRanking.companies.slice(0, 5).forEach(company => {
+      console.log(`  ${company.masterRank}. ${company.name}`);
+    });
+    
+    console.log(`🏆 [UNIFIED MASTER RANKING] Final speedrun ranking (first 5):`);
+    unifiedRanking.speedrun.slice(0, 5).forEach((person, index) => {
+      console.log(`  ${index + 1}. ${person.name} at ${person.company}`);
+    });
     
     return unifiedRanking;
   }

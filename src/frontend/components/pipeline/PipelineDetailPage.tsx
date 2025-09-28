@@ -272,31 +272,51 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
       const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
       
-      if (record) {
-        console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
-          id: record.id,
-          name: record.name,
-          description: record.description ? 'Yes' : 'No',
-          website: record.website ? 'Yes' : 'No',
-          source: 'cached'
-        });
-        
-        // CRITICAL FIX: For companies, always verify the cached record is complete
-        // Check multiple fields to determine if the record is truly complete
-        const isIncomplete = section === 'companies' && (
-          !record.description || 
-          !record.website || 
-          !record.industry ||
-          !record.size ||
-          !record.city ||
-          !record.state ||
-          record.description === 'No description available' ||
-          record.website === 'No website'
-        );
-        
-        if (isIncomplete) {
-          console.log(`⚠️ [COMPANY FIX] Cached company record is incomplete, forcing direct load for better data:`, {
-            hasDescription: !!record.description,
+        if (record) {
+          console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
+            id: record.id,
+            name: record.name,
+            description: record.description ? 'Yes' : 'No',
+            website: record.website ? 'Yes' : 'No',
+            source: 'cached'
+          });
+          
+          // 🚀 PRELOAD: For companies, preload buyer group data for faster tab switching
+          if (section === 'companies') {
+            console.log(`🚀 [BUYER GROUP PRELOAD] Preloading buyer group data for company: ${record.id}`);
+            // Preload buyer group data in background
+            fetch(`/api/data/buyer-groups/fast?companyId=${record.id}&workspaceId=${workspaceId}&userId=${userId}`)
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  console.log(`⚡ [BUYER GROUP PRELOAD] Preloaded ${data.members.length} buyer group members`);
+                  // Cache the preloaded data
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem(`buyer-groups-${record.id}-${workspaceId}`, JSON.stringify(data.members));
+                  }
+                }
+              })
+              .catch(error => {
+                console.log('⚠️ [BUYER GROUP PRELOAD] Failed to preload:', error);
+              });
+          }
+          
+          // CRITICAL FIX: For companies, always verify the cached record is complete
+          // Check multiple fields to determine if the record is truly complete
+          const isIncomplete = section === 'companies' && (
+            !record.description || 
+            !record.website || 
+            !record.industry ||
+            !record.size ||
+            !record.city ||
+            !record.state ||
+            record.description === 'No description available' ||
+            record.website === 'No website'
+          );
+          
+          if (isIncomplete) {
+            console.log(`⚠️ [COMPANY FIX] Cached company record is incomplete, forcing direct load for better data:`, {
+              hasDescription: !!record.description,
             hasWebsite: !!record.website,
             hasIndustry: !!record.industry,
             hasSize: !!record.size,

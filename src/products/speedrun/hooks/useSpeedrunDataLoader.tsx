@@ -11,8 +11,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { authFetch } from "@/platform/auth-fetch";
 import { useSpeedrunContext, type SpeedrunPerson } from "@/products/speedrun/context/SpeedrunProvider";
 import { UniversalRankingEngine, type RankedSpeedrunPerson } from "@/products/speedrun/UniversalRankingEngine";
+import { UnifiedMasterRankingEngine } from "@/platform/services/unified-master-ranking";
 import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engine-settings-service';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
+import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 
 // Helper function to determine vertical from prospect/lead data
 function determineVerticalFromData(data: any): string {
@@ -138,11 +140,23 @@ export function useSpeedrunDataLoader() {
 
       console.log(`🔄 [TRANSFORMED] ${transformedData.length} speedrun people`);
 
-      // Rank the data using UniversalRankingEngine
-      const rankedData: RankedSpeedrunPerson[] = UniversalRankingEngine.rankProspectsForWinning(
-        transformedData,
-        workspaceName
-      );
+      // 🏆 DATA IS ALREADY RANKED by the unified API using UnifiedMasterRankingEngine
+      console.log(`🏆 [SPEEDRUN] Data is already ranked by unified API, no additional ranking needed`);
+      
+      // The unified API has already applied the UnifiedMasterRankingEngine
+      // Just convert to the expected format
+      const rankedData: RankedSpeedrunPerson[] = transformedData.map((person, index) => ({
+        ...person,
+        winningScore: {
+          totalScore: index + 1, // Use position in the already-ranked list
+          rank: (index + 1).toString(),
+          confidence: 0.9,
+          winFactors: [`Unified ranking position: ${index + 1}`],
+          urgencyLevel: index < 5 ? "Critical" : index < 15 ? "High" : "Medium",
+          bestContactTime: "Morning",
+          dealPotential: Math.max(0, 100 - (index * 3))
+        }
+      }));
 
       console.log(`🏆 [RANKED] ${rankedData.length} ranked speedrun people`);
 

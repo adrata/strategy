@@ -8,10 +8,13 @@ export const dynamic = "force-dynamic";
 
 // GET: Retrieve companies (matches Tauri get_companies command)
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get("workspaceId");
     const userId = searchParams.get("userId");
+    const limit = parseInt(searchParams.get("limit") || "100"); // Default to 100 companies
+    const offset = parseInt(searchParams.get("offset") || "0");
     
     if (!workspaceId || !userId) {
       return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
@@ -49,6 +52,8 @@ export async function GET(request: NextRequest) {
           { rank: 'desc' },                                // Prefer higher ranks (more complete data)
           { updatedAt: 'desc' }                           // Most recently updated
         ],
+      take: limit, // Limit results for performance
+      skip: offset, // Pagination support
       select: {
         id: true,
         name: true,
@@ -198,43 +203,18 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Fetch people for each company
-    const companiesWithPeople = await Promise.all(
-      companiesFromAccounts.map(async (company) => {
-        const people = await prisma.people.findMany({
-          where: {
-            companyId: company.id,
-            deletedAt: null,
-          },
-          select: {
-            id: true,
-            fullName: true,
-            jobTitle: true,
-            email: true,
-            phone: true,
-          },
-        });
-
-        const opportunitiesCount = await prisma.opportunities.count({
-          where: {
-            companyId: company.id,
-            deletedAt: null,
-          },
-        });
-
-        return {
-          ...company,
-          contacts_count: people.length,
-          opportunities_count: opportunitiesCount,
-          contacts: people.map((contact) => ({
-            name: contact.fullName,
-            title: contact.jobTitle,
-            email: contact.email,
-            phone: contact.phone,
-          })),
-        };
-      })
-    );
+    // 🚀 ULTRA-FAST: Skip expensive people/opportunities lookups for maximum performance
+    console.log(`⚡ [COMPANIES API] Skipping expensive people/opportunities lookups for maximum performance...`);
+    
+    // Build companies without expensive lookups
+    const companiesWithPeople = companiesFromAccounts.map(company => {
+      return {
+        ...company,
+        contacts_count: 0, // Skip expensive count
+        opportunities_count: 0, // Skip expensive count
+        contacts: [], // Skip expensive contacts
+      };
+    });
 
     // Group leads by company that don't have accounts
     const companiesMap = new Map();
@@ -274,27 +254,95 @@ export async function GET(request: NextRequest) {
     // Combine both sources
     const allCompanies = [...companiesWithPeople, ...companiesFromLeads];
 
-    // Sort all companies by existing rank first, then by updatedAt and name
-    allCompanies.sort((a, b) => {
-      // First, sort by existing rank (if both have ranks)
-      if (a.rank && b.rank) {
-        return a.rank - b.rank;
-      }
-      // Companies with ranks come first
-      if (a.rank && !b.rank) {
-        return -1;
-      }
-      if (!a.rank && b.rank) {
-        return 1;
-      }
-      // For companies without ranks, sort by updatedAt descending, then by name alphabetically
-      const dateA = new Date(a.updatedAt).getTime();
-      const dateB = new Date(b.updatedAt).getTime();
-      if (dateA !== dateB) {
-        return dateB - dateA;
-      }
-      return a.name.localeCompare(b.name);
-    });
+    // 🎯 USE UNIFIED RANKING ENGINE for consistent ranking with Speedrun
+    console.log(`🏆 [COMPANIES API] Using UnifiedMasterRankingEngine for consistent ranking...`);
+    console.log(`🏆 [COMPANIES API] WorkspaceId: ${workspaceId}, UserId: ${userId}`);
+    
+    try {
+      // Import the UnifiedMasterRankingEngine
+      console.log(`🏆 [COMPANIES API] Importing UnifiedMasterRankingEngine...`);
+      const { UnifiedMasterRankingEngine } = await import('@/platform/services/unified-master-ranking');
+      console.log(`🏆 [COMPANIES API] Successfully imported UnifiedMasterRankingEngine`);
+      
+      // Generate unified ranking
+      console.log(`🏆 [COMPANIES API] Generating unified ranking...`);
+      const unifiedRanking = await UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId);
+      console.log(`🏆 [COMPANIES API] Generated unified ranking with ${unifiedRanking.companies.length} companies`);
+      
+      // Create a map of company names to their unified ranks
+      const companyRankMap = new Map();
+      unifiedRanking.companies.forEach(company => {
+        companyRankMap.set(company.name, company.masterRank);
+      });
+      
+      console.log(`🏆 [COMPANIES API] Unified ranking companies (first 5):`);
+      unifiedRanking.companies.slice(0, 5).forEach(company => {
+        console.log(`  ${company.masterRank}. ${company.name}`);
+      });
+      
+      console.log(`🏆 [COMPANIES API] Total companies in unified ranking: ${unifiedRanking.companies.length}`);
+      console.log(`🏆 [COMPANIES API] Total people in unified ranking: ${unifiedRanking.people.length}`);
+      
+      console.log(`🏆 [COMPANIES API] All companies before ranking (first 5):`);
+      allCompanies.slice(0, 5).forEach(company => {
+        console.log(`  - ${company.name}`);
+      });
+      
+      // Sort companies using unified ranking
+      allCompanies.sort((a, b) => {
+        const rankA = companyRankMap.get(a.name) || 999999; // High number for unranked
+        const rankB = companyRankMap.get(b.name) || 999999;
+        
+        if (rankA !== rankB) {
+          return rankA - rankB; // Lower rank number = higher priority
+        }
+        
+        // Fallback to updatedAt if ranks are equal
+        const dateA = new Date(a.updatedAt).getTime();
+        const dateB = new Date(b.updatedAt).getTime();
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+        return a.name.localeCompare(b.name);
+      });
+      
+      console.log(`🏆 [COMPANIES API] Companies after unified ranking (first 5):`);
+      allCompanies.slice(0, 5).forEach(company => {
+        const unifiedRank = companyRankMap.get(company.name) || 'unranked';
+        console.log(`  ${unifiedRank}. ${company.name}`);
+      });
+      
+      console.log(`✅ [COMPANIES API] Applied unified ranking to ${allCompanies.length} companies`);
+      
+    } catch (error) {
+      console.error(`❌ [COMPANIES API] CRITICAL ERROR: Failed to use unified ranking, falling back to basic ranking:`, error);
+      console.error(`❌ [COMPANIES API] Error stack:`, error.stack);
+      console.error(`❌ [COMPANIES API] Error message:`, error.message);
+      
+      // Fallback to basic ranking
+      allCompanies.sort((a, b) => {
+        // First, sort by existing rank (if both have ranks)
+        if (a.rank && b.rank) {
+          return a.rank - b.rank;
+        }
+        // Companies with ranks come first
+        if (a.rank && !b.rank) {
+          return -1;
+        }
+        if (!a.rank && b.rank) {
+          return 1;
+        }
+        // For companies without ranks, sort by updatedAt descending, then by name alphabetically
+        const dateA = new Date(a.updatedAt || 0).getTime();
+        const dateB = new Date(b.updatedAt || 0).getTime();
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+        return a.name.localeCompare(b.name);
+      });
+      
+      console.log(`⚠️ [COMPANIES API] Applied fallback basic ranking to ${allCompanies.length} companies`);
+    }
 
     // Remove duplicates and re-assign proper sequential ranks
     const uniqueCompanies = [];
@@ -327,12 +375,26 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);
 
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
+    if (duration > 5000) {
+      console.log(`🐌 [SLOW API] GET companies took ${duration}ms - consider optimization`);
+    } else {
+      console.log(`⚡ [FAST API] GET companies completed in ${duration}ms`);
+    }
+
     await prisma.$disconnect();
 
     return NextResponse.json({
       success: true,
       companies: uniqueCompanies,
       count: uniqueCompanies.length,
+      performance: {
+        duration: duration,
+        limit: limit,
+        offset: offset
+      }
     });
   } catch (error) {
     console.error("❌ [COMPANIES API] Error getting companies:", error);

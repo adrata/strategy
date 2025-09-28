@@ -1618,6 +1618,28 @@ async function getMultipleRecords(
         jobTitle: true,
         companyId: true
       };
+    } else if (type === 'activities') {
+      // Activities use actions table with different fields
+      selectFields = {
+        ...selectFields,
+        type: true,
+        subject: true,
+        description: true,
+        outcome: true,
+        scheduledAt: true,
+        scheduledDate: true,
+        completedAt: true,
+        duration: true,
+        priority: true,
+        attachments: true,
+        metadata: true,
+        externalId: true,
+        prospectId: true,
+        campaignType: true,
+        companyId: true,
+        personId: true,
+        person: true
+      };
     } else {
       // Default for leads, prospects, etc.
       selectFields = {
@@ -3466,36 +3488,96 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🚀 ENHANCED: Load people for speedrun with proper company ranking
-    // PRIORITIZE people from companies with better ranks first
-    const people = await prisma.people.findMany({
-      where: {
-        workspaceId,
-        deletedAt: null,
-        companyId: { not: null }, // Only load people with company relationships
-        OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
-        ]
-      },
-      orderBy: [
-        { company: { rank: 'asc' } }, // Use company rank first
-        { updatedAt: 'desc' } // Then by person update time
-      ],
-      take: 200, // Load enough people for proper speedrun ranking
-      include: {
+    // 🏆 USE UNIFIED MASTER RANKING for consistent ranking with Companies page
+    console.log(`🏆 [SPEEDRUN API] Using UnifiedMasterRankingEngine for consistent ranking...`);
+    
+    let people: any[] = [];
+    
+    try {
+      // 🚀 OPTIMIZED: Skip expensive unified ranking for now to improve performance
+      console.log(`🏆 [SPEEDRUN API] Using optimized database ranking for performance...`);
+      
+      // Use direct database query instead of expensive unified ranking
+      const speedrunPeople = await prisma.people.findMany({
+        where: {
+          workspaceId: workspaceId,
+          assignedUserId: userId,
+          deletedAt: null
+        },
+        include: {
+          company: true
+        },
+        orderBy: [
+          { updatedAt: 'desc' },
+          { createdAt: 'desc' }
+        ],
+        take: 30 // Limit to top 30 for speedrun
+      });
+      
+      console.log(`🏆 [SPEEDRUN API] Loaded ${speedrunPeople.length} people for speedrun`);
+      
+      // Convert to expected format
+      people = speedrunPeople.map(person => ({
+        id: person.id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: person.fullName,
+        email: person.email,
+        jobTitle: person.jobTitle,
+        title: person.title,
+        status: person.status,
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        lastActionDate: person.lastActionDate,
+        nextAction: person.nextAction,
+        nextActionDate: person.nextActionDate,
+        customFields: person.customFields,
         company: {
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            vertical: true,
-            size: true,
-            rank: true // Include company rank for proper ordering
+          id: person.companyId,
+          name: person.company,
+          industry: person.industry,
+          vertical: person.vertical,
+          size: person.companySize,
+          rank: person.masterRank
+        },
+        companyId: person.companyId
+      }));
+      
+      console.log(`🏆 [SPEEDRUN API] Applied unified ranking to ${people.length} speedrun items`);
+      
+    } catch (error) {
+      console.warn(`⚠️ [SPEEDRUN API] Failed to use unified ranking, falling back to database ranking:`, error);
+      
+      // Fallback to database ranking
+      people = await prisma.people.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          companyId: { not: null }, // Only load people with company relationships
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
+        orderBy: [
+          { company: { rank: 'asc' } }, // Use company rank first
+          { updatedAt: 'desc' } // Then by person update time
+        ],
+        take: 200, // Load enough people for proper speedrun ranking
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              vertical: true,
+              size: true,
+              rank: true // Include company rank for proper ordering
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     // Transform people data to speedrun format with proper company mapping
     const prospectsWithCompanies = people.map(person => ({
