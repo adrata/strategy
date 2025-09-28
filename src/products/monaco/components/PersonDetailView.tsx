@@ -708,6 +708,15 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Check for report parameter in URL on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reportParam = urlParams.get('report');
+    if (reportParam) {
+      setActiveReport(reportParam);
+    }
+  }, []);
+
   const tabs = [
     "Overview",
     "Insights",
@@ -723,18 +732,22 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   const handleReportClick = (reportType: string) => {
     console.log("📊 Opening Deep Value Report:", reportType);
     
-    // Generate unique report URL
-    const reportId = `${person.id}-${reportType.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-    const workspaceSlug = window.location.pathname.split('/')[1]; // Extract workspace from current URL
+    // Set the active report to show in the same panel
+    setActiveReport(reportType);
     
-    // Navigate to the report page
-    const reportUrl = `/${workspaceSlug}/paper/${reportId}`;
-    console.log("🔗 Navigating to report URL:", reportUrl);
-    window.location.href = reportUrl;
+    // Update the URL to include the report parameter
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('report', reportType);
+    window.history.pushState({}, '', currentUrl.toString());
   };
 
   const handleBackFromReport = () => {
     setActiveReport(null);
+    
+    // Remove the report parameter from URL
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('report');
+    window.history.pushState({}, '', currentUrl.toString());
   };
 
   const addNote = () => {
