@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-          take: limit,
+          take: 10000, // Increased limit to ensure we get all leads (same as unified API)
           select: {
             id: true,
             firstName: true,
@@ -202,10 +202,10 @@ export async function GET(request: NextRequest) {
           }
         });
         
-        // Apply consistent ranking logic using people data
+        // Apply proper sequential ranking based on database ranks (same as companies)
         sectionData = leadsPeopleData.map((person, index) => ({
           id: person.id,
-          rank: index + 1,
+          rank: person.rank || (index + 1), // Use database rank or sequential fallback
           name: person.fullName || `${person.firstName} ${person.lastName}`,
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
@@ -240,7 +240,7 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-          take: limit,
+          take: 10000, // Increased limit to ensure we get all prospects (same as unified API)
           select: {
             id: true,
             firstName: true,
@@ -266,10 +266,10 @@ export async function GET(request: NextRequest) {
           }
         });
         
-        // Apply consistent ranking logic using people data
+        // Apply proper sequential ranking based on database ranks (same as companies)
         sectionData = prospectsPeopleData.map((person, index) => ({
           id: person.id,
-          rank: index + 1,
+          rank: person.rank || (index + 1), // Use database rank or sequential fallback
           name: person.fullName || `${person.firstName} ${person.lastName}`,
           company: person.company?.name || 'Unknown Company',
           email: person.email || 'Unknown Email',
@@ -371,14 +371,14 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'people':
-        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
+        // 🚀 CONSISTENT RANKING: Use same logic as unified API for consistent ranking
         const peopleData = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null
           },
-          orderBy: { updatedAt: 'desc' },
-          take: limit,
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Use same ranking as unified API
+          take: 10000, // Increased limit to ensure we get all people (same as unified API)
           select: {
             id: true,
             firstName: true,
@@ -387,22 +387,41 @@ export async function GET(request: NextRequest) {
             email: true,
             jobTitle: true,
             company: true,
+            companyId: true,
+            phone: true,
+            linkedinUrl: true,
+            customFields: true,
+            tags: true,
             status: true,
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            assignedUserId: true,
+            workspaceId: true,
             createdAt: true,
             updatedAt: true
           }
         });
         
-        // Apply consistent ranking logic
+        // Apply proper sequential ranking based on database ranks (same as companies)
         sectionData = peopleData.map((person, index) => ({
           id: person.id,
-          rank: index + 1,
-          name: person.fullName || `${person.firstName} ${person.lastName}`,
-          company: person.company?.name || 'Unknown Company',
+          rank: person.rank || (index + 1), // Use database rank or sequential fallback
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          company: person.company || 'Unknown Company',
           title: person.jobTitle || 'Unknown Title',
+          email: person.email || 'Unknown Email',
+          phone: person.phone || 'Unknown Phone',
+          linkedin: person.linkedinUrl || 'Unknown LinkedIn',
           status: person.status || 'Unknown',
-          lastAction: 'No action taken',
-          nextAction: 'No action planned',
+          lastAction: person.lastAction || 'No action taken',
+          nextAction: person.nextAction || 'No action planned',
+          lastActionDate: person.lastActionDate,
+          nextActionDate: person.nextActionDate,
+          assignedUserId: person.assignedUserId,
+          workspaceId: person.workspaceId,
           createdAt: person.createdAt,
           updatedAt: person.updatedAt
         }));

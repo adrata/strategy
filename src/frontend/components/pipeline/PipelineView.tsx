@@ -198,7 +198,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   
   // 🚀 PERFORMANCE: Use fast section data hook for instant loading
   // Load all data at once for client-side pagination
-  const fastSectionData = useFastSectionData(section, 1000);
+  // Use higher limit for people section to ensure all records are loaded
+  const limit = section === 'people' ? 10000 : 1000;
+  const fastSectionData = useFastSectionData(section, limit);
   
   // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
