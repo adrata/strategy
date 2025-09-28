@@ -393,7 +393,7 @@ export async function GET(request: NextRequest) {
               companyId: true,
               phone: true,
               linkedinUrl: true,
-              customFields: true,
+              // Remove customFields to avoid large JSON data issues
               tags: true,
               status: true,
               rank: true,
@@ -405,33 +405,43 @@ export async function GET(request: NextRequest) {
               workspaceId: true,
               createdAt: true,
               updatedAt: true
+              // Remove notes and bio from select to avoid string length issues
             }
           });
           
           console.log(`👥 [SECTION API] Found ${peopleData.length} people`);
           
           // Apply proper sequential ranking based on database ranks
-          sectionData = peopleData.map((person, index) => ({
-            id: person.id,
-            rank: person.rank || (index + 1),
-            name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-            company: person.company || 'Unknown Company',
-            title: person.jobTitle || 'Unknown Title',
-            email: person.email || 'Unknown Email',
-            phone: person.phone || 'Unknown Phone',
-            linkedin: person.linkedinUrl || 'Unknown LinkedIn',
-            status: person.status || 'Unknown',
-            lastAction: person.lastAction || 'No action taken',
-            lastActionDate: person.lastActionDate || null,
-            nextAction: person.nextAction || 'No next action',
-            nextActionDate: person.nextActionDate || null,
-            assignedUserId: person.assignedUserId || null,
-            workspaceId: person.workspaceId,
-            createdAt: person.createdAt,
-            updatedAt: person.updatedAt,
-            customFields: person.customFields || {},
-            tags: person.tags || []
-          }));
+          sectionData = peopleData.map((person, index) => {
+            // Safe string truncation utility
+            const safeString = (str: any, maxLength: number = 1000): string => {
+              if (!str || typeof str !== 'string') return '';
+              if (str.length <= maxLength) return str;
+              return str.substring(0, maxLength) + '...';
+            };
+
+            return {
+              id: person.id,
+              rank: person.rank || (index + 1),
+              name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
+              company: safeString(person.company || 'Unknown Company', 200),
+              title: safeString(person.jobTitle || 'Unknown Title', 300),
+              email: safeString(person.email || 'Unknown Email', 300),
+              phone: safeString(person.phone || 'Unknown Phone', 50),
+              linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
+              status: safeString(person.status || 'Unknown', 20),
+              lastAction: safeString(person.lastAction || 'No action taken', 500),
+              lastActionDate: person.lastActionDate || null,
+              nextAction: safeString(person.nextAction || 'No next action', 500),
+              nextActionDate: person.nextActionDate || null,
+              assignedUserId: person.assignedUserId || null,
+              workspaceId: person.workspaceId,
+              createdAt: person.createdAt,
+              updatedAt: person.updatedAt,
+              // Remove customFields to avoid large JSON data issues
+              tags: person.tags || []
+            };
+          });
           
         } catch (dbError) {
           console.error('❌ [SECTION API] Database error loading people:', dbError);

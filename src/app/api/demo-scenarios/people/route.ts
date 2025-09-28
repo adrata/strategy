@@ -60,7 +60,7 @@ async function loadRealPeopleForScenario(scenario: string) {
         phone: true,
         department: true,
         companyId: true,
-        notes: true,
+        // Remove notes field to avoid string length issues
         createdAt: true,
         updatedAt: true
       }
