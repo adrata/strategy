@@ -371,60 +371,72 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'people':
-        // 🚀 CONSISTENT RANKING: Use same logic as unified API for consistent ranking
-        const peopleData = await prisma.people.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null
-          },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Use same ranking as unified API
-          take: 10000, // Increased limit to ensure we get all people (same as unified API)
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            fullName: true,
-            email: true,
-            jobTitle: true,
-            company: true,
-            companyId: true,
-            phone: true,
-            linkedinUrl: true,
-            customFields: true,
-            tags: true,
-            status: true,
-            rank: true,
-            lastAction: true,
-            lastActionDate: true,
-            nextAction: true,
-            nextActionDate: true,
-            assignedUserId: true,
-            workspaceId: true,
-            createdAt: true,
-            updatedAt: true
-          }
-        });
+        // 🚀 PERFORMANCE: Optimized people query with error handling
+        console.log(`👥 [SECTION API] Loading people for workspace: ${workspaceId}`);
         
-        // Apply proper sequential ranking based on database ranks (same as companies)
-        sectionData = peopleData.map((person, index) => ({
-          id: person.id,
-          rank: person.rank || (index + 1), // Use database rank or sequential fallback
-          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          company: person.company || 'Unknown Company',
-          title: person.jobTitle || 'Unknown Title',
-          email: person.email || 'Unknown Email',
-          phone: person.phone || 'Unknown Phone',
-          linkedin: person.linkedinUrl || 'Unknown LinkedIn',
-          status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'No action taken',
-          nextAction: person.nextAction || 'No action planned',
-          lastActionDate: person.lastActionDate,
-          nextActionDate: person.nextActionDate,
-          assignedUserId: person.assignedUserId,
-          workspaceId: person.workspaceId,
-          createdAt: person.createdAt,
-          updatedAt: person.updatedAt
-        }));
+        try {
+          const peopleData = await prisma.people.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null
+            },
+            orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+            take: limit || 100, // Use limit parameter instead of hardcoded 10000
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              fullName: true,
+              email: true,
+              jobTitle: true,
+              company: true,
+              companyId: true,
+              phone: true,
+              linkedinUrl: true,
+              customFields: true,
+              tags: true,
+              status: true,
+              rank: true,
+              lastAction: true,
+              lastActionDate: true,
+              nextAction: true,
+              nextActionDate: true,
+              assignedUserId: true,
+              workspaceId: true,
+              createdAt: true,
+              updatedAt: true
+            }
+          });
+          
+          console.log(`👥 [SECTION API] Found ${peopleData.length} people`);
+          
+          // Apply proper sequential ranking based on database ranks
+          sectionData = peopleData.map((person, index) => ({
+            id: person.id,
+            rank: person.rank || (index + 1),
+            name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+            company: person.company || 'Unknown Company',
+            title: person.jobTitle || 'Unknown Title',
+            email: person.email || 'Unknown Email',
+            phone: person.phone || 'Unknown Phone',
+            linkedin: person.linkedinUrl || 'Unknown LinkedIn',
+            status: person.status || 'Unknown',
+            lastAction: person.lastAction || 'No action taken',
+            lastActionDate: person.lastActionDate || null,
+            nextAction: person.nextAction || 'No next action',
+            nextActionDate: person.nextActionDate || null,
+            assignedUserId: person.assignedUserId || null,
+            workspaceId: person.workspaceId,
+            createdAt: person.createdAt,
+            updatedAt: person.updatedAt,
+            customFields: person.customFields || {},
+            tags: person.tags || []
+          }));
+          
+        } catch (dbError) {
+          console.error('❌ [SECTION API] Database error loading people:', dbError);
+          throw new Error(`Database error: ${dbError instanceof Error ? dbError.message : 'Unknown database error'}`);
+        }
         break;
         
       default:

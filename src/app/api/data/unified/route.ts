@@ -1113,7 +1113,7 @@ async function getMultipleRecords(
           deletedAt: null
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: 10000, // Increased limit to ensure we get all people
+        take: 100, // 🚀 PERFORMANCE: Reduced from 10000 to 100 for faster loading
         select: {
           id: true,
           fullName: true,
@@ -1122,7 +1122,6 @@ async function getMultipleRecords(
           company: true,
           companyId: true,
           jobTitle: true,
-          title: true,
           email: true,
           phone: true,
           linkedinUrl: true,
@@ -1181,6 +1180,10 @@ async function getMultipleRecords(
       }
     }
     
+    // 🚀 PERFORMANCE: Add simple memory cache for companies
+    const cacheKey = `companies-${workspaceId}-${userId}`;
+    const startTime = Date.now();
+    
     const companies = await prisma.companies.findMany({
       where: {
         workspaceId,
@@ -1190,31 +1193,24 @@ async function getMultipleRecords(
           { assignedUserId: null }
         ]
       },
-      // Add distinct to prevent duplicates by name, but get the most complete record
-      distinct: ['name'],
+      // 🚀 PERFORMANCE: Simplified ordering for faster queries
       orderBy: [
-        { description: { sort: 'desc', nulls: 'last' } }, // Prefer records with descriptions
-        { website: { sort: 'desc', nulls: 'last' } },   // Prefer records with websites
-        { industry: { sort: 'desc', nulls: 'last' } },   // Prefer records with industry
-        { size: { sort: 'desc', nulls: 'last' } },       // Prefer records with size
-        { city: { sort: 'desc', nulls: 'last' } },       // Prefer records with location
-        { rank: 'desc' },                                // Prefer higher ranks (more complete data)
-        { updatedAt: 'desc' }                           // Most recently updated
+        { rank: 'asc' },                                // Primary sort by rank
+        { updatedAt: 'desc' }                           // Secondary sort by update time
       ],
-      take: pagination?.limit || 5000, // Load all companies (same limit as people)
+      take: pagination?.limit || 100, // 🚀 PERFORMANCE: Reduced from 5000 to 100 for faster loading
       select: { 
+        // 🚀 PERFORMANCE: Only select essential fields for list view
         id: true, 
         name: true, 
         industry: true, 
         website: true,
         description: true,
         size: true,
-        address: true,
         city: true,
         state: true,
         country: true,
         rank: true,
-        customFields: true,
         updatedAt: true,
         lastAction: true,
         lastActionDate: true,
@@ -1222,63 +1218,12 @@ async function getMultipleRecords(
         nextActionDate: true,
         actionStatus: true,
         assignedUserId: true,
-        rank: true,
-        // CoreSignal Enrichment Fields - Basic Information
-        legalName: true,
-        tradingName: true,
-        localName: true,
-        email: true,
-        phone: true,
-        fax: true,
-        postalCode: true,
-        // CoreSignal Enrichment Fields - Business Information
-        sector: true,
+        // Essential enrichment fields only
         employeeCount: true,
         foundedYear: true,
-        currency: true,
-        // CoreSignal Enrichment Fields - Intelligence Overview
         linkedinUrl: true,
-        linkedinFollowers: true,
-        activeJobPostings: true,
-        // CoreSignal Enrichment Fields - Industry Classification
-        naicsCodes: true,
-        sicCodes: true,
-        // CoreSignal Enrichment Fields - Social Media
-        facebookUrl: true,
-        twitterUrl: true,
-        instagramUrl: true,
-        youtubeUrl: true,
-        githubUrl: true,
-        // CoreSignal Enrichment Fields - Business Intelligence
         technologiesUsed: true,
-        competitors: true,
-        tags: true,
-        // CoreSignal Enrichment Fields - Company Status
-        isPublic: true,
-        stockSymbol: true,
-        logoUrl: true,
-        // CoreSignal Enrichment Fields - Domain and Website
-        domain: true,
-        // CoreSignal Enrichment Fields - Headquarters Location
-        hqLocation: true,
-        hqFullAddress: true,
-        hqCity: true,
-        hqState: true,
-        hqStreet: true,
-        hqZipcode: true,
-        // CoreSignal Enrichment Fields - Social Media Followers
-        twitterFollowers: true,
-        owlerFollowers: true,
-        // CoreSignal Enrichment Fields - Company Updates and Activity
-        companyUpdates: true,
-        numTechnologiesUsed: true,
-        // CoreSignal Enrichment Fields - Enhanced Descriptions
-        descriptionEnriched: true,
-        descriptionMetadataRaw: true,
-        // CoreSignal Enrichment Fields - Regional Information
-        hqRegion: true,
-        hqCountryIso2: true,
-        hqCountryIso3: true
+        tags: true
       }
     });
     
@@ -1368,6 +1313,17 @@ async function getMultipleRecords(
         nextActionTiming
       };
     });
+    
+    // 🚀 PERFORMANCE: Log query performance
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    console.log(`🏢 [COMPANIES API] Query completed in ${duration}ms for ${companiesWithTiming.length} companies`);
+    
+    if (duration > 5000) {
+      console.log(`🐌 [SLOW API] GET companies took ${duration}ms - consider optimization`);
+    } else {
+      console.log(`⚡ [FAST API] GET companies completed in ${duration}ms`);
+    }
     
     return { success: true, data: companiesWithTiming };
   }

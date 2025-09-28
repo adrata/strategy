@@ -43,14 +43,18 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       hasWorkspaceId: !!workspaceId,
       hasUserId: !!userId,
       alreadyLoaded: loadedSections.has(section),
-      loadedSections: Array.from(loadedSections)
+      loadedSections: Array.from(loadedSections),
+      actualWorkspaceId: workspaceId,
+      actualUserId: userId
     });
     
     if (!workspaceId || !userId || authLoading) {
       console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
         workspaceId: !!workspaceId,
         userId: !!userId,
-        authLoading
+        authLoading,
+        actualWorkspaceId: workspaceId,
+        actualUserId: userId
       });
       setLoading(false);
       return;
@@ -69,10 +73,17 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
-      const response = await fetch(`/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}`);
+      const url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}`;
+      console.log(`🔗 [FAST SECTION DATA] Making request to:`, url);
+      
+      const response = await fetch(url);
+      
+      console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`❌ [FAST SECTION DATA] API Error:`, errorText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
       }
 
       const result = await response.json();

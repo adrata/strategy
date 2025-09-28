@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   ChevronLeftIcon,
   PlusIcon,
@@ -550,6 +550,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState("Overview");
   const [activeReport, setActiveReport] = useState<string | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   // Extract custom fields data for enhanced display
   const customFields = (person as any).customFields || {};
@@ -614,16 +615,23 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   // Get company intelligence data from authenticated user's workspace
   const { user } = useUnifiedAuth();
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id || 'demo-workspace';
+  
+  // 🚀 PERFORMANCE: Memoize company intelligence to prevent unnecessary re-fetches
+  const companyName = useMemo(() => person.company || '', [person.company]);
   const { intelligence, loading: intelligenceLoading, error: intelligenceError } = useCompanyIntelligence(
-    person.company || '',
+    companyName,
     workspaceId
   );
 
-  // Generate reports on component mount
+  // 🚀 PERFORMANCE: Memoize report generation to prevent expensive recalculations
+  const personalizedReports = useMemo(() => {
+    return generatePersonalizedReports(person);
+  }, [person.id, person.company, person.title, person.department]);
+
+  // Generate reports on component mount (memoized)
   useEffect(() => {
-    const reports = generatePersonalizedReports(person);
-    setDynamicReports(reports);
-  }, [person]);
+    setDynamicReports(personalizedReports);
+  }, [personalizedReports]);
 
   // Initialize notes from person data
   useEffect(() => {
@@ -660,22 +668,32 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [sourceSection, onMarkCompleted, onPrevious, onNext, currentIndex, totalRecords]);
 
-  // Workspace detection for conditional UI
+  // 🚀 PERFORMANCE: Memoize workspace detection to prevent unnecessary API calls
   const [isRetailProductSolutions, setIsRetailProductSolutions] = useState(false);
   
+  const checkWorkspace = useCallback(async () => {
+    try {
+      const context = await WorkspaceDataRouter.getWorkspaceContext();
+      // Dano's Retail Product Solutions workspace
+      const isDemoWorkspace = context.workspaceId?.includes('demo') || context.isDemo;
+      setIsRetailProductSolutions(isDemoWorkspace);
+    } catch (error) {
+      console.error('Error checking workspace context:', error);
+      setIsRetailProductSolutions(false);
+    }
+  }, []);
+  
   useEffect(() => {
-    const checkWorkspace = async () => {
-      try {
-        const context = await WorkspaceDataRouter.getWorkspaceContext();
-        // Dano's Retail Product Solutions workspace
-        const isDemoWorkspace = context.workspaceId?.includes('demo') || context.isDemo;
-        setIsRetailProductSolutions(isDemoWorkspace);
-      } catch (error) {
-        console.error('Error checking workspace context:', error);
-      }
-    };
-    
     checkWorkspace();
+  }, [checkWorkspace]);
+
+  // 🚀 PERFORMANCE: Set initial loading to false after component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 100); // Small delay to show loading state
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const tabs = [
@@ -707,7 +725,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   };
 
   // Handle inline field save for Monaco person records
-  const handlePersonSave = async (field: string, value: string, recordId: string, recordType: string) => {
+  const handlePersonSave = async (field: string, value: string, recordId: string, recordType: string): Promise<void> => {
     try {
       console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
       
@@ -729,7 +747,6 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
         const result = await response.json();
         if (result.success) {
           console.log(`✅ [MONACO PERSON] Successfully updated ${field} for person ${recordId}`);
-          return true;
         } else {
           throw new Error(result.error || 'Update failed');
         }
@@ -2553,6 +2570,36 @@ Dan`}
         return null;
     }
   };
+
+  // 🚀 PERFORMANCE: Show loading skeleton while component initializes
+  if (isInitialLoading) {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto invisible-scrollbar p-4">
+          <div className="w-full px-0">
+            {/* Loading skeleton */}
+            <div className="animate-pulse">
+              <div className="flex items-center justify-between mt-2 mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                  </div>
+                </div>
+                <div className="h-8 bg-gray-200 rounded w-20"></div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col">
