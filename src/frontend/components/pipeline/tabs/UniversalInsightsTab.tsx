@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
+import { useDeepValueReports } from '../hooks/useDeepValueReports';
 
 interface UniversalInsightsTabProps {
   recordType: string;
@@ -9,6 +10,9 @@ interface UniversalInsightsTabProps {
 export function UniversalInsightsTab({ recordType, record: recordProp }: UniversalInsightsTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Deep Value Reports functionality
+  const { reports, isLoading: reportsLoading, activeReport, handleReportClick, handleReportBack } = useDeepValueReports(record);
 
   if (!record) {
     return (
@@ -473,67 +477,60 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       {/* Deep Value Reports */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Deep Value Reports</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Company-Specific Reports */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Company Intelligence</h4>
-            <div className="space-y-2">
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{company} Competitive Analysis</div>
-                <div className="text-xs text-gray-500 mt-1">AI-generated competitive intelligence for {company}</div>
-              </div>
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{company} Market Position Report</div>
-                <div className="text-xs text-gray-500 mt-1">Strategic positioning and growth opportunities</div>
-              </div>
+        
+        {activeReport ? (
+          // Show active report content
+          <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-medium text-gray-900">
+                {reports.find(r => r.id === activeReport)?.title}
+              </h4>
+              <button
+                onClick={handleReportBack}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                ← Back to Reports
+              </button>
             </div>
+            
+            {reports.find(r => r.id === activeReport)?.isGenerating ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600">Generating report with Claude AI...</span>
+              </div>
+            ) : (
+              <div className="prose max-w-none">
+                <div className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+                  {reports.find(r => r.id === activeReport)?.content || 'Report content will appear here...'}
+                </div>
+              </div>
+            )}
           </div>
-          
-          {/* Role-Specific Reports */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role Intelligence</h4>
-            <div className="space-y-2">
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{title} Decision Framework</div>
-                <div className="text-xs text-gray-500 mt-1">AI-analyzed decision-making patterns for {title} role</div>
+        ) : (
+          // Show report grid
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {reports.map((report) => (
+              <div key={report.id} className="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 className="font-medium text-gray-900 mb-3">{report.category}</h4>
+                <div className="space-y-2">
+                  <div 
+                    className="block p-3 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                    onClick={() => handleReportClick(report.id)}
+                  >
+                    <div className="text-sm font-medium text-gray-900">{report.title}</div>
+                    <div className="text-xs text-gray-500 mt-1">{report.description}</div>
+                    {report.isGenerating && (
+                      <div className="flex items-center mt-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        <span className="ml-2 text-xs text-blue-600">Generating...</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{buyerRole} Engagement Strategy</div>
-                <div className="text-xs text-gray-500 mt-1">Personalized engagement approach for {buyerRole}</div>
-              </div>
-            </div>
+            ))}
           </div>
-          
-          {/* Industry Reports */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Industry Analysis</h4>
-            <div className="space-y-2">
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{industry} Market Trends</div>
-                <div className="text-xs text-gray-500 mt-1">AI-generated industry insights and trends</div>
-              </div>
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{industry} Technology Landscape</div>
-                <div className="text-xs text-gray-500 mt-1">Technology adoption and disruption analysis</div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Buyer Group Intelligence */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Buyer Group Intelligence</h4>
-            <div className="space-y-2">
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">{company} Buyer Group Map</div>
-                <div className="text-xs text-gray-500 mt-1">AI-mapped decision makers and influencers</div>
-              </div>
-              <div className="block p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-900">Decision Process Analysis</div>
-                <div className="text-xs text-gray-500 mt-1">AI-analyzed procurement and decision workflow</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

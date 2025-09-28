@@ -89,8 +89,8 @@ export function UniversalOverviewTab({ record, recordType, onSave }: UniversalOv
   });
 
   // Create a wrapper function that adapts the signature for InlineEditField
-  const handleInlineSave = async (field: string, value: string) => {
-    return handleSave(field, value, record?.id || '', recordType);
+  const handleInlineSave = async (field: string, value: string, recordId: string, recordType: string) => {
+    return handleSave(field, value, recordId, recordType);
   };
 
   // Handle date changes for actions

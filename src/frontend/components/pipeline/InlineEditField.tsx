@@ -4,7 +4,7 @@ import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 interface InlineEditFieldProps {
   value: string;
   field: string;
-  onSave: (field: string, value: string) => Promise<void>;
+  onSave: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
   className?: string;
   placeholder?: string;
   type?: 'text' | 'textarea' | 'number' | 'email';
@@ -47,7 +47,8 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
     setIsLoading(true);
     try {
-      await onSave(field, editValue);
+      // Pass all required parameters to onSave
+      await onSave(field, editValue, recordId || '', recordType || '');
       
       // Show success message
       const message = successMessage || `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
