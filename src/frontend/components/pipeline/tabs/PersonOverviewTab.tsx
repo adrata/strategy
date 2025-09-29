@@ -57,10 +57,10 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     phone: String(record.phone || '-'),
     linkedin: String(record.linkedinUrl || '-'),
     
-    // Company info - use CoreSignal experience data for company details
-    company: String(coresignalData.experience?.[0]?.company_name || record.company?.name || record.companyName || '-'),
-    industry: String(coresignalData.experience?.[0]?.company_industry || record.company?.industry || record.industry || '-'),
-    department: String(coresignalData.experience?.[0]?.department || record.customFields?.department || '-'),
+    // Company info - prioritize direct database fields over CoreSignal experience data
+    company: String(record.company?.name || record.companyName || coresignalData.experience?.[0]?.company_name || '-'),
+    industry: String(record.company?.industry || record.industry || coresignalData.experience?.[0]?.company_industry || '-'),
+    department: String(record.department || record.customFields?.department || coresignalData.experience?.[0]?.department || '-'),
     
     // CoreSignal intelligence - use customFields directly
     influenceLevel: String(record.customFields?.influenceLevel || 'Low'),

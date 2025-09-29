@@ -1,10 +1,10 @@
-// Test CoreSignal API calls as provided by user
+// Test the exact script format you provided
 
 const CORESIGNAL_API_KEY = 'hzwQmb13cF21if4arzLpx0SRWyoOUyzP';
 
-// Test 1: Search by LinkedIn URL
+// Test 1: LinkedIn search (exactly like your example)
 async function testLinkedInSearch() {
-  console.log('🔍 Testing LinkedIn URL search...');
+  console.log('🔍 Testing LinkedIn search (exact format)...');
   
   const url = 'https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl';
   const data = {
@@ -20,7 +20,6 @@ async function testLinkedInSearch() {
       }
     }
   };
-  
   const customHeaders = {
     "Content-Type": "application/json",
     "apikey": CORESIGNAL_API_KEY
@@ -34,22 +33,28 @@ async function testLinkedInSearch() {
     });
     
     const result = await response.json();
-    console.log('✅ LinkedIn search result:');
+    console.log('LinkedIn search result:');
+    console.log('Status:', response.status);
     console.log('Total hits:', result.hits?.total);
+    console.log('Hits length:', result.hits?.hits?.length);
+    
     if (result.hits?.hits?.length > 0) {
       console.log('Employee ID:', result.hits.hits[0]._source.id);
       console.log('Name:', result.hits.hits[0]._source.full_name);
+      return result.hits.hits[0]._source.id;
+    } else {
+      console.log('No results found');
+      return null;
     }
-    return result;
   } catch (error) {
-    console.error('❌ LinkedIn search error:', error);
-    throw error;
+    console.error('LinkedIn search error:', error);
+    return null;
   }
 }
 
-// Test 2: Search by email
+// Test 2: Email search (exactly like your example)
 async function testEmailSearch() {
-  console.log('🔍 Testing email search...');
+  console.log('🔍 Testing email search (exact format)...');
   
   const url = 'https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl';
   const data = {
@@ -75,7 +80,6 @@ async function testEmailSearch() {
       }
     }
   };
-  
   const customHeaders = {
     "Content-Type": "application/json",
     "apikey": CORESIGNAL_API_KEY
@@ -89,22 +93,28 @@ async function testEmailSearch() {
     });
     
     const result = await response.json();
-    console.log('✅ Email search result:');
+    console.log('Email search result:');
+    console.log('Status:', response.status);
     console.log('Total hits:', result.hits?.total);
+    console.log('Hits length:', result.hits?.hits?.length);
+    
     if (result.hits?.hits?.length > 0) {
       console.log('Employee ID:', result.hits.hits[0]._source.id);
       console.log('Name:', result.hits.hits[0]._source.full_name);
+      return result.hits.hits[0]._source.id;
+    } else {
+      console.log('No results found');
+      return null;
     }
-    return result;
   } catch (error) {
-    console.error('❌ Email search error:', error);
-    throw error;
+    console.error('Email search error:', error);
+    return null;
   }
 }
 
-// Test 3: Collect full employee data
+// Test 3: Employee collection (exactly like your example)
 async function testEmployeeCollection(employeeId) {
-  console.log(`🔍 Testing employee data collection for ID: ${employeeId}...`);
+  console.log(`🔍 Testing employee collection for ID: ${employeeId}...`);
   
   const url = `https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${employeeId}`;
   const customHeaders = {
@@ -119,7 +129,8 @@ async function testEmployeeCollection(employeeId) {
     });
     
     const result = await response.json();
-    console.log('✅ Employee collection result:');
+    console.log('Employee collection result:');
+    console.log('Status:', response.status);
     console.log('Employee ID:', result.id);
     console.log('Name:', result.full_name);
     console.log('LinkedIn URL:', result.linkedin_url);
@@ -135,38 +146,46 @@ async function testEmployeeCollection(employeeId) {
     
     return result;
   } catch (error) {
-    console.error('❌ Employee collection error:', error);
-    throw error;
+    console.error('Employee collection error:', error);
+    return null;
   }
 }
 
 // Run all tests
 async function runTests() {
   try {
-    console.log('🚀 Testing CoreSignal API Calls');
-    console.log('================================');
+    console.log('🚀 Testing CoreSignal API (Exact Format)');
+    console.log('=========================================');
     console.log('');
     
     // Test LinkedIn search
-    const linkedinResult = await testLinkedInSearch();
+    const linkedinEmployeeId = await testLinkedInSearch();
     console.log('');
     
     // Test email search
-    const emailResult = await testEmailSearch();
+    const emailEmployeeId = await testEmailSearch();
     console.log('');
     
-    // Test employee collection
-    const employeeId = '505666130'; // Aaron Adkins' ID
-    const employeeData = await testEmployeeCollection(employeeId);
+    // Test employee collection with known ID
+    const knownEmployeeId = '505666130'; // Aaron Adkins' ID
+    const employeeData = await testEmployeeCollection(knownEmployeeId);
     console.log('');
     
     console.log('📊 TEST SUMMARY');
     console.log('===============');
-    console.log('✅ LinkedIn search: Working');
-    console.log('✅ Email search: Working');
-    console.log('✅ Employee collection: Working');
-    console.log('');
-    console.log('🎯 Ready for comprehensive enrichment!');
+    console.log('LinkedIn search employee ID:', linkedinEmployeeId);
+    console.log('Email search employee ID:', emailEmployeeId);
+    console.log('Known employee ID:', knownEmployeeId);
+    console.log('Employee data collected:', !!employeeData);
+    
+    if (employeeData) {
+      console.log('');
+      console.log('✅ SUCCESS: CoreSignal API is working correctly!');
+      console.log('We can now create the enrichment script.');
+    } else {
+      console.log('');
+      console.log('❌ FAILED: CoreSignal API is not working');
+    }
     
   } catch (error) {
     console.error('❌ Test failed:', error);

@@ -463,6 +463,37 @@ async function handleResetPassword(resetToken: string, newPassword: string): Pro
 }
 
 // MAIN API HANDLERS
+export async function GET(request: NextRequest) {
+  // Health check endpoint for network diagnostics
+  return NextResponse.json({
+    success: true,
+    message: "Unified Authentication API is running",
+    endpoint: "/api/auth/unified",
+    methods: ["POST"],
+    supportedActions: SUPPORTED_ACTIONS,
+    timestamp: new Date().toISOString()
+  }, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    }
+  });
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return NextResponse.json(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    }
+  });
+}
+
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   

@@ -79,6 +79,20 @@ async function setCachedUser(email: string, user: any): void {
 }
 
 // -------- API handlers --------
+export async function GET(request: NextRequest) {
+  // Health check endpoint for network diagnostics
+  return NextResponse.json({
+    success: true,
+    message: "Authentication API is running",
+    endpoint: "/api/auth/sign-in",
+    methods: ["POST", "OPTIONS"],
+    timestamp: new Date().toISOString()
+  }, {
+    status: 200,
+    headers: SECURITY_HEADERS,
+  });
+}
+
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
