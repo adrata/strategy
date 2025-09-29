@@ -629,9 +629,9 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id || 'demo-workspace';
   
   // 🚀 PERFORMANCE: Memoize company intelligence to prevent unnecessary re-fetches
-  const companyName = useMemo(() => person.company || '', [person.company]);
+  const memoizedCompanyName = useMemo(() => person.company || '', [person.company]);
   const { intelligence, loading: intelligenceLoading, error: intelligenceError } = useCompanyIntelligence(
-    companyName,
+    memoizedCompanyName,
     workspaceId
   );
 
