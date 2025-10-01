@@ -158,13 +158,13 @@ export async function GET(request: NextRequest) {
         });
         
         // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
-        const seenNames = new Set();
+        const seenSpeedrunNames = new Set();
         const deduplicatedPeople = filteredPeople.filter(person => {
           const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
-          if (seenNames.has(fullName)) {
+          if (seenSpeedrunNames.has(fullName)) {
             return false; // Skip duplicate
           }
-          seenNames.add(fullName);
+          seenSpeedrunNames.add(fullName);
           return true;
         });
         
@@ -512,12 +512,12 @@ export async function GET(request: NextRequest) {
         );
         
         // 🎯 DEDUPLICATION: Remove duplicate companies by name (keep first occurrence)
-        const seenNames = new Set();
+        const seenCompanyNames = new Set();
         const deduplicatedCompanies = filteredCompaniesData.filter(company => {
-          if (seenNames.has(company.name)) {
+          if (seenCompanyNames.has(company.name)) {
             return false; // Skip duplicate
           }
-          seenNames.add(company.name);
+          seenCompanyNames.add(company.name);
           return true;
         });
         
