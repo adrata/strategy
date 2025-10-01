@@ -238,12 +238,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
             <h4 className="font-medium text-gray-900 mb-3">Intelligence Snapshot</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
+                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Role:</span>
                 <span className="text-sm font-medium text-gray-900">{record.customFields?.primaryRole || 'Stakeholder'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Decision Power:</span>
@@ -252,14 +260,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Engagement Level:</span>
                 <span className="text-sm font-medium text-gray-900">{record.customFields?.engagementLevel || 'Medium'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Member:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
-                </span>
               </div>
             </div>
           </div>
