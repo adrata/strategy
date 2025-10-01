@@ -36,6 +36,9 @@ import "@/platform/safari-immediate-fix";
 // ✅ CRITICAL: Safari error suppression - must run before any other code
 import "@/platform/safari-error-suppression";
 
+// ✅ ULTIMATE: Safari ultimate fix - most aggressive error suppression
+import "@/platform/safari-ultimate-fix";
+
 // Service worker temporarily disabled to fix production errors
 // TODO: Re-enable when sw.js file is properly implemented
 // if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -217,8 +220,8 @@ export default function RootLayout({
         {/* Twilio Voice SDK for computer-to-phone calling */}
         <Script src="/twilio-voice.min.js" strategy="beforeInteractive" />
         
-        {/* CRITICAL: Safari fixes - must run before any other JavaScript */}
-        <Script id="safari-fixes" strategy="beforeInteractive">
+        {/* ULTIMATE: Safari fixes - most aggressive error suppression */}
+        <Script id="safari-ultimate-fixes" strategy="beforeInteractive">
           {`
             (function() {
               'use strict';
@@ -227,19 +230,19 @@ export default function RootLayout({
                               (/Macintosh/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome/.test(userAgent));
               
               if (isSafari) {
-                console.log('🍎 [SAFARI HEAD] Safari detected - applying immediate fixes');
+                console.log('🍎 [SAFARI ULTIMATE HEAD] Safari detected - applying ULTIMATE fixes');
                 
-                // Override Tauri detection
+                // 1. Override ALL Tauri detection
                 window.__TAURI__ = undefined;
                 window.__TAURI_METADATA__ = undefined;
                 window.__TAURI_INTERNALS__ = undefined;
                 window.__ADRATA_FORCE_WEB__ = true;
                 window.__ADRATA_SAFARI_MODE__ = true;
                 
-                // Override localStorage to prevent SecurityError
+                // 2. Override localStorage with ULTIMATE safe wrapper
                 const originalLocalStorage = window.localStorage;
                 if (originalLocalStorage) {
-                  const safeLocalStorage = {
+                  const ultimateSafeLocalStorage = {
                     getItem: function(key) {
                       try { return originalLocalStorage.getItem(key); } catch (e) { return null; }
                     },
@@ -255,28 +258,84 @@ export default function RootLayout({
                     get length() { try { return originalLocalStorage.length; } catch (e) { return 0; } },
                     key: function(index) { try { return originalLocalStorage.key(index); } catch (e) { return null; } }
                   };
-                  Object.defineProperty(window, 'localStorage', { value: safeLocalStorage, writable: false, configurable: false });
+                  Object.defineProperty(window, 'localStorage', { value: ultimateSafeLocalStorage, writable: false, configurable: false });
                 }
                 
-                // Suppress SecurityError globally
+                // 3. Override sessionStorage with ULTIMATE safe wrapper
+                const originalSessionStorage = window.sessionStorage;
+                if (originalSessionStorage) {
+                  const ultimateSafeSessionStorage = {
+                    getItem: function(key) {
+                      try { return originalSessionStorage.getItem(key); } catch (e) { return null; }
+                    },
+                    setItem: function(key, value) {
+                      try { originalSessionStorage.setItem(key, value); } catch (e) { /* ignore */ }
+                    },
+                    removeItem: function(key) {
+                      try { originalSessionStorage.removeItem(key); } catch (e) { /* ignore */ }
+                    },
+                    clear: function() {
+                      try { originalSessionStorage.clear(); } catch (e) { /* ignore */ }
+                    },
+                    get length() { try { return originalSessionStorage.length; } catch (e) { return 0; } },
+                    key: function(index) { try { return originalSessionStorage.key(index); } catch (e) { return null; } }
+                  };
+                  Object.defineProperty(window, 'sessionStorage', { value: ultimateSafeSessionStorage, writable: false, configurable: false });
+                }
+                
+                // 4. ULTIMATE Global Error Suppression
                 window.onerror = function(message, source, lineno, colno, error) {
-                  if (error && error.name === 'SecurityError' && error.message.includes('insecure')) {
-                    console.warn('🍎 [SAFARI HEAD] Suppressed SecurityError:', message);
+                  if (error && error.name === 'SecurityError') {
+                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError suppressed:', error.message);
+                    return true;
+                  }
+                  if (typeof message === 'string' && message.includes('SecurityError')) {
+                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError in message suppressed:', message);
                     return true;
                   }
                   return false;
                 };
                 
+                // 5. ULTIMATE Promise Rejection Suppression
                 window.onunhandledrejection = function(event) {
-                  if (event.reason && event.reason.name === 'SecurityError' && 
-                      event.reason.message && event.reason.message.includes('insecure')) {
-                    console.warn('🍎 [SAFARI HEAD] Suppressed SecurityError promise rejection');
+                  if (event.reason && event.reason.name === 'SecurityError') {
+                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError promise rejection suppressed:', event.reason.message);
+                    event.preventDefault();
+                    return;
+                  }
+                  if (event.reason && typeof event.reason === 'string' && event.reason.includes('SecurityError')) {
+                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError in promise reason suppressed:', event.reason);
                     event.preventDefault();
                     return;
                   }
                 };
                 
-                console.log('🍎 [SAFARI HEAD] Safari fixes applied');
+                // 6. Override console.error to suppress SecurityError messages
+                const originalConsoleError = console.error;
+                console.error = function(...args) {
+                  const message = args.join(' ');
+                  if (message.includes('SecurityError') || message.includes('The operation is insecure')) {
+                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError console.error suppressed:', message);
+                    return;
+                  }
+                  originalConsoleError.apply(console, args);
+                };
+                
+                // 7. Override protocol if it's tauri:
+                if (window.location.protocol === 'tauri:') {
+                  console.warn('🚨 [SAFARI ULTIMATE HEAD] Overriding tauri: protocol for Safari');
+                  try {
+                    Object.defineProperty(window.location, 'protocol', {
+                      value: 'https:',
+                      writable: false,
+                      configurable: false
+                    });
+                  } catch (e) {
+                    console.warn('🚨 [SAFARI ULTIMATE HEAD] Could not override protocol:', e);
+                  }
+                }
+                
+                console.log('🍎 [SAFARI ULTIMATE HEAD] ULTIMATE Safari fixes applied');
               }
             })();
           `}

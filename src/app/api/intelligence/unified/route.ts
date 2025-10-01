@@ -449,7 +449,7 @@ Best regards,
         accountId,
         confidence: depth === 'comprehensive' ? 95 : depth === 'thorough' ? 90 : 85,
         aiGenerated: true,
-        model: 'claude-3-5-sonnet'
+        model: 'claude-4-5-sonnet'
       },
       processingTime,
       confidence: depth === 'comprehensive' ? 95 : depth === 'thorough' ? 90 : 85,

@@ -12,9 +12,9 @@ export type AIModel = {
 
 export const AI_MODELS: AIModel[] = [
   {
-    id: "claude-3-5-sonnet",
-    name: "Claude 3.5 Sonnet",
-    displayName: "Claude 3.5 Sonnet",
+    id: "claude-4-5-sonnet",
+    name: "Claude 4.5 Sonnet",
+    displayName: "Claude 4.5 Sonnet",
     version: "Best Overall Performance",
     provider: "Anthropic"
   },

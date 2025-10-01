@@ -33,7 +33,7 @@ export interface ClaudeChatResponse {
 
 export class ClaudeAIService {
   private anthropic: Anthropic;
-  private model: string = 'claude-3-5-sonnet-20241022';
+  private model: string = 'claude-4-5-sonnet-20250929';
 
   constructor() {
     const apiKey = process.env.ANTHROPIC_API_KEY;

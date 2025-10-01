@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
       'No emoji responses'
     ],
     models: [
-      'claude-3-5-sonnet-20241022',
+      'claude-4-5-sonnet-20250929',
       'llama-3.1-sonar-large-128k-online'
     ],
     endpoints: {
