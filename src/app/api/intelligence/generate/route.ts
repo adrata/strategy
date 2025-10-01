@@ -94,15 +94,7 @@ async function getRecordWithContext(recordId: string, recordType: string, worksp
       return await prisma.people.findFirst({
         where: baseWhere,
         include: {
-          company: true,
-          contacts: true,
-          decisionMakers: true,
-          leads: true,
-          opportunityStakeholders: {
-            include: {
-              opportunity: true
-            }
-          }
+          company: true
         }
       });
     
