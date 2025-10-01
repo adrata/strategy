@@ -179,7 +179,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">AI Generated</span>
+            <span className="text-sm text-gray-600">Adrata Generated</span>
           </div>
         </div>
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
@@ -514,7 +514,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-600">AI Generated</span>
+            <span className="text-sm text-gray-600">Adrata Generated</span>
           </div>
         </div>
         
