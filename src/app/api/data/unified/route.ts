@@ -998,8 +998,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
 
     const record = await model.findFirst({
       where: whereClause,
-      select: selectFields,
-      ...includeClause
+      ...(Object.keys(includeClause).length > 0 ? includeClause : { select: selectFields })
     });
     
     if (!record) {

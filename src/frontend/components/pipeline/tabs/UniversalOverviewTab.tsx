@@ -228,11 +228,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       });
     }
     
-    // Fill with default actions if we don't have enough
+    // Fill with default actions if we don't have enough - but be more accurate
     const defaultActions = [
-      'Initial contact via email',
       'Added to CRM system',
-      'Profile enrichment completed'
+      'Profile enrichment completed',
+      'Record created'
     ];
     
     let defaultIndex = 0;
@@ -244,9 +244,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       if (!alreadyExists) {
         actions.push({
           action: actionText,
-          date: defaultIndex === 0 ? formatRelativeDate(recordData.lastContact) : 
-                defaultIndex === 1 ? formatRelativeDate(record.createdAt) : 
-                formatRelativeDate(record.lastEnriched || record.updatedAt)
+          date: defaultIndex === 0 ? formatRelativeDate(record.createdAt) : 
+                defaultIndex === 1 ? formatRelativeDate(record.lastEnriched || record.updatedAt) : 
+                formatRelativeDate(record.createdAt)
         });
       }
       defaultIndex++;

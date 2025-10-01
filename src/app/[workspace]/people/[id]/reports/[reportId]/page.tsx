@@ -10,7 +10,7 @@ import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueReportViewer";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
-import { PipelineProvider } from "@/platform/ui/context/PipelineProvider";
+import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/ui/context/SpeedrunDataProvider";
 import { ProfilePopupProvider } from "@/platform/ui/context/ProfilePopupProvider";
 
