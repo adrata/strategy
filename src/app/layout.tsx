@@ -30,6 +30,9 @@ import { isDesktop } from "@/platform/platform-detection";
 // ✅ Initialize Safari error handling for Safari compatibility
 import { initializeSafariErrorHandling } from "@/platform/safari-error-handler";
 
+// ✅ NUCLEAR: Safari nuclear fix - most aggressive error suppression
+import "@/platform/safari-nuclear-fix";
+
 // ✅ CRITICAL: Safari platform override - must run FIRST to prevent desktop detection
 import "@/platform/safari-platform-override";
 
@@ -226,8 +229,8 @@ export default function RootLayout({
         {/* Twilio Voice SDK for computer-to-phone calling */}
         <Script src="/twilio-voice.min.js" strategy="beforeInteractive" />
         
-        {/* 2025 SAFARI FIXES: Most comprehensive Safari compatibility fixes */}
-        <Script id="safari-2025-fixes" strategy="beforeInteractive">
+        {/* NUCLEAR SAFARI FIXES: Most aggressive Safari compatibility fixes */}
+        <Script id="safari-nuclear-fixes" strategy="beforeInteractive">
           {`
             (function() {
               'use strict';
@@ -236,9 +239,9 @@ export default function RootLayout({
                               (/Macintosh/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome/.test(userAgent));
               
               if (isSafari) {
-                console.log('🍎 [SAFARI 2025 HEAD] Safari detected - applying 2025 compatibility fixes');
+                console.log('🍎 [SAFARI NUCLEAR HEAD] Safari detected - applying NUCLEAR compatibility fixes');
                 
-                // 1. CRITICAL: Override ALL Tauri detection IMMEDIATELY
+                // 1. NUCLEAR: Override ALL Tauri detection IMMEDIATELY
                 window.__TAURI__ = undefined;
                 window.__TAURI_METADATA__ = undefined;
                 window.__TAURI_INTERNALS__ = undefined;
@@ -248,10 +251,11 @@ export default function RootLayout({
                 window.__ADRATA_SAFARI_MODE__ = true;
                 window.__ADRATA_WEB_PLATFORM__ = true;
                 window.__ADRATA_SAFARI_2025_FIX__ = true;
+                window.__ADRATA_NUCLEAR_FIX__ = true;
                 
-                // 2. Override protocol if it's tauri: (CRITICAL FIX)
+                // 2. NUCLEAR: Override protocol if it's tauri: (CRITICAL FIX)
                 if (window.location.protocol === 'tauri:') {
-                  console.warn('🚨 [SAFARI 2025 HEAD] Overriding tauri: protocol for Safari');
+                  console.warn('🚨 [SAFARI NUCLEAR HEAD] Overriding tauri: protocol for Safari');
                   try {
                     Object.defineProperty(window.location, 'protocol', {
                       value: 'https:',
@@ -263,12 +267,12 @@ export default function RootLayout({
                   }
                 }
                 
-                // 3. Create 2025-safe storage with memory fallback
-                const create2025SafeStorage = (originalStorage, name) => {
+                // 3. NUCLEAR: Create nuclear-safe storage with memory fallback
+                const createNuclearSafeStorage = (originalStorage, name) => {
                   return {
                     getItem: function(key) {
                       try { return originalStorage.getItem(key); } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.getItem failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.getItem failed:', e.message);
                         return null; 
                       }
                     },
@@ -276,7 +280,7 @@ export default function RootLayout({
                       try { 
                         originalStorage.setItem(key, value); 
                       } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.setItem failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.setItem failed:', e.message);
                         // Store in memory as fallback
                         window.__ADRATA_MEMORY_STORAGE__ = window.__ADRATA_MEMORY_STORAGE__ || {};
                         window.__ADRATA_MEMORY_STORAGE__[key] = value;
@@ -286,7 +290,7 @@ export default function RootLayout({
                       try { 
                         originalStorage.removeItem(key); 
                       } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.removeItem failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.removeItem failed:', e.message);
                         if (window.__ADRATA_MEMORY_STORAGE__) {
                           delete window.__ADRATA_MEMORY_STORAGE__[key];
                         }
@@ -296,7 +300,7 @@ export default function RootLayout({
                       try { 
                         originalStorage.clear(); 
                       } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.clear failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.clear failed:', e.message);
                         window.__ADRATA_MEMORY_STORAGE__ = {};
                       }
                     },
@@ -304,7 +308,7 @@ export default function RootLayout({
                       try { 
                         return originalStorage.length; 
                       } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.length failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.length failed:', e.message);
                         return window.__ADRATA_MEMORY_STORAGE__ ? Object.keys(window.__ADRATA_MEMORY_STORAGE__).length : 0;
                       } 
                     },
@@ -312,7 +316,7 @@ export default function RootLayout({
                       try { 
                         return originalStorage.key(index); 
                       } catch (e) { 
-                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.key failed:', e.message);
+                        console.warn('🍎 [SAFARI NUCLEAR HEAD] ' + name + '.key failed:', e.message);
                         const memoryKeys = window.__ADRATA_MEMORY_STORAGE__ ? Object.keys(window.__ADRATA_MEMORY_STORAGE__) : [];
                         return memoryKeys[index] || null;
                       } 
@@ -320,19 +324,19 @@ export default function RootLayout({
                   };
                 };
                 
-                // 4. Override localStorage with 2025-safe implementation
+                // 4. NUCLEAR: Override localStorage with nuclear-safe implementation
                 if (window.localStorage) {
-                  const safeLocalStorage = create2025SafeStorage(window.localStorage, 'localStorage');
-                  Object.defineProperty(window, 'localStorage', { value: safeLocalStorage, writable: false, configurable: false });
+                  const nuclearSafeLocalStorage = createNuclearSafeStorage(window.localStorage, 'localStorage');
+                  Object.defineProperty(window, 'localStorage', { value: nuclearSafeLocalStorage, writable: false, configurable: false });
                 }
                 
-                // 5. Override sessionStorage with 2025-safe implementation
+                // 5. NUCLEAR: Override sessionStorage with nuclear-safe implementation
                 if (window.sessionStorage) {
-                  const safeSessionStorage = create2025SafeStorage(window.sessionStorage, 'sessionStorage');
-                  Object.defineProperty(window, 'sessionStorage', { value: safeSessionStorage, writable: false, configurable: false });
+                  const nuclearSafeSessionStorage = createNuclearSafeStorage(window.sessionStorage, 'sessionStorage');
+                  Object.defineProperty(window, 'sessionStorage', { value: nuclearSafeSessionStorage, writable: false, configurable: false });
                 }
                 
-                // 6. 2025 Global Error Handler - Enhanced SecurityError detection
+                // 6. NUCLEAR: Global Error Handler - Enhanced SecurityError detection
                 window.onerror = function(message, source, lineno, colno, error) {
                   const isSecurityError = 
                     (error && error.name === 'SecurityError') ||
@@ -343,13 +347,13 @@ export default function RootLayout({
                     ));
                   
                   if (isSecurityError) {
-                    console.warn('🍎 [SAFARI 2025 HEAD] SecurityError suppressed:', { message, source, lineno, colno, error: error?.message });
+                    console.warn('🍎 [SAFARI NUCLEAR HEAD] SecurityError suppressed:', { message, source, lineno, colno, error: error?.message });
                     return true;
                   }
                   return false;
                 };
                 
-                // 7. 2025 Promise Rejection Handler - Enhanced detection
+                // 7. NUCLEAR: Promise Rejection Handler - Enhanced detection
                 window.onunhandledrejection = function(event) {
                   const reason = event.reason;
                   const isSecurityError = 
@@ -361,20 +365,20 @@ export default function RootLayout({
                     ));
                   
                   if (isSecurityError) {
-                    console.warn('🍎 [SAFARI 2025 HEAD] SecurityError promise rejection suppressed:', reason);
+                    console.warn('🍎 [SAFARI NUCLEAR HEAD] SecurityError promise rejection suppressed:', reason);
                     event.preventDefault();
                     return;
                   }
                 };
                 
-                // 8. Override console methods to suppress SecurityError messages
+                // 8. NUCLEAR: Override console methods to suppress SecurityError messages
                 const originalConsoleError = console.error;
                 const originalConsoleWarn = console.warn;
                 
                 console.error = function(...args) {
                   const message = args.join(' ');
                   if (message.includes('SecurityError') || message.includes('The operation is insecure') || message.includes('insecure')) {
-                    console.log('🍎 [SAFARI 2025 HEAD] SecurityError console.error suppressed:', message);
+                    console.log('🍎 [SAFARI NUCLEAR HEAD] SecurityError console.error suppressed:', message);
                     return;
                   }
                   originalConsoleError.apply(console, args);
@@ -383,29 +387,29 @@ export default function RootLayout({
                 console.warn = function(...args) {
                   const message = args.join(' ');
                   if (message.includes('SecurityError') || message.includes('The operation is insecure') || message.includes('insecure')) {
-                    console.log('🍎 [SAFARI 2025 HEAD] SecurityError console.warn suppressed:', message);
+                    console.log('🍎 [SAFARI NUCLEAR HEAD] SecurityError console.warn suppressed:', message);
                     return;
                   }
                   originalConsoleWarn.apply(console, args);
                 };
                 
-                // 9. Override platform detection functions
+                // 9. NUCLEAR: Override platform detection functions
                 window.getPlatform = function() {
-                  console.log('🍎 [SAFARI 2025 HEAD] getPlatform() overridden - returning web');
+                  console.log('🍎 [SAFARI NUCLEAR HEAD] getPlatform() overridden - returning web');
                   return 'web';
                 };
                 
                 window.isDesktopEnvironment = function() {
-                  console.log('🍎 [SAFARI 2025 HEAD] isDesktopEnvironment() overridden - returning false');
+                  console.log('🍎 [SAFARI NUCLEAR HEAD] isDesktopEnvironment() overridden - returning false');
                   return false;
                 };
                 
                 window.shouldUseDesktopAPI = function() {
-                  console.log('🍎 [SAFARI 2025 HEAD] shouldUseDesktopAPI() overridden - returning false');
+                  console.log('🍎 [SAFARI NUCLEAR HEAD] shouldUseDesktopAPI() overridden - returning false');
                   return false;
                 };
                 
-                console.log('🍎 [SAFARI 2025 HEAD] 2025 Safari compatibility fixes applied successfully');
+                console.log('🍎 [SAFARI NUCLEAR HEAD] NUCLEAR Safari compatibility fixes applied successfully');
               }
             })();
           `}

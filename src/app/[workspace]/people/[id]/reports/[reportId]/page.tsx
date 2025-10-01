@@ -9,7 +9,7 @@ import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueReportViewer";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
-import { ZoomProvider } from "@/platform/ui/context/ZoomProvider";
+import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/platform/ui/context/PipelineProvider";
 import { SpeedrunDataProvider } from "@/platform/ui/context/SpeedrunDataProvider";
 import { ProfilePopupProvider } from "@/platform/ui/context/ProfilePopupProvider";
