@@ -225,7 +225,21 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           // If not found in the list, try to load the specific record directly
           console.log(`⚠️ [DIRECT LOAD] Record ${recordId} not found in ${section} list, trying direct fetch...`);
           
-          // 🎯 FIX: Speedrun records are actually people records
+          // 🎯 FIX: For speedrun records, use section API to get filtered/enriched data
+          if (section === 'speedrun') {
+            const sectionResponse = await fetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}`);
+            if (sectionResponse.ok) {
+              const sectionResult = await sectionResponse.json();
+              const speedrunRecord = sectionResult.data.find((r: any) => r.id === recordId);
+              if (speedrunRecord) {
+                console.log(`✅ [SPEEDRUN LOAD] Found record in speedrun section:`, speedrunRecord);
+                setSelectedRecord(speedrunRecord);
+                return;
+              }
+            }
+          }
+          
+          // For other sections, use unified API
           const apiType = section === 'speedrun' ? 'people' : section;
           const directResponse = await fetch(`/api/data/unified?type=${apiType}&action=get&id=${recordId}&workspaceId=${workspaceId}&userId=${userId}`);
           
