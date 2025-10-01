@@ -302,7 +302,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 </div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Engagement Level</span>
-                  <span className="text-sm font-medium text-gray-900">{engagement}</span>
+                  <span className="text-sm font-medium text-gray-900">{engagementLevel || 'Medium'}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Influence Level</span>
@@ -375,9 +375,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Next Steps</h4>
               <p className="text-sm text-gray-600">
-                {engagement.includes('Interested') ? 'Schedule technical demo and stakeholder meeting' :
-                 engagement.includes('Warming') ? 'Provide case studies and reference calls' :
-                 engagement.includes('Neutral') ? 'Identify pain points and build urgency' :
+                {(engagementLevel || 'Medium').includes('High') ? 'Schedule technical demo and stakeholder meeting' :
+                 (engagementLevel || 'Medium').includes('Medium') ? 'Provide case studies and reference calls' :
+                 (engagementLevel || 'Medium').includes('Low') ? 'Identify pain points and build urgency' :
                  'Continue relationship building and value demonstration'}
               </p>
             </div>
@@ -405,7 +405,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Engagement Level</span>
-                <span className="text-sm font-medium text-gray-900">{engagement}</span>
+                <span className="text-sm font-medium text-gray-900">{engagementLevel || 'Medium'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Influence Score</span>
