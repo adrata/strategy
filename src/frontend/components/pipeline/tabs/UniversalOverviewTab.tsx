@@ -142,58 +142,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     }
   };
 
-  // Generate wants and needs based on role and industry
-  const generateWantsAndNeeds = () => {
-    const role = (recordData.title || '').toLowerCase();
-    const industry = (recordData.industry || '').toLowerCase();
-    const department = (recordData.department || '').toLowerCase();
-    
-    const wants = [];
-    const needs = [];
-    
-    // Role-based wants and needs
-    if (role.includes('director') || role.includes('vp') || role.includes('vice president')) {
-      wants.push('Strategic solutions that drive business growth');
-      wants.push('ROI-focused technology investments');
-      wants.push('Competitive advantage in their market');
-      needs.push('Executive-level decision support');
-      needs.push('Strategic planning tools');
-    } else if (role.includes('manager') || role.includes('supervisor')) {
-      wants.push('Operational efficiency improvements');
-      wants.push('Team productivity tools');
-      wants.push('Process automation solutions');
-      needs.push('Management reporting capabilities');
-      needs.push('Team collaboration tools');
-    } else if (role.includes('analyst') || role.includes('specialist')) {
-      wants.push('Data-driven insights and analytics');
-      wants.push('Advanced reporting capabilities');
-      wants.push('Integration with existing systems');
-      needs.push('Technical training and support');
-      needs.push('Data visualization tools');
-    } else {
-      wants.push('User-friendly technology solutions');
-      wants.push('Improved workflow efficiency');
-      wants.push('Better integration with existing systems');
-      needs.push('Training and support resources');
-      needs.push('Reliable technical solutions');
-    }
-    
-    // Industry-specific additions
-    if (industry.includes('technology') || industry.includes('software')) {
-      wants.push('Cutting-edge technology solutions');
-      wants.push('Scalable and flexible systems');
-    } else if (industry.includes('healthcare') || industry.includes('medical')) {
-      wants.push('Compliance-focused solutions');
-      wants.push('Patient data security');
-    } else if (industry.includes('finance') || industry.includes('banking')) {
-      wants.push('Financial compliance tools');
-      wants.push('Risk management solutions');
-    }
-    
-    return { wants, needs };
-  };
-
-  const { wants, needs } = generateWantsAndNeeds();
 
   // Generate last 3 actions based on available data
   const generateLastActions = () => {
@@ -400,37 +348,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               </div>
             </div>
 
-      {/* What do they care about */}
-                <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Insights</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Wants Card */}
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-3">Wants</h4>
-              <div className="space-y-3">
-                {wants.map((want, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-gray-700 leading-relaxed">{want}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Needs Card */}
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-3">Needs</h4>
-              <div className="space-y-3">
-                {needs.map((need, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-gray-700 leading-relaxed">{need}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-                </div>
 
       {/* Last Actions */}
       <div className="space-y-4">
