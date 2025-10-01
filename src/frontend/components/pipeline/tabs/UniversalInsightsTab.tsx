@@ -561,31 +561,129 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       </div>
 
       {/* Deep Value Reports */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Deep Value Reports</h3>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">Deep Value Reports</h3>
+            <p className="text-sm text-gray-600 mt-1">AI-powered insights tailored to this contact</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-gray-600">AI Generated</span>
+          </div>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reportsLoading ? (
-            <div className="col-span-full text-center text-gray-500">Loading reports...</div>
-          ) : reports.length > 0 ? (
-            reports.map((report) => (
-              <div
-                key={report.id}
-                className="bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => handleReportClick(report.id)}
-              >
-                <h4 className="font-medium text-gray-900 mb-2">{report.title}</h4>
-                <p className="text-sm text-gray-600">{report.description}</p>
-                {report.isGenerating && (
-                  <div className="flex items-center mt-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="ml-2 text-xs text-blue-600">Generating...</span>
-                  </div>
-                )}
+            <div className="col-span-full flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <div className="text-gray-500">Generating intelligent reports...</div>
               </div>
-            ))
+            </div>
+          ) : reports.length > 0 ? (
+            reports.map((report, index) => {
+              // Define report categories and their styling
+              const getReportStyle = (reportId: string) => {
+                if (reportId.includes('competitive') || reportId.includes('market-position')) {
+                  return {
+                    icon: '📊',
+                    gradient: 'from-blue-50 to-blue-100',
+                    border: 'border-blue-200',
+                    iconBg: 'bg-blue-100',
+                    iconColor: 'text-blue-600'
+                  };
+                } else if (reportId.includes('decision') || reportId.includes('framework')) {
+                  return {
+                    icon: '🧠',
+                    gradient: 'from-purple-50 to-purple-100',
+                    border: 'border-purple-200',
+                    iconBg: 'bg-purple-100',
+                    iconColor: 'text-purple-600'
+                  };
+                } else if (reportId.includes('engagement') || reportId.includes('stakeholder')) {
+                  return {
+                    icon: '🤝',
+                    gradient: 'from-green-50 to-green-100',
+                    border: 'border-green-200',
+                    iconBg: 'bg-green-100',
+                    iconColor: 'text-green-600'
+                  };
+                } else if (reportId.includes('trends') || reportId.includes('technology')) {
+                  return {
+                    icon: '📈',
+                    gradient: 'from-orange-50 to-orange-100',
+                    border: 'border-orange-200',
+                    iconBg: 'bg-orange-100',
+                    iconColor: 'text-orange-600'
+                  };
+                } else if (reportId.includes('buyer') || reportId.includes('process')) {
+                  return {
+                    icon: '🎯',
+                    gradient: 'from-indigo-50 to-indigo-100',
+                    border: 'border-indigo-200',
+                    iconBg: 'bg-indigo-100',
+                    iconColor: 'text-indigo-600'
+                  };
+                } else {
+                  return {
+                    icon: '📋',
+                    gradient: 'from-gray-50 to-gray-100',
+                    border: 'border-gray-200',
+                    iconBg: 'bg-gray-100',
+                    iconColor: 'text-gray-600'
+                  };
+                }
+              };
+
+              const style = getReportStyle(report.id);
+
+              return (
+                <div
+                  key={report.id}
+                  className={`bg-gradient-to-br ${style.gradient} p-6 rounded-xl border ${style.border} cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group`}
+                  onClick={() => handleReportClick(report.id)}
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className={`${style.iconBg} p-3 rounded-lg ${style.iconColor} text-xl group-hover:scale-110 transition-transform duration-200`}>
+                      {style.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                        {report.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                        {report.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <span className="text-xs text-gray-500">AI Generated</span>
+                        </div>
+                        <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {report.isGenerating && (
+                    <div className="mt-4 flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <span className="text-xs text-blue-600 font-medium">Generating...</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
-            <div className="col-span-full text-center text-gray-500 italic">No deep value reports available.</div>
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-400 text-4xl mb-4">📊</div>
+              <div className="text-gray-500 italic">No deep value reports available</div>
+              <div className="text-sm text-gray-400 mt-2">Reports will appear here once generated</div>
+            </div>
           )}
         </div>
       </div>
