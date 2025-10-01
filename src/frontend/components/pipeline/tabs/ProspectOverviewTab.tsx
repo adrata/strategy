@@ -112,17 +112,17 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData || {};
 
-  // Use Coresignal data ONLY (no fallbacks to database)
+  // Use database fields first, then CoreSignal fallback
   const prospectData = {
-    // Basic Information - Coresignal data only
-    name: String(coresignalData.full_name || '-'),
-    title: String(coresignalData.active_experience_title || '-'),
-    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
+    // Basic Information - Database fields first, then CoreSignal fallback
+    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
+    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
+    department: String(record?.department || coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
     
-    // Contact Information - Coresignal data only
-    email: String(coresignalData.primary_professional_email || '-'),
-    phone: String(coresignalData.phone || '-'),
-    linkedin: String(coresignalData.linkedin_url || '-'),
+    // Contact Information - Database fields first, then CoreSignal fallback
+    email: String(record?.email || coresignalData.primary_professional_email || '-'),
+    phone: String(record?.phone || coresignalData.phone || '-'),
+    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
     // Company Information - Coresignal data only
     company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),

@@ -461,7 +461,8 @@ export function AIRightPanel() {
           const industry = currentRecord?.industry || currentRecord?.customFields?.coresignalData?.categories_and_keywords?.[0] || 'business';
           return `Interesting company - ${company}. This looks like a ${industry} company with ${employeeCount} employees. What's your approach for building this relationship?`;
         case 'people':
-          return `I can see you're focused on ${recordName} at ${company}. As a ${title}, they could be valuable for your business. What would you like to explore about this contact?`;
+          const article = title && /^[aeiouAEIOU]/.test(title.trim()) ? 'an' : 'a';
+          return `I can see you're focused on ${recordName} at ${company}. As ${article} ${title}, they could be valuable for your business. What would you like to explore about this contact?`;
         default:
           return `I notice you're reviewing ${recordName} at ${company}. They look like they could be important for your sales efforts. How can I help you with this?`;
       }

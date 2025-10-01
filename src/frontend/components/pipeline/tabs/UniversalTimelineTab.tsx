@@ -107,7 +107,9 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     });
 
     // Always add creation event - use createdAt if available, otherwise use current date
-    const recordTypeName = recordType === 'companies' ? 'company' : recordType.slice(0, -1); // Handle 'companies' -> 'company' and other plurals
+    const recordTypeName = recordType === 'companies' ? 'company' : 
+                          recordType === 'people' ? 'person' : 
+                          recordType.slice(0, -1); // Handle other plurals
     const creationDate = record?.createdAt ? new Date(record.createdAt) : new Date();
     
     const creationEvent = {

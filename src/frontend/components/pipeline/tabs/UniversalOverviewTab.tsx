@@ -66,12 +66,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
   
   // Extract comprehensive record data from CoreSignal with database fallback
   const recordData = {
-    // Basic info - Coresignal data with database fallback
-    name: String(coresignalData.full_name || record?.fullName || record?.name || '-'),
-    title: String(coresignalData.active_experience_title || record?.jobTitle || record?.title || '-'),
-    email: String(coresignalData.primary_professional_email || record?.email || '-'),
-    phone: String(coresignalData.phone || record?.phone || '-'),
-    linkedin: String(coresignalData.linkedin_url || record?.linkedin || '-'),
+    // Basic info - Database fields first, then CoreSignal fallback
+    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
+    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
+    email: String(record?.email || coresignalData.primary_professional_email || '-'),
+    phone: String(record?.phone || coresignalData.phone || '-'),
+    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
     // Company info - Coresignal data with database fallback
     company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-'),
@@ -200,7 +200,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     const actions = [];
     
     // Add the main last action if it exists and is valid
-    if (recordData.lastAction && recordData.lastAction !== 'No action planned' && recordData.lastAction.trim() !== '') {
+    if (recordData.lastAction && recordData.lastAction !== 'No action planned' && recordData.lastAction.trim() !== '' && recordData.lastAction !== '-') {
       actions.push({
         action: recordData.lastAction,
         date: recordData.lastContact !== 'Never' ? formatRelativeDate(recordData.lastContact) : 'Invalid Date'
@@ -224,11 +224,21 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     }
     
     // Fill with default actions if we don't have enough
-    while (actions.length < 3) {
+    const defaultActions = [
+      'Initial contact via email',
+      'Added to CRM system',
+      'Profile enrichment completed'
+    ];
+    
+    let defaultIndex = 0;
+    while (actions.length < 3 && defaultIndex < defaultActions.length) {
       actions.push({
-        action: 'Initial contact via email',
-        date: 'Invalid Date'
+        action: defaultActions[defaultIndex],
+        date: defaultIndex === 0 ? formatRelativeDate(recordData.lastContact) : 
+              defaultIndex === 1 ? formatRelativeDate(record.createdAt) : 
+              formatRelativeDate(record.lastEnriched || record.updatedAt)
       });
+      defaultIndex++;
     }
     
     return actions.slice(0, 3);
@@ -381,13 +391,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
 
       {/* What do they care about */}
                 <div className="space-y-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">
-            Professional Insights: Based on their role as {recordData.title} at {recordData.company}, they likely care about:
-          </h4>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Insights</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
+            {/* Wants Card */}
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-3">Wants</h4>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
                   <li key={index} className="text-sm text-gray-600 flex items-start">
@@ -396,9 +404,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                   </li>
                 ))}
               </ul>
-                    </div>
-                  <div>
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
+            </div>
+            
+            {/* Needs Card */}
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-3">Needs</h4>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
                   <li key={index} className="text-sm text-gray-600 flex items-start">
@@ -407,9 +417,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                   </li>
                 ))}
               </ul>
-                  </div>
+            </div>
           </div>
-                  </div>
                 </div>
 
       {/* Last Actions */}
@@ -434,7 +443,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
             <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
               {recordData.notes && recordData.notes !== 'No notes available' && recordData.notes.trim() !== '' ? recordData.notes : 
-                `—`
+                `No recent notes available`
               }
                   </div>
                 </div>

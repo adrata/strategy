@@ -106,7 +106,9 @@ async function getRecordCreationEvent(entityType: string, entityId: string, work
     }
 
     if (record && record.createdAt) {
-      const entityName = entityType === 'account' ? 'company' : entityType.slice(0, -1);
+      const entityName = entityType === 'account' ? 'company' : 
+                        entityType === 'people' ? 'person' : 
+                        entityType.slice(0, -1);
       return {
         id: 'record_created',
         type: 'record_created',

@@ -58,14 +58,14 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData || {};
   
-  // Extract comprehensive person data from CoreSignal ONLY (no fallbacks to database)
+  // Extract comprehensive person data from database first, then CoreSignal fallback
   const personData = {
-    // Basic info - Coresignal data only
-    name: String(coresignalData.full_name || '-'),
-    title: String(coresignalData.active_experience_title || '-'),
-    email: String(coresignalData.primary_professional_email || '-'),
-    phone: String(coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone || '-'),
-    linkedin: String(coresignalData.linkedin_url || '-'),
+    // Basic info - Database fields first, then CoreSignal fallback
+    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
+    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
+    email: String(record?.email || coresignalData.primary_professional_email || '-'),
+    phone: String(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone || '-'),
+    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
     // Company info - Coresignal data only
     company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),

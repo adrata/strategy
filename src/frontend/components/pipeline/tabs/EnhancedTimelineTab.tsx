@@ -68,7 +68,9 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
 
     // Always add creation event if we have created date
     if (record?.createdAt) {
-      const recordTypeName = recordType === 'companies' ? 'company' : recordType.slice(0, -1); // Handle 'companies' -> 'company' and other plurals
+      const recordTypeName = recordType === 'companies' ? 'company' : 
+                            recordType === 'people' ? 'person' : 
+                            recordType.slice(0, -1); // Handle other plurals
       events.push({
         id: 'created',
         type: 'created',
