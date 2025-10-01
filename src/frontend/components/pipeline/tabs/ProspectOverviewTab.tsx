@@ -107,22 +107,27 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     }
   }
 
-  // Use real prospect data from record - Enhanced mapping with ALL possible data sources
+  // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
+  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
+  const coresignalProfile = record?.customFields?.coresignalProfile || {};
+  const enrichedData = record?.customFields?.enrichedData || {};
+
+  // Use Coresignal data ONLY (no fallbacks to database)
   const prospectData = {
-    // Basic Information (existing fields) - Enhanced mapping
-    name: record.fullName || record.name || 'Unknown Prospect',
-    title: record.jobTitle || record.title || record.role || record?.customFields?.title || record?.customFields?.jobTitle || record?.customFields?.enrichedData?.overview?.title || record?.customFields?.enrichedData?.overview?.jobTitle || '-',
-    department: record.department || record?.customFields?.department || record?.customFields?.enrichedData?.overview?.department || record?.customFields?.enrichedData?.overview?.department || '-',
+    // Basic Information - Coresignal data only
+    name: String(coresignalData.full_name || '-'),
+    title: String(coresignalData.active_experience_title || '-'),
+    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
     
-    // Contact Information (existing fields) - Enhanced mapping
-    email: record.email || record.workEmail || record.personalEmail || record.secondaryEmail || record?.customFields?.email || record?.customFields?.workEmail || record?.customFields?.enrichedData?.overview?.email || record?.customFields?.enrichedData?.overview?.workEmail || '-',
-    phone: record.phone || record.mobilePhone || record.workPhone || record?.customFields?.phone || record?.customFields?.mobilePhone || record?.customFields?.workPhone || record?.customFields?.enrichedData?.overview?.phone || record?.customFields?.enrichedData?.overview?.mobilePhone || '-',
-    linkedin: record.linkedinUrl || record?.customFields?.linkedinUrl || record?.customFields?.linkedin || record?.customFields?.enrichedData?.overview?.linkedin || record?.customFields?.enrichedData?.overview?.linkedinUrl || '-',
+    // Contact Information - Coresignal data only
+    email: String(coresignalData.primary_professional_email || '-'),
+    phone: String(coresignalData.phone || '-'),
+    linkedin: String(coresignalData.linkedin_url || '-'),
     
-    // Company Information (existing fields) - Enhanced mapping
-    company: record.company || record.companyData?.name || record?.customFields?.company || record?.customFields?.companyName || record?.customFields?.enrichedData?.overview?.company || 'No company assigned',
-    companyId: record.companyId || record?.customFields?.companyId || null,
-    industry: record.industry || record.companyData?.industry || record?.customFields?.industry || record?.customFields?.enrichedData?.overview?.industry || 'Unknown Industry',
+    // Company Information - Coresignal data only
+    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),
+    companyId: record.companyId || null,
+    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || '-'),
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || 'Stakeholder',

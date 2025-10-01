@@ -30,27 +30,27 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   }
 
   // Extract career data from the correct CoreSignal data structure
-  const coresignalData = record?.customFields?.coresignal || {};
+  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData?.career || {};
   const rawData = record?.customFields?.rawData || {};
   
   // Extract CoreSignal data from the correct location
   const coresignalExperience = coresignalData?.experience || coresignalProfile?.experience || [];
-  const coresignalSkills = coresignalData?.skills || coresignalProfile?.skills || [];
+  const coresignalSkills = coresignalData?.inferred_skills || coresignalData?.skills || coresignalProfile?.skills || [];
   const coresignalEducation = coresignalData?.education || coresignalProfile?.education || [];
-  const coresignalTotalExperience = coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
+  const coresignalTotalExperience = coresignalData?.total_experience_duration_months || coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
   
-  // Use CoreSignal data with fallbacks to record data
+  // Use CoreSignal data ONLY (no fallbacks to database)
   const careerData = {
-    department: coresignalData.department || record?.department || '-',
-    companyName: coresignalData.companyName || record?.company?.name || record?.companyName || '-',
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-',
+    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-',
     totalExperience: coresignalTotalExperience > 0 ? `${Math.floor(coresignalTotalExperience / 12)} years` : '-',
     education: coresignalEducation || [],
     skills: coresignalSkills || [],
     experience: coresignalExperience || [],
-    totalFields: coresignalData.totalFields || 0,
-    lastEnrichedAt: coresignalData.lastEnrichedAt || record?.updatedAt || '-'
+    totalFields: Object.keys(coresignalData).length || 0,
+    lastEnrichedAt: record.customFields?.lastEnrichedAt || coresignalData.lastEnrichedAt || coresignalData.enrichedAt || record.updatedAt || '-'
   };
 
   // Debug: Log the actual CoreSignal data structure
@@ -187,81 +187,6 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
         </div>
       </div>
 
-      {/* Company Intelligence */}
-      {coresignalExperience.length > 0 && coresignalExperience[0].company_name && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Intelligence</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            {(() => {
-              const exp = coresignalExperience[0];
-              return (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm text-gray-600">Industry:</span>
-                      <p className="text-sm font-medium text-gray-900">{exp.company_industry || '-'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Company Size:</span>
-                      <p className="text-sm font-medium text-gray-900">{exp.company_size_range || '-'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Employees:</span>
-                      <p className="text-sm font-medium text-gray-900">{exp.company_employees_count ? exp.company_employees_count.toLocaleString() : '-'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Founded:</span>
-                      <p className="text-sm font-medium text-gray-900">{exp.company_founded_year || '-'}</p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Revenue:</span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {exp.company_annual_revenue_source_1 ? `$${(exp.company_annual_revenue_source_1 / 1000000).toFixed(1)}M` : '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Location:</span>
-                      <p className="text-sm font-medium text-gray-900">{exp.company_hq_city}, {exp.company_hq_state}</p>
-                    </div>
-                  </div>
-                  
-                  {exp.company_categories_and_keywords && exp.company_categories_and_keywords.length > 0 && (
-                    <div>
-                      <span className="text-sm text-gray-600 mb-2 block">Company Focus Areas:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {exp.company_categories_and_keywords.slice(0, 10).map((keyword: string, index: number) => (
-                          <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                            {keyword}
-                          </span>
-                        ))}
-                        {exp.company_categories_and_keywords.length > 10 && (
-                          <span className="text-xs text-gray-400">+{exp.company_categories_and_keywords.length - 10} more</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-        </div>
-      )}
-
-      {/* Skills & Expertise */}
-      {careerData.skills.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex flex-wrap gap-2">
-              {careerData.skills.map((skill: string, index: number) => (
-                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Experience Timeline */}
       {(careerData.experience.length > 0 || coresignalExperience.length > 0) && (
@@ -351,6 +276,22 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
         </div>
       )}
 
+      {/* Skills & Expertise */}
+      {careerData.skills.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {careerData.skills.map((skill: string, index: number) => (
+                <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Education */}
       {careerData.education.length > 0 && (
         <div className="space-y-4">
@@ -361,14 +302,14 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
                 <div key={index} className="flex justify-between items-start">
                   <div>
                     <h4 className="text-sm font-medium text-gray-900">{edu.degree || edu.qualification || '-'}</h4>
-                    <p className="text-sm text-gray-600">{edu.institution || edu.school || '-'}</p>
+                    <p className="text-sm text-gray-600">{edu.institution_name || edu.institution || edu.school || '-'}</p>
                     {edu.field_of_study && (
                       <p className="text-sm text-gray-500">{edu.field_of_study}</p>
                     )}
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-500">
-                      {formatDate(edu.start_date)} - {edu.end_date ? formatDate(edu.end_date) : 'Present'}
+                      {formatDate(edu.date_from_year)} - {edu.date_to_year ? formatDate(edu.date_to_year) : 'Present'}
                     </p>
                   </div>
                 </div>

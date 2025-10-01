@@ -135,7 +135,8 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     }
     
     // 🎯 FIRST: Try to find record in sessionStorage (instant loading)
-    if (typeof window !== 'undefined') {
+    // TEMPORARILY DISABLED FOR DEBUGGING - Force fresh API load
+    if (false && typeof window !== 'undefined') {
       // Check the optimized cache first
       const currentRecord = sessionStorage.getItem(`current-record-${section}`);
       if (currentRecord) {

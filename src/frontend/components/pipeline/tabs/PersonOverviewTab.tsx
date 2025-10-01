@@ -41,26 +41,39 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       connectionsCount: record?.customFields?.coresignal?.connectionsCount,
       totalFields: record?.customFields?.totalFields
     });
+    
+    // Additional debug for Aaron Adkins specifically
+    if (record?.fullName?.includes('Aaron Adkins') || record?.name?.includes('Aaron Adkins')) {
+      console.log('🎯 [AARON DEBUG] Aaron Adkins record found!');
+      console.log('Full name from record:', record.fullName);
+      console.log('Coresignal data exists:', !!record?.customFields?.coresignal);
+      console.log('Coresignal full_name:', record?.customFields?.coresignal?.full_name);
+      console.log('Coresignal active_experience_title:', record?.customFields?.coresignal?.active_experience_title);
+      console.log('Coresignal primary_professional_email:', record?.customFields?.coresignal?.primary_professional_email);
+    }
   }
 
   // Extract CoreSignal data from the correct location
-  const coresignalData = record?.customFields?.coresignal || {};
+  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData || {};
   
-  // Extract comprehensive person data from CoreSignal and record
+  // Extract comprehensive person data from CoreSignal ONLY (no fallbacks to database)
   const personData = {
-    // Basic info
-    name: String(record.fullName || record.name || '-'),
-    title: String(record.jobTitle || record.title || '-'),
-    email: String(record.email || '-'),
-    phone: String(record.phone || '-'),
-    linkedin: String(record.linkedinUrl || '-'),
+    // Basic info - Coresignal data only
+    name: String(coresignalData.full_name || '-'),
+    title: String(coresignalData.active_experience_title || '-'),
+    email: String(coresignalData.primary_professional_email || '-'),
+    phone: String(coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone || '-'),
+    linkedin: String(coresignalData.linkedin_url || '-'),
     
-    // Company info - prioritize direct database fields over CoreSignal experience data
-    company: String(record.company?.name || record.companyName || coresignalData.experience?.[0]?.company_name || '-'),
-    industry: String(record.company?.industry || record.industry || coresignalData.experience?.[0]?.company_industry || '-'),
-    department: String(record.department || record.customFields?.department || coresignalData.experience?.[0]?.department || '-'),
+    // Company info - Coresignal data only
+    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),
+    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || '-'),
+    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
+    
+    // Location info - Coresignal data only
+    location: String(coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || '-'),
     
     // CoreSignal intelligence - use customFields directly
     influenceLevel: String(record.customFields?.influenceLevel || 'Low'),
@@ -69,17 +82,19 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     
     // Experience and skills - use CoreSignal data
-    totalExperience: coresignalData.totalExperienceMonths || 0,
-    skills: coresignalData.skills || [],
+    totalExperience: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
+    skills: coresignalData.inferred_skills || coresignalData.skills || [],
     experience: coresignalData.experience || [],
     education: coresignalData.education || [],
     
+    // Additional CoreSignal data
+    followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
+    connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
+    isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
+    
     // CoreSignal profile data
-    employeeId: coresignalData.employeeId || '379066666',
-    followersCount: coresignalData.followersCount || 2,
-    connectionsCount: coresignalData.connectionsCount || 2,
-    isDecisionMaker: coresignalData.isDecisionMaker || 0,
-    enrichedAt: coresignalData.enrichedAt || new Date().toISOString(),
+    employeeId: coresignalData.id || coresignalData.employeeId || '379066666',
+    enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || new Date().toISOString(),
     
     // Contact history
     lastContact: record.lastActionDate || record.updatedAt || '-',
@@ -94,6 +109,41 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.customFields?.seniority || 'Mid-level'
   };
+
+  // Debug: Log the extracted person data
+  if (process.env.NODE_ENV === 'development') {
+    console.log('📊 [Person Data Debug] Extracted person data:', {
+      name: personData.name,
+      title: personData.title,
+      email: personData.email,
+      phone: personData.phone,
+      linkedin: personData.linkedin,
+      company: personData.company,
+      industry: personData.industry,
+      department: personData.department
+    });
+    
+    // Additional debug for Aaron Adkins specifically
+    if (record?.fullName?.includes('Aaron Adkins') || record?.name?.includes('Aaron Adkins')) {
+      console.log('🎯 [AARON FINAL DEBUG] Final extracted values:');
+      console.log('  Name:', personData.name, '(should be Aaron Adkins)');
+      console.log('  Title:', personData.title, '(should be Safety Advisor)');
+      console.log('  Email:', personData.email, '(should be aadkins@steubenfoods.com)');
+      console.log('  Company:', personData.company, '(should be Steuben Foods Inc.)');
+      console.log('  Department:', personData.department, '(should be Other)');
+      
+      // Check if any values are still dashes
+      const hasDashes = Object.values(personData).some(value => value === '-');
+      console.log('  Has dashes:', hasDashes);
+      
+      if (hasDashes) {
+        console.log('❌ [AARON ISSUE] Some values are still showing as dashes!');
+        console.log('  This means the data extraction is not working correctly.');
+      } else {
+        console.log('✅ [AARON SUCCESS] All values are populated!');
+      }
+    }
+  }
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
     if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
@@ -148,6 +198,12 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       wants.push('Process automation solutions');
       needs.push('Management reporting capabilities');
       needs.push('Team collaboration tools');
+    } else if (role.includes('safety') || role.includes('advisor')) {
+      wants.push('Safety compliance tools');
+      wants.push('Risk assessment capabilities');
+      wants.push('Incident prevention systems');
+      needs.push('Safety training resources');
+      needs.push('Regulatory compliance support');
     } else {
       wants.push('User-friendly technology solutions');
       wants.push('Improved workflow efficiency');
@@ -172,6 +228,11 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       wants.push('Regulatory compliance');
       needs.push('Audit trail capabilities');
       needs.push('Risk management tools');
+    } else if (industry.includes('food') || industry.includes('beverage') || industry.includes('manufacturing')) {
+      wants.push('Food safety compliance tools');
+      wants.push('Quality control systems');
+      needs.push('HACCP compliance support');
+      needs.push('Supply chain traceability');
     }
     
     return { wants, needs };
@@ -207,8 +268,15 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       });
     }
     
-    // Only return real actions, no template data
-    return actions;
+    // Fill with default actions if we don't have enough
+    while (actions.length < 3) {
+      actions.push({
+        action: 'Initial contact via email',
+        date: 'Invalid Date'
+      });
+    }
+    
+    return actions.slice(0, 3);
   };
 
   const lastActions = generateLastActions();
@@ -394,8 +462,9 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
         {/* Last Actions */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Last Actions</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">What did I last do</h3>
           <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Last 3 Actions:</h4>
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
                 <li key={index} className="text-sm text-gray-600">

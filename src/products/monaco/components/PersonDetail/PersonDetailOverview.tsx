@@ -17,25 +17,25 @@ export function PersonDetailOverview({
 }: PersonDetailOverviewProps) {
   // Extract enriched data from customFields
   const customFields = (person as any).customFields || {};
-  const coresignalData = customFields.coresignalData || {};
+  const coresignalData = customFields.coresignalData || customFields.coresignal || {};
   const buyerGroupRole = customFields.buyerGroupRole || 'Stakeholder';
   const influenceLevel = customFields.influenceLevel || 'Medium';
   const engagementPriority = customFields.engagementPriority || 'Medium';
   
-  // Get CoreSignal profile data
-  const fullName = coresignalData.full_name || person.fullName || 'Unknown';
-  const jobTitle = coresignalData.active_experience_title || coresignalData.headline || person.jobTitle || 'Unknown Title';
-  const email = coresignalData.primary_professional_email || person.email || 'No email';
-  const phone = coresignalData.phone || person.phone || 'No phone';
-  const linkedinUrl = coresignalData.linkedin_url || person.linkedinUrl || 'No LinkedIn';
-  const location = coresignalData.location_full || coresignalData.location || person.city || 'Unknown Location';
+  // Get CoreSignal profile data ONLY (no fallbacks to database)
+  const fullName = coresignalData.full_name || '-';
+  const jobTitle = coresignalData.active_experience_title || coresignalData.headline || '-';
+  const email = coresignalData.primary_professional_email || '-';
+  const phone = coresignalData.phone || '-';
+  const linkedinUrl = coresignalData.linkedin_url || '-';
+  const location = coresignalData.location_full || coresignalData.location || '-';
   
   // Get company name from active experience
   const activeExperience = coresignalData.experience?.find((exp: any) => exp.active_experience === 1) || coresignalData.experience?.[0];
-  const companyName = activeExperience?.company_name || person.company || 'Unknown Company';
+  const companyName = coresignalData.active_experience_company || activeExperience?.company_name || coresignalData.experience?.[0]?.company_name || '-';
   
   // Get department from active experience
-  const department = activeExperience?.department || person.department || 'Unknown Department';
+  const department = coresignalData.active_experience_department || activeExperience?.department || coresignalData.experience?.[0]?.department || '-';
   
   // Get seniority from active experience
   const seniority = activeExperience?.management_level || person.seniority || 'Unknown';

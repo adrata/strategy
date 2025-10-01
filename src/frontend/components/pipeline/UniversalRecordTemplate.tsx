@@ -1284,11 +1284,9 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
-            recordType === 'prospects' || recordType === 'leads' || recordType === 'speedrun' ?
-              <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
-            recordType === 'people' ?
-              <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+              recordType === 'people' ?
+                <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
+                <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'career':
           console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);

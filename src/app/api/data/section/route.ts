@@ -198,23 +198,34 @@ export async function GET(request: NextRequest) {
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
-            nextActionDate: true
+            nextActionDate: true,
+            customFields: true
           }
         });
         
         // Apply proper sequential ranking based on database ranks (same as companies)
-        sectionData = leadsPeopleData.map((person, index) => ({
-          id: person.id,
-          rank: person.rank || (index + 1), // Use database rank or sequential fallback
-          name: person.fullName || `${person.firstName} ${person.lastName}`,
-          company: person.company?.name || 'Unknown Company',
-          email: person.email || 'Unknown Email',
-          status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'No action taken',
-          nextAction: person.nextAction || 'No action planned',
-          createdAt: person.createdAt,
-          updatedAt: person.updatedAt
-        }));
+        sectionData = leadsPeopleData.map((person, index) => {
+          // Extract Coresignal data
+          const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+          
+          // Get company from Coresignal data (active experience)
+          const coresignalCompany = coresignalData.active_experience_company || 
+                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.[0]?.company_name;
+          
+          return {
+            id: person.id,
+            rank: person.rank || (index + 1), // Use database rank or sequential fallback
+            name: person.fullName || `${person.firstName} ${person.lastName}`,
+            company: coresignalCompany || person.company?.name || '-',
+            email: person.email || 'Unknown Email',
+            status: person.status || 'Unknown',
+            lastAction: person.lastAction || 'No action taken',
+            nextAction: person.nextAction || 'No action planned',
+            createdAt: person.createdAt,
+            updatedAt: person.updatedAt
+          };
+        });
         break;
         
       case 'prospects':
@@ -262,23 +273,34 @@ export async function GET(request: NextRequest) {
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
-            nextActionDate: true
+            nextActionDate: true,
+            customFields: true
           }
         });
         
         // Apply proper sequential ranking based on database ranks (same as companies)
-        sectionData = prospectsPeopleData.map((person, index) => ({
-          id: person.id,
-          rank: person.rank || (index + 1), // Use database rank or sequential fallback
-          name: person.fullName || `${person.firstName} ${person.lastName}`,
-          company: person.company?.name || 'Unknown Company',
-          email: person.email || 'Unknown Email',
-          status: person.status || 'Unknown',
-          lastAction: person.lastAction || 'No action taken',
-          nextAction: person.nextAction || 'No action planned',
-          createdAt: person.createdAt,
-          updatedAt: person.updatedAt
-        }));
+        sectionData = prospectsPeopleData.map((person, index) => {
+          // Extract Coresignal data
+          const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+          
+          // Get company from Coresignal data (active experience)
+          const coresignalCompany = coresignalData.active_experience_company || 
+                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.[0]?.company_name;
+          
+          return {
+            id: person.id,
+            rank: person.rank || (index + 1), // Use database rank or sequential fallback
+            name: person.fullName || `${person.firstName} ${person.lastName}`,
+            company: coresignalCompany || person.company?.name || '-',
+            email: person.email || 'Unknown Email',
+            status: person.status || 'Unknown',
+            lastAction: person.lastAction || 'No action taken',
+            nextAction: person.nextAction || 'No action planned',
+            createdAt: person.createdAt,
+            updatedAt: person.updatedAt
+          };
+        });
         break;
         
       case 'opportunities':

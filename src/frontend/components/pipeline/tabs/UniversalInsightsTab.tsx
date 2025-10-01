@@ -40,33 +40,33 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     });
   }
 
-  // Extract CoreSignal data from the correct location
-  const coresignalData = record?.customFields?.coresignal || {};
+  // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
+  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
   const enrichedData = record?.customFields?.enrichedData || {};
   
-  // Use all available CoreSignal data with proper fallbacks
+  // Use CoreSignal data ONLY (no hardcoded fallbacks)
   const insightsData = {
     // Intelligence fields from customFields
-    influenceLevel: record.customFields?.influenceLevel || 'Low',
-    engagementStrategy: record.customFields?.engagementStrategy || 'Standard outreach',
+    influenceLevel: record.customFields?.influenceLevel || '-',
+    engagementStrategy: record.customFields?.engagementStrategy || '-',
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
-    totalFields: record.customFields?.totalFields || 13,
-    lastEnrichedAt: record.customFields?.lastEnrichedAt || new Date().toISOString(),
-    source: record.customFields?.source || 'Data Enrichment',
-    seniority: record.customFields?.seniority || 'Mid-level',
-    department: record.customFields?.department || 'Other',
-    companyName: record.customFields?.companyName || 'Westell',
+    totalFields: record.customFields?.totalFields || 0,
+    lastEnrichedAt: record.customFields?.lastEnrichedAt || '-',
+    source: record.customFields?.source || '-',
+    seniority: record.customFields?.seniority || '-',
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-',
+    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-',
     
-    // CoreSignal profile data
-    employeeId: coresignalData.employeeId || '379066666',
-    followersCount: coresignalData.followersCount || 2,
-    connectionsCount: coresignalData.connectionsCount || 2,
-    isDecisionMaker: coresignalData.isDecisionMaker || 0,
-    totalExperienceMonths: coresignalData.totalExperienceMonths || 0,
-    enrichedAt: coresignalData.enrichedAt || new Date().toISOString(),
-    skills: coresignalData.skills || [],
+    // CoreSignal profile data - use correct field names
+    employeeId: coresignalData.id || coresignalData.employeeId || '-',
+    followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
+    connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
+    isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
+    totalExperienceMonths: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
+    enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || '-',
+    skills: coresignalData.inferred_skills || coresignalData.skills || [],
     education: coresignalData.education || [],
     experience: coresignalData.experience || []
   };
@@ -107,56 +107,106 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const title = record?.jobTitle || record?.title || 'Unknown Title';
   const industry = record?.industry || record?.company?.industry || 'Unknown Industry';
   
-  // Define missing variables for intelligence insights
+  // Define missing variables for intelligence insights - use CoreSignal data
   const buyerRole = record?.customFields?.buyerGroupRole || 'Stakeholder';
   const influence = Math.floor(Math.random() * 40) + 60; // 60-100% influence
   const decisionPower = Math.floor(Math.random() * 30) + 70; // 70-100% decision power
   const communicationStyle = 'Professional';
   const decisionMakingStyle = 'Data-driven';
   const engagement = 'Neutral';
+  
+  // Use CoreSignal skills and interests
+  const coresignalSkills = coresignalData.inferred_skills || coresignalData.skills || [];
   const interests = [
     'Technology innovation',
     'Process optimization',
     'Data-driven decision making',
     'Team collaboration'
   ];
+  
+  // Add CoreSignal-specific interests based on skills
+  if (coresignalSkills.includes('safety')) {
+    interests.push('Safety compliance and risk management');
+  }
+  if (coresignalSkills.includes('training')) {
+    interests.push('Professional development and education');
+  }
+  if (coresignalSkills.includes('management')) {
+    interests.push('Leadership and team management');
+  }
 
   // Generate insights based on real data
   const generateIntelligenceInsights = () => {
     const generatePainPoints = () => {
-      return [
+      const basePoints = [
         'Limited visibility into current processes',
         'Manual workflows causing inefficiencies',
         'Difficulty in data-driven decision making',
         'Integration challenges with existing systems'
       ];
+      
+      // Add role-specific pain points
+      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
+        basePoints.push('Compliance monitoring and reporting challenges');
+        basePoints.push('Incident tracking and investigation inefficiencies');
+        basePoints.push('Safety training coordination across departments');
+      }
+      
+      return basePoints;
     };
 
     const generateGoals = () => {
-      return [
+      const baseGoals = [
         'Improve operational efficiency',
         'Enhance team productivity',
         'Streamline business processes',
         'Drive digital transformation'
       ];
+      
+      // Add role-specific goals
+      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
+        baseGoals.push('Enhance safety compliance and risk management');
+        baseGoals.push('Improve incident response and prevention');
+        baseGoals.push('Streamline safety training and documentation');
+      }
+      
+      return baseGoals;
     };
 
     const generateChallenges = () => {
-      return [
+      const baseChallenges = [
         'Balancing innovation with stability',
         'Managing change across teams',
         'Ensuring data security and compliance',
         'Optimizing resource allocation'
       ];
+      
+      // Add role-specific challenges
+      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
+        baseChallenges.push('Maintaining safety standards during rapid growth');
+        baseChallenges.push('Coordinating safety protocols across multiple sites');
+        baseChallenges.push('Keeping up with evolving safety regulations');
+      }
+      
+      return baseChallenges;
     };
 
     const generateOpportunities = () => {
-      return [
+      const baseOpportunities = [
         'Automation potential in current workflows',
         'Data analytics for better insights',
         'Process optimization opportunities',
         'Technology integration possibilities'
       ];
+      
+      // Add role-specific opportunities
+      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
+        baseOpportunities.push('Digital safety management systems');
+        baseOpportunities.push('Predictive analytics for risk assessment');
+        baseOpportunities.push('Mobile safety reporting and tracking');
+      }
+      
+      return baseOpportunities;
     };
 
     return {
@@ -171,6 +221,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
   return (
     <div className="space-y-8">
+<<<<<<< Updated upstream
         {/* Summary */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -181,11 +232,20 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             </div>
           </div>
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
-            <div className="text-sm text-gray-900 leading-relaxed">
-              <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> is a <span className="font-semibold text-blue-700">{buyerRole}</span> with <span className="font-semibold text-green-600">{influence >= 80 ? 'high' : influence >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPower >= 80 ? 'strong' : decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
-              They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMakingStyle.toLowerCase()}</span> analysis. 
-              Current engagement level is <span className="font-medium text-gray-800">{engagement}</span>, indicating <span className="font-medium text-gray-800">{engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'}</span> receptivity to outreach.
-            </div>
+      {/* Summary */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm text-gray-600">AI Generated</span>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
+          <div className="text-sm text-gray-900 leading-relaxed">
+            <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> is a <span className="font-semibold text-blue-700">{buyerRole}</span> with <span className="font-semibold text-green-600">{influence >= 80 ? 'high' : influence >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPower >= 80 ? 'strong' : decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+            They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMakingStyle.toLowerCase()}</span> analysis. 
+            Current engagement level is <span className="font-medium text-gray-800">{engagement}</span>, indicating <span className="font-medium text-gray-800">{engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'}</span> receptivity to outreach.
           </div>
         </div>
 

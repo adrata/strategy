@@ -8,7 +8,7 @@ interface PersonDetailIntelligenceProps {
 export function PersonDetailIntelligence({ person }: PersonDetailIntelligenceProps) {
   // Extract enriched data from customFields
   const customFields = (person as any).customFields || {};
-  const coresignalData = customFields.coresignalData || {};
+  const coresignalData = customFields.coresignalData || customFields.coresignal || {};
   const buyerGroupRole = customFields.buyerGroupRole || 'Stakeholder';
   const influenceLevel = customFields.influenceLevel || 'Medium';
   const engagementPriority = customFields.engagementPriority || 'Medium';
@@ -21,9 +21,9 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
   const goals = customFields.goals || [];
   const decisionFactors = customFields.decisionFactors || [];
   
-  // Get CoreSignal insights
+  // Get CoreSignal insights - use the correct field names
   const experience = coresignalData.experience || [];
-  const skills = coresignalData.skills || [];
+  const skills = coresignalData.inferred_skills || coresignalData.skills || [];
   const education = coresignalData.education || [];
   
   // Generate AI insights based on available data

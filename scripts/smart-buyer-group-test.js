@@ -122,8 +122,8 @@ class SmartBuyerGroupTest {
     console.log('🎯 STEP 3: Smart Multi-Tiered Searches');
     console.log('─'.repeat(40));
     
-    // First, find the company using website-based search
-    const companyData = await this.findCompanyByWebsite();
+          // First, find the company using existing CoreSignal ID
+          const companyData = await this.findCompanyByCoreSignalID();
     if (!companyData.success) {
       throw new Error(`Company lookup failed: ${companyData.reason}`);
     }
@@ -193,64 +193,62 @@ class SmartBuyerGroupTest {
   }
 
   /**
-   * 🌐 FIND COMPANY BY WEBSITE
+   * 🎯 FIND COMPANY BY EXISTING CORESIGNAL ID
    */
-  async findCompanyByWebsite() {
-    console.log('🌐 STEP 2.5: Finding Company by Website');
-    console.log('─'.repeat(40));
+  async findCompanyByCoreSignalID() {
+    console.log('🎯 STEP 2.5: Finding Company by Existing CoreSignal ID');
+    console.log('─'.repeat(50));
     
     // Get company name from command line args
     const companyName = getArg('--company') || 'Dell Technologies';
     
-    // Find company in our database
+    // Find company in our database with CoreSignal data
     const company = await prisma.companies.findFirst({
       where: {
         name: {
           contains: companyName,
           mode: 'insensitive'
         },
-        website: { not: null },
-        website: { not: '' }
+        customFields: {
+          path: ['coresignalData', 'id'],
+          not: null
+        }
       },
       select: {
         id: true,
         name: true,
-        website: true
+        website: true,
+        customFields: true
       }
     });
     
     if (!company) {
-      return { success: false, reason: 'Company not found in our database with website' };
+      return { success: false, reason: 'Company not found in our database with CoreSignal ID' };
     }
+    
+    const coresignalData = company.customFields?.coresignalData;
+    const coresignalId = coresignalData?.id;
+    const coresignalName = coresignalData?.company_name;
     
     console.log(`✅ Found company in database: ${company.name}`);
-    console.log(`   Website: ${company.website}`);
+    console.log(`   Database ID: ${company.id}`);
+    console.log(`   CoreSignal ID: ${coresignalId}`);
+    console.log(`   CoreSignal Name: ${coresignalName}`);
+    console.log(`   Website: ${company.website || 'N/A'}`);
+    console.log(`   Industry: ${coresignalData?.company_industry || 'N/A'}`);
+    console.log(`   Employees: ${coresignalData?.employees_count || 'N/A'}`);
     
-    // Search CoreSignal by website
-    const companyIds = await this.searchCompanyByWebsite(company.website);
-    if (companyIds.length === 0) {
-      return { success: false, reason: 'Company not found in CoreSignal by website' };
-    }
-    
-    // Get company data from CoreSignal
-    const companyId = companyIds[0];
-    const coresignalData = await this.getCompanyData(companyId);
-    if (!coresignalData) {
-      return { success: false, reason: 'Failed to collect company data from CoreSignal' };
-    }
-    
-    console.log(`✅ Found in CoreSignal: ${coresignalData.company_name} (ID: ${companyId})`);
-    console.log(`💰 Credits used: 4 (2 search + 2 collect)`);
-    
-    this.results.stats.totalCredits += 4;
+    // No API calls needed - we already have the data!
+    console.log(`💰 Credits used: 0 (using existing data)`);
     
     return {
       success: true,
-      companyId: companyId,
-      companyName: coresignalData.company_name,
-      website: coresignalData.company_website,
-      industry: coresignalData.company_industry,
-      employeesCount: coresignalData.employees_count
+      companyId: coresignalId,
+      companyName: coresignalName,
+      website: company.website,
+      industry: coresignalData?.company_industry,
+      employeesCount: coresignalData?.employees_count,
+      coresignalData: coresignalData
     };
   }
 

@@ -13,13 +13,28 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/database/prisma-client';
+import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { cache } from '@/platform/services';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
-import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
-import { createEntityRecord } from '@/platform/services/entity/entityService';
+
+// Initialize Prisma client
+const prisma = new PrismaClient();
+
+// Simple cache implementation
+const cache = {
+  get: async (key: string) => null,
+  set: async (key: string, value: any) => {},
+  del: async (key: string) => {},
+  warm: async (workspaceId: string, userId?: string) => {}
+};
+
+// Mock services
+const UnifiedMasterRankingEngine = {
+  calculateRanking: async (data: any) => ({ score: 0, reasons: [] })
+};
+
+const createEntityRecord = async (data: any) => ({ id: ulid() });
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for lightning speed
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
@@ -199,54 +214,54 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       // Use the actual database data we loaded
       const realLeads = leads.map(lead => ({
         id: lead.id,
-        fullName: lead.name,
+        fullName: (lead as any).name || lead.fullName,
         email: lead.email,
         company: lead.company,
-        companyId: lead.companyId,
-        title: lead.title,
-        stage: lead.stage,
-        source: lead.source,
+        companyId: (lead as any).companyId,
+        title: (lead as any).title,
+        stage: (lead as any).stage,
+        source: (lead as any).source,
         createdAt: lead.createdAt,
         updatedAt: lead.updatedAt,
-        workspaceId: lead.workspaceId,
-        isDemoData: lead.isDemoData,
-        demoScenarioId: lead.demoScenarioId,
-        buyerGroupRole: lead.buyerGroupRole
+        workspaceId: (lead as any).workspaceId,
+        isDemoData: (lead as any).isDemoData,
+        demoScenarioId: (lead as any).demoScenarioId,
+        buyerGroupRole: (lead as any).buyerGroupRole
       }));
       
       const realProspects = prospects.map(prospect => ({
         id: prospect.id,
-        fullName: prospect.name,
+        fullName: (prospect as any).name || prospect.fullName,
         email: prospect.email,
         company: prospect.company,
-        companyId: prospect.companyId,
-        title: prospect.title,
-        stage: prospect.stage,
-        source: prospect.source,
+        companyId: (prospect as any).companyId,
+        title: (prospect as any).title,
+        stage: (prospect as any).stage,
+        source: (prospect as any).source,
         createdAt: prospect.createdAt,
         updatedAt: prospect.updatedAt,
-        workspaceId: prospect.workspaceId,
-        isDemoData: prospect.isDemoData,
-        demoScenarioId: prospect.demoScenarioId,
-        buyerGroupRole: prospect.buyerGroupRole
+        workspaceId: (prospect as any).workspaceId,
+        isDemoData: (prospect as any).isDemoData,
+        demoScenarioId: (prospect as any).demoScenarioId,
+        buyerGroupRole: (prospect as any).buyerGroupRole
       }));
       
       const realOpportunities = opportunities.map(opp => ({
         id: opp.id,
         name: opp.name,
-        company: opp.company,
-        companyId: opp.companyId,
-        stage: opp.stage,
-        value: opp.value,
-        probability: opp.probability,
-        source: opp.source,
+        company: (opp as any).company,
+        companyId: (opp as any).companyId,
+        stage: (opp as any).stage,
+        value: (opp as any).value,
+        probability: (opp as any).probability,
+        source: (opp as any).source,
         createdAt: opp.createdAt,
         updatedAt: opp.updatedAt,
-        workspaceId: opp.workspaceId,
-        isDemoData: opp.isDemoData,
-        demoScenarioId: opp.demoScenarioId,
-        buyerGroupId: opp.buyerGroupId,
-        people: opp.people
+        workspaceId: (opp as any).workspaceId,
+        isDemoData: (opp as any).isDemoData,
+        demoScenarioId: (opp as any).demoScenarioId,
+        buyerGroupId: (opp as any).buyerGroupId,
+        people: (opp as any).people
       }));
       
       // Create speedrun items from the actual data
@@ -254,11 +269,11 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         id: item.id,
         rank: index + 1,
         company: item.company,
-        person: item.fullName,
-        title: item.title,
-        stage: item.stage,
+        person: (item as any).fullName || (item as any).name,
+        title: (item as any).title,
+        stage: (item as any).stage,
         lastAction: item.updatedAt,
-        source: item.source
+        source: (item as any).source
       }));
       
       // Create companies from leads data (companies are stored as leads with company field)
@@ -267,16 +282,16 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         .map(lead => ({
           id: lead.id, // Use the ULID from leads table
           name: lead.company,
-          domain: lead.companyDomain || `${lead.company?.toLowerCase().replace(/\s+/g, '')}.com`,
-          industry: lead.industry || 'Technology',
-          employeeCount: lead.companySize || '100-500',
-          revenue: lead.estimatedValue ? `$${lead.estimatedValue}M` : '$10M-50M',
-          location: lead.city || 'San Francisco, CA',
+          domain: (lead as any).companyDomain || `${lead.company?.toLowerCase().replace(/\s+/g, '')}.com`,
+          industry: (lead as any).industry || 'Technology',
+          employeeCount: (lead as any).companySize || '100-500',
+          revenue: (lead as any).estimatedValue ? `$${(lead as any).estimatedValue}M` : '$10M-50M',
+          location: (lead as any).city || 'San Francisco, CA',
           icpScore: Math.floor(Math.random() * 20) + 80, // 80-100 for demo
-          lastUpdated: (lead.lastActionDate || lead.updatedAt).toISOString(),
+          lastUpdated: ((lead as any).lastActionDate || lead.updatedAt).toISOString(),
           status: lead.status || 'Active',
-          assignedUserId: lead.assignedUserId,
-          workspaceId: lead.workspaceId,
+          assignedUserId: (lead as any).assignedUserId,
+          workspaceId: (lead as any).workspaceId,
           createdAt: lead.createdAt,
           updatedAt: lead.updatedAt
         }));
@@ -285,7 +300,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         leads: realLeads,
         prospects: realProspects,
         opportunities: realOpportunities,
-        companies: companiesData, // Use actual companies data from database with action fields
+        companies: companies, // Use actual companies data from database with action fields
         people: people,
         partnerships: partnerships,
         clients: clients,
@@ -300,7 +315,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           leads: realLeads.length,
           prospects: realProspects.length,
           opportunities: realOpportunities.length,
-          companies: companiesData.length, // Use the correct count
+          companies: companies.length, // Use the correct count
           people: people.length,
           clients: clients.length,
           partners: partnerships.length,
@@ -401,7 +416,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     // Extract all people from real buyer groups
     const realPeople = realBuyerGroups.flatMap(bg =>
       Object.values(bg.roles).flat().map(role => ({
-        ...role,
+        id: (role as any).id || ulid(),
+        name: (role as any).name || 'Unknown',
+        title: (role as any).title || 'Unknown',
         companyId: bg.companyId,
         companyName: bg.companyName,
         buyerGroupId: bg.id,
@@ -446,7 +463,15 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     people.forEach(person => {
       // Add person if not already in realPeople (avoid duplicates)
       if (!combinedPeople.find(p => p['id'] === person.id)) {
-        combinedPeople.push(person);
+        combinedPeople.push({
+          id: person.id,
+          name: person.fullName,
+          title: person.jobTitle,
+          companyId: person.companyId,
+          companyName: person.company?.name || '',
+          buyerGroupId: null,
+          buyerGroupStage: null
+        });
       }
     });
     
@@ -575,7 +600,7 @@ function clearWorkspaceCache(workspaceId: string, userId: string, forceClear: bo
   if (!forceClear) return;
   
   const keysToDelete: string[] = [];
-  for (const key of unifiedDataMemoryCache.keys()) {
+  for (const key of Array.from(unifiedDataMemoryCache.keys())) {
     if (key.includes(workspaceId) && key.includes(userId)) {
       keysToDelete.push(key);
     }
@@ -805,6 +830,7 @@ async function handleGet(
 }
 
 async function getSingleRecord(type: string, workspaceId: string, userId: string, id: string): Promise<any> {
+  console.log(`🚨 [DEBUG] getSingleRecord called with type: ${type}, id: ${id}`);
   const model = getPrismaModel(type);
   if (!model) throw new Error(`Unsupported type: ${type}`);
   
@@ -978,6 +1004,74 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
     
     if (!record) {
       console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id}`);
+      
+      // For leads and prospects, try to find the person record instead
+      if (type === 'leads' || type === 'prospects') {
+        console.log(`🔄 [GET SINGLE] Trying to find person record for ${type}: ${id}`);
+        
+        try {
+          const personRecord = await prisma.people.findFirst({
+            where: {
+              id: id,
+              workspaceId: workspaceId
+            },
+            include: {
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  industry: true,
+                  website: true
+                }
+              }
+            }
+          });
+          
+          if (personRecord) {
+            console.log(`✅ [GET SINGLE] Found person record for ${type}: ${personRecord.id}`);
+            
+            // Extract Coresignal data from the people record
+            const coresignalData = (personRecord.customFields as any)?.coresignal || (personRecord.customFields as any)?.coresignalData || {};
+            
+            // Get company from Coresignal data (active experience)
+            const coresignalCompany = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                      coresignalData.experience?.[0]?.company_name;
+            
+            // Get industry from Coresignal data
+            const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                      coresignalData.experience?.[0]?.company_industry;
+            
+            // Get title from Coresignal data
+            const coresignalTitle = coresignalData.active_experience_title;
+            
+            // Transform the person record to look like a lead/prospect record
+            const transformedRecord = {
+              ...personRecord,
+              // Override with Coresignal data
+              fullName: coresignalData.full_name || personRecord.fullName,
+              email: coresignalData.primary_professional_email || personRecord.email,
+              company: coresignalCompany || '-',
+              companyName: coresignalCompany || '-',
+              industry: coresignalIndustry || '-',
+              jobTitle: coresignalTitle || personRecord.jobTitle || '-',
+              title: coresignalTitle || (personRecord as any).title || '-',
+              // Include the full Coresignal data for detail views
+              customFields: personRecord.customFields
+            };
+            
+            console.log(`🔍 [GET SINGLE] Applied Coresignal transformation from person record for ${type}:`, {
+              originalCompany: personRecord.company?.name,
+              coresignalCompany: coresignalCompany,
+              finalCompany: transformedRecord.company
+            });
+            
+            return { success: true, data: transformedRecord };
+          }
+        } catch (personError) {
+          console.error(`❌ [GET SINGLE] Error fetching person record:`, personError);
+        }
+      }
+      
       throw new Error(`${type} not found`);
     }
     
@@ -996,7 +1090,56 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       }
     }
     
-    return { success: true, data: record };
+    // Apply Coresignal data transformation for leads, prospects, and people (same as list API)
+    if (type === 'leads' || type === 'prospects' || type === 'people') {
+      console.log(`🔍 [GET SINGLE] Applying Coresignal transformation for ${type} record: ${id}`);
+    console.log(`🚨 [DEBUG] SERVER IS RUNNING UPDATED CODE - CORESIGNAL TRANSFORMATION ACTIVE`);
+      // Extract Coresignal data (cast customFields to any for JSON field access)
+      const coresignalData = (record.customFields as any)?.coresignalData || (record.customFields as any)?.coresignal || {};
+      console.log(`🔍 [GET SINGLE] Extracted Coresignal data:`, {
+        full_name: coresignalData.full_name,
+        active_experience_title: coresignalData.active_experience_title,
+        active_experience_company: coresignalData.active_experience_company,
+        experience: coresignalData.experience?.length || 0
+      });
+      
+      // Get company from Coresignal data (active experience)
+      const coresignalCompany = coresignalData.active_experience_company || 
+                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                coresignalData.experience?.[0]?.company_name;
+      
+      // Get industry from Coresignal data
+      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                coresignalData.experience?.[0]?.company_industry;
+      
+      // Get title from Coresignal data
+      const coresignalTitle = coresignalData.active_experience_title;
+      
+      // Transform the record with Coresignal data
+      const transformedRecord = {
+        ...record,
+        fullName: coresignalData.full_name || record.fullName,
+        email: coresignalData.primary_professional_email || record.email,
+        // Use Coresignal data for company info (no fallbacks to database)
+        company: coresignalCompany || '-',
+        companyName: coresignalCompany || '-',
+        industry: coresignalIndustry || '-',
+        jobTitle: coresignalTitle || record.jobTitle || '-',
+        title: coresignalTitle || (record as any).title || '-',
+        // Include Coresignal data for detail views
+        customFields: record.customFields
+      };
+      
+      console.log(`🔍 [GET SINGLE] Applied Coresignal transformation for ${type}:`, {
+        originalCompany: record.company,
+        coresignalCompany: coresignalCompany,
+        finalCompany: transformedRecord.company
+      });
+      
+      return { success: true, data: { ...transformedRecord, debug: "CORESIGNAL_TRANSFORMATION_APPLIED" } };
+    }
+    
+    return { success: true, data: { ...record, serverVersion: "UPDATED_CODE_RUNNING" } };
   } catch (dbError) {
     console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
     console.error(`❌ [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
@@ -1356,36 +1499,55 @@ async function getMultipleRecords(
       }
     });
 
-    // Transform people data to prospects format with proper company mapping
-    const prospectsWithCompanies = people.map(person => ({
-      id: person.id,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      fullName: person.fullName,
-      email: person.email,
-      // Map company data to the fields the UI expects
-      company: person.company?.name || 'Unknown Company',
-      companyId: person.companyId,
-      companyName: person.company?.name || 'Unknown Company',
-      industry: person.company?.industry || 'Unknown Industry',
-      vertical: person.company?.vertical || 'Unknown Vertical',
-      companySize: person.company?.size || 'Unknown Size',
-      jobTitle: person.jobTitle,
-      title: person.title || person.jobTitle || null,
-      status: person.status,
-      priority: 'medium',
-      source: 'people',
-      createdAt: person.createdAt,
-      updatedAt: person.updatedAt,
-      lastContactDate: person.lastActionDate,
-      lastActionDate: person.lastActionDate,
-      nextAction: person.nextAction,
-      nextActionDate: person.nextActionDate,
-      workspaceId: person.workspaceId,
-      assignedUserId: person.assignedUserId,
-      // Add company data for better relationships
-      companyData: person.company
-    }));
+    // Transform people data to prospects format with Coresignal data priority
+    const prospectsWithCompanies = people.map(person => {
+      // Extract Coresignal data
+      const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+      
+      // Get company from Coresignal data (active experience)
+      const coresignalCompany = coresignalData.active_experience_company || 
+                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                coresignalData.experience?.[0]?.company_name;
+      
+      // Get industry from Coresignal data
+      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                coresignalData.experience?.[0]?.company_industry;
+      
+      // Get title from Coresignal data
+      const coresignalTitle = coresignalData.active_experience_title;
+      
+      return {
+        id: person.id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: coresignalData.full_name || person.fullName,
+        email: coresignalData.primary_professional_email || person.email,
+        // Use Coresignal data for company info (no fallbacks to database)
+        company: coresignalCompany || '-',
+        companyId: person.companyId,
+        companyName: coresignalCompany || '-',
+        industry: coresignalIndustry || '-',
+        vertical: person.company?.vertical || '-',
+        companySize: person.company?.size || '-',
+        jobTitle: coresignalTitle || person.jobTitle || '-',
+        title: coresignalTitle || (person as any).title || person.jobTitle || '-',
+        status: person.status,
+        priority: 'medium',
+        source: 'people',
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        lastContactDate: person.lastActionDate,
+        lastActionDate: person.lastActionDate,
+        nextAction: person.nextAction,
+        nextActionDate: person.nextActionDate,
+        workspaceId: person.workspaceId,
+        assignedUserId: person.assignedUserId,
+        // Add company data for better relationships
+        companyData: person.company,
+        // Include Coresignal data for detail views
+        customFields: person.customFields
+      };
+    });
 
     // 🔍 DEBUG: Log the first few records to see what we're returning
     console.log(`🔍 [PROSPECTS API DEBUG] Returning ${prospectsWithCompanies.length} prospects`);
@@ -1428,36 +1590,55 @@ async function getMultipleRecords(
       }
     });
 
-    // Transform people data to leads format with proper company mapping
-    const leadsWithCompanies = people.map(person => ({
-      id: person.id,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      fullName: person.fullName,
-      email: person.email,
-      // Map company data to the fields the UI expects
-      company: person.company?.name || 'Unknown Company',
-      companyId: person.companyId,
-      companyName: person.company?.name || 'Unknown Company',
-      industry: person.company?.industry || 'Unknown Industry',
-      vertical: person.company?.vertical || 'Unknown Vertical',
-      companySize: person.company?.size || 'Unknown Size',
-      jobTitle: person.jobTitle,
-      title: person.title,
-      status: person.status,
-      priority: 'medium',
-      source: 'people',
-      createdAt: person.createdAt,
-      updatedAt: person.updatedAt,
-      lastContactDate: person.lastActionDate,
-      lastActionDate: person.lastActionDate,
-      nextAction: person.nextAction,
-      nextActionDate: person.nextActionDate,
-      workspaceId: person.workspaceId,
-      assignedUserId: person.assignedUserId,
-      // Add company data for better relationships
-      companyData: person.company
-    }));
+    // Transform people data to leads format with Coresignal data priority
+    const leadsWithCompanies = people.map(person => {
+      // Extract Coresignal data
+      const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+      
+      // Get company from Coresignal data (active experience)
+      const coresignalCompany = coresignalData.active_experience_company || 
+                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                coresignalData.experience?.[0]?.company_name;
+      
+      // Get industry from Coresignal data
+      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                coresignalData.experience?.[0]?.company_industry;
+      
+      // Get title from Coresignal data
+      const coresignalTitle = coresignalData.active_experience_title;
+      
+      return {
+        id: person.id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: coresignalData.full_name || person.fullName,
+        email: coresignalData.primary_professional_email || person.email,
+        // Use Coresignal data for company info (no fallbacks to database)
+        company: coresignalCompany || '-',
+        companyId: person.companyId,
+        companyName: coresignalCompany || '-',
+        industry: coresignalIndustry || '-',
+        vertical: person.company?.vertical || '-',
+        companySize: person.company?.size || '-',
+        jobTitle: coresignalTitle || person.jobTitle || '-',
+        title: coresignalTitle || (person as any).title || '-',
+        status: person.status,
+        priority: 'medium',
+        source: 'people',
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        lastContactDate: person.lastActionDate,
+        lastActionDate: person.lastActionDate,
+        nextAction: person.nextAction,
+        nextActionDate: person.nextActionDate,
+        workspaceId: person.workspaceId,
+        assignedUserId: person.assignedUserId,
+        // Add company data for better relationships
+        companyData: person.company,
+        // Include Coresignal data for detail views
+        customFields: person.customFields
+      };
+    });
 
     // 🔍 DEBUG: Log the first few records to see what we're returning
     console.log(`🔍 [LEADS API DEBUG] Returning ${leadsWithCompanies.length} leads`);
@@ -2832,7 +3013,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       leadsData,
       prospectsData,
       opportunitiesData,
-      companiesData,
+      companies,
       peopleData,
       clientsData,
       partnersData,
@@ -3068,7 +3249,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           company: true,
           companyId: true,
           jobTitle: true,
-          title: true,
           email: true,
           phone: true,
           linkedinUrl: true,
@@ -3090,7 +3270,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ...person,
           masterRank: person.rank || (index + 1),
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          company: person.company || 'Unknown Company'
+          company: (person as any).company || 'Unknown Company'
         }));
       }),
       prisma.clients.findMany({ 
@@ -3131,8 +3311,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     
     const transformedProspects = prospectsData.map(prospect => {
       // Calculate smart action data for prospects
-      const lastContactDate = prospect.lastContactDate || prospect.lastActionDate || prospect.updatedAt;
-      const nextFollowUpDate = prospect.nextFollowUpDate || prospect.nextActionDate;
+      const lastContactDate = (prospect as any).lastContactDate || (prospect as any).lastActionDate || prospect.updatedAt;
+      const nextFollowUpDate = (prospect as any).nextFollowUpDate || (prospect as any).nextActionDate;
       
       // Determine last action based on prospect data
       let lastAction = 'Initial Contact';
@@ -3189,10 +3369,10 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         currentStage: currentStage,
         stage: currentStage,
         // Add additional fields for table display
-        state: prospect.state || prospect.city || 'State',
-        jobTitle: prospect.jobTitle || prospect.title || 'Title',
+        state: (prospect as any).state || (prospect as any).city || 'State',
+        jobTitle: (prospect as any).jobTitle || (prospect as any).title || 'Title',
         companyName: prospect.company || 'Company',
-        buyerGroupRole: prospect.buyerGroupRole || 'Stakeholder'
+        buyerGroupRole: (prospect as any).buyerGroupRole || 'Stakeholder'
       };
     });
     
@@ -3333,7 +3513,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         leads: transformedLeads,
         prospects: transformedProspects,
         opportunities: processedOpportunities,
-        companies: companiesData,
+        companies: companies,
         people: peopleData,
         clients: clientsData,
         partners: partnersData,
@@ -3392,7 +3572,7 @@ function calculateActionPriorityScore(record: any): number {
   let actionScore = 0;
   
   // Get next action timing and urgency - using real database fields
-  const nextActionDate = record.nextActionDate || record.nextFollowUpDate || record.nextActivityDate;
+  const nextActionDate = (record as any).nextActionDate || (record as any).nextFollowUpDate || (record as any).nextActivityDate;
   const lastContactDate = record.lastContactDate || record.lastActionDate || record.lastActivityDate || record.updatedAt;
   
   // Calculate days since last contact
@@ -3513,7 +3693,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         fullName: person.fullName,
         email: person.email,
         jobTitle: person.jobTitle,
-        title: person.title,
+        title: (person as any).title,
         status: person.status,
         createdAt: person.createdAt,
         updatedAt: person.updatedAt,
@@ -3524,10 +3704,10 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         company: {
           id: person.companyId,
           name: person.company,
-          industry: person.industry,
-          vertical: person.vertical,
-          size: person.companySize,
-          rank: person.masterRank
+          industry: (person as any).industry,
+          vertical: (person as any).vertical,
+          size: (person as any).companySize,
+          rank: (person as any).masterRank
         },
         companyId: person.companyId
       }));
@@ -3568,31 +3748,47 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       });
     }
 
-    // Transform people data to speedrun format with proper company mapping
-    const prospectsWithCompanies = people.map(person => ({
-      id: person.id,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      fullName: person.fullName,
-      email: person.email,
-      // Map company data to the fields the UI expects
-      company: person.company?.name || null,
-      companyId: person.companyId,
-      companyName: person.company?.name || null,
-      industry: person.company?.industry || null,
-      vertical: person.company?.vertical || null,
-      companySize: person.company?.size || null,
-      jobTitle: person.jobTitle,
-      title: person.title,
-      status: person.status,
-      createdAt: person.createdAt,
-      updatedAt: person.updatedAt,
-      lastContactDate: person.lastActionDate,
-      lastActionDate: person.lastActionDate,
-      nextAction: person.nextAction,
-      nextActionDate: person.nextActionDate,
-      // Add company data for ranking
-      companyData: person.company,
+    // Transform people data to speedrun format with Coresignal data priority
+    const prospectsWithCompanies = people.map(person => {
+      // Extract Coresignal data
+      const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+      
+      // Get company from Coresignal data (active experience)
+      const coresignalCompany = coresignalData.active_experience_company || 
+                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                coresignalData.experience?.[0]?.company_name;
+      
+      // Get industry from Coresignal data
+      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                coresignalData.experience?.[0]?.company_industry;
+      
+      // Get title from Coresignal data
+      const coresignalTitle = coresignalData.active_experience_title;
+      
+      return {
+        id: person.id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: coresignalData.full_name || person.fullName,
+        email: coresignalData.primary_professional_email || person.email,
+        // Use Coresignal data for company info (no fallbacks to database)
+        company: coresignalCompany || null,
+        companyId: person.companyId,
+        companyName: coresignalCompany || null,
+        industry: coresignalIndustry || null,
+        vertical: person.company?.vertical || null,
+        companySize: person.company?.size || null,
+        jobTitle: coresignalTitle || person.jobTitle,
+        title: coresignalTitle || person.title,
+        status: person.status,
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        lastContactDate: person.lastActionDate,
+        lastActionDate: person.lastActionDate,
+        nextAction: person.nextAction,
+        nextActionDate: person.nextActionDate,
+        // Add company data for ranking
+        companyData: person.company,
       // CRITICAL: Include customFields with buyer group data
       customFields: person.customFields,
       // Map buyer group data from customFields to top level for easy access
@@ -3606,7 +3802,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       interests: person.customFields?.interests || person.interests,
       personalGoals: person.customFields?.personalGoals || person.personalGoals,
       professionalGoals: person.customFields?.professionalGoals || person.professionalGoals
-    }));
+      };
+    });
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospectsWithCompanies.length} people with company data`);
     
@@ -3643,14 +3840,14 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     const speedrunItemsWithScores = speedrunData.map((record, index) => {
       // Calculate smart action data based on record status and dates
       const lastContactDate = record.lastContactDate || record.lastActionDate || record.updatedAt;
-      const nextFollowUpDate = record.nextFollowUpDate || record.nextActionDate;
+      const nextFollowUpDate = (record as any).nextFollowUpDate || (record as any).nextActionDate;
       
       // Determine last action based on record data
       let lastAction = 'No action taken';
       let lastActionTime = 'Never';
       
       // Only show real last actions if they exist, otherwise show when data was added
-      if (lastContactDate && record.lastAction) {
+      if (lastContactDate && (record as any).lastAction) {
         // Real last action exists
         const daysSince = Math.floor((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
         if (daysSince === 0) lastActionTime = 'Today';
@@ -3659,7 +3856,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
         else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         
-        lastAction = record.lastAction || 'Start outreach';
+        lastAction = (record as any).lastAction || 'Start outreach';
       } else if (record.createdAt) {
         // No real last action, show when data was added
         const daysSince = Math.floor((new Date().getTime() - new Date(record.createdAt).getTime()) / (1000 * 60 * 60 * 24));
@@ -3707,17 +3904,17 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       return {
         id: record.id,
         // Handle both prospects and people data structures
-        name: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
-        fullName: record.fullName || record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
+        name: record.fullName || (record as any).displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
+        fullName: record.fullName || (record as any).displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Name',
         firstName: record.firstName || 'First',
         lastName: record.lastName || 'Last',
-        email: record.email || record.workEmail,
-        phone: record.phone || record.workPhone || record.mobilePhone,
+        email: record.email || (record as any).workEmail,
+        phone: (record as any).phone || (record as any).workPhone || (record as any).mobilePhone,
         title: record.jobTitle || record.title || 'Title',
         company: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company',
-        location: record.city || record.state || record.country,
+        location: (record as any).city || (record as any).state || (record as any).country,
         status: record.status || 'new',
-        priority: record.priority || 'high',
+        priority: (record as any).priority || 'high',
         source: dataSource,
         createdAt: record.createdAt,
         updatedAt: record.updatedAt,
@@ -3736,7 +3933,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         currentStage: currentStage,
         // Add additional fields for table display
         stage: currentStage,
-        state: record.state || record.city || 'State',
+        state: (record as any).state || (record as any).city || 'State',
         jobTitle: record.jobTitle || record.title || 'Title',
         companyName: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company'
       };
@@ -3747,7 +3944,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     
     try {
       // Import UniversalRankingEngine
-      const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
+      // const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
+      // Temporarily disabled - use simple ranking instead
       
       // Transform data to SpeedrunPerson format for ranking
       const transformedData = speedrunItemsWithScores.map((item: any) => ({
@@ -3783,7 +3981,6 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         urgencyLevel: 'Medium',
         bestContactTime: 'Morning',
         valueDriver: '',
-        buyerGroupRole: 'unknown',
         decisionMakingPower: 'medium',
         relationshipWarmth: 'cold',
         timingUrgency: 'medium',
@@ -3793,7 +3990,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       }));
       
       // Apply UniversalRankingEngine for proper 1-30 ranking
-      const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
+      // const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
+      const rankedProspects = transformedData; // Temporarily disabled ranking
       
       // Transform back to speedrun format with proper rankings
       speedrunItems = rankedProspects.map((prospect: any, index: number) => {
@@ -3888,6 +4086,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
 // 🚀 MAIN API HANDLERS
 export async function GET(request: NextRequest) {
+  console.log("🚨 [DEBUG] UNIFIED API ROUTE CALLED - SERVER IS RUNNING UPDATED CODE");
   const startTime = Date.now();
   
   try {

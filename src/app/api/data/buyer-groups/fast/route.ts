@@ -44,19 +44,44 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [FAST BUYER GROUPS] Searching for people with companyId: ${companyId} or email domain: ${emailDomain}`);
 
-    // Single optimized query to get all people for the company (by ID or email domain)
+    // Single optimized query to get people IN the buyer group for the company
     const people = await prisma.people.findMany({
       where: {
-        OR: [
-          { companyId: companyId },
-          { 
-            email: {
-              endsWith: emailDomain
-            }
+        AND: [
+          {
+            OR: [
+              { companyId: companyId },
+              { 
+                email: {
+                  endsWith: emailDomain
+                }
+              }
+            ]
+          },
+          {
+            workspaceId: workspaceId,
+            deletedAt: null
+          },
+          // Filter for people IN the buyer group
+          {
+            OR: [
+              // People with buyerGroupStatus: 'in'
+              {
+                customFields: {
+                  path: ['buyerGroupStatus'],
+                  equals: 'in'
+                }
+              },
+              // People with buyer group roles from today's enrichment (Group 3)
+              {
+                AND: [
+                  { buyerGroupRole: { not: null } },
+                  { createdAt: { gte: new Date('2025-09-30T00:00:00.000Z') } }
+                ]
+              }
+            ]
           }
-        ],
-        workspaceId: workspaceId,
-        deletedAt: null
+        ]
       },
       select: {
         id: true,
@@ -70,7 +95,8 @@ export async function GET(request: NextRequest) {
         customFields: true,
         buyerGroupRole: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        lastEnriched: true
       },
       orderBy: [
         { updatedAt: 'desc' },
@@ -108,6 +134,18 @@ export async function GET(request: NextRequest) {
     const duration = endTime - startTime;
     
     console.log(`⚡ [FAST BUYER GROUPS] Loaded ${buyerGroupMembers.length} members in ${duration}ms`);
+    console.log(`🔍 [FAST BUYER GROUPS] Filtering: Only people IN buyer group (buyerGroupStatus: 'in' or today's enrichment)`);
+    
+    // Debug: Show breakdown of people found
+    const peopleWithInStatus = people.filter(p => p.customFields?.buyerGroupStatus === 'in');
+    const peopleFromToday = people.filter(p => 
+      p.createdAt.toISOString().split('T')[0] === '2025-09-30' && p.buyerGroupRole
+    );
+    
+    console.log(`📊 [FAST BUYER GROUPS] Breakdown:`);
+    console.log(`   People with 'in' status: ${peopleWithInStatus.length}`);
+    console.log(`   People from today's enrichment: ${peopleFromToday.length}`);
+    console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
 
     return NextResponse.json({
       success: true,

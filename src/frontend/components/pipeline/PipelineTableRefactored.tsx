@@ -311,10 +311,10 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // Use sequential ranking for consistent display across all sections
-                        // Calculate global rank across all pages for proper sequential display
-                        const globalRank = (currentPage - 1) * pageSize + index + 1;
-                        cellContent = String(globalRank);
+                        // Use the actual rank from the record, fallback to sequential if not available
+                        const recordRank = record.rank || record.masterRank || 0;
+                        const displayRank = recordRank > 0 ? recordRank : (currentPage - 1) * pageSize + index + 1;
+                        cellContent = String(displayRank);
                         break;
                       case 'company':
                         // Handle both string and object company data
