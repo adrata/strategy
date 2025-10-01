@@ -11,8 +11,6 @@ import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueR
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
-import { SpeedrunDataProvider } from "@/platform/ui/context/SpeedrunDataProvider";
-import { ProfilePopupProvider } from "@/platform/ui/context/ProfilePopupProvider";
 
 export default function DeepValueReportPage() {
   const params = useParams();
@@ -74,19 +72,15 @@ export default function DeepValueReportPage() {
       <AcquisitionOSProvider>
         <ZoomProvider>
           <PipelineProvider>
-            <SpeedrunDataProvider>
-              <ProfilePopupProvider>
-                <PanelLayout
-                  leftPanel={<PipelineLeftPanelStandalone />}
-                  rightPanel={<AIRightPanel />}
-                  header={<ProfileBox />}
-                >
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-gray-500">Loading record...</div>
-                  </div>
-                </PanelLayout>
-              </ProfilePopupProvider>
-            </SpeedrunDataProvider>
+            <PanelLayout
+              leftPanel={<PipelineLeftPanelStandalone />}
+              rightPanel={<AIRightPanel />}
+              header={<ProfileBox />}
+            >
+              <div className="flex items-center justify-center h-64">
+                <div className="text-gray-500">Loading record...</div>
+              </div>
+            </PanelLayout>
           </PipelineProvider>
         </ZoomProvider>
       </AcquisitionOSProvider>
@@ -97,24 +91,20 @@ export default function DeepValueReportPage() {
     <AcquisitionOSProvider>
       <ZoomProvider>
         <PipelineProvider>
-          <SpeedrunDataProvider>
-            <ProfilePopupProvider>
-              <PanelLayout
-                leftPanel={<PipelineLeftPanelStandalone />}
-                rightPanel={<AIRightPanel />}
-                header={<ProfileBox />}
-              >
-                <DeepValueReportViewer
-                  reportId={reportId}
-                  reportData={reportData}
-                  isLoading={isLoading}
-                  error={error}
-                  onBack={handleBack}
-                  record={currentRecord}
-                />
-              </PanelLayout>
-            </ProfilePopupProvider>
-          </SpeedrunDataProvider>
+          <PanelLayout
+            leftPanel={<PipelineLeftPanelStandalone />}
+            rightPanel={<AIRightPanel />}
+            header={<ProfileBox />}
+          >
+            <DeepValueReportViewer
+              reportId={reportId}
+              reportData={reportData}
+              isLoading={isLoading}
+              error={error}
+              onBack={handleBack}
+              record={currentRecord}
+            />
+          </PanelLayout>
         </PipelineProvider>
       </ZoomProvider>
     </AcquisitionOSProvider>
