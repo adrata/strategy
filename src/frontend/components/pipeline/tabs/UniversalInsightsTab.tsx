@@ -331,7 +331,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-600">Decision Making:</span>
-                    <span className="text-xs font-medium text-gray-900">{decisionMakingStyle}</span>
+                    <span className="text-xs font-medium text-gray-900">{decisionMaking || 'Data-driven'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-600">Preferred Contact:</span>
@@ -427,7 +427,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Decision Making</span>
-                <span className="text-sm font-medium text-gray-900">{decisionMakingStyle}</span>
+                <span className="text-sm font-medium text-gray-900">{decisionMaking || 'Data-driven'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Preferred Contact</span>
