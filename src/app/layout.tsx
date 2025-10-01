@@ -33,6 +33,9 @@ import { initializeSafariErrorHandling } from "@/platform/safari-error-handler";
 // ✅ CRITICAL: Immediate Safari fix - must run before any other code
 import "@/platform/safari-immediate-fix";
 
+// ✅ CRITICAL: Safari error suppression - must run before any other code
+import "@/platform/safari-error-suppression";
+
 // Service worker temporarily disabled to fix production errors
 // TODO: Re-enable when sw.js file is properly implemented
 // if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
@@ -213,6 +216,71 @@ export default function RootLayout({
         
         {/* Twilio Voice SDK for computer-to-phone calling */}
         <Script src="/twilio-voice.min.js" strategy="beforeInteractive" />
+        
+        {/* CRITICAL: Safari fixes - must run before any other JavaScript */}
+        <Script id="safari-fixes" strategy="beforeInteractive">
+          {`
+            (function() {
+              'use strict';
+              const userAgent = navigator.userAgent;
+              const isSafari = (/iPhone|iPad|iPod/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS/.test(userAgent)) ||
+                              (/Macintosh/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome/.test(userAgent));
+              
+              if (isSafari) {
+                console.log('🍎 [SAFARI HEAD] Safari detected - applying immediate fixes');
+                
+                // Override Tauri detection
+                window.__TAURI__ = undefined;
+                window.__TAURI_METADATA__ = undefined;
+                window.__TAURI_INTERNALS__ = undefined;
+                window.__ADRATA_FORCE_WEB__ = true;
+                window.__ADRATA_SAFARI_MODE__ = true;
+                
+                // Override localStorage to prevent SecurityError
+                const originalLocalStorage = window.localStorage;
+                if (originalLocalStorage) {
+                  const safeLocalStorage = {
+                    getItem: function(key) {
+                      try { return originalLocalStorage.getItem(key); } catch (e) { return null; }
+                    },
+                    setItem: function(key, value) {
+                      try { originalLocalStorage.setItem(key, value); } catch (e) { /* ignore */ }
+                    },
+                    removeItem: function(key) {
+                      try { originalLocalStorage.removeItem(key); } catch (e) { /* ignore */ }
+                    },
+                    clear: function() {
+                      try { originalLocalStorage.clear(); } catch (e) { /* ignore */ }
+                    },
+                    get length() { try { return originalLocalStorage.length; } catch (e) { return 0; } },
+                    key: function(index) { try { return originalLocalStorage.key(index); } catch (e) { return null; } }
+                  };
+                  Object.defineProperty(window, 'localStorage', { value: safeLocalStorage, writable: false, configurable: false });
+                }
+                
+                // Suppress SecurityError globally
+                window.onerror = function(message, source, lineno, colno, error) {
+                  if (error && error.name === 'SecurityError' && error.message.includes('insecure')) {
+                    console.warn('🍎 [SAFARI HEAD] Suppressed SecurityError:', message);
+                    return true;
+                  }
+                  return false;
+                };
+                
+                window.onunhandledrejection = function(event) {
+                  if (event.reason && event.reason.name === 'SecurityError' && 
+                      event.reason.message && event.reason.message.includes('insecure')) {
+                    console.warn('🍎 [SAFARI HEAD] Suppressed SecurityError promise rejection');
+                    event.preventDefault();
+                    return;
+                  }
+                };
+                
+                console.log('🍎 [SAFARI HEAD] Safari fixes applied');
+              }
+            })();
+          `}
+        </Script>
       </head>
       <RootLayoutContent>{children}</RootLayoutContent>
     </html>
