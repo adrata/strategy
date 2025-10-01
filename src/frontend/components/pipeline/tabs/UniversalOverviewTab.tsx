@@ -239,63 +239,33 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       {/* Intelligence Snapshot */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Intelligence Snapshot</h3>
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Key Intelligence Points */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Influence:</span> {recordData.influenceLevel}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Role:</span> {record.customFields?.primaryRole || 'Stakeholder'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Decision Power:</span> {record.customFields?.decisionPower || '70'}%
-                </span>
-              </div>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Influence Level:</span>
+              <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
             </div>
-            
-            {/* Engagement Quick Points */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Engagement:</span> {record.customFields?.engagementLevel || 'Medium'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Communication:</span> {record.customFields?.communicationStyle || 'Professional'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-900">
-                  <span className="text-gray-600">Buyer Group:</span> {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
-                </span>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Role:</span>
+              <span className="text-sm font-medium text-gray-900">{record.customFields?.primaryRole || 'Stakeholder'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Decision Power:</span>
+              <span className="text-sm font-medium text-gray-900">{record.customFields?.decisionPower || '70'}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Engagement Level:</span>
+              <span className="text-sm font-medium text-gray-900">{record.customFields?.engagementLevel || 'Medium'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Buyer Group Member:</span>
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
+              </span>
             </div>
           </div>
-          
-          {/* Quick Strategy Summary */}
-          {record.customFields?.engagementStrategy && (
-            <div className="mt-4 pt-4 border-t border-blue-200">
-              <div className="text-sm text-gray-700">
-                <span className="font-medium text-gray-900">Quick Strategy:</span> {record.customFields.engagementStrategy.length > 120 
-                  ? `${record.customFields.engagementStrategy.substring(0, 120)}...` 
-                  : record.customFields.engagementStrategy}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
