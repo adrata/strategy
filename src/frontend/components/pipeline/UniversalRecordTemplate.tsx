@@ -460,6 +460,10 @@ export function UniversalRecordTemplate({
                } else {
                  return `${sizeCategory}, ${growthStage} telecommunications company`;
                }
+      case 'people':
+        const personTitle = record?.jobTitle || record?.title;
+        const personCompany = record?.company || record?.companyName || 'Company';
+        return personTitle ? `${personTitle} • ${personCompany}` : personCompany;
       case 'clients':
         return `${record?.status || 'Unknown Status'} • ${record?.totalValue ? `$${record.totalValue.toLocaleString()}` : 'No Value'}`;
       case 'partners':

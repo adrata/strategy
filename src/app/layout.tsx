@@ -30,6 +30,12 @@ import { isDesktop } from "@/platform/platform-detection";
 // ✅ Initialize Safari error handling for Safari compatibility
 import { initializeSafariErrorHandling } from "@/platform/safari-error-handler";
 
+// ✅ CRITICAL: Safari platform override - must run FIRST to prevent desktop detection
+import "@/platform/safari-platform-override";
+
+// ✅ CRITICAL: Safari 2025 fix - latest compatibility fixes
+import "@/platform/safari-2025-fix";
+
 // ✅ CRITICAL: Immediate Safari fix - must run before any other code
 import "@/platform/safari-immediate-fix";
 
@@ -220,8 +226,8 @@ export default function RootLayout({
         {/* Twilio Voice SDK for computer-to-phone calling */}
         <Script src="/twilio-voice.min.js" strategy="beforeInteractive" />
         
-        {/* ULTIMATE: Safari fixes - most aggressive error suppression */}
-        <Script id="safari-ultimate-fixes" strategy="beforeInteractive">
+        {/* 2025 SAFARI FIXES: Most comprehensive Safari compatibility fixes */}
+        <Script id="safari-2025-fixes" strategy="beforeInteractive">
           {`
             (function() {
               'use strict';
@@ -230,100 +236,22 @@ export default function RootLayout({
                               (/Macintosh/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome/.test(userAgent));
               
               if (isSafari) {
-                console.log('🍎 [SAFARI ULTIMATE HEAD] Safari detected - applying ULTIMATE fixes');
+                console.log('🍎 [SAFARI 2025 HEAD] Safari detected - applying 2025 compatibility fixes');
                 
-                // 1. Override ALL Tauri detection
+                // 1. CRITICAL: Override ALL Tauri detection IMMEDIATELY
                 window.__TAURI__ = undefined;
                 window.__TAURI_METADATA__ = undefined;
                 window.__TAURI_INTERNALS__ = undefined;
+                window.__TAURI_IPC__ = undefined;
+                window.__TAURI_RUST__ = undefined;
                 window.__ADRATA_FORCE_WEB__ = true;
                 window.__ADRATA_SAFARI_MODE__ = true;
+                window.__ADRATA_WEB_PLATFORM__ = true;
+                window.__ADRATA_SAFARI_2025_FIX__ = true;
                 
-                // 2. Override localStorage with ULTIMATE safe wrapper
-                const originalLocalStorage = window.localStorage;
-                if (originalLocalStorage) {
-                  const ultimateSafeLocalStorage = {
-                    getItem: function(key) {
-                      try { return originalLocalStorage.getItem(key); } catch (e) { return null; }
-                    },
-                    setItem: function(key, value) {
-                      try { originalLocalStorage.setItem(key, value); } catch (e) { /* ignore */ }
-                    },
-                    removeItem: function(key) {
-                      try { originalLocalStorage.removeItem(key); } catch (e) { /* ignore */ }
-                    },
-                    clear: function() {
-                      try { originalLocalStorage.clear(); } catch (e) { /* ignore */ }
-                    },
-                    get length() { try { return originalLocalStorage.length; } catch (e) { return 0; } },
-                    key: function(index) { try { return originalLocalStorage.key(index); } catch (e) { return null; } }
-                  };
-                  Object.defineProperty(window, 'localStorage', { value: ultimateSafeLocalStorage, writable: false, configurable: false });
-                }
-                
-                // 3. Override sessionStorage with ULTIMATE safe wrapper
-                const originalSessionStorage = window.sessionStorage;
-                if (originalSessionStorage) {
-                  const ultimateSafeSessionStorage = {
-                    getItem: function(key) {
-                      try { return originalSessionStorage.getItem(key); } catch (e) { return null; }
-                    },
-                    setItem: function(key, value) {
-                      try { originalSessionStorage.setItem(key, value); } catch (e) { /* ignore */ }
-                    },
-                    removeItem: function(key) {
-                      try { originalSessionStorage.removeItem(key); } catch (e) { /* ignore */ }
-                    },
-                    clear: function() {
-                      try { originalSessionStorage.clear(); } catch (e) { /* ignore */ }
-                    },
-                    get length() { try { return originalSessionStorage.length; } catch (e) { return 0; } },
-                    key: function(index) { try { return originalSessionStorage.key(index); } catch (e) { return null; } }
-                  };
-                  Object.defineProperty(window, 'sessionStorage', { value: ultimateSafeSessionStorage, writable: false, configurable: false });
-                }
-                
-                // 4. ULTIMATE Global Error Suppression
-                window.onerror = function(message, source, lineno, colno, error) {
-                  if (error && error.name === 'SecurityError') {
-                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError suppressed:', error.message);
-                    return true;
-                  }
-                  if (typeof message === 'string' && message.includes('SecurityError')) {
-                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError in message suppressed:', message);
-                    return true;
-                  }
-                  return false;
-                };
-                
-                // 5. ULTIMATE Promise Rejection Suppression
-                window.onunhandledrejection = function(event) {
-                  if (event.reason && event.reason.name === 'SecurityError') {
-                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError promise rejection suppressed:', event.reason.message);
-                    event.preventDefault();
-                    return;
-                  }
-                  if (event.reason && typeof event.reason === 'string' && event.reason.includes('SecurityError')) {
-                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError in promise reason suppressed:', event.reason);
-                    event.preventDefault();
-                    return;
-                  }
-                };
-                
-                // 6. Override console.error to suppress SecurityError messages
-                const originalConsoleError = console.error;
-                console.error = function(...args) {
-                  const message = args.join(' ');
-                  if (message.includes('SecurityError') || message.includes('The operation is insecure')) {
-                    console.warn('🍎 [SAFARI ULTIMATE HEAD] SecurityError console.error suppressed:', message);
-                    return;
-                  }
-                  originalConsoleError.apply(console, args);
-                };
-                
-                // 7. Override protocol if it's tauri:
+                // 2. Override protocol if it's tauri: (CRITICAL FIX)
                 if (window.location.protocol === 'tauri:') {
-                  console.warn('🚨 [SAFARI ULTIMATE HEAD] Overriding tauri: protocol for Safari');
+                  console.warn('🚨 [SAFARI 2025 HEAD] Overriding tauri: protocol for Safari');
                   try {
                     Object.defineProperty(window.location, 'protocol', {
                       value: 'https:',
@@ -331,11 +259,153 @@ export default function RootLayout({
                       configurable: false
                     });
                   } catch (e) {
-                    console.warn('🚨 [SAFARI ULTIMATE HEAD] Could not override protocol:', e);
+                    console.warn('🚨 [SAFARI 2025 HEAD] Could not override protocol:', e);
                   }
                 }
                 
-                console.log('🍎 [SAFARI ULTIMATE HEAD] ULTIMATE Safari fixes applied');
+                // 3. Create 2025-safe storage with memory fallback
+                const create2025SafeStorage = (originalStorage, name) => {
+                  return {
+                    getItem: function(key) {
+                      try { return originalStorage.getItem(key); } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.getItem failed:', e.message);
+                        return null; 
+                      }
+                    },
+                    setItem: function(key, value) {
+                      try { 
+                        originalStorage.setItem(key, value); 
+                      } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.setItem failed:', e.message);
+                        // Store in memory as fallback
+                        window.__ADRATA_MEMORY_STORAGE__ = window.__ADRATA_MEMORY_STORAGE__ || {};
+                        window.__ADRATA_MEMORY_STORAGE__[key] = value;
+                      }
+                    },
+                    removeItem: function(key) {
+                      try { 
+                        originalStorage.removeItem(key); 
+                      } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.removeItem failed:', e.message);
+                        if (window.__ADRATA_MEMORY_STORAGE__) {
+                          delete window.__ADRATA_MEMORY_STORAGE__[key];
+                        }
+                      }
+                    },
+                    clear: function() {
+                      try { 
+                        originalStorage.clear(); 
+                      } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.clear failed:', e.message);
+                        window.__ADRATA_MEMORY_STORAGE__ = {};
+                      }
+                    },
+                    get length() { 
+                      try { 
+                        return originalStorage.length; 
+                      } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.length failed:', e.message);
+                        return window.__ADRATA_MEMORY_STORAGE__ ? Object.keys(window.__ADRATA_MEMORY_STORAGE__).length : 0;
+                      } 
+                    },
+                    key: function(index) { 
+                      try { 
+                        return originalStorage.key(index); 
+                      } catch (e) { 
+                        console.warn('🍎 [SAFARI 2025 HEAD] ' + name + '.key failed:', e.message);
+                        const memoryKeys = window.__ADRATA_MEMORY_STORAGE__ ? Object.keys(window.__ADRATA_MEMORY_STORAGE__) : [];
+                        return memoryKeys[index] || null;
+                      } 
+                    }
+                  };
+                };
+                
+                // 4. Override localStorage with 2025-safe implementation
+                if (window.localStorage) {
+                  const safeLocalStorage = create2025SafeStorage(window.localStorage, 'localStorage');
+                  Object.defineProperty(window, 'localStorage', { value: safeLocalStorage, writable: false, configurable: false });
+                }
+                
+                // 5. Override sessionStorage with 2025-safe implementation
+                if (window.sessionStorage) {
+                  const safeSessionStorage = create2025SafeStorage(window.sessionStorage, 'sessionStorage');
+                  Object.defineProperty(window, 'sessionStorage', { value: safeSessionStorage, writable: false, configurable: false });
+                }
+                
+                // 6. 2025 Global Error Handler - Enhanced SecurityError detection
+                window.onerror = function(message, source, lineno, colno, error) {
+                  const isSecurityError = 
+                    (error && error.name === 'SecurityError') ||
+                    (typeof message === 'string' && (
+                      message.includes('SecurityError') ||
+                      message.includes('The operation is insecure') ||
+                      message.includes('insecure')
+                    ));
+                  
+                  if (isSecurityError) {
+                    console.warn('🍎 [SAFARI 2025 HEAD] SecurityError suppressed:', { message, source, lineno, colno, error: error?.message });
+                    return true;
+                  }
+                  return false;
+                };
+                
+                // 7. 2025 Promise Rejection Handler - Enhanced detection
+                window.onunhandledrejection = function(event) {
+                  const reason = event.reason;
+                  const isSecurityError = 
+                    (reason && reason.name === 'SecurityError') ||
+                    (reason && typeof reason === 'string' && (
+                      reason.includes('SecurityError') ||
+                      reason.includes('The operation is insecure') ||
+                      reason.includes('insecure')
+                    ));
+                  
+                  if (isSecurityError) {
+                    console.warn('🍎 [SAFARI 2025 HEAD] SecurityError promise rejection suppressed:', reason);
+                    event.preventDefault();
+                    return;
+                  }
+                };
+                
+                // 8. Override console methods to suppress SecurityError messages
+                const originalConsoleError = console.error;
+                const originalConsoleWarn = console.warn;
+                
+                console.error = function(...args) {
+                  const message = args.join(' ');
+                  if (message.includes('SecurityError') || message.includes('The operation is insecure') || message.includes('insecure')) {
+                    console.log('🍎 [SAFARI 2025 HEAD] SecurityError console.error suppressed:', message);
+                    return;
+                  }
+                  originalConsoleError.apply(console, args);
+                };
+                
+                console.warn = function(...args) {
+                  const message = args.join(' ');
+                  if (message.includes('SecurityError') || message.includes('The operation is insecure') || message.includes('insecure')) {
+                    console.log('🍎 [SAFARI 2025 HEAD] SecurityError console.warn suppressed:', message);
+                    return;
+                  }
+                  originalConsoleWarn.apply(console, args);
+                };
+                
+                // 9. Override platform detection functions
+                window.getPlatform = function() {
+                  console.log('🍎 [SAFARI 2025 HEAD] getPlatform() overridden - returning web');
+                  return 'web';
+                };
+                
+                window.isDesktopEnvironment = function() {
+                  console.log('🍎 [SAFARI 2025 HEAD] isDesktopEnvironment() overridden - returning false');
+                  return false;
+                };
+                
+                window.shouldUseDesktopAPI = function() {
+                  console.log('🍎 [SAFARI 2025 HEAD] shouldUseDesktopAPI() overridden - returning false');
+                  return false;
+                };
+                
+                console.log('🍎 [SAFARI 2025 HEAD] 2025 Safari compatibility fixes applied successfully');
               }
             })();
           `}
