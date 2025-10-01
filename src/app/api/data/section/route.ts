@@ -202,7 +202,7 @@ export async function GET(request: NextRequest) {
             } else if (influenceLevel === 'High' && seniority === 'Executive') {
               buyerGroupRole = 'Champion';
             } else if (influenceLevel === 'High') {
-              buyerGroupRole = 'Influencer';
+              buyerGroupRole = 'Champion'; // High influence = Champion, not Influencer
             } else if (influenceLevel === 'Medium') {
               buyerGroupRole = 'Stakeholder';
             } else {
