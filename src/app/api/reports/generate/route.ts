@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    const { recordId, recordType, reportType, workspaceId } = await request.json();
+    const { recordId, recordType, reportType, workspaceId, isPublic } = await request.json();
 
     if (!recordId || !recordType || !reportType || !workspaceId) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });

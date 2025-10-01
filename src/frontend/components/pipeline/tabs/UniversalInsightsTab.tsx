@@ -18,12 +18,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   
   // Handle report click with URL navigation
   const handleReportClick = (reportId: string) => {
-    // Use the current URL structure - extract workspace from current path
-    const currentPath = window.location.pathname;
-    const pathParts = currentPath.split('/');
-    const workspaceId = pathParts[1] || 'top'; // Get workspace from current URL
+    // Create workspace-specific public report URL format: /top/reports/reportId-personId
     const recordId = record?.id;
-    router.push(`/${workspaceId}/people/${recordId}/reports/${reportId}`);
+    const workspaceId = window.location.pathname.split('/')[1] || 'top'; // Extract workspace from URL
+    const publicReportId = `${reportId}-${recordId}`;
+    router.push(`/${workspaceId}/reports/${publicReportId}`);
   };
 
   if (!record) {
@@ -574,117 +573,64 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reportsLoading ? (
-            <div className="col-span-full flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <div className="text-gray-500">Generating intelligent reports...</div>
+            {reportsLoading ? (
+              <div className="col-span-full flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
+                  <div className="text-gray-500">Generating intelligent reports...</div>
+                </div>
               </div>
-            </div>
-          ) : reports.length > 0 ? (
-            reports.map((report, index) => {
-              // Define report categories and their styling
-              const getReportStyle = (reportId: string) => {
-                if (reportId.includes('competitive') || reportId.includes('market-position')) {
-                  return {
-                    icon: '📊',
-                    gradient: 'from-blue-50 to-blue-100',
-                    border: 'border-blue-200',
-                    iconBg: 'bg-blue-100',
-                    iconColor: 'text-blue-600'
-                  };
-                } else if (reportId.includes('decision') || reportId.includes('framework')) {
-                  return {
-                    icon: '🧠',
-                    gradient: 'from-purple-50 to-purple-100',
-                    border: 'border-purple-200',
-                    iconBg: 'bg-purple-100',
-                    iconColor: 'text-purple-600'
-                  };
-                } else if (reportId.includes('engagement') || reportId.includes('stakeholder')) {
-                  return {
-                    icon: '🤝',
-                    gradient: 'from-green-50 to-green-100',
-                    border: 'border-green-200',
-                    iconBg: 'bg-green-100',
-                    iconColor: 'text-green-600'
-                  };
-                } else if (reportId.includes('trends') || reportId.includes('technology')) {
-                  return {
-                    icon: '📈',
-                    gradient: 'from-orange-50 to-orange-100',
-                    border: 'border-orange-200',
-                    iconBg: 'bg-orange-100',
-                    iconColor: 'text-orange-600'
-                  };
-                } else if (reportId.includes('buyer') || reportId.includes('process')) {
-                  return {
-                    icon: '🎯',
-                    gradient: 'from-indigo-50 to-indigo-100',
-                    border: 'border-indigo-200',
-                    iconBg: 'bg-indigo-100',
-                    iconColor: 'text-indigo-600'
-                  };
-                } else {
-                  return {
-                    icon: '📋',
-                    gradient: 'from-gray-50 to-gray-100',
-                    border: 'border-gray-200',
-                    iconBg: 'bg-gray-100',
-                    iconColor: 'text-gray-600'
-                  };
-                }
-              };
-
-              const style = getReportStyle(report.id);
-
-              return (
-                <div
-                  key={report.id}
-                  className={`bg-gradient-to-br ${style.gradient} p-6 rounded-xl border ${style.border} cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group`}
-                  onClick={() => handleReportClick(report.id)}
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className={`${style.iconBg} p-3 rounded-lg ${style.iconColor} text-xl group-hover:scale-110 transition-transform duration-200`}>
-                      {style.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
-                        {report.title}
-                      </h4>
-                      <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                        {report.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <span className="text-xs text-gray-500">AI Generated</span>
-                        </div>
-                        <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
+            ) : reports.length > 0 ? (
+              reports.map((report, index) => {
+                return (
+                  <div
+                    key={report.id}
+                    className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-200 group"
+                    onClick={() => handleReportClick(report.id)}
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                          {report.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                          {report.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            <span className="text-xs text-gray-500">AI Generated</span>
+                          </div>
+                          <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
                     </div>
+                    
+                    {report.isGenerating && (
+                      <div className="mt-4 flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                        <span className="text-xs text-gray-600 font-medium">Generating...</span>
+                      </div>
+                    )}
                   </div>
-                  
-                  {report.isGenerating && (
-                    <div className="mt-4 flex items-center space-x-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                      <span className="text-xs text-blue-600 font-medium">Generating...</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <div className="text-gray-400 text-4xl mb-4">📊</div>
-              <div className="text-gray-500 italic">No deep value reports available</div>
-              <div className="text-sm text-gray-400 mt-2">Reports will appear here once generated</div>
-            </div>
-          )}
+                );
+              })
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <div className="text-gray-400 text-4xl mb-4">📊</div>
+                <div className="text-gray-500 italic">No deep value reports available</div>
+                <div className="text-sm text-gray-400 mt-2">Reports will appear here once generated</div>
+              </div>
+            )}
         </div>
       </div>
     </div>

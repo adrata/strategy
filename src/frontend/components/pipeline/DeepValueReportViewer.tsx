@@ -10,6 +10,7 @@ interface DeepValueReportViewerProps {
   error: string | null;
   onBack: () => void;
   record: any;
+  isPublic?: boolean;
 }
 
 export function DeepValueReportViewer({ 
@@ -18,7 +19,8 @@ export function DeepValueReportViewer({
   isLoading, 
   error, 
   onBack, 
-  record 
+  record,
+  isPublic = false
 }: DeepValueReportViewerProps) {
   const router = useRouter();
 
@@ -33,7 +35,7 @@ export function DeepValueReportViewer({
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to {record?.fullName || record?.name}
+            {isPublic ? 'Back' : `Back to ${record?.fullName || record?.name}`}
           </button>
         </div>
 
@@ -58,7 +60,7 @@ export function DeepValueReportViewer({
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to {record?.fullName || record?.name}
+            {isPublic ? 'Back' : `Back to ${record?.fullName || record?.name}`}
           </button>
         </div>
 
@@ -91,9 +93,28 @@ export function DeepValueReportViewer({
           Back to {record?.fullName || record?.name}
         </button>
         
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-sm text-gray-600">AI Generated</span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm text-gray-600">AI Generated</span>
+          </div>
+          
+          {isPublic && (
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  // You could add a toast notification here
+                }}
+                className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Share Report</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
