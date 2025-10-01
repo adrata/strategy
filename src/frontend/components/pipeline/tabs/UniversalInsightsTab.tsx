@@ -18,7 +18,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   
   // Handle report click with URL navigation
   const handleReportClick = (reportId: string) => {
-    const workspaceId = record?.workspaceId || 'top';
+    // Use the current URL structure - extract workspace from current path
+    const currentPath = window.location.pathname;
+    const pathParts = currentPath.split('/');
+    const workspaceId = pathParts[1] || 'top'; // Get workspace from current URL
     const recordId = record?.id;
     router.push(`/${workspaceId}/people/${recordId}/reports/${reportId}`);
   };

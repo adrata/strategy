@@ -100,7 +100,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     // Contact history
     lastContact: record.lastActionDate || record.updatedAt || '-',
     lastAction: record.lastAction || '-',
-    nextAction: record.nextAction || '-',
+    nextAction: record.nextAction || 'Schedule follow-up call',
     nextActionDate: record.nextActionDate || '-',
     
     // Metadata
