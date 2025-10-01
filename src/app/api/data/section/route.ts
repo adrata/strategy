@@ -187,10 +187,28 @@ export async function GET(request: NextRequest) {
             }
           }
 
-          // 🎯 BUYER GROUP ROLE: Extract from intelligence data (use influence level as role)
-          const buyerGroupRole = person.customFields?.buyerGroupRole || 
-                                person.customFields?.influenceLevel || 
-                                'Stakeholder';
+          // 🎯 BUYER GROUP ROLE: Extract from intelligence data and convert to proper buyer group roles
+          let buyerGroupRole = person.customFields?.buyerGroupRole;
+          
+          // If no specific buyer group role, derive from influence level and other factors
+          if (!buyerGroupRole) {
+            const influenceLevel = person.customFields?.influenceLevel;
+            const decisionPower = person.customFields?.decisionPower;
+            const seniority = person.customFields?.seniority;
+            
+            // Determine buyer group role based on intelligence data
+            if (influenceLevel === 'High' && decisionPower > 80) {
+              buyerGroupRole = 'Decision Maker';
+            } else if (influenceLevel === 'High' && seniority === 'Executive') {
+              buyerGroupRole = 'Champion';
+            } else if (influenceLevel === 'High') {
+              buyerGroupRole = 'Influencer';
+            } else if (influenceLevel === 'Medium') {
+              buyerGroupRole = 'Stakeholder';
+            } else {
+              buyerGroupRole = 'Stakeholder';
+            }
+          }
 
           return {
             id: person.id,
