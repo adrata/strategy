@@ -221,17 +221,6 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
   return (
     <div className="space-y-8">
-<<<<<<< Updated upstream
-        {/* Summary */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">AI Generated</span>
-            </div>
-          </div>
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
       {/* Summary */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
