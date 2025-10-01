@@ -164,12 +164,31 @@ export async function GET(request: NextRequest) {
             return str.substring(0, maxLength) + '...';
           };
 
+          // 🎯 DETERMINE STAGE: Check if person is a lead, prospect, or opportunity
+          let stage = 'Prospect'; // Default to Prospect
+          if (person.customFields?.buyerGroupRole) {
+            const role = person.customFields.buyerGroupRole.toLowerCase();
+            if (role.includes('decision') || role.includes('champion')) {
+              stage = 'Opportunity';
+            } else if (role.includes('influencer') || role.includes('stakeholder')) {
+              stage = 'Lead';
+            }
+          }
+
+          // 🎯 BUYER GROUP ROLE: Extract from intelligence data
+          const buyerGroupRole = person.customFields?.primaryRole || 
+                                person.customFields?.buyerGroupRole || 
+                                person.jobTitle || 
+                                'Stakeholder';
+
           return {
             id: person.id,
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
             company: safeString(person.company?.name || 'Unknown Company', 200),
             title: safeString(person.jobTitle || 'Unknown Title', 300),
+            role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
+            stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
             email: safeString(person.email || 'Unknown Email', 300),
             phone: safeString(person.phone || 'Unknown Phone', 50),
             linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
