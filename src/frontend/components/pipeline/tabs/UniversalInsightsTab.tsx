@@ -237,6 +237,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             Current engagement level is <span className="font-medium text-gray-800">{engagement}</span>, indicating <span className="font-medium text-gray-800">{engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'}</span> receptivity to outreach.
           </div>
         </div>
+      </div>
 
       {/* Intelligence Profile */}
       <div className="space-y-4">
