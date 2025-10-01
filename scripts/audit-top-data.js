@@ -34,8 +34,8 @@ const UTC_REGIONS_FILE = path.join(DATA_DIR, 'UTC All Regions 2023.xlsx');
 const CAPSULE_CONTACTS_CSV = path.join(__dirname, '..', 'data', 'Physical Mailer Campaign 2025-08-29.xlsx - contacts.csv');
 const UTC_REGIONS_CSV = path.join(__dirname, '..', 'data', 'UTC All Regions 2023.xlsx - Sheet1.csv');
 
-// Workspace ID for TOP (Dan's workspace)
-const TOP_WORKSPACE_ID = '01K1VBYXHD0J895XAN0HGFBKJP';
+// Workspace ID for TOP Engineering Plus
+const TOP_WORKSPACE_ID = '01K5D01YCQJ9TJ7CT4DZDE79T1';
 
 // Audit results storage
 const auditResults = {

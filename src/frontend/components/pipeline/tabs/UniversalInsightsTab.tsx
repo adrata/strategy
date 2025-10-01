@@ -216,9 +216,24 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                   {influenceLevel}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Engagement Strategy:</span>
-                <span className="text-sm font-medium text-gray-900 text-right max-w-32">{engagementStrategy}</span>
+              <div className="flex flex-col items-start">
+                <span className="text-sm text-gray-600 mb-2">Engagement Strategy:</span>
+                <div className="text-sm text-gray-900">
+                  {engagementStrategy && engagementStrategy.length > 100 ? (
+                    <div className="space-y-2">
+                      {engagementStrategy.split('. ').map((strategy, index) => (
+                        strategy.trim() && (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-sm text-gray-700 leading-relaxed">{strategy.trim()}{strategy.trim().endsWith('.') ? '' : '.'}</span>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-sm font-medium text-gray-900">{engagementStrategy}</span>
+                  )}
+                </div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Buyer Group Member:</span>
@@ -411,10 +426,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 </svg>
               </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {insights.painPoints.map((point: string, index: number) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm text-gray-700 leading-relaxed">{point}</span>
                 </div>
               ))}
@@ -431,11 +446,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 </svg>
               </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {interests.length > 0 ? (
                 interests.map((interest: string, index: number) => (
-                  <div key={index} className="flex items-start gap-4">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-sm text-gray-700 leading-relaxed">{interest}</span>
                   </div>
                 ))
@@ -459,10 +474,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </svg>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {insights.goals.map((goal: string, index: number) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="w-3 h-3 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <span className="text-sm text-gray-700 leading-relaxed">{goal}</span>
               </div>
             ))}
@@ -479,7 +494,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             <div className="space-y-3">
               {insights.challenges.map((challenge: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm text-gray-700 leading-relaxed">{challenge}</span>
                 </div>
               ))}
@@ -491,7 +506,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             <div className="space-y-3">
               {insights.opportunities.map((opportunity: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm text-gray-700 leading-relaxed">{opportunity}</span>
                 </div>
               ))}

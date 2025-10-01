@@ -410,7 +410,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               <div className="space-y-3">
                 {wants.map((want, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-sm text-gray-700 leading-relaxed">{want}</span>
                   </div>
                 ))}
@@ -423,7 +423,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               <div className="space-y-3">
                 {needs.map((need, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-sm text-gray-700 leading-relaxed">{need}</span>
                   </div>
                 ))}
