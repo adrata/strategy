@@ -112,12 +112,16 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // Load speedrun data (people with company relationships) - FIXED: Use company ranking
+        // Load speedrun data (people with company relationships who are buyer group members) - FIXED: Use company ranking
         const people = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null,
             companyId: { not: null },
+            customFields: {
+              path: ['isBuyerGroupMember'],
+              equals: true
+            },
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
@@ -143,10 +147,14 @@ export async function GET(request: NextRequest) {
         });
         
         // Transform to speedrun format with proper action structure
-        // 🚫 FILTER: Exclude user's own company from speedrun
-        const filteredPeople = people.filter(person => 
-          !shouldExcludeCompany(person.company?.name)
-        );
+        // 🚫 FILTER: Exclude user's own company from speedrun and ensure buyer group membership
+        const filteredPeople = people.filter(person => {
+          // Check if person is in buyer group (fallback filter)
+          const isBuyerGroupMember = person.customFields?.isBuyerGroupMember === true;
+          const shouldExclude = shouldExcludeCompany(person.company?.name);
+          
+          return isBuyerGroupMember && !shouldExclude;
+        });
         
         sectionData = filteredPeople.slice(0, limit).map((person, index) => {
           // Safe string truncation utility
