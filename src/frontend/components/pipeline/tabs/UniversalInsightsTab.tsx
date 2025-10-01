@@ -219,15 +219,13 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               <div className="flex flex-col items-start">
                 <span className="text-sm text-gray-600 mb-2">Engagement Strategy:</span>
                 <div className="text-sm text-gray-900">
-                  {engagementStrategy && engagementStrategy.length > 100 ? (
+                  {engagementStrategy && engagementStrategy.length > 80 ? (
                     <div className="space-y-2">
-                      {engagementStrategy.split('. ').map((strategy, index) => (
-                        strategy.trim() && (
-                          <div key={index} className="flex items-start gap-2">
-                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                            <span className="text-sm text-gray-700 leading-relaxed">{strategy.trim()}{strategy.trim().endsWith('.') ? '' : '.'}</span>
-                          </div>
-                        )
+                      {engagementStrategy.split(/[.!?]+/).filter(sentence => sentence.trim().length > 10).map((strategy, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-700 leading-relaxed">{strategy.trim()}{strategy.trim().endsWith('.') ? '' : '.'}</span>
+                        </div>
                       ))}
                     </div>
                   ) : (
