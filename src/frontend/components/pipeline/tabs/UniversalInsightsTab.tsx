@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
-import { useDeepValueReports } from '../hooks/useDeepValueReports';
+// import { useDeepValueReports } from '../hooks/useDeepValueReports'; // Temporarily disabled
 
 interface UniversalInsightsTabProps {
   recordType: string;
@@ -13,17 +13,17 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
   
-  // Deep Value Reports functionality
-  const { reports, isLoading: reportsLoading } = useDeepValueReports(record);
+  // Deep Value Reports functionality - Temporarily disabled
+  // const { reports, isLoading: reportsLoading } = useDeepValueReports(record);
   
-  // Handle report click with URL navigation
-  const handleReportClick = (reportId: string) => {
-    // Create workspace-specific public report URL format: /top/reports/reportId-personId
-    const recordId = record?.id;
-    const workspaceId = window.location.pathname.split('/')[1] || 'top'; // Extract workspace from URL
-    const publicReportId = `${reportId}-${recordId}`;
-    router.push(`/${workspaceId}/reports/${publicReportId}`);
-  };
+  // Handle report click with URL navigation - Temporarily disabled
+  // const handleReportClick = (reportId: string) => {
+  //   // Create workspace-specific public report URL format: /top/reports/reportId-personId
+  //   const recordId = record?.id;
+  //   const workspaceId = window.location.pathname.split('/')[1] || 'top'; // Extract workspace from URL
+  //   const publicReportId = `${reportId}-${recordId}`;
+  //   router.push(`/${workspaceId}/reports/${publicReportId}`);
+  // };
 
   if (!record) {
     return (
@@ -136,13 +136,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const title = record?.jobTitle || record?.title || 'Unknown Title';
   const industry = record?.industry || record?.company?.industry || 'Unknown Industry';
   
-  // Define missing variables for intelligence insights - use CoreSignal data
-  const buyerRole = record?.customFields?.buyerGroupRole || 'Stakeholder';
-  const influence = Math.floor(Math.random() * 40) + 60; // 60-100% influence
-  const decisionPower = Math.floor(Math.random() * 30) + 70; // 70-100% decision power
-  const communicationStyle = 'Professional';
-  const decisionMakingStyle = 'Data-driven';
-  const engagement = 'Neutral';
+  // Use AI-generated data (already extracted above)
+  const buyerRole = primaryRole || 'Stakeholder';
+  const influence = influenceScore || 70;
+  const decisionPowerValue = decisionPower || 70;
   
   // Use AI-generated insights (prioritize over generated fallbacks)
   const insights = {
@@ -230,9 +227,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           <div className="text-sm text-gray-900 leading-relaxed">
             {intelligenceSummary || (
               <>
-                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{primaryRole}</span> with <span className="font-semibold text-green-600">{influenceScore >= 80 ? 'high' : influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPower >= 80 ? 'strong' : decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{primaryRole}</span> with <span className="font-semibold text-green-600">{influenceScore >= 80 ? 'high' : influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPowerValue >= 80 ? 'strong' : decisionPowerValue >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
                 They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMaking.toLowerCase()}</span> analysis. 
-                Current engagement level is <span className="font-medium text-gray-800">{engagementLevel}</span>, indicating <span className="font-medium text-gray-800">{engagementLevel.includes('High') ? 'positive' : engagementLevel.includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
+                Current engagement level is <span className="font-medium text-gray-800">{engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(engagementLevel || 'Medium').includes('High') ? 'positive' : (engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
               </>
             )}
           </div>
@@ -548,7 +545,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         </div>
       </div>
 
-      {/* Deep Value Reports */}
+      {/* Deep Value Reports - Temporarily Hidden */}
+      {/* 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -590,11 +588,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                         <p className="text-sm text-gray-600 leading-relaxed mb-3">
                           {report.description}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span className="text-xs text-gray-500">AI Generated</span>
-                          </div>
+                        <div className="flex items-center justify-end">
                           <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -622,6 +616,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             )}
         </div>
       </div>
+      */}
     </div>
   );
 }

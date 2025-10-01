@@ -7,18 +7,17 @@ async function generateIntelligenceForRecords() {
     console.log('🚀 Starting AI Intelligence Generation...');
     
     // Get all people records that need intelligence generation
-    const people = await prisma.people.findMany({
-      where: {
-        OR: [
-          { customFields: { path: ['intelligenceSummary'], equals: null } },
-          { customFields: { path: ['intelligenceSummary'], equals: undefined } },
-          { customFields: { path: ['intelligenceSummary'], equals: '' } }
-        ]
-      },
+    const allPeople = await prisma.people.findMany({
       include: {
         company: true
       },
       take: 10 // Start with 10 records for testing
+    });
+
+    // Filter for records that need intelligence generation
+    const people = allPeople.filter(person => {
+      const intelligenceSummary = person.customFields?.intelligenceSummary;
+      return !intelligenceSummary || intelligenceSummary === '' || intelligenceSummary === null;
     });
 
     console.log(`📊 Found ${people.length} people records to process`);

@@ -31,7 +31,7 @@ export function useDeepValueReports(record: any) {
         id: 'company-competitive-analysis',
         title: `${company} Competitive Analysis`,
         type: 'company',
-        description: `AI-generated competitive intelligence for ${company}`,
+        description: `Comprehensive competitive landscape and market positioning for ${company}`,
         category: 'Company Intelligence'
       },
       {
@@ -47,7 +47,7 @@ export function useDeepValueReports(record: any) {
         id: 'role-decision-framework',
         title: `${title} Decision Framework`,
         type: 'role',
-        description: `AI-analyzed decision-making patterns for ${title} role`,
+        description: `Decision-making patterns and engagement strategies for ${title} role`,
         category: 'Role Intelligence'
       },
       {
@@ -63,7 +63,7 @@ export function useDeepValueReports(record: any) {
         id: 'industry-market-trends',
         title: `${industry} Market Trends`,
         type: 'industry',
-        description: 'AI-generated industry insights and trends',
+        description: 'Industry insights, trends, and market dynamics',
         category: 'Industry Analysis'
       },
       {
@@ -79,14 +79,14 @@ export function useDeepValueReports(record: any) {
         id: 'buyer-group-map',
         title: `${company} Buyer Group Map`,
         type: 'buyer-group',
-        description: 'AI-mapped decision makers and influencers',
+        description: 'Decision makers, influencers, and stakeholder mapping',
         category: 'Buyer Group Intelligence'
       },
       {
         id: 'decision-process-analysis',
         title: 'Decision Process Analysis',
         type: 'buyer-group',
-        description: 'AI-analyzed procurement and decision workflow',
+        description: 'Procurement workflow and decision-making process analysis',
         category: 'Buyer Group Intelligence'
       }
     ];
