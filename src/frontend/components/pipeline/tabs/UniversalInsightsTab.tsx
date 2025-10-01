@@ -51,26 +51,34 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     });
   }
 
-  // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
+  // Extract CoreSignal data from the correct location
   const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
-  const coresignalProfile = record?.customFields?.coresignalProfile || {};
-  const enrichedData = record?.customFields?.enrichedData || {};
   
-  // Use CoreSignal data ONLY (no hardcoded fallbacks)
+  // Use AI-generated intelligence data (prioritize over fallbacks)
   const insightsData = {
-    // Intelligence fields from customFields
+    // AI-generated intelligence fields
     influenceLevel: record.customFields?.influenceLevel || '-',
     engagementStrategy: record.customFields?.engagementStrategy || '-',
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
-    buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
-    totalFields: record.customFields?.totalFields || 0,
-    lastEnrichedAt: record.customFields?.lastEnrichedAt || '-',
-    source: record.customFields?.source || '-',
     seniority: record.customFields?.seniority || '-',
+    influenceScore: record.customFields?.influenceScore || 0,
+    decisionPower: record.customFields?.decisionPower || 0,
+    primaryRole: record.customFields?.primaryRole || '-',
+    engagementLevel: record.customFields?.engagementLevel || '-',
+    communicationStyle: record.customFields?.communicationStyle || '-',
+    decisionMaking: record.customFields?.decisionMaking || '-',
+    preferredContact: record.customFields?.preferredContact || '-',
+    responseTime: record.customFields?.responseTime || '-',
+    painPoints: record.customFields?.painPoints || [],
+    interests: record.customFields?.interests || [],
+    goals: record.customFields?.goals || [],
+    challenges: record.customFields?.challenges || [],
+    opportunities: record.customFields?.opportunities || [],
+    intelligenceSummary: record.customFields?.intelligenceSummary || '',
+    
+    // CoreSignal profile data
     department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-',
     companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-',
-    
-    // CoreSignal profile data - use correct field names
     employeeId: coresignalData.id || coresignalData.employeeId || '-',
     followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
     connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
@@ -87,11 +95,21 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     influenceLevel,
     engagementStrategy,
     isBuyerGroupMember,
-    buyerGroupOptimized,
-    totalFields,
-    lastEnrichedAt,
-    source,
     seniority,
+    influenceScore,
+    decisionPower,
+    primaryRole,
+    engagementLevel,
+    communicationStyle,
+    decisionMaking,
+    preferredContact,
+    responseTime,
+    painPoints,
+    interests,
+    goals,
+    challenges,
+    opportunities,
+    intelligenceSummary,
     department,
     companyName,
     employeeId,
@@ -126,109 +144,62 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   const decisionMakingStyle = 'Data-driven';
   const engagement = 'Neutral';
   
-  // Use CoreSignal skills and interests
-  const coresignalSkills = coresignalData.inferred_skills || coresignalData.skills || [];
-  const interests = [
-    'Technology innovation',
-    'Process optimization',
-    'Data-driven decision making',
-    'Team collaboration'
-  ];
-  
-  // Add CoreSignal-specific interests based on skills
-  if (coresignalSkills.includes('safety')) {
-    interests.push('Safety compliance and risk management');
-  }
-  if (coresignalSkills.includes('training')) {
-    interests.push('Professional development and education');
-  }
-  if (coresignalSkills.includes('management')) {
-    interests.push('Leadership and team management');
-  }
-
-  // Generate insights based on real data
-  const generateIntelligenceInsights = () => {
-    const generatePainPoints = () => {
-      const basePoints = [
-        'Limited visibility into current processes',
-        'Manual workflows causing inefficiencies',
-        'Difficulty in data-driven decision making',
-        'Integration challenges with existing systems'
-      ];
-      
-      // Add role-specific pain points
-      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
-        basePoints.push('Compliance monitoring and reporting challenges');
-        basePoints.push('Incident tracking and investigation inefficiencies');
-        basePoints.push('Safety training coordination across departments');
-      }
-      
-      return basePoints;
-    };
-
-    const generateGoals = () => {
-      const baseGoals = [
-        'Improve operational efficiency',
-        'Enhance team productivity',
-        'Streamline business processes',
-        'Drive digital transformation'
-      ];
-      
-      // Add role-specific goals
-      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
-        baseGoals.push('Enhance safety compliance and risk management');
-        baseGoals.push('Improve incident response and prevention');
-        baseGoals.push('Streamline safety training and documentation');
-      }
-      
-      return baseGoals;
-    };
-
-    const generateChallenges = () => {
-      const baseChallenges = [
-        'Balancing innovation with stability',
-        'Managing change across teams',
-        'Ensuring data security and compliance',
-        'Optimizing resource allocation'
-      ];
-      
-      // Add role-specific challenges
-      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
-        baseChallenges.push('Maintaining safety standards during rapid growth');
-        baseChallenges.push('Coordinating safety protocols across multiple sites');
-        baseChallenges.push('Keeping up with evolving safety regulations');
-      }
-      
-      return baseChallenges;
-    };
-
-    const generateOpportunities = () => {
-      const baseOpportunities = [
-        'Automation potential in current workflows',
-        'Data analytics for better insights',
-        'Process optimization opportunities',
-        'Technology integration possibilities'
-      ];
-      
-      // Add role-specific opportunities
-      if (title.toLowerCase().includes('safety') || title.toLowerCase().includes('advisor')) {
-        baseOpportunities.push('Digital safety management systems');
-        baseOpportunities.push('Predictive analytics for risk assessment');
-        baseOpportunities.push('Mobile safety reporting and tracking');
-      }
-      
-      return baseOpportunities;
-    };
-
-    return {
-      painPoints: generatePainPoints(),
-      goals: generateGoals(),
-      challenges: generateChallenges(),
-      opportunities: generateOpportunities()
-    };
+  // Use AI-generated insights (prioritize over generated fallbacks)
+  const insights = {
+    painPoints: painPoints.length > 0 ? painPoints : [
+      'Limited visibility into current processes',
+      'Manual workflows causing inefficiencies',
+      'Difficulty in data-driven decision making',
+      'Integration challenges with existing systems'
+    ],
+    goals: goals.length > 0 ? goals : [
+      'Improve operational efficiency',
+      'Enhance team productivity',
+      'Streamline business processes',
+      'Drive digital transformation'
+    ],
+    challenges: challenges.length > 0 ? challenges : [
+      'Balancing innovation with stability',
+      'Managing change across teams',
+      'Ensuring data security and compliance',
+      'Optimizing resource allocation'
+    ],
+    opportunities: opportunities.length > 0 ? opportunities : [
+      'Automation potential in current workflows',
+      'Data analytics for better insights',
+      'Process optimization opportunities',
+      'Technology integration possibilities'
+    ]
   };
 
-  const insights = generateIntelligenceInsights();
+  // Check if AI intelligence has been generated
+  const hasAIIntelligence = intelligenceSummary && influenceLevel !== '-' && engagementStrategy !== '-';
+  
+  // Function to generate AI intelligence
+  const generateAIIntelligence = async () => {
+    try {
+      const response = await fetch('/api/intelligence/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          recordId: record.id,
+          recordType: recordType,
+          workspaceId: record.workspaceId || 'top'
+        })
+      });
+
+      if (response.ok) {
+        // Reload the page to show updated intelligence
+        window.location.reload();
+      } else {
+        console.error('Failed to generate intelligence');
+      }
+    } catch (error) {
+      console.error('Error generating intelligence:', error);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -237,15 +208,33 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">AI Generated</span>
+            {hasAIIntelligence ? (
+              <>
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">AI Generated</span>
+              </>
+            ) : (
+              <button
+                onClick={generateAIIntelligence}
+                className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>Generate AI Intelligence</span>
+              </button>
+            )}
           </div>
         </div>
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
           <div className="text-sm text-gray-900 leading-relaxed">
-            <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> is a <span className="font-semibold text-blue-700">{buyerRole}</span> with <span className="font-semibold text-green-600">{influence >= 80 ? 'high' : influence >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPower >= 80 ? 'strong' : decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
-            They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMakingStyle.toLowerCase()}</span> analysis. 
-            Current engagement level is <span className="font-medium text-gray-800">{engagement}</span>, indicating <span className="font-medium text-gray-800">{engagement.includes('Interested') || engagement.includes('Warming') ? 'positive' : engagement.includes('Neutral') ? 'neutral' : 'limited'}</span> receptivity to outreach.
+            {intelligenceSummary || (
+              <>
+                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{primaryRole}</span> with <span className="font-semibold text-green-600">{influenceScore >= 80 ? 'high' : influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPower >= 80 ? 'strong' : decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+                They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMaking.toLowerCase()}</span> analysis. 
+                Current engagement level is <span className="font-medium text-gray-800">{engagementLevel}</span>, indicating <span className="font-medium text-gray-800">{engagementLevel.includes('High') ? 'positive' : engagementLevel.includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
+              </>
+            )}
           </div>
         </div>
       </div>
