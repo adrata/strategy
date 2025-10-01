@@ -157,7 +157,18 @@ export async function GET(request: NextRequest) {
           return isBuyerGroupMember && !shouldExclude;
         });
         
-        sectionData = filteredPeople.slice(0, limit).map((person, index) => {
+        // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
+        const seenNames = new Set();
+        const deduplicatedPeople = filteredPeople.filter(person => {
+          const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+          if (seenNames.has(fullName)) {
+            return false; // Skip duplicate
+          }
+          seenNames.add(fullName);
+          return true;
+        });
+        
+        sectionData = deduplicatedPeople.slice(0, limit).map((person, index) => {
           // Safe string truncation utility
           const safeString = (str: any, maxLength: number = 1000): string => {
             if (!str || typeof str !== 'string') return '';
@@ -274,7 +285,18 @@ export async function GET(request: NextRequest) {
           return !shouldExcludeCompany(companyName);
         });
         
-        sectionData = filteredLeadsData.map((person, index) => {
+        // 🎯 DEDUPLICATION: Remove duplicate leads by name (keep first occurrence)
+        const seenLeadNames = new Set();
+        const deduplicatedLeads = filteredLeadsData.filter(person => {
+          const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+          if (seenLeadNames.has(fullName)) {
+            return false; // Skip duplicate
+          }
+          seenLeadNames.add(fullName);
+          return true;
+        });
+        
+        sectionData = deduplicatedLeads.map((person, index) => {
           // Extract Coresignal data
           const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
           
@@ -363,7 +385,18 @@ export async function GET(request: NextRequest) {
           return !shouldExcludeCompany(companyName);
         });
         
-        sectionData = filteredProspectsData.map((person, index) => {
+        // 🎯 DEDUPLICATION: Remove duplicate prospects by name (keep first occurrence)
+        const seenProspectNames = new Set();
+        const deduplicatedProspects = filteredProspectsData.filter(person => {
+          const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+          if (seenProspectNames.has(fullName)) {
+            return false; // Skip duplicate
+          }
+          seenProspectNames.add(fullName);
+          return true;
+        });
+        
+        sectionData = deduplicatedProspects.map((person, index) => {
           // Extract Coresignal data
           const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
           
@@ -414,10 +447,21 @@ export async function GET(request: NextRequest) {
           }
         });
         
+        // 🎯 DEDUPLICATION: Remove duplicate opportunities by name (keep first occurrence)
+        const seenOpportunityNames = new Set();
+        const deduplicatedOpportunities = opportunitiesData.filter(opportunity => {
+          const name = opportunity.name || 'Unknown Opportunity';
+          if (seenOpportunityNames.has(name)) {
+            return false; // Skip duplicate
+          }
+          seenOpportunityNames.add(name);
+          return true;
+        });
+        
         // Apply consistent ranking logic
-        sectionData = opportunitiesData.map((opportunity, index) => ({
+        sectionData = deduplicatedOpportunities.map((opportunity, index) => ({
           id: opportunity.id,
-          rank: index + 1,
+          rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
           name: opportunity.name || 'Unknown Opportunity',
           amount: opportunity.amount || 0,
           currency: opportunity.currency || 'USD',
@@ -543,7 +587,18 @@ export async function GET(request: NextRequest) {
             !shouldExcludeCompany(person.company?.name)
           );
           
-          sectionData = filteredPeopleData.map((person, index) => {
+          // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
+          const seenPeopleNames = new Set();
+          const deduplicatedPeople = filteredPeopleData.filter(person => {
+            const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+            if (seenPeopleNames.has(fullName)) {
+              return false; // Skip duplicate
+            }
+            seenPeopleNames.add(fullName);
+            return true;
+          });
+          
+          sectionData = deduplicatedPeople.map((person, index) => {
             // Safe string truncation utility
             const safeString = (str: any, maxLength: number = 1000): string => {
               if (!str || typeof str !== 'string') return '';
