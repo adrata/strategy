@@ -43,15 +43,21 @@
           "wss://ws-us3.pusher.com",
           "https://stats.pusher.com",
           "https://adrata.vercel.app",
+          "https://adrata.com",
           "wss://chunder.twilio.com",
           "https://sdk.twilio.com",
-          "https://eventgw.twilio.com"
+          "https://eventgw.twilio.com",
+          "https://vercel.app"
         ],
-        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        "style-src": ["'self'", "'unsafe-inline'"],
-        "img-src": ["'self'", "data:", "blob:", "asset:", "https:"],
-        "media-src": ["'self'", "data:", "blob:", "https:"],
-        "font-src": ["'self'", "data:"]
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://adrata.com", "https://adrata.vercel.app"],
+        "style-src": ["'self'", "'unsafe-inline'", "https://adrata.com", "https://adrata.vercel.app"],
+        "img-src": ["'self'", "data:", "blob:", "asset:", "https:", "https://adrata.com", "https://adrata.vercel.app"],
+        "media-src": ["'self'", "data:", "blob:", "https:", "https://adrata.com", "https://adrata.vercel.app"],
+        "font-src": ["'self'", "data:", "https://adrata.com", "https://adrata.vercel.app"],
+        "frame-src": ["'self'", "https://adrata.com", "https://adrata.vercel.app"],
+        "object-src": ["'none'"],
+        "base-uri": ["'self'"],
+        "form-action": ["'self'", "https://adrata.com", "https://adrata.vercel.app"]
       }
     }
   },

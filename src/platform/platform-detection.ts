@@ -1,6 +1,8 @@
 // LIGHTNING-FAST MULTI-PLATFORM DETECTION - 2025 OPTIMIZED
 // Production-ready for: Vercel Web + Tauri Desktop + Capacitor Mobile
 
+import { detectSafari, initializeSafariCompatibility, handleSafariError } from './safari-compatibility';
+
 export type Platform = "web" | "desktop" | "mobile";
 export type DataMode = "api" | "static" | "hybrid";
 export type AuthMode =
@@ -67,6 +69,41 @@ export const getPlatform = (): Platform => {
     console.log("🔍 [PLATFORM] Protocol:", window.location.protocol);
     console.log("🔍 [PLATFORM] Hostname:", window.location.hostname);
     console.log("🔍 [PLATFORM] Pathname:", window.location.pathname);
+    console.log("🔍 [PLATFORM] User Agent:", navigator.userAgent);
+
+    // CRITICAL: Safari Detection - Must check this FIRST
+    const safariInfo = detectSafari();
+    
+    // CRITICAL: If Safari (mobile or desktop), force web platform
+    if (safariInfo.isSafari) {
+      cachedPlatform = "web";
+      console.log("🔍 [PLATFORM] Safari detected - forcing web platform");
+      console.log("🔍 [PLATFORM] Safari version:", safariInfo.version);
+      console.log("🔍 [PLATFORM] Safari mobile:", safariInfo.isSafariMobile);
+      
+      // Initialize Safari compatibility
+      try {
+        initializeSafariCompatibility();
+      } catch (error) {
+        handleSafariError(error as Error, 'platform-detection');
+      }
+      
+      return cachedPlatform;
+    }
+
+    // CRITICAL: Web browser detection - check for standard web protocols
+    const isWebProtocol = window.location.protocol === "http:" || 
+                          window.location.protocol === "https:";
+    const isWebDomain = window.location.hostname.includes("adrata.com") ||
+                       window.location.hostname.includes("vercel.app") ||
+                       window.location.hostname === "localhost" ||
+                       window.location.hostname === "127.0.0.1";
+
+    if (isWebProtocol && isWebDomain) {
+      cachedPlatform = "web";
+      console.log("🔍 [PLATFORM] Web protocol and domain detected - forcing web platform");
+      return cachedPlatform;
+    }
 
     // FAST: Build-time environment variable detection (highest priority)
     if (process['env']['NEXT_PUBLIC_IS_DESKTOP'] === "true") {
@@ -88,7 +125,7 @@ export const getPlatform = (): Platform => {
       }
     }
 
-    // FAST: Tauri detection (desktop runtime)
+    // FAST: Tauri detection (desktop runtime) - ONLY if not in web browser
     const windowObj = window as any;
     const hasTauriRuntime = !!(
       windowObj.__TAURI__ ||
@@ -104,30 +141,22 @@ export const getPlatform = (): Platform => {
       __TAURI_INTERNALS__: !!windowObj.__TAURI_INTERNALS__,
     });
 
-    if (hasTauriRuntime) {
+    // Only consider Tauri if we're NOT in a web browser context
+    if (hasTauriRuntime && !isWebProtocol) {
       cachedPlatform = "desktop";
       console.log("🔍 [PLATFORM] Detected as desktop (Tauri)");
       return cachedPlatform;
     }
 
-    // FAST: File protocol detection (static exports)
-    if (window['location']['protocol'] === "file:") {
+    // FAST: File protocol detection (static exports) - ONLY for actual file protocol
+    if (window['location']['protocol'] === "file:" && 
+        window.location.pathname.includes("index.html")) {
       cachedPlatform = "desktop";
       console.log("🔍 [PLATFORM] Detected as desktop (file protocol)");
       return cachedPlatform;
     }
 
-    // FAST: Static export indicators (only for actual static files, not Vercel deployments)
-    if (
-      window.location.pathname.includes("index.html") &&
-      window['location']['protocol'] === "file:"
-    ) {
-      cachedPlatform = "desktop";
-      console.log("🔍 [PLATFORM] Detected as desktop (static export)");
-      return cachedPlatform;
-    }
-
-    // Default to web
+    // Default to web for all web browser contexts
     cachedPlatform = "web";
     console.log("🔍 [PLATFORM] Defaulting to web platform");
     return cachedPlatform;

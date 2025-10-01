@@ -177,7 +177,33 @@ export function isDesktopEnvironment(): boolean {
     return false;
   }
 
-  // Check for Tauri-specific indicators
+  // CRITICAL: Safari detection - force web platform for Safari
+  const isSafariMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
+                        /Safari/.test(navigator.userAgent) && 
+                        !/Chrome|CriOS|FxiOS/.test(navigator.userAgent);
+  
+  const isSafariDesktop = /Macintosh/.test(navigator.userAgent) && 
+                         /Safari/.test(navigator.userAgent) && 
+                         !/Chrome/.test(navigator.userAgent);
+
+  // CRITICAL: If Safari, force web platform
+  if (isSafariMobile || isSafariDesktop) {
+    return false;
+  }
+
+  // CRITICAL: Web browser detection - check for standard web protocols
+  const isWebProtocol = window.location.protocol === "http:" || 
+                        window.location.protocol === "https:";
+  const isWebDomain = window.location.hostname.includes("adrata.com") ||
+                     window.location.hostname.includes("vercel.app") ||
+                     window.location.hostname === "localhost" ||
+                     window.location.hostname === "127.0.0.1";
+
+  if (isWebProtocol && isWebDomain) {
+    return false; // Force web platform for web browsers
+  }
+
+  // Check for Tauri-specific indicators - ONLY if not in web browser
   const hasTauriAPI = !!(window as any).__TAURI__;
   const hasTauriMetadata = !!(window as any).__TAURI_METADATA__;
   const hasTauriInternals = !!(window as any).__TAURI_INTERNALS__;
@@ -191,11 +217,12 @@ export function isDesktopEnvironment(): boolean {
   const buildEnvDesktop = process['env']['TAURI_BUILD'] === "true";
 
   const isDesktop =
-    hasTauriAPI ||
-    hasTauriMetadata ||
-    hasTauriInternals ||
-    isTauriProtocol ||
-    isTauriHost ||
+    (!isWebProtocol && (
+      hasTauriAPI ||
+      hasTauriMetadata ||
+      hasTauriInternals ||
+      isTauriProtocol ||
+      isTauriHost)) ||
     envIndicatesDesktop ||
     buildEnvDesktop ||
     (hasFileProtocol && hasIndexHtml);

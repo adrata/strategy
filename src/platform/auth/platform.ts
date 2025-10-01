@@ -42,20 +42,47 @@ export function getPlatform(): "web" | "mobile" | "desktop" {
     return cachedPlatformResult;
   }
 
-  // Desktop detection for Tauri applications
+  // CRITICAL: Safari detection - force web platform for Safari
+  const isSafariMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
+                        /Safari/.test(navigator.userAgent) && 
+                        !/Chrome|CriOS|FxiOS/.test(navigator.userAgent);
+  
+  const isSafariDesktop = /Macintosh/.test(navigator.userAgent) && 
+                         /Safari/.test(navigator.userAgent) && 
+                         !/Chrome/.test(navigator.userAgent);
+
+  // CRITICAL: If Safari, force web platform
+  if (isSafariMobile || isSafariDesktop) {
+    cachedPlatformResult = "web";
+    return cachedPlatformResult;
+  }
+
+  // CRITICAL: Web browser detection - check for standard web protocols
+  const isWebProtocol = window.location.protocol === "http:" || 
+                        window.location.protocol === "https:";
+  const isWebDomain = window.location.hostname.includes("adrata.com") ||
+                     window.location.hostname.includes("vercel.app") ||
+                     window.location.hostname === "localhost" ||
+                     window.location.hostname === "127.0.0.1";
+
+  if (isWebProtocol && isWebDomain) {
+    cachedPlatformResult = "web";
+    return cachedPlatformResult;
+  }
+
+  // Desktop detection for Tauri applications - ONLY if not in web browser
   const isDesktop =
-    // Primary: Tauri environment detection
-    (!!(window as any).__TAURI__ ||
+    // Primary: Tauri environment detection (only if not web browser)
+    (!isWebProtocol && (
+      !!(window as any).__TAURI__ ||
       !!(window as any).__TAURI_METADATA__ ||
       !!(window as any).__TAURI_INTERNALS__ ||
-      (window as any).location?.protocol === "tauri:") ||
+      (window as any).location?.protocol === "tauri:")) ||
     // Build-time environment variables
     process['env']['NEXT_PUBLIC_IS_DESKTOP'] === "true" ||
     process['env']['TAURI_BUILD'] === "true" ||
-    // File protocol detection for static builds
-    (window['location']['protocol'] === "file:" ||
-      window.location.pathname.includes("index.html") ||
-      window.location.href.includes("tauri://localhost"));
+    // File protocol detection for static builds (only actual file protocol)
+    (window['location']['protocol'] === "file:" && window.location.pathname.includes("index.html"));
 
   // More robust mobile detection - check if Capacitor is actually available and native
   const isMobile = (window as any).Capacitor && 
