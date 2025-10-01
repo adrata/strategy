@@ -187,10 +187,9 @@ export async function GET(request: NextRequest) {
             }
           }
 
-          // 🎯 BUYER GROUP ROLE: Extract from intelligence data
-          const buyerGroupRole = person.customFields?.primaryRole || 
-                                person.customFields?.buyerGroupRole || 
-                                person.jobTitle || 
+          // 🎯 BUYER GROUP ROLE: Extract from intelligence data (use influence level as role)
+          const buyerGroupRole = person.customFields?.buyerGroupRole || 
+                                person.customFields?.influenceLevel || 
                                 'Stakeholder';
 
           return {
