@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { useDeepValueReports } from '../hooks/useDeepValueReports';
 
@@ -8,11 +9,19 @@ interface UniversalInsightsTabProps {
 }
 
 export function UniversalInsightsTab({ recordType, record: recordProp }: UniversalInsightsTabProps) {
+  const router = useRouter();
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
   
   // Deep Value Reports functionality
-  const { reports, isLoading: reportsLoading, activeReport, handleReportClick, handleReportBack } = useDeepValueReports(record);
+  const { reports, isLoading: reportsLoading } = useDeepValueReports(record);
+  
+  // Handle report click with URL navigation
+  const handleReportClick = (reportId: string) => {
+    const workspaceId = record?.workspaceId || 'top';
+    const recordId = record?.id;
+    router.push(`/${workspaceId}/people/${recordId}/reports/${reportId}`);
+  };
 
   if (!record) {
     return (
@@ -552,45 +561,18 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Deep Value Reports</h3>
         
-        {activeReport ? (
-          // Show active report content
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-medium text-gray-900">
-                {reports.find(r => r.id === activeReport)?.title}
-              </h4>
-              <button
-                onClick={handleReportBack}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                ← Back to Reports
-              </button>
-            </div>
-            
-            {reports.find(r => r.id === activeReport)?.isGenerating ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-3 text-gray-600">Adrata is generating report...</span>
-              </div>
-            ) : (
-              <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
-                  {reports.find(r => r.id === activeReport)?.content || 'Report content will appear here...'}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          // Show report grid
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {reports.map((report) => (
-              <div 
-                key={report.id} 
-                className="bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {reportsLoading ? (
+            <div className="col-span-full text-center text-gray-500">Loading reports...</div>
+          ) : reports.length > 0 ? (
+            reports.map((report) => (
+              <div
+                key={report.id}
+                className="bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => handleReportClick(report.id)}
               >
-                <div className="text-sm font-medium text-gray-900 mb-1">{report.title}</div>
-                <div className="text-xs text-gray-500">{report.description}</div>
+                <h4 className="font-medium text-gray-900 mb-2">{report.title}</h4>
+                <p className="text-sm text-gray-600">{report.description}</p>
                 {report.isGenerating && (
                   <div className="flex items-center mt-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -598,9 +580,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500 italic">No deep value reports available.</div>
+          )}
+        </div>
       </div>
     </div>
   );
