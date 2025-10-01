@@ -403,7 +403,8 @@ export function UniversalRecordTemplate({
       case 'prospects':
       case 'speedrun':
         const title = record?.title || record?.jobTitle;
-        const company = record?.company || record?.companyName || 'Company';
+        // 🎯 FIX: Use same company extraction logic as speedrun table
+        const company = record?.company?.name || record?.company || record?.companyName || 'Company';
         return title ? `${title} • ${company}` : company;
       case 'opportunities':
       case 'deals':
@@ -1602,6 +1603,10 @@ export function UniversalRecordTemplate({
                   <span className="text-sm font-semibold text-gray-700">
                     {(() => {
                       console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'Record:', record);
+                      // 🎯 FIX: For speedrun records, use sequential rank from table, not database rank
+                      if (record?.section === 'speedrun' && recordIndex !== undefined) {
+                        return recordIndex + 1; // Sequential rank (1, 2, 3...)
+                      }
                       return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
                     })()}
                   </span>
