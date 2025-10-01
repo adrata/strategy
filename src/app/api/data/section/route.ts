@@ -15,6 +15,23 @@ import jwt from 'jsonwebtoken';
 const SECTION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
 const sectionCache = new Map<string, { data: any; timestamp: number }>();
 
+// 🚫 FILTER: Exclude user's own company from all lists
+function shouldExcludeCompany(companyName: string | null | undefined): boolean {
+  if (!companyName) return false;
+  
+  const companyLower = companyName.toLowerCase();
+  const excludePatterns = [
+    'top engineering plus',
+    'top engineers plus',
+    'top engineering',
+    'top engineers',
+    'adrata',
+    'adrata engineering'
+  ];
+  
+  return excludePatterns.some(pattern => companyLower.includes(pattern));
+}
+
 // 🚀 WORKSPACE CONTEXT: Optimized workspace resolution
 async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
   workspaceId: string;
@@ -126,7 +143,12 @@ export async function GET(request: NextRequest) {
         });
         
         // Transform to speedrun format with proper action structure
-        sectionData = people.slice(0, limit).map((person, index) => {
+        // 🚫 FILTER: Exclude user's own company from speedrun
+        const filteredPeople = people.filter(person => 
+          !shouldExcludeCompany(person.company?.name)
+        );
+        
+        sectionData = filteredPeople.slice(0, limit).map((person, index) => {
           // Determine next action timing based on ranking
           let nextAction = 'Schedule Discovery Call';
           let nextActionTiming = 'Today';
@@ -204,7 +226,21 @@ export async function GET(request: NextRequest) {
         });
         
         // Apply proper sequential ranking based on database ranks (same as companies)
-        sectionData = leadsPeopleData.map((person, index) => {
+        // 🚫 FILTER: Exclude user's own company from leads
+        const filteredLeadsData = leadsPeopleData.filter(person => {
+          // Extract Coresignal data
+          const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+          
+          // Get company from Coresignal data (active experience)
+          const coresignalCompany = coresignalData.active_experience_company || 
+                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.[0]?.company_name;
+          
+          const companyName = coresignalCompany || person.company?.name;
+          return !shouldExcludeCompany(companyName);
+        });
+        
+        sectionData = filteredLeadsData.map((person, index) => {
           // Extract Coresignal data
           const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
           
@@ -279,7 +315,21 @@ export async function GET(request: NextRequest) {
         });
         
         // Apply proper sequential ranking based on database ranks (same as companies)
-        sectionData = prospectsPeopleData.map((person, index) => {
+        // 🚫 FILTER: Exclude user's own company from prospects
+        const filteredProspectsData = prospectsPeopleData.filter(person => {
+          // Extract Coresignal data
+          const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+          
+          // Get company from Coresignal data (active experience)
+          const coresignalCompany = coresignalData.active_experience_company || 
+                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.[0]?.company_name;
+          
+          const companyName = coresignalCompany || person.company?.name;
+          return !shouldExcludeCompany(companyName);
+        });
+        
+        sectionData = filteredProspectsData.map((person, index) => {
           // Extract Coresignal data
           const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
           
@@ -379,7 +429,12 @@ export async function GET(request: NextRequest) {
         });
         
         // Apply proper sequential ranking based on database ranks
-        sectionData = companiesData.map((company, index) => ({
+        // 🚫 FILTER: Exclude user's own company from companies list
+        const filteredCompaniesData = companiesData.filter(company => 
+          !shouldExcludeCompany(company.name)
+        );
+        
+        sectionData = filteredCompaniesData.map((company, index) => ({
           id: company.id,
           rank: company.rank || (index + 1), // Use database rank or sequential fallback
           name: company.name,
@@ -440,7 +495,12 @@ export async function GET(request: NextRequest) {
           console.log(`👥 [SECTION API] Found ${peopleData.length} people`);
           
           // Apply proper sequential ranking based on database ranks
-          sectionData = peopleData.map((person, index) => {
+          // 🚫 FILTER: Exclude user's own company from people list
+          const filteredPeopleData = peopleData.filter(person => 
+            !shouldExcludeCompany(person.company?.name)
+          );
+          
+          sectionData = filteredPeopleData.map((person, index) => {
             // Safe string truncation utility
             const safeString = (str: any, maxLength: number = 1000): string => {
               if (!str || typeof str !== 'string') return '';

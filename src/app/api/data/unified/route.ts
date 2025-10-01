@@ -18,6 +18,23 @@ import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 
+// 🚫 FILTER: Exclude user's own company from all lists
+function shouldExcludeCompany(companyName: string | null | undefined): boolean {
+  if (!companyName) return false;
+  
+  const companyLower = companyName.toLowerCase();
+  const excludePatterns = [
+    'top engineering plus',
+    'top engineers plus',
+    'top engineering',
+    'top engineers',
+    'adrata',
+    'adrata engineering'
+  ];
+  
+  return excludePatterns.some(pattern => companyLower.includes(pattern));
+}
+
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
@@ -1283,13 +1300,15 @@ async function getMultipleRecords(
       
       console.log(`👥 [PEOPLE API] Direct query returned ${people.length} people`);
       
-      // Add basic ranking and formatting
-      const peopleWithRanking = people.map((person, index) => ({
-        ...person,
-        masterRank: person.rank || (index + 1),
-        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-        company: person.company || 'Unknown Company'
-      }));
+      // Add basic ranking and formatting, filter out user's company
+      const peopleWithRanking = people
+        .filter(person => !shouldExcludeCompany(person.company))
+        .map((person, index) => ({
+          ...person,
+          masterRank: person.rank || (index + 1),
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          company: person.company || 'Unknown Company'
+        }));
       
       return { success: true, data: peopleWithRanking };
     } catch (error) {
@@ -3684,32 +3703,34 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       
       console.log(`🏆 [SPEEDRUN API] Loaded ${speedrunPeople.length} people for speedrun`);
       
-      // Convert to expected format
-      people = speedrunPeople.map(person => ({
-        id: person.id,
-        firstName: person.firstName,
-        lastName: person.lastName,
-        fullName: person.fullName,
-        email: person.email,
-        jobTitle: person.jobTitle,
-        title: (person as any).title,
-        status: person.status,
-        createdAt: person.createdAt,
-        updatedAt: person.updatedAt,
-        lastActionDate: person.lastActionDate,
-        nextAction: person.nextAction,
-        nextActionDate: person.nextActionDate,
-        customFields: person.customFields,
-        company: {
-          id: person.companyId,
-          name: person.company,
-          industry: (person as any).industry,
-          vertical: (person as any).vertical,
-          size: (person as any).companySize,
-          rank: (person as any).masterRank
-        },
-        companyId: person.companyId
-      }));
+      // Convert to expected format and filter out user's company
+      people = speedrunPeople
+        .filter(person => !shouldExcludeCompany(person.company))
+        .map(person => ({
+          id: person.id,
+          firstName: person.firstName,
+          lastName: person.lastName,
+          fullName: person.fullName,
+          email: person.email,
+          jobTitle: person.jobTitle,
+          title: (person as any).title,
+          status: person.status,
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt,
+          lastActionDate: person.lastActionDate,
+          nextAction: person.nextAction,
+          nextActionDate: person.nextActionDate,
+          customFields: person.customFields,
+          company: {
+            id: person.companyId,
+            name: person.company,
+            industry: (person as any).industry,
+            vertical: (person as any).vertical,
+            size: (person as any).companySize,
+            rank: (person as any).masterRank
+          },
+          companyId: person.companyId
+        }));
       
       console.log(`🏆 [SPEEDRUN API] Applied unified ranking to ${people.length} speedrun items`);
       
