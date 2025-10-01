@@ -230,7 +230,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             const sectionResponse = await fetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}`);
             if (sectionResponse.ok) {
               const sectionResult = await sectionResponse.json();
-              const speedrunRecord = sectionResult.data.find((r: any) => r.id === recordId);
+              // 🎯 FIX: sectionResult.data is an object with a data property, not an array directly
+              const speedrunData = sectionResult.data?.data || sectionResult.data;
+              const speedrunRecord = Array.isArray(speedrunData) ? speedrunData.find((r: any) => r.id === recordId) : null;
               if (speedrunRecord) {
                 console.log(`✅ [SPEEDRUN LOAD] Found record in speedrun section:`, speedrunRecord);
                 setSelectedRecord(speedrunRecord);
