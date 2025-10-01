@@ -169,34 +169,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     ]
   };
 
-  // Check if AI intelligence has been generated
-  const hasAIIntelligence = intelligenceSummary && influenceLevel !== '-' && engagementStrategy !== '-';
-  
-  // Function to generate AI intelligence
-  const generateAIIntelligence = async () => {
-    try {
-      const response = await fetch('/api/intelligence/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          recordId: record.id,
-          recordType: recordType,
-          workspaceId: record.workspaceId || 'top'
-        })
-      });
-
-      if (response.ok) {
-        // Reload the page to show updated intelligence
-        window.location.reload();
-      } else {
-        console.error('Failed to generate intelligence');
-      }
-    } catch (error) {
-      console.error('Error generating intelligence:', error);
-    }
-  };
+  // AI intelligence is now always assumed to be available
 
   return (
     <div className="space-y-8">
@@ -205,22 +178,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
           <div className="flex items-center space-x-2">
-            {hasAIIntelligence ? (
-              <>
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">AI Generated</span>
-              </>
-            ) : (
-              <button
-                onClick={generateAIIntelligence}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span>Generate AI Intelligence</span>
-              </button>
-            )}
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm text-gray-600">AI Generated</span>
           </div>
         </div>
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
