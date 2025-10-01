@@ -183,7 +183,7 @@ export class IntelligentNextActionService {
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-4-5-sonnet-20250929',
+          model: 'claude-sonnet-4-5',
           max_tokens: 2000, // Increased for more comprehensive responses
           temperature: 0.3, // Lower temperature for more consistent business recommendations
           messages: [

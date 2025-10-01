@@ -344,7 +344,7 @@ Format as professional consulting analysis.
           'anthropic-version': '2023-06-01'
         },
         data: {
-          model: 'claude-4-5-sonnet-20250929',
+          model: 'claude-sonnet-4-5',
           max_tokens: 1000,
           messages: [{
             role: 'user',
@@ -420,7 +420,7 @@ Format as professional consulting analysis.
         'anthropic-version': '2023-06-01'
       },
       data: {
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-5',
         max_tokens: 500,
         messages: [{
           role: 'user',

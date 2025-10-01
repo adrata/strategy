@@ -164,12 +164,12 @@ export class EnhancedAIOrchestrator {
       } else {
         // Fallback to Claude
         response = await this.claudeService.generateContent(enhancedPrompt, {
-          model: 'claude-4-5-sonnet-20250929',
+          model: 'claude-sonnet-4-5',
           temperature: request.options.temperature || 0.7,
           maxTokens: request.options.maxTokens || 2000,
           workspaceId: request.context.workspaceId
         });
-        model = 'claude-4-5-sonnet-20250929';
+        model = 'claude-sonnet-4-5';
         cost = this.calculateClaudeCost(enhancedPrompt, response);
       }
 
@@ -306,7 +306,7 @@ export class EnhancedAIOrchestrator {
     
     // Force specific model if requested
     if (model === 'claude') {
-      return { provider: 'claude', model: 'claude-4-5-sonnet-20250929' };
+      return { provider: 'claude', model: 'claude-sonnet-4-5' };
     }
     if (model === 'perplexity') {
       return { provider: 'perplexity', model: 'llama-3.1-sonar-large-128k-online' };
@@ -317,11 +317,11 @@ export class EnhancedAIOrchestrator {
       case 'reasoning':
       case 'strategic':
       case 'coding':
-        return { provider: 'claude', model: 'claude-4-5-sonnet-20250929' };
+        return { provider: 'claude', model: 'claude-sonnet-4-5' };
       case 'research':
         return { provider: 'perplexity', model: 'llama-3.1-sonar-large-128k-online' };
       default:
-        return { provider: 'claude', model: 'claude-4-5-sonnet-20250929' };
+        return { provider: 'claude', model: 'claude-sonnet-4-5' };
     }
   }
 

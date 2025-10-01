@@ -22,18 +22,18 @@ export class ClaudeService {
   // Claude 4 model configuration - BEST AVAILABLE MODELS (2025)
   private models = {
     // Premium reasoning models for complex strategic analysis
-    premium: "claude-4-5-sonnet-20250929", // Latest Claude 4.5 Sonnet - Best overall performance
-    strategic: "claude-4-5-sonnet-20250929", // Advanced strategic analysis with extended thinking
-    reasoning: "claude-4-5-sonnet-20250929", // Cost-optimized reasoning with high accuracy
+    premium: "claude-sonnet-4-5", // Latest Claude 4.5 Sonnet - Best overall performance
+    strategic: "claude-sonnet-4-5", // Advanced strategic analysis with extended thinking
+    reasoning: "claude-sonnet-4-5", // Cost-optimized reasoning with high accuracy
 
     // Standard models for routine tasks
-    standard: "claude-4-5-sonnet-20250929", // Balanced performance and speed
-    efficient: "claude-4-5-sonnet-20250929", // Cost-optimized with excellent quality
+    standard: "claude-sonnet-4-5", // Balanced performance and speed
+    efficient: "claude-sonnet-4-5", // Cost-optimized with excellent quality
 
     // Specialized models
-    latest: "claude-4-5-sonnet-20250929", // Latest capabilities with 200K context
-    coding: "claude-4-5-sonnet-20250929", // World-class coding (77.2% SWE-bench score)
-    web: "claude-4-5-sonnet-20250929", // Enhanced for web research and analysis
+    latest: "claude-sonnet-4-5", // Latest capabilities with 200K context
+    coding: "claude-sonnet-4-5", // World-class coding (77.2% SWE-bench score)
+    web: "claude-sonnet-4-5", // Enhanced for web research and analysis
   };
 
   constructor() {
@@ -218,7 +218,7 @@ Focus on sales strategy, outreach optimization, pipeline management, and busines
    */
   getModelInfo(model: string): { name: string; description: string; capabilities: string[] } {
     const modelInfo: Record<string, { name: string; description: string; capabilities: string[] }> = {
-      "claude-4-5-sonnet-20250929": {
+      "claude-sonnet-4-5": {
         name: "Claude 4.5 Sonnet",
         description: "Latest Claude model with enhanced reasoning, 30+ hour focus, and superior coding capabilities",
         capabilities: [

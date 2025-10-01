@@ -14,7 +14,7 @@ async function generateOptimizedContent(prompt: string): Promise<string> {
       });
 
       const response = await anthropic.messages.create({
-        model: 'claude-4-5-sonnet-20250929', // Latest Claude 4.5 Sonnet - best for business intelligence
+        model: 'claude-sonnet-4-5', // Latest Claude 4.5 Sonnet - best for business intelligence
         max_tokens: 1000, // Increased for more comprehensive analysis
         temperature: 0.3, // Lower temperature for more consistent, factual output
         messages: [
