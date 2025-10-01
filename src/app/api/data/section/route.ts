@@ -251,7 +251,7 @@ export async function GET(request: NextRequest) {
           
           return {
             id: person.id,
-            rank: index + 1 // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering, // Use database rank or sequential fallback
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: person.fullName || `${person.firstName} ${person.lastName}`,
             company: coresignalCompany || person.company?.name || '-',
             email: person.email || 'Unknown Email',
@@ -340,7 +340,7 @@ export async function GET(request: NextRequest) {
           
           return {
             id: person.id,
-            rank: index + 1 // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering, // Use database rank or sequential fallback
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: person.fullName || `${person.firstName} ${person.lastName}`,
             company: coresignalCompany || person.company?.name || '-',
             email: person.email || 'Unknown Email',
