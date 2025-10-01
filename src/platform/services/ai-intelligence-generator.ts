@@ -100,7 +100,7 @@ Return a JSON object with the following structure:
 Make all insights highly specific to their role, industry, and organizational context. Avoid generic statements.`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-4-5-sonnet-20250929',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 4000,
       temperature: 0.3,
       messages: [

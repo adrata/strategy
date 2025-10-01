@@ -20,7 +20,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate AI-powered intelligence profile
+    console.log('🤖 Generating intelligence for:', record.fullName || record.name);
     const intelligenceProfile = await generateIntelligenceProfile(record);
+    console.log('✅ Intelligence generated:', intelligenceProfile.influenceLevel);
 
     // Update the record with the new intelligence data
     const updateData = {
