@@ -41,11 +41,8 @@
       }
     }
 
-    // Override environment variables that might indicate desktop
-    if (typeof process !== 'undefined' && process.env) {
-      process.env.NEXT_PUBLIC_IS_DESKTOP = 'false';
-      process.env.TAURI_BUILD = 'false';
-    }
+    // Note: Environment variables are set at build time, so we can't override them at runtime
+    // The Tauri variable overrides above are sufficient to prevent desktop detection
 
     // Override any existing platform detection functions
     const originalGetPlatform = (window as any).getPlatform;
