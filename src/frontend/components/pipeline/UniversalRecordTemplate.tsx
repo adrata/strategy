@@ -992,9 +992,9 @@ export function UniversalRecordTemplate({
   const handleAdvanceToOpportunity = async () => {
     try {
       setLoading(true);
-      console.log('⬆️ [UNIVERSAL] Advancing to lead:', record.id);
+      console.log('⬆️ [UNIVERSAL] Advancing to opportunity:', record.id);
       
-      // Make API call to advance prospect to lead
+      // Make API call to advance prospect to opportunity
       const response = await fetch('/api/data/unified', {
         method: 'POST',
         headers: {
@@ -1011,21 +1011,21 @@ export function UniversalRecordTemplate({
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to advance to lead: ${response.statusText}`);
+        throw new Error(`Failed to advance to opportunity: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('✅ [UNIVERSAL] Successfully advanced to lead:', result);
+      console.log('✅ [UNIVERSAL] Successfully advanced to opportunity:', result);
       
-      showMessage('Successfully advanced to lead!');
+      showMessage('Successfully advanced to opportunity!');
       
-      // Update URL to leads page
-      const newLeadId = result.newRecordId || record.id.replace('prospect_', 'lead_');
+      // Update URL to opportunities page
+      const newOpportunityId = result.newRecordId || record.id.replace('prospect_', 'opportunity_');
       
       // Create a proper slug format: name-ulid (matching existing pattern)
-      const leadName = record.fullName || record.name || 'lead';
-      const cleanName = leadName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-      const leadSlug = `${cleanName}-${newLeadId}`;
+      const opportunityName = record.fullName || record.name || 'opportunity';
+      const cleanName = opportunityName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      const opportunitySlug = `${cleanName}-${newOpportunityId}`;
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -1033,18 +1033,18 @@ export function UniversalRecordTemplate({
       
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
-        const newUrl = `/${workspaceSlug}/leads/${leadSlug}`;
-        console.log(`🔗 [ADVANCE] Navigating to lead: ${newUrl}`);
+        const newUrl = `/${workspaceSlug}/opportunities/${opportunitySlug}`;
+        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
         window.location.href = newUrl;
       } else {
-        const newUrl = `/leads/${leadSlug}`;
-        console.log(`🔗 [ADVANCE] Navigating to lead: ${newUrl}`);
+        const newUrl = `/opportunities/${opportunitySlug}`;
+        console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
         window.location.href = newUrl;
       }
       
     } catch (error) {
-      console.error('❌ [UNIVERSAL] Error advancing to lead:', error);
-      showMessage('Failed to advance to lead. Please try again.', 'error');
+      console.error('❌ [UNIVERSAL] Error advancing to opportunity:', error);
+      showMessage('Failed to advance to opportunity. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -1203,14 +1203,14 @@ export function UniversalRecordTemplate({
         </button>
       );
     } else if (recordType === 'prospects') {
-      // Advance to Lead button - LIGHT BLUE BUTTON (matching list page style)
+      // Advance to Opportunity button - LIGHT BLUE BUTTON (matching list page style)
       buttons.push(
         <button
-          key="advance-to-lead"
+          key="advance-to-opportunity"
           onClick={handleAdvanceToOpportunity}
           className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
         >
-          Advance to Lead
+          Advance to Opportunity
         </button>
       );
     }

@@ -2724,14 +2724,14 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
   }
 }
 
-// 🆕 ADVANCE TO LEAD OPERATIONS (formerly advance to opportunity)
+// 🆕 ADVANCE TO OPPORTUNITY OPERATIONS
 async function handleAdvanceToOpportunity(type: string, workspaceId: string, userId: string, id: string, requestData: any): Promise<any> {
-  console.log(`🔧 [ADVANCE] Advancing ${type} ${id} to lead`);
+  console.log(`🔧 [ADVANCE] Advancing ${type} ${id} to opportunity`);
   
   try {
-    // Only allow advancing prospects to leads
+    // Only allow advancing prospects to opportunities
     if (type !== 'prospects') {
-      throw new Error(`Cannot advance ${type} to lead. Only prospects can be advanced.`);
+      throw new Error(`Cannot advance ${type} to opportunity. Only prospects can be advanced.`);
     }
     
     // Get the prospect record
@@ -2748,12 +2748,12 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
     
     console.log(`✅ [ADVANCE] Found prospect:`, prospect.fullName);
     
-    // Create a new lead record with the prospect data
-    const leadModel = getPrismaModel('leads');
-    if (!leadModel) throw new Error('Leads model not found');
+    // Create a new opportunity record with the prospect data
+    const opportunityModel = getPrismaModel('opportunities');
+    if (!opportunityModel) throw new Error('Opportunities model not found');
     
-    // Prepare lead data from prospect data
-    const leadData = {
+    // Prepare opportunity data from prospect data
+    const opportunityData = {
       workspaceId: prospect.workspaceId,
       assignedUserId: prospect.assignedUserId,
       personId: prospect.personId,
@@ -2782,7 +2782,7 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
       state: prospect.state,
       country: prospect.country,
       postalCode: prospect.postalCode,
-      status: 'new', // Set to new status for new lead
+      status: 'qualification', // Set to qualification status for new opportunity
       priority: prospect.priority || 'medium',
       source: prospect.source || 'Advanced from Prospect',
       estimatedValue: prospect.estimatedValue,
@@ -2802,7 +2802,7 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
       emailConfidence: prospect.emailConfidence,
       phoneConfidence: prospect.phoneConfidence,
       dataCompleteness: prospect.dataCompleteness,
-      engagementLevel: 'initial', // Reset engagement level for new lead
+      engagementLevel: 'initial', // Reset engagement level for new opportunity
       lastContactDate: null,
       nextFollowUpDate: null,
       touchPointsCount: 0,
@@ -2833,13 +2833,13 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
       updatedAt: new Date()
     };
     
-    // Create the lead
-    const newLead = await leadModel.create({
-      data: leadData
+    // Create the opportunity
+    const newOpportunity = await opportunityModel.create({
+      data: opportunityData
     });
     
-    console.log(`✅ [ADVANCE] Created lead:`, newLead.id);
-    console.log(`✅ [ADVANCE] Lead data:`, JSON.stringify(newLead, null, 2));
+    console.log(`✅ [ADVANCE] Created opportunity:`, newOpportunity.id);
+    console.log(`✅ [ADVANCE] Opportunity data:`, JSON.stringify(newOpportunity, null, 2));
     
     // Soft delete the original prospect
     await prospectModel.update({
@@ -2850,7 +2850,7 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
       }
     });
     
-    console.log(`✅ [ADVANCE] Successfully advanced prospect ${id} to lead ${newLead.id}`);
+    console.log(`✅ [ADVANCE] Successfully advanced prospect ${id} to opportunity ${newOpportunity.id}`);
     
     // Clear cache after advance
     clearWorkspaceCache(workspaceId, userId, true);
@@ -2864,14 +2864,14 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
     
     return { 
       success: true, 
-      data: newLead,
-      newRecordId: newLead.id,
-      message: `Prospect successfully advanced to lead`
+      data: newOpportunity,
+      newRecordId: newOpportunity.id,
+      message: `Prospect successfully advanced to opportunity`
     };
     
   } catch (error) {
     console.error(`❌ [ADVANCE] Failed to advance ${type} ${id}:`, error);
-    throw new Error(`Failed to advance to lead: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to advance to opportunity: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
