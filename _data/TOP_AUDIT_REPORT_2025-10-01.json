@@ -1,0 +1,4688 @@
+{
+  "auditInfo": {
+    "timestamp": "2025-10-01T01:54:32.727Z",
+    "workspaceId": "01K1VBYXHD0J895XAN0HGFBKJP",
+    "dataFiles": [
+      "UTC All Regions 2023.xlsx",
+      "Physical Mailer Campaign 2025-08-29.xlsx",
+      "Exported Capsule Contacts 2025-08-29.xlsx"
+    ]
+  },
+  "summary": {
+    "totalCompanies": 70,
+    "totalPeople": 100,
+    "totalLeads": 59,
+    "totalProspects": 7,
+    "matchedCompanies": 1,
+    "matchedPeople": 0,
+    "matchedLeads": 0,
+    "matchedProspects": 0,
+    "missingCompanies": 69,
+    "missingPeople": 100,
+    "missingLeads": 100,
+    "missingProspects": 0,
+    "dataQualityIssues": 443
+  },
+  "detailedResults": {
+    "companies": {
+      "matched": [
+        {
+          "fileCompany": "Viavi Solutions",
+          "dbCompany": "VIAVI Solutions",
+          "dbId": "acc_1756911846522_id58g8y05",
+          "matchType": "exact",
+          "peopleCount": 1,
+          "dbPeopleCount": 0
+        }
+      ],
+      "missing": [
+        {
+          "name": "Exelon Corporation",
+          "normalizedName": "exelon corporation",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "National Grid USA Service Company",
+          "normalizedName": "national grid usa service company",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Northern Virgina Electic Cooperative",
+          "normalizedName": "northern virgina electic cooperative",
+          "peopleCount": 2,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Public Service Enterprise Group",
+          "normalizedName": "public service enterprise group",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Vermont Electric Power Company",
+          "normalizedName": "vermont electric power company",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Duke Energy Corporation",
+          "normalizedName": "duke energy corporation",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Memphis Light, Gas & Water Division",
+          "normalizedName": "memphis light gas water division",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Southern Company ",
+          "normalizedName": "southern company",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Basin Electric Power Cooperative",
+          "normalizedName": "basin electric power cooperative",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Calhoun Communications, Inc. ",
+          "normalizedName": "calhoun communications inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Dairyland Power Cooperative",
+          "normalizedName": "dairyland power cooperative",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "East River Electric Power Cooperative",
+          "normalizedName": "east river electric power cooperative",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Great River Energy",
+          "normalizedName": "great river energy",
+          "peopleCount": 2,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "MINNESOTA POWER",
+          "normalizedName": "minnesota power",
+          "peopleCount": 4,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Montana-Dakota Utilities Co.",
+          "normalizedName": "montanadakota utilities co",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Otter Tail Power Company",
+          "normalizedName": "otter tail power company",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "ADB",
+          "normalizedName": "adb",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "CenterPoint Energy",
+          "normalizedName": "centerpoint energy",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "CPS Energy",
+          "normalizedName": "cps energy",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Irby Utilities",
+          "normalizedName": "irby utilities",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Lower Colorado River Authority",
+          "normalizedName": "lower colorado river authority",
+          "peopleCount": 4,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Cleco Power LLC",
+          "normalizedName": "cleco power llc",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "YUBA Water Agency",
+          "normalizedName": "yuba water agency",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Nevada Energy",
+          "normalizedName": "nevada energy",
+          "peopleCount": 4,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Wesco",
+          "normalizedName": "wesco",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Telecom by Design LLC",
+          "normalizedName": "telecom by design llc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Sacremento Municipal Utility District",
+          "normalizedName": "sacremento municipal utility district",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Portland General Electric Company",
+          "normalizedName": "portland general electric company",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "PowerTrunk",
+          "normalizedName": "powertrunk",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Graybar",
+          "normalizedName": "graybar",
+          "peopleCount": 2,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Grant County PUD",
+          "normalizedName": "grant county pud",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Catalyst Communications Technologies, Inc. ",
+          "normalizedName": "catalyst communications technologies inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Belden",
+          "normalizedName": "belden",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Padtec",
+          "normalizedName": "padtec",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Westermo Data Communications, Inc. ",
+          "normalizedName": "westermo data communications inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Tri-State Generation and Transmission Association Inc. ",
+          "normalizedName": "tristate generation and transmission association inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Northwestern Corporation",
+          "normalizedName": "northwestern corporation",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Washoe County Utilities Division",
+          "normalizedName": "washoe county utilities division",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Southwest Gas Corporation",
+          "normalizedName": "southwest gas corporation",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Wells Rural Electric Company",
+          "normalizedName": "wells rural electric company",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Pacific Gas & Electric Company",
+          "normalizedName": "pacific gas electric company",
+          "peopleCount": 2,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Utility Telecom Consulting Group Inc.",
+          "normalizedName": "utility telecom consulting group inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Gillespie, Prudhon and Associates",
+          "normalizedName": "gillespie prudhon and associates",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Lockard & White, Inc. ",
+          "normalizedName": "lockard white inc",
+          "peopleCount": 1,
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Austin Energy",
+          "normalizedName": "austin energy",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "El Paso Electric Company",
+          "normalizedName": "el paso electric company",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "FLORIDA POWER",
+          "normalizedName": "florida power",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Los Angeles Department of Water & Power",
+          "normalizedName": "los angeles department of water power",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Northern Virginia Electric Cooperative",
+          "normalizedName": "northern virginia electric cooperative",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "PSEG Long Island",
+          "normalizedName": "pseg long island",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "WEC Energy Group",
+          "normalizedName": "wec energy group",
+          "peopleCount": 2,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Columbia Water & Light",
+          "normalizedName": "columbia water light",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Omaha Public Power District",
+          "normalizedName": "omaha public power district",
+          "peopleCount": 2,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "M & A Electric Power Cooperative",
+          "normalizedName": "m a electric power cooperative",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Corn Belt Power Cooperative",
+          "normalizedName": "corn belt power cooperative",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Duke Energy Corporation Telecommunications",
+          "normalizedName": "duke energy corporation telecommunications",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Bonneville Power Administration",
+          "normalizedName": "bonneville power administration",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Eversource Energy",
+          "normalizedName": "eversource energy",
+          "peopleCount": 2,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Eversource",
+          "normalizedName": "eversource",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Arkansas Electric Cooperative Corp.",
+          "normalizedName": "arkansas electric cooperative corp",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "PSEG Long Island Power Authority",
+          "normalizedName": "pseg long island power authority",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Grant County Public Utility District No. 2",
+          "normalizedName": "grant county public utility district no 2",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "TxDOT",
+          "normalizedName": "txdot",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Sacramento Municipal Utility District",
+          "normalizedName": "sacramento municipal utility district",
+          "peopleCount": 2,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Rappahannock Electric Cooperative",
+          "normalizedName": "rappahannock electric cooperative",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "JEA",
+          "normalizedName": "jea",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Pacific Gas & Electric",
+          "normalizedName": "pacific gas electric",
+          "peopleCount": 2,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "National Grid USA",
+          "normalizedName": "national grid usa",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Avista Corp.",
+          "normalizedName": "avista corp",
+          "peopleCount": 1,
+          "source": "Physical Mailer Campaign 2025"
+        }
+      ],
+      "qualityIssues": [
+        {
+          "name": "dscout",
+          "normalizedName": "dscout",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911761692_hz4teyixu"
+        },
+        {
+          "name": "Karin Jones PR",
+          "normalizedName": "karin jones pr",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K66HEZZM9DBHZ68ZBBYZ79CG"
+        },
+        {
+          "name": "Confluent",
+          "normalizedName": "confluent",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911750351_g55q1f5rw"
+        },
+        {
+          "name": "LoanPro",
+          "normalizedName": "loanpro",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911793260_eoq63j8ui"
+        },
+        {
+          "name": "TOP Engineers Plus, PLLC",
+          "normalizedName": "top engineers plus pllc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K66MXVKF9CBHWGSEDYD02KB9"
+        },
+        {
+          "name": "Adept AI Labs Inc.",
+          "normalizedName": "adept ai labs inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEG1VM1DRQNQ4ZAFKKFNE"
+        },
+        {
+          "name": "Lam Research Corporation",
+          "normalizedName": "lam research corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911789891_kkm1mnywl"
+        },
+        {
+          "name": "Alation, Inc.",
+          "normalizedName": "alation inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEHGNWKWJ3PJJBBE2V4YK"
+        },
+        {
+          "name": "Airbyte",
+          "normalizedName": "airbyte",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEGR36G57P1NHAMXBEXZ4"
+        },
+        {
+          "name": "Cockroach Labs, Inc.",
+          "normalizedName": "cockroach labs inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEM58CRTKG1CBY5W1BCJQ"
+        },
+        {
+          "name": "Auth0",
+          "normalizedName": "auth0",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911731452_uhz3djzb2"
+        },
+        {
+          "name": "Visa",
+          "normalizedName": "visa",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911847354_0ieim4a48"
+        },
+        {
+          "name": "Zapier",
+          "normalizedName": "zapier",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911851454_kehcqs57b"
+        },
+        {
+          "name": "Eightfold AI",
+          "normalizedName": "eightfold ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911762901_nsquyrg4p"
+        },
+        {
+          "name": "H2O.ai",
+          "normalizedName": "h2oai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911777035_v9s9stopx"
+        },
+        {
+          "name": "MinIO",
+          "normalizedName": "minio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VER64Y1Z22Z5YA9QJM69R"
+        },
+        {
+          "name": "Ivanti",
+          "normalizedName": "ivanti",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911785052_yqkh00bus"
+        },
+        {
+          "name": "Retail Product Solutions",
+          "normalizedName": "retail product solutions",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K542JZETY5J45B6KV1GC17CR"
+        },
+        {
+          "name": "ServiceTitan",
+          "normalizedName": "servicetitan",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911824563_pex6q1xip"
+        },
+        {
+          "name": "Zuora",
+          "normalizedName": "zuora",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911853686_i2qeskxy6"
+        },
+        {
+          "name": "SignNow",
+          "normalizedName": "signnow",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911826269_fe5jsfbo3"
+        },
+        {
+          "name": "Ribbon Health",
+          "normalizedName": "ribbon health",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911817906_wgb5xl2gm"
+        },
+        {
+          "name": "General Electric Company",
+          "normalizedName": "general electric company",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911772072_ntonyr0gj"
+        },
+        {
+          "name": "HG Insights",
+          "normalizedName": "hg insights",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911778950_6e8yc35bl"
+        },
+        {
+          "name": "GitLab",
+          "normalizedName": "gitlab",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911773810_wtbro22th"
+        },
+        {
+          "name": "Entrust Corporation",
+          "normalizedName": "entrust corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911764202_ovq0j441n"
+        },
+        {
+          "name": "Navan",
+          "normalizedName": "navan",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911802426_lod7t0nix"
+        },
+        {
+          "name": "Dell Technologies",
+          "normalizedName": "dell technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911756618_a4sox7l31"
+        },
+        {
+          "name": "Fortinet",
+          "normalizedName": "fortinet",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911770440_gz4o3l259"
+        },
+        {
+          "name": "Vercel",
+          "normalizedName": "vercel",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911844306_knblaua2u"
+        },
+        {
+          "name": "Atlassian",
+          "normalizedName": "atlassian",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911731106_w4e5zvg9g"
+        },
+        {
+          "name": "Icertis",
+          "normalizedName": "icertis",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911780761_h9hzzi6hd"
+        },
+        {
+          "name": "Palo Alto Networks",
+          "normalizedName": "palo alto networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911808376_u6798nbq9"
+        },
+        {
+          "name": "Sprinklr",
+          "normalizedName": "sprinklr",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911832760_2ih7q199e"
+        },
+        {
+          "name": "VMware",
+          "normalizedName": "vmware",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911847655_2ofm5rhn5"
+        },
+        {
+          "name": "Prefect",
+          "normalizedName": "prefect",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEV70PRNWYRQ531S42NMV"
+        },
+        {
+          "name": "Zendesk",
+          "normalizedName": "zendesk",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911851838_2ltl9rg7x"
+        },
+        {
+          "name": "Claroty",
+          "normalizedName": "claroty",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911746384_idk8oamh5"
+        },
+        {
+          "name": "Cornerstone OnDemand",
+          "normalizedName": "cornerstone ondemand",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911751976_b30q8v065"
+        },
+        {
+          "name": "MicroStrategy Incorporated",
+          "normalizedName": "microstrategy incorporated",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911798801_2vxgmnaql"
+        },
+        {
+          "name": "FactSet Research Systems",
+          "normalizedName": "factset research systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911767173_f2bvbb31s"
+        },
+        {
+          "name": "Verint Systems",
+          "normalizedName": "verint systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911844608_p9f8jm0t7"
+        },
+        {
+          "name": "Veeva Systems",
+          "normalizedName": "veeva systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911843202_dkx4t5lmy"
+        },
+        {
+          "name": "Uptake",
+          "normalizedName": "uptake",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911842227_604k0ci4x"
+        },
+        {
+          "name": "Lucid",
+          "normalizedName": "lucid",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911794174_qm0lemlvw"
+        },
+        {
+          "name": "Retool",
+          "normalizedName": "retool",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911817604_b4gh5ntyb"
+        },
+        {
+          "name": "UIPath",
+          "normalizedName": "uipath",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911841096_stk5pvwxk"
+        },
+        {
+          "name": "Tenable",
+          "normalizedName": "tenable",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911837734_ij540t0el"
+        },
+        {
+          "name": "Sanity.io",
+          "normalizedName": "sanityio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911821239_pzap57yz7"
+        },
+        {
+          "name": "Samsara",
+          "normalizedName": "samsara",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911820933_ubp9d9v6g"
+        },
+        {
+          "name": "Commvault Systems",
+          "normalizedName": "commvault systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911749329_t1t7pehx5"
+        },
+        {
+          "name": "Rippling",
+          "normalizedName": "rippling",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911818938_1t1rdvb3d"
+        },
+        {
+          "name": "Redis",
+          "normalizedName": "redis",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911816292_rv415t9z2"
+        },
+        {
+          "name": "Transmit Security",
+          "normalizedName": "transmit security",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911838815_5pk5u06ud"
+        },
+        {
+          "name": "Chartio",
+          "normalizedName": "chartio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911743460_3maifchkk"
+        },
+        {
+          "name": "New Relic",
+          "normalizedName": "new relic",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911804009_vgq4jsjt2"
+        },
+        {
+          "name": "Netskope",
+          "normalizedName": "netskope",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911803707_3sg28gkiy"
+        },
+        {
+          "name": "GitHub",
+          "normalizedName": "github",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911773408_b77arvpz8"
+        },
+        {
+          "name": "Ixia",
+          "normalizedName": "ixia",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911785354_78v5m7smt"
+        },
+        {
+          "name": "Elastic N.V",
+          "normalizedName": "elastic nv",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911763304_jdsndxhq4"
+        },
+        {
+          "name": "Honeycomb.io",
+          "normalizedName": "honeycombio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911779369_wf0wfg3sw"
+        },
+        {
+          "name": "SentinelOne",
+          "normalizedName": "sentinelone",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911823596_m6xq6506i"
+        },
+        {
+          "name": "ESRI",
+          "normalizedName": "esri",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911765224_gukxyaq43"
+        },
+        {
+          "name": "Together AI",
+          "normalizedName": "together ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEZVABC7W854PE7HPC7C9"
+        },
+        {
+          "name": "Synopsys",
+          "normalizedName": "synopsys",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911835389_y1ifnet8u"
+        },
+        {
+          "name": "Malwarebytes",
+          "normalizedName": "malwarebytes",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911794870_3zptexk04"
+        },
+        {
+          "name": "Carta",
+          "normalizedName": "carta",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911740807_9hr83n6c7"
+        },
+        {
+          "name": "Sigma Computing",
+          "normalizedName": "sigma computing",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911825673_hovm64iiu"
+        },
+        {
+          "name": "Equifax",
+          "normalizedName": "equifax",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911764924_ddtzuwcwo"
+        },
+        {
+          "name": "ProtectWise",
+          "normalizedName": "protectwise",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911813677_d568bu4ry"
+        },
+        {
+          "name": "Trend Micro",
+          "normalizedName": "trend micro",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911839450_3m5t1m0pz"
+        },
+        {
+          "name": "Mastercard",
+          "normalizedName": "mastercard",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911796191_2skgw6ikm"
+        },
+        {
+          "name": "Domo",
+          "normalizedName": "domo",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911759653_6cw0u5ghj"
+        },
+        {
+          "name": "Cybereason",
+          "normalizedName": "cybereason",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911753959_6vopdq69n"
+        },
+        {
+          "name": "Caterpillar",
+          "normalizedName": "caterpillar",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911741525_igyi2n0m7"
+        },
+        {
+          "name": "Winning Variant",
+          "normalizedName": "winning variant",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K542JZ599N6QYQTVYCPH1BH3"
+        },
+        {
+          "name": "Aetion",
+          "normalizedName": "aetion",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911724324_m9tin20fc"
+        },
+        {
+          "name": "Duck Creek Technologies",
+          "normalizedName": "duck creek technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911761995_etmuka4dc"
+        },
+        {
+          "name": "Relativity Space",
+          "normalizedName": "relativity space",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911817305_b28gp69vr"
+        },
+        {
+          "name": "Agiloft",
+          "normalizedName": "agiloft",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911724748_gesdz87u5"
+        },
+        {
+          "name": "Deloitte LLP",
+          "normalizedName": "deloitte llp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911756920_m8e75ar5j"
+        },
+        {
+          "name": "TransUnion",
+          "normalizedName": "transunion",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911839134_urld95zrq"
+        },
+        {
+          "name": "Moveworks",
+          "normalizedName": "moveworks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911801415_d3nsr9112"
+        },
+        {
+          "name": "Catalant",
+          "normalizedName": "catalant",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911741223_oa07vy6es"
+        },
+        {
+          "name": "SingleStore",
+          "normalizedName": "singlestore",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911826568_76bqq2on2"
+        },
+        {
+          "name": "Concord",
+          "normalizedName": "concord",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911749930_64pff5r72"
+        },
+        {
+          "name": "Bosch North America",
+          "normalizedName": "bosch north america",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911736820_uyoqpff07"
+        },
+        {
+          "name": "Capterra",
+          "normalizedName": "capterra",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911738783_m34l2809a"
+        },
+        {
+          "name": "RightSignature",
+          "normalizedName": "rightsignature",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911818208_30ucg295w"
+        },
+        {
+          "name": "Ocrolus",
+          "normalizedName": "ocrolus",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911805600_v43bnt3wr"
+        },
+        {
+          "name": "Nuance Communications",
+          "normalizedName": "nuance communications",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911804688_vdzgoa3n4"
+        },
+        {
+          "name": "Cloudfirst",
+          "normalizedName": "cloudfirst",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4SJV089HQ936CQPQFK4B"
+        },
+        {
+          "name": "Carbon Black",
+          "normalizedName": "carbon black",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911739081_pbinw60jd"
+        },
+        {
+          "name": "Sketch B.V",
+          "normalizedName": "sketch bv",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911828858_enpuljjbe"
+        },
+        {
+          "name": "CobbleStone Software",
+          "normalizedName": "cobblestone software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911747703_ml8jvfg04"
+        },
+        {
+          "name": "Test Company Inc",
+          "normalizedName": "test company inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1757908896698_4n1orm"
+        },
+        {
+          "name": "Artera",
+          "normalizedName": "artera",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911730339_n9fowebjn"
+        },
+        {
+          "name": "Ramp Business",
+          "normalizedName": "ramp business",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911815280_2r0kb5j64"
+        },
+        {
+          "name": "CyberArk Software",
+          "normalizedName": "cyberark software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911753657_6y36inoms"
+        },
+        {
+          "name": "BMC Software",
+          "normalizedName": "bmc software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911735844_3ecsn1mbl"
+        },
+        {
+          "name": "Pinecone",
+          "normalizedName": "pinecone",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VETGAMFM5BWD65W7SGKBP"
+        },
+        {
+          "name": "BlackLine",
+          "normalizedName": "blackline",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911735544_k1ap2iqf2"
+        },
+        {
+          "name": "Test Corp",
+          "normalizedName": "test corp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1757908727390_v6gg8j"
+        },
+        {
+          "name": "Fintech innov",
+          "normalizedName": "fintech innov",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4T6MWNZ3YW1F4GNEHAZ9"
+        },
+        {
+          "name": "Asana",
+          "normalizedName": "asana",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911730807_2iuiuazwv"
+        },
+        {
+          "name": "Looker Studio",
+          "normalizedName": "looker studio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911793869_t109i3u8l"
+        },
+        {
+          "name": "Comscore",
+          "normalizedName": "comscore",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911749629_xpj47ivci"
+        },
+        {
+          "name": "Lambda",
+          "normalizedName": "lambda",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEPWJK5PPMA7EHSAHJKXR"
+        },
+        {
+          "name": "Anthropic",
+          "normalizedName": "anthropic",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911728298_zrmuc8gvh"
+        },
+        {
+          "name": "CircleCI",
+          "normalizedName": "circleci",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911744773_qx6jt53fl"
+        },
+        {
+          "name": "Cloudera",
+          "normalizedName": "cloudera",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911747101_f1nqnitjn"
+        },
+        {
+          "name": "DriveWealth",
+          "normalizedName": "drivewealth",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911760970_og9g4oe82"
+        },
+        {
+          "name": "Dataiku",
+          "normalizedName": "dataiku",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911755697_yh7ew8blo"
+        },
+        {
+          "name": "Advancement Test Corp",
+          "normalizedName": "advancement test corp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1757909112152_rjn6di"
+        },
+        {
+          "name": "Imprivata",
+          "normalizedName": "imprivata",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911782377_xnhzgoxqb"
+        },
+        {
+          "name": "Rapid7",
+          "normalizedName": "rapid7",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911815578_qm6z1wbop"
+        },
+        {
+          "name": "Finally",
+          "normalizedName": "finally",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911768217_4hxoum2db"
+        },
+        {
+          "name": "Coupa",
+          "normalizedName": "coupa",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911752751_al4k3n73s"
+        },
+        {
+          "name": "Madix",
+          "normalizedName": "madix",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6KCDWPSGQSJ84KVMB6FY"
+        },
+        {
+          "name": "Appian Corporation",
+          "normalizedName": "appian corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911728900_fnasrd1ke"
+        },
+        {
+          "name": "Starburst",
+          "normalizedName": "starburst",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEXJ32M223WKKTBTZHTEK"
+        },
+        {
+          "name": "Gusto",
+          "normalizedName": "gusto",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911776737_ii72xltlw"
+        },
+        {
+          "name": "Evisort",
+          "normalizedName": "evisort",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911765827_qcbw0d0lt"
+        },
+        {
+          "name": "Mixpanel",
+          "normalizedName": "mixpanel",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911799809_i4pktt4dt"
+        },
+        {
+          "name": "Talkdesk",
+          "normalizedName": "talkdesk",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911836428_mztu00l61"
+        },
+        {
+          "name": "Trimble",
+          "normalizedName": "trimble",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911839865_ddhaikax5"
+        },
+        {
+          "name": "CloudCaddie",
+          "normalizedName": "cloudcaddie",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K1V9C6M4ESAQ78P2PJY7YM7X"
+        },
+        {
+          "name": "Securenet",
+          "normalizedName": "securenet",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4SWMWX2JEQ4VTANGTBTF"
+        },
+        {
+          "name": "Stack Overflow",
+          "normalizedName": "stack overflow",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911833763_ppncqbkml"
+        },
+        {
+          "name": "SailPoint Technologies",
+          "normalizedName": "sailpoint technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911820326_qna7llcnb"
+        },
+        {
+          "name": "Height",
+          "normalizedName": "height",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911777741_s3nr59swu"
+        },
+        {
+          "name": "Cadence Design Systems",
+          "normalizedName": "cadence design systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911738484_noxhqdagb"
+        },
+        {
+          "name": "MongoDB",
+          "normalizedName": "mongodb",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911800811_2s52gez3j"
+        },
+        {
+          "name": "Microsoft",
+          "normalizedName": "microsoft",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911798500_cp4ywslhw"
+        },
+        {
+          "name": "Druva",
+          "normalizedName": "druva",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911761281_q9d96hqko"
+        },
+        {
+          "name": "Checkmarx",
+          "normalizedName": "checkmarx",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911744158_oitbh3t1d"
+        },
+        {
+          "name": "Coda",
+          "normalizedName": "coda",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911748003_iy0slt3ov"
+        },
+        {
+          "name": "Cerner Corporation",
+          "normalizedName": "cerner corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911742855_70zix2ztt"
+        },
+        {
+          "name": "Webflow",
+          "normalizedName": "webflow",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911848370_2f6xkmqgr"
+        },
+        {
+          "name": "Strapi SAS",
+          "normalizedName": "strapi sas",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911834061_y4obq44m6"
+        },
+        {
+          "name": "Phenom People",
+          "normalizedName": "phenom people",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911810675_ionob1n00"
+        },
+        {
+          "name": "Illumina",
+          "normalizedName": "illumina",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911781365_1xq96dhin"
+        },
+        {
+          "name": "TrustRadius",
+          "normalizedName": "trustradius",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911840176_bksa1kjzk"
+        },
+        {
+          "name": "Tyler Technologies",
+          "normalizedName": "tyler technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911840799_ya9ncml4s"
+        },
+        {
+          "name": "Fidelity National Information Services",
+          "normalizedName": "fidelity national information services",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911767473_0a39w02dw"
+        },
+        {
+          "name": "Drata",
+          "normalizedName": "drata",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911760670_ly6fiaigh"
+        },
+        {
+          "name": "DoubleVerify",
+          "normalizedName": "doubleverify",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911759953_wc1pngtlc"
+        },
+        {
+          "name": "Symantec",
+          "normalizedName": "symantec",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911834679_h5vqaap1v"
+        },
+        {
+          "name": "Digital.ai",
+          "normalizedName": "digitalai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911759049_2j623nkkx"
+        },
+        {
+          "name": "PlanetScale",
+          "normalizedName": "planetscale",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911811286_ejybve271"
+        },
+        {
+          "name": "Linear Inc.",
+          "normalizedName": "linear inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911791541_icfqc0kat"
+        },
+        {
+          "name": "DocuSign",
+          "normalizedName": "docusign",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911759349_fqb94gtmk"
+        },
+        {
+          "name": "Enterprise Software Deal",
+          "normalizedName": "enterprise software deal",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1757909204123_qwnssj"
+        },
+        {
+          "name": "ClickUp",
+          "normalizedName": "clickup",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911746803_kbn1hr8dq"
+        },
+        {
+          "name": "SmartRecruiters",
+          "normalizedName": "smartrecruiters",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911829610_ybz1xd1v0"
+        },
+        {
+          "name": "Software Advice",
+          "normalizedName": "software advice",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911830806_og8o7tkgd"
+        },
+        {
+          "name": "SignEasy",
+          "normalizedName": "signeasy",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911825973_rtfuf9mxa"
+        },
+        {
+          "name": "Blackbaud",
+          "normalizedName": "blackbaud",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911735242_e50ilm6q4"
+        },
+        {
+          "name": "Cisco",
+          "normalizedName": "cisco",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911745182_7sn82pdt7"
+        },
+        {
+          "name": "Carrum Health",
+          "normalizedName": "carrum health",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911739387_atcfe9ylk"
+        },
+        {
+          "name": "Cerebras Systems",
+          "normalizedName": "cerebras systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911742252_p1do4was0"
+        },
+        {
+          "name": "Verisk Analytics",
+          "normalizedName": "verisk analytics",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911844908_mq55sy4nv"
+        },
+        {
+          "name": "Alteryx",
+          "normalizedName": "alteryx",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911726665_b99ssarrn"
+        },
+        {
+          "name": "Guru",
+          "normalizedName": "guru",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911776438_caerw327a"
+        },
+        {
+          "name": "Relativity",
+          "normalizedName": "relativity",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911816914_zogam5cjc"
+        },
+        {
+          "name": "Airtable",
+          "normalizedName": "airtable",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911725355_p2ri82buo"
+        },
+        {
+          "name": "BetterUp",
+          "normalizedName": "betterup",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911734221_vqr02a75u"
+        },
+        {
+          "name": "Tableau Software",
+          "normalizedName": "tableau software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911836108_x3twb5tbr"
+        },
+        {
+          "name": "SparkCognition",
+          "normalizedName": "sparkcognition",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911831843_sp7u8yhc3"
+        },
+        {
+          "name": "Sentry",
+          "normalizedName": "sentry",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911823898_bkp88lwtw"
+        },
+        {
+          "name": "SAP",
+          "normalizedName": "sap",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911821646_u4xaer8f6"
+        },
+        {
+          "name": "Prospect Test Inc",
+          "normalizedName": "prospect test inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1757909113383_b4i7dk"
+        },
+        {
+          "name": "Freshworks",
+          "normalizedName": "freshworks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911771170_flzedtyj8"
+        },
+        {
+          "name": "PricewaterhouseCoopers",
+          "normalizedName": "pricewaterhousecoopers",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911812610_u4wnkz009"
+        },
+        {
+          "name": "Red Hat",
+          "normalizedName": "red hat",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911815987_2degs6hws"
+        },
+        {
+          "name": "MariaDB",
+          "normalizedName": "mariadb",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911795170_tmzlmcz8t"
+        },
+        {
+          "name": "Jack Henry & Associates",
+          "normalizedName": "jack henry associates",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911785654_5iou0aznj"
+        },
+        {
+          "name": "Darktrace",
+          "normalizedName": "darktrace",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911754679_59ij4rrn0"
+        },
+        {
+          "name": "Riverside.fm",
+          "normalizedName": "riversidefm",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911819262_yj91dd9gs"
+        },
+        {
+          "name": "ThoughtSpot",
+          "normalizedName": "thoughtspot",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911838200_boe3qohsv"
+        },
+        {
+          "name": "Couchbase",
+          "normalizedName": "couchbase",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911752280_z2rtb2tc4"
+        },
+        {
+          "name": "Gainsight",
+          "normalizedName": "gainsight",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911771772_113gxxb3f"
+        },
+        {
+          "name": "Airmeet",
+          "normalizedName": "airmeet",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911725053_vwr669cul"
+        },
+        {
+          "name": "Looker Data Sciences",
+          "normalizedName": "looker data sciences",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911793567_a5ldzwf1p"
+        },
+        {
+          "name": "Allscripts Healthcare Solutions",
+          "normalizedName": "allscripts healthcare solutions",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911726362_sa2gdvs2s"
+        },
+        {
+          "name": "Qlik Technologies",
+          "normalizedName": "qlik technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911814680_gsvnw5azu"
+        },
+        {
+          "name": "Sprout Social",
+          "normalizedName": "sprout social",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911833167_7bkru0w9h"
+        },
+        {
+          "name": "OutSystems",
+          "normalizedName": "outsystems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911807680_9y61uyebj"
+        },
+        {
+          "name": "SmartBear Software",
+          "normalizedName": "smartbear software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911829160_rlhhz3sjx"
+        },
+        {
+          "name": "Accenture",
+          "normalizedName": "accenture",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911723013_xo7m112u5"
+        },
+        {
+          "name": "Temporal Technologies",
+          "normalizedName": "temporal technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911837427_wflaikzu8"
+        },
+        {
+          "name": "Arctic Wolf Networks",
+          "normalizedName": "arctic wolf networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911729353_y2ounr0j8"
+        },
+        {
+          "name": "PandaDoc",
+          "normalizedName": "pandadoc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911808678_qkir9fhvc"
+        },
+        {
+          "name": "Synapse Financial Technologies",
+          "normalizedName": "synapse financial technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911835085_0qibwxhka"
+        },
+        {
+          "name": "Planful",
+          "normalizedName": "planful",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911811594_9gvliqpzg"
+        },
+        {
+          "name": "Workday",
+          "normalizedName": "workday",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911849783_7hiykq7bs"
+        },
+        {
+          "name": "C3.ai",
+          "normalizedName": "c3ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911738185_7ecw3fmte"
+        },
+        {
+          "name": "Barracuda Networks",
+          "normalizedName": "barracuda networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911733531_almhxsdcp"
+        },
+        {
+          "name": "BigID",
+          "normalizedName": "bigid",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911734523_wl8ny4438"
+        },
+        {
+          "name": "ServiceNow",
+          "normalizedName": "servicenow",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911824262_6keaivaba"
+        },
+        {
+          "name": "Stability AI",
+          "normalizedName": "stability ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911833466_wu0oy8j71"
+        },
+        {
+          "name": "Virtru",
+          "normalizedName": "virtru",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911846837_2boau1r0t"
+        },
+        {
+          "name": "Dun & Bradstreet Holdings",
+          "normalizedName": "dun bradstreet holdings",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911762296_co1soikec"
+        },
+        {
+          "name": "Redpanda Data",
+          "normalizedName": "redpanda data",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911816604_9gy8p0kjl"
+        },
+        {
+          "name": "Amazon Web Services",
+          "normalizedName": "amazon web services",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911726965_j97tic3dj"
+        },
+        {
+          "name": "Pure Storage",
+          "normalizedName": "pure storage",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911814280_w9jjsy64g"
+        },
+        {
+          "name": "TigerGraph",
+          "normalizedName": "tigergraph",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911838512_ppvo9j0ij"
+        },
+        {
+          "name": "iCIMS",
+          "normalizedName": "icims",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911781061_7hm5pkr1k"
+        },
+        {
+          "name": "Corelight",
+          "normalizedName": "corelight",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911751675_tyds385b8"
+        },
+        {
+          "name": "Oracle Corporation",
+          "normalizedName": "oracle corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911806951_nd5jqb25q"
+        },
+        {
+          "name": "Skedulo",
+          "normalizedName": "skedulo",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911828357_hcxmy0uh3"
+        },
+        {
+          "name": "Lightstep",
+          "normalizedName": "lightstep",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911791234_0vaw171mr"
+        },
+        {
+          "name": "Jamf Holding",
+          "normalizedName": "jamf holding",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911786254_5t5vib7ej"
+        },
+        {
+          "name": "Vectra AI",
+          "normalizedName": "vectra ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911842836_n94wv584r"
+        },
+        {
+          "name": "Medallion",
+          "normalizedName": "medallion",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911797400_eap599il1"
+        },
+        {
+          "name": "Cohesity",
+          "normalizedName": "cohesity",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911748725_7yzoiuu31"
+        },
+        {
+          "name": "Shortcut Software Inc.",
+          "normalizedName": "shortcut software inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911824863_2xqwa9nxm"
+        },
+        {
+          "name": "Scene Health",
+          "normalizedName": "scene health",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911822689_dlkk6hjxp"
+        },
+        {
+          "name": "PagerDuty",
+          "normalizedName": "pagerduty",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911807983_3rzasxfyb"
+        },
+        {
+          "name": "Splunk",
+          "normalizedName": "splunk",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911832454_vu3tsy4tq"
+        },
+        {
+          "name": "Siemens AG",
+          "normalizedName": "siemens ag",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911825207_ao8rudyo5"
+        },
+        {
+          "name": "Postman",
+          "normalizedName": "postman",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911812305_0cawz28lm"
+        },
+        {
+          "name": "Orca Security",
+          "normalizedName": "orca security",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911807376_g71yp4hqt"
+        },
+        {
+          "name": "ForgeRock",
+          "normalizedName": "forgerock",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911769532_zplh7y02f"
+        },
+        {
+          "name": "Boomi",
+          "normalizedName": "boomi",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911736455_vc18k9pxl"
+        },
+        {
+          "name": "Retail Fixtures Inc",
+          "normalizedName": "retail fixtures inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6NKBB9F8NH93R1KY4F78"
+        },
+        {
+          "name": "Immuta",
+          "normalizedName": "immuta",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEP7286EXMGWPZ8B6RTP5"
+        },
+        {
+          "name": "Lozier Corporation",
+          "normalizedName": "lozier corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6M38GZG3Y3HFJGQC7Q7D"
+        },
+        {
+          "name": "Adrata",
+          "normalizedName": "adrata",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4RHE22SA0V4CY7BBJP82"
+        },
+        {
+          "name": "Metro Supermarket Fixtures",
+          "normalizedName": "metro supermarket fixtures",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6JRGKQ4KPTBZ1F7YW2A6"
+        },
+        {
+          "name": "Keysight Technologies",
+          "normalizedName": "keysight technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911787935_160kpqoo8"
+        },
+        {
+          "name": "Ironclad",
+          "normalizedName": "ironclad",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911784327_q5zpp5qxa"
+        },
+        {
+          "name": "Pendo.io",
+          "normalizedName": "pendoio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911809373_ldsyizuq2"
+        },
+        {
+          "name": "Weights & Biases",
+          "normalizedName": "weights biases",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VF0Y9RXWB5VFS6W2ZBR7D"
+        },
+        {
+          "name": "PTC",
+          "normalizedName": "ptc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911813980_28e0vsm0f"
+        },
+        {
+          "name": "MathWorks",
+          "normalizedName": "mathworks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911796496_jux1f71di"
+        },
+        {
+          "name": "Marvell Technology",
+          "normalizedName": "marvell technology",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911795773_l70qv9cbv"
+        },
+        {
+          "name": "F5",
+          "normalizedName": "f5",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911766554_u1y87nd5y"
+        },
+        {
+          "name": "Nutanix",
+          "normalizedName": "nutanix",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911804989_b88t4jzdu"
+        },
+        {
+          "name": "Firefly Health",
+          "normalizedName": "firefly health",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911768519_y6o5rjhmv"
+        },
+        {
+          "name": "3M Company",
+          "normalizedName": "3m company",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911722691_0bztdk8h1"
+        },
+        {
+          "name": "OneTrust",
+          "normalizedName": "onetrust",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VESR6CF2CDEH0T69AE1C5"
+        },
+        {
+          "name": "Advanced Micro Devices",
+          "normalizedName": "advanced micro devices",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911724018_xc33h23mf"
+        },
+        {
+          "name": "Neo4j",
+          "normalizedName": "neo4j",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911802727_0wxtonzee"
+        },
+        {
+          "name": "Procore Technologies",
+          "normalizedName": "procore technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911812912_jleyom0c9"
+        },
+        {
+          "name": "MURAL",
+          "normalizedName": "mural",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911801717_76qnclpbv"
+        },
+        {
+          "name": "LaunchDarkly",
+          "normalizedName": "launchdarkly",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911790500_52yruu9cp"
+        },
+        {
+          "name": "Mux",
+          "normalizedName": "mux",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911802022_71apq2svh"
+        },
+        {
+          "name": "Hexagon AB",
+          "normalizedName": "hexagon ab",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911778645_1tseubrkx"
+        },
+        {
+          "name": "Arista Networks",
+          "normalizedName": "arista networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911729653_u885r1j2r"
+        },
+        {
+          "name": "Adobe",
+          "normalizedName": "adobe",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911723718_k7cx9usib"
+        },
+        {
+          "name": "Chainalysis",
+          "normalizedName": "chainalysis",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911743159_yvdlsnhl8"
+        },
+        {
+          "name": "Armis",
+          "normalizedName": "armis",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911730005_j7eue3g4o"
+        },
+        {
+          "name": "Zipkin",
+          "normalizedName": "zipkin",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911852515_fc7fk9xv1"
+        },
+        {
+          "name": "Chili Piper",
+          "normalizedName": "chili piper",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911744458_pjpvpcave"
+        },
+        {
+          "name": "Google Cloud Platform",
+          "normalizedName": "google cloud platform",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911774117_kknwhnyff"
+        },
+        {
+          "name": "Gigamon",
+          "normalizedName": "gigamon",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911773108_txh3fh49p"
+        },
+        {
+          "name": "Veracode",
+          "normalizedName": "veracode",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911843871_7306ktgpy"
+        },
+        {
+          "name": "Mentor Graphics",
+          "normalizedName": "mentor graphics",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911797834_w3shw3j84"
+        },
+        {
+          "name": "Tech Corporation",
+          "normalizedName": "tech corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4RYC82JK314VS8E3B7DB"
+        },
+        {
+          "name": "HelloSign",
+          "normalizedName": "hellosign",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911778042_kpeqassm8"
+        },
+        {
+          "name": "Juniper Networks",
+          "normalizedName": "juniper networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911787205_1cg31fjff"
+        },
+        {
+          "name": "RingCentral",
+          "normalizedName": "ringcentral",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911818506_lfsb0xvnw"
+        },
+        {
+          "name": "Bentley Systems",
+          "normalizedName": "bentley systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911733921_yshnuzkj6"
+        },
+        {
+          "name": "Flock Safety",
+          "normalizedName": "flock safety",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911769233_op7em2f69"
+        },
+        {
+          "name": "PlayVS",
+          "normalizedName": "playvs",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911811899_p1ko69huz"
+        },
+        {
+          "name": "Imperva",
+          "normalizedName": "imperva",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911781966_mh32nzs74"
+        },
+        {
+          "name": "G2.com",
+          "normalizedName": "g2com",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911771473_zqww4q2rq"
+        },
+        {
+          "name": "ON24",
+          "normalizedName": "on24",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911806351_mq2yybx31"
+        },
+        {
+          "name": "Demandbase",
+          "normalizedName": "demandbase",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911758338_zevecp0lv"
+        },
+        {
+          "name": "LinkSquares",
+          "normalizedName": "linksquares",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911791842_v37vnw9hd"
+        },
+        {
+          "name": "Snyk",
+          "normalizedName": "snyk",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911830507_t3y0248b"
+        },
+        {
+          "name": "Unity Technologies",
+          "normalizedName": "unity technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911841904_jlq83iw7n"
+        },
+        {
+          "name": "Dataflow",
+          "normalizedName": "dataflow",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4S8WKVSN5NDKDVEP38QT"
+        },
+        {
+          "name": "Tecton",
+          "normalizedName": "tecton",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEYZV30J6ETGR1AQQ0539"
+        },
+        {
+          "name": "Schneider Electric USA",
+          "normalizedName": "schneider electric usa",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911822998_ah4fte689"
+        },
+        {
+          "name": "Lattice",
+          "normalizedName": "lattice",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911790194_qcsslc37w"
+        },
+        {
+          "name": "Dynatrace",
+          "normalizedName": "dynatrace",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911762598_v9qsimrii"
+        },
+        {
+          "name": "Monte Carlo",
+          "normalizedName": "monte carlo",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911801114_ux0hk11j7"
+        },
+        {
+          "name": "Rubrik",
+          "normalizedName": "rubrik",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911820027_hol4v0ygt"
+        },
+        {
+          "name": "Autodesk",
+          "normalizedName": "autodesk",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911731860_77mhpocql"
+        },
+        {
+          "name": "Display Fixtures & More",
+          "normalizedName": "display fixtures more",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6PA126HGKGQNT7EWMEBS"
+        },
+        {
+          "name": "Ansys",
+          "normalizedName": "ansys",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911727984_qubdep5to"
+        },
+        {
+          "name": "Grafana Labs",
+          "normalizedName": "grafana labs",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911774417_p7zqzugb4"
+        },
+        {
+          "name": "Smartsheet",
+          "normalizedName": "smartsheet",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911829909_64n6jjs3b"
+        },
+        {
+          "name": "Snowflake",
+          "normalizedName": "snowflake",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911830208_uquwqaui6"
+        },
+        {
+          "name": "Kantata",
+          "normalizedName": "kantata",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911787505_hv8mwg8wv"
+        },
+        {
+          "name": "Monday.com",
+          "normalizedName": "mondaycom",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911800408_vsgegy8ke"
+        },
+        {
+          "name": "Hugging Face",
+          "normalizedName": "hugging face",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VENJT1HFHTVJCBXAQQMRB"
+        },
+        {
+          "name": "Clumio",
+          "normalizedName": "clumio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911747402_h3xy1ld2s"
+        },
+        {
+          "name": "Metabase",
+          "normalizedName": "metabase",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911798198_r5j4xplb4"
+        },
+        {
+          "name": "WordPress VIP",
+          "normalizedName": "wordpress vip",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911848994_06hprzdxj"
+        },
+        {
+          "name": "Anthropic PBC",
+          "normalizedName": "anthropic pbc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911728599_9xxilp1ny"
+        },
+        {
+          "name": "Qualys",
+          "normalizedName": "qualys",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911814980_iuatictpb"
+        },
+        {
+          "name": "NetApp",
+          "normalizedName": "netapp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911803031_4i332m53k"
+        },
+        {
+          "name": "NetScout Systems",
+          "normalizedName": "netscout systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911803332_shsg0ebqd"
+        },
+        {
+          "name": "NVIDIA Corporation",
+          "normalizedName": "nvidia corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911805300_dp6ga6h8b"
+        },
+        {
+          "name": "Nozomi Networks",
+          "normalizedName": "nozomi networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911804309_puevatm68"
+        },
+        {
+          "name": "Modern Treasury",
+          "normalizedName": "modern treasury",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911800109_knised63l"
+        },
+        {
+          "name": "Runway",
+          "normalizedName": "runway",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEVXXG86R4KPAZAZCZME3"
+        },
+        {
+          "name": "Snorkel AI",
+          "normalizedName": "snorkel ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEWXHKJVFSJ617DJHQ83Q"
+        },
+        {
+          "name": "Hootsuite",
+          "normalizedName": "hootsuite",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911779992_oh8yyr0xo"
+        },
+        {
+          "name": "Netlify",
+          "normalizedName": "netlify",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VES03W4K359BBNQQV76VJ"
+        },
+        {
+          "name": "Censys",
+          "normalizedName": "censys",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911741826_vm9lec8fi"
+        },
+        {
+          "name": "JFrog",
+          "normalizedName": "jfrog",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911786907_88l0rv71e"
+        },
+        {
+          "name": "Varonis Systems",
+          "normalizedName": "varonis systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911842530_fxvg7kjmf"
+        },
+        {
+          "name": "Tanium",
+          "normalizedName": "tanium",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911836753_n62oz428q"
+        },
+        {
+          "name": "Stripe",
+          "normalizedName": "stripe",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911834370_0ynk3v8lp"
+        },
+        {
+          "name": "Workiva",
+          "normalizedName": "workiva",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911850441_wljpdfuag"
+        },
+        {
+          "name": "Akamai Technologies",
+          "normalizedName": "akamai technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911725657_lvtyr7cca"
+        },
+        {
+          "name": "KnowBe4",
+          "normalizedName": "knowbe4",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911788535_sm9ztxf8v"
+        },
+        {
+          "name": "Descript",
+          "normalizedName": "descript",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911758748_ujb7fx091"
+        },
+        {
+          "name": "SambaNova Systems",
+          "normalizedName": "sambanova systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911820629_l5mby6xx2"
+        },
+        {
+          "name": "Greenhouse",
+          "normalizedName": "greenhouse",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911775720_5em5oiagj"
+        },
+        {
+          "name": "ContractWorks",
+          "normalizedName": "contractworks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911751255_gfy5acizd"
+        },
+        {
+          "name": "Synack",
+          "normalizedName": "synack",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEY89KDTJF7HYF2KFJ3MW"
+        },
+        {
+          "name": "Forrester Research",
+          "normalizedName": "forrester research",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911770141_tm3wnq9ai"
+        },
+        {
+          "name": "Wasabi Technologies",
+          "normalizedName": "wasabi technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911848054_lj3ghjsi2"
+        },
+        {
+          "name": "Wix",
+          "normalizedName": "wix",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911848669_djm1jdosr"
+        },
+        {
+          "name": "Anaplan",
+          "normalizedName": "anaplan",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911727684_l4u0259qa"
+        },
+        {
+          "name": "Ping Identity",
+          "normalizedName": "ping identity",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911810982_3wvfiuocc"
+        },
+        {
+          "name": "Formlabs",
+          "normalizedName": "formlabs",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911769837_bjot83jc6"
+        },
+        {
+          "name": "Intuitive Surgical",
+          "normalizedName": "intuitive surgical",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911783724_bqb6ilvgi"
+        },
+        {
+          "name": "Amplitude",
+          "normalizedName": "amplitude",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911727263_ql25uald1"
+        },
+        {
+          "name": "Mimecast",
+          "normalizedName": "mimecast",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911799203_yz37setrz"
+        },
+        {
+          "name": "Celestial AI, Inc.",
+          "normalizedName": "celestial ai inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEKH2P3G130PMQBVY8TA4"
+        },
+        {
+          "name": "Bain & Company",
+          "normalizedName": "bain company",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911733218_xssblf16a"
+        },
+        {
+          "name": "Yello",
+          "normalizedName": "yello",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911850747_2cpnm61rh"
+        },
+        {
+          "name": "GetApp",
+          "normalizedName": "getapp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911772378_1kkufk2sa"
+        },
+        {
+          "name": "Spirent Communications",
+          "normalizedName": "spirent communications",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911832140_n44pek3r9"
+        },
+        {
+          "name": "IBM",
+          "normalizedName": "ibm",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911780321_a97k89c9y"
+        },
+        {
+          "name": "SAS Institute",
+          "normalizedName": "sas institute",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911821952_c2afgk1gk"
+        },
+        {
+          "name": "Zscaler",
+          "normalizedName": "zscaler",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911853385_493lei75g"
+        },
+        {
+          "name": "Zoom",
+          "normalizedName": "zoom",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911853051_dxxof0ou2"
+        },
+        {
+          "name": "Astronomer",
+          "normalizedName": "astronomer",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEJSHBRVY0EENX727R9ED"
+        },
+        {
+          "name": "Zenoti",
+          "normalizedName": "zenoti",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911852209_kajbgm8lb"
+        },
+        {
+          "name": "Figma",
+          "normalizedName": "figma",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911767916_neyii7cbx"
+        },
+        {
+          "name": "Framer",
+          "normalizedName": "framer",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911770871_i89eicger"
+        },
+        {
+          "name": "Guidewire Software",
+          "normalizedName": "guidewire software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911776020_gxhw3rdnu"
+        },
+        {
+          "name": "Datadog",
+          "normalizedName": "datadog",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911755286_7delz7dvf"
+        },
+        {
+          "name": "Awake Security",
+          "normalizedName": "awake security",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911732687_783ru298s"
+        },
+        {
+          "name": "Sisense",
+          "normalizedName": "sisense",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911826868_0t0tam5sk"
+        },
+        {
+          "name": "CrowdStrike Holdings",
+          "normalizedName": "crowdstrike holdings",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911753057_b9kj7ks9x"
+        },
+        {
+          "name": "Integral Ad Science",
+          "normalizedName": "integral ad science",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911783345_zsi9waklk"
+        },
+        {
+          "name": "Dassault Systèmes",
+          "normalizedName": "dassault systmes",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911754981_76royqsnk"
+        },
+        {
+          "name": "Epic Systems Corporation",
+          "normalizedName": "epic systems corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911764504_bgdgwke5r"
+        },
+        {
+          "name": "Matterport",
+          "normalizedName": "matterport",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911796799_dawmzcczh"
+        },
+        {
+          "name": "Cylance Inc.",
+          "normalizedName": "cylance inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911754372_innnomy3c"
+        },
+        {
+          "name": "Materialize",
+          "normalizedName": "materialize",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEQJ1W9FCR96CE1KBF31T"
+        },
+        {
+          "name": "Acquia",
+          "normalizedName": "acquia",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911723417_8hqxomwzw"
+        },
+        {
+          "name": "Anyscale, Inc.",
+          "normalizedName": "anyscale inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEJ501VC6MS2BCASGXG8P"
+        },
+        {
+          "name": "Sophos Group",
+          "normalizedName": "sophos group",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911831405_6jguj2kbo"
+        },
+        {
+          "name": "InVision App",
+          "normalizedName": "invision app",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911784026_5fzvehkht"
+        },
+        {
+          "name": "Algolia",
+          "normalizedName": "algolia",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911725962_ewfdylz7s"
+        },
+        {
+          "name": "OpenTelemetry",
+          "normalizedName": "opentelemetry",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911806650_y1p15n3kj"
+        },
+        {
+          "name": "Ghost Foundation",
+          "normalizedName": "ghost foundation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911772803_lqf7xmfny"
+        },
+        {
+          "name": "Dragos",
+          "normalizedName": "dragos",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911760368_2h6dbll6y"
+        },
+        {
+          "name": "Informatica",
+          "normalizedName": "informatica",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911783034_qj2gor4s4"
+        },
+        {
+          "name": "Boom Supersonic",
+          "normalizedName": "boom supersonic",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911736147_o9hamxpvx"
+        },
+        {
+          "name": "KLA Corporation",
+          "normalizedName": "kla corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911788234_z6ay3pmbk"
+        },
+        {
+          "name": "Fintech innovations",
+          "normalizedName": "fintech innovations",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K4VJ4TG7N769AVH8K1PCR4RQ"
+        },
+        {
+          "name": "Store Fixtures & Displays",
+          "normalizedName": "store fixtures displays",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K54X6MQ5C4GPR1RQ0Y6VMS46"
+        },
+        {
+          "name": "Coinbase Global",
+          "normalizedName": "coinbase global",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911749027_wgs5c4uyu"
+        },
+        {
+          "name": "dbt Labs",
+          "normalizedName": "dbt labs",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911756316_5ezddcwvn"
+        },
+        {
+          "name": "Tealium",
+          "normalizedName": "tealium",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911837055_bdbndzcfn"
+        },
+        {
+          "name": "Luma Labs",
+          "normalizedName": "luma labs",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911794479_2o72hkqla"
+        },
+        {
+          "name": "Scale AI",
+          "normalizedName": "scale ai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911822256_yxqtdm8ee"
+        },
+        {
+          "name": "Workhuman",
+          "normalizedName": "workhuman",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911850092_0xxyf5p0h"
+        },
+        {
+          "name": "Automation Anywhere",
+          "normalizedName": "automation anywhere",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911732385_5vav7tyzi"
+        },
+        {
+          "name": "Code42 Software",
+          "normalizedName": "code42 software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911748426_n4i9eg6pc"
+        },
+        {
+          "name": "Fivetran",
+          "normalizedName": "fivetran",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911768821_fw6ybbckm"
+        },
+        {
+          "name": "Ceridian HCM Holding",
+          "normalizedName": "ceridian hcm holding",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911742554_3jbjd83cg"
+        },
+        {
+          "name": "HashiCorp",
+          "normalizedName": "hashicorp",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911777336_ryrojkytc"
+        },
+        {
+          "name": "MarkLogic Corporation",
+          "normalizedName": "marklogic corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911795471_ymrthjwyu"
+        },
+        {
+          "name": "Hewlett Packard Enterprise",
+          "normalizedName": "hewlett packard enterprise",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911778344_zq77t4vki"
+        },
+        {
+          "name": "Cisco Systems",
+          "normalizedName": "cisco systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911745484_sm0jcu166"
+        },
+        {
+          "name": "Broadcom",
+          "normalizedName": "broadcom",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911737788_h9cn2j7gg"
+        },
+        {
+          "name": "Illumio",
+          "normalizedName": "illumio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911781665_l4usi0igy"
+        },
+        {
+          "name": "Jaeger Tracing",
+          "normalizedName": "jaeger tracing",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911785954_u4we6iu1w"
+        },
+        {
+          "name": "RSA Security",
+          "normalizedName": "rsa security",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911819561_6vuvghov3"
+        },
+        {
+          "name": "JetBrains s.r.o",
+          "normalizedName": "jetbrains sro",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911786553_6djxwr37v"
+        },
+        {
+          "name": "Yext",
+          "normalizedName": "yext",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911851136_5f9dzcykh"
+        },
+        {
+          "name": "Twilio",
+          "normalizedName": "twilio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911840490_b89p6mmci"
+        },
+        {
+          "name": "eversign",
+          "normalizedName": "eversign",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911765527_s37v43ai0"
+        },
+        {
+          "name": "F5 Networks",
+          "normalizedName": "f5 networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911766863_dcccnjbt9"
+        },
+        {
+          "name": "Braze",
+          "normalizedName": "braze",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911737480_jthwa7gtz"
+        },
+        {
+          "name": "Proofpoint",
+          "normalizedName": "proofpoint",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911813272_p1d44x0dt"
+        },
+        {
+          "name": "Hex Technologies Inc.",
+          "normalizedName": "hex technologies inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEMY8FBH77R41WZGFVWFQ"
+        },
+        {
+          "name": "Clarifai",
+          "normalizedName": "clarifai",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911746084_851m5qjh0"
+        },
+        {
+          "name": "Citrix Systems",
+          "normalizedName": "citrix systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911745784_zfqz8snke"
+        },
+        {
+          "name": "ExtraHop Networks",
+          "normalizedName": "extrahop networks",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911766255_353asjb19"
+        },
+        {
+          "name": "Honeywell International",
+          "normalizedName": "honeywell international",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911779668_dhhzs8ufn"
+        },
+        {
+          "name": "Iterable",
+          "normalizedName": "iterable",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911784751_a4896boa1"
+        },
+        {
+          "name": "Pegasystems",
+          "normalizedName": "pegasystems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911808984_aumalympi"
+        },
+        {
+          "name": "UKG",
+          "normalizedName": "ukg",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911841411_tzal7u7nf"
+        },
+        {
+          "name": "McAfee Enterprise",
+          "normalizedName": "mcafee enterprise",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911797100_owglgjorj"
+        },
+        {
+          "name": "Miro",
+          "normalizedName": "miro",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911799503_szqgomaje"
+        },
+        {
+          "name": "Binary Defense Systems",
+          "normalizedName": "binary defense systems",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911734822_b53fckvdg"
+        },
+        {
+          "name": "SolarWinds Corporation",
+          "normalizedName": "solarwinds corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911831108_707jq631n"
+        },
+        {
+          "name": "Endgame Inc.",
+          "normalizedName": "endgame inc",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911763903_96p17h6p1"
+        },
+        {
+          "name": "Okta",
+          "normalizedName": "okta",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911805902_t3xivp72d"
+        },
+        {
+          "name": "Check Point Software",
+          "normalizedName": "check point software",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911743858_ilxy5o94h"
+        },
+        {
+          "name": "LeadIQ",
+          "normalizedName": "leadiq",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911790928_95qgygki2"
+        },
+        {
+          "name": "Workato",
+          "normalizedName": "workato",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911849297_7hs67qacg"
+        },
+        {
+          "name": "Krisp Technologies",
+          "normalizedName": "krisp technologies",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911789140_1bdx0ql85"
+        },
+        {
+          "name": "Infor",
+          "normalizedName": "infor",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911782676_hj05rlm51"
+        },
+        {
+          "name": "Kong",
+          "normalizedName": "kong",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911788837_121cn54ak"
+        },
+        {
+          "name": "Box",
+          "normalizedName": "box",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911737117_wn7e7q4zz"
+        },
+        {
+          "name": "Segment",
+          "normalizedName": "segment",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911823296_dst522geo"
+        },
+        {
+          "name": "Lacework",
+          "normalizedName": "lacework",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911789590_onb7knbuo"
+        },
+        {
+          "name": "DataRobot",
+          "normalizedName": "datarobot",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911756007_4fty065m6"
+        },
+        {
+          "name": "Synthesia",
+          "normalizedName": "synthesia",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911835691_z6mwhkuom"
+        },
+        {
+          "name": "Contractbook",
+          "normalizedName": "contractbook",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911750954_b37rrowv5"
+        },
+        {
+          "name": "Vertiv Holdings",
+          "normalizedName": "vertiv holdings",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911846218_1w9wf9gdo"
+        },
+        {
+          "name": "Abnormal Security Corporation",
+          "normalizedName": "abnormal security corporation",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "01K48VEF878KSYMTDJ7RPTNFK8"
+        },
+        {
+          "name": "Elastic Observability",
+          "normalizedName": "elastic observability",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911763603_tkdufifee"
+        },
+        {
+          "name": "Contentful GmbH",
+          "normalizedName": "contentful gmbh",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911750653_4wegqxham"
+        },
+        {
+          "name": "Customer.io",
+          "normalizedName": "customerio",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911753359_nu419leo0"
+        },
+        {
+          "name": "Venafi",
+          "normalizedName": "venafi",
+          "issue": "Company exists in database but not in data files",
+          "dbId": "acc_1756911843505_gd3nn87y6"
+        }
+      ]
+    },
+    "people": {
+      "matched": [],
+      "missing": [
+        {
+          "name": "Michael Bayle",
+          "email": "michael.bayle@exeloncorp.com",
+          "company": "Exelon Corporation",
+          "title": "Business Analyst",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Roman Rusin",
+          "email": "",
+          "company": "National Grid USA Service Company",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Paul  Hartung",
+          "email": "",
+          "company": "Northern Virgina Electic Cooperative",
+          "title": "Manger - Substation & Telecom",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Rumsey Light",
+          "email": "",
+          "company": "Northern Virgina Electic Cooperative",
+          "title": "Telecom Analyst",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Michael  Buisson",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Shondel McPherson",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Distribution Business Team Leader",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Anthony Suppa",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Project Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "James Yorke",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Manager Utility Business Systems Strategy",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Tim Wigmore",
+          "email": "",
+          "company": "Vermont Electric Power Company",
+          "title": "Telecom Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Casey Harris",
+          "email": "casey.harris@duke-energy.com",
+          "company": "Duke Energy Corporation Telecommunications",
+          "title": "Sr. IT Telecom Analyst",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Seth  Kahel",
+          "email": "hkahel@mlgw.org",
+          "company": "Memphis Light, Gas & Water Division",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Suzanne Hoffman",
+          "email": "skhoffma@southernco.com",
+          "company": "Southern Company ",
+          "title": "SCS Telecom Engineering",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Jason Batke",
+          "email": "jbatke@bepc.com",
+          "company": "Basin Electric Power Cooperative",
+          "title": "SUPT TELECOM",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Tony Carpenter",
+          "email": "",
+          "company": "Calhoun Communications, Inc. ",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Steve Stoczynski",
+          "email": "steve.stoczynski@dairylandpower.com",
+          "company": "Dairyland Power Cooperative",
+          "title": "Telecommunications Field Supervisor",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Curtis Wiedman",
+          "email": "cwiedman@eastriver.coop",
+          "company": "East River Electric Power Cooperative",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Clay Reagle",
+          "email": "creagle@eastriver.coop",
+          "company": "Great River Energy",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Michael Tate",
+          "email": "mtate@grenergy.com",
+          "company": "Great River Energy",
+          "title": "Telecom Engineer II",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Chad Highland",
+          "email": "chighland@mnpower.com",
+          "company": "MINNESOTA POWER",
+          "title": "Electronics Technician",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Becky Moore",
+          "email": "bmoore@mnpower.com",
+          "company": "Minnesota Power",
+          "title": "Engineer III",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Jason Oswald",
+          "email": "joswald@mnpower.com",
+          "company": "MINNESOTA POWER",
+          "title": "Electronics Technician",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Jon Wirtanen",
+          "email": "jwirtanen@mnpower.com",
+          "company": "Minnesota Power",
+          "title": "Supervising Engineer",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Bruce Whitmore",
+          "email": "bruce.whitmore@mdu.com",
+          "company": "Montana-Dakota Utilities Co.",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Marty Berlinger",
+          "email": "mberlinger@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "Sr. Network Engineer",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Shane Wevley",
+          "email": "shane.wevley@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "Supervisor Network Engineering",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Linda Meynier",
+          "email": "linda.rogers@adb-us.com",
+          "company": "ADB",
+          "title": "Senior Director of Business Development",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Jeff Hooter",
+          "email": "jeffery.hooter@centerpointenergy.com",
+          "company": "CenterPoint Energy",
+          "title": "Supervising Transport Planning",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Darren Lafferty",
+          "email": "",
+          "company": "CenterPoint Energy",
+          "title": "Smart Grid Telecom Architect",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "James Boston",
+          "email": "jaboston@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "Director Communication Services",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Gabriel Garcia",
+          "email": "ggarcia1@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "Senior Counsel",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Anand Vedapuri",
+          "email": "avedapuri@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "VP Infrastructure & Operations",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Barrett Briley",
+          "email": "bbriley@irby.com",
+          "company": "Irby Utilities",
+          "title": "Director of Business Development",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Spencer Burks",
+          "email": "spencer.burks@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director of Strategic Planning",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Richie Cepeda",
+          "email": "richie.cepeda@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director, Engineering",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Robert Saddler",
+          "email": "rsaddler@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director, Telecom Systems",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Will Davis",
+          "email": "",
+          "company": "Lower Colorado River Authority",
+          "title": "",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Peter LeBoeuf ",
+          "email": "",
+          "company": "Cleco Power LLC",
+          "title": "Telecommunications Engineer ",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Warren Frederickson",
+          "email": "wfrederickson@yubawater.org",
+          "company": "YUBA Water Agency",
+          "title": "Supervising Communications Technician",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Rich Slider",
+          "email": "richard.slider@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Manager, Telecom Operations North",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Sylvan Tucker",
+          "email": "sylvan.tucker@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Project Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Vanessa Luera",
+          "email": "vanessa.luera@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Telecom Ops Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Reggie Hesse",
+          "email": "reggie.hesse@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Engineer",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Luis Colvin",
+          "email": "luis.colvin@wescodist.com",
+          "company": "Wesco",
+          "title": "Representative - Outside Sales\nUtility Power Solutions",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "James Allen",
+          "email": "telecombydesign@sbcglobal.net",
+          "company": "Telecom by Design LLC",
+          "title": "Owner",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Christian Morales",
+          "email": "christian.morales-gomez@smud.org",
+          "company": "Sacremento Municipal Utility District",
+          "title": "Telecommunications Engineer",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Mohan Chidambaram",
+          "email": "mohan.chidambaram@pgn.com",
+          "company": "Portland General Electric Company",
+          "title": "Telecom Program Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Ignacio Callen",
+          "email": "licallen@powertrunk.com",
+          "company": "PowerTrunk",
+          "title": "Senior VP Sales",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Chris Alben",
+          "email": "chris.alben@graybar.com",
+          "company": "Graybar",
+          "title": "Manager - Broadband Sales",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Jennifer  Walters",
+          "email": "jennifer.walters@graybar.com",
+          "company": "Graybar",
+          "title": "Senior Outside Sales Representative",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Matt DeBalski",
+          "email": "matthew.debalski@viavisolutions.com",
+          "company": "Viavi Solutions",
+          "title": "Account Executive, Utilities",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "David Parkhurst",
+          "email": "dparkhurst@gcpud.org",
+          "company": "Grant County Public Utility District No. 2",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Frank  Fulton",
+          "email": "ffulton@catcomtec.com",
+          "company": "Catalyst Communications Technologies, Inc. ",
+          "title": "Solution Sales Consultant",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Caroline Santiago",
+          "email": "caroline.santiago@belden.com",
+          "company": "Belden",
+          "title": "Solution Account Manager - Energy",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Ralph Huff",
+          "email": "",
+          "company": "Padtec",
+          "title": "Regional Sales Director",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Robert Hartley",
+          "email": "robert.hartley@westermo.com",
+          "company": "Westermo Data Communications, Inc. ",
+          "title": "Regional Sales Manager",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Anthony  Romero",
+          "email": "arromero@tristategt.org",
+          "company": "Tri-State Generation and Transmission Association Inc. ",
+          "title": "Telecommunications Foreman",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Justin Brunell",
+          "email": "justin.brunell@northwestern.com",
+          "company": "Northwestern Corporation",
+          "title": "BT Telecom & Networks",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Melissa Lawney",
+          "email": "mlawney@washoecounty.gov",
+          "company": "Washoe County Utilities Division",
+          "title": "Regional Communication Coordinator",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Frank  Schnorbus",
+          "email": "frank.schnorbus@swgas.com",
+          "company": "Southwest Gas Corporation",
+          "title": "Contractor, End User Technical Support",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Spencer Fuller",
+          "email": "sfuller@wrec.coop",
+          "company": "Wells Rural Electric Company",
+          "title": "Information System Analyst",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Victor Gong",
+          "email": "v3g7@pge.com",
+          "company": "Pacific Gas & Electric Company",
+          "title": "IT Product Specialist, Senior",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Scott Garrison",
+          "email": "s2g3@pge.com",
+          "company": "Pacific Gas & Electric Company",
+          "title": "Solutions Architect, Principal",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Sonny Loreto",
+          "email": "sonny.loreto@utcg.com",
+          "company": "Utility Telecom Consulting Group Inc.",
+          "title": "President",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Robin Smyth",
+          "email": "rsmyth@gpatelecom.com",
+          "company": "Gillespie, Prudhon and Associates",
+          "title": "President",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "David  Hattey",
+          "email": "dhattey@landw.com",
+          "company": "Lockard & White, Inc. ",
+          "title": "Senior Associate Consultant",
+          "source": "UTC Regions 2023"
+        },
+        {
+          "name": "Christopher Conoley",
+          "email": "christopher.conoley@austinenergy.com",
+          "company": "Austin Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Carlos Estrada",
+          "email": "carlos.estrada2@epelectric.com",
+          "company": "El Paso Electric Company",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Terry Key",
+          "email": "terry.key@fpl.com",
+          "company": "FLORIDA POWER",
+          "title": "Manager, Transport Network Engineering",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Vladmir Kapisarov",
+          "email": "",
+          "company": "Los Angeles Department of Water & Power",
+          "title": "RF",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Paul Hartung",
+          "email": "phartung@novec.com",
+          "company": "Northern Virginia Electric Cooperative",
+          "title": "Manager Substations & Telecom",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Edi Sierra",
+          "email": "edi.sierra@pseg.com",
+          "company": "PSEG Long Island",
+          "title": "Telecommunications Manager",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Steve Liegl",
+          "email": "steven.liegl@wecenergygroup.com",
+          "company": "WEC Energy Group",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Jeremy Wardenburg",
+          "email": "jeremy.wardenburg@como.gov",
+          "company": "Columbia Water & Light",
+          "title": "Communications Technician",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Brian Gragert",
+          "email": "bdgragert@oppd.com",
+          "company": "Omaha Public Power District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "James Rothenberger",
+          "email": "jrothenberger@maelectric.com",
+          "company": "M & A Electric Power Cooperative",
+          "title": "Communication Technician",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Brad Hill",
+          "email": "brad.hill@cbpower.coop",
+          "company": "Corn Belt Power Cooperative",
+          "title": "Communications Superintendent",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Michael McClintock",
+          "email": "mrmcclintock@bpa.gov",
+          "company": "Bonneville Power Administration",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Bechir El Khoury Hanna",
+          "email": "bechir.khoury@eversource.com",
+          "company": "Eversource Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Zahoor Haq",
+          "email": "zahoor.haq@eversource.com",
+          "company": "Eversource Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Heath Markovetz",
+          "email": "hmarkovetz@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Herbert King",
+          "email": "herbert.king@wecenergygroup.com",
+          "company": "WEC Energy Group",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Daniel Holbrook",
+          "email": "daniel.holbrook@eversource.com",
+          "company": "Eversource",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Dean McDowell",
+          "email": "dean.mcdowell@aecc.com",
+          "company": "Arkansas Electric Cooperative Corp.",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Ed Orellana",
+          "email": "eduardo.orellana@pseg.com",
+          "company": "PSEG Long Island Power Authority",
+          "title": "RF Engineering & FCC Compliance",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Anthony Suppa",
+          "email": "anthony.suppajr@pseg.com",
+          "company": "Public Service Enterprise Group",
+          "title": "Project Manager- Electric & Gas Strategy",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Curtis Reule",
+          "email": "curtis.reule@mdu.com",
+          "company": "Montana-Dakota Utilities Co.",
+          "title": "Manager, Communications Engineering",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Rodney Jones",
+          "email": "rodney.jones@txdot.gov",
+          "company": "TxDOT",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Tin Vo",
+          "email": "tin.vo@smud.org",
+          "company": "Sacramento Municipal Utility District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Kevin Fennelly",
+          "email": "kevin.fennelly@smud.org",
+          "company": "Sacramento Municipal Utility District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Michael Honaker",
+          "email": "mjhonaker@oppd.com",
+          "company": "Omaha Public Power District",
+          "title": "Lead Telecommunications Engineer",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Cory Smith",
+          "email": "csmith@myrec.coop",
+          "company": "Rappahannock Electric Cooperative",
+          "title": "Distribution Engineer",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Gary Vondrasek",
+          "email": "vondgr@jea.com",
+          "company": "JEA",
+          "title": "Manager Telecom Sales and Services",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Jake Hooker",
+          "email": "jdhw@pge.com",
+          "company": "Pacific Gas & Electric",
+          "title": "Program Manager",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Michael Lac",
+          "email": "nghia.lac@nationalgrid.com",
+          "company": "National Grid USA",
+          "title": "Manager, Telecom Engineering",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Sam Kahel",
+          "email": "hkahel@mlgw.org",
+          "company": "Memphis Light, Gas & Water Division",
+          "title": "Telecommunications Engr. Dept.",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Peter LeBoeuf",
+          "email": "peter.leboeuf@cleco.com",
+          "company": "Cleco Power LLC",
+          "title": "Telecommunications Engineer",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Dewey Day",
+          "email": "dcdb@pge.com",
+          "company": "Pacific Gas & Electric",
+          "title": "Principal OT Architect",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Tim Wigmore",
+          "email": "twigmore@velco.com",
+          "company": "Vermont Electric Power Company",
+          "title": "Telecom Manager",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Jeff Hooter",
+          "email": "jeff.hooter@centerpointenergy.com",
+          "company": "CenterPoint Energy",
+          "title": "Supervisor Transport Planning",
+          "source": "Physical Mailer Campaign 2025"
+        },
+        {
+          "name": "Casey Hutchinson",
+          "email": "casey.hutchinson@avistacorp.com",
+          "company": "Avista Corp.",
+          "title": "Network Engineer",
+          "source": "Physical Mailer Campaign 2025"
+        }
+      ],
+      "qualityIssues": [
+        {
+          "name": "Jane Smith",
+          "email": "jane.smith@testcompany.com",
+          "company": "Test Company Inc",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "per_1757908897050_b0wp9y"
+        },
+        {
+          "name": "KC McClure",
+          "email": "kc.mcclure@accenture.com",
+          "company": "Accenture",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K48QDMH4VYFHHPDFPR0C200K"
+        },
+        {
+          "name": "Manish Sharma",
+          "email": "manish.sharma@accenture.com",
+          "company": "Accenture",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K48QDPH7DSA6D26KHZ28R64W"
+        },
+        {
+          "name": "Julie Sweet",
+          "email": "julie.sweet@accenture.com",
+          "company": "Accenture",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K48QDKFSY3ZRX819FX3ZNC70"
+        },
+        {
+          "name": "Kathleen OReilly",
+          "email": "kathleen.oreilly@accenture.com",
+          "company": "Accenture",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K48QDQJVD25SQK3M99KAM1F1"
+        },
+        {
+          "name": "Penelope Prett",
+          "email": "penelope.prett@accenture.com",
+          "company": "Accenture",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K48QDNK6WSSXQ4KPB82FAHH7"
+        },
+        {
+          "name": "Bob Johnson",
+          "email": "bob.johnson@prospect-test.com",
+          "company": "Prospect Test Inc",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "per_1757909113682_t5668h"
+        },
+        {
+          "name": "Jane Smith",
+          "email": "jane.smith@advancement-test.com",
+          "company": "Advancement Test Corp",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "per_1757909112453_d1nvt9"
+        },
+        {
+          "name": "John Doe",
+          "email": "john.doe@testcompany.com",
+          "company": "Test Company Inc",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "per_1757908733677_pz9x0c"
+        },
+        {
+          "name": "John Doe",
+          "email": "john@test.com",
+          "company": "Test Corp",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "per_1757908728149_o81kka"
+        },
+        {
+          "name": "John Dano",
+          "email": null,
+          "company": "Retail Product Solutions",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K544HGF53J2Z5NJJC5G3S6EF"
+        },
+        {
+          "name": "David Beitler",
+          "email": "d.beitler@winningvariant.com",
+          "company": "Winning Variant",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4SG3NCCTPKXS3YXYXNW25Z3"
+        },
+        {
+          "name": "Derek Cummings",
+          "email": "derek@retailproductsolutions.com",
+          "company": "Retail Product Solutions",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4SGR1ANP5QSB39CGFY56T2D"
+        },
+        {
+          "name": "Kirk Morales",
+          "email": "kirk@winningvariant.com",
+          "company": "Winning Variant",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4SB2SGDHZY5B96P95XFDXE8"
+        },
+        {
+          "name": "Adam Lohmann",
+          "email": "adam@thetresgroup.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D91PPETX7VQ7DBWMMDHFMX"
+        },
+        {
+          "name": "Nicole Montgomery",
+          "email": "nicole@closingteamfl.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D91KC0QHAFVC4R0PJWMN2Z"
+        },
+        {
+          "name": "Edina McGuire",
+          "email": "edina@somerstitle.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D91F927CM8C98YZAFXV5G8"
+        },
+        {
+          "name": "Barry Miller",
+          "email": "barry@theclosingagent.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D91AKJ849JSAWSXEHHR2BX"
+        },
+        {
+          "name": "Dennis Egan",
+          "email": "dennis@closewithsun.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D916X9VAKRP8K41HWBBN3J"
+        },
+        {
+          "name": "Randy Cruz",
+          "email": "rcruz@gorequire.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D912J1BY0VHEWZRY60XAGW"
+        },
+        {
+          "name": "Tami Sturdevant",
+          "email": "tsturdevant@professionaltitle.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D90YW6HF7PW2B7KWYY1RVA"
+        },
+        {
+          "name": "Armando Romero",
+          "email": "armando@brokernation.net",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D9097RSHEDZ6XFQTHS2EZY"
+        },
+        {
+          "name": "Alison Nazarowski",
+          "email": "alison@brightlinetitle.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D905J36R011YT3BWRFDEJA"
+        },
+        {
+          "name": "Shari Roll",
+          "email": "shariroll@ftgagency.com",
+          "company": "Unknown",
+          "issue": "Person exists in database but not in data files",
+          "dbId": "01K4D8Z8B94EYP2ZQ9D1RW23DX"
+        }
+      ]
+    },
+    "leads": {
+      "matched": [],
+      "missing": [
+        {
+          "name": "Michael Bayle",
+          "email": "michael.bayle@exeloncorp.com",
+          "company": "Exelon Corporation",
+          "title": "Business Analyst",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Roman Rusin",
+          "email": "",
+          "company": "National Grid USA Service Company",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Paul  Hartung",
+          "email": "",
+          "company": "Northern Virgina Electic Cooperative",
+          "title": "Manger - Substation & Telecom",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Rumsey Light",
+          "email": "",
+          "company": "Northern Virgina Electic Cooperative",
+          "title": "Telecom Analyst",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Michael  Buisson",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Shondel McPherson",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Distribution Business Team Leader",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Anthony Suppa",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Project Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "James Yorke",
+          "email": "",
+          "company": "Public Service Enterprise Group",
+          "title": "Manager Utility Business Systems Strategy",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Tim Wigmore",
+          "email": "",
+          "company": "Vermont Electric Power Company",
+          "title": "Telecom Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Casey Harris",
+          "email": "casey.harris@duke-energy.com",
+          "company": "Duke Energy Corporation Telecommunications",
+          "title": "Sr. IT Telecom Analyst",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Seth  Kahel",
+          "email": "hkahel@mlgw.org",
+          "company": "Memphis Light, Gas & Water Division",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Suzanne Hoffman",
+          "email": "skhoffma@southernco.com",
+          "company": "Southern Company ",
+          "title": "SCS Telecom Engineering",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jason Batke",
+          "email": "jbatke@bepc.com",
+          "company": "Basin Electric Power Cooperative",
+          "title": "SUPT TELECOM",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Tony Carpenter",
+          "email": "",
+          "company": "Calhoun Communications, Inc. ",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Steve Stoczynski",
+          "email": "steve.stoczynski@dairylandpower.com",
+          "company": "Dairyland Power Cooperative",
+          "title": "Telecommunications Field Supervisor",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Curtis Wiedman",
+          "email": "cwiedman@eastriver.coop",
+          "company": "East River Electric Power Cooperative",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Clay Reagle",
+          "email": "creagle@eastriver.coop",
+          "company": "Great River Energy",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Michael Tate",
+          "email": "mtate@grenergy.com",
+          "company": "Great River Energy",
+          "title": "Telecom Engineer II",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Chad Highland",
+          "email": "chighland@mnpower.com",
+          "company": "MINNESOTA POWER",
+          "title": "Electronics Technician",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Becky Moore",
+          "email": "bmoore@mnpower.com",
+          "company": "Minnesota Power",
+          "title": "Engineer III",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jason Oswald",
+          "email": "joswald@mnpower.com",
+          "company": "MINNESOTA POWER",
+          "title": "Electronics Technician",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jon Wirtanen",
+          "email": "jwirtanen@mnpower.com",
+          "company": "Minnesota Power",
+          "title": "Supervising Engineer",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Bruce Whitmore",
+          "email": "bruce.whitmore@mdu.com",
+          "company": "Montana-Dakota Utilities Co.",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Marty Berlinger",
+          "email": "mberlinger@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "Sr. Network Engineer",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Shane Wevley",
+          "email": "shane.wevley@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "Supervisor Network Engineering",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Linda Meynier",
+          "email": "linda.rogers@adb-us.com",
+          "company": "ADB",
+          "title": "Senior Director of Business Development",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jeff Hooter",
+          "email": "jeffery.hooter@centerpointenergy.com",
+          "company": "CenterPoint Energy",
+          "title": "Supervising Transport Planning",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Darren Lafferty",
+          "email": "",
+          "company": "CenterPoint Energy",
+          "title": "Smart Grid Telecom Architect",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "James Boston",
+          "email": "jaboston@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "Director Communication Services",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Gabriel Garcia",
+          "email": "ggarcia1@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "Senior Counsel",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Anand Vedapuri",
+          "email": "avedapuri@cpsenergy.com",
+          "company": "CPS Energy",
+          "title": "VP Infrastructure & Operations",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Barrett Briley",
+          "email": "bbriley@irby.com",
+          "company": "Irby Utilities",
+          "title": "Director of Business Development",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Spencer Burks",
+          "email": "spencer.burks@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director of Strategic Planning",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Richie Cepeda",
+          "email": "richie.cepeda@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director, Engineering",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Robert Saddler",
+          "email": "rsaddler@lcra.org",
+          "company": "Lower Colorado River Authority",
+          "title": "Director, Telecom Systems",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Will Davis",
+          "email": "",
+          "company": "Lower Colorado River Authority",
+          "title": "",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Peter LeBoeuf ",
+          "email": "",
+          "company": "Cleco Power LLC",
+          "title": "Telecommunications Engineer ",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Warren Frederickson",
+          "email": "wfrederickson@yubawater.org",
+          "company": "YUBA Water Agency",
+          "title": "Supervising Communications Technician",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Rich Slider",
+          "email": "richard.slider@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Manager, Telecom Operations North",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Sylvan Tucker",
+          "email": "sylvan.tucker@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Project Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Vanessa Luera",
+          "email": "vanessa.luera@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Telecom Ops Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Reggie Hesse",
+          "email": "reggie.hesse@nvenergy.com",
+          "company": "Nevada Energy",
+          "title": "Engineer",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Luis Colvin",
+          "email": "luis.colvin@wescodist.com",
+          "company": "Wesco",
+          "title": "Representative - Outside Sales\nUtility Power Solutions",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "James Allen",
+          "email": "telecombydesign@sbcglobal.net",
+          "company": "Telecom by Design LLC",
+          "title": "Owner",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Christian Morales",
+          "email": "christian.morales-gomez@smud.org",
+          "company": "Sacremento Municipal Utility District",
+          "title": "Telecommunications Engineer",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Mohan Chidambaram",
+          "email": "mohan.chidambaram@pgn.com",
+          "company": "Portland General Electric Company",
+          "title": "Telecom Program Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Ignacio Callen",
+          "email": "licallen@powertrunk.com",
+          "company": "PowerTrunk",
+          "title": "Senior VP Sales",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Chris Alben",
+          "email": "chris.alben@graybar.com",
+          "company": "Graybar",
+          "title": "Manager - Broadband Sales",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jennifer  Walters",
+          "email": "jennifer.walters@graybar.com",
+          "company": "Graybar",
+          "title": "Senior Outside Sales Representative",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Matt DeBalski",
+          "email": "matthew.debalski@viavisolutions.com",
+          "company": "Viavi Solutions",
+          "title": "Account Executive, Utilities",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "David Parkhurst",
+          "email": "dparkhurst@gcpud.org",
+          "company": "Grant County Public Utility District No. 2",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Frank  Fulton",
+          "email": "ffulton@catcomtec.com",
+          "company": "Catalyst Communications Technologies, Inc. ",
+          "title": "Solution Sales Consultant",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Caroline Santiago",
+          "email": "caroline.santiago@belden.com",
+          "company": "Belden",
+          "title": "Solution Account Manager - Energy",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Ralph Huff",
+          "email": "",
+          "company": "Padtec",
+          "title": "Regional Sales Director",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Robert Hartley",
+          "email": "robert.hartley@westermo.com",
+          "company": "Westermo Data Communications, Inc. ",
+          "title": "Regional Sales Manager",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Anthony  Romero",
+          "email": "arromero@tristategt.org",
+          "company": "Tri-State Generation and Transmission Association Inc. ",
+          "title": "Telecommunications Foreman",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Justin Brunell",
+          "email": "justin.brunell@northwestern.com",
+          "company": "Northwestern Corporation",
+          "title": "BT Telecom & Networks",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Melissa Lawney",
+          "email": "mlawney@washoecounty.gov",
+          "company": "Washoe County Utilities Division",
+          "title": "Regional Communication Coordinator",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Frank  Schnorbus",
+          "email": "frank.schnorbus@swgas.com",
+          "company": "Southwest Gas Corporation",
+          "title": "Contractor, End User Technical Support",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Spencer Fuller",
+          "email": "sfuller@wrec.coop",
+          "company": "Wells Rural Electric Company",
+          "title": "Information System Analyst",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Victor Gong",
+          "email": "v3g7@pge.com",
+          "company": "Pacific Gas & Electric Company",
+          "title": "IT Product Specialist, Senior",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Scott Garrison",
+          "email": "s2g3@pge.com",
+          "company": "Pacific Gas & Electric Company",
+          "title": "Solutions Architect, Principal",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Sonny Loreto",
+          "email": "sonny.loreto@utcg.com",
+          "company": "Utility Telecom Consulting Group Inc.",
+          "title": "President",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Robin Smyth",
+          "email": "rsmyth@gpatelecom.com",
+          "company": "Gillespie, Prudhon and Associates",
+          "title": "President",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "David  Hattey",
+          "email": "dhattey@landw.com",
+          "company": "Lockard & White, Inc. ",
+          "title": "Senior Associate Consultant",
+          "source": "UTC Regions 2023",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Christopher Conoley",
+          "email": "christopher.conoley@austinenergy.com",
+          "company": "Austin Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Carlos Estrada",
+          "email": "carlos.estrada2@epelectric.com",
+          "company": "El Paso Electric Company",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Terry Key",
+          "email": "terry.key@fpl.com",
+          "company": "FLORIDA POWER",
+          "title": "Manager, Transport Network Engineering",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Vladmir Kapisarov",
+          "email": "",
+          "company": "Los Angeles Department of Water & Power",
+          "title": "RF",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Paul Hartung",
+          "email": "phartung@novec.com",
+          "company": "Northern Virginia Electric Cooperative",
+          "title": "Manager Substations & Telecom",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Edi Sierra",
+          "email": "edi.sierra@pseg.com",
+          "company": "PSEG Long Island",
+          "title": "Telecommunications Manager",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Steve Liegl",
+          "email": "steven.liegl@wecenergygroup.com",
+          "company": "WEC Energy Group",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jeremy Wardenburg",
+          "email": "jeremy.wardenburg@como.gov",
+          "company": "Columbia Water & Light",
+          "title": "Communications Technician",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Brian Gragert",
+          "email": "bdgragert@oppd.com",
+          "company": "Omaha Public Power District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "James Rothenberger",
+          "email": "jrothenberger@maelectric.com",
+          "company": "M & A Electric Power Cooperative",
+          "title": "Communication Technician",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Brad Hill",
+          "email": "brad.hill@cbpower.coop",
+          "company": "Corn Belt Power Cooperative",
+          "title": "Communications Superintendent",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Michael McClintock",
+          "email": "mrmcclintock@bpa.gov",
+          "company": "Bonneville Power Administration",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Bechir El Khoury Hanna",
+          "email": "bechir.khoury@eversource.com",
+          "company": "Eversource Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Zahoor Haq",
+          "email": "zahoor.haq@eversource.com",
+          "company": "Eversource Energy",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Heath Markovetz",
+          "email": "hmarkovetz@otpco.com",
+          "company": "Otter Tail Power Company",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Herbert King",
+          "email": "herbert.king@wecenergygroup.com",
+          "company": "WEC Energy Group",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Daniel Holbrook",
+          "email": "daniel.holbrook@eversource.com",
+          "company": "Eversource",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Dean McDowell",
+          "email": "dean.mcdowell@aecc.com",
+          "company": "Arkansas Electric Cooperative Corp.",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Ed Orellana",
+          "email": "eduardo.orellana@pseg.com",
+          "company": "PSEG Long Island Power Authority",
+          "title": "RF Engineering & FCC Compliance",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Anthony Suppa",
+          "email": "anthony.suppajr@pseg.com",
+          "company": "Public Service Enterprise Group",
+          "title": "Project Manager- Electric & Gas Strategy",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Curtis Reule",
+          "email": "curtis.reule@mdu.com",
+          "company": "Montana-Dakota Utilities Co.",
+          "title": "Manager, Communications Engineering",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Rodney Jones",
+          "email": "rodney.jones@txdot.gov",
+          "company": "TxDOT",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Tin Vo",
+          "email": "tin.vo@smud.org",
+          "company": "Sacramento Municipal Utility District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Kevin Fennelly",
+          "email": "kevin.fennelly@smud.org",
+          "company": "Sacramento Municipal Utility District",
+          "title": "",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Michael Honaker",
+          "email": "mjhonaker@oppd.com",
+          "company": "Omaha Public Power District",
+          "title": "Lead Telecommunications Engineer",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Cory Smith",
+          "email": "csmith@myrec.coop",
+          "company": "Rappahannock Electric Cooperative",
+          "title": "Distribution Engineer",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Gary Vondrasek",
+          "email": "vondgr@jea.com",
+          "company": "JEA",
+          "title": "Manager Telecom Sales and Services",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jake Hooker",
+          "email": "jdhw@pge.com",
+          "company": "Pacific Gas & Electric",
+          "title": "Program Manager",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Michael Lac",
+          "email": "nghia.lac@nationalgrid.com",
+          "company": "National Grid USA",
+          "title": "Manager, Telecom Engineering",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Sam Kahel",
+          "email": "hkahel@mlgw.org",
+          "company": "Memphis Light, Gas & Water Division",
+          "title": "Telecommunications Engr. Dept.",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Peter LeBoeuf",
+          "email": "peter.leboeuf@cleco.com",
+          "company": "Cleco Power LLC",
+          "title": "Telecommunications Engineer",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Dewey Day",
+          "email": "dcdb@pge.com",
+          "company": "Pacific Gas & Electric",
+          "title": "Principal OT Architect",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Tim Wigmore",
+          "email": "twigmore@velco.com",
+          "company": "Vermont Electric Power Company",
+          "title": "Telecom Manager",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Jeff Hooter",
+          "email": "jeff.hooter@centerpointenergy.com",
+          "company": "CenterPoint Energy",
+          "title": "Supervisor Transport Planning",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        },
+        {
+          "name": "Casey Hutchinson",
+          "email": "casey.hutchinson@avistacorp.com",
+          "company": "Avista Corp.",
+          "title": "Network Engineer",
+          "source": "Physical Mailer Campaign 2025",
+          "potentialType": "lead_or_prospect"
+        }
+      ],
+      "qualityIssues": []
+    },
+    "prospects": {
+      "matched": [],
+      "missing": [],
+      "qualityIssues": []
+    }
+  },
+  "recommendations": [
+    {
+      "category": "Companies",
+      "priority": "High",
+      "issue": "69 companies from data files are missing from TOP database",
+      "recommendation": "Import missing companies to ensure complete data coverage",
+      "affectedRecords": 69
+    },
+    {
+      "category": "People",
+      "priority": "High",
+      "issue": "100 people from data files are missing from TOP database",
+      "recommendation": "Import missing people and associate them with their companies",
+      "affectedRecords": 100
+    },
+    {
+      "category": "Leads/Prospects",
+      "priority": "Medium",
+      "issue": "100 people from data files could be converted to leads or prospects",
+      "recommendation": "Review missing people and convert qualified contacts to leads/prospects",
+      "affectedRecords": 100
+    },
+    {
+      "category": "Data Quality",
+      "priority": "Medium",
+      "issue": "443 data quality issues found",
+      "recommendation": "Review and clean up data inconsistencies",
+      "affectedRecords": 443
+    }
+  ]
+}

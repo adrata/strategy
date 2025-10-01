@@ -411,10 +411,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 </svg>
               </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {insights.painPoints.map((point: string, index: number) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div key={index} className="flex items-start gap-4">
+                  <div className="w-3 h-3 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
                   <span className="text-sm text-gray-700 leading-relaxed">{point}</span>
                 </div>
               ))}
@@ -431,11 +431,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 </svg>
               </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {interests.length > 0 ? (
                 interests.map((interest: string, index: number) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
                     <span className="text-sm text-gray-700 leading-relaxed">{interest}</span>
                   </div>
                 ))
@@ -459,10 +459,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </svg>
             </div>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {insights.goals.map((goal: string, index: number) => (
-              <div key={index} className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div key={index} className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
                 <span className="text-sm text-gray-700 leading-relaxed">{goal}</span>
               </div>
             ))}
@@ -476,11 +476,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Current Challenges</h4>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {insights.challenges.map((challenge: string, index: number) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">{challenge}</span>
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <span className="text-sm text-gray-700 leading-relaxed">{challenge}</span>
                 </div>
               ))}
             </div>
@@ -488,11 +488,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Strategic Opportunities</h4>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {insights.opportunities.map((opportunity: string, index: number) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">{opportunity}</span>
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <span className="text-sm text-gray-700 leading-relaxed">{opportunity}</span>
                 </div>
               ))}
             </div>

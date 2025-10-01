@@ -78,7 +78,7 @@ async function testAllClaudeIntegrations() {
     
     // Test 5: Unified Intelligence API
     console.log('\n5️⃣ Testing Unified Intelligence API...');
-    const unifiedResponse = await fetch('http://localhost:3000/api/intelligence/unified', {
+    const unifiedResponse = await fetch('http://localhost:3000/api/intelligence/unified?workspaceId=01K5D01YCQJ9TJ7CT4DZDE79T1&userId=01K1VBYZG41K9QA0D9CF06KNRG', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

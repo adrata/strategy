@@ -246,7 +246,7 @@ export class EnhancedAIOrchestrator {
         }),
         prisma.users.findUnique({
           where: { id: context.userId },
-          select: { email: true, role: true, preferences: true }
+          select: { email: true, preferences: true }
         }),
         this.getRecentActivity(context.workspaceId, context.userId),
         context.currentRecord ? this.getCurrentRecordData(context.currentRecord) : null

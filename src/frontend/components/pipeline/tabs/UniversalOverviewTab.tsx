@@ -407,27 +407,27 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
             {/* Wants Card */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-gray-900 mb-3">Wants</h4>
-              <ul className="space-y-1">
+              <div className="space-y-3">
                 {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
-                    {want}
-                  </li>
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700 leading-relaxed">{want}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
             
             {/* Needs Card */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-gray-900 mb-3">Needs</h4>
-              <ul className="space-y-1">
+              <div className="space-y-3">
                 {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
-                    {need}
-                  </li>
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700 leading-relaxed">{need}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
                 </div>
