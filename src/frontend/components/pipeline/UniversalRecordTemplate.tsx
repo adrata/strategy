@@ -462,8 +462,14 @@ export function UniversalRecordTemplate({
                }
       case 'people':
         const personTitle = record?.jobTitle || record?.title;
-        const personCompany = record?.company || record?.companyName || 'Company';
-        return personTitle ? `${personTitle} • ${personCompany}` : personCompany;
+        // Use the same company extraction logic as UniversalOverviewTab
+        const personCoresignalData = record?.customFields?.coresignal || {};
+        const personCompany = personCoresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                             personCoresignalData.experience?.[0]?.company_name || 
+                             record?.company?.name || 
+                             record?.companyName || 
+                             'Company';
+        return personTitle ? `${personCompany} • ${personTitle}` : personCompany;
       case 'clients':
         return `${record?.status || 'Unknown Status'} • ${record?.totalValue ? `$${record.totalValue.toLocaleString()}` : 'No Value'}`;
       case 'partners':
