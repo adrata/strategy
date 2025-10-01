@@ -1,5 +1,6 @@
 import { SpeedrunOptimizationSettings } from '@/platform/ui/components/SpeedrunEngineOptimizer';
 import { SpeedrunUserSettings } from '@/products/speedrun/types';
+import { safeStorage } from '../safe-storage';
 
 export class SpeedrunEngineSettingsService {
   private static readonly SETTINGS_KEY = 'speedrun-engine-settings';
@@ -14,7 +15,7 @@ export class SpeedrunEngineSettingsService {
       
       // 1. Save optimization settings to localStorage
       if (typeof window !== 'undefined') {
-        localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(settings));
+        safeStorage.setItem(this.SETTINGS_KEY, JSON.stringify(settings));
       }
 
       // 2. Convert to speedrun user settings format
@@ -55,7 +56,7 @@ export class SpeedrunEngineSettingsService {
     if (typeof window === 'undefined') return null;
     
     try {
-      const stored = localStorage.getItem(this.SETTINGS_KEY);
+      const stored = safeStorage.getItem(this.SETTINGS_KEY);
       return stored ? JSON.parse(stored) : null;
     } catch (error) {
       console.warn('Failed to parse optimization settings:', error);

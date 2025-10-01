@@ -6,6 +6,7 @@
 import type { UnifiedSession, AuthConfig } from "./types";
 import { getPlatform } from "./platform";
 import { AUTH_API_ROUTES } from "./routes";
+import { safeStorage } from "../safe-storage";
 
 // Session Configuration
 export const AUTH_CONFIG: AuthConfig = {
@@ -20,7 +21,7 @@ export async function storeSession(session: UnifiedSession): Promise<void> {
 
   try {
     console.log("💾 [SESSION] Storing session to localStorage...");
-    localStorage.setItem(AUTH_CONFIG.sessionKey, JSON.stringify(session));
+    safeStorage.setItem(AUTH_CONFIG.sessionKey, JSON.stringify(session));
     console.log("✅ [SESSION] Session stored successfully");
   } catch (error) {
     console.error("❌ [SESSION] Failed to store session:", error);
@@ -41,7 +42,7 @@ export async function getSession(): Promise<UnifiedSession | null> {
       return null;
     }
 
-    const stored = localStorage.getItem(AUTH_CONFIG.sessionKey);
+    const stored = safeStorage.getItem(AUTH_CONFIG.sessionKey);
     
     if (!stored) {
       return null;
@@ -70,7 +71,7 @@ export async function clearSession(): Promise<void> {
 
   try {
     console.log("🔐 [SESSION] Clearing session...");
-    localStorage.removeItem(AUTH_CONFIG.sessionKey);
+    safeStorage.removeItem(AUTH_CONFIG.sessionKey);
     sessionStorage.removeItem("adrata_signed_out");
     console.log("✅ [SESSION] Session cleared successfully");
   } catch (error) {
@@ -139,11 +140,11 @@ export async function signOut(): Promise<void> {
 
     // Clear speedrun engine settings for demo reset
     if (typeof window !== "undefined") {
-      localStorage.removeItem('speedrun-engine-settings');
+      safeStorage.removeItem('speedrun-engine-settings');
       console.log("🎯 Auth signOut: Speedrun engine settings cleared for demo reset");
       
       // Clear auto-login credentials for security
-      localStorage.removeItem("adrata_remembered_password");
+      safeStorage.removeItem("adrata_remembered_password");
       document['cookie'] = "adrata_remember_me=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       console.log("🔐 Auth signOut: Auto-login credentials cleared for security");
     }

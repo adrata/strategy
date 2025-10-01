@@ -3,6 +3,7 @@
 
 import { isDesktop } from "./platform-detection";
 import React from "react";
+import { safeStorage } from "./safe-storage";
 
 class UnifiedStorageService {
   private static instance: UnifiedStorageService;
@@ -64,11 +65,11 @@ class UnifiedStorageService {
     if (typeof window === "undefined") return null;
 
     try {
-      const value = localStorage.getItem(key);
+      const value = safeStorage.getItem(key);
       return value ? JSON.parse(value) : null;
     } catch (error) {
       console.warn("⚠️ UnifiedStorage: Failed to parse stored value for", key);
-      return localStorage.getItem(key);
+      return safeStorage.getItem(key);
     }
   }
 
@@ -77,7 +78,7 @@ class UnifiedStorageService {
 
     try {
       const stringValue = JSON.stringify(value);
-      localStorage.setItem(key, stringValue);
+      safeStorage.setItem(key, stringValue);
       this.lastValues.set(key, value);
       console.log(`💾 UnifiedStorage: Stored ${key}:`, value);
     } catch (error) {
