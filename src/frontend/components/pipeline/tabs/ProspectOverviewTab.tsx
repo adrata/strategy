@@ -491,8 +491,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
-              {prospectData.notes !== 'No notes available' ? prospectData.notes : 
-                `${prospectData.name} is a ${prospectData.buyerGroupRole} at ${prospectData.company} with ${prospectData.influenceLevel.toLowerCase()} influence level, involved in ${prospectData.industry} industry decisions.`
+              {prospectData.notes && prospectData.notes !== 'No notes available' && prospectData.notes.trim() !== '' ? prospectData.notes : 
+                `—`
               }
             </div>
           </div>

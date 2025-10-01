@@ -199,11 +199,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
   const generateLastActions = () => {
     const actions = [];
     
-    // Add the main last action if it exists
-    if (recordData.lastAction && recordData.lastAction !== 'No action planned') {
+    // Add the main last action if it exists and is valid
+    if (recordData.lastAction && recordData.lastAction !== 'No action planned' && recordData.lastAction.trim() !== '') {
       actions.push({
         action: recordData.lastAction,
         date: recordData.lastContact !== 'Never' ? formatRelativeDate(recordData.lastContact) : 'Invalid Date'
+      });
+    }
+    
+    // Add enrichment action if available (should come before CRM addition)
+    if (record.lastEnriched) {
+      actions.push({
+        action: 'Profile enrichment completed',
+        date: formatRelativeDate(record.lastEnriched)
       });
     }
     
@@ -212,14 +220,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       actions.push({
         action: 'Added to CRM system',
         date: formatRelativeDate(record.createdAt)
-      });
-    }
-    
-    // Add enrichment action if available
-    if (record.lastEnriched) {
-      actions.push({
-        action: 'Profile enrichment completed',
-        date: formatRelativeDate(record.lastEnriched)
       });
     }
     
@@ -433,8 +433,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
-              {recordData.notes !== 'No notes available' ? recordData.notes : 
-                `${recordData.name} is a ${recordData.buyerGroupRole} at ${recordData.company} with ${(recordData.influenceLevel || '').toLowerCase()} influence level, involved in ${recordData.industry} industry decisions.`
+              {recordData.notes && recordData.notes !== 'No notes available' && recordData.notes.trim() !== '' ? recordData.notes : 
+                `—`
               }
                   </div>
                 </div>

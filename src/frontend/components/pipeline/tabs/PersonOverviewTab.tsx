@@ -244,11 +244,19 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
   const generateLastActions = () => {
     const actions = [];
     
-    // Add the main last action if it exists
-    if (personData.lastAction && personData.lastAction !== 'No action planned') {
+    // Add the main last action if it exists and is valid
+    if (personData.lastAction && personData.lastAction !== 'No action planned' && personData.lastAction.trim() !== '') {
       actions.push({
         action: personData.lastAction,
         date: personData.lastContact !== 'Never' ? formatRelativeDate(personData.lastContact) : 'Invalid Date'
+      });
+    }
+    
+    // Add enrichment action if available (should come before CRM addition)
+    if (record.lastEnriched) {
+      actions.push({
+        action: 'Profile enrichment completed',
+        date: formatRelativeDate(record.lastEnriched)
       });
     }
     
@@ -257,14 +265,6 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       actions.push({
         action: 'Added to CRM system',
         date: formatRelativeDate(record.createdAt)
-      });
-    }
-    
-    // Add enrichment action if available
-    if (record.lastEnriched) {
-      actions.push({
-        action: 'Profile enrichment completed',
-        date: formatRelativeDate(record.lastEnriched)
       });
     }
     
@@ -482,8 +482,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-gray-600 leading-relaxed">
-              {personData.notes !== 'No notes available' ? personData.notes : 
-                `${personData.name} is a ${personData.buyerGroupRole} at ${personData.company} with ${(personData.influenceLevel || '').toLowerCase()} influence level, involved in ${personData.industry} industry decisions.`
+              {personData.notes && personData.notes !== 'No notes available' && personData.notes.trim() !== '' ? personData.notes : 
+                `—`
               }
             </div>
           </div>
