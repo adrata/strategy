@@ -208,62 +208,59 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
         return (
           <div className="space-y-8">
       {/* Who are they */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
-                  <div className="space-y-2">
+            <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Name:</span>
                 <span className="text-sm font-medium text-gray-900">{recordData.name}</span>
-                  </div>
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Title:</span>
                 <span className="text-sm font-medium text-gray-900">{recordData.title}</span>
-                </div>
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Company:</span>
                 <span className="text-sm font-medium text-gray-900">{recordData.company}</span>
-                  </div>
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Department:</span>
                 <span className="text-sm font-medium text-gray-900">{recordData.department}</span>
-                </div>
-                  </div>
-                </div>
-
               </div>
             </div>
+          </div>
 
-      {/* Intelligence Snapshot */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Intelligence Snapshot</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Influence Level:</span>
-              <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Role:</span>
-              <span className="text-sm font-medium text-gray-900">{record.customFields?.primaryRole || 'Stakeholder'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Decision Power:</span>
-              <span className="text-sm font-medium text-gray-900">{record.customFields?.decisionPower || '70'}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Engagement Level:</span>
-              <span className="text-sm font-medium text-gray-900">{record.customFields?.engagementLevel || 'Medium'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Buyer Group Member:</span>
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
-              </span>
+          {/* Intelligence Snapshot Card */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-3">Intelligence Snapshot</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Role:</span>
+                <span className="text-sm font-medium text-gray-900">{record.customFields?.primaryRole || 'Stakeholder'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Decision Power:</span>
+                <span className="text-sm font-medium text-gray-900">{record.customFields?.decisionPower || '70'}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Engagement Level:</span>
+                <span className="text-sm font-medium text-gray-900">{record.customFields?.engagementLevel || 'Medium'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
