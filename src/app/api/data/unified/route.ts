@@ -1194,59 +1194,7 @@ async function getMultipleRecords(
   pagination?: any
 ): Promise<any> {
   
-  // Check if this is a demo workspace
-  if (workspaceId === DEMO_WORKSPACE_ID || workspaceId === ZEROPOINT_DEMO_WORKSPACE_ID) {
-    console.log(`🎯 [DEMO DATA] Loading demo data for type: ${type}`);
-    
-    // Determine scenario slug based on workspace ID
-    const scenarioSlug = workspaceId === ZEROPOINT_DEMO_WORKSPACE_ID ? 'zeropoint' : 'winning-variant';
-    const demoData = await loadDemoData(scenarioSlug);
-    
-    // Return the appropriate data based on type
-    switch (type) {
-      case 'dashboard':
-        return {
-          success: true,
-          data: {
-            leads: demoData.leads,
-            prospects: demoData.prospects,
-            opportunities: demoData.opportunities,
-            companies: demoData.companies,
-            people: demoData.people,
-            partnerships: demoData.partnerships,
-            clients: demoData.clients,
-            buyerGroups: demoData.buyerGroups,
-            catalyst: demoData.catalyst,
-            calendar: demoData.calendar,
-            champions: demoData.champions,
-            decisionMakers: demoData.decisionMakers,
-            speedrunItems: demoData.speedrunItems,
-            sellers: demoData.sellers,
-            counts: demoData.counts
-          }
-        };
-      case 'speedrun':
-        return await loadSpeedrunData(workspaceId, userId);
-      case 'leads':
-        return { success: true, data: demoData.leads };
-      case 'prospects':
-        return { success: true, data: demoData.prospects };
-      case 'opportunities':
-        return { success: true, data: demoData.opportunities };
-      case 'companies':
-        return { success: true, data: demoData.companies };
-      case 'people':
-        return { success: true, data: demoData.people };
-      case 'clients':
-        return { success: true, data: demoData.clients };
-      case 'partners':
-        return { success: true, data: demoData.partnerships };
-      case 'sellers':
-        return { success: true, data: demoData.sellers };
-      default:
-        return { success: true, data: [] };
-    }
-  }
+  // 🚫 REMOVED: Demo data generation - no more fake/fallback data
   
   if (type === 'dashboard') {
     return await loadDashboardData(workspaceId, userId);
@@ -2994,29 +2942,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
   try {
     console.log(`🔍 [DASHBOARD] Loading dashboard data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // Check if this is a demo scenario
-    if (workspaceId === ZEROPOINT_DEMO_WORKSPACE_ID || workspaceId === DEMO_WORKSPACE_ID) {
-      console.log(`🎯 [DASHBOARD] Using demo data for workspace: ${workspaceId}`);
-      const scenarioSlug = workspaceId === ZEROPOINT_DEMO_WORKSPACE_ID ? 'zeropoint' : 'winning-variant';
-      const demoData = await loadDemoData(scenarioSlug);
-      
-      return {
-        success: true,
-        data: {
-          leads: demoData.leads,
-          prospects: demoData.prospects,
-          opportunities: demoData.opportunities,
-          companies: demoData.companies,
-          people: demoData.people,
-          clients: demoData.clients,
-          partners: demoData.partnerships,
-          speedrunItems: demoData.speedrunItems,
-          counts: demoData.counts,
-          totalPipelineValue: 0,
-          timestamp: new Date().toISOString()
-        }
-      };
-    }
+    // 🚫 REMOVED: Demo data generation - no more fake/fallback data
     
     // 🚀 PERFORMANCE: Load counts and data in fewer queries
     const [

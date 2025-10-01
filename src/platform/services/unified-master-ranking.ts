@@ -112,7 +112,6 @@ export class UnifiedMasterRankingEngine {
       prisma.leads.findMany({
         where: { 
           workspaceId: workspaceId,
-          assignedUserId: userId,
           status: { notIn: ['closed', 'converted'] },
           deletedAt: null 
         },
@@ -123,7 +122,6 @@ export class UnifiedMasterRankingEngine {
       prisma.prospects.findMany({
         where: {
           workspaceId: workspaceId,
-          assignedUserId: userId,
           deletedAt: null
         },
         orderBy: { updatedAt: 'desc' }
@@ -133,22 +131,14 @@ export class UnifiedMasterRankingEngine {
       prisma.opportunities.findMany({
         where: { 
           workspaceId: workspaceId,
-          assignedUserId: userId,
           stage: { notIn: ['closed-won', 'closed-lost', 'closed-lost-to-competition'] },
           deletedAt: null 
         },
         orderBy: { amount: 'desc' }
       }),
       
-      // Contacts - Use people table instead of contacts (contacts table may not exist)
-      prisma.people.findMany({
-        where: {
-          workspaceId: workspaceId,
-          assignedUserId: userId,
-          deletedAt: null
-        },
-        orderBy: { updatedAt: 'desc' }
-      })
+      // Contacts - Use empty array since we already have people
+      []
     ]);
     
     console.log(`📊 [UNIFIED MASTER RANKING] Loaded data: ${companies.length} companies, ${people.length} people, ${leads.length} leads, ${prospects.length} prospects, ${opportunities.length} opportunities, ${contacts.length} contacts`);
