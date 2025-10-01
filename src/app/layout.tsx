@@ -30,6 +30,9 @@ import { isDesktop } from "@/platform/platform-detection";
 // ✅ Initialize Safari error handling for Safari compatibility
 import { initializeSafariErrorHandling } from "@/platform/safari-error-handler";
 
+// ✅ CRITICAL: Immediate Safari fix - must run before any other code
+import "@/platform/safari-immediate-fix";
+
 // Service worker temporarily disabled to fix production errors
 // TODO: Re-enable when sw.js file is properly implemented
 // if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {

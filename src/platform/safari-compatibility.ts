@@ -78,6 +78,22 @@ export function handleSafariError(error: Error, context: string): void {
       
       // Force web platform
       (window as any).__ADRATA_FORCE_WEB__ = true;
+      
+      // CRITICAL: Override any Tauri detection
+      (window as any).__TAURI__ = undefined;
+      (window as any).__TAURI_METADATA__ = undefined;
+      (window as any).__TAURI_INTERNALS__ = undefined;
+      
+      // Force web protocol detection
+      if (window.location.protocol === 'tauri:') {
+        console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - forcing web mode');
+        // This is a Safari-specific workaround
+        Object.defineProperty(window.location, 'protocol', {
+          value: 'https:',
+          writable: false,
+          configurable: false
+        });
+      }
     }
   }
 }
@@ -128,12 +144,37 @@ export function initializeSafariCompatibility(): void {
   console.log('🍎 [SAFARI COMPAT] Mobile:', safariInfo.isSafariMobile);
   console.log('🍎 [SAFARI COMPAT] Has WebKit issues:', safariInfo.hasWebKitIssues);
 
+  // CRITICAL: Force web mode for Safari immediately
+  if (typeof window !== 'undefined') {
+    // Override any Tauri detection
+    (window as any).__TAURI__ = undefined;
+    (window as any).__TAURI_METADATA__ = undefined;
+    (window as any).__TAURI_INTERNALS__ = undefined;
+    
+    // Force web platform
+    (window as any).__ADRATA_FORCE_WEB__ = true;
+    (window as any).__ADRATA_SAFARI_MODE__ = true;
+    
+    // Override protocol if it's tauri:
+    if (window.location.protocol === 'tauri:') {
+      console.warn('🚨 [SAFARI COMPAT] Overriding tauri: protocol for Safari');
+      try {
+        Object.defineProperty(window.location, 'protocol', {
+          value: 'https:',
+          writable: false,
+          configurable: false
+        });
+      } catch (e) {
+        console.warn('🚨 [SAFARI COMPAT] Could not override protocol:', e);
+      }
+    }
+  }
+
   // Apply Safari-specific fixes
   const fallbacks = getSafariFallbacks();
   
   // Set global Safari flags
   if (typeof window !== 'undefined') {
-    (window as any).__ADRATA_SAFARI_MODE__ = true;
     (window as any).__ADRATA_SAFARI_FALLBACKS__ = fallbacks;
   }
 

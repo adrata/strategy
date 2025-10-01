@@ -81,6 +81,14 @@ export const getPlatform = (): Platform => {
       console.log("🔍 [PLATFORM] Safari version:", safariInfo.version);
       console.log("🔍 [PLATFORM] Safari mobile:", safariInfo.isSafariMobile);
       
+      // CRITICAL: Override any Tauri detection for Safari
+      if (typeof window !== 'undefined') {
+        (window as any).__TAURI__ = undefined;
+        (window as any).__TAURI_METADATA__ = undefined;
+        (window as any).__TAURI_INTERNALS__ = undefined;
+        (window as any).__ADRATA_FORCE_WEB__ = true;
+      }
+      
       // Initialize Safari compatibility
       try {
         initializeSafariCompatibility();
