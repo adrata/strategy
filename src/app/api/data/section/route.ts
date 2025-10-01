@@ -149,27 +149,33 @@ export async function GET(request: NextRequest) {
         );
         
         sectionData = filteredPeople.slice(0, limit).map((person, index) => {
-          // Determine next action timing based on ranking
-          let nextAction = 'Schedule Discovery Call';
-          let nextActionTiming = 'Today';
-          
-          if (index === 0) {
-            nextActionTiming = 'Now';
-            nextAction = 'Call immediately - highest priority';
-          }
-          
+          // Safe string truncation utility
+          const safeString = (str: any, maxLength: number = 1000): string => {
+            if (!str || typeof str !== 'string') return '';
+            if (str.length <= maxLength) return str;
+            return str.substring(0, maxLength) + '...';
+          };
+
           return {
             id: person.id,
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
-            name: person.fullName || `${person.firstName} ${person.lastName}`,
-            company: person.company?.name || 'Unknown Company',
-            industry: person.company?.industry || 'Unknown',
-            size: person.company?.size || 'Unknown',
-            stage: 'Prospect',
-            lastAction: 'No action taken',
-            lastActionTime: 'Never',
-            nextAction: nextAction,
-            nextActionTiming: nextActionTiming
+            name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
+            company: safeString(person.company?.name || 'Unknown Company', 200),
+            title: safeString(person.jobTitle || 'Unknown Title', 300),
+            email: safeString(person.email || 'Unknown Email', 300),
+            phone: safeString(person.phone || 'Unknown Phone', 50),
+            linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
+            status: safeString(person.status || 'Unknown', 20),
+            lastAction: safeString(person.lastAction || 'No action taken', 500),
+            lastActionDate: person.lastActionDate || null,
+            nextAction: safeString(person.nextAction || 'No next action', 500),
+            nextActionDate: person.nextActionDate || null,
+            assignedUserId: person.assignedUserId || null,
+            workspaceId: person.workspaceId,
+            createdAt: person.createdAt,
+            updatedAt: person.updatedAt,
+            // Remove customFields to avoid large JSON data issues
+            tags: person.tags || []
           };
         });
         break;
