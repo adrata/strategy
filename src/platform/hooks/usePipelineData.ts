@@ -204,7 +204,7 @@ export function usePipelineData({
   const [timezoneFilter, setTimezoneFilter] = useState('all');
   
   // Sort state
-  const [sortField, setSortField] = useState('name');
+  const [sortField, setSortField] = useState('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   
   // Pagination state
