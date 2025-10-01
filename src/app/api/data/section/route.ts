@@ -25,6 +25,7 @@ function shouldExcludeCompany(companyName: string | null | undefined): boolean {
     'top engineers plus',
     'top engineering',
     'top engineers',
+    'top engineers plus, pllc', // 🎯 FIX: Match exact company name
     'adrata',
     'adrata engineering'
   ];
@@ -461,15 +462,24 @@ export async function GET(request: NextRequest) {
           }
         });
         
-        // Apply proper sequential ranking based on database ranks
         // 🚫 FILTER: Exclude user's own company from companies list
         const filteredCompaniesData = companiesData.filter(company => 
           !shouldExcludeCompany(company.name)
         );
         
-        sectionData = filteredCompaniesData.map((company, index) => ({
+        // 🎯 DEDUPLICATION: Remove duplicate companies by name (keep first occurrence)
+        const seenNames = new Set();
+        const deduplicatedCompanies = filteredCompaniesData.filter(company => {
+          if (seenNames.has(company.name)) {
+            return false; // Skip duplicate
+          }
+          seenNames.add(company.name);
+          return true;
+        });
+        
+        sectionData = deduplicatedCompanies.map((company, index) => ({
           id: company.id,
-          rank: company.rank || (index + 1), // Use database rank or sequential fallback
+          rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering and deduplication
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
