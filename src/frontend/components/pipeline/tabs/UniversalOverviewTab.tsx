@@ -200,7 +200,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     const actions = [];
     
     // Add the main last action if it exists and is valid
-    if (recordData.lastAction && recordData.lastAction !== 'No action planned' && recordData.lastAction.trim() !== '' && recordData.lastAction !== '-') {
+    if (recordData.lastAction && 
+        recordData.lastAction !== 'No action planned' && 
+        recordData.lastAction.trim() !== '' && 
+        recordData.lastAction !== '-' &&
+        recordData.lastAction !== '--' &&
+        !recordData.lastAction.includes('--')) {
       actions.push({
         action: recordData.lastAction,
         date: recordData.lastContact !== 'Never' ? formatRelativeDate(recordData.lastContact) : 'Invalid Date'
@@ -232,12 +237,18 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     
     let defaultIndex = 0;
     while (actions.length < 3 && defaultIndex < defaultActions.length) {
-      actions.push({
-        action: defaultActions[defaultIndex],
-        date: defaultIndex === 0 ? formatRelativeDate(recordData.lastContact) : 
-              defaultIndex === 1 ? formatRelativeDate(record.createdAt) : 
-              formatRelativeDate(record.lastEnriched || record.updatedAt)
-      });
+      // Only add default actions if we don't already have them
+      const actionText = defaultActions[defaultIndex];
+      const alreadyExists = actions.some(action => action.action === actionText);
+      
+      if (!alreadyExists) {
+        actions.push({
+          action: actionText,
+          date: defaultIndex === 0 ? formatRelativeDate(recordData.lastContact) : 
+                defaultIndex === 1 ? formatRelativeDate(record.createdAt) : 
+                formatRelativeDate(record.lastEnriched || record.updatedAt)
+        });
+      }
       defaultIndex++;
     }
     
