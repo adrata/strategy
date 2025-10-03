@@ -1637,7 +1637,11 @@ export function UniversalRecordTemplate({
                 hasOnNavigatePrevious: !!onNavigatePrevious,
                 hasOnNavigateNext: !!onNavigateNext,
                 recordId: record?.id,
-                recordName: record?.name || record?.fullName
+                recordName: record?.name || record?.fullName,
+                recordType: recordType,
+                // Additional debugging
+                previousButtonDisabled: !recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1,
+                nextButtonDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1
               });
               
               return (

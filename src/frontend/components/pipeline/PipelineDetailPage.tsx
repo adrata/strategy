@@ -122,7 +122,11 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       sampleIds: data.slice(0, 3).map(r => r.id),
       section: section,
       hasAcquisitionData: !!acquisitionData,
-      acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data'
+      acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data',
+      // Speedrun specific debugging
+      speedrunItems: acquisitionData?.acquireData?.speedrunItems?.length || 0,
+      leadsCount: acquisitionData?.acquireData?.leads?.length || 0,
+      prospectsCount: acquisitionData?.acquireData?.prospects?.length || 0
     });
     
     // Companies are already properly ranked by the API - no additional sorting needed
