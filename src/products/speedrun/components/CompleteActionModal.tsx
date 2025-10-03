@@ -164,7 +164,7 @@ export function CompleteActionModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
               >
                 Cancel
               </button>
@@ -180,10 +180,7 @@ export function CompleteActionModal({
                     Completing...
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <span>Complete</span>
-                    <kbd className="px-2 py-1 text-xs bg-white/30 rounded-md border border-white/40 font-mono font-semibold">⌘↵</kbd>
-                  </div>
+                  'Complete'
                 )}
               </button>
             </div>
