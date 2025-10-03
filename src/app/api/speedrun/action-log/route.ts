@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the action log - match the schema field names
-    const actionLog = await prisma.speedrunActionLogs.create({
+    const actionLog = await prisma.speedrun_action_logs.create({
       data: {
         personId: personId.toString(),
         personName: personName || 'Unknown',

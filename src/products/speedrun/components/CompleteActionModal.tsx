@@ -96,11 +96,9 @@ export function CompleteActionModal({
             <button
               onClick={handleClose}
               disabled={isLoading}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+              className="px-3 py-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              Close
             </button>
           </div>
 
@@ -174,7 +172,11 @@ export function CompleteActionModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 bg-green-100 border border-green-300 text-green-700 rounded-lg hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+                className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
+                  formData.action.trim() && !isLoading
+                    ? 'bg-green-200 border-green-300 text-green-700 hover:bg-green-300' // Active state when typing
+                    : 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' // Default state
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
                 title="Complete action (⌘+Enter)"
               >
                 {isLoading ? (
