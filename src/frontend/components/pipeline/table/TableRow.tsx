@@ -181,7 +181,7 @@ export function TableRow({
                 const displayRank = winningRank || numericRank;
                 return (
                   <td key="rank" className={textClasses}>
-                    <div className="text-center font-medium">{displayRank}</div>
+                    <div className="text-left font-medium">{displayRank}</div>
                   </td>
                 );
               case 'company':

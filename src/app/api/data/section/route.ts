@@ -649,7 +649,11 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null
             },
-            orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+            orderBy: [
+              { company: { rank: 'asc' } }, // Use company rank first (same as speedrun)
+              { rank: 'asc' },              // Then by person rank within company
+              { updatedAt: 'desc' }         // Then by person update time
+            ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
             select: {
               id: true,
@@ -673,11 +677,12 @@ export async function GET(request: NextRequest) {
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
-              // Include company relationship to get company name
+              // Include company relationship to get company name and rank
               company: {
                 select: {
                   id: true,
-                  name: true
+                  name: true,
+                  rank: true // Include company rank for proper ordering
                 }
               }
               // Remove notes and bio from select to avoid string length issues
