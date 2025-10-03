@@ -113,50 +113,6 @@ export function CompleteActionModal({
               </div>
             </div>
 
-            {/* When */}
-            <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                When
-              </label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, time: 'Now' }))}
-                  className={`px-3 py-2 text-sm rounded-md border ${
-                    formData.time === 'Now'
-                      ? 'bg-green-100 border-green-300 text-green-700' 
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                  disabled={isLoading}
-                >
-                  Now
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, time: 'Past' }))}
-                  className={`px-3 py-2 text-sm rounded-md border ${
-                    formData.time === 'Past'
-                      ? 'bg-green-100 border-green-300 text-green-700' 
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                  disabled={isLoading}
-                >
-                  Past
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, time: 'Future' }))}
-                  className={`px-3 py-2 text-sm rounded-md border ${
-                    formData.time === 'Future'
-                      ? 'bg-green-100 border-green-300 text-green-700' 
-                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                  disabled={isLoading}
-                >
-                  Future
-                </button>
-              </div>
-            </div>
 
             {/* Type */}
             <div>
