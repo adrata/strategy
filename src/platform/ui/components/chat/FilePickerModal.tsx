@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { authFetch } from '@/platform/auth-fetch';
 import {
   XMarkIcon,
   DocumentIcon,
@@ -150,7 +151,7 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
       // Get workspace context for API call
       const { workspaceId, userId } = await WorkspaceDataRouter.getApiParams();
       
-      const response = await fetch(`/api/search/${type}?q=${encodeURIComponent(query)}&workspaceId=${workspaceId}&userId=${userId}`);
+      const response = await authFetch(`/api/search/${type}`);
       const data = await response.json();
       
       if (data.success) {

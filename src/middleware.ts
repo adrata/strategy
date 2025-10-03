@@ -19,26 +19,12 @@ export async function middleware(request: NextRequest) {
     return response;
   }
   
-  // TEMPORARY: Disable middleware for development
-  if (false && pathname.startsWith('/api/') && !isAuthEndpoint(pathname)) {
+  // Protect all API endpoints with authentication
+  if (pathname.startsWith('/api/') && !isAuthEndpoint(pathname)) {
     try {
       console.log(`🔐 [MIDDLEWARE] Protecting API endpoint: ${pathname}`);
       
-      // Development bypass: Allow requests with workspaceId and userId query params
-      const url = new URL(request.url);
-      const hasWorkspaceId = url.searchParams.has('workspaceId');
-      const hasUserId = url.searchParams.has('userId');
-      
-      if (hasWorkspaceId && hasUserId) {
-        console.log(`🔧 [MIDDLEWARE] Development bypass for ${pathname} with query params`);
-        // Add mock user context for development
-        const response = NextResponse.next();
-        response.headers.set('x-user-id', url.searchParams.get('userId') || '');
-        response.headers.set('x-user-email', 'dev@adrata.com');
-        response.headers.set('x-workspace-id', url.searchParams.get('workspaceId') || '');
-        response.headers.set('x-user-name', 'Development User');
-        return response;
-      }
+      // No development bypass - require proper authentication
       
       // 1. Authenticate user
       const authUser = await getUnifiedAuthUser(request);

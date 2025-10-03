@@ -10,6 +10,7 @@
  */
 
 import { TodayActivityTracker } from "./TodayActivityTracker";
+import { authFetch } from '@/platform/auth-fetch';
 import type { SpeedrunPerson } from "./context/SpeedrunProvider";
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 
@@ -132,7 +133,7 @@ export class AutoClientConversion {
       const { workspaceId, userId } = await this.getWorkspaceContext();
       
       // Fetch all leads/contacts from the same company
-      const response = await fetch(`/api/data/leads/by-company?workspaceId=${workspaceId}&userId=${userId}&company=${encodeURIComponent(companyName)}`);
+      const response = await authFetch(`/api/data/leads/by-company`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch company people: ${response.statusText}`);

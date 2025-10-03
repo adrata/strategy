@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
+import { authFetch } from '@/platform/auth-fetch';
 import { UpdateModal } from './UpdateModal';
 import { AddActionModal } from './AddActionModal';
 import { AddTaskModal } from './AddTaskModal';
@@ -683,7 +684,8 @@ export function UniversalRecordTemplate({
       console.log(`🗑️ [UNIVERSAL] Deleting ${recordType} ${recordId}`);
       
       // Make API call to soft delete the record using unified API
-      const response = await fetch(`/api/data/unified?type=${recordType}&id=${recordId}&workspaceId=${record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP'}&userId=01K1VBYZG41K9QA0D9CF06KNRG`, {
+      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+      const response = await authFetch(`/api/data/unified?type=${recordType}&id=${recordId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

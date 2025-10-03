@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
@@ -48,7 +49,7 @@ export function SellersView() {
         // Determine the correct workspace ID based on the current demo scenario
         const isZeroPointDemo = typeof window !== "undefined" && window.location.pathname.includes('/demo/zeropoint/');
         const workspaceId = isZeroPointDemo ? 'zeropoint-demo-2025' : 'demo-workspace-2025';
-        const response = await fetch(`/api/data/unified?type=sellers&action=get&workspaceId=${workspaceId}&userId=demo-user-2025&t=${timestamp}`);
+        const response = await authFetch(`/api/data/unified`);
         console.log('🔍 [SELLERS VIEW] Fetch response status:', response.status);
         const sellersData = await response.json();
         

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
@@ -189,7 +190,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       
       // 🚀 UNIFIED API: Use new consolidated API format with cache busting
       const timestamp = Date.now();
-      const response = await fetch(`/api/data/unified?type=${section}&action=get&workspaceId=${workspaceId}&userId=${userId}&forceRefresh=true&timestamp=${timestamp}`);
+      const response = await authFetch(`/api/data/unified`);
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       
@@ -227,7 +228,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           
           // 🎯 FIX: For speedrun records, use section API to get filtered/enriched data
           if (section === 'speedrun') {
-            const sectionResponse = await fetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}`);
+            const sectionResponse = await authFetch(`/api/data/section`);
             if (sectionResponse.ok) {
               const sectionResult = await sectionResponse.json();
               // 🎯 FIX: sectionResult.data is an object with a data property, not an array directly
@@ -243,7 +244,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           
           // For other sections, use unified API
           const apiType = section === 'speedrun' ? 'people' : section;
-          const directResponse = await fetch(`/api/data/unified?type=${apiType}&action=get&id=${recordId}&workspaceId=${workspaceId}&userId=${userId}`);
+          const directResponse = await authFetch(`/api/data/unified`);
           
           if (directResponse.ok) {
             const directResult = await directResponse.json();
@@ -305,7 +306,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           if (section === 'companies') {
             console.log(`🚀 [BUYER GROUP PRELOAD] Preloading buyer group data for company: ${record.id}`);
             // Preload buyer group data in background
-            fetch(`/api/data/buyer-groups/fast?companyId=${record.id}&workspaceId=${workspaceId}&userId=${userId}`)
+            authFetch(`/api/data/buyer-groups/fast`)
               .then(response => response.json())
               .then(data => {
                 if (data.success) {

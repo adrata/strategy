@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from "next/navigation";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { usePipeline } from "@/products/pipeline/context/PipelineContext";
@@ -147,7 +148,7 @@ function PipelineSections({
         setFallbackLoading(true);
         try {
           // 🚀 PERFORMANCE: Use fast counts API instead of heavy dashboard API
-          const response = await fetch(`/api/data/counts?workspaceId=${workspaceId}&userId=${userId}`);
+          const response = await authFetch(`/api/data/counts`);
           if (response.ok) {
             const data = await response.json();
             if (data['success'] && data.data) {

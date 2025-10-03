@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
@@ -159,7 +160,7 @@ export function MetricsDashboard() {
       console.log('📊 [METRICS DEBUG] API URL:', `/api/metrics/pipeline?workspaceId=${workspaceId}&userId=${userId}`);
       
       // Use dedicated metrics API endpoint
-      const response = await fetch(`/api/metrics/pipeline?workspaceId=${workspaceId}&userId=${userId}`);
+      const response = await authFetch(`/api/metrics/pipeline`);
       
       if (!response.ok) {
         const errorText = await response.text();

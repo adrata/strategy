@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 
 interface UniversalSellerCompaniesTabProps {
@@ -24,7 +25,7 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
         console.log('Loading companies for seller:', { record, workspaceId, userId });
         
         // Fetch companies directly from the unified API
-        const response = await fetch(`/api/data/unified?type=companies&workspaceId=${workspaceId}&userId=${userId}`);
+        const response = await authFetch(`/api/data/unified`);
         const result = await response.json();
         
         if (result['success'] && result.data) {

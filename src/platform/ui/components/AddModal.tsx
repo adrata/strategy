@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { authFetch } from '@/platform/auth-fetch';
 import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
@@ -85,7 +86,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const searchContacts = async (query: string) => {
     setIsSearchingContacts(true);
     try {
-      const response = await fetch(`/api/data/search?workspaceId=${activeWorkspace?.id || ""}&userId=${authUser?.id || ""}&query=${encodeURIComponent(query)}&type=people&limit=10`);
+      const response = await authFetch(`/api/data/search`);
       
       if (response.ok) {
         const data = await response.json();
@@ -135,7 +136,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         authUser: authUser
       });
       
-      const response = await fetch(`/api/data/search?workspaceId=${workspaceId}&userId=${userId}&query=${encodeURIComponent(query)}&type=companies&limit=10`);
+      const response = await authFetch(`/api/data/search`);
       
       if (response.ok) {
         const data = await response.json();

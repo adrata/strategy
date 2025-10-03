@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeftIcon, 
@@ -256,7 +257,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
         setError(null);
 
         // Use the unified dashboard API instead of individual endpoints
-        const response = await fetch(`/api/pipeline/dashboard?workspaceId=${workspaceId}&userId=${userId}&_t=${Date.now()}`);
+        const response = await authFetch(`/api/pipeline/dashboard`);
         const data = await response.json();
 
         if (data.success) {

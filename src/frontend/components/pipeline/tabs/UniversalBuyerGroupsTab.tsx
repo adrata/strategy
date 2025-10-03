@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from '../InlineEditField';
 import { useRouter } from 'next/navigation';
@@ -193,7 +194,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
           try {
-            const fastResponse = await fetch(`/api/data/buyer-groups/fast?companyId=${companyId}&workspaceId=${workspaceId}&userId=${userId}`);
+            const fastResponse = await authFetch(`/api/data/buyer-groups/fast`);
             if (fastResponse.ok) {
               const fastResult = await fastResponse.json();
               if (fastResult.success && fastResult.members) {

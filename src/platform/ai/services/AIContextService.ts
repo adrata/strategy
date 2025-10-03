@@ -7,6 +7,7 @@
 
 // import { WorkspaceDataRouter } from '../../services/workspace-data-router';
 
+import { authFetch } from '@/platform/auth-fetch';
 export interface AIContextConfig {
   userId: string;
   workspaceId: string;
@@ -483,7 +484,8 @@ IMPORTANT RULES:
    */
   private static async fetchSpeedrunData(workspaceId: string, userId: string): Promise<any> {
     try {
-      const response = await fetch(`${process['env']['NEXT_PUBLIC_BASE_URL'] || 'http://localhost:3000'}/api/data/unified?type=speedrun&action=get&workspaceId=${workspaceId}&userId=${userId}`, {
+      // 🔐 SECURITY: Use authenticated fetch without query parameters
+      const response = await authFetch(`${process['env']['NEXT_PUBLIC_BASE_URL'] || 'http://localhost:3000'}/api/data/unified?type=speedrun&action=get`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });

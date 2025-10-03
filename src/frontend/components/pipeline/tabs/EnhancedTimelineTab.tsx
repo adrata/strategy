@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 
@@ -154,7 +155,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       let noteEvents: TimelineEvent[] = [];
 
       // Fetch activities/actions
-      const activitiesResponse = await fetch(`/api/data/unified?type=actions&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
+      const activitiesResponse = await authFetch(`/api/data/unified`);
       
       if (activitiesResponse.ok) {
         const activitiesData = await activitiesResponse.json();
@@ -197,7 +198,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       }
 
       // Fetch notes using unified API
-      const notesResponse = await fetch(`/api/data/unified?type=notes&action=get&workspaceId=${record.workspaceId}&userId=${record.assignedUserId}`);
+      const notesResponse = await authFetch(`/api/data/unified`);
       
       if (notesResponse.ok) {
         const notesData = await notesResponse.json();

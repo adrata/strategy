@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { authFetch } from '@/platform/auth-fetch';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
@@ -221,7 +222,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         console.log('🔍 [TIMELINE] Fetching fresh timeline data');
         
         // Load activities for this specific record using unified API
-        const activitiesResponse = await fetch(`/api/data/unified?type=activities&action=get&workspaceId=${workspaceId}&userId=${userId}`);
+        const activitiesResponse = await authFetch(`/api/data/unified`);
         
         if (activitiesResponse.ok) {
           const activitiesData = await activitiesResponse.json();

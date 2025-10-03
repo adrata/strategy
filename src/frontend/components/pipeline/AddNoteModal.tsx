@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface Contact {
@@ -38,7 +39,7 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
   const searchContacts = async (query: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/data/search?workspaceId=${workspaceId}&userId=${userId}&query=${encodeURIComponent(query)}&type=people&limit=10`);
+      const response = await authFetch(`/api/data/search`);
       
       if (response.ok) {
         const data = await response.json();
