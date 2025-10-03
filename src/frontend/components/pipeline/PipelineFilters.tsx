@@ -788,7 +788,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                           }}
                           className="text-xs text-gray-500 hover:text-gray-700"
                         >
-                          Show All
+                          Reset
                         </button>
                       </div>
                       
