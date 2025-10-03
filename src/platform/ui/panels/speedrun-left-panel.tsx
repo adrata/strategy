@@ -242,6 +242,27 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [selectedPerson, activeContacts]);
 
+  // 🎯 SPEEDRUN ACTION LOGGED: Listen for action logged events to move records
+  useEffect(() => {
+    const handleSpeedrunActionLogged = (event: CustomEvent) => {
+      const { currentRecord, actionData, timestamp } = event.detail;
+      console.log('🎯 [SPEEDRUN LEFT PANEL] Action logged event received:', {
+        currentRecord: currentRecord?.name,
+        actionType: actionData?.actionType,
+        timestamp
+      });
+      
+      // Move the current record to done list and gray it out
+      if (currentRecord && selectedPerson?.id === currentRecord.id) {
+        markCurrentContactAsDone();
+        console.log('🎯 [SPEEDRUN LEFT PANEL] Moved current record to done list and grayed out');
+      }
+    };
+
+    document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    return () => document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+  }, [selectedPerson]);
+
   const handleAddMoreProspects = () => {
     setShowCompletionModal(false);
     // TODO: Add logic to load 20 more prospects
@@ -592,7 +613,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 }`}
               >
                 <div className="flex items-start justify-between mb-1">
-                  <span className="text-xs font-medium text-gray-900">{contact.rank}</span>
+                  <div className="w-6 h-6 bg-blue-100 text-blue-800 rounded-lg flex items-center justify-center font-semibold text-xs">
+                    {contact.rank}
+                  </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getPriorityColor(contact.priority)}`}>
                     {contact.priority}
                   </span>

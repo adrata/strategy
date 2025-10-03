@@ -45,6 +45,15 @@ export function useWorkspaceUsers() {
         return;
       }
 
+      // 🔐 AUTH: Check if user is authenticated
+      if (!user) {
+        console.log('🔐 [useWorkspaceUsers] No authenticated user - skipping fetch');
+        setUsers([]);
+        setError('Authentication required - please sign in');
+        setLoading(false);
+        return;
+      }
+
       console.log('🔍 [useWorkspaceUsers] Fetching users for workspace:', {
         workspaceId,
         isDemoMode,
@@ -87,6 +96,9 @@ export function useWorkspaceUsers() {
         const requestPromise = (async () => {
           const response = await fetch(`/api/workspace/users?workspaceId=${workspaceId}`);
           if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error('Authentication required - please sign in');
+            }
             const errorText = await response.text();
             throw new Error(`Failed to fetch workspace users: ${response.status} ${errorText}`);
           }

@@ -58,6 +58,14 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
+    // 🔐 AUTH: Check if user is authenticated
+    if (!authUser) {
+      console.log('🔐 [FAST COUNTS] No authenticated user - skipping fetch');
+      setLoading(false);
+      setError('Authentication required');
+      return;
+    }
+
     // 🚀 PERFORMANCE: Only fetch if we haven't loaded counts yet
     if (hasLoaded) {
       console.log('⚡ [FAST COUNTS] Skipping fetch - already loaded');
@@ -74,6 +82,9 @@ export function useFastCounts(): UseFastCountsReturn {
       const response = await authFetch('/api/data/counts');
       
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication required - please sign in');
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -93,7 +104,7 @@ export function useFastCounts(): UseFastCountsReturn {
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, userId, authLoading, hasLoaded]);
+  }, [workspaceId, userId, authLoading, hasLoaded, authUser]);
 
   // 🚀 PERFORMANCE: Only load counts once when workspace/user is available
   useEffect(() => {

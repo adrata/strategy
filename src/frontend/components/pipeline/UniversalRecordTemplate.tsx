@@ -1092,6 +1092,23 @@ export function UniversalRecordTemplate({
         // Close the modal
         setIsAddActionModalOpen(false);
         
+        // 🎯 SPEEDRUN RECORD MOVEMENT: Move current record to bottom and gray out
+        if (recordType === 'speedrun' && onNavigateNext) {
+          console.log('🎯 [SPEEDRUN] Action logged - moving to next record');
+          
+          // Dispatch custom event to trigger record movement in left panel
+          document.dispatchEvent(new CustomEvent('speedrunActionLogged', {
+            detail: {
+              currentRecord: record,
+              actionData: actionData,
+              timestamp: new Date().toISOString()
+            }
+          }));
+          
+          // Navigate to next record
+          onNavigateNext();
+        }
+        
         // Optionally refresh the record or trigger a callback
         if (onRecordUpdate) {
           // Trigger record update to refresh any activity lists
@@ -1299,26 +1316,16 @@ export function UniversalRecordTemplate({
       );
     }
 
-    // Add Action button - LIGHT BLUE BUTTON
-    // For speedrun records, show "Start Speedrun" instead of "Add Action"
+    // Add Action button - LIGHT GREEN BUTTON for speedrun records
+    // For speedrun records, show "Add Action" with green styling
     if (recordType === 'speedrun') {
       buttons.push(
         <button
-          key="start-speedrun"
-          onClick={() => {
-                    // Navigate to speedrun/sprint page
-                    const currentPath = window.location.pathname;
-                    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-                    if (workspaceMatch) {
-                      const workspaceSlug = workspaceMatch[1];
-                      window.location.href = `/${workspaceSlug}/speedrun/sprint`;
-                    } else {
-                      window.location.href = '/speedrun/sprint';
-                    }
-          }}
-          className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+          key="add-action"
+          onClick={() => setIsAddActionModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
         >
-          Start Speedrun
+          Add Action
         </button>
       );
     } else {
@@ -1690,9 +1697,12 @@ export function UniversalRecordTemplate({
                         hasOnNavigatePrevious: !!onNavigatePrevious,
                         recordIndex,
                         totalRecords,
-                        canNavigate: !(!recordIndex || recordIndex <= 1)
+                        canNavigate: !(!recordIndex || recordIndex <= 1),
+                        recordId: record?.id,
+                        recordName: record?.name || record?.fullName
                       });
                       if (onNavigatePrevious && recordIndex && recordIndex > 1) {
+                        console.log(`✅ [UNIVERSAL] Navigating to previous record`);
                         onNavigatePrevious();
                       } else {
                         console.warn(`❌ [UNIVERSAL] Cannot navigate previous - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);
@@ -1716,9 +1726,12 @@ export function UniversalRecordTemplate({
                         hasOnNavigateNext: !!onNavigateNext,
                         recordIndex,
                         totalRecords,
-                        canNavigate: !(!recordIndex || !totalRecords || recordIndex >= totalRecords)
+                        canNavigate: !(!recordIndex || !totalRecords || recordIndex >= totalRecords),
+                        recordId: record?.id,
+                        recordName: record?.name || record?.fullName
                       });
                       if (onNavigateNext && recordIndex && totalRecords && recordIndex < totalRecords) {
+                        console.log(`✅ [UNIVERSAL] Navigating to next record`);
                         onNavigateNext();
                       } else {
                         console.warn(`❌ [UNIVERSAL] Cannot navigate next - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);

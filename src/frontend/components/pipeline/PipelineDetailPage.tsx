@@ -443,7 +443,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     } else {
       console.log(`❌ [NAVIGATION] Cannot go previous - already at first record (index: ${currentIndex})`);
     }
-  }, [data, selectedRecord, section]);
+  }, [data, selectedRecord, section, navigateToPipelineItem]);
 
   const handleNavigateNext = useCallback(() => {
     console.log(`🔍 [NAVIGATION] handleNavigateNext called:`, {
@@ -477,7 +477,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     } else {
       console.log(`❌ [NAVIGATION] Cannot go next - already at last record (index: ${currentIndex}, total: ${data.length})`);
     }
-  }, [data, selectedRecord, section]);
+  }, [data, selectedRecord, section, navigateToPipelineItem]);
 
   // Loading state - Only show loading for direct record loading, not general data loading
   if (directRecordLoading) {

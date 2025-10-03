@@ -3634,11 +3634,10 @@ const SPEEDRUN_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {
-    // 🚀 PERFORMANCE: Check cache first (TEMPORARILY DISABLED FOR DEBUGGING)
+    // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `speedrun:${workspaceId}:${userId}`;
     const cached = speedrunCache.get(cacheKey);
     
-    // TEMPORARILY DISABLE CACHE TO FORCE FRESH DATA
     if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL) {
       console.log('⚡ [SPEEDRUN] Cache hit for workspace:', workspaceId);
       return cached.data;
@@ -3646,24 +3645,43 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🏆 USE UNIFIED MASTER RANKING for consistent ranking with Companies page
-    console.log(`🏆 [SPEEDRUN API] Using UnifiedMasterRankingEngine for consistent ranking...`);
-    
     let people: any[] = [];
     
     try {
-      // 🚀 OPTIMIZED: Skip expensive unified ranking for now to improve performance
+      // 🚀 OPTIMIZED: Use fast database query with minimal fields for speedrun
       console.log(`🏆 [SPEEDRUN API] Using optimized database ranking for performance...`);
       
-      // Use direct database query instead of expensive unified ranking
+      // Use direct database query with only essential fields
       const speedrunPeople = await prisma.people.findMany({
         where: {
           workspaceId: workspaceId,
           assignedUserId: userId,
           deletedAt: null
         },
-        include: {
-          company: true
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          jobTitle: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          customFields: true,
+          companyId: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              vertical: true,
+              size: true
+            }
+          }
         },
         orderBy: [
           { updatedAt: 'desc' },
