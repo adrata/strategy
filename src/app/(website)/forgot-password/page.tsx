@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
           <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
             Check Your Email
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
           Reset Your Password
