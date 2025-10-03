@@ -481,7 +481,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             </div>
             
             {/* Start Button */}
-            <button className="px-3 py-1 bg-blue-700 text-white text-sm font-medium rounded hover:bg-blue-800 transition-colors shadow-sm">
+            <button className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
               Start Speedrun
             </button>
           </div>
