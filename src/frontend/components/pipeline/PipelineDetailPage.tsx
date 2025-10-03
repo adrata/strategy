@@ -141,6 +141,33 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // 🚀 SPEEDRUN NAVIGATION FIX: Use speedrun data for navigation when on speedrun records
   const data = section === 'speedrun' ? (speedrunData || []) : getSectionData(section);
   
+  // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
+  // instead of loading it separately to ensure navigation works correctly
+  useEffect(() => {
+    if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && !selectedRecord && slug) {
+      console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
+        slug,
+        speedrunDataLength: speedrunData.length,
+        lookingForId: slug
+      });
+      
+      const currentRecord = speedrunData.find((record: any) => record.id === slug);
+      if (currentRecord) {
+        console.log('✅ [SPEEDRUN RECORD] Found current record in speedrun data:', {
+          id: currentRecord.id,
+          name: currentRecord.name || currentRecord.fullName
+        });
+        setSelectedRecord(currentRecord);
+      } else {
+        console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
+        // Fallback to direct loading if not found in speedrun data
+        if (slug && !directRecordLoading) {
+          loadDirectRecord(slug);
+        }
+      }
+    }
+  }, [section, speedrunData, selectedRecord, slug, directRecordLoading]);
+  
   // Debug speedrun data loading
   if (section === 'speedrun') {
     console.log('🔍 [SPEEDRUN NAVIGATION] Speedrun data for navigation:', {
@@ -154,7 +181,8 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   }
   
   // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
-  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading);
+  // For speedrun records, don't show loading if we have the record from speedrun data
+  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
   const error = acquisitionData.error || directRecordError;
   
   console.log(`🔍 [LOADING STATE] Loading states:`, {
