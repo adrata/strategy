@@ -119,7 +119,10 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     console.log(`🔍 [DATA PIPELINE] Section ${section} data:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map(r => r.id)
+      sampleIds: data.slice(0, 3).map(r => r.id),
+      section: section,
+      hasAcquisitionData: !!acquisitionData,
+      acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data'
     });
     
     // Companies are already properly ranked by the API - no additional sorting needed
