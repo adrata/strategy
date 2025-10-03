@@ -1316,18 +1316,44 @@ export function UniversalRecordTemplate({
       );
     }
 
-    // Add Action button - LIGHT GREEN BUTTON for speedrun records
-    // For speedrun records, show "Add Action" with green styling
+    // Add Action button - Check URL path to determine button text and styling
     if (recordType === 'speedrun') {
-      buttons.push(
-        <button
-          key="add-action"
-          onClick={() => setIsAddActionModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
-        >
-          Add Action
-        </button>
-      );
+      // Check if we're on the sprint page or individual record page
+      const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
+      
+      if (isOnSprintPage) {
+        // On sprint page: Show "Add Action" with green styling
+        buttons.push(
+          <button
+            key="add-action"
+            onClick={() => setIsAddActionModalOpen(true)}
+            className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
+          >
+            Add Action
+          </button>
+        );
+      } else {
+        // On individual record page: Show "Start Speedrun" with blue styling
+        buttons.push(
+          <button
+            key="start-speedrun"
+            onClick={() => {
+              // Navigate to speedrun/sprint page
+              const currentPath = window.location.pathname;
+              const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+              if (workspaceMatch) {
+                const workspaceSlug = workspaceMatch[1];
+                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+              } else {
+                window.location.href = '/speedrun/sprint';
+              }
+            }}
+            className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+          >
+            Start Speedrun
+          </button>
+        );
+      }
     } else {
       buttons.push(
         <button
