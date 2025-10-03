@@ -45,6 +45,16 @@ export function CompleteActionModal({
     onSubmit(formData);
   };
 
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!isLoading && formData.action.trim()) {
+        handleSubmit(e as any);
+      }
+    }
+  };
+
   const handleClose = () => {
     if (!isLoading) {
       setFormData({
@@ -92,7 +102,7 @@ export function CompleteActionModal({
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
             {/* Person - Auto-filled */}
             <div>
               <label className="block text-base font-semibold text-[var(--foreground)] mb-3">
@@ -180,14 +190,18 @@ export function CompleteActionModal({
                 type="submit"
                 disabled={isLoading}
                 className="flex-1 px-6 py-4 text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold text-base shadow-lg"
+                title="Complete action (⌘+Enter)"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Saving...
+                    Completing...
                   </div>
                 ) : (
-                  'Save & Next'
+                  <div className="flex items-center justify-center gap-2">
+                    <span>Complete</span>
+                    <kbd className="px-2 py-1 text-xs bg-white/20 rounded border border-white/30">⌘↵</kbd>
+                  </div>
                 )}
               </button>
             </div>
