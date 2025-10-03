@@ -160,6 +160,10 @@ export default function SignInPage() {
       const result = await authSignIn(email, password);
 
       console.log("🔐 [SIGN-IN PAGE] Authentication result:", result);
+      console.log("🔐 [SIGN-IN PAGE] Result type:", typeof result);
+      console.log("🔐 [SIGN-IN PAGE] Result keys:", Object.keys(result || {}));
+      console.log("🔐 [SIGN-IN PAGE] Result success:", result?.success);
+      console.log("🔐 [SIGN-IN PAGE] Result session:", result?.session);
 
       if (result.success) {
         console.log("✅ [SIGN-IN PAGE] Authentication successful!");
