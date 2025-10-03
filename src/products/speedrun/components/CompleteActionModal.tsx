@@ -72,7 +72,7 @@ export function CompleteActionModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -179,10 +179,10 @@ export function CompleteActionModal({
               </select>
             </div>
 
-            {/* Action */}
+            {/* Notes */}
             <div>
               <label htmlFor="action" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Action
+                Notes
               </label>
               <textarea
                 id="action"
@@ -216,7 +216,7 @@ export function CompleteActionModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 text-white bg-green-100 border border-transparent rounded-lg hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm shadow-lg"
+                className="flex-1 px-4 py-3 bg-green-100 border border-green-300 text-green-700 rounded-lg hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
                 title="Complete action (⌘+Enter)"
               >
                 {isLoading ? (
