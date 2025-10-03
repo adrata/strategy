@@ -34,6 +34,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [riskAssessments, setRiskAssessments] = useState<Record<string, RiskAssessment>>({});
   const [isFetching, setIsFetching] = useState(false); // Prevent multiple simultaneous fetches
+  const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const router = useRouter();
 
   // Handle person click navigation
@@ -101,14 +102,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         return;
       }
       
-      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching
-      if (isFetching) {
-        console.log('🔍 [BUYER GROUPS DEBUG] Already fetching, skipping');
+      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched
+      if (isFetching || (lastFetchTime && Date.now() - lastFetchTime < 5000)) {
+        console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
         return;
       }
       
       setIsFetching(true);
       setLoading(true);
+      setLastFetchTime(Date.now());
       
       try {
         

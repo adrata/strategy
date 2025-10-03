@@ -228,9 +228,30 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           const activitiesData = await activitiesResponse.json();
           console.log('📅 [TIMELINE] Activities data:', activitiesData);
           
-          if (activitiesData['success'] && activitiesData.data) {
+          // 🚫 SAFETY CHECK: Ensure data exists and is an object
+          if (activitiesData['success'] && activitiesData.data && typeof activitiesData.data === 'object') {
+            // 🚫 FIX: Handle data structure properly - data is an object, not array
+            console.log('📅 [TIMELINE] Data structure:', {
+              hasData: !!activitiesData.data,
+              dataKeys: activitiesData.data ? Object.keys(activitiesData.data) : 'no data',
+              dataType: Array.isArray(activitiesData.data) ? 'array' : typeof activitiesData.data
+            });
+            
+            // Get all activities from all sections and flatten them
+            const allActivities: any[] = [];
+            
+            // Check each section for activities
+            const sections = ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'];
+            sections.forEach(section => {
+              if (activitiesData.data[section] && Array.isArray(activitiesData.data[section])) {
+                allActivities.push(...activitiesData.data[section]);
+              }
+            });
+            
+            console.log('📅 [TIMELINE] Total activities found:', allActivities.length);
+            
             // Filter activities for this specific record
-            const recordActivities = activitiesData.data.filter((activity: any) => {
+            const recordActivities = allActivities.filter((activity: any) => {
               // Check if this activity is related to our record
               return (
                 activity['leadId'] === record.id ||
@@ -238,19 +259,53 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                 activity['opportunityId'] === record.id ||
                 activity['contactId'] === record.id ||
                 activity['accountId'] === record.id ||
-                activity['companyId'] === record.id
+                activity['companyId'] === record.id ||
+                activity['id'] === record.id // Also check if the activity itself matches our record
               );
             });
             
             console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
 
-            // Convert activities to timeline events
-            activityEvents = recordActivities.map((activity: any) => ({
-              id: activity.id,
-              type: 'activity',
-              date: new Date(activity.completedAt || activity.createdAt),
-              title: activity.subject || activity.type || 'Activity',
-              description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
+            // 🚫 FIX: Handle case where no activities are found
+            if (recordActivities.length === 0) {
+              console.log('📅 [TIMELINE] No activities found for this record, creating placeholder events');
+              
+              // Create some basic timeline events from the record itself
+              const recordEvents = [];
+              
+              if (record.createdAt) {
+                recordEvents.push({
+                  id: `${record.id}-created`,
+                  type: 'created',
+                  title: 'Record Created',
+                  description: `${record.name || 'Record'} was created`,
+                  date: new Date(record.createdAt),
+                  icon: 'plus',
+                  color: 'blue'
+                });
+              }
+              
+              if (record.updatedAt && record.updatedAt !== record.createdAt) {
+                recordEvents.push({
+                  id: `${record.id}-updated`,
+                  type: 'updated',
+                  title: 'Record Updated',
+                  description: `${record.name || 'Record'} was last updated`,
+                  date: new Date(record.updatedAt),
+                  icon: 'edit',
+                  color: 'green'
+                });
+              }
+              
+              activityEvents = recordEvents;
+            } else {
+              // Convert activities to timeline events
+              activityEvents = recordActivities.map((activity: any) => ({
+                id: activity.id,
+                type: 'activity',
+                date: new Date(activity.completedAt || activity.createdAt || Date.now()),
+                title: activity.subject || activity.type || 'Activity',
+                description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
               content: activity.description || activity.outcome || '', // Full content for expansion
               user: getUserName(activity.userId || 'System'),
               metadata: {
@@ -259,6 +314,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                 priority: activity.priority
               }
             }));
+            }
           }
         }
 
@@ -332,7 +388,12 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           index === self.findIndex(e => e['id'] === event.id)
         );
         
-        const sortedEvents = uniqueEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
+        const sortedEvents = uniqueEvents.sort((a, b) => {
+          // 🚫 FIX: Handle undefined dates safely
+          const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
+          const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
         console.log('🔄 [TIMELINE] Final timeline events:', sortedEvents);
         
         return sortedEvents;

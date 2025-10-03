@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useRecordTitle } from '@/platform/hooks/useRecordTitle';
 
 // Map URL paths to page names
 const getPageName = (pathname: string): string => {
@@ -68,6 +69,7 @@ const getPageName = (pathname: string): string => {
 export function DynamicTitle() {
   const { user } = useUnifiedAuth();
   const pathname = usePathname();
+  const { recordData, isLoading } = useRecordTitle();
   
   useEffect(() => {
     if (user?.workspaces && user.workspaces.length > 0) {
@@ -75,10 +77,41 @@ export function DynamicTitle() {
       const activeWorkspace = user.workspaces.find(w => w['id'] === user.activeWorkspaceId) || user['workspaces'][0];
       
       if (activeWorkspace) {
-        // Get the current page name
-        const pageName = getPageName(pathname);
-        // Update the document title - just use the page name
-        document['title'] = pageName;
+        // Check if we have record data for a specific record
+        if (recordData && !isLoading) {
+          // Extract section from pathname
+          const pathParts = pathname.split('/');
+          const section = pathParts[pathParts.length - 2];
+          
+          console.log('🔍 [DYNAMIC TITLE] Setting title with record data:', { recordData, section });
+          
+          // Generate title based on record type and data
+          let title = '';
+          
+          if (section === 'people' || section === 'leads' || section === 'prospects') {
+            // For people/leads/prospects, use fullName or name
+            title = recordData.fullName || recordData.name || 'Unknown Person';
+          } else if (section === 'companies' || section === 'clients' || section === 'partners') {
+            // For companies/clients/partners, use name
+            title = recordData.name || 'Unknown Company';
+          } else if (section === 'opportunities') {
+            // For opportunities, use name
+            title = recordData.name || 'Unknown Opportunity';
+          } else if (section === 'sellers') {
+            // For sellers, use fullName or name
+            title = recordData.fullName || recordData.name || 'Unknown Seller';
+          } else {
+            // Fallback to generic title
+            title = getPageName(pathname);
+          }
+          
+          console.log('🔍 [DYNAMIC TITLE] Setting document title to:', title);
+          document['title'] = title;
+        } else {
+          // No record data available, use generic page name
+          const pageName = getPageName(pathname);
+          document['title'] = pageName;
+        }
       } else {
         // Fallback to default title
         document['title'] = 'Adrata | Dashboard';
@@ -87,7 +120,7 @@ export function DynamicTitle() {
       // No workspaces available, use default title
       document['title'] = 'Adrata | Dashboard';
     }
-  }, [user?.activeWorkspaceId, user?.workspaces, pathname]);
+  }, [user?.activeWorkspaceId, user?.workspaces, pathname, recordData, isLoading]);
 
   // This component doesn't render anything
   return null;

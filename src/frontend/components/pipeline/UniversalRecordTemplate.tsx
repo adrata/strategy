@@ -1672,7 +1672,7 @@ export function UniversalRecordTemplate({
             <Loader size="lg" />
           </div>
         ) : (
-          <div key={`${activeTab}-${record?.id}`} className="p-6 min-h-[400px]">
+          <div key={`${activeTab}-${record?.id}`} className="px-1 min-h-[400px]">
             {renderTabContent()}
           </div>
         )}

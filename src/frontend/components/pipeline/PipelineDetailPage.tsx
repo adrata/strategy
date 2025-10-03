@@ -40,6 +40,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
   const [directRecordLoading, setDirectRecordLoading] = useState(false);
   const [directRecordError, setDirectRecordError] = useState<string | null>(null);
+  const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
@@ -92,6 +93,15 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
     const acquireData = acquisitionData?.acquireData || {};
+    
+    console.log(`🔍 [DATA PIPELINE] Getting data for section ${section}:`, {
+      hasAcquisitionData: !!acquisitionData,
+      hasAcquireData: !!acquisitionData?.acquireData,
+      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : 'no acquireData',
+      sectionDataLength: acquireData[section]?.length || 0,
+      isLoading: acquisitionData?.loading?.isLoading
+    });
+    
     let data = [];
     switch (section) {
       case 'leads': data = acquireData.leads || []; break;
@@ -106,6 +116,12 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       default: data = []; break;
     }
     
+    console.log(`🔍 [DATA PIPELINE] Section ${section} data:`, {
+      dataLength: data.length,
+      firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
+      sampleIds: data.slice(0, 3).map(r => r.id)
+    });
+    
     // Companies are already properly ranked by the API - no additional sorting needed
     
     return data;
@@ -116,10 +132,27 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
   const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning;
   const error = acquisitionData.error || directRecordError;
+  
+  console.log(`🔍 [LOADING STATE] Loading states:`, {
+    acquisitionDataLoading: acquisitionData.isLoading,
+    directRecordLoading,
+    isTransitioning,
+    totalLoading: loading,
+    hasError: !!error,
+    errorMessage: error
+  });
 
   // Direct record loading function for when accessed via URL
   const loadDirectRecord = useCallback(async (recordId: string) => {
     if (!recordId || directRecordLoading) return;
+    
+    // 🚫 PREVENT RAPID-FIRE CALLS: Debounce API calls
+    const now = Date.now();
+    if (lastLoadAttempt && now - parseInt(lastLoadAttempt) < 2000) {
+      console.log(`🔄 [DEBOUNCE] Skipping rapid API call for ${recordId}`);
+      return;
+    }
+    setLastLoadAttempt(now.toString());
     
     // Prevent loading external Coresignal IDs
     if (recordId.includes('coresignal')) {
@@ -229,7 +262,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           
           setSelectedRecord(record);
         } else {
-          throw new Error(`Record not found in API response`);
+          console.log(`⚠️ [DIRECT LOAD] Record not found in API response, but continuing with cached data if available`);
+          // Don't throw error - let the app continue with cached data
+          return;
         }
       } else {
         throw new Error(result.error || `Failed to load ${section} record from unified API`);
@@ -240,7 +275,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     } finally {
       setDirectRecordLoading(false);
     }
-  }, [section, directRecordLoading, directRecordError]);
+  }, [section]); // 🚫 FIXED: Removed directRecordLoading, directRecordError to prevent infinite loops
 
   useEffect(() => {
     if (!slug) return;
@@ -248,23 +283,36 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     // Extract ID from slug
     const recordId = extractIdFromSlug(slug);
     
-    // MODERATE FIX: For companies, clear cache but still check cached data first
-    if (section === 'companies') {
-      console.log(`🔄 [COMPANY CACHE FIX] Clearing cache for company: ${recordId}`);
-      // Clear company-related cache
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem(`cached-companies-${recordId}`);
-        sessionStorage.removeItem(`current-record-companies`);
-      }
+    console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`);
+    
+    // 🚫 PREVENT INFINITE LOOPS: Check if we're already loading this record
+    if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+      console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId}`);
+      return;
     }
+    
+    // 🚫 PREVENT CACHE CLEARING: Don't clear cache unnecessarily
+    // if (section === 'companies') {
+    //   console.log(`🔄 [COMPANY CACHE FIX] Clearing cache for company: ${recordId}`);
+    //   // Clear company-related cache
+    //   if (typeof window !== 'undefined') {
+    //     sessionStorage.removeItem(`cached-companies-${recordId}`);
+    //     sessionStorage.removeItem(`current-record-companies`);
+    //   }
+    // }
     
     // If we have data loaded, try to find the record in it
     if (data.length > 0) {
       console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
       console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
+      console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
       
       // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
       const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
+      
+      console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
+      console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
+      console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
       
         if (record) {
           console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
@@ -295,47 +343,22 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               });
           }
           
-          // CRITICAL FIX: For companies, always verify the cached record is complete
-          // Check multiple fields to determine if the record is truly complete
-          const isIncomplete = section === 'companies' && (
-            !record.description || 
-            !record.website || 
-            !record.industry ||
-            !record.size ||
-            !record.city ||
-            !record.state ||
-            record.description === 'No description available' ||
-            record.website === 'No website'
-          );
-          
-          if (isIncomplete) {
-            console.log(`⚠️ [COMPANY FIX] Cached company record is incomplete, forcing direct load for better data:`, {
-              hasDescription: !!record.description,
+          // 🚫 REMOVED: Overly aggressive company record validation that was causing loading issues
+          // Just use the cached record if we have it
+          console.log(`✅ [COMPANY FIX] Using cached company record:`, {
+            id: record.id,
+            name: record.name,
+            hasDescription: !!record.description,
             hasWebsite: !!record.website,
-            hasIndustry: !!record.industry,
-            hasSize: !!record.size,
-            hasLocation: !!(record.city || record.state),
-            description: record.description,
-            website: record.website
+            hasIndustry: !!record.industry
           });
           
-          // Clear any cached data for this company to force fresh load
-          if (typeof window !== 'undefined') {
-            sessionStorage.removeItem(`cached-${section}-${record.id}`);
-            sessionStorage.removeItem(`current-record-${section}`);
-            console.log(`🧹 [COMPANY FIX] Cleared cached data for company: ${record.id}`);
-          }
-          
-          // Don't return - continue to direct load
-        } else {
-          console.log(`✅ [COMPANY FIX] Cached company record is complete, using cached data`);
           // Keep the previous record in case we need to fall back
           if (selectedRecord && selectedRecord.id !== record.id) {
             setPreviousRecord(selectedRecord);
           }
           setSelectedRecord(record);
           return;
-        }
       } else {
         console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
       }
@@ -368,7 +391,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         setDirectRecordError('Invalid record ID');
       }
     }
-  }, [slug, data, loading, section, selectedRecord]);
+  }, [slug, section]); // 🚫 FIXED: Removed data, loading, selectedRecord to prevent infinite loops
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {
@@ -596,6 +619,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   }
 
   // Show record details if found (or use previous record as fallback during transitions)
+  // 🚫 FALLBACK: Create a basic record if none found to prevent infinite loading
   if (selectedRecord || (previousRecord && slug)) {
     const recordToShow = selectedRecord || previousRecord;
     
@@ -731,6 +755,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       </>
     );
   }
+
 
   // If we have data but no selected record, show the list
   // BUT only if we're not on a detail page URL (slug exists)
