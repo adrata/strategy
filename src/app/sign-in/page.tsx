@@ -185,47 +185,49 @@ export default function SignInPage() {
           }
         }
 
-        // Determine redirect URL based on platform routing
-        let redirectUrl = "/speedrun"; // Default to Speedrun
+        // 🆕 AUTO-LOGIN TO LAST WORKSPACE
+        // Instead of showing workspace selection, automatically redirect to user's last workspace
+        let redirectUrl = "/speedrun"; // Default fallback
         
-        if (result.redirectTo) {
-          // Use platform-specific route from authentication response
-          redirectUrl = result.redirectTo;
-          console.log("🎯 [SIGN-IN PAGE] Using platform route:", redirectUrl);
+        // Check if user has a last active workspace
+        if (result.session?.user?.activeWorkspaceId) {
+          const activeWorkspaceId = result.session.user.activeWorkspaceId;
+          console.log("🎯 [SIGN-IN PAGE] User has active workspace:", activeWorkspaceId);
           
-          if (result.platformRoute) {
-            console.log("🎯 [SIGN-IN PAGE] Platform configuration:", {
-              component: result.platformRoute.component,
-              title: result.platformRoute.title,
-              description: result.platformRoute.description
-            });
+          // Find the workspace details
+          const activeWorkspace = result.session.user.workspaces?.find(
+            (ws: any) => ws.id === activeWorkspaceId
+          );
+          
+          if (activeWorkspace) {
+            console.log("✅ [SIGN-IN PAGE] Found active workspace:", activeWorkspace.name);
+            // Redirect directly to the main app with the active workspace
+            redirectUrl = "/speedrun";
+            console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
+          } else {
+            console.log("⚠️ [SIGN-IN PAGE] Active workspace not found in user's workspaces");
+            // Fall back to workspace selection if workspace not found
+            redirectUrl = "/workspaces";
           }
         } else {
-          // Fallback to last location or user-specific default
-          if (typeof window !== "undefined") {
-            const lastLocation = localStorage.getItem("adrata_last_location");
-            if (lastLocation) {
-              redirectUrl = lastLocation;
-            } else {
-              // First time login - set based on user type
-              const isDemo = email.includes("demo");
-              
-              if (isDemo) {
-                redirectUrl = "/monaco";
-              } else {
-                redirectUrl = "/speedrun";  // All non-demo users go to Speedrun by default
-              }
-              
-              localStorage.setItem("adrata_last_location", redirectUrl);
-            }
-            console.log("🎯 [SIGN-IN PAGE] Redirect decision:", { 
-              email, 
-              lastLocation,
-              redirectUrl,
-              resultRedirectTo: result.redirectTo 
-            });
-          }
+          console.log("⚠️ [SIGN-IN PAGE] No active workspace found, redirecting to workspace selection");
+          redirectUrl = "/workspaces";
         }
+
+        // Handle returnTo parameter for post-login redirects (override auto-login)
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get("returnTo");
+        if (returnTo) {
+          redirectUrl = returnTo;
+          console.log("🎯 [SIGN-IN PAGE] Using returnTo parameter (overriding auto-login):", redirectUrl);
+        }
+
+        console.log("🎯 [SIGN-IN PAGE] Final redirect decision:", { 
+          email, 
+          redirectUrl,
+          hasActiveWorkspace: !!result.session?.user?.activeWorkspaceId,
+          activeWorkspaceId: result.session?.user?.activeWorkspaceId
+        });
 
         // 🆕 ENVIRONMENT-AWARE: Ensure we're redirecting to the correct domain
         if (typeof window !== "undefined") {
