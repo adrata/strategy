@@ -71,7 +71,7 @@ export function CompleteActionModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           {/* Header */}
@@ -136,20 +136,47 @@ export function CompleteActionModal({
 
             {/* Time */}
             <div>
-              <label htmlFor="time" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Time
               </label>
-              <select
-                id="time"
-                value={formData.time}
-                onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value as ActionLogData['time'] }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
-                disabled={isLoading}
-              >
-                <option value="Now">Now</option>
-                <option value="Past">Past</option>
-                <option value="Future">Future</option>
-              </select>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, time: 'Now' }))}
+                  className={`px-3 py-2 text-sm rounded-md border ${
+                    formData.time === 'Now'
+                      ? 'bg-green-100 border-green-300 text-green-700' 
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  disabled={isLoading}
+                >
+                  Now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, time: 'Past' }))}
+                  className={`px-3 py-2 text-sm rounded-md border ${
+                    formData.time === 'Past'
+                      ? 'bg-green-100 border-green-300 text-green-700' 
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  disabled={isLoading}
+                >
+                  Past
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, time: 'Future' }))}
+                  className={`px-3 py-2 text-sm rounded-md border ${
+                    formData.time === 'Future'
+                      ? 'bg-green-100 border-green-300 text-green-700' 
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  disabled={isLoading}
+                >
+                  Future
+                </button>
+              </div>
             </div>
 
             {/* Action */}
