@@ -1296,7 +1296,7 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
-              recordType === 'people' ?
+              recordType === 'people' || recordType === 'speedrun' ?
                 <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
               recordType === 'prospects' ?
                 <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
