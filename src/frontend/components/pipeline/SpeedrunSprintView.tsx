@@ -45,10 +45,19 @@ export function SpeedrunSprintView() {
   // CRITICAL FIX: Use original PipelineDataStore for reliable data loading
   const pipelineData = usePipelineData('speedrun', workspaceId, userId);
   
-  const allData = pipelineData.data || [];
+  // Ensure allData is always an array
+  const allData = Array.isArray(pipelineData.data) ? pipelineData.data : [];
   const loading = pipelineData.isLoading || false;
   const error = pipelineData.error || null;
   const refresh = pipelineData.mutate || (() => {});
+  
+  console.log('🔍 [SPEEDRUN DEBUG] Pipeline data:', {
+    pipelineData,
+    allDataLength: allData.length,
+    allDataType: typeof allData,
+    isArray: Array.isArray(allData),
+    sampleData: allData.slice(0, 2)
+  });
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
