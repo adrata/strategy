@@ -295,37 +295,73 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
   const verticalOptions = getVerticalOptions();
 
-  // Sort options - optimized for sales pipeline management with Rank as default
+  // Sort options - match actual columns for each section
   const getSortOptions = () => {
-    const baseOptions = [
+    // Section-specific sort options that match the actual columns
+    if (section === 'speedrun') {
+      return [
+        { value: 'rank', label: 'Rank' },
+        { value: 'company', label: 'Company' },
+        { value: 'name', label: 'Person' },
+        { value: 'status', label: 'Stage' },
+        { value: 'lastContact', label: 'Last Action' },
+        { value: 'nextAction', label: 'Next Action' }
+      ];
+    }
+    
+    if (section === 'opportunities') {
+      return [
+        { value: 'rank', label: 'Rank' },
+        { value: 'company', label: 'Company' },
+        { value: 'stage', label: 'Stage' },
+        { value: 'amount', label: 'Value' },
+        { value: 'lastContact', label: 'Last Action' },
+        { value: 'nextAction', label: 'Next Action' }
+      ];
+    }
+    
+    if (section === 'leads' || section === 'prospects') {
+      return [
+        { value: 'rank', label: 'Rank' },
+        { value: 'company', label: 'Company' },
+        { value: 'name', label: 'Person' },
+        { value: 'title', label: 'Title' },
+        { value: 'status', label: 'Status' },
+        { value: 'lastContact', label: 'Last Action' },
+        { value: 'nextAction', label: 'Next Action' }
+      ];
+    }
+    
+    if (section === 'people') {
+      return [
+        { value: 'rank', label: 'Rank' },
+        { value: 'name', label: 'Name' },
+        { value: 'company', label: 'Company' },
+        { value: 'title', label: 'Title' },
+        { value: 'lastContact', label: 'Last Action' },
+        { value: 'nextAction', label: 'Next Action' }
+      ];
+    }
+    
+    if (section === 'companies') {
+      return [
+        { value: 'rank', label: 'Rank' },
+        { value: 'company', label: 'Company' },
+        { value: 'lastContact', label: 'Last Action' },
+        { value: 'nextAction', label: 'Next Action' }
+      ];
+    }
+    
+    // Default options for other sections
+    return [
       { value: 'rank', label: 'Rank' },
-      { value: 'lastContact', label: 'Last Action' },
       { value: 'company', label: 'Company' },
       { value: 'name', label: 'Name' },
       { value: 'title', label: 'Title' },
-      { value: 'status', label: section === 'opportunities' ? 'Stage' : 'Status' },
-      { value: 'industry', label: 'Industry' },
-      { value: 'revenue', label: 'Company Size' },
-      { value: 'created_at', label: 'Created Date' },
-      { value: 'updated_at', label: 'Last Updated' }
+      { value: 'status', label: 'Status' },
+      { value: 'lastContact', label: 'Last Action' },
+      { value: 'nextAction', label: 'Next Action' }
     ];
-
-    if (!data || data['length'] === 0) return baseOptions;
-    
-    const sampleRecord = data[0];
-    const additionalOptions = [];
-    
-    // Add smart ranking if available
-    if (sampleRecord && (sampleRecord as any).smartRankScore !== undefined) {
-      additionalOptions.unshift({ value: 'smart_rank', label: 'Smart Rank' });
-    }
-    
-    // Add engagement metrics if available
-    if (sampleRecord && (sampleRecord as any).engagementScore !== undefined) {
-      additionalOptions.push({ value: 'engagement', label: 'Engagement Score' });
-    }
-    
-    return [...additionalOptions, ...baseOptions];
   };
 
   const sortOptions = getSortOptions();
