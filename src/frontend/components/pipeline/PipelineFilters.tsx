@@ -189,45 +189,39 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   };
 
   const getLocationOptions = () => {
-    const baseOptions = [{ value: 'all', label: 'All Locations' }];
+    const baseOptions = [{ value: 'all', label: 'All States' }];
     
     if (!data || !data.length) {
       return baseOptions;
     }
 
-    // Extract unique locations from the data
-    const locations = new Set<string>();
+    // Extract unique states from the data
+    const states = new Set<string>();
     
     data.forEach((record: any) => {
-      // Check company location fields
-      if (record.company?.hqCity && typeof record.company.hqCity === 'string') {
-        locations.add(record.company.hqCity);
-      }
+      // Check company state fields (prioritize hqState, then state)
       if (record.company?.hqState && typeof record.company.hqState === 'string') {
-        locations.add(record.company.hqState);
+        states.add(record.company.hqState);
       }
-      if (record.company?.hqCountry && typeof record.company.hqCountry === 'string') {
-        locations.add(record.company.hqCountry);
+      if (record.company?.state && typeof record.company.state === 'string') {
+        states.add(record.company.state);
       }
-      // Also check direct location fields
-      if (record.hqCity && typeof record.hqCity === 'string') {
-        locations.add(record.hqCity);
-      }
+      // Also check direct state fields
       if (record.hqState && typeof record.hqState === 'string') {
-        locations.add(record.hqState);
+        states.add(record.hqState);
       }
-      if (record.hqCountry && typeof record.hqCountry === 'string') {
-        locations.add(record.hqCountry);
+      if (record.state && typeof record.state === 'string') {
+        states.add(record.state);
       }
     });
 
     // Convert to options array and sort
-    const dynamicOptions = Array.from(locations)
-      .filter(location => location && typeof location === 'string' && location.toLowerCase() !== 'unknown')
+    const dynamicOptions = Array.from(states)
+      .filter(state => state && typeof state === 'string' && state.toLowerCase() !== 'unknown')
       .sort()
-      .map(location => ({
-        value: (location || '').toLowerCase().replace(/\s+/g, '_'),
-        label: location || ''
+      .map(state => ({
+        value: (state || '').toLowerCase().replace(/\s+/g, '_'),
+        label: state || ''
       }));
 
     return [...baseOptions, ...dynamicOptions];
@@ -600,7 +594,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
               {/* Location Filter */}
               <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">State</label>
                 <select
                   value={locationFilter}
                   onChange={(e) => handleLocationChange(e.target.value)}

@@ -845,17 +845,15 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         }
       })();
 
-      // Location filter
+      // Location filter (State-based)
       const matchesLocation = locationFilter === 'all' || (() => {
-        const hqCity = record.hqCity || record.company?.hqCity;
         const hqState = record.hqState || record.company?.hqState;
-        const hqCountry = record.hqCountry || record.company?.hqCountry;
+        const state = record.state || record.company?.state;
         
         const location = locationFilter.toLowerCase().replace(/\s+/g, '_');
         
-        return (hqCity && hqCity.toLowerCase().replace(/\s+/g, '_') === location) ||
-               (hqState && hqState.toLowerCase().replace(/\s+/g, '_') === location) ||
-               (hqCountry && hqCountry.toLowerCase().replace(/\s+/g, '_') === location);
+        return (hqState && hqState.toLowerCase().replace(/\s+/g, '_') === location) ||
+               (state && state.toLowerCase().replace(/\s+/g, '_') === location);
       })();
 
       return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation;
