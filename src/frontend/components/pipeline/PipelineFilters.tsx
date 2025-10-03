@@ -32,9 +32,13 @@ interface PipelineFiltersProps {
   onAddRecord?: () => void;
   onColumnVisibilityChange?: (columns: string[]) => void;
   visibleColumns?: string[];
+  // New seller-specific filters
+  onCompanySizeChange?: (size: string) => void;
+  onLocationChange?: (location: string) => void;
+  onTechnologyChange?: (technology: string) => void;
 }
 
-export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns }: PipelineFiltersProps) {
+export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange }: PipelineFiltersProps) {
   // 🚀 PERFORMANCE: Use single data source from useAcquisitionOS with aggressive caching
   const { data: acquisitionData } = useAcquisitionOS();
   
@@ -89,6 +93,10 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [timezoneFilter, setTimezoneFilter] = useState('all');
+  // New seller-specific filter states
+  const [companySizeFilter, setCompanySizeFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
+  const [technologyFilter, setTechnologyFilter] = useState('all');
 
   // Get filter options based on section
   const getStatusOptions = () => {
@@ -168,8 +176,77 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     ];
   };
 
+  // 🎯 NEW SELLER FILTERS: Company Size, Location, Stage
+  const getCompanySizeOptions = () => {
+    return [
+      { value: 'all', label: 'All Sizes' },
+      { value: 'startup', label: 'Startup (1-10)' },
+      { value: 'small', label: 'Small (11-50)' },
+      { value: 'medium', label: 'Medium (51-200)' },
+      { value: 'large', label: 'Large (201-1000)' },
+      { value: 'enterprise', label: 'Enterprise (1000+)' }
+    ];
+  };
+
+  const getLocationOptions = () => {
+    const baseOptions = [{ value: 'all', label: 'All Locations' }];
+    
+    if (!data || !data.length) {
+      return baseOptions;
+    }
+
+    // Extract unique locations from the data
+    const locations = new Set<string>();
+    
+    data.forEach((record: any) => {
+      // Check company location fields
+      if (record.company?.hqCity && typeof record.company.hqCity === 'string') {
+        locations.add(record.company.hqCity);
+      }
+      if (record.company?.hqState && typeof record.company.hqState === 'string') {
+        locations.add(record.company.hqState);
+      }
+      if (record.company?.hqCountry && typeof record.company.hqCountry === 'string') {
+        locations.add(record.company.hqCountry);
+      }
+      // Also check direct location fields
+      if (record.hqCity && typeof record.hqCity === 'string') {
+        locations.add(record.hqCity);
+      }
+      if (record.hqState && typeof record.hqState === 'string') {
+        locations.add(record.hqState);
+      }
+      if (record.hqCountry && typeof record.hqCountry === 'string') {
+        locations.add(record.hqCountry);
+      }
+    });
+
+    // Convert to options array and sort
+    const dynamicOptions = Array.from(locations)
+      .filter(location => location && typeof location === 'string' && location.toLowerCase() !== 'unknown')
+      .sort()
+      .map(location => ({
+        value: (location || '').toLowerCase().replace(/\s+/g, '_'),
+        label: location || ''
+      }));
+
+    return [...baseOptions, ...dynamicOptions];
+  };
+
+  const getStageOptions = () => {
+    return [
+      { value: 'all', label: 'All Stages' },
+      { value: 'lead', label: 'Lead' },
+      { value: 'prospect', label: 'Prospect' },
+      { value: 'opportunity', label: 'Opportunity' }
+    ];
+  };
+
   const statusOptions = getStatusOptions();
   const priorityOptions = getPriorityOptions();
+  const companySizeOptions = getCompanySizeOptions();
+  const locationOptions = getLocationOptions();
+  const stageOptions = getStageOptions();
 
   // Show priority filter for relevant sections
   const showPriorityFilter = ['leads', 'prospects', 'opportunities', 'speedrun'].includes(section);
@@ -418,6 +495,22 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     onTimezoneChange?.(value);
   };
 
+  // 🎯 NEW SELLER FILTER HANDLERS
+  const handleCompanySizeChange = (value: string) => {
+    setCompanySizeFilter(value);
+    onCompanySizeChange?.(value);
+  };
+
+  const handleLocationChange = (value: string) => {
+    setLocationFilter(value);
+    onLocationChange?.(value);
+  };
+
+  const handleStageChange = (value: string) => {
+    setStatusFilter(value); // Use status filter for stage
+    onStatusChange?.(value);
+  };
+
   return (
     <div className="flex items-center gap-4 py-2 w-full bg-white">
       {/* Search - full width with icon on right */}
@@ -461,9 +554,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <button
                   onClick={() => {
                     setStatusFilter('all');
-                    setLastContactedFilter('all');
+                    setCompanySizeFilter('all');
+                    setLocationFilter('all');
                     onStatusChange?.('all');
-                    onLastContactedChange?.('all');
+                    onCompanySizeChange?.('all');
+                    onLocationChange?.('all');
                   }}
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
@@ -471,41 +566,51 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </button>
               </div>
               
-              {/* Status Filter - Show for leads, prospects, opportunities */}
-              {['leads', 'prospects', 'opportunities'].includes(section) && (
-                <div className="mb-4">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
-                    {section === 'opportunities' ? 'Stage' : 'Status'}
-                  </label>
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => handleStatusChange(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
-                  >
-                    {statusOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-              
-              {/* Last Contacted Filter */}
+              {/* 🎯 STAGE FILTER - First and simplified */}
               <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">Last Contacted</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Stage</label>
                 <select
-                  value={lastContactedFilter}
-                  onChange={(e) => handleLastContactedChange(e.target.value)}
+                  value={statusFilter}
+                  onChange={(e) => handleStageChange(e.target.value)}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 >
-                  <option value="all">Any Time</option>
-                  <option value="never">Never Contacted</option>
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="quarter">This Quarter</option>
-                  <option value="overdue">Overdue Follow-up</option>
+                  {stageOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Company Size Filter */}
+              <div className="mb-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">Company Size</label>
+                <select
+                  value={companySizeFilter}
+                  onChange={(e) => handleCompanySizeChange(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                >
+                  {companySizeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Location Filter */}
+              <div className="mb-4">
+                <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
+                <select
+                  value={locationFilter}
+                  onChange={(e) => handleLocationChange(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                >
+                  {locationOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -513,8 +618,10 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
               <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end">
                 <button
                   onClick={() => {
-                    setLastContactedFilter('all');
-                    onLastContactedChange?.('all');
+                    setCompanySizeFilter('all');
+                    setLocationFilter('all');
+                    onCompanySizeChange?.('all');
+                    onLocationChange?.('all');
                     setIsDropdownOpen(false);
                   }}
                   className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"

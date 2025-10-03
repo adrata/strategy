@@ -274,7 +274,7 @@ export function PipelineTable({
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       {/* Table */}
-      <div className="overflow-x-auto" style={{ height: tableHeight }}>
+      <div className="overflow-x-auto pipeline-table-scroll" style={{ height: tableHeight }}>
         <table className="w-full">
           <TableHeader
             headers={headers}

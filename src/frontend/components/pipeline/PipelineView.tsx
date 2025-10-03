@@ -83,13 +83,15 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [revenueFilter, setRevenueFilter] = useState('all');
-  const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   // Default sorting: prospects by oldest Last Action, others by rank
   const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
+  // 🎯 NEW SELLER FILTERS
+  const [companySizeFilter, setCompanySizeFilter] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
   
   // Get workspace context at component level
   const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
@@ -798,25 +800,6 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         }
       })();
 
-      // Last contacted filter
-      const matchesLastContacted = lastContactedFilter === 'all' || (() => {
-        const lastContact = record.lastContactDate || record.lastContact || record.lastAction;
-        if (!lastContact && lastContactedFilter === 'never') return true;
-        if (!lastContact) return false;
-        
-        const contactDate = new Date(lastContact);
-        const now = new Date();
-        const daysDiff = Math.floor((now.getTime() - contactDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        switch (lastContactedFilter) {
-          case 'today': return daysDiff === 0;
-          case 'week': return daysDiff <= 7;
-          case 'month': return daysDiff <= 30;
-          case 'quarter': return daysDiff <= 90;
-          case 'overdue': return daysDiff > 14; // Overdue if not contacted in 2 weeks
-          default: return true;
-        }
-      })();
 
       // Status filter - handle both status and stage fields for different record types
       const matchesStatus = statusFilter === 'all' ||
@@ -846,7 +829,36 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         console.log(`🔍 [TIMEZONE FILTER DEBUG] Record: ${record.name || record.fullName}, Timezone: ${record.timezone || record.timeZone || 'null'}, Filter: ${timezoneFilter}, Matches: ${matchesTimezone}`);
       }
 
-      return matchesSearch && matchesVertical && matchesRevenue && matchesLastContacted && matchesStatus && matchesPriority && matchesTimezone;
+      // 🎯 NEW SELLER FILTERS
+      // Company Size filter
+      const matchesCompanySize = companySizeFilter === 'all' || (() => {
+        const employeeCount = record.employeeCount || record.company?.employeeCount || 0;
+        const empCount = typeof employeeCount === 'string' ? parseInt(employeeCount, 10) : employeeCount;
+        
+        switch (companySizeFilter) {
+          case 'startup': return empCount >= 1 && empCount <= 10;
+          case 'small': return empCount >= 11 && empCount <= 50;
+          case 'medium': return empCount >= 51 && empCount <= 200;
+          case 'large': return empCount >= 201 && empCount <= 1000;
+          case 'enterprise': return empCount > 1000;
+          default: return true;
+        }
+      })();
+
+      // Location filter
+      const matchesLocation = locationFilter === 'all' || (() => {
+        const hqCity = record.hqCity || record.company?.hqCity;
+        const hqState = record.hqState || record.company?.hqState;
+        const hqCountry = record.hqCountry || record.company?.hqCountry;
+        
+        const location = locationFilter.toLowerCase().replace(/\s+/g, '_');
+        
+        return (hqCity && hqCity.toLowerCase().replace(/\s+/g, '_') === location) ||
+               (hqState && hqState.toLowerCase().replace(/\s+/g, '_') === location) ||
+               (hqCountry && hqCountry.toLowerCase().replace(/\s+/g, '_') === location);
+      })();
+
+      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation;
     });
 
     // Apply smart ranking or sorting
@@ -923,7 +935,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Note: Removed rank limiting logic - user wants to see all records
 
     return filtered;
-  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter]);
+  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
@@ -1363,17 +1375,23 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
           onStatusChange={setStatusFilter}
           onPriorityChange={setPriorityFilter}
           onRevenueChange={setRevenueFilter}
-          onLastContactedChange={setLastContactedFilter}
           onTimezoneChange={setTimezoneFilter}
           onSortChange={handleDropdownSortChange}
           onAddRecord={handleAddRecord}
           onColumnVisibilityChange={handleColumnVisibilityChange}
           visibleColumns={visibleColumns}
+          // 🎯 NEW SELLER FILTERS
+          onCompanySizeChange={setCompanySizeFilter}
+          onLocationChange={setLocationFilter}
         />
       </div>
 
       {/* Main content */}
-      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`}>
+      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'} overflow-auto middle-panel-scroll`} style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#cbd5e1 #f1f5f9',
+        minHeight: 'calc(100vh - 200px)' // Extend table height
+      }}>
         {Array.isArray(sectionDataArray) && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
