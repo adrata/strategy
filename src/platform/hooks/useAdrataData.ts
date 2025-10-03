@@ -18,6 +18,7 @@
 import useSWR, { SWRConfiguration, mutate } from 'swr';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { cache } from '@/platform/services/unified-cache';
+import { authFetch } from '@/platform/auth-fetch';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -251,8 +252,9 @@ export function usePipelineData(
 
     console.log(`🔍 [usePipelineData] Fetching ${section} data for workspace: ${workspaceId}, user: ${userId}`);
     
-    const response = await fetch(
-      `/api/data/unified?type=${section}&workspaceId=${workspaceId}&userId=${userId}`
+    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+    const response = await authFetch(
+      `/api/data/unified?type=${section}`
     );
     
     if (!response.ok) {
@@ -298,7 +300,8 @@ export function useAcquisitionData(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    const response = await fetch('/api/data/unified', {
+    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+    const response = await authFetch('/api/data/unified', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -347,7 +350,8 @@ export function useSpeedrunData(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    const response = await fetch(`/api/data/unified?type=speedrun&action=get&workspaceId=${workspaceId}&userId=${userId}`);
+    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+    const response = await authFetch(`/api/data/unified?type=speedrun&action=get`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch speedrun data');
@@ -381,7 +385,8 @@ export function usePipelineCounts(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    const response = await fetch(`/api/data/unified?dashboardOnly=true&workspaceId=${workspaceId}&userId=${userId}`);
+    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+    const response = await authFetch(`/api/data/unified?dashboardOnly=true`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch pipeline counts');

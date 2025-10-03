@@ -94,8 +94,6 @@ export async function GET(request: NextRequest) {
     const userId = context.userId;
 
     try {
-    const context = await getOptimizedWorkspaceContext(request);
-    const { workspaceId, userId } = context;
     
     const url = new URL(request.url);
     const section = url.searchParams.get('section') || 'speedrun';
@@ -107,7 +105,13 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
       console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
-      return createSuccessResponse(data, meta);
+      return createSuccessResponse(cached.data, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role,
+        responseTime: Date.now() - startTime,
+        fromCache: true
+      });
     }
     
     console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
@@ -770,13 +774,19 @@ export async function GET(request: NextRequest) {
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
     
-    return createSuccessResponse(data, meta);
+    return createSuccessResponse(result, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role,
+      responseTime: Date.now() - startTime
+    });
     
   } catch (error) {
     console.error('❌ [SECTION API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process section request',
+      'SECTION_ERROR',
+      500
+    );
   }
 }

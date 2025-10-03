@@ -24,14 +24,38 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use secure context instead of query parameters
+    const workspaceId = context.workspaceId;
+
+    // Get email linking statistics
+    const stats = await getEmailLinkingStats(workspaceId);
+
+    return createSuccessResponse(stats, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
+
+  } catch (error) {
     console.error('❌ Error getting email linking statistics:', error);
-    return NextResponse.json(
-      { error: 'Failed to get statistics', details: error.message },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to get email linking statistics',
+      'EMAIL_LINKING_STATS_ERROR',
+      500
     );
   }
 }

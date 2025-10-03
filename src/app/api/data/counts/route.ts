@@ -18,20 +18,20 @@ const countsCache = new Map<string, { data: any; timestamp: number }>();
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
-    // 1. Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
+      try {
+        // 1. Authenticate and authorize user
+        const { context, response } = await getSecureApiContext(request, {
+          requireAuth: true,
+          requireWorkspaceAccess: true
+        });
 
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
+        if (response) {
+          return response; // Return error response if authentication failed
+        }
 
-    if (!context) {
-      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
-    }
+        if (!context) {
+          return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+        }
 
     // Use authenticated user's workspace and ID
     const workspaceId = context.workspaceId;
@@ -43,7 +43,13 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < COUNTS_CACHE_TTL) {
       console.log(`⚡ [COUNTS API] Cache hit - returning cached counts in ${Date.now() - startTime}ms`);
-      return createSuccessResponse(data, meta);
+      return createSuccessResponse(cached.data, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role,
+        responseTime: Date.now() - startTime,
+        fromCache: true
+      });
     }
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);

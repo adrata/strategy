@@ -102,11 +102,11 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ [NOTES API] Error creating note:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create note',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to create note',
+      'CREATE_NOTE_ERROR',
+      500
+    );
   }
 }
 
@@ -136,10 +136,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const recordId = searchParams.get('recordId');
     const recordType = searchParams.get('recordType');
-    const workspaceId = searchParams.get('workspaceId');
+    // Use secure context instead of query parameters
+    const workspaceId = context.workspaceId;
 
     if (!recordId || !recordType || !workspaceId) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Record ID, record type, and workspace are required', 'VALIDATION_ERROR', 400);
     }
 
     // Build the where clause based on record type
@@ -190,10 +191,10 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ [NOTES API] Error retrieving notes:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to retrieve notes',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to retrieve notes',
+      'RETRIEVE_NOTES_ERROR',
+      500
+    );
   }
 }

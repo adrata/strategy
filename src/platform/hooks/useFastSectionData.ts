@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth-unified';
+import { authFetch } from '@/platform/auth-fetch';
 
 interface UseFastSectionDataReturn {
   data: any[];
@@ -73,10 +74,11 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
-      const url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}`;
-      console.log(`🔗 [FAST SECTION DATA] Making request to:`, url);
+      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+      const url = `/api/data/section?section=${section}&limit=${limit}`;
+      console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
-      const response = await fetch(url);
+      const response = await authFetch(url);
       
       console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
       

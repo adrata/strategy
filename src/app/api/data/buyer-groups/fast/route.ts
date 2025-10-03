@@ -13,11 +13,13 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get("companyId");
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
+    // Use secure context instead of query parameters
+    const workspaceId = context.workspaceId;
+    // Use secure context instead of query parameters
+    const userId = context.userId;
     
     if (!companyId || !workspaceId || !userId) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Company ID, workspace, and user are required', 'VALIDATION_ERROR', 400);
     }
 
     console.log(`🚀 [FAST BUYER GROUPS] Loading buyer group for company: ${companyId}`);
@@ -151,13 +153,10 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error("❌ [FAST BUYER GROUPS] Error:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to load buyer group data",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to load buyer group data",
+      "BUYER_GROUP_FAST_ERROR",
+      500
     );
   }
 }

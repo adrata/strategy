@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    const response = {
+    const responseData = {
       success: true,
       users: usersWithRole,
       count: usersWithRole.length,
@@ -109,12 +109,11 @@ export async function GET(request: NextRequest) {
 
     // 🚀 PERFORMANCE: Cache the response
     workspaceUsersCache.set(cacheKey, {
-      data: response,
+      data: responseData,
       timestamp: Date.now()
     });
 
-    return createSuccessResponse(response.data, {
-      ...response.meta,
+    return createSuccessResponse(responseData, {
       cacheHit: false,
       userId: context.userId,
       workspaceId: context.workspaceId,

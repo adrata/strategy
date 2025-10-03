@@ -154,14 +154,14 @@ function testMiddleware() {
   
   const hasApiProtection = /pathname\.startsWith\('\/api\/'\)/.test(content);
   const hasAuthCheck = /getUnifiedAuthUser/.test(content);
-  const hasWorkspaceValidation = /validateWorkspaceAccess/.test(content);
   const hasUserContext = /x-user-id/.test(content);
+  const hasEdgeRuntimeCompatibility = !/validateWorkspaceAccess/.test(content); // Should NOT have Prisma imports for Edge Runtime
   
-  const allChecks = hasApiProtection && hasAuthCheck && hasWorkspaceValidation && hasUserContext;
+  const allChecks = hasApiProtection && hasAuthCheck && hasUserContext && hasEdgeRuntimeCompatibility;
   
   console.log(`   ${allChecks ? '✅' : '❌'} Middleware security checks`);
   if (!allChecks) {
-    console.log(`     ❌ Missing: API protection=${hasApiProtection}, Auth check=${hasAuthCheck}, Workspace validation=${hasWorkspaceValidation}, User context=${hasUserContext}`);
+    console.log(`     ❌ Missing: API protection=${hasApiProtection}, Auth check=${hasAuthCheck}, User context=${hasUserContext}, Edge Runtime compatibility=${hasEdgeRuntimeCompatibility}`);
   }
   
   return { passed: allChecks };

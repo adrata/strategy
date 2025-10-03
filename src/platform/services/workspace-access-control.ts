@@ -60,19 +60,13 @@ export async function validateWorkspaceAccess(
     console.log(`🔍 [WORKSPACE ACCESS] Validating access for user ${userId} to workspace ${workspaceId}`);
 
     // Query workspace membership
-    const membership = await prisma.workspaceMembership.findFirst({
+    const membership = await prisma.workspace_users.findFirst({
       where: {
         userId,
         workspaceId,
-        status: 'active'
       },
-      include: {
-        role: {
-          select: {
-            name: true,
-            permissions: true
-          }
-        }
+      select: {
+        role: true,
       }
     });
 
@@ -95,13 +89,13 @@ export async function validateWorkspaceAccess(
     // Check role requirements if specified
     if (requiredRole) {
       const roleHierarchy = { 'viewer': 1, 'member': 2, 'admin': 3 };
-      const userRoleLevel = roleHierarchy[membership.role?.name as keyof typeof roleHierarchy] || 0;
+      const userRoleLevel = roleHierarchy[membership.role as keyof typeof roleHierarchy] || 0;
       const requiredRoleLevel = roleHierarchy[requiredRole];
       
       if (userRoleLevel < requiredRoleLevel) {
         const result: WorkspaceAccessResult = {
           hasAccess: false,
-          error: `Insufficient permissions. Required: ${requiredRole}, User role: ${membership.role?.name}`
+          error: `Insufficient permissions. Required: ${requiredRole}, User role: ${membership.role}`
         };
         
         workspaceAccessCache.set(cacheKey, {
@@ -109,15 +103,15 @@ export async function validateWorkspaceAccess(
           timestamp: Date.now()
         });
         
-        console.log(`❌ [WORKSPACE ACCESS] Insufficient permissions: User ${userId} has ${membership.role?.name}, needs ${requiredRole}`);
+        console.log(`❌ [WORKSPACE ACCESS] Insufficient permissions: User ${userId} has ${membership.role}, needs ${requiredRole}`);
         return result;
       }
     }
 
     const result: WorkspaceAccessResult = {
       hasAccess: true,
-      role: membership.role?.name,
-      permissions: membership.role?.permissions || []
+      role: membership.role,
+      permissions: [] // Simplified for now
     };
 
     // Cache positive result
@@ -126,7 +120,7 @@ export async function validateWorkspaceAccess(
       timestamp: Date.now()
     });
 
-    console.log(`✅ [WORKSPACE ACCESS] Access granted: User ${userId} has ${membership.role?.name} access to workspace ${workspaceId}`);
+    console.log(`✅ [WORKSPACE ACCESS] Access granted: User ${userId} has ${membership.role} access to workspace ${workspaceId}`);
     return result;
 
   } catch (error) {

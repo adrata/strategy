@@ -107,8 +107,10 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
     
     // Fallback to query parameters
     const url = new URL(request.url);
-    const workspaceId = url.searchParams.get('workspaceId');
-    const userId = url.searchParams.get('userId');
+    // Use secure context instead of query parameters
+    const workspaceId = context.workspaceId;
+    // Use secure context instead of query parameters
+    const userId = context.userId;
     
     if (!workspaceId || !userId) {
       throw new Error('Missing workspaceId and userId');

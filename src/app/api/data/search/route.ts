@@ -183,10 +183,11 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        return NextResponse.json({
-          success: false,
-          error: `Unsupported search category: ${category}`
-        }, { status: 400 });
+        return createErrorResponse(
+          `Unsupported search category: ${category}`,
+          'UNSUPPORTED_CATEGORY',
+          400
+        );
     }
 
     console.log(`✅ [SEARCH API] Found ${results.length} results for ${category}:`, results);
@@ -195,10 +196,11 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ [SEARCH API] POST Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to perform search',
+      'SEARCH_ERROR',
+      500
+    );
   }
 }
 

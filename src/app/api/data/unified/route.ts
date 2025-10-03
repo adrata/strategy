@@ -4016,17 +4016,19 @@ export async function GET(request: NextRequest) {
     
     // Validate request
     if (!SUPPORTED_TYPES.includes(type as any)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`,
+        'UNSUPPORTED_TYPE',
+        400
+      );
     }
     
     if (!SUPPORTED_ACTIONS.includes(action as any)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported action: ${action}. Supported actions: ${SUPPORTED_ACTIONS.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported action: ${action}. Supported actions: ${SUPPORTED_ACTIONS.join(', ')}`,
+        'UNSUPPORTED_ACTION',
+        400
+      );
     }
     
     // Check cache first with optimized TTL for different data types
@@ -4040,13 +4042,13 @@ export async function GET(request: NextRequest) {
     
     if (memoryCached && Date.now() - memoryCached.timestamp < cacheTTL) {
       console.log(`⚡ [CACHE HIT] ${cacheKey} - returning cached data in ${Date.now() - startTime}ms`);
-      return NextResponse.json({
-        ...memoryCached.data,
-        meta: {
-          ...memoryCached.data.meta,
-          cacheHit: true,
-          responseTime: Date.now() - startTime
-        }
+      return createSuccessResponse(memoryCached.data.data, {
+        ...memoryCached.data.meta,
+        cacheHit: true,
+        responseTime: Date.now() - startTime,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
     
@@ -4055,13 +4057,13 @@ export async function GET(request: NextRequest) {
     if (existingRequest) {
       console.log(`⚡ [DEDUP] Waiting for existing request: ${cacheKey}`);
       const result = await existingRequest;
-      return NextResponse.json({
-        ...result,
-        meta: {
-          ...result.meta,
-          responseTime: Date.now() - startTime,
-          deduplicated: true
-        }
+      return createSuccessResponse(result.data, {
+        ...result.meta,
+        responseTime: Date.now() - startTime,
+        deduplicated: true,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
     
@@ -4125,7 +4127,12 @@ export async function GET(request: NextRequest) {
         console.log(`⚡ [FAST API] ${action.toUpperCase()} ${type} completed in ${response.meta.responseTime}ms`);
       }
       
-      return NextResponse.json(response);
+      return createSuccessResponse(response.data, {
+        ...response.meta,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
       
     } finally {
       pendingRequests.delete(cacheKey);
@@ -4133,15 +4140,11 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ [UNIFIED API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Internal server error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process unified data request',
+      'UNIFIED_DATA_ERROR',
+      500
+    );
   }
 }
 
@@ -4181,17 +4184,19 @@ export async function POST(request: NextRequest) {
     }
     
     if (!SUPPORTED_TYPES.includes(type)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`,
+        'UNSUPPORTED_TYPE',
+        400
+      );
     }
     
     if (!SUPPORTED_ACTIONS.includes(action)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported action: ${action}. Supported actions: ${SUPPORTED_ACTIONS.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported action: ${action}. Supported actions: ${SUPPORTED_ACTIONS.join(', ')}`,
+        'UNSUPPORTED_ACTION',
+        400
+      );
     }
     
     // Execute operation
@@ -4209,19 +4214,20 @@ export async function POST(request: NextRequest) {
     
     console.log(`✅ [SUCCESS] ${action.toUpperCase()} ${type} completed in ${response.meta.responseTime}ms`);
     
-    return NextResponse.json(response);
+    return createSuccessResponse(response.data, {
+      ...response.meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
     
   } catch (error) {
     console.error('❌ [UNIFIED API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Internal server error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process unified data request',
+      'UNIFIED_DATA_ERROR',
+      500
+    );
   }
 }
 
@@ -4273,19 +4279,20 @@ export async function PUT(request: NextRequest) {
     
     console.log(`✅ [SUCCESS] UPDATE ${type} (${id}) completed in ${response.meta.responseTime}ms`);
     
-    return NextResponse.json(response);
+    return createSuccessResponse(response.data, {
+      ...response.meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
     
   } catch (error) {
     console.error('❌ [UNIFIED API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Internal server error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process unified data request',
+      'UNIFIED_DATA_ERROR',
+      500
+    );
   }
 }
 
@@ -4319,19 +4326,20 @@ export async function DELETE(request: NextRequest) {
     
     console.log(`✅ [SUCCESS] DELETE ${type} (${id}) completed in ${response.meta.responseTime}ms`);
     
-    return NextResponse.json(response);
+    return createSuccessResponse(response.data, {
+      ...response.meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
     
   } catch (error) {
     console.error('❌ [UNIFIED API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Internal server error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process unified data request',
+      'UNIFIED_DATA_ERROR',
+      500
+    );
   }
 }
 

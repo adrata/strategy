@@ -229,8 +229,10 @@ async function getWorkspaceContext(request: NextRequest): Promise<{
     
     // Fallback to query parameters for development
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
+    // Use secure context instead of query parameters
+    const workspaceId = context.workspaceId;
+    // Use secure context instead of query parameters
+    const userId = context.userId;
     
     if (!workspaceId || !userId) {
       throw new Error('Missing authentication or workspace context');

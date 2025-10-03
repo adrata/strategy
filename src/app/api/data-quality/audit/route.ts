@@ -27,12 +27,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     
     // Use authenticated user's workspace and ID
+    // Use secure context instead of query parameters
     const workspaceId = context.workspaceId;
     const userId = context.userId;
 
     try {
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
     const action = searchParams.get('action') || 'audit';
 
     // Authentication is handled by middleware and secure-api-helper
@@ -60,10 +60,11 @@ export async function GET(request: NextRequest) {
       role: context.role
     });
     } else {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid action. Use "audit" or "fix"'
-      }, { status: 400 });
+      return createErrorResponse(
+        'Invalid action. Use "audit" or "fix"',
+        'INVALID_ACTION',
+        400
+      );
     }
 
   } catch (error) {

@@ -123,13 +123,10 @@ export async function GET(
     
     if (!company) {
       console.log(`❌ [COMPANY BY NAME API] Company not found: ${name}`);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Company not found',
-          company: null
-        },
-        { status: 404 }
+      return createErrorResponse(
+        'Company not found',
+        'COMPANY_NOT_FOUND',
+        404
       );
     }
     

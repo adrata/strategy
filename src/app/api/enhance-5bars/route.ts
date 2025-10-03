@@ -71,10 +71,11 @@ export async function POST(request: NextRequest) {
         enhancementResult = await executeComprehensiveEnhancement(company);
         break;
       default:
-        return NextResponse.json({
-          success: false,
-          error: 'Invalid enhancement type. Use "perplexity" or "comprehensive"'
-        }, { status: 400 });
+        return createErrorResponse(
+          'Invalid enhancement type. Use "perplexity" or "comprehensive"',
+          'INVALID_ENHANCEMENT_TYPE',
+          400
+        );
     }
     
     const processingTime = Date.now() - startTime;

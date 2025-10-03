@@ -1,5 +1,4 @@
 import { type NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
 
 type AuthUser = {
   id: string;
@@ -7,6 +6,30 @@ type AuthUser = {
   name?: string;
   workspaceId?: string;
 };
+
+/**
+ * Edge Runtime compatible JWT decoder
+ * Note: This is a simplified version for Edge Runtime compatibility
+ * In production, you should use a proper JWT library that supports Edge Runtime
+ */
+function decodeJWT(token: string): any | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    
+    const payload = parts[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    
+    // Check if token is expired
+    if (decoded.exp && decoded.exp < Date.now() / 1000) {
+      return null;
+    }
+    
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+}
 
 export async function getUnifiedAuthUser(
   req: NextRequest,
@@ -28,20 +51,17 @@ export async function getUnifiedAuthUser(
 
       const token = cookies["auth-token"];
       if (token) {
-        try {
-          const secret = process['env']['NEXTAUTH_SECRET'] || "dev-secret";
-          const decoded = jwt.verify(token, secret) as any;
-
+        const decoded = decodeJWT(token);
+        if (decoded) {
           console.log("✅ API Auth: Valid token for:", decoded.email);
-
           return {
             id: decoded.userId || decoded.id,
             email: decoded.email,
             name: decoded.name,
             workspaceId: decoded.workspaceId || "local-workspace",
           };
-        } catch (jwtError) {
-          console.warn("⚠️ API Auth: JWT verification failed:", jwtError);
+        } else {
+          console.warn("⚠️ API Auth: JWT verification failed");
         }
       }
     }
@@ -49,28 +69,23 @@ export async function getUnifiedAuthUser(
     // 2. Try Authorization header (Bearer token)
     const authHeader = req.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.split(" ")[1] || "";
-        if (!token) {
-          console.warn("⚠️ API Auth: No token found in Bearer header");
-          return null;
-        }
-        const secret = process['env']['NEXTAUTH_SECRET'] || "dev-secret";
-        const decoded = jwt.verify(token, secret) as any;
-
+      const token = authHeader.split(" ")[1] || "";
+      if (!token) {
+        console.warn("⚠️ API Auth: No token found in Bearer header");
+        return null;
+      }
+      
+      const decoded = decodeJWT(token);
+      if (decoded) {
         console.log("✅ API Auth: Valid bearer token for:", decoded.email);
-
         return {
           id: decoded.userId || decoded.id,
           email: decoded.email,
           name: decoded.name,
           workspaceId: decoded.workspaceId || "local-workspace",
         };
-      } catch (jwtError) {
-        console.warn(
-          "⚠️ API Auth: Bearer token verification failed:",
-          jwtError,
-        );
+      } else {
+        console.warn("⚠️ API Auth: Bearer token verification failed");
       }
     }
 

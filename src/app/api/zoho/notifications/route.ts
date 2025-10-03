@@ -30,12 +30,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     
     // Use authenticated user's workspace and ID
+    // Use secure context instead of query parameters
     const workspaceId = context.workspaceId;
     const userId = context.userId;
 
     try {
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
     const since = searchParams.get('since');
     const limit = parseInt(searchParams.get('limit') || '10');
 

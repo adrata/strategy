@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth-unified';
+import { authFetch } from '@/platform/auth-fetch';
 
 interface FastCounts {
   leads: number;
@@ -69,7 +70,8 @@ export function useFastCounts(): UseFastCountsReturn {
     try {
       console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
       
-      const response = await fetch(`/api/data/counts?workspaceId=${workspaceId}&userId=${userId}`);
+      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
+      const response = await authFetch('/api/data/counts');
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

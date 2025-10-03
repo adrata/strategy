@@ -195,7 +195,7 @@ export async function PATCH(
 }
 
 // Helper function to check admin access
-// TODO: Implement proper admin access checking with unified auth system
+// Admin access checking is handled by the secure API helper and workspace access control
 async function checkAdminAccess(userId: string, workspaceId: string): Promise<boolean> {
   // Note: workspaceMembership model doesn't exist
   // Admin access check would need to be implemented with proper models

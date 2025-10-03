@@ -405,13 +405,10 @@ export async function GET(request: NextRequest) {
     console.error("❌ [COMPANIES API] Error getting companies:", error);
     await prisma.$disconnect();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to get companies",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to get companies",
+      "GET_COMPANIES_ERROR",
+      500
     );
   }
 }
@@ -426,9 +423,10 @@ export async function POST(request: NextRequest) {
     );
 
     if (!companyData || !companyData.name) {
-      return NextResponse.json(
-        { success: false, error: "Company name is required" },
-        { status: 400 },
+      return createErrorResponse(
+        "Company name is required",
+        "VALIDATION_ERROR",
+        400
       );
     }
 
@@ -475,13 +473,10 @@ export async function POST(request: NextRequest) {
     console.error("❌ [COMPANIES API] Error creating company:", error);
     await prisma.$disconnect();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create company",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to create company",
+      "CREATE_COMPANY_ERROR",
+      500
     );
   }
 }

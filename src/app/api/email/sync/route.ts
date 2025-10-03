@@ -65,9 +65,10 @@ export async function POST(request: NextRequest) {
         const result = await EmailPlatformIntegrator.syncOutlookEmails(accountId);
         syncResults.push({ accountId, platform: accountPlatform, result });
       } else {
-        return NextResponse.json(
-          { success: false, error: `Platform ${accountPlatform} not supported` },
-          { status: 400 }
+        return createErrorResponse(
+          `Platform ${accountPlatform} not supported`,
+          'UNSUPPORTED_PLATFORM',
+          400
         );
       }
       
