@@ -51,12 +51,12 @@ export function SpeedrunSprintView() {
   // } = usePipelineData('speedrun', workspaceId, userId);
   
   // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
-  const fastSectionData = useFastSectionData('speedrun', 30, workspaceId, userId);
+  const fastSectionData = useFastSectionData('speedrun', workspaceId ? parseInt(workspaceId) : undefined);
   
   const allData = fastSectionData.data || [];
   const loading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
-  const refresh = fastSectionData.refreshData || (() => {});
+  const refresh = fastSectionData.refresh || (() => {});
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
@@ -221,9 +221,8 @@ export function SpeedrunSprintView() {
     setIsSubmittingAction(true);
     
     try {
-      // Save action log to backend using existing API
-      const { authFetch } = await import('@/platform/auth-fetch');
-      const response = await authFetch('/api/speedrun/action-log', {
+      // Save action log to backend
+      const response = await fetch('/api/speedrun/action-log', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -232,34 +231,44 @@ export function SpeedrunSprintView() {
           personId: selectedRecord.id,
           personName: selectedRecord.fullName || selectedRecord.name || 'Unknown',
           actionType: actionData.type,
-          notes: actionData.notes,
+          notes: actionData.action, // Use action field for notes
           nextAction: actionData.nextAction,
           nextActionDate: actionData.nextActionDate,
-          workspaceId,
-          userId,
           actionPerformedBy: actionData.actionPerformedBy || userId,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save action log');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save action log');
       }
 
-      console.log(`✅ Action log saved for ${selectedRecord.name || selectedRecord.fullName}`);
+      const result = await response.json();
+      console.log(`✅ Action log saved for ${selectedRecord.name || selectedRecord.fullName}:`, result);
 
-      // Get next record in current sprint
+      // Mark the current record as completed and move it to the bottom
       const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
-      const nextRecord = data[currentIndex + 1];
-      
-      if (nextRecord) {
-        // Move to next record in sprint
-        setSelectedRecord(nextRecord);
-      } else if (hasNextSprint) {
-        // Current sprint done, move to next sprint
-        setCurrentSprintIndex(currentSprintIndex + 1);
-      } else {
-        // All sprints done, go back to speedrun list
-        navigateToPipeline('speedrun');
+      if (currentIndex >= 0) {
+        // Remove from current position and add to end
+        const completedRecord = data[currentIndex];
+        const updatedData = [...data];
+        updatedData.splice(currentIndex, 1);
+        updatedData.push(completedRecord);
+        
+        // Update the data state by refreshing the data
+        // Note: The data will be updated through the state change above
+        
+        // Move to next record (which is now at the same index)
+        const nextRecord = updatedData[currentIndex];
+        if (nextRecord) {
+          setSelectedRecord(nextRecord);
+        } else if (hasNextSprint) {
+          // Current sprint done, move to next sprint
+          setCurrentSprintIndex(currentSprintIndex + 1);
+        } else {
+          // All sprints done, go back to speedrun list
+          navigateToPipeline('speedrun');
+        }
       }
 
       // Close modal
@@ -267,7 +276,7 @@ export function SpeedrunSprintView() {
       
     } catch (error) {
       console.error('❌ Error saving action log:', error);
-      alert('Failed to save action log. Please try again.');
+      alert(`Failed to save action log: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmittingAction(false);
     }
@@ -363,7 +372,7 @@ export function SpeedrunSprintView() {
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Error Loading Sprint
           </h3>
-          <p className="text-gray-600 mb-4">{error instanceof Error ? error.message : String(error)}</p>
+          <p className="text-gray-600 mb-4">{error && typeof error === 'object' && 'message' in error ? (error as Error).message : String(error)}</p>
           <button
             onClick={refresh}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

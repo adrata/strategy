@@ -13,9 +13,11 @@ interface CompleteActionModalProps {
 
 export interface ActionLogData {
   person: string;
-  type: 'LinkedIn' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
+  type: 'LinkedIn Friend Request' | 'LinkedIn' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
   time: 'Now' | 'Past' | 'Future';
   action: string;
+  nextAction?: string;
+  nextActionDate?: string;
   actionPerformedBy?: string; // User ID of who performed the action
 }
 
@@ -30,7 +32,7 @@ export function CompleteActionModal({
   
   const [formData, setFormData] = useState<ActionLogData>({
     person: personName,
-    type: 'LinkedIn',
+    type: 'LinkedIn Friend Request',
     time: 'Now',
     action: '',
     actionPerformedBy: currentUser?.id || ''
@@ -59,7 +61,7 @@ export function CompleteActionModal({
     if (!isLoading) {
       setFormData({
         person: personName,
-        type: 'LinkedIn',
+        type: 'LinkedIn Friend Request',
         time: 'Now',
         action: '',
         actionPerformedBy: currentUser?.id || ''
@@ -126,6 +128,7 @@ export function CompleteActionModal({
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
                 disabled={isLoading}
               >
+                <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
                 <option value="LinkedIn">LinkedIn</option>
                 <option value="LinkedIn InMail">LinkedIn InMail</option>
                 <option value="LinkedIn DM">LinkedIn DM</option>
