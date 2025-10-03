@@ -195,7 +195,7 @@ export function PipelineTable({
   } = usePipelineData({ 
     data, 
     pageSize,
-    disableSorting: section === 'companies' || section === 'speedrun' || section === 'people' || section === 'leads' || section === 'prospects', // Disable sorting for companies, speedrun, people, leads, and prospects to preserve API ranking
+    disableSorting: section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects', // Disable sorting for companies, people, leads, and prospects to preserve API ranking
     searchQuery, // Pass search query to hook
     totalCount // Pass totalCount for correct pagination
   });
