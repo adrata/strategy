@@ -58,6 +58,15 @@ export function SpeedrunSprintView() {
   const error = fastSectionData.error || null;
   const refresh = fastSectionData.refresh || (() => {});
   
+  console.log('🔍 [SPEEDRUN DEBUG] Fast section data:', {
+    workspaceId,
+    userId,
+    loading,
+    error,
+    allDataLength: allData.length,
+    allDataSample: allData.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
+  });
+  
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
     if (workspaceId && userId && !loading && !allData.length) {
@@ -96,12 +105,18 @@ export function SpeedrunSprintView() {
   
   // Filter out snoozed records (without modifying localStorage in render)
   const filteredData = useMemo(() => {
+    console.log('🔍 [SPEEDRUN DEBUG] Data filtering:', {
+      allDataLength: allData?.length || 0,
+      allDataSample: allData?.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName })) || [],
+      windowAvailable: typeof window !== 'undefined'
+    });
+    
     if (!allData || typeof window === 'undefined') return allData || [];
     
     const snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
     const now = new Date();
     
-    return allData.filter(record => {
+    const filtered = allData.filter(record => {
       const snoozedRecord = snoozedRecords.find((snooze: any) => snooze['recordId'] === record.id);
       
       if (snoozedRecord) {
@@ -112,6 +127,14 @@ export function SpeedrunSprintView() {
       
       return true;
     });
+    
+    console.log('🔍 [SPEEDRUN DEBUG] Filtered data:', {
+      filteredLength: filtered.length,
+      filteredSample: filtered.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName })),
+      snoozedCount: snoozedRecords.length
+    });
+    
+    return filtered;
   }, [allData]);
   
   const SPRINT_SIZE = calculateOptimalSprintSize(filteredData?.length || 0);
@@ -444,6 +467,14 @@ export function SpeedrunSprintView() {
                              (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
                              record.name || 
                              'Unknown';
+          
+          console.log('🔍 [SPEEDRUN DEBUG] Rendering record:', {
+            index,
+            recordId: record.id,
+            displayName,
+            isSelected,
+            totalFilteredData: filteredData.length
+          });
           
           return (
             <div
