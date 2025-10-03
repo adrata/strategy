@@ -96,9 +96,11 @@ export function CompleteActionModal({
             <button
               onClick={handleClose}
               disabled={isLoading}
-              className="px-3 py-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+              className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
             >
-              Close
+              <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
@@ -108,7 +110,7 @@ export function CompleteActionModal({
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Person
               </label>
-              <div className="px-3 py-2 bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg text-[var(--foreground)] text-sm">
+              <div className="px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-[var(--foreground)] text-sm">
                 {personName}
               </div>
             </div>
