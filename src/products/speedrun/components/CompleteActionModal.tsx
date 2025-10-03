@@ -227,7 +227,7 @@ export function CompleteActionModal({
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <span>Complete</span>
-                    <kbd className="px-1.5 py-0.5 text-xs bg-white/20 rounded border border-white/30">⌘↵</kbd>
+                    <kbd className="px-2 py-1 text-xs bg-white/30 rounded-md border border-white/40 font-mono font-semibold">⌘↵</kbd>
                   </div>
                 )}
               </button>
