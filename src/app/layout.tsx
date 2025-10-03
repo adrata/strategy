@@ -211,7 +211,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <title>Adrata | Sales Acceleration</title>
+        <title>Adrata</title>
         <meta
           name="description"
           content="The Leader in Buyer Group Intelligence. Instantly identify decision-makers, influencers, and stakeholders within complex buyer groups. Decode buyer dynamics in seconds, not months."

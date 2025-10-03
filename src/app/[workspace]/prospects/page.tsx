@@ -3,7 +3,7 @@ import { PipelineView } from "@/frontend/components/pipeline/PipelineView";
 import { WorkspacePipelineWrapper } from "../WorkspacePipelineWrapper";
 
 export const metadata: Metadata = {
-  title: "Prospects | Pipeline",
+  title: "Prospects",
   description: "Pipeline prospects management",
 };
 
