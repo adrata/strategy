@@ -780,16 +780,26 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-gray-900">Show Columns</h3>
-                        <button
-                          onClick={() => {
-                            const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
-                            setVisibleColumns(allColumnValues);
-                            onColumnVisibilityChange?.(allColumnValues);
-                          }}
-                          className="text-xs text-gray-500 hover:text-gray-700"
-                        >
-                          Reset
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
+                              setVisibleColumns(allColumnValues);
+                              onColumnVisibilityChange?.(allColumnValues);
+                            }}
+                            className="text-xs text-gray-500 hover:text-gray-700"
+                          >
+                            Reset
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsColumnsDropdownOpen(false);
+                            }}
+                            className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                          >
+                            ×
+                          </button>
+                        </div>
                       </div>
                       
                       {/* Column Options */}
