@@ -27,9 +27,9 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
-          <h1 className="text-2xl font-bold mb-6 text-center">
+          <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
             Check Your Email
           </h1>
           
@@ -55,9 +55,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
           Reset Your Password
         </h1>
 
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none"
+              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-gray-300"
               placeholder="Enter your email address"
               required
               disabled={isLoading}
@@ -92,7 +92,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={isLoading || !email}
-            className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#2F6FDC] text-white py-2 rounded font-semibold hover:bg-[#4374DE] transition disabled:cursor-not-allowed"
           >
             {isLoading ? "Sending..." : "Send Reset Link"}
           </button>
