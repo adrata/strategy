@@ -1182,12 +1182,12 @@ export function UniversalRecordTemplate({
 
     // Edit button removed per user request
 
-    // Add Action button - WHITE BUTTON WITH GRAY BORDER
+    // Add Action button - LIGHT BLUE BUTTON
     buttons.push(
       <button
         key="add-action"
         onClick={() => setIsAddActionModalOpen(true)}
-        className="px-3 py-1.5 text-sm bg-white text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+        className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
       >
         Add Action
       </button>
