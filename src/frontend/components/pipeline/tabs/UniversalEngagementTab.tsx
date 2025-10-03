@@ -183,7 +183,9 @@ export function UniversalEngagementTab({ record, recordType }: UniversalEngageme
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Marketing Qualified</span>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  record?.marketingQualified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                  record?.marketingQualified 
+                    ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
+                    : 'bg-gray-100 text-gray-600'
                 }`}>
                   {record?.marketingQualified ? 'Yes' : 'No'}
                 </span>
@@ -191,7 +193,9 @@ export function UniversalEngagementTab({ record, recordType }: UniversalEngageme
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Sales Qualified</span>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  record?.salesQualified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                  record?.salesQualified 
+                    ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
+                    : 'bg-gray-100 text-gray-600'
                 }`}>
                   {record?.salesQualified ? 'Yes' : 'No'}
                 </span>

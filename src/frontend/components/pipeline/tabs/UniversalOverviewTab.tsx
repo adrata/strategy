@@ -240,7 +240,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  recordData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  recordData.isBuyerGroupMember 
+                    ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
+                    : 'bg-gray-100 text-gray-800'
                 }`}>
                   {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
