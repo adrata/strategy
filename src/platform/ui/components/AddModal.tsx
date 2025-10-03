@@ -308,9 +308,9 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           </div>
           <button
             onClick={handleClose}
-            className="px-3 py-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
           >
-            Close
+            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
           </button>
         </div>
 

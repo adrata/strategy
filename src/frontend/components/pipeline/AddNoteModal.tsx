@@ -135,9 +135,9 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
           </div>
           <button
             onClick={handleClose}
-            className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
           >
-            Close
+            <XMarkIcon className="w-4.5 h-4.5 text-gray-500" />
           </button>
         </div>
 
