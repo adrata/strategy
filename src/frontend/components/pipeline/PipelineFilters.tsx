@@ -750,52 +750,93 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 )}
               </div>
 
-      {/* Columns Dropdown - moved to last position */}
-      <div className="relative min-w-32" ref={columnsDropdownRef}>
-        <button
-          type="button"
-          onClick={() => setIsColumnsDropdownOpen(!isColumnsDropdownOpen)}
-          className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
-        >
-          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-          </svg>
-          <span className="block truncate text-gray-900">
-            {section === 'opportunities' ? 'Show' : 'Columns'}
-          </span>
-        </button>
-
-        {/* Columns Dropdown Menu */}
-        {isColumnsDropdownOpen && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto min-w-[200px]">
-            {columnOptions.map((option) => {
-              const isAllOption = option['value'] === 'all';
-              const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
-              const isAllSelected = isAllOption && visibleColumns['length'] === allColumnValues.length;
-              const isChecked = isAllOption ? isAllSelected : visibleColumns.includes(option.value);
-              
-              return (
+              {/* Columns Dropdown - Match Filter/Sort styling */}
+              <div className="relative min-w-32" ref={columnsDropdownRef}>
                 <button
-                  key={option.value}
                   type="button"
-                  onClick={() => handleColumnToggle(option.value)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors flex items-center gap-2 ${
-                    isAllOption ? 'border-b border-gray-200 font-medium' : ''
-                  }`}
+                  onClick={() => setIsColumnsDropdownOpen(!isColumnsDropdownOpen)}
+                  className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
                 >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => {}} // Handled by parent click
-                    className="rounded border-gray-300 text-red-600 focus:ring-red-500 accent-red-600"
-                  />
-                  <span>{option.label}</span>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                  </svg>
+                  <span className="block truncate text-gray-900">
+                    {section === 'opportunities' ? 'Show' : 'Columns'}
+                  </span>
                 </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+
+                {/* Columns Dropdown Menu - Match Filter/Sort styling */}
+                {isColumnsDropdownOpen && (
+                  <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-medium text-gray-900">Show Columns</h3>
+                        <button
+                          onClick={() => {
+                            const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
+                            setVisibleColumns(allColumnValues);
+                            onColumnVisibilityChange?.(allColumnValues);
+                          }}
+                          className="text-xs text-gray-500 hover:text-gray-700"
+                        >
+                          Show All
+                        </button>
+                      </div>
+                      
+                      {/* Column Options */}
+                      <div className="space-y-2">
+                        {columnOptions.map((option) => {
+                          const isAllOption = option['value'] === 'all';
+                          const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
+                          const isAllSelected = isAllOption && visibleColumns['length'] === allColumnValues.length;
+                          const isChecked = isAllOption ? isAllSelected : visibleColumns.includes(option.value);
+                          
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() => handleColumnToggle(option.value)}
+                              className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
+                                isChecked 
+                                  ? 'bg-gray-100 text-gray-800 border border-gray-300' 
+                                  : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {}} // Handled by parent click
+                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                              />
+                              <span>{option.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Apply/Cancel Buttons */}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end mt-4">
+                        <button
+                          onClick={() => {
+                            setIsColumnsDropdownOpen(false);
+                          }}
+                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsColumnsDropdownOpen(false);
+                          }}
+                          className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
       {/* Timezone Filter removed per user request */}
 
