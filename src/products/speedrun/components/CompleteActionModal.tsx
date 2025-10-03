@@ -144,7 +144,7 @@ export function CompleteActionModal({
                 id="action"
                 value={formData.action}
                 onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
-                rows={3}
+                rows={4}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-sm"
                 placeholder="Describe what happened during this interaction..."
                 disabled={isLoading}

@@ -52,9 +52,9 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
         };
       default: // success
         return {
-          container: 'bg-green-50 border-green-200 text-green-800',
-          icon: 'text-green-500',
-          closeButton: 'text-green-500 hover:text-green-700',
+          container: 'bg-green-100 border-green-300 text-green-700',
+          icon: 'text-green-600',
+          closeButton: 'text-green-600 hover:text-green-800',
           iconPath: 'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
         };
     }
