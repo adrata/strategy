@@ -98,7 +98,12 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
       console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
-      return createSuccessResponse(data, meta);
+      return createSuccessResponse(cached.data, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        responseTime: Date.now() - startTime,
+        fromCache: true
+      });
     }
     
     console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
@@ -117,7 +122,7 @@ export async function GET(request: NextRequest) {
             customFields: {
               path: ['isBuyerGroupMember'],
               equals: true
-            },
+            } as any,
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
@@ -146,7 +151,7 @@ export async function GET(request: NextRequest) {
         // 🚫 FILTER: Exclude user's own company from speedrun and ensure buyer group membership
         const filteredPeople = people.filter(person => {
           // Check if person is in buyer group (fallback filter)
-          const isBuyerGroupMember = person.customFields?.isBuyerGroupMember === true;
+          const isBuyerGroupMember = (person.customFields as any)?.isBuyerGroupMember === true;
           const shouldExclude = shouldExcludeCompany(person.company?.name);
           
           return isBuyerGroupMember && !shouldExclude;
@@ -173,8 +178,8 @@ export async function GET(request: NextRequest) {
 
           // 🎯 DETERMINE STAGE: Check if person is a lead, prospect, or opportunity
           let stage = 'Prospect'; // Default to Prospect
-          if (person.customFields?.buyerGroupRole) {
-            const role = person.customFields.buyerGroupRole.toLowerCase();
+          if ((person.customFields as any)?.buyerGroupRole) {
+            const role = (person.customFields as any).buyerGroupRole.toLowerCase();
             if (role.includes('decision') || role.includes('champion')) {
               stage = 'Opportunity';
             } else if (role.includes('influencer') || role.includes('stakeholder')) {
@@ -183,13 +188,13 @@ export async function GET(request: NextRequest) {
           }
 
           // 🎯 BUYER GROUP ROLE: Extract from intelligence data and convert to proper buyer group roles
-          let buyerGroupRole = person.customFields?.buyerGroupRole;
+          let buyerGroupRole = (person.customFields as any)?.buyerGroupRole;
           
           // If no specific buyer group role, derive from influence level and other factors
           if (!buyerGroupRole) {
-            const influenceLevel = person.customFields?.influenceLevel;
-            const decisionPower = person.customFields?.decisionPower;
-            const seniority = person.customFields?.seniority;
+            const influenceLevel = (person.customFields as any)?.influenceLevel;
+            const decisionPower = (person.customFields as any)?.decisionPower;
+            const seniority = (person.customFields as any)?.seniority;
             
             // Determine buyer group role based on intelligence data
             if (influenceLevel === 'High' && decisionPower > 80) {
@@ -290,7 +295,7 @@ export async function GET(request: NextRequest) {
           
           // Get company from Coresignal data (active experience)
           const coresignalCompany = coresignalData.active_experience_company || 
-                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
           const companyName = coresignalCompany || person.company?.name;
@@ -314,7 +319,7 @@ export async function GET(request: NextRequest) {
           
           // Get company from Coresignal data (active experience)
           const coresignalCompany = coresignalData.active_experience_company || 
-                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
           return {
@@ -390,7 +395,7 @@ export async function GET(request: NextRequest) {
           
           // Get company from Coresignal data (active experience)
           const coresignalCompany = coresignalData.active_experience_company || 
-                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
           const companyName = coresignalCompany || person.company?.name;
@@ -414,7 +419,7 @@ export async function GET(request: NextRequest) {
           
           // Get company from Coresignal data (active experience)
           const coresignalCompany = coresignalData.active_experience_company || 
-                                    coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+                                    coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
           return {
@@ -761,7 +766,11 @@ export async function GET(request: NextRequest) {
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
     
-    return createSuccessResponse(data, meta);
+    return createSuccessResponse(result, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      responseTime: Date.now() - startTime
+    });
     
   } catch (error) {
     console.error('❌ [SECTION API] Error:', error);
