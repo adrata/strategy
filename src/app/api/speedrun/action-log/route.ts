@@ -38,22 +38,20 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Missing required fields: personId, actionType, and notes are required', 'VALIDATION_ERROR', 400);
     }
 
-    // Create the action log
+    // Create the action log - match the schema field names
     const actionLog = await prisma.speedrunActionLogs.create({
       data: {
-        id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        workspaceId,
-        userId,
         personId: personId.toString(),
         personName: personName || 'Unknown',
-        actionType,
-        notes,
+        actionLog: notes, // Map notes to actionLog field
+        type: actionType, // Map actionType to type field
+        notes: notes, // Also store in notes field
         nextAction: nextAction || null,
         nextActionDate: nextActionDate ? new Date(nextActionDate) : null,
+        workspaceId,
+        userId,
         actionPerformedBy: actionPerformedBy || userId,
-        timestamp: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        timestamp: new Date()
       }
     });
 
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
         id: actionLog.id,
         personId: actionLog.personId,
         personName: actionLog.personName,
-        actionType: actionLog.actionType,
+        actionType: actionLog.type, // Map type back to actionType
         notes: actionLog.notes,
         nextAction: actionLog.nextAction,
         nextActionDate: actionLog.nextActionDate,
