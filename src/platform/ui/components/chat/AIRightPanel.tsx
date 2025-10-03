@@ -1134,14 +1134,17 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           height: 8px;
         }
         .ai-panel-scroll::-webkit-scrollbar-track {
-          background: #f9fafb;
+          background: transparent;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb {
           background: #9ca3af;
           border-radius: 4px;
+          border: 1px solid transparent;
+          background-clip: content-box;
         }
         .ai-panel-scroll::-webkit-scrollbar-thumb:hover {
           background: #6b7280;
+          background-clip: content-box;
         }
         
         /* Middle panel scrollbar styling */

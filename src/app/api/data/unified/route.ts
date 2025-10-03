@@ -22,6 +22,7 @@ import { ulid } from 'ulid';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { getOptimizedPagination, applyPagination, calculatePaginationMetadata } from '@/platform/services/database/pagination';
 import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';
+import { UnifiedCache } from '@/platform/services/unified-cache';
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
   if (!companyName) return false;
@@ -42,13 +43,13 @@ function shouldExcludeCompany(companyName: string | null | undefined): boolean {
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
-// Simple cache implementation
-const cache = {
-  get: async (key: string) => null,
-  set: async (key: string, value: any) => {},
-  del: async (key: string) => {},
-  warm: async (workspaceId: string, userId?: string) => {}
-};
+// Initialize UnifiedCache
+const cache = UnifiedCache;
+
+// Initialize cache on startup
+if (typeof window === 'undefined') {
+  UnifiedCache.initialize().catch(console.warn);
+}
 
 // Mock services
 const UnifiedMasterRankingEngine = {
@@ -1310,8 +1311,8 @@ async function getMultipleRecords(
       
       // Clear any existing cache for this workspace
       try {
-        await cache.del(`unified-companies-${workspaceId}`);
-        await cache.del(`companies-${workspaceId}`);
+        await cache.invalidate(`unified-companies-${workspaceId}`);
+        await cache.invalidate(`companies-${workspaceId}`);
         console.log(`🧹 [COMPANIES API] Cleared cache for workspace: ${workspaceId}`);
       } catch (error) {
         console.warn(`⚠️ [COMPANIES API] Failed to clear cache:`, error);
@@ -1322,48 +1323,64 @@ async function getMultipleRecords(
     const cacheKey = `companies-${workspaceId}-${userId}`;
     const startTime = Date.now();
     
-    const companies = await prisma.companies.findMany({
-      where: {
+    let companies;
+    try {
+      // Ensure database connection is active
+      await prisma.$connect();
+      
+      companies = await prisma.companies.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
+        },
+        // 🚀 PERFORMANCE: Simplified ordering for faster queries
+        orderBy: [
+          { rank: 'asc' },                                // Primary sort by rank
+          { updatedAt: 'desc' }                           // Secondary sort by update time
+        ],
+        take: pagination?.limit || 100, // 🚀 PERFORMANCE: Reduced from 5000 to 100 for faster loading
+        select: { 
+          // 🚀 PERFORMANCE: Only select essential fields for list view
+          id: true, 
+          name: true, 
+          industry: true, 
+          website: true,
+          description: true,
+          size: true,
+          city: true,
+          state: true,
+          country: true,
+          rank: true,
+          updatedAt: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          actionStatus: true,
+          assignedUserId: true,
+          // Essential enrichment fields only
+          employeeCount: true,
+          foundedYear: true,
+          linkedinUrl: true,
+          technologiesUsed: true,
+          tags: true
+        }
+      });
+    } catch (error) {
+      console.error('❌ [COMPANIES API] Database error:', error);
+      console.error('❌ [COMPANIES API] Error details:', {
         workspaceId,
-        deletedAt: null,
-        OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
-        ]
-      },
-      // 🚀 PERFORMANCE: Simplified ordering for faster queries
-      orderBy: [
-        { rank: 'asc' },                                // Primary sort by rank
-        { updatedAt: 'desc' }                           // Secondary sort by update time
-      ],
-      take: pagination?.limit || 100, // 🚀 PERFORMANCE: Reduced from 5000 to 100 for faster loading
-      select: { 
-        // 🚀 PERFORMANCE: Only select essential fields for list view
-        id: true, 
-        name: true, 
-        industry: true, 
-        website: true,
-        description: true,
-        size: true,
-        city: true,
-        state: true,
-        country: true,
-        rank: true,
-        updatedAt: true,
-        lastAction: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        actionStatus: true,
-        assignedUserId: true,
-        // Essential enrichment fields only
-        employeeCount: true,
-        foundedYear: true,
-        linkedinUrl: true,
-        technologiesUsed: true,
-        tags: true
-      }
-    });
+        userId,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorStack: error instanceof Error ? error.stack : undefined,
+        errorName: error instanceof Error ? error.name : undefined
+      });
+      throw new Error(`Database error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
     
     console.log(`🏢 [COMPANIES API] Direct companies access loaded:`, {
       totalCompanies: companies.length,
