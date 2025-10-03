@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function ForgotPasswordPage() {
+export default function ResetPasswordRequestPage() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
         </h1>
 
         <p className="text-sm text-gray-600 mb-6 text-center">
-          Enter your email address and we'll send you a link to reset your password.
+          Enter your email address and we'll send you a secure link to reset your password.
         </p>
 
         {error && (

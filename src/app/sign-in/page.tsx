@@ -347,7 +347,7 @@ export default function SignInPage() {
               </label>
             </div>
             <Link
-              href="/forgot-password"
+              href="/reset-password"
               className="text-sm text-gray-600 hover:text-black transition-colors"
             >
               Forgot password?
