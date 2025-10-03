@@ -302,6 +302,28 @@ export function UniversalRecordTemplate({
     };
   }, [record?.id, recordType]);
 
+  // Keyboard shortcut for Add Action (⌘⏎)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        // Only trigger if we're on a speedrun sprint page and have a record
+        const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
+        if (isOnSprintPage && record && recordType === 'speedrun') {
+          event.preventDefault();
+          console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
+          setIsAddActionModalOpen(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [record, recordType]);
+
   // Get record display name with fallbacks
   const getDisplayName = () => {
     return record?.name || 
@@ -1322,14 +1344,14 @@ export function UniversalRecordTemplate({
       const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
       
       if (isOnSprintPage) {
-        // On sprint page: Show "Add Action" with green styling
+        // On sprint page: Show "Add Action" with green styling and keyboard shortcut
         buttons.push(
           <button
             key="add-action"
             onClick={() => setIsAddActionModalOpen(true)}
             className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
           >
-            Add Action
+            Add Action (⌘⏎)
           </button>
         );
       } else {

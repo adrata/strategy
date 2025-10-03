@@ -74,9 +74,6 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // Load data for navigation - REQUIRED for navigation arrows to work
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🚀 SPEEDRUN NAVIGATION FIX: Load speedrun data for navigation when on speedrun records
-  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
-  
   // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
   // Map workspace to correct user ID
@@ -93,6 +90,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     }
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
+  
+  // 🚀 SPEEDRUN NAVIGATION FIX: Load speedrun data for navigation when on speedrun records
+  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {

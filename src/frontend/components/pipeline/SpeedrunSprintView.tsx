@@ -447,10 +447,10 @@ export function SpeedrunSprintView() {
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-xl ${
+                    <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-2xl ${
                       isSelected 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-gray-100 text-gray-600'
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-green-100 text-green-800'
                     }`}>
                       {index + 1}
                     </span>
