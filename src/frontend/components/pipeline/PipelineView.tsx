@@ -1388,7 +1388,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'} overflow-auto middle-panel-scroll`} style={{
         scrollbarWidth: 'thin',
         scrollbarColor: '#cbd5e1 #f1f5f9',
-        minHeight: 'calc(100vh - 200px)', // Extend table height
+        minHeight: 'calc(100vh - 150px)', // Extend table height further down
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>

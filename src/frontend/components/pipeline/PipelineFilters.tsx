@@ -435,9 +435,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
   const handleSortSelect = (value: string) => {
     setSortBy(value);
-    setIsSortDropdownOpen(false);
-    onSortChange?.(value);
-    console.log('Sort by:', value);
+    // Don't close dropdown or apply sort yet - wait for Apply button
+    console.log('Sort selected (pending apply):', value);
   };
 
   const handleColumnToggle = (columnValue: string) => {
@@ -704,24 +703,24 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       {/* Sort Options */}
                       <div className="space-y-2">
                         {sortOptions.map((option) => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => handleSortSelect(option.value)}
-                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
-                              option.value === sortBy 
-                                ? 'bg-blue-100 text-blue-800 border border-blue-200' 
-                                : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              checked={option.value === sortBy}
-                              onChange={() => {}} // Handled by parent click
-                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
-                            />
-                            <span>{option.label}</span>
-                          </button>
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => handleSortSelect(option.value)}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
+                            option.value === sortBy 
+                              ? 'bg-gray-100 text-gray-800 border border-gray-300' 
+                              : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            checked={option.value === sortBy}
+                            onChange={() => {}} // Handled by parent click
+                            className="rounded border-gray-300 text-gray-600 focus:ring-gray-500 accent-gray-600"
+                          />
+                          <span>{option.label}</span>
+                        </button>
                         ))}
                       </div>
 
@@ -729,16 +728,18 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end mt-4">
                         <button
                           onClick={() => {
-                            setSortBy('rank');
-                            onSortChange?.('rank');
                             setIsSortDropdownOpen(false);
                           }}
                           className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         >
-                          Reset
+                          Cancel
                         </button>
                         <button
-                          onClick={() => setIsSortDropdownOpen(false)}
+                          onClick={() => {
+                            onSortChange?.(sortBy);
+                            setIsSortDropdownOpen(false);
+                            console.log('Sort applied:', sortBy);
+                          }}
                           className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           Apply
