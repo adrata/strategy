@@ -189,6 +189,12 @@ export default function SignInPage() {
         // Instead of showing workspace selection, automatically redirect to user's last workspace
         let redirectUrl = "/speedrun"; // Default fallback
         
+        // DEBUG: Log the full authentication result
+        console.log("🔍 [SIGN-IN PAGE] Full authentication result:", JSON.stringify(result, null, 2));
+        console.log("🔍 [SIGN-IN PAGE] Session user:", result.session?.user);
+        console.log("🔍 [SIGN-IN PAGE] Active workspace ID:", result.session?.user?.activeWorkspaceId);
+        console.log("🔍 [SIGN-IN PAGE] User workspaces:", result.session?.user?.workspaces);
+        
         // Check if user has a last active workspace
         if (result.session?.user?.activeWorkspaceId) {
           const activeWorkspaceId = result.session.user.activeWorkspaceId;
@@ -206,6 +212,7 @@ export default function SignInPage() {
             console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
           } else {
             console.log("⚠️ [SIGN-IN PAGE] Active workspace not found in user's workspaces");
+            console.log("⚠️ [SIGN-IN PAGE] Available workspaces:", result.session.user.workspaces?.map((ws: any) => ({ id: ws.id, name: ws.name })));
             // Fall back to workspace selection if workspace not found
             redirectUrl = "/workspaces";
           }
