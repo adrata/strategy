@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
           <div className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Set New Password
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none"
+              className="w-full border border-gray-300 rounded px-4 py-2 hover:border-[#2F6FDC] focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none transition-colors"
               placeholder="Enter your new password"
               required
               disabled={isLoading}
@@ -145,7 +145,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none"
+              className="w-full border border-gray-300 rounded px-4 py-2 hover:border-[#2F6FDC] focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none transition-colors"
               placeholder="Confirm your new password"
               required
               disabled={isLoading}
