@@ -19,6 +19,7 @@ import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
+import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
 
 interface PipelineDetailPageProps {
@@ -72,6 +73,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   
   // Load data for navigation - REQUIRED for navigation arrows to work
   const { data: acquisitionData } = useAcquisitionOS();
+  
+  // 🚀 SPEEDRUN NAVIGATION FIX: Load speedrun data for navigation when on speedrun records
+  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
   
   // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
@@ -134,10 +138,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     return data;
   };
   
-  const data = getSectionData(section);
+  // 🚀 SPEEDRUN NAVIGATION FIX: Use speedrun data for navigation when on speedrun records
+  const data = section === 'speedrun' ? (speedrunData || []) : getSectionData(section);
+  
+  // Debug speedrun data loading
+  if (section === 'speedrun') {
+    console.log('🔍 [SPEEDRUN NAVIGATION] Speedrun data for navigation:', {
+      speedrunDataLength: speedrunData?.length || 0,
+      speedrunLoading,
+      section,
+      workspaceId,
+      userId,
+      firstRecord: speedrunData?.[0] ? { id: speedrunData[0].id, name: speedrunData[0].name } : 'no records'
+    });
+  }
   
   // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
-  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning;
+  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading);
   const error = acquisitionData.error || directRecordError;
   
   console.log(`🔍 [LOADING STATE] Loading states:`, {
