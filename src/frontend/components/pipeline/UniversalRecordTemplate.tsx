@@ -249,6 +249,7 @@ export function UniversalRecordTemplate({
   const [isAddActionModalOpen, setIsAddActionModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditRecordModalOpen, setIsEditRecordModalOpen] = useState(false);
+  const [activeEditTab, setActiveEditTab] = useState('basic');
   const [hasLoggedAction, setHasLoggedAction] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -1161,6 +1162,78 @@ export function UniversalRecordTemplate({
     }
   };
 
+  // Handle record saving
+  const handleSaveRecord = async () => {
+    try {
+      setLoading(true);
+      console.log('🔄 [UNIVERSAL] Saving record updates...');
+      
+      // Collect form data from all tabs
+      const formData = {
+        // Basic info
+        name: (document.querySelector('input[type="text"]') as HTMLInputElement)?.value || record?.name,
+        title: (document.querySelectorAll('input[type="text"]')[1] as HTMLInputElement)?.value || record?.title,
+        company: (document.querySelectorAll('input[type="text"]')[2] as HTMLInputElement)?.value || record?.company,
+        department: (document.querySelectorAll('input[type="text"]')[3] as HTMLInputElement)?.value || record?.department,
+        // Contact info
+        email: (document.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.email,
+        phone: (document.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.phone,
+        linkedinUrl: (document.querySelector('input[type="url"]') as HTMLInputElement)?.value || record?.linkedinUrl,
+        location: (document.querySelectorAll('input[type="text"]')[4] as HTMLInputElement)?.value || record?.location,
+        // Status info
+        status: (document.querySelector('select') as HTMLSelectElement)?.value || record?.status,
+        priority: (document.querySelectorAll('select')[1] as HTMLSelectElement)?.value || record?.priority,
+        engagementLevel: (document.querySelectorAll('select')[2] as HTMLSelectElement)?.value || record?.engagementLevel,
+        influenceLevel: (document.querySelectorAll('select')[3] as HTMLSelectElement)?.value || record?.influenceLevel,
+        // Notes
+        notes: (document.querySelector('textarea') as HTMLTextAreaElement)?.value || record?.notes,
+      };
+      
+      // Make API call to update the record
+      const response = await fetch(`/api/records/${record?.id}/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          recordType: recordType,
+          workspaceId: record?.workspaceId || 'default',
+          userId: record?.userId || 'default'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update record: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        showMessage('Record updated successfully!');
+        
+        // Close the modal
+        setIsEditRecordModalOpen(false);
+        
+        // Trigger record update callback if provided
+        if (onRecordUpdate) {
+          onRecordUpdate(result.record);
+        }
+        
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        throw new Error(result.error || 'Failed to update record');
+      }
+      
+    } catch (error) {
+      console.error('❌ [UNIVERSAL] Error updating record:', error);
+      showMessage(`Error: ${error instanceof Error ? error.message : 'Failed to update record'}`, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Get action buttons based on record type and context
   const getActionButtons = () => {
     const buttons = [];
@@ -1188,23 +1261,44 @@ export function UniversalRecordTemplate({
           onClick={() => setIsEditRecordModalOpen(true)}
           className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
         >
-          Edit Record
+          Update Record
         </button>
       );
     }
 
     // Add Action button - LIGHT BLUE BUTTON
     // For speedrun records, show "Start Speedrun" instead of "Add Action"
-    const actionButtonText = recordType === 'speedrun' ? 'Start Speedrun' : 'Add Action';
-    buttons.push(
-      <button
-        key="add-action"
-        onClick={() => setIsAddActionModalOpen(true)}
-        className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
-      >
-        {actionButtonText}
-      </button>
-    );
+    if (recordType === 'speedrun') {
+      buttons.push(
+        <button
+          key="start-speedrun"
+          onClick={() => {
+            // Navigate to speedrun/start page
+            const currentPath = window.location.pathname;
+            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+            if (workspaceMatch) {
+              const workspaceSlug = workspaceMatch[1];
+              window.location.href = `/${workspaceSlug}/speedrun/start`;
+            } else {
+              window.location.href = '/speedrun/start';
+            }
+          }}
+          className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+        >
+          Start Speedrun
+        </button>
+      );
+    } else {
+      buttons.push(
+        <button
+          key="add-action"
+          onClick={() => setIsAddActionModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+        >
+          Add Action
+        </button>
+      );
+    }
 
     // Context-aware advance button
     if (recordType === 'leads') {
@@ -1812,7 +1906,7 @@ export function UniversalRecordTemplate({
       {/* Edit Record Modal */}
       {isEditRecordModalOpen && (
         <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" data-edit-modal>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Update Record</h3>
               <button
@@ -1825,96 +1919,167 @@ export function UniversalRecordTemplate({
               </button>
             </div>
             
+            {/* Tabs */}
+            <div className="border-b border-gray-200 mb-6">
+              <nav className="-mb-px flex space-x-8">
+                {[
+                  { id: 'basic', label: 'Basic Info' },
+                  { id: 'contact', label: 'Contact' },
+                  { id: 'status', label: 'Status & Actions' },
+                  { id: 'notes', label: 'Notes' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveEditTab(tab.id)}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeEditTab === tab.id
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            {/* Tab Content */}
             <div className="space-y-4">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                  <input
-                    type="text"
-                    defaultValue={record?.name || record?.fullName || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+              {activeEditTab === 'basic' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.name || record?.fullName || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.title || record?.jobTitle || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.company || record?.companyName || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.department || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                  <input
-                    type="text"
-                    defaultValue={record?.title || record?.jobTitle || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                  <input
-                    type="text"
-                    defaultValue={record?.company || record?.companyName || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    defaultValue={record?.email || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    defaultValue={record?.phone || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                  <input
-                    type="url"
-                    defaultValue={record?.linkedinUrl || record?.linkedin || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
+              )}
 
-              {/* Status and Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                  <select
-                    defaultValue={record?.status || 'active'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="qualified">Qualified</option>
-                    <option value="cold">Cold</option>
-                  </select>
+              {activeEditTab === 'contact' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      defaultValue={record?.email || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input
+                      type="tel"
+                      defaultValue={record?.phone || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                    <input
+                      type="url"
+                      defaultValue={record?.linkedinUrl || record?.linkedin || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.location || record?.city || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                  <select
-                    defaultValue={record?.priority || 'medium'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                  </select>
-                </div>
-              </div>
+              )}
 
-              {/* Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea
-                  rows={3}
-                  defaultValue={record?.notes || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Add any additional notes..."
-                />
-              </div>
+              {activeEditTab === 'status' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select
+                      defaultValue={record?.status || 'active'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="qualified">Qualified</option>
+                      <option value="cold">Cold</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <select
+                      defaultValue={record?.priority || 'medium'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
+                    <select
+                      defaultValue={record?.engagementLevel || 'medium'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
+                    <select
+                      defaultValue={record?.influenceLevel || 'medium'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {activeEditTab === 'notes' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    rows={6}
+                    defaultValue={record?.notes || ''}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Add any additional notes..."
+                  />
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
@@ -1926,13 +2091,8 @@ export function UniversalRecordTemplate({
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // TODO: Implement save functionality
-                  console.log('Saving record updates...');
-                  setIsEditRecordModalOpen(false);
-                  showMessage('Record updated successfully!');
-                }}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={handleSaveRecord}
+                className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
               >
                 Save Changes
               </button>
