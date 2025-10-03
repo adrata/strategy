@@ -797,6 +797,70 @@ async function handleGet(
 
 async function getSingleRecord(type: string, workspaceId: string, userId: string, id: string, request?: any): Promise<any> {
   console.log(`🚨 [DEBUG] getSingleRecord called with type: ${type}, id: ${id}`);
+  
+  // 🚀 SPEEDRUN FIX: Handle speedrun records specially since they're not a direct database table
+  if (type === 'speedrun') {
+    console.log(`🔍 [SPEEDRUN SINGLE] Loading speedrun record: ${id}`);
+    
+    // Speedrun records are actually people records with specific criteria
+    // Try to find the person record first
+    const person = await prisma.people.findUnique({
+      where: { id },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            website: true,
+            rank: true
+          }
+        }
+      }
+    });
+    
+    if (!person) {
+      throw new Error(`Speedrun record not found: ${id}`);
+    }
+    
+    // Transform person record to speedrun format
+    const speedrunRecord = {
+      id: person.id,
+      rank: person.rank || 1,
+      name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+      fullName: person.fullName,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      email: person.email,
+      phone: person.phone,
+      linkedinUrl: person.linkedinUrl,
+      title: person.jobTitle,
+      company: person.company?.name || 'Unknown Company',
+      companyId: person.companyId,
+      industry: person.company?.industry,
+      website: person.company?.website,
+      customFields: person.customFields,
+      tags: person.tags,
+      lastAction: person.lastAction,
+      lastActionDate: person.lastActionDate,
+      nextAction: person.nextAction,
+      nextActionDate: person.nextActionDate,
+      assignedUserId: person.assignedUserId,
+      workspaceId: person.workspaceId,
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt
+    };
+    
+    console.log(`✅ [SPEEDRUN SINGLE] Found speedrun record: ${speedrunRecord.name} at ${speedrunRecord.company}`);
+    
+    return {
+      success: true,
+      data: {
+        speedrun: [speedrunRecord]
+      }
+    };
+  }
+  
   const model = getPrismaModel(type);
   if (!model) throw new Error(`Unsupported type: ${type}`);
   

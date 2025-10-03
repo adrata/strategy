@@ -450,7 +450,7 @@ export function SpeedrunSprintView() {
                     <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-2xl ${
                       isSelected 
                         ? 'bg-green-100 text-green-800' 
-                        : 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-600'
                     }`}>
                       {index + 1}
                     </span>
