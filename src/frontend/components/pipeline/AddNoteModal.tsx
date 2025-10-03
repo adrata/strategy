@@ -122,12 +122,22 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
       <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Add Note</h3>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Add Note</h3>
+              <p className="text-sm text-gray-500">Add a note to a contact</p>
+            </div>
+          </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5" />
+            Close
           </button>
         </div>
 
@@ -199,14 +209,18 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
         <div className="flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmitNote}
             disabled={!selectedContact || !noteContent.trim() || isSubmitting}
-            className="flex-1 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg transition-colors"
+            className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
+              selectedContact && noteContent.trim() && !isSubmitting
+                ? 'bg-blue-200 border-blue-300 text-blue-700 hover:bg-blue-300' // Active state when ready
+                : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200' // Default state
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isSubmitting ? 'Adding...' : 'Add Note'}
           </button>

@@ -83,6 +83,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [revenueFilter, setRevenueFilter] = useState('all');
+  const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   // Default sorting: prospects by oldest Last Action, others by rank
   const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
@@ -856,7 +857,29 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
                (state && state.toLowerCase().replace(/\s+/g, '_') === location);
       })();
 
-      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation;
+      // Last contacted filter
+      const matchesLastContacted = lastContactedFilter === 'all' || (() => {
+        const lastContact = record.lastContactDate || record.lastContact || record.lastAction;
+        if (!lastContact) {
+          return lastContactedFilter === 'never';
+        }
+        
+        const contactDate = new Date(lastContact);
+        const now = new Date();
+        const daysDiff = Math.floor((now.getTime() - contactDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        switch (lastContactedFilter) {
+          case 'never': return false; // Already handled above
+          case 'today': return daysDiff === 0;
+          case 'week': return daysDiff <= 7;
+          case 'month': return daysDiff <= 30;
+          case 'quarter': return daysDiff <= 90;
+          case 'overdue': return daysDiff > 90;
+          default: return true;
+        }
+      })();
+
+      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted;
     });
 
     // Apply smart ranking or sorting
@@ -933,7 +956,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Note: Removed rank limiting logic - user wants to see all records
 
     return filtered;
-  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
+  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
@@ -1385,6 +1408,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
           onStatusChange={setStatusFilter}
           onPriorityChange={setPriorityFilter}
           onRevenueChange={setRevenueFilter}
+          onLastContactedChange={setLastContactedFilter}
           onTimezoneChange={setTimezoneFilter}
           onSortChange={handleDropdownSortChange}
           onAddRecord={handleAddRecord}

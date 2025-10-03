@@ -269,14 +269,26 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-[var(--foreground)]">
-            Add {getSectionTitle()}
-          </h2>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">
+                Add {getSectionTitle()}
+              </h2>
+              <p className="text-sm text-[var(--muted)]">
+                Create a new {getSectionTitle().toLowerCase()} record
+              </p>
+            </div>
+          </div>
           <button
             onClick={handleClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="px-3 py-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            Close
           </button>
         </div>
 
@@ -883,18 +895,18 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg text-[var(--foreground)] hover:bg-[var(--hover-bg)] transition-colors"
+              className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!formData.name?.trim()}
-              className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
                 formData.name?.trim()
-                  ? "bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                  ? 'bg-blue-200 border-blue-300 text-blue-700 hover:bg-blue-300' // Active state when typing
+                  : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200' // Default state
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               Add {getSectionTitle()}
             </button>
@@ -1014,13 +1026,13 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 <button
                   type="button"
                   onClick={() => setShowAddCompanyModal(false)}
-                  className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg text-[var(--foreground)] hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#2563EB] text-white rounded-lg font-medium hover:bg-[#2563EB]/90 transition-colors"
+                  className="flex-1 px-4 py-3 bg-blue-200 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-300 transition-colors font-semibold text-sm"
                 >
                   Add Company
                 </button>

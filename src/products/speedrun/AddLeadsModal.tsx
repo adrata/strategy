@@ -40,18 +40,23 @@ export function AddLeadsModal({
       <div className="bg-[var(--background)] rounded-lg p-6 w-96 max-w-[90vw] border border-[var(--border)] max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center">
-              <UserGroupIcon className="w-5 h-5 text-[#2563EB]" />
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <UserGroupIcon className="w-5 h-5 text-blue-600" />
             </div>
-            <h3 className="text-xl font-bold text-[var(--foreground)]">
-              Add More Leads
-            </h3>
+            <div>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
+                Add More Leads
+              </h3>
+              <p className="text-sm text-[var(--muted)]">
+                Add new leads to your speedrun
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="px-3 py-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5" />
+            Close
           </button>
         </div>
 
@@ -131,14 +136,14 @@ export function AddLeadsModal({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 bg-[#2563EB] text-white rounded-lg font-medium hover:bg-[#2563EB]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex-1 px-4 py-3 bg-blue-200 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-300 transition-colors font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
               <>
