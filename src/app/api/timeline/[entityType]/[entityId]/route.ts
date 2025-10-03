@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
  * 📅 TIMELINE API - Get timeline events for any entity
@@ -13,16 +14,22 @@ export async function GET(
   { params }: { params: { entityType: string; entityId: string } }
 ) {
   try {
-    const { entityType, entityId } = params;
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required parameter: workspaceId'
-      }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { entityType, entityId } = params;
+    const workspaceId = context.workspaceId;
 
     console.log(`🔍 [TIMELINE API] Fetching timeline for ${entityType} ${entityId} in workspace ${workspaceId}`);
 
@@ -49,21 +56,24 @@ export async function GET(
     // Sort by date (newest first)
     timelineEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    console.log(`✅ [TIMELINE API] Found ${timelineEvents.length} timeline events for ${entityType} ${entityId}`);
+    console.log(`✅ [TIMELINE API] Found ${timelineEvents.length} timeline events for ${entityType} ${entityId} by user ${context.userId}`);
 
-    return NextResponse.json({
-      success: true,
+    return createSuccessResponse({
       timeline: timelineEvents,
       count: timelineEvents.length
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error('❌ [TIMELINE API] Error fetching timeline:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch timeline',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to fetch timeline',
+      'FETCH_TIMELINE_ERROR',
+      500
+    );
   }
 }
 

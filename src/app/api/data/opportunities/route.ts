@@ -2,18 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { createEntityRecord } from '@/platform/services/entity/entityService';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
     const includeClosed = searchParams.get("includeClosed") === "true";
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
-    }
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     console.log(`🔍 [DATA OPPORTUNITIES] Fetching opportunities for workspace: ${workspaceId}, userId: ${userId}, includeClosed: ${includeClosed}`);
 
@@ -44,14 +58,7 @@ export async function GET(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
-      success: true,
-      opportunities: opportunities,
-      count: opportunities.length,
-      workspaceId: workspaceId,
-      userId: userId,
-      includeClosed: includeClosed
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error('❌ Error fetching opportunities:', error);
@@ -68,9 +75,7 @@ export async function POST(request: NextRequest) {
     const { workspaceId, userId, name, description, currency, estimatedValue, stage } = await request.json();
 
     if (!workspaceId || !userId || !name) {
-      return NextResponse.json({ 
-        error: "workspaceId, userId, and name are required" 
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     console.log(`🔄 [DATA OPPORTUNITIES] Creating opportunity: ${name} for workspace: ${workspaceId}`);
@@ -110,20 +115,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
-      success: true,
-      opportunity: {
-        id: opportunity.id,
-        name: opportunity.name,
-        description: opportunity.description,
-        currency: opportunity.currency,
-        estimatedValue: opportunity.estimatedValue,
-        stage: opportunity.stage,
-        status: opportunity.status,
-        created_at: opportunity.createdAt?.toISOString() || new Date().toISOString()
-      },
-      message: "Opportunity successfully created"
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error('❌ Error creating opportunity:', error);

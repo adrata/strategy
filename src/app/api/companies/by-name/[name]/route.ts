@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 const prisma = new PrismaClient();
 
 export async function GET(
@@ -9,13 +11,23 @@ export async function GET(
 ) {
   try {
     const { name } = await params;
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
-    
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     
     console.log(`🏢 [COMPANY BY NAME API] Loading company: ${name} in workspace: ${workspaceId}`);
     
@@ -130,20 +142,19 @@ export async function GET(
       employeeCount: company.employeeCount
     });
     
-    return NextResponse.json({
-      success: true,
-      company: company
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('❌ [COMPANY BY NAME API] Error loading company:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to load company',
-        company: null
-      },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to load company',
+      'COMPANY_LOAD_ERROR',
+      500
     );
   } finally {
     await prisma.$disconnect();

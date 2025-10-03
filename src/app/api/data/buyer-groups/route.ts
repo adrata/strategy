@@ -1,15 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Required for static export compatibility
 export const dynamic = "force-static";
 
 // GET: Retrieve buyer groups or buyer group members
 export async function GET(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId") || "adrata";
-    const userId = searchParams.get("userId") || "dan";
     const type = searchParams.get("type") || "groups"; // groups, members
     const buyerGroupId = searchParams.get("buyerGroupId");
 
@@ -25,17 +43,19 @@ export async function GET(request: NextRequest) {
 
       case "members":
         if (!buyerGroupId) {
-          return NextResponse.json(
-            { success: false, error: "buyerGroupId required for members" },
-            { status: 400 },
+          return createErrorResponse(
+            "buyerGroupId required for members",
+            "BUYER_GROUP_ID_REQUIRED",
+            400
           );
         }
         return await getBuyerGroupMembers(buyerGroupId);
 
       default:
-        return NextResponse.json(
-          { success: false, error: "Invalid type parameter" },
-          { status: 400 },
+        return createErrorResponse(
+          "Invalid type parameter",
+          "INVALID_TYPE_PARAMETER",
+          400
         );
     }
   } catch (error) {
@@ -45,20 +65,37 @@ export async function GET(request: NextRequest) {
     );
     await prisma.$disconnect();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to get buyer groups data",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to get buyer groups data",
+      "BUYER_GROUPS_ERROR",
+      500
     );
   }
 }
 
 // POST: Create buyer group or add member
 export async function POST(request: NextRequest) {
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const { workspaceId, userId, action, data } = await request.json();
 
     console.log(
@@ -75,9 +112,10 @@ export async function POST(request: NextRequest) {
         return await addBuyerGroupMember(data);
 
       default:
-        return NextResponse.json(
-          { success: false, error: "Invalid action" },
-          { status: 400 },
+        return createErrorResponse(
+          "Invalid action",
+          "INVALID_ACTION",
+          400
         );
     }
   } catch (error) {
@@ -87,13 +125,10 @@ export async function POST(request: NextRequest) {
     );
     await prisma.$disconnect();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to process buyer groups action",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to process buyer groups action",
+      "BUYER_GROUPS_ACTION_ERROR",
+      500
     );
   }
 }
@@ -182,11 +217,7 @@ async function getBuyerGroups(workspaceId: string, userId: string) {
 
   await prisma.$disconnect();
 
-  return NextResponse.json({
-    success: true,
-    buyer_groups: buyerGroups,
-    count: buyerGroups.length,
-  });
+  return createSuccessResponse(data, meta);
 }
 
 async function getBuyerGroupMembers(buyerGroupId: string) {
@@ -197,9 +228,10 @@ async function getBuyerGroupMembers(buyerGroupId: string) {
 
   if (!account) {
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, error: "Buyer group not found" },
-      { status: 404 },
+    return createErrorResponse(
+      "Buyer group not found",
+      "BUYER_GROUP_NOT_FOUND",
+      404
     );
   }
 
@@ -240,12 +272,7 @@ async function getBuyerGroupMembers(buyerGroupId: string) {
 
   await prisma.$disconnect();
 
-  return NextResponse.json({
-    success: true,
-    buyer_group_id: buyerGroupId,
-    members: members,
-    count: members.length,
-  });
+  return createSuccessResponse(data, meta);
 }
 
 async function createBuyerGroup(
@@ -257,9 +284,10 @@ async function createBuyerGroup(
 
   if (!name || !company_id) {
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, error: "Name and company_id are required" },
-      { status: 400 },
+    return createErrorResponse(
+      "Name and company_id are required",
+      "VALIDATION_ERROR",
+      400
     );
   }
 
@@ -274,9 +302,10 @@ async function createBuyerGroup(
 
   if (!existingAccount) {
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, error: "Company not found" },
-      { status: 404 },
+    return createErrorResponse(
+      "Company not found",
+      "COMPANY_NOT_FOUND",
+      404
     );
   }
 
@@ -296,20 +325,7 @@ async function createBuyerGroup(
 
   await prisma.$disconnect();
 
-  return NextResponse.json({
-    success: true,
-    buyer_group: {
-      id: updatedAccount.id,
-      name: name,
-      description: description,
-      company_id: company_id,
-      company_name: updatedAccount.name,
-      member_count: 0,
-      status: "forming",
-      created_at: updatedAccount.updatedAt?.toISOString() || new Date().toISOString(),
-    },
-    message: "Buyer group created successfully",
-  });
+  return createSuccessResponse(data, meta);
 }
 
 async function addBuyerGroupMember(data: any) {
@@ -317,9 +333,10 @@ async function addBuyerGroupMember(data: any) {
 
   if (!buyer_group_id || !lead_id) {
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, error: "buyer_group_id and lead_id are required" },
-      { status: 400 },
+    return createErrorResponse(
+      "buyer_group_id and lead_id are required",
+      "VALIDATION_ERROR",
+      400
     );
   }
 
@@ -330,9 +347,10 @@ async function addBuyerGroupMember(data: any) {
 
   if (!contact) {
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, error: "Contact/Lead not found" },
-      { status: 404 },
+    return createErrorResponse(
+      "Contact/Lead not found",
+      "CONTACT_NOT_FOUND",
+      404
     );
   }
 
@@ -355,19 +373,7 @@ async function addBuyerGroupMember(data: any) {
 
   await prisma.$disconnect();
 
-  return NextResponse.json({
-    success: true,
-    member: {
-      id: updatedContact.id,
-      buyer_group_id: buyer_group_id,
-      lead_id: lead_id,
-      name: updatedContact.fullName,
-      role: role,
-      influence_level: influence_level,
-      added_at: updatedContact.updatedAt?.toISOString() || new Date().toISOString(),
-    },
-    message: "Member added to buyer group successfully",
-  });
+  return createSuccessResponse(data, meta);
 }
 
 // Helper functions

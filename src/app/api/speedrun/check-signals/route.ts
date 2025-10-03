@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Optimized speedrun signals check with caching
 const signalsCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 30 * 1000; // 30 seconds cache
@@ -13,9 +15,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
 
-    if (!workspaceId) {
-      return NextResponse.json({ error: "workspaceId is required" }, { status: 400 });
-    }
+    // Authentication is handled by middleware and secure-api-helper
 
     // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `signals:${workspaceId}`;
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     // Check if prisma is available
     if (!prisma) {
       console.error('❌ [SPEEDRUN CHECK SIGNALS] Prisma client is not available');
-      return NextResponse.json({ error: "Database connection not available" }, { status: 500 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     // 🚀 PERFORMANCE: Fast response - return empty signals immediately

@@ -16,6 +16,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Aggressive caching for instant loading
 const INTELLIGENCE_CACHE_TTL = 3600; // 1 hour for intelligence results
 const pendingRequests = new Map<string, Promise<any>>();
@@ -594,7 +596,27 @@ async function executeExecutivesIntelligence(depth: string, target: any, options
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const context = await getOptimizedWorkspaceContext(request);
     const { workspaceId, userId } = context;
     
@@ -603,24 +625,23 @@ export async function POST(request: NextRequest) {
     
     // Validate request
     if (!depth || !type || !target) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: depth, type, and target'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     if (!SUPPORTED_DEPTHS.includes(depth)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported depth: ${depth}. Supported depths: ${SUPPORTED_DEPTHS.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported depth: ${depth}. Supported depths: ${SUPPORTED_DEPTHS.join(', ')}`,
+        'UNSUPPORTED_DEPTH',
+        400
+      );
     }
     
     if (!SUPPORTED_TYPES.includes(type)) {
-      return NextResponse.json({
-        success: false,
-        error: `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`
-      }, { status: 400 });
+      return createErrorResponse(
+        `Unsupported type: ${type}. Supported types: ${SUPPORTED_TYPES.join(', ')}`,
+        'UNSUPPORTED_TYPE',
+        400
+      );
     }
     
     // Check cache first (skip caching for chat intelligence due to conversation context)
@@ -630,13 +651,13 @@ export async function POST(request: NextRequest) {
     
     if (memoryCached && Date.now() - memoryCached.timestamp < INTELLIGENCE_CACHE_TTL * 1000) {
       console.log(`⚡ [INTELLIGENCE CACHE HIT] ${cacheKey}`);
-      return NextResponse.json({
-        ...memoryCached.data,
-        meta: {
-          ...memoryCached.data.meta,
-          cacheHit: true,
-          responseTime: Date.now() - startTime
-        }
+      return createSuccessResponse(memoryCached.data.intelligence, {
+        ...memoryCached.data.meta,
+        cacheHit: true,
+        responseTime: Date.now() - startTime,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
     
@@ -645,12 +666,12 @@ export async function POST(request: NextRequest) {
     if (existingRequest) {
       console.log(`⚡ [INTELLIGENCE DEDUP] Waiting for existing request: ${cacheKey}`);
       const result = await existingRequest;
-      return NextResponse.json({
-        ...result,
-        meta: {
-          ...result.meta,
-          responseTime: Date.now() - startTime
-        }
+      return createSuccessResponse(result.intelligence, {
+        ...result.meta,
+        responseTime: Date.now() - startTime,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
     
@@ -686,7 +707,12 @@ export async function POST(request: NextRequest) {
       
       console.log(`✅ [INTELLIGENCE SUCCESS] ${type.toUpperCase()} (${depth}) completed in ${response.meta?.responseTime || 0}ms`);
       
-      return NextResponse.json(response);
+      return createSuccessResponse(response.intelligence, {
+        ...response.meta,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
       
     } finally {
       if (shouldCache && cacheKey) {
@@ -696,22 +722,38 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ [INTELLIGENCE API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Internal server error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process intelligence request',
+      'INTELLIGENCE_ERROR',
+      500
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const context = await getOptimizedWorkspaceContext(request);
     const { workspaceId, userId } = context;
     
@@ -720,59 +762,14 @@ export async function GET(request: NextRequest) {
     const depth = url.searchParams.get('depth') || 'auto';
     
     // Health check and capabilities
-    return NextResponse.json({
-      success: true,
-      intelligence: {
-        type,
-        depth,
-        status: 'operational',
-        version: '3.0.0',
-        message: 'Unified Intelligence API - Enterprise Grade'
-      },
-      capabilities: {
-        depths: SUPPORTED_DEPTHS,
-        types: SUPPORTED_TYPES,
-        features: [
-          'Adaptive research depth (auto, quick, thorough, comprehensive)',
-          'Multiple intelligence types (research, AI, chat, buyer-group, executives)',
-          'Cost optimization and intelligent caching',
-          'Real-time progress tracking',
-          'Advanced buyer group analysis',
-          'Executive team intelligence',
-          'AI-powered insights and recommendations'
-        ],
-        performance: {
-          quick: '0.5-3 seconds',
-          thorough: '2-10 seconds', 
-          comprehensive: '4-18 seconds',
-          auto: '1-6 seconds (adaptive)'
-        },
-        accuracy: {
-          quick: '75-80%',
-          thorough: '82-88%',
-          comprehensive: '90-95%'
-        }
-      },
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime,
-        type,
-        depth
-      }
-    });
+    return createSuccessResponse(data, meta);
     
   } catch (error) {
     console.error('❌ [INTELLIGENCE API] Health check error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Health check failed',
-      details: error instanceof Error ? error.message : 'Unknown error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Health check failed',
+      'HEALTH_CHECK_ERROR',
+      500
+    );
   }
 }

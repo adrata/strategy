@@ -1,0 +1,291 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+const prisma = new PrismaClient();
+
+/**
+ * ☁️ CLOUD EMAIL PROCESSOR API
+ * 
+ * Processes remaining emails in the cloud with priority on recent emails
+ * Can run continuously to enrich and link emails
+ */
+
+export async function POST(request: NextRequest) {
+  try {
+    const { 
+      workspaceId, 
+      priority = 'recent', // 'recent', 'all', 'unlinked'
+      batchSize = 100,
+      maxProcessingTime = 300000 // 5 minutes default
+    } = await request.json();
+
+    // Authentication is handled by middleware and secure-api-helper else if (priority === 'unlinked') {
+      // Process unlinked emails
+      const allEmails = await prisma.email_messages.findMany({
+        orderBy: { sentAt: 'desc' },
+        take: batchSize * 3, // Get more to find unlinked ones
+        select: {
+          id: true,
+          subject: true,
+          from: true,
+          to: true,
+          cc: true,
+          bcc: true,
+          sentAt: true
+        }
+      });
+
+      // Filter for unlinked emails
+      emailsToProcess = [];
+      for (const email of allEmails) {
+        const hasLinks = await prisma.emailToContact.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToAccount.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToLead.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToOpportunity.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToProspect.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToPerson.findFirst({ where: { A: email.id } }) ||
+                        await prisma.emailToCompany.findFirst({ where: { A: email.id } });
+        
+        if (!hasLinks) {
+          emailsToProcess.push(email);
+          if (emailsToProcess.length >= batchSize) break;
+        }
+      }
+    } else {
+      // Process all emails
+      emailsToProcess = await prisma.email_messages.findMany({
+        orderBy: { sentAt: 'desc' },
+        take: batchSize,
+        select: {
+          id: true,
+          subject: true,
+          from: true,
+          to: true,
+          cc: true,
+          bcc: true,
+          sentAt: true
+        }
+      });
+    }
+
+    console.log(`📧 Found ${emailsToProcess.length} emails to process`);
+
+    // Get all entities for linking
+    const [people, companies, leads, opportunities, prospects, persons, companiesData] = await Promise.all([
+      prisma.people.findMany({ 
+        where: { workspaceId },
+        select: { id: true, email: true, fullName: true } 
+      }),
+      prisma.companies.findMany({ 
+        where: { workspaceId },
+        select: { id: true, email: true, name: true } 
+      }),
+      prisma.leads.findMany({ 
+        where: { workspaceId },
+        select: { id: true, email: true, fullName: true } 
+      }),
+      prisma.opportunities.findMany({ 
+        where: { workspaceId },
+        select: { id: true, name: true } 
+      }),
+      prisma.prospects.findMany({ 
+        where: { workspaceId },
+        select: { id: true, email: true, fullName: true } 
+      }),
+      prisma.people.findMany({ 
+        select: { id: true, email: true, fullName: true } 
+      }),
+      prisma.companies.findMany({ 
+        select: { id: true, name: true } 
+      })
+    ]);
+
+    console.log(`🔗 Loaded entities: ${people.length} people, ${companies.length} companies, ${leads.length} leads, ${opportunities.length} opportunities, ${prospects.length} prospects, ${persons.length} persons, ${companiesData.length} companiesData`);
+
+    // Process emails
+    for (const email of emailsToProcess) {
+      // Check if we've exceeded max processing time
+      if (Date.now() - startTime > maxProcessingTime) {
+        console.log(`⏰ Max processing time reached (${maxProcessingTime}ms)`);
+        break;
+      }
+
+      try {
+        processedCount++;
+        
+        if (processedCount % 10 === 0) {
+          console.log(`   Processed ${processedCount}/${emailsToProcess.length} emails...`);
+        }
+
+        // Link email to entities
+        const linksCreated = await linkEmailToEntities(email, {
+          people, companies, leads, opportunities, prospects, persons, companiesData
+        });
+
+        if (linksCreated > 0) {
+          linkedCount++;
+        }
+
+      } catch (error) {
+        console.error(`❌ Error processing email ${email.id}:`, error);
+        errors++;
+      }
+    }
+
+    const processingTime = Date.now() - startTime;
+    const successRate = processedCount > 0 ? ((processedCount - errors) / processedCount * 100).toFixed(1) : 0;
+
+    console.log(`✅ Cloud processing completed in ${processingTime}ms`);
+    console.log(`   Processed: ${processedCount} emails`);
+    console.log(`   Linked: ${linkedCount} emails`);
+    console.log(`   Errors: ${errors}`);
+    console.log(`   Success rate: ${successRate}%`);
+
+    return createSuccessResponse(data, meta);
+
+  } catch (error) {
+    console.error('❌ Cloud email processing error:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Cloud email processing failed',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Link email to entities
+ */
+async function linkEmailToEntities(email: any, entities: any): Promise<number> {
+  let linksCreated = 0;
+  
+  try {
+    const { people, companies, leads, opportunities, prospects, persons, companiesData } = entities;
+    
+    // Link based on email addresses
+    const allEmails = [
+      email.from,
+      ...email.to,
+      ...email.cc,
+      ...email.bcc
+    ].filter(Boolean);
+
+    for (const emailAddress of allEmails) {
+      if (!emailAddress) continue;
+
+      // Link to people
+      const matchingPeople = people.filter((c: any) => c.email?.toLowerCase() === emailAddress.toLowerCase());
+      for (const person of matchingPeople) {
+        await prisma.emailToContact.upsert({
+          where: { A_B: { A: email.id, B: person.id } },
+          create: { A: email.id, B: person.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+
+      // Link to leads
+      const matchingLeads = leads.filter((l: any) => l.email?.toLowerCase() === emailAddress.toLowerCase());
+      for (const lead of matchingLeads) {
+        await prisma.emailToLead.upsert({
+          where: { A_B: { A: email.id, B: lead.id } },
+          create: { A: email.id, B: lead.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+
+      // Link to prospects
+      const matchingProspects = prospects.filter((p: any) => p.email?.toLowerCase() === emailAddress.toLowerCase());
+      for (const prospect of matchingProspects) {
+        await prisma.emailToProspect.upsert({
+          where: { A_B: { A: email.id, B: prospect.id } },
+          create: { A: email.id, B: prospect.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+
+      // Link to persons
+      const matchingPersons = persons.filter((p: any) => p.email?.toLowerCase() === emailAddress.toLowerCase());
+      for (const person of matchingPersons) {
+        await prisma.emailToPerson.upsert({
+          where: { A_B: { A: email.id, B: person.id } },
+          create: { A: email.id, B: person.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+    }
+
+    // Link based on content analysis
+    const content = `${email.subject} ${email.from}`.toLowerCase();
+
+    // Link to companies by name
+    for (const company of companies) {
+      if (company['name'] && content.includes(company.name.toLowerCase())) {
+        await prisma.emailToCompany.upsert({
+          where: { A_B: { A: email.id, B: company.id } },
+          create: { A: email.id, B: company.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+    }
+
+    // Link to companies by name
+    for (const company of companies) {
+      if (company['name'] && content.includes(company.name.toLowerCase())) {
+        await prisma.emailToAccount.upsert({
+          where: { A_B: { A: email.id, B: company.id } },
+          create: { A: email.id, B: company.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+    }
+
+    // Link to opportunities by name
+    for (const opportunity of opportunities) {
+      if (opportunity['name'] && content.includes(opportunity.name.toLowerCase())) {
+        await prisma.emailToOpportunity.upsert({
+          where: { A_B: { A: email.id, B: opportunity.id } },
+          create: { A: email.id, B: opportunity.id },
+          update: {}
+        });
+        linksCreated++;
+      }
+    }
+
+  } catch (error) {
+    console.error(`Error linking email ${email.id}:`, error);
+  }
+
+  return linksCreated;
+}
+
+/**
+ * GET: Get cloud processing status
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get('workspaceId');
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error('❌ Error getting cloud processing status:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to get processing status',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}

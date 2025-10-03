@@ -2,41 +2,67 @@
  * USER PROFILE API ENDPOINT
  * 
  * Handles enhanced user profile management with role-based access control
+ * SECURITY: Now properly authenticated and authorized
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
   try {
-    // For now, allow access - in production you'd validate the session token
-    // TODO: Implement proper session validation with the unified auth system
-    
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID required' }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // 2. Validate that user can access the requested profile
+    const requestedUserId = params.userId;
+    
+    // Users can only access their own profile unless they have admin permissions
+    if (requestedUserId !== context.userId && context.role !== 'admin') {
+      return createErrorResponse('Access denied to user profile', 'ACCESS_DENIED', 403);
     }
 
     const user = await prisma.users.findUnique({
-      where: { id: params['userId'] }
+      where: { id: requestedUserId }
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse('User not found', 'USER_NOT_FOUND', 404);
     }
 
-    return NextResponse.json(user);
+    // 3. Ensure user belongs to the same workspace (additional security check)
+    if (user.workspaceId !== context.workspaceId) {
+      return createErrorResponse('User not in your workspace', 'WORKSPACE_MISMATCH', 403);
+    }
+
+    console.log(`✅ [USER PROFILE] Retrieved profile for user ${requestedUserId} by ${context.userId}`);
+
+    return createSuccessResponse(user, {
+      requestedBy: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
 
   } catch (error) {
-    console.error('Error fetching user profile:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+    console.error('❌ [USER PROFILE] Error fetching user profile:', error);
+    return createErrorResponse(
+      'Failed to fetch user profile',
+      'FETCH_PROFILE_ERROR',
+      500
     );
   }
 }
@@ -46,14 +72,33 @@ export async function PUT(
   { params }: { params: { userId: string } }
 ) {
   try {
-    // For now, allow access - in production you'd validate the session token
-    // TODO: Implement proper session validation with the unified auth system
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // 2. Validate that user can update the requested profile
+    const requestedUserId = params.userId;
+    
+    // Users can only update their own profile unless they have admin permissions
+    if (requestedUserId !== context.userId && context.role !== 'admin') {
+      return createErrorResponse('Access denied to update user profile', 'ACCESS_DENIED', 403);
+    }
 
     const body = await request.json();
-    const { workspaceId, profile } = body;
+    const { profile } = body;
 
-    if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID required' }, { status: 400 });
+    if (!profile) {
+      return createErrorResponse('Profile data required', 'VALIDATION_ERROR', 400);
     }
 
     // Note: usersProfile model doesn't exist, user profile data is stored in users model
@@ -79,16 +124,22 @@ export async function PUT(
       });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    console.log(`✅ [USER PROFILE] Updated profile for user ${requestedUserId} by ${context.userId}`);
+
+    return createSuccessResponse({ 
       message: 'Profile updated successfully'
+    }, {
+      updatedBy: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+    console.error('❌ [USER PROFILE] Error updating user profile:', error);
+    return createErrorResponse(
+      'Failed to update user profile',
+      'UPDATE_PROFILE_ERROR',
+      500
     );
   }
 }
@@ -98,31 +149,47 @@ export async function PATCH(
   { params }: { params: { userId: string } }
 ) {
   try {
-    // For now, allow access - in production you'd validate the session token
-    // TODO: Implement proper session validation with the unified auth system
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true,
+      requiredRole: 'admin' // Only admins can change user roles
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
 
     const body = await request.json();
-    const { workspaceId, roleId, reason } = body;
+    const { roleId, reason } = body;
 
-    if (!workspaceId || !roleId) {
-      return NextResponse.json({ 
-        error: 'Workspace ID and Role ID required' 
-      }, { status: 400 });
+    if (!roleId) {
+      return createErrorResponse('Role ID required', 'VALIDATION_ERROR', 400);
     }
 
     // Note: workspaceMembership and usersRoleHistory models don't exist
     // User role management would need to be implemented with proper models
 
-    return NextResponse.json({ 
-      success: true, 
+    console.log(`✅ [USER PROFILE] Role update attempted for user ${params.userId} by admin ${context.userId}`);
+
+    return createSuccessResponse({ 
       message: 'Role update not implemented - models missing'
+    }, {
+      updatedBy: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
-    console.error('Error updating user role:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+    console.error('❌ [USER PROFILE] Error updating user role:', error);
+    return createErrorResponse(
+      'Failed to update user role',
+      'UPDATE_ROLE_ERROR',
+      500
     );
   }
 }

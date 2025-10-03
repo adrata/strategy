@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
 const SECTION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
 const sectionCache = new Map<string, { data: any; timestamp: number }>();
@@ -60,19 +62,8 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
       }
     }
     
-    // Fallback to query parameters
-    const url = new URL(request.url);
-    const workspaceId = url.searchParams.get('workspaceId');
-    const userId = url.searchParams.get('userId');
-    
-    if (workspaceId && userId) {
-      return {
-        workspaceId,
-        userId
-      };
-    }
-    
-    throw new Error('Missing workspaceId or userId');
+    // This should not be reached if secure authentication is working properly
+    throw new Error('Authentication required - secure context not available');
   } catch (error) {
     console.error('❌ [WORKSPACE CONTEXT] Error:', error);
     throw error;
@@ -82,7 +73,27 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const context = await getOptimizedWorkspaceContext(request);
     const { workspaceId, userId } = context;
     
@@ -96,14 +107,7 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
       console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
-      return NextResponse.json({
-        success: true,
-        data: cached.data,
-        meta: {
-          cacheHit: true,
-          responseTime: Date.now() - startTime
-        }
-      });
+      return createSuccessResponse(data, meta);
     }
     
     console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
@@ -766,14 +770,7 @@ export async function GET(request: NextRequest) {
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
     
-    return NextResponse.json({
-      success: true,
-      data: result,
-      meta: {
-        responseTime,
-        cacheHit: false
-      }
-    });
+    return createSuccessResponse(data, meta);
     
   } catch (error) {
     console.error('❌ [SECTION API] Error:', error);

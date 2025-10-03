@@ -1,0 +1,48 @@
+import { NextRequest, NextResponse } from "next/server";
+import { emailLinkingService } from "@/platform/services/EmailLinkingService";
+
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+export const dynamic = "force-dynamic";
+export const maxDuration = 600; // 10 minutes timeout for large linking operations
+
+/**
+ * Email Linking API
+ * 
+ * POST: Link emails to contacts, leads, accounts, and prospects
+ */
+
+export async function POST(request: NextRequest) {
+  try {
+    const { workspaceId, dateRange, linkAll } = await request.json();
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error("❌ [EMAIL LINKING API] Linking failed:", error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: "Email linking failed",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get('workspaceId');
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error("❌ [EMAIL LINKING API] Failed to get linking status:", error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: "Failed to get linking status",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    );
+  }
+}

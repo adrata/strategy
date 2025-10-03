@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 /**
  * 📝 NOTES API - Create and manage notes
  * 
@@ -10,7 +12,27 @@ import { prisma } from '@/platform/database/prisma-client';
 
 // POST: Create a new note
 export async function POST(request: NextRequest) {
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const body = await request.json();
     const {
       content,
@@ -31,18 +53,12 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!content || !workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: content, workspaceId, userId'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     // Validate that at least one record is linked
     if (!leadId && !opportunityId && !accountId && !contactId && !personId && !companyId) {
-      return NextResponse.json({
-        success: false,
-        error: 'At least one record must be linked (leadId, opportunityId, accountId, contactId, personId, or companyId)'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     // Create the note
@@ -82,11 +98,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({
-      success: true,
-      note,
-      message: 'Note created successfully'
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error('❌ [NOTES API] Error creating note:', error);
@@ -100,17 +112,34 @@ export async function POST(request: NextRequest) {
 
 // GET: Retrieve notes for a specific record
 export async function GET(request: NextRequest) {
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const { searchParams } = new URL(request.url);
     const recordId = searchParams.get('recordId');
     const recordType = searchParams.get('recordType');
     const workspaceId = searchParams.get('workspaceId');
 
     if (!recordId || !recordType || !workspaceId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required parameters: recordId, recordType, workspaceId'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     // Build the where clause based on record type
@@ -157,11 +186,7 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ [NOTES API] Retrieved ${notes.length} notes for ${recordType} ${recordId}`);
 
-    return NextResponse.json({
-      success: true,
-      notes,
-      count: notes.length
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error('❌ [NOTES API] Error retrieving notes:', error);

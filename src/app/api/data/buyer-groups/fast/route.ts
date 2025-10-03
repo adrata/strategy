@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Required for dynamic API functionality
 export const dynamic = "force-dynamic";
 
@@ -15,9 +17,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get("userId");
     
     if (!companyId || !workspaceId || !userId) {
-      return NextResponse.json({ 
-        error: "companyId, workspaceId, and userId are required" 
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     console.log(`🚀 [FAST BUYER GROUPS] Loading buyer group for company: ${companyId}`);
@@ -147,16 +147,7 @@ export async function GET(request: NextRequest) {
     console.log(`   People from today's enrichment: ${peopleFromToday.length}`);
     console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
 
-    return NextResponse.json({
-      success: true,
-      companyId: companyId,
-      members: buyerGroupMembers,
-      count: buyerGroupMembers.length,
-      performance: {
-        duration: duration,
-        source: 'fast-api'
-      }
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error("❌ [FAST BUYER GROUPS] Error:", error);

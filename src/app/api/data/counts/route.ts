@@ -9,64 +9,33 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
-import jwt from 'jsonwebtoken';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const countsCache = new Map<string, { data: any; timestamp: number }>();
 
-// 🚀 WORKSPACE CONTEXT: Optimized workspace resolution
-async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
-  workspaceId: string;
-  userId: string;
-}> {
-  try {
-    // Check for JWT token in cookies (for web requests with credentials: 'include')
-    const cookieToken = request.cookies.get("auth-token")?.value || 
-                       request.cookies.get("auth_token")?.value ||
-                       request.cookies.get("access_token")?.value;
-    
-    if (cookieToken) {
-      try {
-        const secret = process['env']['NEXTAUTH_SECRET'] || process['env']['JWT_SECRET'] || "dev-secret-key-change-in-production";
-        const decoded = jwt.verify(cookieToken, secret) as any;
-        
-        if (decoded && decoded['workspaceId'] && decoded['userId']) {
-          return {
-            workspaceId: decoded.workspaceId,
-            userId: decoded.userId
-          };
-        }
-      } catch (error) {
-        console.warn('⚠️ [WORKSPACE CONTEXT] Failed to verify cookie token:', error);
-      }
-    }
-    
-    // Fallback to query parameters
-    const url = new URL(request.url);
-    const workspaceId = url.searchParams.get('workspaceId');
-    const userId = url.searchParams.get('userId');
-    
-    if (workspaceId && userId) {
-      return {
-        workspaceId,
-        userId
-      };
-    }
-    
-    throw new Error('Missing workspaceId or userId');
-  } catch (error) {
-    console.error('❌ [WORKSPACE CONTEXT] Error:', error);
-    throw error;
-  }
-}
-
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    const context = await getOptimizedWorkspaceContext(request);
-    const { workspaceId, userId } = context;
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     
     // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `counts-${workspaceId}-${userId}`;
@@ -74,14 +43,7 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < COUNTS_CACHE_TTL) {
       console.log(`⚡ [COUNTS API] Cache hit - returning cached counts in ${Date.now() - startTime}ms`);
-      return NextResponse.json({
-        success: true,
-        data: cached.data,
-        meta: {
-          cacheHit: true,
-          responseTime: Date.now() - startTime
-        }
-      });
+      return createSuccessResponse(data, meta);
     }
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
@@ -223,20 +185,19 @@ export async function GET(request: NextRequest) {
     const responseTime = Date.now() - startTime;
     console.log(`✅ [COUNTS API] Loaded counts in ${responseTime}ms:`, counts);
     
-    return NextResponse.json({
-      success: true,
-      data: counts,
-      meta: {
-        responseTime,
-        cacheHit: false
-      }
+    return createSuccessResponse(counts, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role,
+      responseTime: Date.now() - startTime
     });
     
   } catch (error) {
     console.error('❌ [COUNTS API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to fetch counts',
+      'FETCH_COUNTS_ERROR',
+      500
+    );
   }
 }

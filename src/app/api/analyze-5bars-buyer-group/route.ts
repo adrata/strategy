@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ success: false, error: 'Missing workspaceId or userId' }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     console.log('🎯 Starting 5Bars Buyer Group Analysis...');
     
@@ -24,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!company) {
-      return NextResponse.json({ success: false, error: '5Bars company not found' }, { status: 404 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     console.log(`📋 Company: ${company.name}`);
@@ -39,30 +51,44 @@ export async function POST(request: NextRequest) {
     
     const processingTime = Date.now() - startTime;
 
-    return NextResponse.json({
-      success: true,
-      message: '5Bars buyer group analysis completed successfully',
-      data: {
-        company: {
-          id: company.id,
-          name: company.name,
-          existingPeople: company.people.length
-        },
-        processingTime: processingTime
-      }
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error: any) {
     console.error('❌ [5BARS BUYER GROUP API] Error during analysis:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message 
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to analyze 5Bars buyer group',
+      'ANALYZE_5BARS_ERROR',
+      500
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     // Get current 5Bars company data
     const company = await prisma.companies.findUnique({
       where: { id: '01K5D5VGQ35SXGBPK5F2WSMFM2' },
@@ -80,7 +106,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!company) {
-      return NextResponse.json({ success: false, error: '5Bars company not found' }, { status: 404 });
+      return createErrorResponse('$1', '$2', $3);
     }
 
     // Analyze existing buyer group data
@@ -105,39 +131,19 @@ export async function GET(request: NextRequest) {
       else peopleByRole.unknown++;
     });
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        company: {
-          id: company.id,
-          name: company.name,
-          website: company.website,
-          industry: company.industry,
-          size: company.size
-        },
-        people: {
-          total: company.people.length,
-          byRole: peopleByRole,
-          list: company.people.map(p => ({
-            id: p.id,
-            name: p.fullName,
-            title: p.jobTitle,
-            email: p.email,
-            buyerGroupRole: p.customFields?.buyerGroupRole || 'Unknown',
-            influenceLevel: p.customFields?.influenceLevel || 'Unknown'
-          }))
-        },
-        buyerGroupAnalysis,
-        coresignalData,
-        lastUpdated: company.updatedAt
-      }
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error: any) {
     console.error('❌ [5BARS BUYER GROUP API] Error fetching data:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message 
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to fetch 5Bars buyer group data',
+      'FETCH_5BARS_DATA_ERROR',
+      500
+    );
   }
 }

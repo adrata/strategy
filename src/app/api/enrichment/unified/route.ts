@@ -9,6 +9,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { UnifiedEnrichmentFactory, EnrichmentRequest } from '@/platform/services/unified-enrichment-system';
 import jwt from 'jsonwebtoken';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Performance caching
 const enrichmentCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 3600000; // 1 hour
@@ -19,16 +21,33 @@ const CACHE_TTL = 3600000; // 1 hour
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     // Parse request body
     const body = await request.json() as EnrichmentRequest;
     
     // Validate request
     if (!body.operation || !body.target) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: operation and target'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Get workspace context
@@ -42,13 +61,13 @@ export async function POST(request: NextRequest) {
       const cached = enrichmentCache.get(cacheKey)!;
       if (Date.now() - cached.timestamp < CACHE_TTL) {
         console.log(`💾 [CACHE HIT] Returning cached result for ${body.operation}`);
-        return NextResponse.json({
-          ...cached.data,
-          meta: {
-            ...cached.data.meta,
-            cacheHit: true,
-            responseTime: Date.now() - startTime
-          }
+        return createSuccessResponse(cached.data.data, {
+          ...cached.data.meta,
+          cacheHit: true,
+          responseTime: Date.now() - startTime,
+          userId: context.userId,
+          workspaceId: context.workspaceId,
+          role: context.role
         });
       }
     }
@@ -70,28 +89,23 @@ export async function POST(request: NextRequest) {
     
     const responseTime = Date.now() - startTime;
     
-    return NextResponse.json({
-      ...result,
-      meta: {
-        timestamp: new Date().toISOString(),
-        responseTime,
-        cacheHit: false,
-        workspaceId,
-        userId
-      }
+    return createSuccessResponse(result.data, {
+      timestamp: new Date().toISOString(),
+      responseTime,
+      cacheHit: false,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('[UNIFIED API] Error:', error);
     
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to process enrichment request',
+      'ENRICHMENT_ERROR',
+      500
+    );
   }
 }
 
@@ -99,7 +113,27 @@ export async function POST(request: NextRequest) {
  * 🔍 GET - System Health and Capabilities
  */
 export async function GET(request: NextRequest) {
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const { searchParams } = new URL(request.url);
     const operation = searchParams.get('operation');
     
@@ -109,24 +143,36 @@ export async function GET(request: NextRequest) {
     if (operation === 'health') {
       // System health check
       const health = await checkSystemHealth();
-      return NextResponse.json(health);
+      return createSuccessResponse(health, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
     }
     
     if (operation === 'capabilities') {
       // System capabilities
       const capabilities = getSystemCapabilities();
-      return NextResponse.json(capabilities);
+      return createSuccessResponse(capabilities, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
     }
     
     if (operation === 'stats') {
       // System statistics
       const enrichmentSystem = UnifiedEnrichmentFactory.createForWorkspace(workspaceId, userId);
       const stats = enrichmentSystem.getSystemStats();
-      return NextResponse.json(stats);
+      return createSuccessResponse(stats, {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
     }
     
     // Default: Return API documentation
-    return NextResponse.json({
+    return createSuccessResponse({
       name: 'Unified Enrichment API',
       version: '1.0.0',
       description: 'Single endpoint for all data enrichment operations',
@@ -143,15 +189,20 @@ export async function GET(request: NextRequest) {
         GET: '/api/enrichment/unified?operation=capabilities - System capabilities',
         GET: '/api/enrichment/unified?operation=stats - System statistics'
       }
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('[UNIFIED API] GET Error:', error);
     
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to get enrichment status',
+      'ENRICHMENT_STATUS_ERROR',
+      500
+    );
   }
 }
 

@@ -8,10 +8,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const body = await request.json();
     const { enhancementType = 'perplexity', workspaceId, userId } = body;
     
@@ -19,10 +41,7 @@ export async function POST(request: NextRequest) {
     
     // Validate workspace and user
     if (!workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing workspaceId or userId'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Get company information
@@ -38,10 +57,7 @@ export async function POST(request: NextRequest) {
     });
     
     if (!company) {
-      return NextResponse.json({
-        success: false,
-        error: '5Bars company not found'
-      }, { status: 404 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Execute enhancement based on type
@@ -63,40 +79,43 @@ export async function POST(request: NextRequest) {
     
     const processingTime = Date.now() - startTime;
     
-    return NextResponse.json({
-      success: true,
-      data: {
-        company: company,
-        enhancementType: enhancementType,
-        result: enhancementResult,
-        processingTime: processingTime,
-        timestamp: new Date().toISOString()
-      }
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('❌ [5BARS ENHANCEMENT] Error:', error);
     
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      processingTime: Date.now() - startTime
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to enhance 5Bars data',
+      'ENHANCE_5BARS_ERROR',
+      500
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
-    
-    if (!workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing workspaceId or userId'
-      }, { status: 400 });
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     
     // Get company information
     const company = await prisma.companies.findUnique({
@@ -120,10 +139,7 @@ export async function GET(request: NextRequest) {
     });
     
     if (!company) {
-      return NextResponse.json({
-        success: false,
-        error: '5Bars company not found'
-      }, { status: 404 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Get people count
@@ -134,34 +150,21 @@ export async function GET(request: NextRequest) {
     // Get recent insights (placeholder - insights table doesn't exist yet)
     const recentInsights = [];
     
-    return NextResponse.json({
-      success: true,
-      data: {
-        company: company,
-        peopleCount: peopleCount,
-        recentInsights: recentInsights,
-        enhancementOptions: {
-          perplexity: {
-            description: 'Perplexity AI research for comprehensive intelligence',
-            estimatedCost: '$0.10',
-            estimatedTime: '2-3 minutes'
-          },
-          comprehensive: {
-            description: 'Full enhancement with CoreSignal, Perplexity, and web research',
-            estimatedCost: '$0.25',
-            estimatedTime: '5-10 minutes'
-          }
-        }
-      }
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('❌ [5BARS ENHANCEMENT] GET Error:', error);
     
-    return NextResponse.json({
-      success: false,
-      error: error.message
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to get 5Bars enhancement status',
+      'ENHANCE_5BARS_STATUS_ERROR',
+      500
+    );
   }
 }
 

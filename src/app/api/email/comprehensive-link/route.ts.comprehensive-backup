@@ -1,0 +1,40 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { ComprehensiveEmailLinkingService } from '@/platform/services/ComprehensiveEmailLinkingService';
+
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+const emailLinkingService = ComprehensiveEmailLinkingService.getInstance();
+
+export async function POST(request: NextRequest) {
+  try {
+    const { emailIds, workspaceId } = await request.json();
+
+    if (!emailIds || !Array.isArray(emailIds)) {
+      return NextResponse.json(
+        { error: 'emailIds array is required' },
+        { status: 400 }
+      );
+    }
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error('❌ Error in comprehensive email linking:', error);
+    return NextResponse.json(
+      { error: 'Failed to link emails', details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get('workspaceId');
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error('❌ Error getting email linking statistics:', error);
+    return NextResponse.json(
+      { error: 'Failed to get statistics', details: error.message },
+      { status: 500 }
+    );
+  }
+}

@@ -1,12 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export async function POST(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
     console.log('🔍 [SEARCH API] Starting POST search request');
     
     const body = await request.json();
-    const { workspaceId, userId, category, query, limit = 20 } = body;
+    const { category, query, limit = 20 } = body;
 
     console.log(`🔍 [SEARCH API] POST search request:`, {
       category,
@@ -17,17 +37,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!category || !query) {
-      return NextResponse.json({
-        success: false,
-        error: 'Category and query are required'
-      }, { status: 400 });
-    }
-
-    if (!workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'WorkspaceId and userId are required'
-      }, { status: 400 });
+      return createErrorResponse('Category and query are required', 'VALIDATION_ERROR', 400);
     }
 
     let results = [];
@@ -36,7 +46,7 @@ export async function POST(request: NextRequest) {
       case 'companies':
         results = await prisma.companies.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             name: {
               contains: query,
@@ -59,7 +69,7 @@ export async function POST(request: NextRequest) {
       case 'people':
         results = await prisma.people.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             OR: [
               {
@@ -100,7 +110,7 @@ export async function POST(request: NextRequest) {
       case 'leads':
         results = await prisma.leads.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             OR: [
               {
@@ -141,7 +151,7 @@ export async function POST(request: NextRequest) {
       case 'opportunities':
         results = await prisma.opportunities.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             OR: [
               {
@@ -181,10 +191,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ [SEARCH API] Found ${results.length} results for ${category}:`, results);
 
-    return NextResponse.json({
-      success: true,
-      results: results
-    });
+    return createSuccessResponse(data, meta);
 
   } catch (error) {
     console.error('❌ [SEARCH API] POST Error:', error);
@@ -196,36 +203,44 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     console.log('🔍 [SEARCH API] Starting search request');
     
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const query = searchParams.get('query');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
 
     console.log(`🔍 [SEARCH API] Search request:`, {
       type,
       query,
       limit,
-      workspaceId,
-      userId
+      workspaceId: context.workspaceId,
+      userId: context.userId
     });
 
     if (!type || !query) {
-      return NextResponse.json({
-        success: false,
-        error: 'Type and query parameters are required'
-      }, { status: 400 });
-    }
-
-    if (!workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'WorkspaceId and userId are required'
-      }, { status: 400 });
+      return createErrorResponse('Type and query are required', 'VALIDATION_ERROR', 400);
     }
 
     let results = [];
@@ -234,7 +249,7 @@ export async function GET(request: NextRequest) {
       case 'companies':
         results = await prisma.companies.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             name: {
               contains: query,
@@ -255,7 +270,7 @@ export async function GET(request: NextRequest) {
       case 'people':
         results = await prisma.people.findMany({
           where: {
-            workspaceId,
+            workspaceId: context.workspaceId,
             deletedAt: null,
             OR: [
               {
@@ -291,25 +306,30 @@ export async function GET(request: NextRequest) {
         break;
 
       default:
-        return NextResponse.json({
-          success: false,
-          error: `Unsupported search type: ${type}`
-        }, { status: 400 });
+        return createErrorResponse(
+          `Unsupported search category: ${category}`,
+          'UNSUPPORTED_CATEGORY',
+          400
+        );
     }
 
-    console.log(`✅ [SEARCH API] Found ${results.length} results for ${type}:`, results);
+    console.log(`✅ [SEARCH API] Found ${results.length} results for ${category}:`, results);
 
-    return NextResponse.json({
-      success: true,
-      data: results
+    return createSuccessResponse(results, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role,
+      category,
+      query,
+      count: results.length
     });
 
   } catch (error) {
     console.error('❌ [SEARCH API] Error:', error);
-    console.error('❌ [SEARCH API] Error details:', error);
-    return NextResponse.json({
-      success: false,
-      error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to perform search',
+      'SEARCH_ERROR',
+      500
+    );
   }
 }

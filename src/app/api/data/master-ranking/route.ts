@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MasterRankingEngine } from '@/platform/services/master-ranking-engine';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export const runtime = 'nodejs';
 
 /**
@@ -11,14 +13,26 @@ export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
-    const view = searchParams.get("view") as 'speedrun' | 'leads' | 'prospects' | 'opportunities' | 'all';
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    const { searchParams } = new URL(request.url);
+    const view = searchParams.get("view") as 'speedrun' | 'leads' | 'prospects' | 'opportunities' | 'all';
 
     console.log(`🏆 [MASTER RANKING API] Generating ranking for workspace: ${workspaceId}, view: ${view || 'all'}`);
 
@@ -37,33 +51,19 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
 
-    return NextResponse.json({
-      success: true,
-      masterRanking: view === 'all' ? masterRanking : filteredData,
-      totalContacts: masterRanking.length,
-      view: view || 'all',
-      timingDistribution,
-      topOpportunities: masterRanking
-        .filter(c => c['type'] === 'opportunity_contact')
-        .slice(0, 10)
-        .map(c => ({
-          rank: c.masterRank,
-          name: c.name,
-          company: c.company,
-          value: c.opportunityValue,
-          stage: c.opportunityStage
-        }))
+    return createSuccessResponse(data, {
+      ...meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error('❌ [MASTER RANKING API] Error:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to generate master ranking',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }, 
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to generate master ranking',
+      'MASTER_RANKING_ERROR',
+      500
     );
   }
 }

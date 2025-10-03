@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 export async function POST(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const body = await request.json();
     const {
       subject,
@@ -11,20 +26,19 @@ export async function POST(request: NextRequest) {
       priority = 'normal',
       status = 'planned',
       scheduledDate,
-      workspaceId,
-      userId,
       contactId,
       opportunityId,
       leadId,
       accountId
     } = body;
 
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
     // Validate required fields
-    if (!subject || !workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: subject, workspaceId, userId'
-      }, { status: 400 });
+    if (!subject) {
+      return createErrorResponse('Missing required field: subject', 'VALIDATION_ERROR', 400);
     }
 
     // Create the activity
@@ -53,41 +67,53 @@ export async function POST(request: NextRequest) {
       id: activity.id,
       subject: activity.subject,
       type: activity.type,
-      workspaceId: activity.workspaceId
+      workspaceId: activity.workspaceId,
+      userId: context.userId
     });
 
-    return NextResponse.json({
-      success: true,
+    return createSuccessResponse({
       activity,
       message: 'Activity created successfully'
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId
     });
 
   } catch (error) {
     console.error('❌ [ACTIVITIES API] Error creating activity:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create activity',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to create activity',
+      'CREATE_ACTIVITY_ERROR',
+      500
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
     const type = searchParams.get('type');
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '50');
     const page = parseInt(searchParams.get('page') || '1');
 
-    if (!workspaceId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing workspaceId'
-      }, { status: 400 });
-    }
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     // Build where clause
     const where: any = {
@@ -140,11 +166,11 @@ export async function GET(request: NextRequest) {
     console.log('✅ [ACTIVITIES API] Retrieved activities:', {
       count: activities.length,
       totalCount,
-      workspaceId
+      workspaceId,
+      userId: context.userId
     });
 
-    return NextResponse.json({
-      success: true,
+    return createSuccessResponse({
       activities,
       pagination: {
         page,
@@ -152,14 +178,18 @@ export async function GET(request: NextRequest) {
         totalCount,
         totalPages: Math.ceil(totalCount / limit)
       }
+    }, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error('❌ [ACTIVITIES API] Error retrieving activities:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to retrieve activities',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to retrieve activities',
+      'RETRIEVE_ACTIVITIES_ERROR',
+      500
+    );
   }
 }

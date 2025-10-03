@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 /**
  * 🏆 UNIFIED MASTER RANKING API
  * 
@@ -17,16 +19,23 @@ export async function GET(request: NextRequest) {
     const startTime = Date.now();
     
     // Get workspace and user from request
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
-    
-    if (!workspaceId || !userId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing workspaceId or userId'
-      }, { status: 400 });
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     
     console.log(`🏆 [UNIFIED MASTER RANKING API] Generating master ranking for workspace: ${workspaceId}, user: ${userId}`);
     
@@ -36,45 +45,19 @@ export async function GET(request: NextRequest) {
     const processingTime = Date.now() - startTime;
     console.log(`✅ [UNIFIED MASTER RANKING API] Generated ranking in ${processingTime}ms`);
     
-    return NextResponse.json({
-      success: true,
-      data: {
-        companies: unifiedRanking.companies,
-        people: unifiedRanking.people,
-        leads: unifiedRanking.leads,
-        prospects: unifiedRanking.prospects,
-        speedrun: unifiedRanking.speedrun,
-        lastCalculated: unifiedRanking.lastCalculated,
-        counts: {
-          companies: unifiedRanking.companies.length,
-          people: unifiedRanking.people.length,
-          leads: unifiedRanking.leads.length,
-          prospects: unifiedRanking.prospects.length,
-          speedrun: unifiedRanking.speedrun.length
-        }
-      },
-      processingTime
+    return createSuccessResponse(unifiedRanking, {
+      processingTime: Date.now() - startTime,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
     
   } catch (error) {
     console.error('❌ [UNIFIED MASTER RANKING API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      data: {
-        companies: [],
-        people: [],
-        leads: [],
-        prospects: [],
-        speedrun: [],
-        counts: {
-          companies: 0,
-          people: 0,
-          leads: 0,
-          prospects: 0,
-          speedrun: 0
-        }
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to generate unified master ranking',
+      'UNIFIED_MASTER_RANKING_ERROR',
+      500
+    );
   }
 }

@@ -1,0 +1,33 @@
+import { NextRequest, NextResponse } from 'next/server';
+// import { zohoNotificationService } from '@/platform/services/zoho-notification-service';
+
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+/**
+ * 🔔 ZOHO NOTIFICATIONS API ENDPOINT
+ * 
+ * Handles fetching Zoho update notifications for a workspace
+ */
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get('workspaceId');
+    const since = searchParams.get('since');
+    const limit = parseInt(searchParams.get('limit') || '10');
+
+    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    console.error('❌ [ZOHO NOTIFICATIONS API] Error:', error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Failed to fetch notifications',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
+  }
+}

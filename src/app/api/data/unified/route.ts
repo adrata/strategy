@@ -18,6 +18,8 @@ import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
   if (!companyName) return false;
@@ -722,66 +724,8 @@ async function getOptimizedWorkspaceContext(request: NextRequest, requestBody?: 
       }
     }
     
-    // Fallback to query parameters
-    const url = new URL(request.url);
-    const workspaceId = url.searchParams.get('workspaceId');
-    const userId = url.searchParams.get('userId');
-    const demo = url.searchParams.get('demo');
-    
-    console.log('🔍 [WORKSPACE CONTEXT] Query params:', { workspaceId, userId, demo });
-    
-    // Handle demo scenarios
-    if (demo === 'true') {
-      console.log('✅ [WORKSPACE CONTEXT] Resolved for demo scenario');
-      return {
-        workspaceId: workspaceId,
-        userId: 'demo-user-2025',
-        userEmail: 'demo@adrata.com'
-      };
-    }
-    
-    // Handle ZeroPoint demo scenarios
-    if (workspaceId === ZEROPOINT_DEMO_WORKSPACE_ID) {
-      console.log('✅ [WORKSPACE CONTEXT] Resolved for ZeroPoint demo scenario');
-      return {
-        workspaceId: ZEROPOINT_DEMO_WORKSPACE_ID,
-        userId: 'zeropoint-demo-user-2025',
-        userEmail: 'demo@zeropoint.com'
-      };
-    }
-    
-    // Development fallback - if no workspace/user provided, use environment variables
-    if (!workspaceId || !userId) {
-      console.log('⚠️ [WORKSPACE CONTEXT] No workspaceId/userId provided in query parameters');
-      console.log('🔍 [WORKSPACE CONTEXT] Falling back to environment variables...');
-      
-      const envWorkspaceId = process['env']['DEFAULT_WORKSPACE_ID'] || process['env']['NEXT_PUBLIC_WORKSPACE_ID'];
-      const envUserId = process['env']['DEFAULT_USER_ID'];
-      
-      console.log('🔍 [WORKSPACE CONTEXT] Environment variables:', {
-        workspaceId: envWorkspaceId,
-        userId: envUserId
-      });
-      
-      if (!envWorkspaceId || !envUserId) {
-        console.error('❌ [WORKSPACE CONTEXT] No environment variables available for fallback');
-        throw new Error('Missing workspaceId and userId in request and environment');
-      }
-      
-      console.log('✅ [WORKSPACE CONTEXT] Using environment variables as fallback');
-      return {
-        workspaceId: envWorkspaceId,
-        userId: envUserId,
-        userEmail: 'api@adrata.com'
-      };
-    }
-    
-    console.log('✅ [WORKSPACE CONTEXT] Resolved from query parameters');
-    return {
-      workspaceId,
-      userId,
-      userEmail: 'api@adrata.com'
-    };
+    // This should not be reached if secure authentication is working properly
+    throw new Error('Authentication required - secure context not available');
     
   } catch (error) {
     console.error('❌ [WORKSPACE CONTEXT] Error:', error);
@@ -4035,7 +3979,27 @@ export async function GET(request: NextRequest) {
   console.log("🚨 [DEBUG] UNIFIED API ROUTE CALLED - SERVER IS RUNNING UPDATED CODE");
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const context = await getOptimizedWorkspaceContext(request);
     const { workspaceId, userId } = context;
     
@@ -4184,7 +4148,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const body: UnifiedDataRequest = await request.json();
     const { type, action, data, id, filters, pagination, search } = body;
     
@@ -4193,10 +4177,7 @@ export async function POST(request: NextRequest) {
     
     // Validate request
     if (!type || !action) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: type and action'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     if (!SUPPORTED_TYPES.includes(type)) {
@@ -4247,17 +4228,34 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const startTime = Date.now();
   
-  try {
+  // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { searchParams } = new URL(request.url);
+    
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    try {
     const body: UnifiedDataRequest = await request.json();
     const context = await getOptimizedWorkspaceContext(request, body);
     const { workspaceId, userId } = context;
     const { type, action, data, id } = body;
     
     if (!type || !id || !data) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: type, id, and data'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Execute update operation
@@ -4303,10 +4301,7 @@ export async function DELETE(request: NextRequest) {
     const id = url.searchParams.get('id');
     
     if (!type || !id) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required parameters: type and id'
-      }, { status: 400 });
+      return createErrorResponse('$1', '$2', $3);
     }
     
     // Execute delete operation

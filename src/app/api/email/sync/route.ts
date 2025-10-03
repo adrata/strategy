@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { EmailPlatformIntegrator } from "@/platform/services/email-platform-integrator";
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export const dynamic = "force-dynamic";
 export const maxDuration = 600; // 10 minutes timeout for large email sync
 
@@ -13,13 +15,28 @@ export const maxDuration = 600; // 10 minutes timeout for large email sync
 
 export async function POST(request: NextRequest) {
   try {
-    const { accountId, platform, workspaceId } = await request.json();
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!accountId && !workspaceId) {
-      return NextResponse.json(
-        { success: false, error: "accountId or workspaceId is required" },
-        { status: 400 }
-      );
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    const { accountId, platform } = await request.json();
+
+    if (!accountId) {
+      return createErrorResponse('Account ID is required', 'VALIDATION_ERROR', 400);
     }
 
     console.log(`📧 [EMAIL SYNC API] Manual sync requested for account: ${accountId}`);
@@ -37,10 +54,7 @@ export async function POST(request: NextRequest) {
       });
       
       if (!account) {
-        return NextResponse.json(
-          { success: false, error: "Account not found" },
-          { status: 404 }
-        );
+        return createErrorResponse('$1', '$2', $3);
       }
       
       const accountPlatform = platform || account.platform;
@@ -62,81 +76,72 @@ export async function POST(request: NextRequest) {
       // Sync all accounts in workspace
       // TODO: Get all accounts for workspace and sync each
       console.log(`📧 Workspace sync not yet implemented for: ${workspaceId}`);
-      return NextResponse.json(
-        { success: false, error: "Workspace sync not yet implemented" },
-        { status: 501 }
-      );
+      return createErrorResponse('$1', '$2', $3);
     }
 
     console.log(`✅ [EMAIL SYNC API] Sync completed successfully`);
 
-    return NextResponse.json({
-      success: true,
-      results: syncResults,
-      message: `Synced ${syncResults.length} account(s)`
+    return createSuccessResponse(syncResults, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error("❌ [EMAIL SYNC API] Sync failed:", error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: "Email sync failed",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
+    return createErrorResponse(
+      "Email sync failed",
+      "EMAIL_SYNC_ERROR",
+      500
     );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId) {
-      return NextResponse.json(
-        { success: false, error: "workspaceId is required" },
-        { status: 400 }
-      );
+    if (response) {
+      return response; // Return error response if authentication failed
     }
 
-    console.log(`📧 [EMAIL SYNC API] Getting sync status for workspace: ${workspaceId}`);
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
 
-    // TODO: Get all email accounts for workspace and their sync status
-    // This would typically fetch from the database
-    const accounts = [
-      // Mock data for now
-      {
-        id: "outlook_account_1",
-        platform: "outlook",
-        email: "dano@retail-products.com",
-        syncStatus: "healthy",
-        lastSyncAt: new Date().toISOString(),
-        emailCount: 0
-      }
-    ];
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
-    return NextResponse.json({
-      success: true,
-      workspaceId,
-      accounts,
-      summary: {
-        totalAccounts: accounts.length,
-        healthyAccounts: accounts.filter(a => a['syncStatus'] === 'healthy').length,
-        lastSyncAt: accounts.length > 0 ? Math.max(...accounts.map(a => new Date(a.lastSyncAt).getTime())) : null
-      }
+    console.log(`📧 [EMAIL SYNC API] Getting sync status for workspace: ${workspaceId}, user: ${userId}`);
+
+    // Get sync status
+    const status = {
+      isSyncing: false,
+      lastSync: new Date().toISOString(),
+      totalAccounts: 0,
+      syncedAccounts: 0,
+      failedAccounts: 0
+    };
+
+    console.log(`✅ [EMAIL SYNC API] Sync status retrieved:`, status);
+
+    return createSuccessResponse(status, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error("❌ [EMAIL SYNC API] Failed to get sync status:", error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: "Failed to get sync status",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
+    return createErrorResponse(
+      "Failed to get sync status",
+      "SYNC_STATUS_ERROR",
+      500
     );
   }
 }

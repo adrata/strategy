@@ -10,6 +10,8 @@ import { prisma } from '../../../../platform/database/prisma-client';
 import { cache } from '../../../../platform/services';
 import * as jwt from 'jsonwebtoken';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // -------- Types & interfaces --------
 interface DashboardResponse {
   success: boolean;
@@ -233,16 +235,23 @@ export async function GET(request: NextRequest) {
   
   try {
     // 🚀 CACHING: Check cache first
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Missing workspaceId or userId' 
-      }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     // Check cache first
     const cacheKey = `dashboard-${workspaceId}-${userId}`;
@@ -250,13 +259,13 @@ export async function GET(request: NextRequest) {
     
     if (memoryCached && Date.now() - memoryCached.timestamp < DASHBOARD_TTL * 1000) {
       console.log(`⚡ [CACHE HIT] Dashboard: ${cacheKey}`);
-      return NextResponse.json({
-        ...memoryCached.data,
-        meta: {
-          ...memoryCached.data.meta,
-          cacheHit: true,
-          responseTime: Date.now() - startTime
-        }
+      return createSuccessResponse(memoryCached.data.data, {
+        ...memoryCached.data.meta,
+        cacheHit: true,
+        responseTime: Date.now() - startTime,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
 
@@ -265,13 +274,13 @@ export async function GET(request: NextRequest) {
     if (existingRequest) {
       console.log(`⚡ [DEDUP] Waiting for existing dashboard request: ${cacheKey}`);
       const result = await existingRequest;
-      return NextResponse.json({
-        ...result,
-        meta: {
-          ...result.meta,
-          cacheHit: false,
-          responseTime: Date.now() - startTime
-        }
+      return createSuccessResponse(result.data, {
+        ...result.meta,
+        cacheHit: false,
+        responseTime: Date.now() - startTime,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
       });
     }
 
@@ -298,7 +307,12 @@ export async function GET(request: NextRequest) {
         timestamp: Date.now()
       });
       
-      return NextResponse.json(response);
+      return createSuccessResponse(response.data, {
+        ...response.meta,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
       
     } finally {
       pendingRequests.delete(cacheKey);
@@ -306,16 +320,11 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ [DASHBOARD API] Error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to load leadership dashboard',
-      details: error instanceof Error ? error.message : 'Unknown error',
-      meta: {
-        timestamp: new Date().toISOString(),
-        cacheHit: false,
-        responseTime: Date.now() - startTime
-      }
-    }, { status: 500 });
+    return createErrorResponse(
+      'Failed to load leadership dashboard',
+      'DASHBOARD_ERROR',
+      500
+    );
   }
 }
 

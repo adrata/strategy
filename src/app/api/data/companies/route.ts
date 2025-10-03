@@ -3,6 +3,8 @@ import { prisma } from '@/platform/database/prisma-client';
 import { RevenueEstimationService } from "@/platform/services/revenue-estimation-service";
 import { createEntityRecord } from '@/platform/services/entity/entityService';
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // Required for dynamic API functionality
 export const dynamic = "force-dynamic";
 
@@ -10,15 +12,27 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
     const limit = parseInt(searchParams.get("limit") || "100"); // Default to 100 companies
     const offset = parseInt(searchParams.get("offset") || "0");
     
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
-    }
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     console.log(
       `🏢 [COMPANIES API] Getting companies for workspace: ${workspaceId}, user: ${userId}`,
@@ -386,16 +400,7 @@ export async function GET(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
-      success: true,
-      companies: uniqueCompanies,
-      count: uniqueCompanies.length,
-      performance: {
-        duration: duration,
-        limit: limit,
-        offset: offset
-      }
-    });
+    return createSuccessResponse(data, meta);
   } catch (error) {
     console.error("❌ [COMPANIES API] Error getting companies:", error);
     await prisma.$disconnect();
@@ -465,19 +470,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
-      success: true,
-      company: {
-        id: newAccount.id,
-        name: newAccount.name,
-        industry: newAccount.industry,
-        website: newAccount.website,
-        revenue: newAccount.revenue?.toString(),
-        location: newAccount.city,
-        created_at: newAccount.createdAt?.toISOString() || new Date().toISOString(),
-      },
-      message: "Company created successfully",
-    });
+    return createSuccessResponse(data, meta);
   } catch (error) {
     console.error("❌ [COMPANIES API] Error creating company:", error);
     await prisma.$disconnect();

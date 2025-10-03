@@ -1,33 +1,128 @@
 /**
- * Middleware Configuration
+ * UNIVERSAL AUTHENTICATION MIDDLEWARE
  * 
- * Safe crawling protection for private content without breaking the site
+ * Protects ALL API endpoints with enterprise-grade authentication
+ * while maintaining performance and user experience.
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { getUnifiedAuthUser } from "@/platform/api-auth";
+import { validateWorkspaceAccess } from "@/platform/services/workspace-access-control";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Only process private routes
+  // Handle private routes (existing functionality)
   if (pathname.startsWith('/private/')) {
-    // Add noindex, nofollow meta tags for private content
     const response = NextResponse.next();
-    
-    // Add headers to prevent crawling
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    
     return response;
+  }
+  
+  // Protect ALL API routes except authentication endpoints
+  if (pathname.startsWith('/api/') && !isAuthEndpoint(pathname)) {
+    try {
+      console.log(`🔐 [MIDDLEWARE] Protecting API endpoint: ${pathname}`);
+      
+      // 1. Authenticate user
+      const authUser = await getUnifiedAuthUser(request);
+      
+      if (!authUser) {
+        console.log(`❌ [MIDDLEWARE] Authentication failed for ${pathname}`);
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required',
+            code: 'AUTH_REQUIRED'
+          },
+          { status: 401 }
+        );
+      }
+
+      // 2. Validate workspace access if workspaceId is provided
+      const workspaceId = getWorkspaceIdFromRequest(request);
+      if (workspaceId && workspaceId !== authUser.workspaceId) {
+        console.log(`🔍 [MIDDLEWARE] Validating workspace access for ${workspaceId}`);
+        
+        const workspaceAccess = await validateWorkspaceAccess(authUser.id, workspaceId);
+        
+        if (!workspaceAccess.hasAccess) {
+          console.log(`❌ [MIDDLEWARE] Workspace access denied for user ${authUser.id} to workspace ${workspaceId}`);
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: 'Workspace access denied',
+              code: 'WORKSPACE_ACCESS_DENIED'
+            },
+            { status: 403 }
+          );
+        }
+      }
+
+      // 3. Add authenticated user context to request headers
+      const response = NextResponse.next();
+      response.headers.set('x-user-id', authUser.id);
+      response.headers.set('x-user-email', authUser.email);
+      response.headers.set('x-workspace-id', authUser.workspaceId || '');
+      response.headers.set('x-user-name', authUser.name || '');
+      
+      console.log(`✅ [MIDDLEWARE] Authentication successful for user ${authUser.email} on ${pathname}`);
+      return response;
+
+    } catch (error) {
+      console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Authentication failed',
+          code: 'AUTH_ERROR'
+        },
+        { status: 401 }
+      );
+    }
   }
   
   // Pass through for all other routes
   return NextResponse.next();
 }
 
-// Only match private routes to avoid breaking the main site
+/**
+ * Check if the endpoint is an authentication endpoint that should be excluded
+ */
+function isAuthEndpoint(pathname: string): boolean {
+  const authEndpoints = [
+    '/api/auth/',
+    '/api/health/',
+    '/api/webhooks/'
+  ];
+  
+  return authEndpoints.some(endpoint => pathname.startsWith(endpoint));
+}
+
+/**
+ * Extract workspaceId from request (query params or body)
+ */
+function getWorkspaceIdFromRequest(request: NextRequest): string | null {
+  // Check query parameters
+  const url = new URL(request.url);
+  const workspaceId = url.searchParams.get('workspaceId');
+  
+  if (workspaceId) {
+    return workspaceId;
+  }
+  
+  // For POST/PUT requests, we could also check the body
+  // but that would require parsing the body which is expensive
+  // The endpoint should handle workspace validation from the authenticated user
+  
+  return null;
+}
+
+// Protect all API routes
 export const config = {
   matcher: [
+    '/api/:path*',
     '/private/:path*'
   ],
 };

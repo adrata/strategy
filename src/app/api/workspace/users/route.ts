@@ -1,21 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/platform/database/prisma-client";
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Add caching for workspace users
 const workspaceUsersCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId) {
-      return NextResponse.json(
-        { success: false, error: "workspaceId is required" },
-        { status: 400 }
-      );
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `workspace_users:${workspaceId}`;
@@ -23,7 +33,13 @@ export async function GET(request: NextRequest) {
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       console.log('⚡ [CACHE HIT] Workspace users:', workspaceId);
-      return NextResponse.json(cached.data);
+      return createSuccessResponse(cached.data.data, {
+        ...cached.data.meta,
+        cacheHit: true,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        role: context.role
+      });
     }
 
     console.log('🔍 [API] Fetching users for workspace:', workspaceId);
@@ -97,17 +113,20 @@ export async function GET(request: NextRequest) {
       timestamp: Date.now()
     });
 
-    return NextResponse.json(response);
+    return createSuccessResponse(response.data, {
+      ...response.meta,
+      cacheHit: false,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
 
   } catch (error) {
     console.error("Error fetching workspace users:", error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: "Failed to fetch workspace users",
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
+    return createErrorResponse(
+      "Failed to fetch workspace users",
+      "FETCH_WORKSPACE_USERS_ERROR",
+      500
     );
   }
 }

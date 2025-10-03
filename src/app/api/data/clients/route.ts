@@ -3,15 +3,27 @@ import { prisma } from '@/platform/database/prisma-client';
 
 
 
+
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     console.log(`📊 [CLIENTS API] Getting clients for workspace: ${workspaceId}, user: ${userId}`);
 
@@ -56,17 +68,19 @@ export async function GET(request: NextRequest) {
       updatedAt: client.updatedAt
     }));
 
-    return NextResponse.json({ 
-      success: true,
-      clients: transformedClients,
+    return createSuccessResponse(transformedClients, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role,
       count: transformedClients.length
     });
 
   } catch (error) {
-    console.error('❌ Error fetching clients:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch clients', details: error }, 
-      { status: 500 }
+    console.error('❌ [CLIENTS API] Error fetching clients:', error);
+    return createErrorResponse(
+      'Failed to fetch clients',
+      'FETCH_CLIENTS_ERROR',
+      500
     );
   }
 }
@@ -74,16 +88,35 @@ export async function GET(request: NextRequest) {
 // POST: Create new client
 export async function POST(request: NextRequest) {
   try {
-    const { workspaceId, userId, clientData } = await request.json();
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    const { clientData } = await request.json();
 
     console.log(
       `📝 [CLIENTS API] Adding client for workspace: ${workspaceId}, user: ${userId}`,
     );
 
     if (!clientData || !clientData.accountId) {
-      return NextResponse.json(
-        { success: false, error: "Account ID is required for client creation" },
-        { status: 400 },
+      return createErrorResponse(
+        "Account ID is required for client creation",
+        "VALIDATION_ERROR",
+        400
       );
     }
 
@@ -134,22 +167,19 @@ export async function POST(request: NextRequest) {
 
     await prisma.$disconnect();
 
-    return NextResponse.json({
-      success: true,
-      client: transformedClient,
-      message: "Client created successfully",
+    return createSuccessResponse(transformedClient, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
   } catch (error) {
     console.error("❌ [CLIENTS API] Error creating client:", error);
     await prisma.$disconnect();
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create client",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
+    return createErrorResponse(
+      "Failed to create client",
+      "CREATE_CLIENT_ERROR",
+      500
     );
   }
 } 
