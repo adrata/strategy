@@ -249,7 +249,7 @@ export function UniversalRecordTemplate({
   const [isAddActionModalOpen, setIsAddActionModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditRecordModalOpen, setIsEditRecordModalOpen] = useState(false);
-  const [activeEditTab, setActiveEditTab] = useState('basic');
+  const [activeEditTab, setActiveEditTab] = useState('overview');
   const [hasLoggedAction, setHasLoggedAction] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -1168,25 +1168,58 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Saving record updates...');
       
-      // Collect form data from all tabs
+      // Collect form data from all tabs using the modal element
+      const modalElement = document.querySelector('[data-edit-modal]');
+      if (!modalElement) {
+        throw new Error('Edit modal element not found.');
+      }
+
       const formData = {
-        // Basic info
-        name: (document.querySelector('input[type="text"]') as HTMLInputElement)?.value || record?.name,
-        title: (document.querySelectorAll('input[type="text"]')[1] as HTMLInputElement)?.value || record?.title,
-        company: (document.querySelectorAll('input[type="text"]')[2] as HTMLInputElement)?.value || record?.company,
-        department: (document.querySelectorAll('input[type="text"]')[3] as HTMLInputElement)?.value || record?.department,
-        // Contact info
-        email: (document.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.email,
-        phone: (document.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.phone,
-        linkedinUrl: (document.querySelector('input[type="url"]') as HTMLInputElement)?.value || record?.linkedinUrl,
-        location: (document.querySelectorAll('input[type="text"]')[4] as HTMLInputElement)?.value || record?.location,
-        // Status info
-        status: (document.querySelector('select') as HTMLSelectElement)?.value || record?.status,
-        priority: (document.querySelectorAll('select')[1] as HTMLSelectElement)?.value || record?.priority,
-        engagementLevel: (document.querySelectorAll('select')[2] as HTMLSelectElement)?.value || record?.engagementLevel,
-        influenceLevel: (document.querySelectorAll('select')[3] as HTMLSelectElement)?.value || record?.influenceLevel,
-        // Notes
-        notes: (document.querySelector('textarea') as HTMLTextAreaElement)?.value || record?.notes,
+        // Basic info (Overview tab)
+        name: (modalElement.querySelector('input[defaultValue*="' + (record?.name || record?.fullName || '') + '"]') as HTMLInputElement)?.value || record?.name,
+        title: (modalElement.querySelector('input[defaultValue*="' + (record?.title || record?.jobTitle || '') + '"]') as HTMLInputElement)?.value || record?.title,
+        company: (modalElement.querySelector('input[defaultValue*="' + (record?.company || record?.companyName || '') + '"]') as HTMLInputElement)?.value || record?.company,
+        department: (modalElement.querySelector('input[defaultValue*="' + (record?.department || '') + '"]') as HTMLInputElement)?.value || record?.department,
+        
+        // Speedrun Summary (Overview tab)
+        status: (modalElement.querySelector('select[defaultValue*="' + (record?.status || 'active') + '"]') as HTMLSelectElement)?.value || record?.status,
+        engagementLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.engagementLevel || 'medium') + '"]') as HTMLSelectElement)?.value || record?.engagementLevel,
+        influenceLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.influenceLevel || 'medium') + '"]') as HTMLSelectElement)?.value || record?.influenceLevel,
+        decisionPower: (modalElement.querySelector('select[defaultValue*="' + (record?.decisionPower || 'limited') + '"]') as HTMLSelectElement)?.value || record?.decisionPower,
+        priority: (modalElement.querySelector('select[defaultValue*="' + (record?.priority || 'medium') + '"]') as HTMLSelectElement)?.value || record?.priority,
+        isBuyerGroupMember: (modalElement.querySelector('select[defaultValue*="' + (record?.isBuyerGroupMember ? 'yes' : 'no') + '"]') as HTMLSelectElement)?.value === 'yes',
+        
+        // Intelligence tab
+        engagementStrategy: (modalElement.querySelector('select[defaultValue*="' + (record?.engagementStrategy || 'standard') + '"]') as HTMLSelectElement)?.value || record?.engagementStrategy,
+        buyerGroupOptimized: (modalElement.querySelector('select[defaultValue*="' + (record?.buyerGroupOptimized ? 'yes' : 'no') + '"]') as HTMLSelectElement)?.value === 'yes',
+        seniority: (modalElement.querySelector('select[defaultValue*="' + (record?.seniority || 'mid-level') + '"]') as HTMLSelectElement)?.value || record?.seniority,
+        communicationStyle: (modalElement.querySelector('select[defaultValue*="' + (record?.communicationStyle || 'professional') + '"]') as HTMLSelectElement)?.value || record?.communicationStyle,
+        engagementScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.engagementScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
+        influenceScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.influenceScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
+        decisionPowerScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.decisionPowerScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
+        relationshipWarmth: (modalElement.querySelector('select[defaultValue*="' + (record?.relationshipWarmth || 'cold') + '"]') as HTMLSelectElement)?.value || record?.relationshipWarmth,
+        
+        // Career tab
+        industry: (modalElement.querySelector('input[defaultValue*="' + (record?.industry || '') + '"]') as HTMLInputElement)?.value || record?.industry,
+        yearsExperience: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.yearsExperience || '') + '"]') as HTMLInputElement)?.value || '0'),
+        educationLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.educationLevel || '') + '"]') as HTMLSelectElement)?.value || record?.educationLevel,
+        skills: (modalElement.querySelector('input[placeholder*="Comma-separated skills"]') as HTMLInputElement)?.value || record?.skills,
+        certifications: (modalElement.querySelector('input[placeholder*="Comma-separated certifications"]') as HTMLInputElement)?.value || record?.certifications,
+        
+        // Activity tab (Contact info)
+        email: (modalElement.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.email,
+        phone: (modalElement.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.phone,
+        linkedinUrl: (modalElement.querySelector('input[type="url"]') as HTMLInputElement)?.value || record?.linkedinUrl,
+        location: (modalElement.querySelector('input[defaultValue*="' + (record?.location || record?.city || '') + '"]') as HTMLInputElement)?.value || record?.location,
+        lastContactDate: (modalElement.querySelector('input[type="date"]') as HTMLInputElement)?.value || record?.lastContactDate,
+        nextActionDate: (modalElement.querySelectorAll('input[type="date"]')[1] as HTMLInputElement)?.value || record?.nextActionDate,
+        nextAction: (modalElement.querySelector('input[defaultValue*="' + (record?.nextAction || '') + '"]') as HTMLInputElement)?.value || record?.nextAction,
+        bestContactTime: (modalElement.querySelector('select[defaultValue*="' + (record?.bestContactTime || 'morning') + '"]') as HTMLSelectElement)?.value || record?.bestContactTime,
+        
+        // Notes tab
+        notes: (modalElement.querySelector('textarea') as HTMLTextAreaElement)?.value || record?.notes,
+        tags: (modalElement.querySelector('input[placeholder*="Comma-separated tags"]') as HTMLInputElement)?.value || record?.tags,
+        valueDriver: (modalElement.querySelector('input[placeholder*="What drives value"]') as HTMLInputElement)?.value || record?.valueDriver,
       };
       
       // Make API call to update the record
@@ -1931,9 +1964,10 @@ export function UniversalRecordTemplate({
             <div className="border-b border-gray-200 mb-6">
               <nav className="-mb-px flex space-x-8">
                 {[
-                  { id: 'basic', label: 'Basic Info' },
-                  { id: 'contact', label: 'Contact' },
-                  { id: 'status', label: 'Status & Actions' },
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'intelligence', label: 'Intelligence' },
+                  { id: 'career', label: 'Career' },
+                  { id: 'activity', label: 'Activity' },
                   { id: 'notes', label: 'Notes' }
                 ].map((tab) => (
                   <button
@@ -1953,139 +1987,439 @@ export function UniversalRecordTemplate({
 
             {/* Tab Content */}
             <div className="space-y-4">
-              {activeEditTab === 'basic' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeEditTab === 'overview' && (
+                <div className="space-y-6">
+                  {/* Basic Information */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input
-                      type="text"
-                      defaultValue={record?.name || record?.fullName || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Basic Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.name || record?.fullName || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.title || record?.jobTitle || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.company || record?.companyName || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.department || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Speedrun Summary */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input
-                      type="text"
-                      defaultValue={record?.title || record?.jobTitle || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                    <input
-                      type="text"
-                      defaultValue={record?.company || record?.companyName || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                    <input
-                      type="text"
-                      defaultValue={record?.department || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Speedrun Summary</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
+                        <select
+                          defaultValue={record?.status || 'active'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="qualified">Qualified</option>
+                          <option value="cold">Cold</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
+                        <select
+                          defaultValue={record?.engagementLevel || 'medium'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
+                        <select
+                          defaultValue={record?.influenceLevel || 'medium'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power</label>
+                        <select
+                          defaultValue={record?.decisionPower || 'limited'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="high">High</option>
+                          <option value="moderate">Moderate</option>
+                          <option value="limited">Limited</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                        <select
+                          defaultValue={record?.priority || 'medium'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="high">High</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Member</label>
+                        <select
+                          defaultValue={record?.isBuyerGroupMember ? 'yes' : 'no'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {activeEditTab === 'contact' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeEditTab === 'intelligence' && (
+                <div className="space-y-6">
+                  {/* Intelligence Profile */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input
-                      type="email"
-                      defaultValue={record?.email || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Intelligence Profile</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Strategy</label>
+                        <select
+                          defaultValue={record?.engagementStrategy || 'standard'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="standard">Standard Outreach</option>
+                          <option value="personalized">Personalized</option>
+                          <option value="executive">Executive</option>
+                          <option value="technical">Technical</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Optimized</label>
+                        <select
+                          defaultValue={record?.buyerGroupOptimized ? 'yes' : 'no'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Seniority</label>
+                        <select
+                          defaultValue={record?.seniority || 'mid-level'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="executive">Executive</option>
+                          <option value="senior">Senior</option>
+                          <option value="mid-level">Mid-Level</option>
+                          <option value="junior">Junior</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Communication Style</label>
+                        <select
+                          defaultValue={record?.communicationStyle || 'professional'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="professional">Professional</option>
+                          <option value="casual">Casual</option>
+                          <option value="technical">Technical</option>
+                          <option value="executive">Executive</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Key Metrics */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <input
-                      type="tel"
-                      defaultValue={record?.phone || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                    <input
-                      type="url"
-                      defaultValue={record?.linkedinUrl || record?.linkedin || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <input
-                      type="text"
-                      defaultValue={record?.location || record?.city || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Key Metrics</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Score</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          defaultValue={record?.engagementScore || 0}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Influence Score</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          defaultValue={record?.influenceScore || 0}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power Score</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          defaultValue={record?.decisionPowerScore || 0}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Relationship Warmth</label>
+                        <select
+                          defaultValue={record?.relationshipWarmth || 'cold'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="warm">Warm</option>
+                          <option value="neutral">Neutral</option>
+                          <option value="cold">Cold</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {activeEditTab === 'status' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeEditTab === 'career' && (
+                <div className="space-y-6">
+                  {/* Current Role */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select
-                      defaultValue={record?.status || 'active'}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="qualified">Qualified</option>
-                      <option value="cold">Cold</option>
-                    </select>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Current Role</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.title || record?.jobTitle || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.company || record?.companyName || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.department || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.industry || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Professional Background */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                    <select
-                      defaultValue={record?.priority || 'medium'}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </select>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Professional Background</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="50"
+                          defaultValue={record?.yearsExperience || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Education Level</label>
+                        <select
+                          defaultValue={record?.educationLevel || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select Education</option>
+                          <option value="high-school">High School</option>
+                          <option value="associate">Associate</option>
+                          <option value="bachelor">Bachelor's</option>
+                          <option value="master">Master's</option>
+                          <option value="phd">PhD</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.skills || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Comma-separated skills"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Certifications</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.certifications || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Comma-separated certifications"
+                        />
+                      </div>
+                    </div>
                   </div>
+                </div>
+              )}
+
+              {activeEditTab === 'activity' && (
+                <div className="space-y-6">
+                  {/* Contact Information */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
-                    <select
-                      defaultValue={record?.engagementLevel || 'medium'}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </select>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Contact Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input
+                          type="email"
+                          defaultValue={record?.email || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                        <input
+                          type="tel"
+                          defaultValue={record?.phone || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                        <input
+                          type="url"
+                          defaultValue={record?.linkedinUrl || record?.linkedin || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.location || record?.city || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Engagement History */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
-                    <select
-                      defaultValue={record?.influenceLevel || 'medium'}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </select>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Engagement History</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Last Contact Date</label>
+                        <input
+                          type="date"
+                          defaultValue={record?.lastContactDate ? new Date(record.lastContactDate).toISOString().split('T')[0] : ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Next Action Date</label>
+                        <input
+                          type="date"
+                          defaultValue={record?.nextActionDate ? new Date(record.nextActionDate).toISOString().split('T')[0] : ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Next Action</label>
+                        <input
+                          type="text"
+                          defaultValue={record?.nextAction || ''}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Best Contact Time</label>
+                        <select
+                          defaultValue={record?.bestContactTime || 'morning'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="morning">Morning</option>
+                          <option value="afternoon">Afternoon</option>
+                          <option value="evening">Evening</option>
+                          <option value="anytime">Anytime</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
 
               {activeEditTab === 'notes' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                  <textarea
-                    rows={6}
-                    defaultValue={record?.notes || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add any additional notes..."
-                  />
+                <div className="space-y-6">
+                  {/* Notes */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea
+                      rows={6}
+                      defaultValue={record?.notes || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Add any additional notes..."
+                    />
+                  </div>
+
+                  {/* Tags */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.tags?.join(', ') || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Comma-separated tags"
+                    />
+                  </div>
+
+                  {/* Value Driver */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Value Driver</label>
+                    <input
+                      type="text"
+                      defaultValue={record?.valueDriver || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="What drives value for this contact"
+                    />
+                  </div>
                 </div>
               )}
             </div>
