@@ -646,9 +646,9 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </select>
               </div>
 
-              {/* Location Filter */}
-              <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">State</label>
+                      {/* Location Filter */}
+                      <div className="mb-4">
+                        <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
                 <select
                   value={locationFilter}
                   onChange={(e) => handleLocationChange(e.target.value)}
@@ -672,7 +672,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     onLocationChange?.('all');
                     setIsDropdownOpen(false);
                   }}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>
@@ -746,7 +746,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                             type="radio"
                             checked={option.value === sortBy}
                             onChange={() => {}} // Handled by parent click
-                            className="rounded border-blue-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                            className="rounded border-blue-200 text-blue-800 focus:ring-blue-500 accent-blue-800"
                           />
                           <span>{option.label}</span>
                         </button>
@@ -759,7 +759,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                           onClick={() => {
                             setIsSortDropdownOpen(false);
                           }}
-                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
                         >
                           Cancel
                         </button>
@@ -800,26 +800,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-gray-900">Show Columns</h3>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => {
-                              const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
-                              setVisibleColumns(allColumnValues);
-                              onColumnVisibilityChange?.(allColumnValues);
-                            }}
-                            className="text-xs text-gray-500 hover:text-gray-700"
-                          >
-                            Reset
-                          </button>
-                          <button
-                            onClick={() => {
-                              setIsColumnsDropdownOpen(false);
-                            }}
-                            className="text-xs text-gray-500 hover:text-gray-700"
-                          >
-                            Close
-                          </button>
-                        </div>
                       </div>
                       
                       {/* Column Options */}
@@ -845,7 +825,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                                 type="checkbox"
                                 checked={isChecked}
                                 onChange={() => {}} // Handled by parent click
-                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                                className="rounded border-blue-200 text-blue-800 focus:ring-blue-500 accent-blue-800"
                               />
                               <span>{option.label}</span>
                             </button>
@@ -853,25 +833,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                         })}
                       </div>
 
-                      {/* Apply/Cancel Buttons */}
-                      <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end mt-4">
-                        <button
-                          onClick={() => {
-                            setIsColumnsDropdownOpen(false);
-                          }}
-                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsColumnsDropdownOpen(false);
-                          }}
-                          className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          Apply
-                        </button>
-                      </div>
                     </div>
                   </div>
                 )}
