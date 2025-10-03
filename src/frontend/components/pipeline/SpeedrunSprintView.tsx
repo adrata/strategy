@@ -405,7 +405,7 @@ export function SpeedrunSprintView() {
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-base font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
+              <h2 className="text-lg font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
             </div>
             <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{data.length}/10</span>
           </div>
