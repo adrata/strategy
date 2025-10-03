@@ -1082,25 +1082,39 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Submitting action:', actionData);
       
+      // Use different API endpoints based on record type
+      const apiEndpoint = recordType === 'speedrun' ? '/api/speedrun/action-log' : '/api/actions/add';
+      
+      // Prepare request body based on record type
+      const requestBody = recordType === 'speedrun' ? {
+        personId: record.id,
+        personName: record.name || record.fullName || 'Unknown',
+        actionType: actionData.type,
+        notes: actionData.action || actionData.notes, // Use action field for speedrun
+        nextAction: actionData.nextAction,
+        nextActionDate: actionData.nextActionDate,
+        actionPerformedBy: actionData.actionPerformedBy
+      } : {
+        recordId: record.id,
+        recordType: recordType,
+        actionType: actionData.type,
+        actionLog: actionData.actionLog,
+        notes: actionData.notes,
+        nextAction: actionData.nextAction,
+        nextActionDate: actionData.nextActionDate,
+        actionPerformedBy: actionData.actionPerformedBy,
+        contactId: actionData.contactId,
+        workspaceId: record.workspaceId || 'default',
+        userId: record.userId || 'default'
+      };
+      
       // Make API call to log the action
-      const response = await fetch('/api/actions/add', {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          recordId: record.id,
-          recordType: recordType,
-          actionType: actionData.type, // CompleteActionModal uses 'type' field
-          actionLog: actionData.actionLog, // CompleteActionModal uses 'actionLog' field
-          notes: actionData.notes,
-          nextAction: actionData.nextAction,
-          nextActionDate: actionData.nextActionDate,
-          actionPerformedBy: actionData.actionPerformedBy,
-          contactId: actionData.contactId,
-          workspaceId: record.workspaceId || 'default', // Fallback if not available
-          userId: record.userId || 'default' // Fallback if not available
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
