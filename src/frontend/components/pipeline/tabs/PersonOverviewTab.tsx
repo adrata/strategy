@@ -346,6 +346,55 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         </div>
       </div>
 
+      {/* Speedrun Summary */}
+      <div className="space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <h4 className="font-semibold text-gray-900 mb-4">Speedrun Summary</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Current Status:</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{personData.status}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Engagement Level:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.engagementLevel || 'Medium'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.influenceLevel || 'Moderate'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Decision Power:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.decisionPower || 'Limited'}</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Last Contact:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.lastContact}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Next Action:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.nextAction}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Buyer Group:</span>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {personData.isBuyerGroupMember ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Priority:</span>
+                <span className="text-sm font-medium text-gray-900">{personData.priority || 'Medium'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* How do I reach them */}
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
