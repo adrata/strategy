@@ -1,8 +1,12 @@
-"use client";
-
+import { Metadata } from "next";
 import { PipelineView } from "@/frontend/components/pipeline/PipelineView";
 import { WorkspacePipelineWrapper } from "../WorkspacePipelineWrapper";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Leads",
+  description: "Leads management",
+};
 
 // Simple error boundary to catch PipelineView errors
 class ErrorBoundary extends React.Component {

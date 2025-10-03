@@ -552,16 +552,25 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'people':
-        // 🚀 PERFORMANCE: Optimized people query with error handling
+        // 🚀 PERFORMANCE: Optimized people query with error handling - FIXED: Use same logic as speedrun
         console.log(`👥 [SECTION API] Loading people for workspace: ${workspaceId}`);
         
         try {
           const peopleData = await prisma.people.findMany({
             where: {
               workspaceId,
-              deletedAt: null
+              deletedAt: null,
+              companyId: { not: null }, // Only people with company relationships like speedrun
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
             },
-            orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+            orderBy: [
+              { company: { rank: 'asc' } }, // Use company rank first like speedrun
+              { rank: 'asc' }, // Then by person rank
+              { updatedAt: 'desc' }
+            ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
             select: {
               id: true,
@@ -628,6 +637,7 @@ export async function GET(request: NextRequest) {
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
+              companyRank: person.company?.rank || 0, // Include company rank for proper ordering
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
