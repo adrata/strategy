@@ -2677,7 +2677,7 @@ Dan`}
                     {person.name}
                   </h1>
                   <p className="text-[var(--muted)]">
-                    {person.title ? `${person.title} • ` : ''}{person.company || "ADP"}
+                    {person.title || ''}
                   </p>
                 </div>
               </div>
