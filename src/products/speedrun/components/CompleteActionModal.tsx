@@ -164,8 +164,7 @@ export function CompleteActionModal({
               <button
                 type="button"
                 onClick={handleClose}
-                disabled={isLoading}
-                className="flex-1 px-4 py-3 text-[var(--muted)] bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]/20 transition-colors disabled:opacity-50 font-medium text-sm"
+                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
               >
                 Cancel
               </button>
