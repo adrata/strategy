@@ -248,7 +248,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const [sortBy, setSortBy] = useState('rank');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(externalVisibleColumns || ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction']);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const columnsDropdownRef = useRef<HTMLDivElement>(null);
@@ -412,6 +411,13 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   };
 
   const columnOptions = getColumnOptions();
+
+  // Get all available columns for the current section
+  const getAllAvailableColumns = () => {
+    return columnOptions.filter(option => option.value !== 'all').map(option => option.value);
+  };
+
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(externalVisibleColumns || getAllAvailableColumns());
 
   // Close dropdowns when clicking outside
   useEffect(() => {
