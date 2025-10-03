@@ -1821,10 +1821,10 @@ export function UniversalRecordTemplate({
                 ) : (
                   <span className="text-sm font-semibold text-gray-700">
                     {(() => {
-                      console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'Record:', record);
-                      // 🎯 FIX: For speedrun records, use sequential rank from table, not database rank
-                      if (record?.section === 'speedrun' && recordIndex !== undefined) {
-                        return recordIndex + 1; // Sequential rank (1, 2, 3...)
+                      console.log(`🔍 [RANK DEBUG] Record rank:`, record?.rank, 'RecordIndex:', recordIndex, 'RecordType:', recordType, 'Record:', record);
+                      // 🎯 FIX: For speedrun records, use sequential rank from navigation, not database rank
+                      if (recordType === 'speedrun' && recordIndex !== undefined) {
+                        return recordIndex; // Use the recordIndex directly (already 1-based)
                       }
                       return record?.rank !== undefined ? record.rank : (recordIndex !== undefined ? recordIndex : getFirstInitial());
                     })()}
