@@ -13,7 +13,7 @@ interface CompleteActionModalProps {
 
 export interface ActionLogData {
   person: string;
-  type: 'LinkedIn Friend Request' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
+  type: 'LinkedIn Friend Request' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email';
   time: 'Now' | 'Past' | 'Future';
   action: string;
   nextAction?: string;
@@ -125,7 +125,7 @@ export function CompleteActionModal({
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors"
                 disabled={isLoading}
               >
                 <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
@@ -133,7 +133,6 @@ export function CompleteActionModal({
                 <option value="LinkedIn DM">LinkedIn DM</option>
                 <option value="Phone">Phone</option>
                 <option value="Email">Email</option>
-                <option value="Text">Text</option>
               </select>
             </div>
 
