@@ -77,8 +77,8 @@ export function DynamicTitle() {
       if (activeWorkspace) {
         // Get the current page name
         const pageName = getPageName(pathname);
-        // Update the document title
-        document['title'] = `Adrata | ${pageName}`;
+        // Update the document title - just use the page name
+        document['title'] = pageName;
       } else {
         // Fallback to default title
         document['title'] = 'Adrata | Dashboard';
