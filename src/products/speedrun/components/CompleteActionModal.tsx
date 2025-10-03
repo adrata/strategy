@@ -113,31 +113,10 @@ export function CompleteActionModal({
               </div>
             </div>
 
-            {/* Type */}
-            <div>
-              <label htmlFor="type" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Type
-              </label>
-              <select
-                id="type"
-                value={formData.type}
-                onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
-                disabled={isLoading}
-              >
-                <option value="LinkedIn">LinkedIn</option>
-                <option value="LinkedIn InMail">LinkedIn InMail</option>
-                <option value="LinkedIn DM">LinkedIn DM</option>
-                <option value="Phone">Phone</option>
-                <option value="Email">Email</option>
-                <option value="Text">Text</option>
-              </select>
-            </div>
-
-            {/* Time */}
+            {/* When */}
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Time
+                When
               </label>
               <div className="flex gap-2">
                 <button
@@ -177,6 +156,27 @@ export function CompleteActionModal({
                   Future
                 </button>
               </div>
+            </div>
+
+            {/* Type */}
+            <div>
+              <label htmlFor="type" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Type
+              </label>
+              <select
+                id="type"
+                value={formData.type}
+                onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
+                disabled={isLoading}
+              >
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="LinkedIn InMail">LinkedIn InMail</option>
+                <option value="LinkedIn DM">LinkedIn DM</option>
+                <option value="Phone">Phone</option>
+                <option value="Email">Email</option>
+                <option value="Text">Text</option>
+              </select>
             </div>
 
             {/* Action */}
