@@ -520,10 +520,30 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
                     )}
                     
                     <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span>{formatDistanceToNow(event.date, { addSuffix: true })}</span>
+                      <span>{(() => {
+                        try {
+                          const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+                          if (isNaN(eventDate.getTime())) {
+                            return 'Unknown time';
+                          }
+                          return formatDistanceToNow(eventDate, { addSuffix: true });
+                        } catch (error) {
+                          return 'Unknown time';
+                        }
+                      })()}</span>
                       {event['user'] && <span>by {event.user}</span>}
                       <span>•</span>
-                      <span>{format(event.date, 'MMM d, yyyy h:mm a')}</span>
+                      <span>{(() => {
+                        try {
+                          const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+                          if (isNaN(eventDate.getTime())) {
+                            return 'Unknown date';
+                          }
+                          return format(eventDate, 'MMM d, yyyy h:mm a');
+                        } catch (error) {
+                          return 'Unknown date';
+                        }
+                      })()}</span>
                     </div>
                   </div>
                 </div>
