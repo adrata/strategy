@@ -1179,16 +1179,32 @@ export function UniversalRecordTemplate({
       }
     });
 
-    // Edit button removed per user request
+    // Update Record button - for speedrun records
+    if (recordType === 'speedrun') {
+      buttons.push(
+        <button
+          key="update-record"
+          onClick={() => {
+            // TODO: Implement update record functionality
+            console.log('Update record clicked for:', record?.name || record?.id);
+          }}
+          className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+        >
+          Update Record
+        </button>
+      );
+    }
 
     // Add Action button - LIGHT BLUE BUTTON
+    // For speedrun records, show "Start Speedrun" instead of "Add Action"
+    const actionButtonText = recordType === 'speedrun' ? 'Start Speedrun' : 'Add Action';
     buttons.push(
       <button
         key="add-action"
         onClick={() => setIsAddActionModalOpen(true)}
         className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
       >
-        Add Action
+        {actionButtonText}
       </button>
     );
 
