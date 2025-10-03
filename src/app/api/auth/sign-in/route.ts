@@ -452,8 +452,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           // Monaco routes get workspace query parameter  
           platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
         } else if (platformRoute.path.startsWith('/speedrun')) {
-          // Speedrun routes stay as /speedrun (no workspace prefix needed)
-          platformRoute['path'] = platformRoute.path;
+          // Speedrun routes get workspace prefix for proper routing
+          platformRoute['path'] = `/${workspaceSlug}/speedrun`;
         } else {
           // Default to workspace-specific speedrun for authenticated users
           platformRoute['path'] = `/${workspaceSlug}/speedrun`;

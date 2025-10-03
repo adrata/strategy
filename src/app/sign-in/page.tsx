@@ -190,7 +190,7 @@ export default function SignInPage() {
         }
 
         // 🆕 AUTO-LOGIN TO LAST WORKSPACE
-        // Instead of showing workspace selection, automatically redirect to user's last workspace
+        // Use the server-provided redirectTo path which includes workspace-aware routing
         let redirectUrl = "/speedrun"; // Default fallback
         
         // DEBUG: Log the full authentication result
@@ -198,9 +198,14 @@ export default function SignInPage() {
         console.log("🔍 [SIGN-IN PAGE] Session user:", result.session?.user);
         console.log("🔍 [SIGN-IN PAGE] Active workspace ID:", result.session?.user?.activeWorkspaceId);
         console.log("🔍 [SIGN-IN PAGE] User workspaces:", result.session?.user?.workspaces);
+        console.log("🔍 [SIGN-IN PAGE] Server redirectTo:", result.redirectTo);
+        console.log("🔍 [SIGN-IN PAGE] Platform route:", result.platformRoute);
         
-        // Check if user has a last active workspace
-        if (result.session?.user?.activeWorkspaceId) {
+        // 🆕 CRITICAL FIX: Use server-provided redirectTo path (workspace-aware)
+        if (result.redirectTo) {
+          redirectUrl = result.redirectTo;
+          console.log("🎯 [SIGN-IN PAGE] Using server-provided redirectTo:", redirectUrl);
+        } else if (result.session?.user?.activeWorkspaceId) {
           const activeWorkspaceId = result.session.user.activeWorkspaceId;
           console.log("🎯 [SIGN-IN PAGE] User has active workspace:", activeWorkspaceId);
           
@@ -211,7 +216,7 @@ export default function SignInPage() {
           
           if (activeWorkspace) {
             console.log("✅ [SIGN-IN PAGE] Found active workspace:", activeWorkspace.name);
-            // Redirect directly to the main app with the active workspace
+            // Fall back to generic path if no server redirect
             redirectUrl = "/speedrun";
             console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
           } else {
