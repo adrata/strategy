@@ -15,11 +15,24 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      // Simulate API call for password reset
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send reset email');
+      }
+
       setIsSubmitted(true);
     } catch (error) {
-      setError("Failed to send reset email. Please try again.");
+      console.error('Password reset error:', error);
+      setError(error instanceof Error ? error.message : "Failed to send reset email. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +105,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={isLoading || !email}
-            className="w-full bg-[#2F6FDC] text-white py-2 rounded font-semibold hover:bg-[#4374DE] transition disabled:cursor-not-allowed disabled:bg-[#2F6FDC] disabled:opacity-100"
+            className="w-full bg-[#2F6FDC] text-white py-2 rounded font-semibold hover:bg-[#4374DE] transition disabled:cursor-not-allowed disabled:bg-[#2F6FDC] disabled:opacity-100 cursor-pointer"
           >
             {isLoading ? "Sending..." : "Send Reset Link"}
           </button>
