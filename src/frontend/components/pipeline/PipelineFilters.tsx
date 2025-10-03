@@ -607,9 +607,9 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     onClick={() => {
                       setIsDropdownOpen(false);
                     }}
-                    className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                    className="text-xs text-gray-500 hover:text-gray-700"
                   >
-                    ×
+                    Close
                   </button>
                 </div>
               </div>
@@ -722,9 +722,9 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                             onClick={() => {
                               setIsSortDropdownOpen(false);
                             }}
-                            className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                            className="text-xs text-gray-500 hover:text-gray-700"
                           >
-                            ×
+                            Close
                           </button>
                         </div>
                       </div>
@@ -815,9 +815,9 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                             onClick={() => {
                               setIsColumnsDropdownOpen(false);
                             }}
-                            className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                            className="text-xs text-gray-500 hover:text-gray-700"
                           >
-                            ×
+                            Close
                           </button>
                         </div>
                       </div>
