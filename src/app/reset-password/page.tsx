@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useUnifiedAuth } from "@/platform/auth-unified";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -11,7 +12,10 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [token, setToken] = useState<string | null>(null);
+  const [resetUser, setResetUser] = useState<any>(null);
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { signIn } = useUnifiedAuth();
 
   useEffect(() => {
     const tokenParam = searchParams.get('token');
@@ -54,7 +58,26 @@ export default function ResetPasswordPage() {
         throw new Error(data.error || 'Failed to reset password');
       }
 
+      // Store user info for auto-login
+      setResetUser(data.user);
       setIsSubmitted(true);
+
+      // Auto-log them in after successful password reset
+      try {
+        console.log("🔄 [RESET PASSWORD] Auto-logging in user:", data.user.email);
+        const loginResult = await signIn(data.user.email, password);
+        
+        if (loginResult.success) {
+          console.log("✅ [RESET PASSWORD] Auto-login successful, redirecting to app");
+          // Redirect to the app (they'll be taken to their workspace)
+          router.push('/workspaces');
+        } else {
+          console.log("⚠️ [RESET PASSWORD] Auto-login failed, user will need to sign in manually");
+        }
+      } catch (loginError) {
+        console.error("❌ [RESET PASSWORD] Auto-login error:", loginError);
+        // User will need to sign in manually, but password was reset successfully
+      }
     } catch (error) {
       console.error('Password reset error:', error);
       setError(error instanceof Error ? error.message : "Failed to reset password. Please try again.");
@@ -77,15 +100,23 @@ export default function ResetPasswordPage() {
             </div>
             
             <p className="text-sm text-gray-600 mb-6">
-              You can now sign in with your new password.
+              {resetUser ? `Welcome back, ${resetUser.name}! You're being logged in automatically...` : 'You can now sign in with your new password.'}
             </p>
             
-            <Link
-              href="/sign-in"
-              className="inline-flex items-center gap-2 text-black font-medium hover:text-gray-800 transition-colors"
-            >
-              ← Back to Sign In
-            </Link>
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/workspaces"
+                className="inline-flex items-center justify-center gap-2 bg-[#2F6FDC] text-white px-4 py-2 rounded font-medium hover:bg-[#4374DE] transition-colors"
+              >
+                Go to Workspaces
+              </Link>
+              <Link
+                href="/sign-in"
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors text-sm"
+              >
+                ← Back to Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </div>
