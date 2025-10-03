@@ -1,18 +1,17 @@
-"use client";
-
+import { Metadata } from "next";
 import { PipelineView } from "@/frontend/components/pipeline/PipelineView";
 import { WorkspacePipelineWrapper } from "../WorkspacePipelineWrapper";
-import { ErrorBoundary } from "@/frontend/components/ErrorBoundary";
+
+export const metadata: Metadata = {
+  title: "Sellers",
+  description: "Sellers management",
+};
 
 export default function WorkspaceSellersPage() {
-  console.log(`🧪🧪🧪 [SELLERS PAGE] Page executing for SELLERS section`);
-  
-  // Use PipelineView with error boundary
+  // Use the original PipelineView component with proper providers
   return (
     <WorkspacePipelineWrapper>
-      <ErrorBoundary>
-        <PipelineView section="sellers" />
-      </ErrorBoundary>
+      <PipelineView section="sellers" />
     </WorkspacePipelineWrapper>
   );
 }

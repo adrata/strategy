@@ -8,11 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProspectsPage() {
+  // Use the original PipelineView component with proper providers
   return (
-    <div className="h-full">
-      <WorkspacePipelineWrapper>
-        <PipelineView section="prospects" />
-      </WorkspacePipelineWrapper>
-    </div>
+    <WorkspacePipelineWrapper>
+      <PipelineView section="prospects" />
+    </WorkspacePipelineWrapper>
   );
 }
