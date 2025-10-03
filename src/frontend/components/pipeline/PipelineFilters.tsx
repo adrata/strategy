@@ -670,41 +670,84 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         )}
       </div>
 
-      {/* Sort Dropdown */}
-      <div className="relative min-w-32" ref={sortDropdownRef}>
-        <button
-          type="button"
-          onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-          className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
-        >
-          <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
-          <span className="block truncate text-gray-900">
-            Sort
-          </span>
-        </button>
+              {/* Sort Dropdown */}
+              <div className="relative min-w-32" ref={sortDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                  className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+                >
+                  <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
+                  <span className="block truncate text-gray-900">
+                    Sort
+                  </span>
+                </button>
 
-        {/* Sort Dropdown Menu */}
-        {isSortDropdownOpen && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto min-w-[180px]">
-            {sortOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleSortSelect(option.value)}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors flex items-center gap-2"
-              >
-                <input
-                  type="checkbox"
-                  checked={option['value'] === sortBy}
-                  onChange={() => {}} // Handled by parent click
-                  className="rounded border-gray-300 text-red-600 focus:ring-red-500 accent-red-600"
-                />
-                <span>{option.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+                {/* Sort Dropdown Menu - Match Filter styling */}
+                {isSortDropdownOpen && (
+                  <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-medium text-gray-900">Sort By</h3>
+                        <button
+                          onClick={() => {
+                            setSortBy('rank');
+                            onSortChange?.('rank');
+                            setIsSortDropdownOpen(false);
+                          }}
+                          className="text-xs text-gray-500 hover:text-gray-700"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                      
+                      {/* Sort Options */}
+                      <div className="space-y-2">
+                        {sortOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => handleSortSelect(option.value)}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
+                              option.value === sortBy 
+                                ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              checked={option.value === sortBy}
+                              onChange={() => {}} // Handled by parent click
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
+                            />
+                            <span>{option.label}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Apply/Cancel Buttons */}
+                      <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end mt-4">
+                        <button
+                          onClick={() => {
+                            setSortBy('rank');
+                            onSortChange?.('rank');
+                            setIsSortDropdownOpen(false);
+                          }}
+                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          onClick={() => setIsSortDropdownOpen(false)}
+                          className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
       {/* Columns Dropdown - moved to last position */}
       <div className="relative min-w-32" ref={columnsDropdownRef}>
