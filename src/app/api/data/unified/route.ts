@@ -20,6 +20,8 @@ import { ulid } from 'ulid';
 
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getOptimizedPagination, applyPagination, calculatePaginationMetadata } from '@/platform/services/database/pagination';
+import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
   if (!companyName) return false;
@@ -823,10 +825,14 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   console.log(`🔍 [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
   
   try {
-    // Use dynamic field selection based on record type to avoid PostgreSQL rank function conflicts
+    // 🚀 PERFORMANCE: Track individual record query performance
+    const startTime = Date.now();
+    
+    // 🚀 PERFORMANCE: Use optimized field selection for individual records
     let selectFields: any = {};
     
     if (type === 'people') {
+      // 🚀 PERFORMANCE: Only select essential fields for people records
       selectFields = {
         id: true,
         firstName: true,
@@ -837,36 +843,29 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
         jobTitle: true,
         phone: true,
         linkedinUrl: true,
-        customFields: true,
         tags: true,
         status: true,
         createdAt: true,
         updatedAt: true,
         department: true,
         seniority: true,
-        mobilePhone: true,
-        workPhone: true,
         city: true,
         state: true,
         country: true,
-        address: true,
-        industry: true,
-        notes: true,
-        description: true
+        notes: true
+        // 🚫 REMOVED: customFields, mobilePhone, workPhone, address, industry, description (large data)
       };
     } else if (type === 'companies') {
+      // 🚀 PERFORMANCE: Only select essential fields for company records
       selectFields = {
         id: true,
         name: true,
         industry: true,
         website: true,
-        description: true,
         size: true,
-        address: true,
         city: true,
         state: true,
         country: true,
-        customFields: true,
         updatedAt: true,
         lastAction: true,
         lastActionDate: true,
@@ -875,62 +874,17 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
         actionStatus: true,
         assignedUserId: true,
         rank: true,
-        // CoreSignal Enrichment Fields - Basic Information
-        legalName: true,
-        tradingName: true,
-        localName: true,
-        email: true,
-        phone: true,
-        fax: true,
-        postalCode: true,
-        // CoreSignal Enrichment Fields - Business Information
-        sector: true,
+        // Essential enrichment fields only
         employeeCount: true,
         foundedYear: true,
-        currency: true,
-        // CoreSignal Enrichment Fields - Intelligence Overview
         linkedinUrl: true,
-        linkedinFollowers: true,
-        activeJobPostings: true,
-        // CoreSignal Enrichment Fields - Industry Classification
-        naicsCodes: true,
-        sicCodes: true,
-        // CoreSignal Enrichment Fields - Social Media
-        facebookUrl: true,
-        twitterUrl: true,
-        instagramUrl: true,
-        youtubeUrl: true,
-        githubUrl: true,
-        // CoreSignal Enrichment Fields - Business Intelligence
         technologiesUsed: true,
-        competitors: true,
         tags: true,
-        // CoreSignal Enrichment Fields - Company Status
         isPublic: true,
         stockSymbol: true,
         logoUrl: true,
-        // CoreSignal Enrichment Fields - Domain and Website
-        domain: true,
-        // CoreSignal Enrichment Fields - Headquarters Location
-        hqLocation: true,
-        hqFullAddress: true,
-        hqCity: true,
-        hqState: true,
-        hqStreet: true,
-        hqZipcode: true,
-        // CoreSignal Enrichment Fields - Social Media Followers
-        twitterFollowers: true,
-        owlerFollowers: true,
-        // CoreSignal Enrichment Fields - Company Updates and Activity
-        companyUpdates: true,
-        numTechnologiesUsed: true,
-        // CoreSignal Enrichment Fields - Enhanced Descriptions
-        descriptionEnriched: true,
-        descriptionMetadataRaw: true,
-        // CoreSignal Enrichment Fields - Regional Information
-        hqRegion: true,
-        hqCountryIso2: true,
-        hqCountryIso3: true
+        domain: true
+        // 🚫 REMOVED: 40+ enrichment fields (customFields, description, address, etc.) for better performance
       };
     } else if (type === 'leads' || type === 'prospects') {
       selectFields = {
@@ -957,10 +911,17 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       };
     }
 
-    const record = await model.findFirst({
-      where: whereClause,
-      ...(Object.keys(includeClause).length > 0 ? includeClause : { select: selectFields })
-    });
+    // 🚀 PERFORMANCE: Execute query with monitoring
+    const record = await trackQueryPerformance(
+      'findFirst',
+      type,
+      workspaceId,
+      userId,
+      () => model.findFirst({
+        where: whereClause,
+        ...(Object.keys(includeClause).length > 0 ? includeClause : { select: selectFields })
+      })
+    );
     
     if (!record) {
       console.log(`❌ [GET SINGLE] No ${type} record found with ID: ${id}`);
@@ -1099,6 +1060,14 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       return { success: true, data: { ...transformedRecord, debug: "CORESIGNAL_TRANSFORMATION_APPLIED" } };
     }
     
+    // 🚀 PERFORMANCE: Log individual record query performance
+    const executionTime = Date.now() - startTime;
+    console.log(`⚡ [GET SINGLE] Loaded ${type} record ${id} in ${executionTime}ms`);
+    
+    if (executionTime > 1000) {
+      console.warn(`🐌 [SLOW INDIVIDUAL RECORD] ${type} record ${id} took ${executionTime}ms - consider optimization`);
+    }
+    
     return { success: true, data: { ...record, serverVersion: "UPDATED_CODE_RUNNING" } };
   } catch (dbError) {
     console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
@@ -1157,38 +1126,47 @@ async function getMultipleRecords(
     try {
       console.log(`👥 [PEOPLE API] Starting people data load for workspace: ${workspaceId}, user: ${userId}`);
       
-      // Use direct query for better performance and reliability
-      const people = await prisma.people.findMany({
-        where: {
-          workspaceId,
-          deletedAt: null
-        },
-        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: 100, // 🚀 PERFORMANCE: Reduced from 10000 to 100 for faster loading
-        select: {
-          id: true,
-          fullName: true,
-          firstName: true,
-          lastName: true,
-          company: true,
-          companyId: true,
-          jobTitle: true,
-          email: true,
-          phone: true,
-          linkedinUrl: true,
-          customFields: true,
-          tags: true,
-          updatedAt: true,
-          createdAt: true,
-          rank: true,
-          lastAction: true,
-          lastActionDate: true,
-          nextAction: true,
-          nextActionDate: true,
-          assignedUserId: true,
-          workspaceId: true
-        }
-      });
+      // 🚀 PERFORMANCE: Use optimized pagination
+      const pagination = getOptimizedPagination('people', pagination);
+      
+      // Use direct query for better performance and reliability with monitoring
+      const people = await trackQueryPerformance(
+        'findMany',
+        'people',
+        workspaceId,
+        userId,
+        () => prisma.people.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null
+          },
+          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          ...applyPagination({}, pagination),
+          select: {
+            id: true,
+            fullName: true,
+            firstName: true,
+            lastName: true,
+            company: true,
+            companyId: true,
+            jobTitle: true,
+            email: true,
+            phone: true,
+            linkedinUrl: true,
+            customFields: true,
+            tags: true,
+            updatedAt: true,
+            createdAt: true,
+            rank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            assignedUserId: true,
+            workspaceId: true
+          }
+        })
+      );
       
       console.log(`👥 [PEOPLE API] Direct query returned ${people.length} people`);
       
@@ -3039,19 +3017,17 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           ]
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
-        take: 500, // Load all companies for dashboard to show complete ranking (1-425)
+        take: 100, // 🚀 PERFORMANCE: Reduced from 500 to 100 for faster loading
         select: { 
+          // 🚀 PERFORMANCE: Only select essential fields for dashboard
           id: true, 
           name: true, 
           industry: true, 
           website: true,
-          description: true,
           size: true,
-          address: true,
           city: true,
           state: true,
           country: true,
-          customFields: true,
           updatedAt: true,
           lastAction: true,
           lastActionDate: true,
@@ -3060,6 +3036,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           actionStatus: true,
           assignedUserId: true,
           rank: true
+          // 🚫 REMOVED: description, address, customFields (large data) for better performance
         }
       }).then(companies => {
         // Companies loaded successfully
@@ -3128,19 +3105,18 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-        take: 10000, // Increased limit to ensure we get all people
+        take: 100, // 🚀 PERFORMANCE: Reduced from 10000 to 100 for faster loading
         select: { 
+          // 🚀 PERFORMANCE: Only select essential fields for dashboard
           id: true, 
           fullName: true, 
           firstName: true, 
           lastName: true, 
-          company: true,
           companyId: true,
           jobTitle: true,
           email: true,
           phone: true,
           linkedinUrl: true,
-          customFields: true,
           tags: true,
           updatedAt: true,
           createdAt: true,
@@ -3151,6 +3127,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           nextActionDate: true,
           assignedUserId: true,
           workspaceId: true
+          // 🚫 REMOVED: customFields (large JSON data) for better performance
         }
       }).then(people => {
         // Add basic ranking and formatting
