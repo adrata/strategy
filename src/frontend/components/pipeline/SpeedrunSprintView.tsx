@@ -416,7 +416,7 @@ export function SpeedrunSprintView() {
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
             </div>
-            <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{data.length}/10</span>
+            <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{filteredData.length}/10</span>
           </div>
           {totalSprints > 1 && (
             <div className="text-xs text-gray-500">
@@ -438,7 +438,7 @@ export function SpeedrunSprintView() {
           </div>
         )}
         
-        {data.map((record: any, index: number) => {
+        {filteredData.map((record: any, index: number) => {
           const isSelected = selectedRecord?.id === record.id;
           const displayName = record.fullName || 
                              (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
