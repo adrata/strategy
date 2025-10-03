@@ -1674,7 +1674,12 @@ export function UniversalRecordTemplate({
                 recordType: recordType,
                 // Additional debugging
                 previousButtonDisabled: !recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1,
-                nextButtonDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1
+                nextButtonDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1,
+                // Debug the actual disabled conditions
+                prevDisabledCondition: `!${recordIndex} || ${recordIndex} <= 1 || !${totalRecords}`,
+                nextDisabledCondition: `!${recordIndex} || !${totalRecords} || ${recordIndex} >= ${totalRecords}`,
+                prevDisabledResult: !recordIndex || recordIndex <= 1 || !totalRecords,
+                nextDisabledResult: !recordIndex || !totalRecords || recordIndex >= totalRecords
               });
               
               return (
