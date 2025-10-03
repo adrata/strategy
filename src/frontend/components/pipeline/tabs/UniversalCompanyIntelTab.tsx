@@ -46,20 +46,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
       // Check for cached intelligence first
       const cachedIntelligence = record?.customFields?.intelligence;
       if (cachedIntelligence) {
+        console.log('✅ Using cached intelligence data');
         setIntelligence(cachedIntelligence);
         setLoading(false);
         return;
       }
 
-      // Generate new intelligence with timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-      const response = await fetch(`/api/companies/${record.id}/intelligence`, {
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
+      // Generate new intelligence without timeout
+      const response = await fetch(`/api/companies/${record.id}/intelligence`);
       const data = await response.json();
 
       if (data.success) {
@@ -69,11 +63,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
       }
     } catch (err) {
       console.error('Error loading intelligence:', err);
-      if (err.name === 'AbortError') {
-        setError('Intelligence generation timed out. Please try again.');
-      } else {
-        setError('Failed to load intelligence');
-      }
+      setError('Failed to load intelligence');
     } finally {
       setLoading(false);
     }
@@ -119,20 +109,8 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
     return (
       <div className="p-6">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Generating company intelligence...</p>
-          <p className="mt-1 text-sm text-gray-500">This may take up to 30 seconds</p>
-          <div className="mt-4">
-            <button
-              onClick={() => {
-                setLoading(false);
-                setError('Intelligence generation cancelled by user');
-              }}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-            >
-              Cancel
-            </button>
-          </div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading intelligence...</p>
         </div>
       </div>
     );

@@ -346,9 +346,10 @@ export function PipelineHeader({
   // Handle button action
   const handleAction = useCallback(() => {
     if (section === 'speedrun') {
-      console.log('Starting speedrun...');
-      // Use workspace-aware navigation
-      navigateToPipeline('speedrun/start');
+      console.log('Opening add person popup...');
+      // Open add person popup for speedrun section
+      setSelectedRecord(null);
+      setShowAddActionModal(true);
     } else {
       console.log(`Creating new ${section.slice(0, -1)}`);
       onAddRecord?.();
@@ -433,7 +434,7 @@ export function PipelineHeader({
         return {
           title: 'Speedrun',
           subtitle: 'Win more, faster',
-          actionButton: 'Add Person',
+          actionButton: 'Add Action',
           secondaryActionButton: 'Start Speedrun',
           showStartSpeedrun: true
         };

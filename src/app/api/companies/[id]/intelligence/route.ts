@@ -238,10 +238,10 @@ async function generateSophisticatedIntelligence(company: any, coresignalData: C
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     console.log(`🧠 [COMPANY INTELLIGENCE API] Generating intelligence for company ID: ${id}`);
 
@@ -367,10 +367,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { forceRegenerate } = await request.json();
 
     console.log(`🔄 [COMPANY INTELLIGENCE API] Force regenerating intelligence for company ID: ${id}`);
