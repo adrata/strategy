@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/platform/prisma";
 import { sendEmail } from "@/platform/services/ResendService";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,12 +40,21 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ [FORGOT PASSWORD] User found:", user.email);
 
-    // Generate reset token (in production, use a proper JWT or crypto token)
-    const resetToken = `reset_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    // Generate cryptographically secure reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
     
-    // Store reset token in database (you might want to add a resetTokens table)
-    // For now, we'll just log it - in production, store it securely
-    console.log("🔐 [FORGOT PASSWORD] Generated reset token for:", user.email);
+    // Store reset token in database with expiration
+    await prisma.resetTokens.create({
+      data: {
+        token: resetToken,
+        userId: user.id,
+        expiresAt: expiresAt,
+        used: false,
+      },
+    });
+
+    console.log("🔐 [FORGOT PASSWORD] Generated secure reset token for:", user.email);
 
     // Create reset link
     const resetLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;

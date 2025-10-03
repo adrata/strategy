@@ -22,59 +22,60 @@ export async function POST(request: NextRequest) {
 
     console.log("🔐 [RESET PASSWORD] Password reset attempt with token:", token);
 
-    // For now, we'll extract the email from the token (since we're using a simple token format)
-    // In production, you'd have a proper resetTokens table with expiration
-    const tokenParts = token.split('_');
-    if (tokenParts.length < 3 || !tokenParts[0] === 'reset') {
-      return NextResponse.json(
-        { success: false, error: "Invalid reset token" },
-        { status: 400 }
-      );
-    }
-
-    // For development, we'll find the user by looking for recent password reset requests
-    // In production, you'd have a proper resetTokens table
-    console.log("🔍 [RESET PASSWORD] Looking up user for token...");
-
-    // For now, we'll just find any active user (in production, you'd validate the token properly)
-    const user = await prisma.users.findFirst({
+    // Find and validate the reset token
+    const resetTokenRecord = await prisma.resetTokens.findFirst({
       where: {
-        isActive: true,
+        token: token,
+        used: false,
+        expiresAt: {
+          gt: new Date(), // Token must not be expired
+        },
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
       },
     });
 
-    if (!user) {
+    if (!resetTokenRecord) {
+      console.log("❌ [RESET PASSWORD] Invalid or expired token");
       return NextResponse.json(
         { success: false, error: "Invalid or expired reset token" },
         { status: 400 }
       );
     }
 
-    console.log("✅ [RESET PASSWORD] User found:", user.email);
+    console.log("✅ [RESET PASSWORD] Valid token found for user:", resetTokenRecord.user.email);
 
     // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 12);
     
     // Update the user's password in the database
     await prisma.users.update({
-      where: { id: user.id },
+      where: { id: resetTokenRecord.user.id },
       data: { password: hashedPassword }
     });
+
+    // Mark the token as used to prevent reuse
+    await prisma.resetTokens.update({
+      where: { id: resetTokenRecord.id },
+      data: { used: true }
+    });
     
-    console.log("✅ [RESET PASSWORD] Password updated successfully for:", user.email);
+    console.log("✅ [RESET PASSWORD] Password updated successfully for:", resetTokenRecord.user.email);
 
     return NextResponse.json({
       success: true,
       message: "Password has been reset successfully.",
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
+        id: resetTokenRecord.user.id,
+        email: resetTokenRecord.user.email,
+        name: resetTokenRecord.user.name,
       },
     });
 

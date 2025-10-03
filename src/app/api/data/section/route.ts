@@ -15,7 +15,6 @@ import jwt from 'jsonwebtoken';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
 const SECTION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
-const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes for speedrun (longer cache)
 const sectionCache = new Map<string, { data: any; timestamp: number }>();
 
 // 🚫 FILTER: Exclude user's own company from all lists
@@ -63,8 +62,19 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
       }
     }
     
-    // This should not be reached if secure authentication is working properly
-    throw new Error('Authentication required - secure context not available');
+    // Fallback to query parameters
+    const url = new URL(request.url);
+    const workspaceId = url.searchParams.get('workspaceId');
+    const userId = url.searchParams.get('userId');
+    
+    if (workspaceId && userId) {
+      return {
+        workspaceId,
+        userId
+      };
+    }
+    
+    throw new Error('Missing workspaceId or userId');
   } catch (error) {
     console.error('❌ [WORKSPACE CONTEXT] Error:', error);
     throw error;
@@ -74,48 +84,21 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
-  // 1. Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
-      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
-    }
-
-    const { searchParams } = new URL(request.url);
-    
-    // Use authenticated user's workspace and ID
-    const workspaceId = context.workspaceId;
-    const userId = context.userId;
-
-    try {
+  try {
+    const context = await getOptimizedWorkspaceContext(request);
+    const { workspaceId, userId } = context;
     
     const url = new URL(request.url);
     const section = url.searchParams.get('section') || 'speedrun';
     const limit = parseInt(url.searchParams.get('limit') || '30');
     
-    // 🚀 PERFORMANCE: Check cache first with section-specific TTL
+    // 🚀 PERFORMANCE: Check cache first
     const cacheKey = `section-${section}-${workspaceId}-${userId}-${limit}`;
     const cached = sectionCache.get(cacheKey);
-    const cacheTTL = section === 'speedrun' ? SPEEDRUN_CACHE_TTL : SECTION_CACHE_TTL;
     
-    // 🚀 FIXED: Removed cache bypass - issue was restrictive assignedUserId filter
-    
-    if (cached && Date.now() - cached.timestamp < cacheTTL) {
+    if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
       console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
-      return createSuccessResponse(cached.data, {
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-        role: context.role,
-        responseTime: Date.now() - startTime,
-        fromCache: true
-      });
+      return createSuccessResponse(data, meta);
     }
     
     console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
@@ -125,50 +108,27 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // 🚀 OPTIMIZED: Load speedrun data with minimal fields and optimized query
-        console.log(`🔍 [SPEEDRUN DEBUG] Query parameters:`, {
-          workspaceId,
-          userId,
-          hasWorkspaceId: !!workspaceId,
-          hasUserId: !!userId
-        });
-        
-        // 🚀 FIXED: Removed debugging queries - issue was restrictive assignedUserId filter
-        
+        // Load speedrun data (people with company relationships who are buyer group members) - FIXED: Use company ranking
         const people = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null,
-            companyId: { not: null }
-            // 🚀 FIXED: Removed restrictive assignedUserId filter for speedrun
-            // This was filtering out people assigned to other users
+            companyId: { not: null },
+            customFields: {
+              path: ['isBuyerGroupMember'],
+              equals: true
+            },
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
           },
           orderBy: [
             { company: { rank: 'asc' } }, // Use company rank first
-            { rank: 'asc' },              // Then by person rank within company
-            { updatedAt: 'desc' }         // Then by person update time
+            { updatedAt: 'desc' } // Then by person update time
           ],
-          take: 30, // 🚀 OPTIMIZED: Reduce from 200 to 30 for faster loading
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            fullName: true,
-            email: true,
-            jobTitle: true,
-            phone: true,
-            linkedinUrl: true,
-            status: true,
-            lastAction: true,
-            lastActionDate: true,
-            nextAction: true,
-            nextActionDate: true,
-            assignedUserId: true,
-            workspaceId: true,
-            createdAt: true,
-            updatedAt: true,
-            tags: true,
-            customFields: true,
+          take: 200,
+          include: {
             company: {
               select: {
                 id: true,
@@ -176,63 +136,20 @@ export async function GET(request: NextRequest) {
                 industry: true,
                 vertical: true,
                 size: true,
-                rank: true
+                rank: true // Include company rank for proper ordering
               }
             }
           }
         });
         
-        console.log(`🔍 [SPEEDRUN DEBUG] Database query result:`, {
-          totalPeople: people.length,
-          samplePeople: people.slice(0, 5).map(p => ({
-            id: p.id,
-            name: p.fullName,
-            company: p.company?.name,
-            companyRank: p.company?.rank,
-            personRank: p.rank,
-            assignedUserId: p.assignedUserId
-          }))
-        });
-        
         // Transform to speedrun format with proper action structure
-        console.log(`🔍 [SPEEDRUN DEBUG] Raw people data:`, {
-          totalPeople: people.length,
-          samplePeople: people.slice(0, 3).map(p => ({
-            id: p.id,
-            name: p.fullName,
-            company: p.company?.name
-          }))
-        });
-        
-        // 🚫 FILTER: Exclude user's own company from all lists
-        function shouldExcludeCompany(companyName: string | null | undefined): boolean {
-          if (!companyName) return false;
-          
-          const companyLower = companyName.toLowerCase();
-          const excludePatterns = [
-            'top engineering plus',
-            'top engineers plus',
-            'top engineering',
-            'top engineers',
-            'top engineers plus, pllc', // 🎯 FIX: Match exact company name
-            'adrata',
-            'adrata engineering'
-          ];
-          
-          return excludePatterns.some(pattern => companyLower.includes(pattern));
-        }
-        
+        // 🚫 FILTER: Exclude user's own company from speedrun and ensure buyer group membership
         const filteredPeople = people.filter(person => {
-          return !shouldExcludeCompany(person.company?.name);
-        });
-        
-        console.log(`🔍 [SPEEDRUN DEBUG] After company filtering:`, {
-          totalPeople: filteredPeople.length,
-          samplePeople: filteredPeople.slice(0, 3).map(p => ({
-            id: p.id,
-            name: p.fullName,
-            company: p.company?.name
-          }))
+          // Check if person is in buyer group (fallback filter)
+          const isBuyerGroupMember = person.customFields?.isBuyerGroupMember === true;
+          const shouldExclude = shouldExcludeCompany(person.company?.name);
+          
+          return isBuyerGroupMember && !shouldExclude;
         });
         
         // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
@@ -244,15 +161,6 @@ export async function GET(request: NextRequest) {
           }
           seenSpeedrunNames.add(fullName);
           return true;
-        });
-        
-        console.log(`🔍 [SPEEDRUN DEBUG] After deduplication:`, {
-          totalPeople: deduplicatedPeople.length,
-          samplePeople: deduplicatedPeople.slice(0, 3).map(p => ({
-            id: p.id,
-            name: p.fullName,
-            company: p.company?.name
-          }))
         });
         
         sectionData = deduplicatedPeople.slice(0, limit).map((person, index) => {
@@ -299,10 +207,9 @@ export async function GET(request: NextRequest) {
 
           return {
             id: person.id,
-            rank: person.rank || (index + 1), // 🎯 PRESERVE DATABASE RANK: Use actual person rank from database
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
             company: safeString(person.company?.name || 'Unknown Company', 200),
-            companyRank: person.company?.rank || 0, // 🎯 ADD: Include company rank for proper grouping
             title: safeString(person.jobTitle || 'Unknown Title', 300),
             role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
             stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
@@ -649,11 +556,7 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null
             },
-            orderBy: [
-              { company: { rank: 'asc' } }, // Use company rank first (same as speedrun)
-              { rank: 'asc' },              // Then by person rank within company
-              { updatedAt: 'desc' }         // Then by person update time
-            ],
+            orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
             select: {
               id: true,
@@ -677,12 +580,11 @@ export async function GET(request: NextRequest) {
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
-              // Include company relationship to get company name and rank
+              // Include company relationship to get company name
               company: {
                 select: {
                   id: true,
-                  name: true,
-                  rank: true // Include company rank for proper ordering
+                  name: true
                 }
               }
               // Remove notes and bio from select to avoid string length issues
@@ -859,19 +761,13 @@ export async function GET(request: NextRequest) {
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
     
-    return createSuccessResponse(result, {
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-      role: context.role,
-      responseTime: Date.now() - startTime
-    });
+    return createSuccessResponse(data, meta);
     
   } catch (error) {
     console.error('❌ [SECTION API] Error:', error);
-    return createErrorResponse(
-      'Failed to process section request',
-      'SECTION_ERROR',
-      500
-    );
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

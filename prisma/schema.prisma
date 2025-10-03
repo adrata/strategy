@@ -1689,11 +1689,28 @@ model users {
   version                 Int         @default(1)
   username                String?     @unique @db.VarChar(50)
   workspaces              workspaces? @relation(fields: [activeWorkspaceId], references: [id])
+  resetTokens             resetTokens[]
 
   @@index([activeWorkspaceId], map: "idx_users_active_workspace")
   @@index([createdBy], map: "idx_users_created_by")
   @@index([updatedBy], map: "idx_users_updated_by")
   @@index([username], map: "idx_users_username")
+}
+
+model resetTokens {
+  id        String   @id @default(ulid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([used])
 }
 
 model webhook_subscriptions {
