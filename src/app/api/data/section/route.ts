@@ -271,6 +271,7 @@ export async function GET(request: NextRequest) {
             lastName: true,
             fullName: true,
             email: true,
+            jobTitle: true,
             company: {
               select: {
                 id: true,
@@ -332,6 +333,7 @@ export async function GET(request: NextRequest) {
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: person.fullName || `${person.firstName} ${person.lastName}`,
             company: coresignalCompany || person.company?.name || '-',
+            title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
             lastAction: person.lastAction || 'No action taken',
@@ -376,6 +378,7 @@ export async function GET(request: NextRequest) {
             lastName: true,
             fullName: true,
             email: true,
+            jobTitle: true,
             company: {
               select: {
                 id: true,
@@ -437,6 +440,7 @@ export async function GET(request: NextRequest) {
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
             name: person.fullName || `${person.firstName} ${person.lastName}`,
             company: coresignalCompany || person.company?.name || '-',
+            title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
             lastAction: person.lastAction || 'No action taken',
