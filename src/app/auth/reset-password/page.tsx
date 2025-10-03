@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
           <div className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Set New Password
@@ -156,7 +156,7 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={isLoading || !token}
-            className="w-full bg-[#2F6FDC] text-white py-2 rounded font-semibold hover:bg-[#4374DE] transition disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full bg-[#2F6FDC] text-white py-2 rounded font-semibold hover:bg-[#4374DE] active:bg-[#4374DE] transition disabled:cursor-not-allowed disabled:bg-[#4374DE]"
           >
             {isLoading ? "Updating..." : "Update Password"}
           </button>
