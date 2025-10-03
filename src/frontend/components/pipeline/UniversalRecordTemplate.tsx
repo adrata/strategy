@@ -1661,11 +1661,11 @@ export function UniversalRecordTemplate({
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1
+                      !recordIndex || recordIndex <= 1 || !totalRecords
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1}
+                    disabled={!recordIndex || recordIndex <= 1 || !totalRecords}
                     title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Previous record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1687,11 +1687,11 @@ export function UniversalRecordTemplate({
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1
+                      !recordIndex || !totalRecords || recordIndex >= totalRecords
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1}
+                    disabled={!recordIndex || !totalRecords || recordIndex >= totalRecords}
                     title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Next record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
