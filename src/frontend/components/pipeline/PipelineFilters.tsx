@@ -449,7 +449,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         // If all are selected, deselect all but keep at least one
         newVisibleColumns = ['rank'];
       } else {
-        // Select all columns
+        // Select all columns in their original order
         newVisibleColumns = allColumnValues;
       }
     } else {
@@ -457,8 +457,17 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         // Remove column (but ensure at least one column remains)
         newVisibleColumns = visibleColumns.length > 1 ? visibleColumns.filter(col => col !== columnValue) : visibleColumns;
       } else {
-        // Add column
-        newVisibleColumns = [...visibleColumns, columnValue];
+        // Add column in its original position based on columnOptions order
+        const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
+        const currentColumns = [...visibleColumns];
+        const columnIndex = allColumnValues.indexOf(columnValue);
+        
+        // Insert the new column at its original position
+        const newColumns = [...currentColumns];
+        newColumns.splice(columnIndex, 0, columnValue);
+        
+        // Remove duplicates and maintain order
+        newVisibleColumns = [...new Set(newColumns)];
       }
     }
     
