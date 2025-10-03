@@ -97,7 +97,10 @@ export async function GET(request: NextRequest) {
     const cached = sectionCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
-      console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
+      // Only log in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
+      }
       return createSuccessResponse(cached.data, {
         userId: context.userId,
         workspaceId: context.workspaceId,
@@ -106,7 +109,10 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🚀 [SECTION API] Loading ${section} data for workspace: ${workspaceId}, user: ${userId}`);
+    }
     
     let sectionData: any[] = [];
     

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 import { prisma } from '@/platform/database/prisma-client';
 
+// 🚀 PERFORMANCE: Request deduplication to prevent multiple calls
+const pendingRequests = new Map<string, Promise<any>>();
+
 export async function POST(request: NextRequest) {
   try {
     const { workspaceId } = await request.json();
@@ -10,10 +13,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing workspaceId' }, { status: 400 });
     }
 
-    // Query database for workspace configuration
-    // Import prisma directly from @/platform/prisma
+    // 🚀 PERFORMANCE: Check for existing request to prevent duplicates
+    const requestKey = `workspace-config-${workspaceId}`;
+    const existingRequest = pendingRequests.get(requestKey);
     
-    const workspace = await prisma.workspaces.findUnique({
+    if (existingRequest) {
+      console.log(`⚡ [WORKSPACE CONFIG] Deduplicating request for workspace: ${workspaceId}`);
+      return await existingRequest;
+    }
+
+    // 🚀 PERFORMANCE: Create promise for request deduplication
+    const requestPromise = (async () => {
+      // Query database for workspace configuration
+      // Import prisma directly from @/platform/prisma
+      
+      const workspace = await prisma.workspaces.findUnique({
       where: { id: workspaceId },
       select: {
         id: true,
@@ -47,20 +61,32 @@ export async function POST(request: NextRequest) {
       secondaryColor = '#3b82f6'; // Blue as secondary
     }
 
-    return NextResponse.json({
-      id: workspace.id,
-      name: workspace.name,
-      timezone: 'UTC', // Default since field doesn't exist in schema
-      currency: 'USD', // Default since field doesn't exist in schema
-      dateFormat: 'MM/DD/YYYY', // Default since field doesn't exist in schema
-      defaultPipelineView: 'kanban', // Default value since field doesn't exist in schema
-      settings: {}, // Default empty object since field doesn't exist in schema
-      branding: {
-        logoUrl: '/favicon.ico', // Standard favicon
-        primaryColor: primaryColor,
-        secondaryColor: secondaryColor
-      }
-    });
+      return NextResponse.json({
+        id: workspace.id,
+        name: workspace.name,
+        timezone: 'UTC', // Default since field doesn't exist in schema
+        currency: 'USD', // Default since field doesn't exist in schema
+        dateFormat: 'MM/DD/YYYY', // Default since field doesn't exist in schema
+        defaultPipelineView: 'kanban', // Default value since field doesn't exist in schema
+        settings: {}, // Default empty object since field doesn't exist in schema
+        branding: {
+          logoUrl: '/favicon.ico', // Standard favicon
+          primaryColor: primaryColor,
+          secondaryColor: secondaryColor
+        }
+      });
+    })();
+
+    // Add to pending requests for deduplication
+    pendingRequests.set(requestKey, requestPromise);
+    
+    try {
+      const result = await requestPromise;
+      return result;
+    } finally {
+      // Clean up pending request
+      pendingRequests.delete(requestKey);
+    }
   } catch (error) {
     console.error('Error fetching workspace config:', error);
     return NextResponse.json({ 

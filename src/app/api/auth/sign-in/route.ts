@@ -102,13 +102,16 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    console.log("🔐 [AUTH API] Sign-in request received");
-    console.log("🔐 [AUTH API] Environment check:", {
-      NODE_ENV: process['env']['NODE_ENV'],
-      DATABASE_URL: process['env']['DATABASE_URL'] ? "SET" : "NOT SET",
-      POSTGRES_URL: process['env']['POSTGRES_URL'] ? "SET" : "NOT SET",
-      hasPrisma: !!prisma
-    });
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log("🔐 [AUTH API] Sign-in request received");
+      console.log("🔐 [AUTH API] Environment check:", {
+        NODE_ENV: process['env']['NODE_ENV'],
+        DATABASE_URL: process['env']['DATABASE_URL'] ? "SET" : "NOT SET",
+        POSTGRES_URL: process['env']['POSTGRES_URL'] ? "SET" : "NOT SET",
+        hasPrisma: !!prisma
+      });
+    }
 
     // SECURITY: Check for URL-based credential attempts
     const url = new URL(request.url);
@@ -149,7 +152,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const { email, password, platform, deviceId, preferredWorkspaceId } = credentials;
 
-    console.log("🔐 [AUTH API] Authenticating user:", email);
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log("🔐 [AUTH API] Authenticating user:", email);
+    }
 
     // Database connection is handled by singleton client
 

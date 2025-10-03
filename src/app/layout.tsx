@@ -13,7 +13,7 @@ const inter = Inter({
 });
 import Script from "next/script";
 import { ThemeProvider } from "@/platform/ui/components/ThemeProvider";
-import { EnhancedDesktopErrorBoundary } from "@/platform/ui/components/EnhancedDesktopErrorBoundary";
+import { DesktopErrorBoundary } from "@/platform/ui/components/DesktopErrorBoundary";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { DynamicFavicon } from "@/platform/ui/components/DynamicFavicon";
@@ -180,11 +180,11 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
     >
               <DynamicFavicon isWebsite={isWebsite} defaultColor="#3b82f6" />
       <DynamicTitle />
-      <EnhancedDesktopErrorBoundary>
+      <DesktopErrorBoundary>
         <ThemeProvider>
           <Suspense fallback={<SuspenseLoading />}>{children}</Suspense>
         </ThemeProvider>
-      </EnhancedDesktopErrorBoundary>
+      </DesktopErrorBoundary>
     </body>
   );
 }

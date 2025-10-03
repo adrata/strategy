@@ -434,7 +434,6 @@ export function PipelineHeader({
         return {
           title: 'Speedrun',
           subtitle: 'Win more, faster',
-          actionButton: 'Add Action',
           secondaryActionButton: 'Start Speedrun',
           showStartSpeedrun: true
         };
