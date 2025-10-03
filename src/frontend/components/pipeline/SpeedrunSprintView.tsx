@@ -22,7 +22,7 @@ import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { CompleteActionModal, ActionLogData } from '@/products/speedrun/components/CompleteActionModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
-import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
+import { usePipelineData } from '@/platform/hooks/useAdrataData';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
@@ -42,30 +42,13 @@ export function SpeedrunSprintView() {
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
   const userId = user?.id;
   
-  // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
-  // const {
-  //   data: allData, 
-  //   loading, 
-  //   error, 
-  //   refresh 
-  // } = usePipelineData('speedrun', workspaceId, userId);
+  // CRITICAL FIX: Use original PipelineDataStore for reliable data loading
+  const pipelineData = usePipelineData('speedrun', workspaceId, userId);
   
-  // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
-  const fastSectionData = useFastSectionData('speedrun', workspaceId ? parseInt(workspaceId) : undefined);
-  
-  const allData = fastSectionData.data || [];
-  const loading = fastSectionData.loading || false;
-  const error = fastSectionData.error || null;
-  const refresh = fastSectionData.refresh || (() => {});
-  
-  console.log('🔍 [SPEEDRUN DEBUG] Fast section data:', {
-    workspaceId,
-    userId,
-    loading,
-    error,
-    allDataLength: allData.length,
-    allDataSample: allData.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
-  });
+  const allData = pipelineData.data || [];
+  const loading = pipelineData.isLoading || false;
+  const error = pipelineData.error || null;
+  const refresh = pipelineData.mutate || (() => {});
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
@@ -105,18 +88,12 @@ export function SpeedrunSprintView() {
   
   // Filter out snoozed records (without modifying localStorage in render)
   const filteredData = useMemo(() => {
-    console.log('🔍 [SPEEDRUN DEBUG] Data filtering:', {
-      allDataLength: allData?.length || 0,
-      allDataSample: allData?.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName })) || [],
-      windowAvailable: typeof window !== 'undefined'
-    });
-    
     if (!allData || typeof window === 'undefined') return allData || [];
     
     const snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
     const now = new Date();
     
-    const filtered = allData.filter(record => {
+    return allData.filter(record => {
       const snoozedRecord = snoozedRecords.find((snooze: any) => snooze['recordId'] === record.id);
       
       if (snoozedRecord) {
@@ -127,14 +104,6 @@ export function SpeedrunSprintView() {
       
       return true;
     });
-    
-    console.log('🔍 [SPEEDRUN DEBUG] Filtered data:', {
-      filteredLength: filtered.length,
-      filteredSample: filtered.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName })),
-      snoozedCount: snoozedRecords.length
-    });
-    
-    return filtered;
   }, [allData]);
   
   const SPRINT_SIZE = calculateOptimalSprintSize(filteredData?.length || 0);
@@ -467,14 +436,6 @@ export function SpeedrunSprintView() {
                              (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
                              record.name || 
                              'Unknown';
-          
-          console.log('🔍 [SPEEDRUN DEBUG] Rendering record:', {
-            index,
-            recordId: record.id,
-            displayName,
-            isSelected,
-            totalFilteredData: filteredData.length
-          });
           
           return (
             <div
