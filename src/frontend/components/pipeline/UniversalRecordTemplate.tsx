@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch } from '@/platform/auth-fetch';
 import { UpdateModal } from './UpdateModal';
-import { AddActionModal } from './AddActionModal';
+import { CompleteActionModal } from '@/products/speedrun/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
@@ -1091,7 +1091,8 @@ export function UniversalRecordTemplate({
         body: JSON.stringify({
           recordId: record.id,
           recordType: recordType,
-          actionType: actionData.actionType,
+          actionType: actionData.type, // CompleteActionModal uses 'type' field
+          actionLog: actionData.actionLog, // CompleteActionModal uses 'actionLog' field
           notes: actionData.notes,
           nextAction: actionData.nextAction,
           nextActionDate: actionData.nextActionDate,
@@ -1981,13 +1982,12 @@ export function UniversalRecordTemplate({
         </div>
       )}
 
-      {/* Add Action Modal */}
-      <AddActionModal
+      {/* Complete Action Modal */}
+      <CompleteActionModal
         isOpen={isAddActionModalOpen}
         onClose={() => setIsAddActionModalOpen(false)}
         onSubmit={handleActionSubmit}
-        record={record}
-        recordType={recordType}
+        personName={record?.fullName || record?.name || 'Unknown'}
         isLoading={loading}
       />
 
