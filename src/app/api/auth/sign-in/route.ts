@@ -351,6 +351,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       availableWorkspaces: workspaces.map(w => ({ id: w.workspace?.id, name: w.workspace?.name }))
     });
 
+    // 🆕 CRITICAL FIX: Update user's activeWorkspaceId in database if it's not set or invalid
+    if (!user.activeWorkspaceId || !hasAccessToActiveWorkspace) {
+      console.log("🔄 [AUTH API] Updating user's activeWorkspaceId in database:", finalActiveWorkspaceId);
+      await prisma.users.update({
+        where: { id: user.id },
+        data: { activeWorkspaceId: finalActiveWorkspaceId }
+      });
+      console.log("✅ [AUTH API] User's activeWorkspaceId updated successfully");
+    }
+
     // Generate JWT token
     const secret =
       process['env']['NEXTAUTH_SECRET'] ||
