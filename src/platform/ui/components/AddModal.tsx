@@ -339,6 +339,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   : `Enter ${getSectionTitle().toLowerCase()} name`
               }
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              style={{ outline: 'none' }}
               required
             />
           </div>

@@ -13,7 +13,7 @@ interface CompleteActionModalProps {
 
 export interface ActionLogData {
   person: string;
-  type: 'LinkedIn Friend Request' | 'LinkedIn' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
+  type: 'LinkedIn Friend Request' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
   time: 'Now' | 'Past' | 'Future';
   action: string;
   nextAction?: string;
@@ -129,7 +129,6 @@ export function CompleteActionModal({
                 disabled={isLoading}
               >
                 <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
-                <option value="LinkedIn">LinkedIn</option>
                 <option value="LinkedIn InMail">LinkedIn InMail</option>
                 <option value="LinkedIn DM">LinkedIn DM</option>
                 <option value="Phone">Phone</option>
