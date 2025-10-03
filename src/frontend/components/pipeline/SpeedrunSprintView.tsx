@@ -508,7 +508,13 @@ export function SpeedrunSprintView() {
             dataLength: data.length,
             foundIndex: index,
             calculatedRecordIndex: recordIndex,
-            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName }))
+            dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name || r.fullName })),
+            // Debug navigation state
+            canGoPrevious: index > 0,
+            canGoNext: index < data.length - 1,
+            hasNextSprint: hasNextSprint,
+            currentSprintIndex: currentSprintIndex,
+            totalSprints: totalSprints
           });
           return recordIndex;
         })()}
@@ -519,6 +525,12 @@ export function SpeedrunSprintView() {
         }}
         onNavigatePrevious={() => {
           const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
+          console.log('🔍 [SPRINT VIEW] Previous navigation:', {
+            currentIndex,
+            dataLength: data.length,
+            canGoPrevious: currentIndex > 0,
+            previousRecord: currentIndex > 0 ? data[currentIndex - 1] : null
+          });
           if (currentIndex > 0) {
             setSelectedRecord(data[currentIndex - 1]);
           }
@@ -526,6 +538,15 @@ export function SpeedrunSprintView() {
         onNavigateNext={() => {
           const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
           const nextRecord = data[currentIndex + 1];
+          console.log('🔍 [SPRINT VIEW] Next navigation:', {
+            currentIndex,
+            dataLength: data.length,
+            canGoNext: currentIndex < data.length - 1,
+            nextRecord: nextRecord,
+            hasNextSprint: hasNextSprint,
+            currentSprintIndex: currentSprintIndex,
+            totalSprints: totalSprints
+          });
           if (nextRecord) {
             setSelectedRecord(nextRecord);
           } else if (hasNextSprint) {
