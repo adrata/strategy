@@ -84,7 +84,7 @@ export function CompleteActionModal({
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F6FDC] focus:border-transparent text-gray-900"
                 disabled={isLoading}
               >
                 <option value="LinkedIn">LinkedIn</option>
@@ -106,7 +106,7 @@ export function CompleteActionModal({
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2F6FDC] focus:border-transparent text-gray-900 resize-none"
                 placeholder="Describe what happened during this interaction..."
                 disabled={isLoading}
                 required
@@ -133,7 +133,7 @@ export function CompleteActionModal({
               <button
                 type="submit"
                 disabled={isLoading || !formData.notes.trim()}
-                className="flex-1 px-6 py-3 text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="flex-1 px-6 py-3 text-white bg-[#2F6FDC] border border-transparent rounded-lg hover:bg-[#4374DE] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
