@@ -1108,9 +1108,21 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
 
   // Handle sort from dropdown (different from column clicks)
   const handleDropdownSortChange = useCallback((field: string) => {
-    setSortField(field);
+    // Map dropdown field names to actual data field names
+    const fieldMapping: Record<string, string> = {
+      'rank': 'rank',
+      'company': 'company',
+      'name': 'name',
+      'status': 'status',
+      'stage': 'stage',
+      'lastContact': 'lastActionDate',
+      'nextAction': 'nextAction'
+    };
+    
+    const actualField = fieldMapping[field] || field;
+    setSortField(actualField);
     setSortDirection('asc'); // Always start with ascending from dropdown
-    console.log(`🔧 Dropdown sort: ${field}`);
+    console.log(`🔧 Dropdown sort: ${field} -> ${actualField}`);
   }, []);
 
   const handleColumnSort = useCallback((columnName: string) => {

@@ -377,7 +377,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
       { value: 'lastAction', label: 'Last Action', icon: '📅' },
       { value: 'actions', label: 'Actions', icon: '⚡' },
-      { value: 'status', label: section === 'opportunities' ? 'Stage' : 'Status', icon: '📊' },
+      { value: 'status', label: section === 'opportunities' ? 'Stage' : section === 'speedrun' ? 'Stage' : 'Status', icon: '📊' },
       { value: 'industry', label: 'Industry', icon: '🏭' },
       { value: 'email', label: 'Email', icon: '📧' },
       { value: 'phone', label: 'Phone', icon: '📞' }
@@ -404,7 +404,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     
     if (section === 'speedrun') {
       return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'role', 'status', 'nextAction', 'lastAction', 'actions'].includes(option.value)
+        ['all', 'rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'].includes(option.value)
       );
     }
     
