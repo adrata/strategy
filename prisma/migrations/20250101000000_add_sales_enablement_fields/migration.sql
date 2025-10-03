@@ -51,14 +51,14 @@ CREATE TABLE "partners" (
     CONSTRAINT "partners_pkey" PRIMARY KEY ("id")
 );
 
--- Add personal intelligence fields to contacts
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "hobbies" TEXT[] DEFAULT ARRAY[]::TEXT[];
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "interests" TEXT[] DEFAULT ARRAY[]::TEXT[];
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "personalGoals" TEXT[] DEFAULT ARRAY[]::TEXT[];
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "professionalGoals" TEXT[] DEFAULT ARRAY[]::TEXT[];
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "communicationStyle" VARCHAR(30) DEFAULT 'Professional';
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "decisionMakingStyle" VARCHAR(30) DEFAULT 'Analytical';
-ALTER TABLE "contacts" ADD COLUMN IF NOT EXISTS "workAnniversary" TIMESTAMP(3);
+-- Add personal intelligence fields to people (contacts table doesn't exist)
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "hobbies" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "interests" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "personalGoals" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "professionalGoals" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "communicationStyle" VARCHAR(30) DEFAULT 'Professional';
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "decisionMakingStyle" VARCHAR(30) DEFAULT 'Analytical';
+ALTER TABLE "people" ADD COLUMN IF NOT EXISTS "workAnniversary" TIMESTAMP(3);
 
 -- Add personal intelligence fields to leads
 ALTER TABLE "leads" ADD COLUMN IF NOT EXISTS "dateOfBirth" TIMESTAMP(3);

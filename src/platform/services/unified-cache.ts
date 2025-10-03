@@ -223,13 +223,52 @@ export class UnifiedCache {
     fetchFn: () => Promise<T>,
     options: CacheOptions = {}
   ): Promise<T> {
-    // Client-side fallback
+    // 🚀 CLIENT-SIDE CACHE: Implement proper browser-side caching
     if (typeof window !== 'undefined') {
-      return await fetchFn();
+      const {
+        ttl = key.includes('speedrun') ? 600000 : 300000, // 10 minutes for speedrun, 5 minutes default
+        skipCache = false
+      } = options;
+      
+      if (skipCache) {
+        return await fetchFn();
+      }
+      
+      // Check browser cache first
+      const cacheKey = `adrata-cache-${key}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      if (cached) {
+        try {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < ttl) {
+            console.log(`⚡ [CLIENT CACHE HIT] ${key}`);
+            return data;
+          }
+        } catch (error) {
+          console.warn('Failed to parse cached data:', error);
+        }
+      }
+      
+      // Fetch fresh data and cache it
+      console.log(`🔄 [CLIENT CACHE MISS] ${key} - fetching fresh data`);
+      const data = await fetchFn();
+      
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data,
+          timestamp: Date.now()
+        }));
+        console.log(`💾 [CLIENT CACHE SET] ${key}`);
+      } catch (error) {
+        console.warn('Failed to cache data:', error);
+      }
+      
+      return data;
     }
 
     const {
-      ttl = 300000, // 5 minutes
+      ttl = key.includes('speedrun') ? 600000 : 300000, // 10 minutes for speedrun, 5 minutes default
       tags = [],
       priority = 'medium',
       layer = 'auto',
@@ -378,7 +417,7 @@ export class UnifiedCache {
     }
 
     const {
-      ttl = 300000,
+      ttl = key.includes('speedrun') ? 600000 : 300000, // 10 minutes for speedrun, 5 minutes default
       tags = [],
       priority = 'medium',
       layer = 'auto'
@@ -455,6 +494,15 @@ export class UnifiedCache {
     if (this.l1Cache.has(key)) {
       this.l1Cache.delete(key);
       deleted = true;
+    }
+    
+    // Delete from localStorage
+    if (typeof window !== 'undefined') {
+      const cacheKey = `adrata-cache-${key}`;
+      if (localStorage.getItem(cacheKey)) {
+        localStorage.removeItem(cacheKey);
+        deleted = true;
+      }
     }
     
     // Also delete from SWR cache if available

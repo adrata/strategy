@@ -136,8 +136,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     }
     
     // 🎯 FIRST: Try to find record in sessionStorage (instant loading)
-    // TEMPORARILY DISABLED FOR DEBUGGING - Force fresh API load
-    if (false && typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       // Check the optimized cache first
       const currentRecord = sessionStorage.getItem(`current-record-${section}`);
       if (currentRecord) {
@@ -188,9 +187,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // ⚡ PERFORMANCE MONITORING: Track API call timing
       const startTime = performance.now();
       
-      // 🚀 UNIFIED API: Use new consolidated API format with cache busting
+      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first
       const timestamp = Date.now();
-      const response = await authFetch(`/api/data/unified`);
+      const response = await authFetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       
@@ -209,7 +208,6 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         // Extract the record from the unified API response
         const sectionData = result['data'][section] || [];
         console.log(`🔍 [DIRECT LOAD] Looking for record ${recordId} in ${sectionData.length} ${section} records`);
-        console.log(`🔍 [DIRECT LOAD] Available record IDs:`, sectionData.map((r: any) => r.id));
         
         const record = sectionData.find((r: any) => r['id'] === recordId);
         
@@ -219,44 +217,19 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             name: record.name,
             description: record.description ? 'Yes' : 'No',
             website: record.website ? 'Yes' : 'No',
-            source: 'direct_api'
+            source: 'unified_api'
           });
+          
+          // Cache the record for future use
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem(`cached-${section}-${recordId}`, JSON.stringify(record));
+            sessionStorage.setItem(`current-record-${section}`, JSON.stringify({ id: recordId, data: record, timestamp: Date.now() }));
+            console.log(`💾 [CACHE] Cached ${section} record for future instant loading`);
+          }
+          
           setSelectedRecord(record);
         } else {
-          // If not found in the list, try to load the specific record directly
-          console.log(`⚠️ [DIRECT LOAD] Record ${recordId} not found in ${section} list, trying direct fetch...`);
-          
-          // 🎯 FIX: For speedrun records, use section API to get filtered/enriched data
-          if (section === 'speedrun') {
-            const sectionResponse = await authFetch(`/api/data/section`);
-            if (sectionResponse.ok) {
-              const sectionResult = await sectionResponse.json();
-              // 🎯 FIX: sectionResult.data is an object with a data property, not an array directly
-              const speedrunData = sectionResult.data?.data || sectionResult.data;
-              const speedrunRecord = Array.isArray(speedrunData) ? speedrunData.find((r: any) => r.id === recordId) : null;
-              if (speedrunRecord) {
-                console.log(`✅ [SPEEDRUN LOAD] Found record in speedrun section:`, speedrunRecord);
-                setSelectedRecord(speedrunRecord);
-                return;
-              }
-            }
-          }
-          
-          // For other sections, use unified API
-          const apiType = section === 'speedrun' ? 'people' : section;
-          const directResponse = await authFetch(`/api/data/unified`);
-          
-          if (directResponse.ok) {
-            const directResult = await directResponse.json();
-            if (directResult.success && directResult.data) {
-              console.log(`✅ [DIRECT LOAD] Found record via direct fetch:`, directResult.data);
-              setSelectedRecord(directResult.data);
-            } else {
-              throw new Error(`No ${section} record found with ID: ${recordId}`);
-            }
-          } else {
-            throw new Error(`No ${section} record found with ID: ${recordId}`);
-          }
+          throw new Error(`Record not found in API response`);
         }
       } else {
         throw new Error(result.error || `Failed to load ${section} record from unified API`);

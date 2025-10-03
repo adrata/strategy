@@ -1299,6 +1299,8 @@ export function UniversalRecordTemplate({
               <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
               recordType === 'people' ?
                 <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
+              recordType === 'prospects' ?
+                <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
                 <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'career':
@@ -1670,7 +1672,7 @@ export function UniversalRecordTemplate({
             <Loader size="lg" />
           </div>
         ) : (
-          <div key={`${activeTab}-${record?.id}`} className="px-1 py-1">
+          <div key={`${activeTab}-${record?.id}`} className="p-6 min-h-[400px]">
             {renderTabContent()}
           </div>
         )}

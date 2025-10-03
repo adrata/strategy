@@ -60,20 +60,29 @@ export function useSpeedrunSignals(
         console.log('🔍 [Speedrun Signals] Checking for new signals...');
         
         // Call API to check for new signals since lastCheck
-        const response = await fetch(`/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`);
+        const { authFetch } = await import('@/platform/auth-fetch');
+        const response = await authFetch(`/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`);
         
         if (response.ok && isActive) {
-          const data = await response.json();
-          
-          if (data.signal && isActive) {
-            console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
-            setActiveSignal(data.signal);
-            setLastCheck(new Date());
+          try {
+            const data = await response.json();
+            
+            if (data.signal && isActive) {
+              console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
+              setActiveSignal(data.signal);
+              setLastCheck(new Date());
+            }
+          } catch (parseError) {
+            console.warn('⚠️ [Speedrun Signals] Failed to parse response:', parseError);
           }
+        } else if (!response.ok) {
+          console.warn(`⚠️ [Speedrun Signals] API returned ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
         if (isActive) {
           console.error('❌ [Speedrun Signals] Error checking for signals:', error);
+          // Don't throw the error to prevent React error boundaries from triggering
+          // This is a background polling operation that shouldn't break the UI
         }
       }
     };
@@ -105,7 +114,8 @@ export function useSpeedrunSignals(
       console.log('🚨 [Speedrun Signals] Accepting signal for:', activeSignal?.contact?.name || 'Unknown');
       
       // Call the API to add contact to Speedrun
-      const response = await fetch('/api/speedrun/add-from-signal', {
+      const { authFetch } = await import('@/platform/auth-fetch');
+      const response = await authFetch('/api/speedrun/add-from-signal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

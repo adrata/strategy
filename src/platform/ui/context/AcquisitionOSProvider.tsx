@@ -89,24 +89,8 @@ export function AcquisitionOSProvider({
     activeWorkspace: ui.activeWorkspace,
   });
   
-  // 🆕 WORKSPACE CHANGE DETECTION: Force data refresh when workspace changes
-  const [lastWorkspaceId, setLastWorkspaceId] = React.useState<string | null>(null);
-  
-  React.useEffect(() => {
-    if (ui.activeWorkspace?.id && ui.activeWorkspace.id !== lastWorkspaceId && lastWorkspaceId !== null) {
-      console.log(`🔄 [PROVIDER] Workspace changed from ${lastWorkspaceId} to ${ui.activeWorkspace.id}, forcing data refresh`);
-      
-      // Force data refresh when workspace changes
-      if (data.refreshData) {
-        data.refreshData();
-      }
-      
-      setLastWorkspaceId(ui.activeWorkspace.id);
-    } else if (ui.activeWorkspace?.id && lastWorkspaceId === null) {
-      // Initial load - just set the workspace ID
-      setLastWorkspaceId(ui.activeWorkspace.id);
-    }
-  }, [ui.activeWorkspace?.id, lastWorkspaceId, data.refreshData]);
+  // 🚀 PERFORMANCE: Removed redundant workspace change handling
+  // The useAcquisitionOSData hook already handles workspace changes internally
   const chat = useAcquisitionOSChat();
   const forms = useAcquisitionOSForms();
   const progress = useAcquisitionOSProgress();

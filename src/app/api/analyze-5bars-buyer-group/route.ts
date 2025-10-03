@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!company) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Company not found', 'COMPANY_NOT_FOUND', 404);
     }
 
     console.log(`📋 Company: ${company.name}`);
@@ -47,12 +47,12 @@ export async function POST(request: NextRequest) {
     const analyzer = new FiveBarsBuyerGroupAnalyzer();
     
     // Run the analysis
-    await analyzer.execute();
+    const result = await analyzer.execute();
     
     const processingTime = Date.now() - startTime;
 
-    return createSuccessResponse(data, {
-      ...meta,
+    return createSuccessResponse(result, {
+      processingTime,
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role
@@ -88,7 +88,6 @@ export async function GET(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const userId = context.userId;
 
-    try {
     // Get current 5Bars company data
     const company = await prisma.companies.findUnique({
       where: { id: '01K5D5VGQ35SXGBPK5F2WSMFM2' },
@@ -106,7 +105,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!company) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Company not found', 'COMPANY_NOT_FOUND', 404);
     }
 
     // Analyze existing buyer group data
@@ -131,8 +130,18 @@ export async function GET(request: NextRequest) {
       else peopleByRole.unknown++;
     });
 
+    const data = {
+      company: {
+        id: company.id,
+        name: company.name,
+        peopleCount: company.people.length
+      },
+      buyerGroupAnalysis,
+      coresignalData,
+      peopleByRole
+    };
+
     return createSuccessResponse(data, {
-      ...meta,
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role

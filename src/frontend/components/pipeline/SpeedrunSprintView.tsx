@@ -50,16 +50,24 @@ export function SpeedrunSprintView() {
   //   refresh 
   // } = usePipelineData('speedrun', workspaceId, userId);
   
-  // Use fast section data loading system (same as PipelineView)
+  // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
   const fastSectionData = useFastSectionData('speedrun', 30, workspaceId, userId);
   
   const allData = fastSectionData.data || [];
   const loading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
   const refresh = fastSectionData.refreshData || (() => {});
+  
+  // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
+  useEffect(() => {
+    if (workspaceId && userId && !loading && !allData.length) {
+      console.log('🚀 [SPEEDRUN] Pre-loading speedrun data for faster initial load');
+      refresh();
+    }
+  }, [workspaceId, userId, loading, allData.length, refresh]);
 
   // Dynamic sprint size based on available data
-    const calculateOptimalSprintSize = (totalRecords: number): number => {
+  const calculateOptimalSprintSize = (totalRecords: number): number => {
     if (totalRecords <= 15) return Math.max(3, Math.ceil(totalRecords / 3)); // 3-5 for small datasets
     if (totalRecords <= 30) return Math.ceil(totalRecords / 3); // 10 for medium datasets
     return 10; // 10 for large datasets (default)
@@ -214,7 +222,8 @@ export function SpeedrunSprintView() {
     
     try {
       // Save action log to backend using existing API
-      const response = await fetch('/api/speedrun/action-log', {
+      const { authFetch } = await import('@/platform/auth-fetch');
+      const response = await authFetch('/api/speedrun/action-log', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

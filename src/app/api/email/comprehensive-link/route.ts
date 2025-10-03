@@ -13,7 +13,8 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('$1', '$2', $3);
     }
 
-    // Authentication is handled by middleware and secure-api-helper catch (error) {
+    // Authentication is handled by middleware and secure-api-helper
+  } catch (error) {
     console.error('❌ Error in comprehensive email linking:', error);
     return NextResponse.json(
       { error: 'Failed to link emails', details: error.message },

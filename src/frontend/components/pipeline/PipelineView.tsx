@@ -417,6 +417,26 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     }
   }, [finalData, finalError]);
   
+  // 🚀 PERFORMANCE: Pre-load speedrun data in background when on other sections
+  useEffect(() => {
+    if (section !== 'speedrun' && workspaceId && userId) {
+      console.log('🚀 [SPEEDRUN PRELOAD] Pre-loading speedrun data in background for faster navigation');
+      // Pre-load speedrun data using the fast section data hook
+      const preloadSpeedrunData = async () => {
+        try {
+          const { authFetch } = await import('@/platform/auth-fetch');
+          await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=30`);
+        } catch (error) {
+          console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
+        }
+      };
+      
+      // Pre-load after a short delay to not interfere with current section loading
+      const timeoutId = setTimeout(preloadSpeedrunData, 2000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [section, workspaceId, userId]);
+
   // Speedrun signals hook for automatic Monaco Signal popup (only for speedrun section)
   console.log('🔍 [Pipeline Speedrun] About to initialize useSpeedrunSignals hook for section:', section);
   console.log('🔍 [Pipeline Speedrun] Section type check:', typeof section, 'Value:', section);
@@ -1054,19 +1074,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     console.log(`✅ Force refresh completed for ${section} at ${timestamp}`);
   };
 
-  // 🆕 AUTO FORCE REFRESH: Automatically force refresh when page changes
-  useEffect(() => {
-    const handlePageChange = () => {
-      console.log(`🔄 [AUTO REFRESH] Page changed, force refreshing ${section} data...`);
-      handleForceRefresh();
-    };
-
-    // Listen for page changes
-    if (typeof window !== 'undefined') {
-      window.addEventListener('popstate', handlePageChange);
-      return () => window.removeEventListener('popstate', handlePageChange);
-    }
-  }, [section]);
+  // 🚀 CACHE OPTIMIZATION: Removed aggressive auto-refresh that was causing unnecessary reloads
+  // The cache system now handles data freshness intelligently without forcing refreshes on navigation
 
   // Handle add record
   const handleAddRecord = () => {

@@ -746,14 +746,15 @@ async function handleDataOperation(
   id?: string,
   filters?: any,
   pagination?: any,
-  search?: any
+  search?: any,
+  request?: any
 ): Promise<any> {
   
   console.log(`🔧 [DATA OP] ${action.toUpperCase()} ${type}${id ? ` (${id})` : ''}`);
   
   switch (action) {
     case 'get':
-      return await handleGet(type, workspaceId, userId, id, filters, pagination);
+      return await handleGet(type, workspaceId, userId, id, filters, pagination, request);
     case 'create':
       return await handleCreate(type, workspaceId, userId, requestData);
     case 'update':
@@ -780,19 +781,20 @@ async function handleGet(
   userId: string,
   id?: string,
   filters?: any,
-  pagination?: any
+  pagination?: any,
+  request?: any
 ): Promise<any> {
   
   if (id) {
     // Get single record
-    return await getSingleRecord(type, workspaceId, userId, id);
+    return await getSingleRecord(type, workspaceId, userId, id, request);
   } else {
     // Get multiple records
     return await getMultipleRecords(type, workspaceId, userId, filters, pagination);
   }
 }
 
-async function getSingleRecord(type: string, workspaceId: string, userId: string, id: string): Promise<any> {
+async function getSingleRecord(type: string, workspaceId: string, userId: string, id: string, request?: any): Promise<any> {
   console.log(`🚨 [DEBUG] getSingleRecord called with type: ${type}, id: ${id}`);
   const model = getPrismaModel(type);
   if (!model) throw new Error(`Unsupported type: ${type}`);
@@ -831,84 +833,189 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
     // 🚀 PERFORMANCE: Use optimized field selection for individual records
     let selectFields: any = {};
     
+    // Check if this is an essential fields request (for fast Overview tab loading)
+    const isEssentialFields = request?.url?.includes('fields=essential');
+    
     if (type === 'people') {
-      // 🚀 PERFORMANCE: Only select essential fields for people records
-      selectFields = {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        companyId: true,
-        jobTitle: true,
-        phone: true,
-        linkedinUrl: true,
-        tags: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        department: true,
-        seniority: true,
-        city: true,
-        state: true,
-        country: true,
-        notes: true
-        // 🚫 REMOVED: customFields, mobilePhone, workPhone, address, industry, description (large data)
-      };
+      if (isEssentialFields) {
+        // 🚀 OVERVIEW TAB: Select all fields needed for complete Overview tab display
+        selectFields = {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          jobTitle: true,
+          title: true,
+          phone: true,
+          linkedinUrl: true,
+          companyId: true,
+          company: true,
+          companyName: true,
+          department: true,
+          status: true,
+          priority: true,
+          source: true,
+          createdAt: true,
+          updatedAt: true,
+          lastContactDate: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          assignedUserId: true,
+          workspaceId: true,
+          // Custom fields for intelligence data
+          customFields: true,
+          // Additional fields for engagement history
+          tags: true,
+          notes: true
+        };
+      } else {
+        // 🚀 PERFORMANCE: Only select essential fields for people records
+        selectFields = {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          companyId: true,
+          jobTitle: true,
+          phone: true,
+          linkedinUrl: true,
+          tags: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+          department: true,
+          seniority: true,
+          city: true,
+          state: true,
+          country: true,
+          notes: true
+          // 🚫 REMOVED: customFields, mobilePhone, workPhone, address, industry, description (large data)
+        };
+      }
     } else if (type === 'companies') {
-      // 🚀 PERFORMANCE: Only select essential fields for company records
-      selectFields = {
-        id: true,
-        name: true,
-        industry: true,
-        website: true,
-        size: true,
-        city: true,
-        state: true,
-        country: true,
-        updatedAt: true,
-        lastAction: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        actionStatus: true,
-        assignedUserId: true,
-        rank: true,
-        // Essential enrichment fields only
-        employeeCount: true,
-        foundedYear: true,
-        linkedinUrl: true,
-        technologiesUsed: true,
-        tags: true,
-        isPublic: true,
-        stockSymbol: true,
-        logoUrl: true,
-        domain: true
-        // 🚫 REMOVED: 40+ enrichment fields (customFields, description, address, etc.) for better performance
-      };
-    } else if (type === 'leads' || type === 'prospects') {
-      selectFields = {
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        company: true,
-        companyId: true,
-        jobTitle: true,
-        title: true,
-        status: true,
-        priority: true,
-        source: true,
-        createdAt: true,
-        updatedAt: true,
-        lastContactDate: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        workspaceId: true,
-        assignedUserId: true
-      };
+      if (isEssentialFields) {
+        // 🚀 OVERVIEW TAB: Select all fields needed for complete Overview tab display
+        selectFields = {
+          id: true,
+          name: true,
+          industry: true,
+          website: true,
+          size: true,
+          employeeCount: true,
+          city: true,
+          state: true,
+          country: true,
+          updatedAt: true,
+          rank: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          actionStatus: true,
+          assignedUserId: true,
+          // Custom fields for intelligence data
+          customFields: true,
+          // Additional fields for engagement history
+          tags: true,
+          linkedinUrl: true,
+          foundedYear: true,
+          stockSymbol: true,
+          logoUrl: true,
+          domain: true
+        };
+      } else {
+        // 🚀 PERFORMANCE: Only select essential fields for company records
+        selectFields = {
+          id: true,
+          name: true,
+          industry: true,
+          website: true,
+          size: true,
+          city: true,
+          state: true,
+          country: true,
+          updatedAt: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          actionStatus: true,
+          assignedUserId: true,
+          rank: true,
+          // Essential enrichment fields only
+          employeeCount: true,
+          foundedYear: true,
+          linkedinUrl: true,
+          technologiesUsed: true,
+          tags: true,
+          isPublic: true,
+          stockSymbol: true,
+          logoUrl: true,
+          domain: true
+          // 🚫 REMOVED: 40+ enrichment fields (customFields, description, address, etc.) for better performance
+        };
+      }
+    } else if (type === 'leads' || type === 'prospects' || type === 'opportunities' || type === 'clients' || type === 'partners' || type === 'sellers') {
+      if (isEssentialFields) {
+        // 🚀 OVERVIEW TAB: Select all fields needed for complete Overview tab display
+        selectFields = {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          phone: true,
+          linkedinUrl: true,
+          company: true,
+          companyId: true,
+          companyName: true,
+          jobTitle: true,
+          title: true,
+          department: true,
+          status: true,
+          priority: true,
+          source: true,
+          createdAt: true,
+          updatedAt: true,
+          lastContactDate: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          assignedUserId: true,
+          workspaceId: true,
+          // Custom fields for intelligence data
+          customFields: true,
+          // Additional fields for engagement history
+          tags: true,
+          notes: true
+        };
+      } else {
+        selectFields = {
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          company: true,
+          companyId: true,
+          jobTitle: true,
+          title: true,
+          status: true,
+          priority: true,
+          source: true,
+          createdAt: true,
+          updatedAt: true,
+          lastContactDate: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          workspaceId: true,
+          assignedUserId: true
+        };
+      }
     }
 
     // 🚀 PERFORMANCE: Execute query with monitoring
@@ -4045,7 +4152,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Execute operation
-    const requestPromise = handleDataOperation(type, action, workspaceId, userId, undefined, id, filters, pagination, search);
+    const requestPromise = handleDataOperation(type, action, workspaceId, userId, undefined, id, filters, pagination, search, request);
     pendingRequests.set(cacheKey, requestPromise);
     
     try {
@@ -4177,7 +4284,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Execute operation
-    const result = await handleDataOperation(type, action, workspaceId, userId, data, id, filters, pagination, search);
+    const result = await handleDataOperation(type, action, workspaceId, userId, data, id, filters, pagination, search, request);
     
     // Add metadata
     const response = {

@@ -217,52 +217,27 @@ export default function WorkspacesPage() {
       // Use the getWorkspaceUrl function to generate the correct URL
       const redirectUrl = result.redirectUrl || getWorkspaceUrl(workspace, 'speedrun');
       
-      // Clear all possible caches before hard reload
+      // 🚀 OPTIMIZED: Minimal cache clearing for faster navigation
       try {
-        // Clear localStorage workspace-related data
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.includes('workspace') || key.includes('cache') || key.includes('swr'))) {
-            keysToRemove.push(key);
-          }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-        console.log(`🧹 [CACHE CLEAR] Cleared ${keysToRemove.length} localStorage entries`);
-        
-        // Clear sessionStorage
-        sessionStorage.clear();
-        console.log(`🧹 [CACHE CLEAR] Cleared sessionStorage`);
-        
-        // Clear SWR cache if available
-        if (typeof window !== 'undefined' && (window as any).__SWR_CACHE__) {
-          (window as any).__SWR_CACHE__.clear();
-          console.log(`🧹 [CACHE CLEAR] Cleared SWR cache`);
+        // Only clear workspace-specific cache, not all caches
+        if (typeof window !== 'undefined') {
+          // Clear only workspace-related localStorage entries
+          const workspaceKeys = ['adrata_last_active_workspace'];
+          workspaceKeys.forEach(key => localStorage.removeItem(key));
+          console.log(`🧹 [CACHE CLEAR] Cleared workspace-specific cache`);
         }
       } catch (error) {
-        console.warn('⚠️ [CACHE CLEAR] Failed to clear some caches:', error);
+        console.warn('⚠️ [CACHE CLEAR] Failed to clear workspace cache:', error);
       }
       
-      // Show simple loading message before hard reload
-      document['body']['innerHTML'] = `
-        <div style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          font-family: system-ui, -apple-system, sans-serif;
-          background: #f8fafc;
-        ">
-          <h2 style="color: #1e293b; margin: 0;">Loading...</h2>
-        </div>
-      `;
+      // 🚀 OPTIMIZED: Use router.push for instant navigation instead of hard reload
+      console.log("🔄 [WORKSPACE SWITCH] Navigating to:", redirectUrl);
       
-      // Use hard reload to ensure all caches are cleared and fresh data is loaded
-      setTimeout(() => {
-        console.log("🔄 [WORKSPACE SWITCH] Redirecting to:", redirectUrl);
-        window['location']['href'] = redirectUrl;
-      }, 2000); // Longer delay to ensure session is fully processed
+      // Use Next.js router for instant navigation
+      router.push(redirectUrl);
+      
+      // Clear loading state immediately
+      setIsSwitching(false);
 
     } catch (error) {
       console.error("❌ Failed to switch workspace:", error);

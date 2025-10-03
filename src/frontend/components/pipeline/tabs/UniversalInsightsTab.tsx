@@ -172,7 +172,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   // AI intelligence is now always assumed to be available
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Summary */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">

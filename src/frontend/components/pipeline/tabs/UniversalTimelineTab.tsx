@@ -348,7 +348,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
   const isPastEvent = (date: Date) => date <= new Date();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between">
           <div className="text-lg font-medium text-gray-900">Timeline</div>

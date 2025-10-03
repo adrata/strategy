@@ -98,8 +98,8 @@ export function useAdrataData<T>(
     
     // SWR options
     revalidateOnFocus = false,
-    revalidateOnReconnect = true,
-    dedupingInterval = 30000, // 30 seconds
+    revalidateOnReconnect = false, // 🚀 CACHE OPTIMIZATION: Disable revalidation on reconnect to prevent unnecessary reloads
+    dedupingInterval = 60000, // 🚀 CACHE OPTIMIZATION: 60 seconds deduplication for better performance
     errorRetryCount = 1, // Reduced from 3 to prevent excessive retries
     errorRetryInterval = 2000, // Reduced from 5000ms to 2000ms
     

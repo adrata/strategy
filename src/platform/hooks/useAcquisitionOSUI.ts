@@ -11,6 +11,7 @@ interface UseAcquisitionOSUIReturn {
   // Panel Visibility
   isLeftPanelVisible: boolean;
   isRightPanelVisible: boolean;
+  isSectionChanging: boolean;
 
   // Modal State
   isThemeModalOpen: boolean;
@@ -115,6 +116,25 @@ export function useAcquisitionOSUI(): UseAcquisitionOSUIReturn {
   const [activeSubApp, setActiveSubApp] = useState("Speedrun");
   const [activeSection, setActiveSection] = useState("speedrun");
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  
+  // 🚀 PERFORMANCE: Track section changes for immediate UI feedback
+  const [isSectionChanging, setIsSectionChanging] = useState(false);
+  
+  // 🚀 PERFORMANCE: Optimized setActiveSection with immediate feedback
+  const setActiveSectionOptimized = useCallback((section: string) => {
+    console.log(`⚡ [UI HOOK] Immediate section change: ${activeSection} -> ${section}`);
+    
+    // Set immediate visual feedback
+    setIsSectionChanging(true);
+    
+    // Update section immediately
+    setActiveSection(section);
+    
+    // Clear loading state after a short delay to allow UI to update
+    setTimeout(() => {
+      setIsSectionChanging(false);
+    }, 100);
+  }, [activeSection]);
 
   // Panel Visibility - Configure based on route type
   const [isLeftPanelVisible, setIsLeftPanelVisible] = useState(() => {
@@ -302,22 +322,27 @@ export function useAcquisitionOSUI(): UseAcquisitionOSUIReturn {
     }
   }, [activeSubApp, activeSection, isClient]);
 
-  // Persist state changes to localStorage
+  // Persist state changes to localStorage - DEFERRED for performance
   useEffect(() => {
     if (!isClient) return;
 
-    try {
-      localStorage.setItem("aos-active-sub-app", activeSubApp);
-      localStorage.setItem(
-        `aos-${activeSubApp}-active-section`,
-        activeSection,
-      );
-      localStorage.setItem("aos-active-section", activeSection);
+    // Defer localStorage operations to avoid blocking UI updates
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem("aos-active-sub-app", activeSubApp);
+        localStorage.setItem(
+          `aos-${activeSubApp}-active-section`,
+          activeSection,
+        );
+        localStorage.setItem("aos-active-section", activeSection);
 
-      debug("PERSISTED_UI_STATE", { activeSubApp, activeSection });
-    } catch (error) {
-      debug("ERROR_PERSISTING_UI_STATE", { error });
-    }
+        debug("PERSISTED_UI_STATE", { activeSubApp, activeSection });
+      } catch (error) {
+        debug("ERROR_PERSISTING_UI_STATE", { error });
+      }
+    }, 0); // Defer to next tick
+
+    return () => clearTimeout(timeoutId);
   }, [activeSubApp, activeSection, isClient]);
 
   // Helper to get default section for an app
@@ -376,43 +401,50 @@ export function useAcquisitionOSUI(): UseAcquisitionOSUIReturn {
     [isClient],
   );
 
-  // Set correct default section when switching apps
+  // Set correct default section when switching apps - DEFERRED for performance
   useEffect(() => {
-    const currentApp = ACTION_PLATFORM_APPS.find(
-      (app) => app['id'] === activeSubApp,
-    );
-    if (currentApp && currentApp.sections.length > 0) {
-      const isValidSection = currentApp.sections.includes(activeSection);
+    // Defer validation to avoid blocking immediate UI updates
+    const timeoutId = setTimeout(() => {
+      const currentApp = ACTION_PLATFORM_APPS.find(
+        (app) => app['id'] === activeSubApp,
+      );
+      if (currentApp && currentApp.sections.length > 0) {
+        const isValidSection = currentApp.sections.includes(activeSection);
 
-      debug("APP_SWITCH_VALIDATION", {
-        activeSubApp,
-        currentApp: currentApp.name,
-        availableSections: currentApp.sections,
-        currentSection: activeSection,
-        isValidSection,
-      });
+        debug("APP_SWITCH_VALIDATION", {
+          activeSubApp,
+          currentApp: currentApp.name,
+          availableSections: currentApp.sections,
+          currentSection: activeSection,
+          isValidSection,
+        });
 
-      if (!isValidSection) {
-        const defaultSection = getDefaultSectionForApp(activeSubApp);
-        debug("FIXING_INVALID_SECTION", {
-          from: activeSection,
-          to: defaultSection,
-          app: activeSubApp,
-        });
-        setActiveSection(defaultSection);
-      } else if (activeSubApp === "pipeline" && activeSection === "daily40") {
-        // Special case: If pipeline app is active but section is still the default "daily40", 
-        // set it to the proper pipeline default
-        const pipelineDefault = getDefaultSectionForApp("pipeline");
-        debug("SETTING_PIPELINE_DEFAULT", {
-          from: activeSection,
-          to: pipelineDefault,
-        });
-        setActiveSection(pipelineDefault);
+        if (!isValidSection) {
+          const defaultSection = getDefaultSectionForApp(activeSubApp);
+          debug("FIXING_INVALID_SECTION", {
+            from: activeSection,
+            to: defaultSection,
+            app: activeSubApp,
+          });
+          setActiveSection(defaultSection);
+        } else if (activeSubApp === "pipeline" && activeSection === "daily40") {
+          // Special case: If pipeline app is active but section is still the default "daily40", 
+          // set it to the proper pipeline default
+          const pipelineDefault = getDefaultSectionForApp("pipeline");
+          debug("SETTING_PIPELINE_DEFAULT", {
+            from: activeSection,
+            to: pipelineDefault,
+          });
+          setActiveSection(pipelineDefault);
+        }
       }
-    }
+    }, 0); // Defer to next tick
 
-    // Ensure Speedrun always shows both panels like original Speedrun
+    return () => clearTimeout(timeoutId);
+  }, [activeSubApp, activeSection, getDefaultSectionForApp]);
+
+  // Ensure Speedrun always shows both panels like original Speedrun
+  useEffect(() => {
     if (activeSubApp === "Speedrun") {
       debug("ENSURING_SPEEDRUN_PANELS_VISIBLE", {
         leftPanelVisible: isLeftPanelVisible,
@@ -683,6 +715,7 @@ export function useAcquisitionOSUI(): UseAcquisitionOSUIReturn {
     expandedSection,
     isLeftPanelVisible,
     isRightPanelVisible,
+    isSectionChanging,
     isThemeModalOpen,
     isProfileOpen,
     profileAnchor,
@@ -702,7 +735,7 @@ export function useAcquisitionOSUI(): UseAcquisitionOSUIReturn {
 
     // Setters
     setActiveSubApp,
-    setActiveSection,
+    setActiveSection: setActiveSectionOptimized,
     setExpandedSection,
     setIsLeftPanelVisible,
     setIsRightPanelVisible,

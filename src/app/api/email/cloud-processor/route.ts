@@ -38,7 +38,8 @@ export async function POST(request: NextRequest) {
       maxProcessingTime = 300000 // 5 minutes default
     } = await request.json();
 
-    // Authentication is handled by middleware and secure-api-helper else if (priority === 'unlinked') {
+    // Authentication is handled by middleware and secure-api-helper
+    if (priority === 'unlinked') {
       // Process unlinked emails
       const allEmails = await prisma.email_messages.findMany({
         orderBy: { sentAt: 'desc' },

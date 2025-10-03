@@ -102,10 +102,19 @@ export function useFastCounts(): UseFastCountsReturn {
     }
   }, [workspaceId, userId, authLoading, hasLoaded, fetchCounts]);
 
-  // 🚀 PERFORMANCE: Reset loaded state when workspace changes
+  // 🚀 PERFORMANCE: Track workspace changes to reset loaded state only when needed
+  const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
+  const [lastUserId, setLastUserId] = useState<string | null>(null);
+  
   useEffect(() => {
-    setHasLoaded(false);
-  }, [workspaceId, userId]);
+    // Only reset if workspace or user actually changed
+    if (workspaceId !== lastWorkspaceId || userId !== lastUserId) {
+      console.log('🔄 [FAST COUNTS] Workspace/user changed, resetting loaded state');
+      setHasLoaded(false);
+      setLastWorkspaceId(workspaceId);
+      setLastUserId(userId);
+    }
+  }, [workspaceId, userId, lastWorkspaceId, lastUserId]);
 
   return {
     counts,

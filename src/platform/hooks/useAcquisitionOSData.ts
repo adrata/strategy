@@ -381,7 +381,7 @@ export function useAcquisitionOSData(
     refresh,
     clearCache 
   } = useAdrataData(cacheKey, fetchAcquisitionData, {
-    ttl: 30000, // 🚀 PERFORMANCE: 30 seconds cache for testing updated people ranking
+    ttl: 300000, // 🚀 PERFORMANCE: 5 minutes cache for better user experience
     priority: 'high',
     tags: ['acquisition-os', activeWorkspace?.id || '', authUser?.id || ''],
     revalidateOnReconnect: true,
@@ -395,16 +395,17 @@ export function useAcquisitionOSData(
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
   
   useEffect(() => {
+    // Only clear cache and refresh when workspace actually changes (not on initial load)
     if (activeWorkspace?.id && activeWorkspace.id !== lastWorkspaceId && lastWorkspaceId !== null) {
       console.log(`🔄 [WORKSPACE SWITCH] Detected workspace change from ${lastWorkspaceId} to ${activeWorkspace.id}`);
       
-      // Clear cache and force refresh
+      // Clear cache and force refresh only on actual workspace change
       clearCache();
       refresh();
       
       setLastWorkspaceId(activeWorkspace.id);
     } else if (activeWorkspace?.id && lastWorkspaceId === null) {
-      // Initial load - just set the workspace ID
+      // Initial load - just set the workspace ID, don't clear cache
       setLastWorkspaceId(activeWorkspace.id);
     }
   }, [activeWorkspace?.id, lastWorkspaceId, clearCache, refresh]);

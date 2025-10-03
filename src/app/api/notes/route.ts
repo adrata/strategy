@@ -187,7 +187,7 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ [NOTES API] Retrieved ${notes.length} notes for ${recordType} ${recordId}`);
 
-    return createSuccessResponse(data, meta);
+    return createSuccessResponse(notes, meta);
 
   } catch (error) {
     console.error('❌ [NOTES API] Error retrieving notes:', error);

@@ -109,7 +109,7 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Career Overview */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Overview</h3>

@@ -124,23 +124,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [section, workspaceId, userId, authLoading, loadedSections, fetchSectionData]);
 
-  // 🚀 PERFORMANCE: Reset loaded sections when workspace changes
+  // 🚀 PERFORMANCE: Track workspace changes to reset loaded sections only when needed
+  const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
+  const [lastUserId, setLastUserId] = useState<string | null>(null);
+  
   useEffect(() => {
-    console.log(`🔄 [FAST SECTION DATA] Resetting loaded sections for ${section} due to workspace/user change`);
-    setLoadedSections(new Set());
-  }, [workspaceId, userId]);
-
-  // 🔧 DEBUG: Force refresh for people section to fix caching issue
-  useEffect(() => {
-    if (section === 'people') {
-      console.log(`🔧 [FAST SECTION DATA] Force clearing cache for people section`);
-      setLoadedSections(prev => {
-        const newSet = new Set(prev);
-        newSet.delete('people');
-        return newSet;
-      });
+    // Only reset if workspace or user actually changed (not on initial load)
+    if (workspaceId && userId && (workspaceId !== lastWorkspaceId || userId !== lastUserId) && lastWorkspaceId !== null) {
+      console.log(`🔄 [FAST SECTION DATA] Workspace/user changed, resetting loaded sections for ${section}`);
+      setLoadedSections(new Set());
+      setLastWorkspaceId(workspaceId);
+      setLastUserId(userId);
+    } else if (workspaceId && userId && lastWorkspaceId === null) {
+      // Initial load - just set the workspace/user IDs, don't reset loaded sections
+      setLastWorkspaceId(workspaceId);
+      setLastUserId(userId);
     }
-  }, [section]);
+  }, [workspaceId, userId, lastWorkspaceId, lastUserId, section]);
+
+  // 🚀 CACHE OPTIMIZATION: Removed debug force refresh that was causing unnecessary reloads
 
   return {
     data,
