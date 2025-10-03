@@ -1306,15 +1306,15 @@ export function UniversalRecordTemplate({
         <button
           key="start-speedrun"
           onClick={() => {
-            // Navigate to speedrun/start page
-            const currentPath = window.location.pathname;
-            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-            if (workspaceMatch) {
-              const workspaceSlug = workspaceMatch[1];
-              window.location.href = `/${workspaceSlug}/speedrun/start`;
-            } else {
-              window.location.href = '/speedrun/start';
-            }
+                    // Navigate to speedrun/sprint page
+                    const currentPath = window.location.pathname;
+                    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+                    if (workspaceMatch) {
+                      const workspaceSlug = workspaceMatch[1];
+                      window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+                    } else {
+                      window.location.href = '/speedrun/sprint';
+                    }
           }}
           className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
         >

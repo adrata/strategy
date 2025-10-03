@@ -939,7 +939,7 @@ export function PipelineHeader({
                             // Handle secondary action - Start Speedrun for speedrun section, Add Action for others
                             if (section === 'speedrun') {
                               console.log('Starting speedrun...');
-                              navigateToPipeline('speedrun/start');
+                              navigateToPipeline('speedrun/sprint');
                             } else {
                               setSelectedRecord(null);
                               setShowAddActionModal(true);
