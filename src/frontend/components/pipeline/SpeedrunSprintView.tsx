@@ -405,11 +405,6 @@ export function SpeedrunSprintView() {
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* TOP-style squircle for sprint */}
-              <div className="bg-gray-100 text-gray-800 px-3 py-2 rounded-2xl text-xs font-semibold flex flex-col items-center">
-                <span className="leading-tight">S{currentSprintNumber}</span>
-                <span className="text-[10px] leading-tight">Sprint</span>
-              </div>
               <h2 className="text-base font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
             </div>
             <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{data.length}/10</span>
@@ -456,10 +451,10 @@ export function SpeedrunSprintView() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-2xl ${
                       isSelected 
-                        ? 'bg-white text-gray-800 border border-gray-300' 
-                        : 'bg-white text-gray-600 border border-gray-200'
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-600'
                     }`}>
-                      S1
+                      {index + 1}
                     </span>
                     <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-gray-900' : 'text-gray-900'}`}>
                       {displayName}

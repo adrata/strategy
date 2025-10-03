@@ -1299,7 +1299,7 @@ async function getMultipleRecords(
       console.log(`👥 [PEOPLE API] Starting people data load for workspace: ${workspaceId}, user: ${userId}`);
       
       // 🚀 PERFORMANCE: Use optimized pagination
-      const pagination = getOptimizedPagination('people', pagination);
+      const optimizedPagination = getOptimizedPagination('people', pagination);
       
       // Use direct query for better performance and reliability with monitoring
       const people = await trackQueryPerformance(
@@ -1313,7 +1313,7 @@ async function getMultipleRecords(
             deletedAt: null
           },
           orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
-          ...applyPagination({}, pagination),
+          ...applyPagination({}, optimizedPagination),
           select: {
             id: true,
             fullName: true,
@@ -1344,7 +1344,7 @@ async function getMultipleRecords(
       
       // Add basic ranking and formatting, filter out user's company
       const peopleWithRanking = people
-        .filter(person => !shouldExcludeCompany(person.company))
+        .filter(person => !shouldExcludeCompany(person.company?.name))
         .map((person, index) => ({
           ...person,
           masterRank: person.rank || (index + 1),
@@ -3758,7 +3758,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       
       // Convert to expected format and filter out user's company
       people = speedrunPeople
-        .filter(person => !shouldExcludeCompany(person.company))
+        .filter(person => !shouldExcludeCompany(person.company?.name))
         .map(person => ({
           id: person.id,
           firstName: person.firstName,
@@ -4231,7 +4231,7 @@ export async function GET(request: NextRequest) {
         responseTime: Date.now() - startTime,
         userId: context.userId,
         workspaceId: context.workspaceId,
-        role: context.role
+        userEmail: context.userEmail
       });
     }
     
@@ -4246,7 +4246,7 @@ export async function GET(request: NextRequest) {
         deduplicated: true,
         userId: context.userId,
         workspaceId: context.workspaceId,
-        role: context.role
+        userEmail: context.userEmail
       });
     }
     
@@ -4314,7 +4314,7 @@ export async function GET(request: NextRequest) {
         ...response.meta,
         userId: context.userId,
         workspaceId: context.workspaceId,
-        role: context.role
+        userEmail: context.userEmail
       });
       
     } finally {
@@ -4363,7 +4363,7 @@ export async function POST(request: NextRequest) {
     
     // Validate request
     if (!type || !action) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Missing required parameters', 'MISSING_PARAMETERS', 400);
     }
     
     if (!SUPPORTED_TYPES.includes(type)) {
@@ -4401,7 +4401,7 @@ export async function POST(request: NextRequest) {
       ...response.meta,
       userId: context.userId,
       workspaceId: context.workspaceId,
-      role: context.role
+      userEmail: context.userEmail
     });
     
   } catch (error) {
@@ -4444,7 +4444,7 @@ export async function PUT(request: NextRequest) {
     const { type, action, data, id } = body;
     
     if (!type || !id || !data) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Missing required parameters', 'MISSING_PARAMETERS', 400);
     }
     
     // Execute update operation
@@ -4466,7 +4466,7 @@ export async function PUT(request: NextRequest) {
       ...response.meta,
       userId: context.userId,
       workspaceId: context.workspaceId,
-      role: context.role
+      userEmail: context.userEmail
     });
     
   } catch (error) {
@@ -4491,7 +4491,7 @@ export async function DELETE(request: NextRequest) {
     const id = url.searchParams.get('id');
     
     if (!type || !id) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Missing required parameters', 'MISSING_PARAMETERS', 400);
     }
     
     // Execute delete operation
@@ -4513,7 +4513,7 @@ export async function DELETE(request: NextRequest) {
       ...response.meta,
       userId: context.userId,
       workspaceId: context.workspaceId,
-      role: context.role
+      userEmail: context.userEmail
     });
     
   } catch (error) {
