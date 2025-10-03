@@ -589,19 +589,29 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-900">Filter By</h3>
-                <button
-                  onClick={() => {
-                    setStatusFilter('all');
-                    setCompanySizeFilter('all');
-                    setLocationFilter('all');
-                    onStatusChange?.('all');
-                    onCompanySizeChange?.('all');
-                    onLocationChange?.('all');
-                  }}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Reset
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setStatusFilter('all');
+                      setCompanySizeFilter('all');
+                      setLocationFilter('all');
+                      onStatusChange?.('all');
+                      onCompanySizeChange?.('all');
+                      onLocationChange?.('all');
+                    }}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                    }}
+                    className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
               
               {/* 🎯 STAGE FILTER - First and simplified */}
@@ -697,16 +707,26 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-gray-900">Sort By</h3>
-                        <button
-                          onClick={() => {
-                            setSortBy('rank');
-                            onSortChange?.('rank');
-                            setIsSortDropdownOpen(false);
-                          }}
-                          className="text-xs text-gray-500 hover:text-gray-700"
-                        >
-                          Reset
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setSortBy('rank');
+                              onSortChange?.('rank');
+                              setIsSortDropdownOpen(false);
+                            }}
+                            className="text-xs text-gray-500 hover:text-gray-700"
+                          >
+                            Reset
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsSortDropdownOpen(false);
+                            }}
+                            className="text-xs text-gray-500 hover:text-gray-700 w-4 h-4 flex items-center justify-center"
+                          >
+                            ×
+                          </button>
+                        </div>
                       </div>
                       
                       {/* Sort Options */}
