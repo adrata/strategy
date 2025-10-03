@@ -1188,7 +1188,7 @@ export function UniversalRecordTemplate({
           onClick={() => setIsEditRecordModalOpen(true)}
           className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
         >
-          Update Record
+          Edit Record
         </button>
       );
     }
