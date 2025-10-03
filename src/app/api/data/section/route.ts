@@ -259,7 +259,11 @@ export async function GET(request: NextRequest) {
               }
             ]
           },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          orderBy: [
+            { company: { rank: 'asc' } }, // Use company rank first like people
+            { rank: 'asc' }, // Then by person rank
+            { updatedAt: 'desc' }
+          ],
           take: 10000, // Increased limit to ensure we get all leads (same as unified API)
           select: {
             id: true,
@@ -272,7 +276,8 @@ export async function GET(request: NextRequest) {
                 id: true,
                 name: true,
                 industry: true,
-                size: true
+                size: true,
+                rank: true
               }
             },
             status: true,
@@ -359,7 +364,11 @@ export async function GET(request: NextRequest) {
               }
             ]
           },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          orderBy: [
+            { company: { rank: 'asc' } }, // Use company rank first like people
+            { rank: 'asc' }, // Then by person rank
+            { updatedAt: 'desc' }
+          ],
           take: 10000, // Increased limit to ensure we get all prospects (same as unified API)
           select: {
             id: true,
@@ -372,7 +381,8 @@ export async function GET(request: NextRequest) {
                 id: true,
                 name: true,
                 industry: true,
-                size: true
+                size: true,
+                rank: true
               }
             },
             status: true,
@@ -598,7 +608,8 @@ export async function GET(request: NextRequest) {
               company: {
                 select: {
                   id: true,
-                  name: true
+                  name: true,
+                  rank: true
                 }
               }
               // Remove notes and bio from select to avoid string length issues
