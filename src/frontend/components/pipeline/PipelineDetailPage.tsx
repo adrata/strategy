@@ -91,8 +91,12 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🚀 SPEEDRUN NAVIGATION FIX: Load speedrun data for navigation when on speedrun records
+  // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
   const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
+  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000, workspaceId, userId);
+  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500, workspaceId, userId);
+  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000, workspaceId, userId);
+  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000, workspaceId, userId);
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -137,9 +141,65 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     
     return data;
   };
+
+  // 🚀 NAVIGATION FIX: Get navigation data using fast section data for proper record indexing
+  const getNavigationData = (section: string) => {
+    console.log(`🔍 [NAVIGATION DATA] Getting navigation data for section ${section}:`, {
+      section,
+      hasPeopleData: !!peopleData,
+      peopleDataLength: peopleData?.length || 0,
+      hasCompaniesData: !!companiesData,
+      companiesDataLength: companiesData?.length || 0,
+      hasLeadsData: !!leadsData,
+      leadsDataLength: leadsData?.length || 0,
+      hasProspectsData: !!prospectsData,
+      prospectsDataLength: prospectsData?.length || 0,
+      hasSpeedrunData: !!speedrunData,
+      speedrunDataLength: speedrunData?.length || 0
+    });
+    
+    let data = [];
+    switch (section) {
+      case 'people': data = peopleData || []; break;
+      case 'companies': data = companiesData || []; break;
+      case 'leads': data = leadsData || []; break;
+      case 'prospects': data = prospectsData || []; break;
+      case 'speedrun': data = speedrunData || []; break;
+      default: data = getSectionData(section); break;
+    }
+    
+    console.log(`🔍 [NAVIGATION DATA] Navigation data for ${section}:`, {
+      dataLength: data.length,
+      firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
+      sampleIds: data.slice(0, 3).map(r => r.id)
+    });
+    
+    return data;
+  };
   
-  // 🚀 SPEEDRUN NAVIGATION FIX: Use speedrun data for navigation when on speedrun records
-  const data = section === 'speedrun' ? (speedrunData || []) : getSectionData(section);
+  // 🚀 NAVIGATION FIX: Use fast section data for navigation for all sections
+  const data = getNavigationData(section);
+  
+  // 🚀 DEBUG: Log navigation data for all sections
+  console.log(`🔍 [NAVIGATION DEBUG] Navigation data for ${section}:`, {
+    section,
+    dataLength: data.length,
+    selectedRecordId: selectedRecord?.id,
+    selectedRecordName: selectedRecord?.name,
+    dataFirstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
+    // Section-specific data
+    peopleDataLength: peopleData?.length || 0,
+    companiesDataLength: companiesData?.length || 0,
+    leadsDataLength: leadsData?.length || 0,
+    prospectsDataLength: prospectsData?.length || 0,
+    speedrunDataLength: speedrunData?.length || 0,
+    // Loading states
+    peopleLoading,
+    companiesLoading,
+    leadsLoading,
+    prospectsLoading,
+    speedrunLoading
+  });
   
   // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
   // instead of loading it separately to ensure navigation works correctly
@@ -457,11 +517,14 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
 
   // Navigation functions for record detail view - FIXED to work like the back arrow (URL-based)
   const handleNavigatePrevious = useCallback(() => {
-    console.log(`🔍 [NAVIGATION] handleNavigatePrevious called:`, {
+    console.log(`🔍 [NAVIGATION] handleNavigatePrevious called for ${section}:`, {
       hasData: !!data,
       dataLength: data?.length,
       hasSelectedRecord: !!selectedRecord,
-      selectedRecordId: selectedRecord?.id
+      selectedRecordId: selectedRecord?.id,
+      selectedRecordName: selectedRecord?.name,
+      dataFirstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
+      dataLastRecord: data[data.length - 1] ? { id: data[data.length - 1].id, name: data[data.length - 1].name } : 'no records'
     });
     
     if (!data || !selectedRecord) {
@@ -491,11 +554,14 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   }, [data, selectedRecord, section, navigateToPipelineItem]);
 
   const handleNavigateNext = useCallback(() => {
-    console.log(`🔍 [NAVIGATION] handleNavigateNext called:`, {
+    console.log(`🔍 [NAVIGATION] handleNavigateNext called for ${section}:`, {
       hasData: !!data,
       dataLength: data?.length,
       hasSelectedRecord: !!selectedRecord,
-      selectedRecordId: selectedRecord?.id
+      selectedRecordId: selectedRecord?.id,
+      selectedRecordName: selectedRecord?.name,
+      dataFirstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
+      dataLastRecord: data[data.length - 1] ? { id: data[data.length - 1].id, name: data[data.length - 1].name } : 'no records'
     });
     
     if (!data || !selectedRecord) {
@@ -713,28 +779,18 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                   });
                   return recordIndex;
                 } else {
-                  // For other sections, use database rank if available, otherwise calculate from index
-                  const dbRank = recordToShow?.rank;
-                  if (dbRank && dbRank > 0) {
-                    console.log(`🔍 [NAVIGATION] Using database rank:`, {
-                      recordId: recordToShow?.id,
-                      recordName: recordToShow?.name,
-                      databaseRank: dbRank
-                    });
-                    return dbRank;
-                  } else {
-                    // Fallback: Calculate from index
-                    const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                    console.log(`🔍 [NAVIGATION] Calculating recordIndex from position:`, {
-                      recordId: recordToShow?.id,
-                      recordName: recordToShow?.name,
-                      dataLength: data.length,
-                      foundIndex: index,
-                      calculatedRecordIndex: index >= 0 ? index + 1 : 0,
-                      firstFewRecords: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
-                    });
-                    return index >= 0 ? index + 1 : 0;
-                  }
+                  // For other sections, always use sequential position like speedrun for consistent navigation
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  const recordIndex = index >= 0 ? index + 1 : 1;
+                  console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: recordIndex,
+                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+                  });
+                  return recordIndex;
                 }
               })()}
               totalRecords={data.length}
@@ -862,7 +918,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                     return dbRank;
                   } else {
                     const index = data.findIndex(r => r['id'] === selectedRecord.id);
-                    return index >= 0 ? index + 1 : 0;
+                    return index >= 0 ? index + 1 : 1;
                   }
                 })()}
                 totalRecords={data.length}

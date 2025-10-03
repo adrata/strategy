@@ -12,7 +12,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking';
 import { isWeekend, isHoliday } from '@/platform/utils/workday-utils';
 import { AddNoteModal } from './AddNoteModal';
-import { AddActionModal, ActionLogData } from './AddActionModal';
+import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { PanelLoader } from '@/platform/ui/components/Loader';
@@ -1012,8 +1012,8 @@ export function PipelineHeader({
           setSelectedRecord(null);
         }}
         onSubmit={handleActionSubmit}
-        record={selectedRecord}
-        recordType={section.slice(0, -1)}
+        contextRecord={selectedRecord}
+        section={section}
         isLoading={false}
       />
 

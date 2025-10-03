@@ -9,6 +9,7 @@ interface CompleteActionModalProps {
   onSubmit: (actionData: ActionLogData) => void;
   personName: string;
   isLoading?: boolean;
+  section?: string; // The section type to determine color scheme
 }
 
 export interface ActionLogData {
@@ -26,7 +27,8 @@ export function CompleteActionModal({
   onClose,
   onSubmit,
   personName,
-  isLoading = false
+  isLoading = false,
+  section = 'speedrun'
 }: CompleteActionModalProps) {
   const { users, currentUser } = useWorkspaceUsers();
   
@@ -79,8 +81,8 @@ export function CompleteActionModal({
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`p-2 ${section === 'speedrun' ? 'bg-green-100' : 'bg-blue-100'} rounded-lg`}>
+                <svg className={`w-5 h-5 ${section === 'speedrun' ? 'text-green-600' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -110,7 +112,7 @@ export function CompleteActionModal({
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Person
               </label>
-              <div className="px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-[var(--foreground)] text-sm">
+              <div className={`px-3 py-2 ${section === 'speedrun' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'} border rounded-lg text-[var(--foreground)] text-sm`}>
                 {personName}
               </div>
             </div>
@@ -125,7 +127,7 @@ export function CompleteActionModal({
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors`}
                 disabled={isLoading}
               >
                 <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
@@ -146,7 +148,7 @@ export function CompleteActionModal({
                 value={formData.action}
                 onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-sm"
+                className={`w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500' : 'focus:ring-blue-500'} focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-sm`}
                 placeholder="Describe what happened during this interaction..."
                 disabled={isLoading}
                 required
@@ -174,8 +176,12 @@ export function CompleteActionModal({
                 disabled={isLoading}
                 className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
                   formData.action.trim() && !isLoading
-                    ? 'bg-green-200 border-green-300 text-green-700 hover:bg-green-300' // Active state when typing
-                    : 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' // Default state
+                    ? section === 'speedrun' 
+                      ? 'bg-green-200 border-green-300 text-green-700 hover:bg-green-300' // Active state when typing
+                      : 'bg-blue-200 border-blue-300 text-blue-700 hover:bg-blue-300'
+                    : section === 'speedrun'
+                      ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' // Default state
+                      : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
                 title="Complete action (⌘+Enter)"
               >

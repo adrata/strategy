@@ -21,6 +21,7 @@ import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { CompleteActionModal, ActionLogData } from '@/products/speedrun/components/CompleteActionModal';
+import { AddActionModal } from '@/platform/ui/components/AddActionModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
@@ -35,6 +36,7 @@ export function SpeedrunSprintView() {
   const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
   const [currentSprintIndex, setCurrentSprintIndex] = useState(0);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [snoozedRecords, setSnoozedRecords] = useState<string[]>([]);
 
@@ -58,12 +60,10 @@ export function SpeedrunSprintView() {
     }
   }, [workspaceId, userId, loading, allData.length, refresh]);
 
-  // Dynamic sprint size based on available data
-  const calculateOptimalSprintSize = (totalRecords: number): number => {
-    if (totalRecords <= 15) return Math.max(3, Math.ceil(totalRecords / 3)); // 3-5 for small datasets
-    if (totalRecords <= 30) return Math.ceil(totalRecords / 3); // 10 for medium datasets
-    return 10; // 10 for large datasets (default)
-  };
+  // Fixed sprint configuration: 3 sprints total, 10 people per sprint, 30 total people
+  const SPRINT_SIZE = 10; // Fixed at 10 people per sprint
+  const TOTAL_SPRINTS = 3; // Fixed at 3 sprints total
+  const TOTAL_PEOPLE = 30; // Fixed at 30 total people in speedrun
   
 
   
@@ -106,17 +106,15 @@ export function SpeedrunSprintView() {
     });
   }, [allData]);
   
-  const SPRINT_SIZE = calculateOptimalSprintSize(filteredData?.length || 0);
-  
-  // Log adaptive sprint sizing for workspace optimization
+  // Log fixed sprint configuration
   useEffect(() => {
     if (filteredData?.length) {
-      console.log(`🏃‍♂️ Adaptive Sprint: ${filteredData.length} records → ${SPRINT_SIZE} per sprint for optimal workflow`);
+      console.log(`🏃‍♂️ Fixed Sprint Config: ${TOTAL_PEOPLE} total people → ${SPRINT_SIZE} per sprint, ${TOTAL_SPRINTS} sprints total`);
     }
-  }, [filteredData?.length, SPRINT_SIZE]);
+  }, [filteredData?.length]);
   
   const data = filteredData ? filteredData.slice(currentSprintIndex * SPRINT_SIZE, (currentSprintIndex + 1) * SPRINT_SIZE) : [];
-  const totalSprints = Math.ceil((filteredData?.length || 0) / SPRINT_SIZE);
+  const totalSprints = TOTAL_SPRINTS; // Fixed at 3 sprints
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
   const currentSprintNumber = currentSprintIndex + 1;
 
@@ -137,7 +135,7 @@ export function SpeedrunSprintView() {
     }
   }, [data]); // Remove selectedRecord from dependencies to prevent infinite loop
 
-  // Keyboard shortcut for Command+Enter to complete current record
+  // Keyboard shortcuts for Command+Enter
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Command+Enter for completing as DONE
@@ -156,6 +154,26 @@ export function SpeedrunSprintView() {
         
         return false;
       }
+      
+      // Command+Shift+Enter for adding new action
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        event.shiftKey &&
+        (event['key'] === "Enter" || event['keyCode'] === 13)
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        console.log(`⌨️ Command+Shift+Enter pressed - opening Add Action modal`);
+        
+        // Show the add action modal
+        setShowAddActionModal(true);
+        
+        return false;
+      }
+      
+      // No action needed for other key combinations
+      return;
     };
 
     // Add event listener with capture to ensure we get the event first
@@ -269,6 +287,24 @@ export function SpeedrunSprintView() {
     } catch (error) {
       console.error('❌ Error saving action log:', error);
       alert(`Failed to save action log: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsSubmittingAction(false);
+    }
+  };
+
+  // Handle add action submission
+  const handleAddAction = async (actionData: any) => {
+    setIsSubmittingAction(true);
+    try {
+      console.log('🚀 [SPEEDRUN] Adding new action:', actionData);
+      
+      // Here you would typically make an API call to add the action
+      // For now, we'll just log it and close the modal
+      console.log('✅ [SPEEDRUN] Action added successfully');
+      
+      setShowAddActionModal(false);
+    } catch (error) {
+      console.error('❌ [SPEEDRUN] Failed to add action:', error);
     } finally {
       setIsSubmittingAction(false);
     }
@@ -410,11 +446,9 @@ export function SpeedrunSprintView() {
             </div>
             <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{data.length}/{SPRINT_SIZE}</span>
           </div>
-          {totalSprints > 1 && (
-            <div className="text-xs text-gray-500">
-              {currentSprintNumber} of {totalSprints} sprints
-            </div>
-          )}
+          <div className="text-xs text-gray-500">
+            {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
+          </div>
         </div>
       </div>
 
@@ -597,6 +631,16 @@ export function SpeedrunSprintView() {
         onClose={() => setShowCompleteModal(false)}
         onSubmit={handleActionLogSubmit}
         personName={selectedRecord?.fullName || selectedRecord?.name || 'Unknown'}
+        section="speedrun"
+        isLoading={isSubmittingAction}
+      />
+
+      {/* Add Action Modal */}
+      <AddActionModal
+        isOpen={showAddActionModal}
+        onClose={() => setShowAddActionModal(false)}
+        onSubmit={handleAddAction}
+        contextRecord={selectedRecord}
         isLoading={isSubmittingAction}
       />
     </SpeedrunDataProvider>

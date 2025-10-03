@@ -54,12 +54,12 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       setCompanySearchQuery('');
       setCompanySearchResults([]);
       setSelectedCompany(null);
-      // Auto-focus the first input field (Person Name field)
+      // Auto-focus the first input field (Person Name field) without selecting text
       setTimeout(() => {
         const firstInput = document.querySelector('input[type="text"]') as HTMLInputElement;
         if (firstInput) {
           firstInput.focus();
-          firstInput.select(); // Also select any existing text for better UX
+          // Remove the select() call to prevent text selection that might cause black border
         }
       }, 150); // Slightly longer delay for better reliability
     }
@@ -338,8 +338,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   ? "Enter person name"
                   : `Enter ${getSectionTitle().toLowerCase()} name`
               }
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
-              style={{ outline: 'none' }}
+              className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               required
             />
           </div>
@@ -357,7 +356,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={companySearchQuery}
                     onChange={(e) => setCompanySearchQuery(e.target.value)}
                     placeholder="Search for company..."
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
@@ -441,7 +440,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                       }))
                     }
                     placeholder="Enter deal amount"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
@@ -458,7 +457,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         probability: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select probability</option>
                     <option value="10">10% - Early stage</option>
@@ -484,7 +483,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         stage: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select stage</option>
                     <option value="Discovery">Discovery</option>
@@ -520,7 +519,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         closeDate: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   />
                 </div>
               </div>
@@ -540,7 +539,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     }))
                   }
                   placeholder="Contact name"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                 />
               </div>
             </>
@@ -563,7 +562,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         partnerType: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select partner type</option>
                     <option value="VC">VC - Venture Capital</option>
@@ -587,7 +586,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         relationshipStatus: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select relationship status</option>
                     <option value="Active">Active</option>
@@ -613,7 +612,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                       }))
                     }
                     placeholder="Contact person name"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
@@ -631,7 +630,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                       }))
                     }
                     placeholder="e.g., Partner, VP"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
               </div>
@@ -653,7 +652,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, email: e.target.value }))
                   }
                   placeholder="Enter email address"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                 />
               </div>
             )}
@@ -671,7 +670,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, phone: e.target.value }))
                   }
                   placeholder="Enter phone number"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                 />
               </div>
             )}
@@ -689,7 +688,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, website: e.target.value }))
                   }
                   placeholder="Enter company website"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                 />
               </div>
             )}
@@ -707,7 +706,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, industry: e.target.value }))
                   }
                   placeholder="Enter industry"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                 />
               </div>
             )}
@@ -727,7 +726,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         setFormData((prev: any) => ({ ...prev, contractValue: e.target.value }))
                       }
                       placeholder="Enter contract value"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                      className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                     />
                   </div>
 
@@ -741,7 +740,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                       onChange={(e) =>
                         setFormData((prev: any) => ({ ...prev, renewalDate: e.target.value }))
                       }
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                      className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                     />
                   </div>
                 </div>
@@ -825,30 +824,28 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   setFormData((prev: any) => ({ ...prev, company: e.target.value }))
                 }
                 placeholder="Enter company name"
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               />
             </div>
           )}
 
-          {/* Title Field (not for opportunities, partnerships, or accounts) */}
-          {activeSection !== "opportunities" &&
-            activeSection !== "partnerships" &&
-            activeSection !== "accounts" && (
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={formData.title || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, title: e.target.value }))
-                  }
-                  placeholder="Enter job title"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
-                />
-              </div>
-            )}
+          {/* Title Field - Only show for specific sections that need it */}
+          {(activeSection === "opportunities" || activeSection === "partnerships") && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Title
+              </label>
+              <input
+                type="text"
+                value={formData.title || ""}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({ ...prev, title: e.target.value }))
+                }
+                placeholder="Enter job title"
+                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              />
+            </div>
+          )}
 
           {/* Additional Account-specific fields */}
           {activeSection === "accounts" && (
@@ -862,7 +859,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   onChange={(e) =>
                     setFormData((prev: any) => ({ ...prev, size: e.target.value }))
                   }
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                 >
                   <option value="">Select company size</option>
                   <option value="1-10">1-10 employees</option>
@@ -883,7 +880,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   onChange={(e) =>
                     setFormData((prev: any) => ({ ...prev, revenue: e.target.value }))
                   }
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                 >
                   <option value="">Select revenue range</option>
                   <option value="Under $1M">Under $1M</option>
@@ -909,7 +906,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               }
               placeholder={`Additional notes about this ${getSectionTitle().toLowerCase()}`}
               rows={3}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
             />
           </div>
 
@@ -1025,7 +1022,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.name}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
@@ -1039,7 +1036,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.website}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                     placeholder="example.com or https://example.com"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 

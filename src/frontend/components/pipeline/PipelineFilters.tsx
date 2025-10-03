@@ -813,7 +813,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                         {columnOptions.map((option) => {
                           const isAllOption = option['value'] === 'all';
                           const allColumnValues = columnOptions.filter(opt => opt.value !== 'all').map(opt => opt.value);
-                          const isAllSelected = isAllOption && visibleColumns['length'] === allColumnValues.length;
+                          // Fix: Check if ALL individual columns are actually selected, not just length
+                          const isAllSelected = isAllOption && allColumnValues.every(col => visibleColumns.includes(col));
                           const isChecked = isAllOption ? isAllSelected : visibleColumns.includes(option.value);
                           
                           return (

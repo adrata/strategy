@@ -3,7 +3,7 @@
  * Clean, modular table that handles all pipeline sections with proper TypeScript safety.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
@@ -15,7 +15,7 @@ import { Pagination } from './table/Pagination';
 import { TableSkeleton } from './table/TableSkeleton';
 import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
-import { AddActionModal, ActionLogData } from './AddActionModal';
+import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
 
 // -------- Types --------
@@ -266,6 +266,28 @@ export function PipelineTable({
     return handleActionSubmit(convertedActionData);
   };
 
+  // Keyboard shortcuts for Add Action
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Command+Enter to open Add Action modal
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        // Only if we're not in an input field
+        const target = event.target as HTMLElement;
+        const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+        
+        if (!isInput && data.length > 0) {
+          event.preventDefault();
+          // Open Add Action modal with the first record as context
+          setSelectedRecord(data[0]);
+          setAddActionModalOpen(true);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [data]);
+
   // Map section to recordType for RecordDetailModal
   const getRecordType = (section: string): 'lead' | 'prospect' | 'opportunity' | 'account' | 'contact' | 'customer' | 'partner' => {
     switch (section) {
@@ -471,11 +493,11 @@ export function PipelineTable({
       
       {addActionModalOpen && selectedRecord && (
         <AddActionModal
-          record={selectedRecord}
           isOpen={addActionModalOpen}
           onClose={closeAddActionModal}
           onSubmit={handleActionSubmitWrapper}
-          recordType={section}
+          contextRecord={selectedRecord}
+          section={section}
           isLoading={isSubmitting}
         />
       )}

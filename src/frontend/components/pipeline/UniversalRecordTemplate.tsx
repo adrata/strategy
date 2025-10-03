@@ -1340,18 +1340,16 @@ export function UniversalRecordTemplate({
       }
     });
 
-    // Update Record button - for speedrun records
-    if (recordType === 'speedrun') {
-      buttons.push(
-        <button
-          key="update-record"
-          onClick={() => setIsEditRecordModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          Update Record
-        </button>
-      );
-    }
+    // Update Record button - for all record types
+    buttons.push(
+      <button
+        key="update-record"
+        onClick={() => setIsEditRecordModalOpen(true)}
+        className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+      >
+        Update Record
+      </button>
+    );
 
     // Add Action button - Check URL path to determine button text and styling
     if (recordType === 'speedrun') {
@@ -1730,26 +1728,32 @@ export function UniversalRecordTemplate({
           
           <div className="flex items-center gap-1">
             {(() => {
+              // Ensure recordIndex is always at least 1 for proper navigation
+              const safeRecordIndex = recordIndex || 1;
+              const safeTotalRecords = totalRecords || 0;
+              
               console.log(`🔍 [UNIVERSAL] Navigation arrows state:`, {
                 recordIndex,
+                safeRecordIndex,
                 totalRecords,
-                canGoPrevious: !(!recordIndex || recordIndex <= 1),
-                canGoNext: !(!recordIndex || !totalRecords || recordIndex >= totalRecords),
-                isPreviousDisabled: !recordIndex || recordIndex <= 1,
-                isNextDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords,
+                safeTotalRecords,
+                canGoPrevious: !(!safeRecordIndex || safeRecordIndex <= 1),
+                canGoNext: !(!safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords),
+                isPreviousDisabled: !safeRecordIndex || safeRecordIndex <= 1,
+                isNextDisabled: !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords,
                 hasOnNavigatePrevious: !!onNavigatePrevious,
                 hasOnNavigateNext: !!onNavigateNext,
                 recordId: record?.id,
                 recordName: record?.name || record?.fullName,
                 recordType: recordType,
                 // Additional debugging
-                previousButtonDisabled: !recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1,
-                nextButtonDisabled: !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1,
+                previousButtonDisabled: !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords || safeTotalRecords <= 1,
+                nextButtonDisabled: !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords || safeTotalRecords <= 1,
                 // Debug the actual disabled conditions
-                prevDisabledCondition: `!${recordIndex} || ${recordIndex} <= 1 || !${totalRecords}`,
-                nextDisabledCondition: `!${recordIndex} || !${totalRecords} || ${recordIndex} >= ${totalRecords}`,
-                prevDisabledResult: !recordIndex || recordIndex <= 1 || !totalRecords,
-                nextDisabledResult: !recordIndex || !totalRecords || recordIndex >= totalRecords
+                prevDisabledCondition: `!${safeRecordIndex} || ${safeRecordIndex} <= 1 || !${safeTotalRecords}`,
+                nextDisabledCondition: `!${safeRecordIndex} || !${safeTotalRecords} || ${safeRecordIndex} >= ${safeTotalRecords}`,
+                prevDisabledResult: !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords,
+                nextDisabledResult: !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords
               });
               
               return (
@@ -1764,20 +1768,20 @@ export function UniversalRecordTemplate({
                         recordId: record?.id,
                         recordName: record?.name || record?.fullName
                       });
-                      if (onNavigatePrevious && recordIndex && recordIndex > 1) {
+                      if (onNavigatePrevious && safeRecordIndex && safeRecordIndex > 1) {
                         console.log(`✅ [UNIVERSAL] Navigating to previous record`);
                         onNavigatePrevious();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] Cannot navigate previous - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate previous - safeRecordIndex: ${safeRecordIndex}, safeTotalRecords: ${safeTotalRecords}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || recordIndex <= 1 || !totalRecords
+                      !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || recordIndex <= 1 || !totalRecords}
-                    title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Previous record"}
+                    disabled={!safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords}
+                    title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Previous record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1793,20 +1797,20 @@ export function UniversalRecordTemplate({
                         recordId: record?.id,
                         recordName: record?.name || record?.fullName
                       });
-                      if (onNavigateNext && recordIndex && totalRecords && recordIndex < totalRecords) {
+                      if (onNavigateNext && safeRecordIndex && safeTotalRecords && safeRecordIndex < safeTotalRecords) {
                         console.log(`✅ [UNIVERSAL] Navigating to next record`);
                         onNavigateNext();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] Cannot navigate next - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate next - safeRecordIndex: ${safeRecordIndex}, safeTotalRecords: ${safeTotalRecords}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || !totalRecords || recordIndex >= totalRecords
+                      !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || !totalRecords || recordIndex >= totalRecords}
-                    title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Next record"}
+                    disabled={!safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords}
+                    title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Next record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -2002,6 +2006,7 @@ export function UniversalRecordTemplate({
         onClose={() => setIsAddActionModalOpen(false)}
         onSubmit={handleActionSubmit}
         personName={record?.fullName || record?.name || 'Unknown'}
+        section={recordType}
         isLoading={loading}
       />
 

@@ -630,6 +630,13 @@ button:focus {
   --tw-ring-opacity: 0 !important;
 }
 
+/* Add Modal specific focus styles - override global focus removal */
+.add-modal-input:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+  border-color: #3b82f6 !important;
+}
+
 /* Override default link colors globally */
 a {
   color: inherit;

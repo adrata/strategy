@@ -23,6 +23,7 @@ const getPageName = (pathname: string): string => {
     '/partners': 'Partners',
     '/sellers': 'Sellers',
     '/speedrun': 'Speedrun',
+    '/speedrun/sprint': 'Sprint',
     '/metrics': 'Metrics',
     '/aos': 'AOS Platform',
     '/monaco': 'Monaco',

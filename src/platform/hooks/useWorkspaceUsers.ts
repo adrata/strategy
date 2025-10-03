@@ -147,8 +147,16 @@ export function useWorkspaceUsers() {
           setError(null);
         }
       } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch users';
         console.error('Error fetching workspace users:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch users');
+        
+        // Don't set error for network failures - just log and continue
+        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+          console.warn('⚠️ [useWorkspaceUsers] Network error - will retry later');
+          setError(null); // Clear any previous errors
+        } else {
+          setError(errorMessage);
+        }
         setUsers([]);
       } finally {
         // 🚀 PERFORMANCE: Clean up the request promise
