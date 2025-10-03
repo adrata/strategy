@@ -591,7 +591,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                   }}
                   className="text-xs text-gray-500 hover:text-gray-700"
                 >
-                  Clear All
+                  Reset
                 </button>
               </div>
               
@@ -717,7 +717,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                             type="radio"
                             checked={option.value === sortBy}
                             onChange={() => {}} // Handled by parent click
-                            className="rounded border-gray-300 text-gray-600 focus:ring-gray-500 accent-gray-600"
+                            className="rounded border-blue-300 text-blue-600 focus:ring-blue-500 accent-blue-600"
                           />
                           <span>{option.label}</span>
                         </button>
