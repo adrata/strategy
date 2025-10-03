@@ -1647,21 +1647,22 @@ export function UniversalRecordTemplate({
                       console.log(`🔍 [UNIVERSAL] Previous button clicked!`, {
                         hasOnNavigatePrevious: !!onNavigatePrevious,
                         recordIndex,
-                        totalRecords
+                        totalRecords,
+                        canNavigate: !(!recordIndex || recordIndex <= 1)
                       });
-                      if (onNavigatePrevious) {
+                      if (onNavigatePrevious && recordIndex && recordIndex > 1) {
                         onNavigatePrevious();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] onNavigatePrevious is not defined!`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate previous - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || recordIndex <= 1
+                      !recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || recordIndex <= 1}
-                    title="Previous record"
+                    disabled={!recordIndex || recordIndex <= 1 || !totalRecords || totalRecords <= 1}
+                    title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Previous record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1672,21 +1673,22 @@ export function UniversalRecordTemplate({
                       console.log(`🔍 [UNIVERSAL] Next button clicked!`, {
                         hasOnNavigateNext: !!onNavigateNext,
                         recordIndex,
-                        totalRecords
+                        totalRecords,
+                        canNavigate: !(!recordIndex || !totalRecords || recordIndex >= totalRecords)
                       });
-                      if (onNavigateNext) {
+                      if (onNavigateNext && recordIndex && totalRecords && recordIndex < totalRecords) {
                         onNavigateNext();
                       } else {
-                        console.warn(`❌ [UNIVERSAL] onNavigateNext is not defined!`);
+                        console.warn(`❌ [UNIVERSAL] Cannot navigate next - recordIndex: ${recordIndex}, totalRecords: ${totalRecords}`);
                       }
                     }}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      !recordIndex || !totalRecords || recordIndex >= totalRecords
+                      !recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1
                         ? 'text-gray-300 cursor-not-allowed'
                         : 'text-gray-900 hover:text-blue-600 hover:bg-gray-50'
                     }`}
-                    disabled={!recordIndex || !totalRecords || recordIndex >= totalRecords}
-                    title="Next record"
+                    disabled={!recordIndex || !totalRecords || recordIndex >= totalRecords || totalRecords <= 1}
+                    title={!totalRecords || totalRecords <= 1 ? "No other records to navigate" : "Next record"}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
