@@ -14,6 +14,7 @@ interface CompleteActionModalProps {
 export interface ActionLogData {
   person: string;
   type: 'LinkedIn' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
+  time: 'Now' | 'Past' | 'Future';
   action: string;
   actionPerformedBy?: string; // User ID of who performed the action
 }
@@ -30,6 +31,7 @@ export function CompleteActionModal({
   const [formData, setFormData] = useState<ActionLogData>({
     person: personName,
     type: 'LinkedIn',
+    time: 'Now',
     action: '',
     actionPerformedBy: currentUser?.id || ''
   });
@@ -48,6 +50,7 @@ export function CompleteActionModal({
       setFormData({
         person: personName,
         type: 'LinkedIn',
+        time: 'Now',
         action: '',
         actionPerformedBy: currentUser?.id || ''
       });
@@ -59,21 +62,21 @@ export function CompleteActionModal({
 
   return (
     <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-2xl max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-100 rounded-xl">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[var(--foreground)]">
+                <h2 className="text-2xl font-bold text-[var(--foreground)]">
                   Complete Action
                 </h2>
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-base text-[var(--muted)]">
                   Log your interaction with {personName}
                 </p>
               </div>
@@ -81,9 +84,9 @@ export function CompleteActionModal({
             <button
               onClick={handleClose}
               disabled={isLoading}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
             >
-              <svg className="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -92,24 +95,24 @@ export function CompleteActionModal({
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Person - Auto-filled */}
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-base font-semibold text-[var(--foreground)] mb-3">
                 Person
               </label>
-              <div className="px-4 py-3 bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg text-[var(--foreground)]">
+              <div className="px-4 py-4 bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg text-[var(--foreground)] text-base">
                 {personName}
               </div>
             </div>
 
             {/* Type */}
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label htmlFor="type" className="block text-base font-semibold text-[var(--foreground)] mb-3">
                 Type
               </label>
               <select
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)]"
+                className="w-full px-4 py-4 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-base"
                 disabled={isLoading}
               >
                 <option value="LinkedIn">LinkedIn</option>
@@ -121,17 +124,35 @@ export function CompleteActionModal({
               </select>
             </div>
 
-            {/* Notes */}
+            {/* Time */}
             <div>
-              <label htmlFor="action" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Notes
+              <label htmlFor="time" className="block text-base font-semibold text-[var(--foreground)] mb-3">
+                Time
+              </label>
+              <select
+                id="time"
+                value={formData.time}
+                onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value as ActionLogData['time'] }))}
+                className="w-full px-4 py-4 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-base"
+                disabled={isLoading}
+              >
+                <option value="Now">Now</option>
+                <option value="Past">Past</option>
+                <option value="Future">Future</option>
+              </select>
+            </div>
+
+            {/* Action */}
+            <div>
+              <label htmlFor="action" className="block text-base font-semibold text-[var(--foreground)] mb-3">
+                Action
               </label>
               <textarea
                 id="action"
                 value={formData.action}
                 onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
                 rows={4}
-                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none"
+                className="w-full px-4 py-4 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-base"
                 placeholder="Describe what happened during this interaction..."
                 disabled={isLoading}
                 required
@@ -146,23 +167,23 @@ export function CompleteActionModal({
             />
 
             {/* Buttons */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-4 pt-6">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 text-[var(--muted)] bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]/20 transition-colors disabled:opacity-50 font-medium"
+                className="flex-1 px-6 py-4 text-[var(--muted)] bg-[var(--muted)]/10 border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]/20 transition-colors disabled:opacity-50 font-semibold text-base"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={isLoading || !formData.action.trim()}
-                className="flex-1 px-4 py-3 text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                disabled={isLoading}
+                className="flex-1 px-6 py-4 text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold text-base shadow-lg"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Saving...
                   </div>
                 ) : (
