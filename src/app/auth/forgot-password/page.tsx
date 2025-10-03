@@ -39,8 +39,8 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
+    <div className="flex min-h-screen items-center justify-center bg-black">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
           <div className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
               <svg
@@ -90,9 +90,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+    <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
           Reset Your Password
         </h1>
 

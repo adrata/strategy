@@ -339,7 +339,7 @@ export default function SignInPage() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
+                className="h-4 w-4 text-[#2F6FDC] focus:ring-[#2F6FDC] border-gray-300 rounded"
                 disabled={isLoading}
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
