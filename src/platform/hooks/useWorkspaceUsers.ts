@@ -69,7 +69,9 @@ export function useWorkspaceUsers() {
             throw new Error(data.error || 'Failed to fetch users');
           }
           
-          const workspaceUsers = data.users || [];
+          // Handle the response structure from createSuccessResponse
+          const responseData = data.data || data;
+          const workspaceUsers = responseData.users || [];
           const validUsers = workspaceUsers.filter((u: any) => u['id'] && (u.name || u.email));
           setUsers(validUsers);
           
@@ -102,7 +104,9 @@ export function useWorkspaceUsers() {
           throw new Error(data.error || 'Failed to fetch users');
         }
         
-        const workspaceUsers = data.users || [];
+        // Handle the response structure from createSuccessResponse
+        const responseData = data.data || data;
+        const workspaceUsers = responseData.users || [];
         console.log('🔍 [useWorkspaceUsers] Users fetched successfully:', {
           usersCount: workspaceUsers.length,
           users: workspaceUsers.map((u: any) => ({ 
@@ -120,7 +124,15 @@ export function useWorkspaceUsers() {
         setUsers(validUsers);
         
         if (validUsers['length'] === 0) {
-          setError('No users found in this workspace');
+          // Provide more specific error message
+          if (workspaceUsers.length > 0) {
+            setError('Users found but missing required data. Please contact support.');
+          } else {
+            setError('No users found in this workspace');
+          }
+        } else {
+          // Clear any previous errors if we found users
+          setError(null);
         }
       } catch (err) {
         console.error('Error fetching workspace users:', err);

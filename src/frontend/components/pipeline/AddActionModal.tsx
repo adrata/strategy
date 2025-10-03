@@ -533,7 +533,7 @@ export function AddActionModal({
                   <option value="">Select a user</option>
                   {users.map(user => (
                     <option key={user.id} value={user.id}>
-                      {user['id'] === currentUser?.id ? 'Me (John Dano)' : (user.name || user.email || 'Unknown User')}
+                      {user['id'] === currentUser?.id ? `Me (${currentUser?.name || currentUser?.email || 'Current User'})` : (user.name || user.email || 'Unknown User')}
                     </option>
                   ))}
                 </>

@@ -79,6 +79,7 @@ export async function GET(request: NextRequest) {
 
     console.log('🔍 [API] Found workspace users:', {
       count: users.length,
+      totalWorkspaceUsers: workspaceUsers.length,
       users: users.map(u => ({
         id: u.id,
         name: u.name,
@@ -86,8 +87,15 @@ export async function GET(request: NextRequest) {
       }))
     });
 
+    // Log any missing users for debugging
+    const foundUserIds = users.map(u => u.id);
+    const missingUserIds = userIds.filter(id => !foundUserIds.includes(id));
+    if (missingUserIds.length > 0) {
+      console.warn('⚠️ [API] Some workspace users not found in users table:', missingUserIds);
+    }
+
     // Map users with their workspace role
-    const usersWithRole = users.map(user => {
+    let usersWithRole = users.map(user => {
       const workspaceUser = workspaceUsers.find(wu => wu['userId'] === user.id);
       return {
         id: user.id,
@@ -100,8 +108,40 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // If no users found, try to get the current user as a fallback
+    if (usersWithRole.length === 0) {
+      console.warn('⚠️ [API] No users found in workspace, attempting to get current user as fallback');
+      try {
+        const currentUser = await prisma.users.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            displayName: true
+          }
+        });
+        
+        if (currentUser) {
+          usersWithRole = [{
+            id: currentUser.id,
+            name: currentUser.name || currentUser.displayName || currentUser.email || 'Current User',
+            email: currentUser.email,
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+            displayName: currentUser.displayName,
+            role: 'admin' // Default to admin for current user
+          }];
+          console.log('✅ [API] Added current user as fallback');
+        }
+      } catch (fallbackError) {
+        console.error('❌ [API] Failed to get current user as fallback:', fallbackError);
+      }
+    }
+
     const responseData = {
-      success: true,
       users: usersWithRole,
       count: usersWithRole.length,
       workspaceId
