@@ -43,7 +43,7 @@ export function SpeedrunSprintView() {
   const userId = user?.id;
   
   // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
-  const fastSectionData = useFastSectionData('speedrun', workspaceId ? parseInt(workspaceId) : undefined);
+  const fastSectionData = useFastSectionData('speedrun', 1000); // Load up to 1000 records
   
   const allData = fastSectionData.data || [];
   const loading = fastSectionData.loading || false;
