@@ -14,7 +14,7 @@ interface CompleteActionModalProps {
 export interface ActionLogData {
   person: string;
   type: 'LinkedIn' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email' | 'Text';
-  time: 'Now' | 'Past' | 'Future';
+  time: string; // Will be auto-set to current timestamp when logging
   action: string;
   actionPerformedBy?: string; // User ID of who performed the action
 }
@@ -31,7 +31,7 @@ export function CompleteActionModal({
   const [formData, setFormData] = useState<ActionLogData>({
     person: personName,
     type: 'LinkedIn',
-    time: 'Now',
+    time: new Date().toISOString(),
     action: '',
     actionPerformedBy: currentUser?.id || ''
   });
@@ -60,7 +60,7 @@ export function CompleteActionModal({
       setFormData({
         person: personName,
         type: 'LinkedIn',
-        time: 'Now',
+        time: new Date().toISOString(),
         action: '',
         actionPerformedBy: currentUser?.id || ''
       });
@@ -134,23 +134,6 @@ export function CompleteActionModal({
               </select>
             </div>
 
-            {/* Time */}
-            <div>
-              <label htmlFor="time" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Time
-              </label>
-              <select
-                id="time"
-                value={formData.time}
-                onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value as ActionLogData['time'] }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] text-sm"
-                disabled={isLoading}
-              >
-                <option value="Now">Now</option>
-                <option value="Past">Past</option>
-                <option value="Future">Future</option>
-              </select>
-            </div>
 
             {/* Action */}
             <div>
@@ -189,7 +172,7 @@ export function CompleteActionModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm shadow-lg"
+                className="flex-1 px-4 py-3 text-white bg-green-400 border border-transparent rounded-lg hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm shadow-lg"
                 title="Complete action (⌘+Enter)"
               >
                 {isLoading ? (
