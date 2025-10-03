@@ -1296,7 +1296,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     })()
   ) : finalLoading ? (
     // 🚀 PERFORMANCE: Show XL loading skeleton while fast section data loads
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white max-w-full overflow-hidden">
       {/* Top header skeleton - includes title, count, and action buttons */}
       <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -1325,7 +1325,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       </div>
       
       {/* Table skeleton */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 max-w-full overflow-hidden">
         <div className="space-y-4">
           {/* Table header skeleton */}
           <div className="grid grid-cols-6 gap-4 py-3 border-b border-gray-200">
@@ -1390,7 +1390,9 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
       <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'} overflow-auto middle-panel-scroll`} style={{
         scrollbarWidth: 'thin',
         scrollbarColor: '#cbd5e1 #f1f5f9',
-        minHeight: 'calc(100vh - 200px)' // Extend table height
+        minHeight: 'calc(100vh - 200px)', // Extend table height
+        maxWidth: '100%', // Prevent overflow into right panel
+        overflowX: 'hidden' // Prevent horizontal overflow
       }}>
         {Array.isArray(sectionDataArray) && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
