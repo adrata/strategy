@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { generateSlug } from '@/platform/utils/url-utils';
 
 interface HierarchicalBreadcrumbProps {
   record: any;
@@ -40,10 +41,16 @@ export function HierarchicalBreadcrumb({
   // Handle navigation to company page
   const handleCompanyClick = () => {
     const companyId = getCompanyId();
-    if (companyId) {
+    const companyName = getCompanyName();
+    
+    if (companyId && companyName) {
+      // Generate proper company slug using name and ID
+      const companySlug = generateSlug(companyName, companyId);
+      
       // Navigate to company page
       const currentPath = window.location.pathname;
       console.log(`🔍 [BREADCRUMB] Current path for company navigation: ${currentPath}`);
+      console.log(`🔍 [BREADCRUMB] Generated company slug: ${companySlug}`);
       
       // Fix malformed URLs like /leads/prospects
       if (currentPath.includes('/leads/prospects') || currentPath.includes('/prospects/leads')) {
@@ -54,11 +61,11 @@ export function HierarchicalBreadcrumb({
       
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
-        const newUrl = `/${workspaceSlug}/companies/${companyId}`;
+        const newUrl = `/${workspaceSlug}/companies/${companySlug}`;
         console.log(`🔗 [BREADCRUMB] Navigating to company: ${newUrl}`);
         router.push(newUrl);
       } else {
-        const newUrl = `/companies/${companyId}`;
+        const newUrl = `/companies/${companySlug}`;
         console.log(`🔗 [BREADCRUMB] Navigating to company: ${newUrl}`);
         router.push(newUrl);
       }

@@ -404,9 +404,8 @@ export function UniversalRecordTemplate({
       case 'prospects':
       case 'speedrun':
         const title = record?.title || record?.jobTitle;
-        // 🎯 FIX: Use same company extraction logic as speedrun table
-        const company = record?.company?.name || record?.company || record?.companyName || 'Company';
-        return title ? `${title} • ${company}` : company;
+        // 🎯 FIX: Show only title, not company
+        return title || 'Unknown Title';
       case 'opportunities':
       case 'deals':
         return `${record?.stage || 'Unknown Stage'} • ${record?.amount || record?.value ? `$${(record.amount || record.value).toLocaleString()}` : 'No Amount'}`;
