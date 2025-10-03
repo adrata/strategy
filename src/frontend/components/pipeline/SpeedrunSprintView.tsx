@@ -22,7 +22,7 @@ import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { CompleteActionModal, ActionLogData } from '@/products/speedrun/components/CompleteActionModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
-import { usePipelineData } from '@/platform/hooks/useAdrataData';
+import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
@@ -42,22 +42,13 @@ export function SpeedrunSprintView() {
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
   const userId = user?.id;
   
-  // CRITICAL FIX: Use original PipelineDataStore for reliable data loading
-  const pipelineData = usePipelineData('speedrun', workspaceId, userId);
+  // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
+  const fastSectionData = useFastSectionData('speedrun', workspaceId ? parseInt(workspaceId) : undefined);
   
-  // Ensure allData is always an array
-  const allData = Array.isArray(pipelineData.data) ? pipelineData.data : [];
-  const loading = pipelineData.isLoading || false;
-  const error = pipelineData.error || null;
-  const refresh = pipelineData.mutate || (() => {});
-  
-  console.log('🔍 [SPEEDRUN DEBUG] Pipeline data:', {
-    pipelineData,
-    allDataLength: allData.length,
-    allDataType: typeof allData,
-    isArray: Array.isArray(allData),
-    sampleData: allData.slice(0, 2)
-  });
+  const allData = fastSectionData.data || [];
+  const loading = fastSectionData.loading || false;
+  const error = fastSectionData.error || null;
+  const refresh = fastSectionData.refresh || (() => {});
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
