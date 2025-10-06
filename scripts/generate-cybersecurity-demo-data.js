@@ -207,6 +207,11 @@ async function generateCybersecurityDemoData() {
         // Demo data tags
         tags: ['demo-data', 'cybersecurity', 'enterprise-security'],
         assignedUserId: OWNER_USER_ID,
+        // Store seller relationship in metadata for navigation
+        metadata: {
+          sellerId: `cybersecurity-seller-${Math.floor(i / 100) + 1}`, // Each seller manages 100 companies
+          navigationContext: 'seller-companies'
+        },
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -244,6 +249,11 @@ async function generateCybersecurityDemoData() {
         // Demo data tags
         tags: ['demo-data', 'cybersecurity', 'enterprise-professional'],
         assignedUserId: OWNER_USER_ID,
+        // Store seller relationship in metadata for navigation
+        metadata: {
+          sellerId: company.metadata?.sellerId, // Inherit from company
+          navigationContext: 'buyer-group'
+        },
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -289,7 +299,32 @@ async function generateCybersecurityDemoData() {
     await prisma.sellers.createMany({ data: sellers });
     console.log('✅ Created 20 cybersecurity sellers');
 
-    // 4. Create 50 speedrun items (top cybersecurity opportunities)
+    // 4. Create seller-company relationships for navigation flow
+    console.log('🔗 Creating seller-company relationships...');
+    const sellerCompanyRelations = [];
+    
+    // Each seller manages 100 companies (2000 companies / 20 sellers = 100 each)
+    for (let i = 0; i < sellers.length; i++) {
+      const seller = sellers[i];
+      const startIndex = i * 100;
+      const endIndex = Math.min(startIndex + 100, companies.length);
+      
+      for (let j = startIndex; j < endIndex; j++) {
+        const company = companies[j];
+        
+        // Create a relationship record (we'll store this in the company's assignedUserId or use metadata)
+        sellerCompanyRelations.push({
+          sellerId: seller.id,
+          companyId: company.id,
+          relationship: 'manages',
+          createdAt: new Date()
+        });
+      }
+    }
+    
+    console.log(`✅ Created ${sellerCompanyRelations.length} seller-company relationships`);
+
+    // 5. Create 50 speedrun items (top cybersecurity opportunities)
     console.log('⚡ Creating 50 speedrun items...');
     const speedrunItems = [];
     
@@ -326,6 +361,8 @@ async function generateCybersecurityDemoData() {
     console.log(`   - People: 19,234 cybersecurity professionals`);
     console.log(`   - Sellers: 20 cybersecurity sales professionals`);
     console.log(`   - Speedrun: 50 high-priority opportunities`);
+    console.log(`   - Seller-Company Relationships: ${sellerCompanyRelations.length} (100 companies per seller)`);
+    console.log(`   - Navigation Flow: Seller List → Companies → Buyer Group → Person Record`);
     console.log(`   - All data tagged as 'demo-data' for easy identification`);
 
   } catch (error) {
