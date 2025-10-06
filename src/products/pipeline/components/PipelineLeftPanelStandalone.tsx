@@ -1022,6 +1022,11 @@ export function PipelineLeftPanelStandalone({
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
+                  // Check if we're in demo mode
+                  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+                                    (workspaceId && workspaceId.includes('demo')) ||
+                                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+                  
                   // Calculate revenue from closed won opportunities
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   if (opportunities.length > 0) {
@@ -1036,9 +1041,9 @@ export function PipelineLeftPanelStandalone({
                       return sum + value;
                     }, 0);
                     
-                    return totalRevenue > 0 ? `$${(totalRevenue / 1000000).toFixed(1)}M` : "$0.0M";
+                    return totalRevenue > 0 ? `$${(totalRevenue / 1000000).toFixed(1)}M` : (isDemoMode ? "$47.2M" : "$0.0M");
                   }
-                  return "$0.0M";
+                  return isDemoMode ? "$47.2M" : "$0.0M";
                 })()}
               </span>
             </div>
@@ -1048,6 +1053,11 @@ export function PipelineLeftPanelStandalone({
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
+                  // Check if we're in demo mode
+                  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+                                    (workspaceId && workspaceId.includes('demo')) ||
+                                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+                  
                   // Calculate total pipeline value from all open opportunities
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   if (opportunities.length > 0) {
@@ -1065,9 +1075,9 @@ export function PipelineLeftPanelStandalone({
                       return sum + value;
                     }, 0);
                     
-                    return totalValue > 0 ? `$${(totalValue / 1000000).toFixed(1)}M` : "$0.0M";
+                    return totalValue > 0 ? `$${(totalValue / 1000000).toFixed(1)}M` : (isDemoMode ? "$89.4M" : "$0.0M");
                   }
-                  return "$0.0M";
+                  return isDemoMode ? "$89.4M" : "$0.0M";
                 })()}
               </span>
             </div>
@@ -1077,6 +1087,11 @@ export function PipelineLeftPanelStandalone({
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
                 ) : (() => {
+                  // Check if we're in demo mode
+                  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+                                    (workspaceId && workspaceId.includes('demo')) ||
+                                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+                  
                   // Calculate coverage as pipeline / quarterly target
                   const opportunities = acquisitionData?.acquireData?.opportunities || [];
                   const quarterlyTarget = 1000000; // $1M quarterly target (can be made configurable)
@@ -1099,7 +1114,7 @@ export function PipelineLeftPanelStandalone({
                     const coverage = quarterlyTarget > 0 ? Math.round((totalValue / quarterlyTarget) * 100) : 0;
                     return `${coverage}%`;
                   }
-                  return "0%";
+                  return isDemoMode ? "87%" : "0%";
                 })()}
               </span>
             </div>
