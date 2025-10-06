@@ -10,7 +10,7 @@ import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupConte
 import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/PipelineLeftPanelStandalone";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
-import { FullPanelSkeleton } from "@/platform/ui/components/skeletons/FullPanelSkeleton";
+import { MiddlePanelSkeleton } from "@/platform/ui/components/skeletons/MiddlePanelSkeleton";
 import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
 import { authFetch } from "@/platform/auth-fetch";
 import { useUnifiedAuth } from "@/platform/auth-unified";
@@ -179,11 +179,57 @@ export default function SellerCompaniesPage() {
 
   // Show loading while authentication is loading
   if (authLoading) {
-    return <FullPanelSkeleton />;
+    return (
+      <AcquisitionOSProvider>
+        <PipelineProvider>
+          <SpeedrunDataProvider>
+            <RecordContextProvider>
+              <ProfilePopupProvider>
+                <PanelLayout
+                  leftPanel={
+                    <PipelineLeftPanelStandalone
+                      activeSection="sellers"
+                      onSectionChange={() => {}}
+                    />
+                  }
+                  middlePanel={<MiddlePanelSkeleton />}
+                  rightPanel={<AIRightPanel />}
+                  isLeftPanelVisible={true}
+                  isRightPanelVisible={true}
+                />
+              </ProfilePopupProvider>
+            </RecordContextProvider>
+          </SpeedrunDataProvider>
+        </PipelineProvider>
+      </AcquisitionOSProvider>
+    );
   }
 
   if (loading) {
-    return <FullPanelSkeleton />;
+    return (
+      <AcquisitionOSProvider>
+        <PipelineProvider>
+          <SpeedrunDataProvider>
+            <RecordContextProvider>
+              <ProfilePopupProvider>
+                <PanelLayout
+                  leftPanel={
+                    <PipelineLeftPanelStandalone
+                      activeSection="sellers"
+                      onSectionChange={() => {}}
+                    />
+                  }
+                  middlePanel={<MiddlePanelSkeleton />}
+                  rightPanel={<AIRightPanel />}
+                  isLeftPanelVisible={true}
+                  isRightPanelVisible={true}
+                />
+              </ProfilePopupProvider>
+            </RecordContextProvider>
+          </SpeedrunDataProvider>
+        </PipelineProvider>
+      </AcquisitionOSProvider>
+    );
   }
 
   if (error || !seller) {

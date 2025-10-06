@@ -14,6 +14,7 @@ import { MiddlePanelSkeleton } from '@/platform/ui/components/skeletons/MiddlePa
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { generateSlug } from '@/platform/utils/url-utils';
 import { authFetch } from "@/platform/auth-fetch";
+// Removed PipelineDetailPage import - using custom person detail view instead
 
 interface CompanyData {
   id: string;
@@ -532,34 +533,119 @@ Create opportunities for ongoing engagement and relationship development. Provid
                   />
                 }
                 middlePanel={
-                  <div className="flex flex-col h-full">
-                    {/* Breadcrumb */}
-                    <div className="border-b border-gray-200 px-6 py-3 bg-white">
-                      <nav className="flex items-center space-x-2 text-sm">
-                        <button
-                          onClick={() => router.push(`/${workspace}/sellers`)}
-                          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  selectedPerson ? (
+                    <div className="flex flex-col h-full">
+                      {/* Person Detail Header */}
+                      <div className="border-b border-gray-200 px-6 py-3 bg-white">
+                        <nav className="flex items-center space-x-2 text-sm">
+                          <button
+                            onClick={() => router.push(`/${workspace}/sellers`)}
+                            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Sellers
+                          </button>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                          Sellers
-                        </button>
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                        <button
-                          onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
-                          className="text-gray-500 hover:text-gray-700 transition-colors"
-                        >
-                          Companies
-                        </button>
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                        <span className="text-gray-900 font-medium">Buyer Group</span>
-                      </nav>
+                          <button
+                            onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
+                            className="text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            Companies
+                          </button>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <button
+                            onClick={() => {
+                              const newUrl = new URL(window.location.href);
+                              newUrl.searchParams.delete('person');
+                              router.push(newUrl.pathname + newUrl.search);
+                            }}
+                            className="text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            Buyer Group
+                          </button>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <span className="text-gray-900 font-medium">{selectedPerson.name}</span>
+                        </nav>
+                      </div>
+
+                      {/* Person Detail Content */}
+                      <div className="flex-1 overflow-y-auto p-6">
+                        <div className="max-w-4xl mx-auto">
+                          <div className="bg-white rounded-lg border border-gray-200 p-6">
+                            <div className="flex items-start gap-6">
+                              <div className="w-20 h-20 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
+                                <span className="text-gray-700 font-semibold text-2xl">
+                                  {selectedPerson.name.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                              <div className="flex-1">
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">{selectedPerson.name}</h1>
+                                <p className="text-xl text-gray-600 mb-1">{selectedPerson.title}</p>
+                                <p className="text-lg text-gray-500 mb-4">{selectedPerson.department} • {selectedPerson.company}</p>
+                                
+                                <div className="flex gap-3 mb-6">
+                                  <span className={`px-4 py-2 rounded-full text-sm font-medium ${getRoleColor(selectedPerson.buyerRole)}`}>
+                                    {selectedPerson.buyerRole}
+                                  </span>
+                                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    {selectedPerson.status}
+                                  </span>
+                                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                                    {selectedPerson.riskStatus}
+                                  </span>
+                                </div>
+                                
+                                {selectedPerson.directionalIntelligence && (
+                                  <div className="mt-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Directional Intelligence</h3>
+                                    <div className="text-gray-700 leading-relaxed">
+                                      {selectedPerson.directionalIntelligence}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+                  ) : (
+                    <div className="flex flex-col h-full">
+                      {/* Breadcrumb */}
+                      <div className="border-b border-gray-200 px-6 py-3 bg-white">
+                        <nav className="flex items-center space-x-2 text-sm">
+                          <button
+                            onClick={() => router.push(`/${workspace}/sellers`)}
+                            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Sellers
+                          </button>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <button
+                            onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
+                            className="text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            Companies
+                          </button>
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <span className="text-gray-900 font-medium">Buyer Group</span>
+                        </nav>
+                      </div>
 
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
@@ -732,65 +818,8 @@ Create opportunities for ongoing engagement and relationship development. Provid
                       )}
                     </div>
 
-                    {/* Person Detail View */}
-                    {selectedPerson && (
-                      <div className="border-t border-gray-200 bg-gray-50">
-                        <div className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">Person Details</h3>
-                            <button
-                              onClick={() => {
-                                const newUrl = new URL(window.location.href);
-                                newUrl.searchParams.delete('person');
-                                router.push(newUrl.pathname + newUrl.search);
-                              }}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                          
-                          <div className="bg-white rounded-lg border border-gray-200 p-6">
-                            <div className="flex items-start gap-4">
-                              <div className="w-16 h-16 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
-                                <span className="text-gray-700 font-semibold text-lg">
-                                  {selectedPerson.name.split(' ').map(n => n[0]).join('')}
-                                </span>
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="text-xl font-semibold text-gray-900 mb-1">{selectedPerson.name}</h4>
-                                <p className="text-gray-600 mb-2">{selectedPerson.title}</p>
-                                <p className="text-sm text-gray-500 mb-4">{selectedPerson.department} • {selectedPerson.company}</p>
-                                
-                                <div className="flex gap-2 mb-4">
-                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRoleColor(selectedPerson.buyerRole)}`}>
-                                    {selectedPerson.buyerRole}
-                                  </span>
-                                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    {selectedPerson.status}
-                                  </span>
-                                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
-                                    {selectedPerson.riskStatus}
-                                  </span>
-                                </div>
-                                
-                                {selectedPerson.directionalIntelligence && (
-                                  <div className="mt-4">
-                                    <h5 className="text-sm font-medium text-gray-700 mb-2">Directional Intelligence</h5>
-                                    <div className="text-sm text-gray-600 leading-relaxed">
-                                      {selectedPerson.directionalIntelligence}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )
                 }
                 rightPanel={<AIRightPanel />}
                 isLeftPanelVisible={true}
