@@ -1395,7 +1395,25 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         onRefresh={handleRefresh}
         onClearCache={handleClearCache}
         onAddRecord={handleAddRecord}
-        recordCount={fastSectionData.count || (Array.isArray(sectionDataArray) ? sectionDataArray.length : 0)}
+        recordCount={(() => {
+          const fastCount = fastSectionData.count;
+          const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;
+          const finalCount = fastCount || arrayCount;
+          
+          // Debug logging for sellers section
+          if (section === 'sellers') {
+            console.log('🔍 [SELLERS DEBUG] Record count calculation:', {
+              section,
+              fastSectionDataCount: fastCount,
+              sectionDataArrayLength: arrayCount,
+              finalCount,
+              fastSectionDataExists: !!fastSectionData,
+              sectionDataArrayExists: !!sectionDataArray
+            });
+          }
+          
+          return finalCount;
+        })()}
       />
 
       {/* Filters */}
