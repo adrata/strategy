@@ -124,20 +124,22 @@ export default function SellerCompaniesPage() {
             console.log('🔍 Companies data type:', typeof companiesResult.data);
             console.log('🔍 Companies data is array:', Array.isArray(companiesResult.data));
             
-            if (companiesResult['success'] && companiesResult.data && Array.isArray(companiesResult.data)) {
+            if (companiesResult['success'] && companiesResult.data && companiesResult.data.data && Array.isArray(companiesResult.data.data)) {
               // Filter companies assigned to this seller
-              const sellerCompanies = companiesResult.data.filter((company: Company) => 
+              const sellerCompanies = companiesResult.data.data.filter((company: Company) => 
                 company['assignedUserId'] === foundSeller.id
               );
               console.log('🔍 Seller companies:', sellerCompanies);
               console.log('🔍 Found seller ID:', foundSeller.id);
-              console.log('🔍 Company assigned user IDs:', companiesResult.data.map((c: Company) => c.assignedUserId));
+              console.log('🔍 Company assigned user IDs:', companiesResult.data.data.map((c: Company) => c.assignedUserId));
               setCompanies(sellerCompanies);
             } else {
               console.log('❌ Companies data is not an array or API failed');
               console.log('❌ API success:', companiesResult['success']);
               console.log('❌ Data exists:', !!companiesResult.data);
+              console.log('❌ Data.data exists:', !!companiesResult.data?.data);
               console.log('❌ Data type:', typeof companiesResult.data);
+              console.log('❌ Data.data type:', typeof companiesResult.data?.data);
             }
           } else {
             console.log('❌ Seller not found');
