@@ -695,8 +695,7 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [
-            { rank: 'asc' }, // Use seller rank if available
-            { updatedAt: 'desc' } // Then by update time
+            { updatedAt: 'desc' } // Order by update time (sellers table doesn't have rank field)
           ],
           take: limit,
           select: {
