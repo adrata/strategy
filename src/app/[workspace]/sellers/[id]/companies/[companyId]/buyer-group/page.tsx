@@ -397,6 +397,12 @@ export default function BuyerGroupPage() {
                       <div className="flex gap-4">
                         <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
                           <div className="text-2xl font-bold text-gray-900">
+                            {buyerGroupMembers.length}
+                          </div>
+                          <div className="text-sm text-gray-600">Total</div>
+                        </div>
+                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-gray-900">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Decision Maker').length}
                           </div>
                           <div className="text-sm text-gray-600">Decision Makers</div>
@@ -418,12 +424,6 @@ export default function BuyerGroupPage() {
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Blocker').length}
                           </div>
                           <div className="text-sm text-gray-600">Blockers</div>
-                        </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Opener').length}
-                          </div>
-                          <div className="text-sm text-gray-600">Openers</div>
                         </div>
                       </div>
                     </div>
