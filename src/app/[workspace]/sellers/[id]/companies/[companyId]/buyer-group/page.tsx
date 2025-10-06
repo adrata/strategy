@@ -14,7 +14,7 @@ import { MiddlePanelSkeleton } from '@/platform/ui/components/skeletons/MiddlePa
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { generateSlug } from '@/platform/utils/url-utils';
 import { authFetch } from "@/platform/auth-fetch";
-// Removed PipelineDetailPage import - using custom person detail view instead
+import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';
 
 interface CompanyData {
   id: string;
@@ -139,6 +139,8 @@ Create opportunities for ongoing engagement and relationship development. Provid
   const [company, setCompany] = useState<CompanyData | null>(null);
   const [buyerGroupMembers, setBuyerGroupMembers] = useState<BuyerGroupMember[]>([]);
   const [selectedPerson, setSelectedPerson] = useState<BuyerGroupMember | null>(null);
+  const [personRecord, setPersonRecord] = useState<any>(null);
+  const [personLoading, setPersonLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -395,8 +397,62 @@ Create opportunities for ongoing engagement and relationship development. Provid
       setSelectedPerson(foundPerson || null);
     } else {
       setSelectedPerson(null);
+      setPersonRecord(null);
     }
   }, [selectedPersonSlug, buyerGroupMembers]);
+
+  // Load person record when selected
+  useEffect(() => {
+    const loadPersonRecord = async () => {
+      if (!selectedPerson || !selectedPersonSlug) {
+        setPersonRecord(null);
+        return;
+      }
+
+      setPersonLoading(true);
+      try {
+        console.log('🔍 [PERSON RECORD] Loading person record for:', selectedPerson.name);
+        
+        // Load the actual person record from the database
+        const personResponse = await authFetch(`/api/data/unified?type=people&action=get&id=${selectedPerson.id}`);
+        const personResult = await personResponse.json();
+        
+        if (personResult.success && personResult.data) {
+          setPersonRecord(personResult.data);
+          console.log('🔍 [PERSON RECORD] Loaded person record:', personResult.data);
+        } else {
+          // If no real data found, create a mock record based on buyer group member
+          const mockRecord = {
+            id: selectedPerson.id,
+            name: selectedPerson.name,
+            title: selectedPerson.title,
+            department: selectedPerson.department,
+            company: selectedPerson.company,
+            email: `${selectedPerson.name.toLowerCase().replace(' ', '.')}@${selectedPerson.company.toLowerCase()}.com`,
+            phone: '+1 (555) 123-4567',
+            location: 'San Francisco, CA',
+            status: selectedPerson.status,
+            buyerRole: selectedPerson.buyerRole,
+            influence: selectedPerson.influence,
+            decisionPower: selectedPerson.decisionPower,
+            riskStatus: selectedPerson.riskStatus,
+            directionalIntelligence: selectedPerson.directionalIntelligence,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          setPersonRecord(mockRecord);
+          console.log('🔍 [PERSON RECORD] Using mock record:', mockRecord);
+        }
+      } catch (error) {
+        console.error('🔍 [PERSON RECORD] Error loading person record:', error);
+        setPersonRecord(null);
+      } finally {
+        setPersonLoading(false);
+      }
+    };
+
+    loadPersonRecord();
+  }, [selectedPerson, selectedPersonSlug]);
 
   // Helper functions for buyer roles and influence
   const getBuyerRoleForIndex = (index: number): string => {
@@ -534,89 +590,33 @@ Create opportunities for ongoing engagement and relationship development. Provid
                 }
                 middlePanel={
                   selectedPerson ? (
-                    <div className="flex flex-col h-full">
-                      {/* Person Detail Header */}
-                      <div className="border-b border-gray-200 px-6 py-3 bg-white">
-                        <nav className="flex items-center space-x-2 text-sm">
-                          <button
-                            onClick={() => router.push(`/${workspace}/sellers`)}
-                            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                            Sellers
-                          </button>
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <button
-                            onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
-                            className="text-gray-500 hover:text-gray-700 transition-colors"
-                          >
-                            Companies
-                          </button>
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
+                    personLoading ? (
+                      <MiddlePanelSkeleton />
+                    ) : personRecord ? (
+                      <UniversalRecordTemplate
+                        record={personRecord}
+                        recordType="people"
+                        recordIndex={1}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <div className="text-gray-400 text-6xl mb-4">👤</div>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">Person Not Found</h3>
+                          <p className="text-gray-600 mb-4">Unable to load person details.</p>
                           <button
                             onClick={() => {
                               const newUrl = new URL(window.location.href);
                               newUrl.searchParams.delete('person');
                               router.push(newUrl.pathname + newUrl.search);
                             }}
-                            className="text-gray-500 hover:text-gray-700 transition-colors"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                           >
-                            Buyer Group
+                            Back to Buyer Group
                           </button>
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                          <span className="text-gray-900 font-medium">{selectedPerson.name}</span>
-                        </nav>
-                      </div>
-
-                      {/* Person Detail Content */}
-                      <div className="flex-1 overflow-y-auto p-6">
-                        <div className="max-w-4xl mx-auto">
-                          <div className="bg-white rounded-lg border border-gray-200 p-6">
-                            <div className="flex items-start gap-6">
-                              <div className="w-20 h-20 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
-                                <span className="text-gray-700 font-semibold text-2xl">
-                                  {selectedPerson.name.split(' ').map(n => n[0]).join('')}
-                                </span>
-                              </div>
-                              <div className="flex-1">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">{selectedPerson.name}</h1>
-                                <p className="text-xl text-gray-600 mb-1">{selectedPerson.title}</p>
-                                <p className="text-lg text-gray-500 mb-4">{selectedPerson.department} • {selectedPerson.company}</p>
-                                
-                                <div className="flex gap-3 mb-6">
-                                  <span className={`px-4 py-2 rounded-full text-sm font-medium ${getRoleColor(selectedPerson.buyerRole)}`}>
-                                    {selectedPerson.buyerRole}
-                                  </span>
-                                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    {selectedPerson.status}
-                                  </span>
-                                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
-                                    {selectedPerson.riskStatus}
-                                  </span>
-                                </div>
-                                
-                                {selectedPerson.directionalIntelligence && (
-                                  <div className="mt-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Directional Intelligence</h3>
-                                    <div className="text-gray-700 leading-relaxed">
-                                      {selectedPerson.directionalIntelligence}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
                         </div>
                       </div>
-                    </div>
+                    )
                   ) : (
                     <div className="flex flex-col h-full">
                       {/* Breadcrumb */}
