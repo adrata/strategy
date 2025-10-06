@@ -56,7 +56,11 @@ export function useFastCounts(): UseFastCountsReturn {
   const userId = authUser?.id;
 
   const fetchCounts = useCallback(async (forceRefresh = false) => {
+    console.log('🔍 [FAST COUNTS] fetchCounts called with:', { workspaceId, userId, authLoading, forceRefresh });
+    console.log('🔍 [FAST COUNTS] Auth user:', authUser?.id, 'Workspace:', authUser?.activeWorkspaceId);
+    
     if (!workspaceId || !userId || authLoading) {
+      console.log('🔍 [FAST COUNTS] Skipping fetch - missing requirements:', { workspaceId, userId, authLoading });
       setLoading(false);
       return;
     }
@@ -75,6 +79,12 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
+    // 🚀 PERFORMANCE: Prevent rapid successive calls
+    if (loading) {
+      console.log('⚡ [FAST COUNTS] Already loading - skipping duplicate call');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -82,7 +92,9 @@ export function useFastCounts(): UseFastCountsReturn {
       console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
       
       // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-      const response = await authFetch('/api/data/counts');
+      // Add cache-busting parameter for force refresh
+      const url = forceRefresh ? `/api/data/counts?t=${Date.now()}` : '/api/data/counts';
+      const response = await authFetch(url);
       
       if (!response.ok) {
         if (response.status === 401) {
@@ -92,13 +104,23 @@ export function useFastCounts(): UseFastCountsReturn {
       }
 
       const data = await response.json();
+      console.log('🔍 [FAST COUNTS] API response:', data);
       
       if (data.success && data.data) {
         setCounts(data.data);
         setHasLoaded(true);
         console.log('⚡ [FAST COUNTS] Loaded counts:', data.data);
         console.log('🔍 [FAST COUNTS] Sellers count specifically:', data.data.sellers);
+        console.log('🔍 [FAST COUNTS] All counts loaded successfully:', {
+          leads: data.data.leads,
+          companies: data.data.companies,
+          people: data.data.people,
+          sellers: data.data.sellers,
+          speedrun: data.data.speedrun
+        });
       } else {
+        console.error('❌ [FAST COUNTS] API returned error:', data.error);
+        console.error('❌ [FAST COUNTS] Full API response:', data);
         throw new Error(data.error || 'Failed to load counts');
       }
     } catch (err) {
@@ -113,9 +135,42 @@ export function useFastCounts(): UseFastCountsReturn {
   // 🚀 PERFORMANCE: Only load counts once when workspace/user is available
   useEffect(() => {
     if (workspaceId && userId && !authLoading && !hasLoaded) {
+      // Clear any existing cache on first load to ensure fresh data
+      if (typeof window !== 'undefined') {
+        // Clear localStorage cache
+        const keys = Object.keys(localStorage);
+        const cacheKeys = keys.filter(key => key.includes('counts') || key.includes('fastCounts'));
+        cacheKeys.forEach(key => localStorage.removeItem(key));
+      }
+      console.log('🚀 [FAST COUNTS] Starting initial load for workspace:', workspaceId);
       fetchCounts();
     }
   }, [workspaceId, userId, authLoading, hasLoaded]);
+
+  // 🔄 FORCE REFRESH: Add a fallback to force refresh if counts are still 0 after 5 seconds
+  useEffect(() => {
+    if (hasLoaded && counts.leads === 0 && counts.companies === 0 && counts.people === 0) {
+      const timeout = setTimeout(() => {
+        console.log('🔄 [FAST COUNTS] Counts are 0 after loading - forcing refresh');
+        fetchCounts(true);
+      }, 5000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [hasLoaded, counts, fetchCounts]);
+
+  // 🚀 PERFORMANCE: Add timeout to prevent stuck loading state
+  useEffect(() => {
+    if (loading) {
+      const timeout = setTimeout(() => {
+        console.log('⏰ [FAST COUNTS] Loading timeout - resetting loading state');
+        setLoading(false);
+        setError('Request timeout');
+      }, 10000); // 10 second timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [loading]);
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded state only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);

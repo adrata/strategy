@@ -116,19 +116,32 @@ export async function GET(request: NextRequest) {
     
     let sectionData: any[] = [];
     
+    // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
+    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
+                      userId === 'demo-user-2025' || 
+                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+    console.log(`🎯 [SECTION API] Demo mode detected: ${isDemoMode} for workspace: ${workspaceId}, user: ${userId}`);
+    
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
         // 🆕 FIX: Load speedrun data from leads table with speedrun tag
+        // In demo mode, show speedrun leads assigned to sellers too
+        
         const speedrunLeads = await prisma.leads.findMany({
           where: {
             workspaceId,
             deletedAt: null,
             tags: { has: 'speedrun' },
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ]
+            ...(isDemoMode ? {} : {
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
+            })
           },
           orderBy: [
             { updatedAt: 'desc' }
@@ -185,10 +198,14 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ],
+            ...(isDemoMode ? {} : {
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
+            }),
             // Filter for people who are leads - use specific lead filters
             AND: [
               {
@@ -292,10 +309,14 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ],
+            ...(isDemoMode ? {} : {
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
+            }),
             // Filter for people who are prospects - use specific prospect filters
             AND: [
               {
@@ -398,10 +419,12 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ]
+            ...(isDemoMode ? {} : {
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            })
           },
           orderBy: { updatedAt: 'desc' },
           take: limit,
@@ -452,10 +475,12 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ]
+            ...(isDemoMode ? {} : {
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            })
           },
           orderBy: [
             { rank: 'asc' }, // Use actual company ranks first
@@ -516,10 +541,12 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null,
               companyId: { not: null }, // Only people with company relationships like speedrun
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             },
             orderBy: [
               { company: { rank: 'asc' } }, // Use company rank first like speedrun
@@ -626,10 +653,12 @@ export async function GET(request: NextRequest) {
             where: {
               workspaceId,
               deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             },
             orderBy: [
               { updatedAt: 'desc' }
@@ -658,10 +687,12 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null,
               role: 'seller',
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             },
             orderBy: [
               { updatedAt: 'desc' }
@@ -758,10 +789,12 @@ export async function GET(request: NextRequest) {
             where: {
               workspaceId,
               deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             }
           });
           break;
@@ -770,10 +803,12 @@ export async function GET(request: NextRequest) {
             where: {
               workspaceId,
               deletedAt: null,
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             }
           });
           break;

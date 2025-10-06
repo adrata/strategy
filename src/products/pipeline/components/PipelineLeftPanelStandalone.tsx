@@ -147,35 +147,22 @@ function PipelineSections({
   const [fallbackLoading, setFallbackLoading] = useState(false);
   
   // 🚀 PERFORMANCE: Use fast counts API instead of heavy dashboard API
-  useEffect(() => {
-    // Only fetch if we have no counts AND acquisition data is not loading
-    if ((!actualCounts || Object.keys(actualCounts).length === 0) && !acquisitionData?.loading?.isLoading) {
-      const fetchFastCounts = async () => {
-        setFallbackLoading(true);
-        try {
-          // 🚀 PERFORMANCE: Use fast counts API instead of heavy dashboard API
-          const response = await authFetch(`/api/data/counts`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data['success'] && data.data) {
-              setFallbackCounts(data.data);
-              console.log('✅ [LEFT PANEL] Fast counts loaded:', data.data);
-            }
-          }
-        } catch (error) {
-          console.error('❌ [LEFT PANEL] Failed to load fast counts:', error);
-        } finally {
-          setFallbackLoading(false);
-        }
-      };
-      
-      // 🚀 PERFORMANCE: Immediate call - no debounce needed for fast API
-      fetchFastCounts();
-    }
-  }, [workspaceId, userId, actualCounts, acquisitionData?.loading?.isLoading]);
+  // REMOVED: This was causing duplicate API calls - useFastCounts hook already handles this
+  // The useFastCounts hook is already being used above and provides the counts
   
-  // Use fallback counts if acquisitionData counts are not available
-  const finalCounts = actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts;
+  // Use fastCounts from useFastCounts hook as primary source, with fallbacks
+  const finalCounts = fastCounts && Object.keys(fastCounts).length > 0 ? fastCounts : 
+                     (actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts);
+  
+  // 🔍 DEBUG: Log counts for debugging
+  console.log('🔍 [LEFT PANEL DEBUG] Counts sources:', {
+    fastCounts,
+    actualCounts,
+    fallbackCounts,
+    finalCounts,
+    fastCountsLoading,
+    authLoading
+  });
   
   
   // 🚀 PERFORMANCE: Use fast counts loading state for instant feedback
@@ -847,11 +834,32 @@ export function PipelineLeftPanelStandalone({
 
   // 🔄 FORCE REFRESH: Ensure we get the latest counts when component mounts
   useEffect(() => {
+    console.log('🔍 [LEFT PANEL DEBUG] Force refresh check:', {
+      currentWorkspaceId,
+      currentUserId,
+      fastCountsLoading,
+      authLoading,
+      hasAuthUser: !!authUser,
+      authUserWorkspaces: authUser?.workspaces?.length
+    });
+    
     if (currentWorkspaceId && currentUserId && !fastCountsLoading) {
       console.log('🔄 [LEFT PANEL] Force refreshing counts to ensure latest data');
       forceRefreshCounts();
     }
   }, [currentWorkspaceId, currentUserId, fastCountsLoading]);
+
+  // 🔄 ADDITIONAL FORCE REFRESH: If counts are still 0 after 3 seconds, force refresh again
+  useEffect(() => {
+    if (fastCounts && Object.values(fastCounts).every(count => count === 0)) {
+      const timeout = setTimeout(() => {
+        console.log('🔄 [LEFT PANEL] Counts are still 0 after 3 seconds - forcing refresh');
+        forceRefreshCounts();
+      }, 3000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [fastCounts, forceRefreshCounts]);
 
   // Pipeline context for profile functionality (not Monaco)
   const {

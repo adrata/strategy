@@ -22,10 +22,33 @@ export function clearCountsCache(workspaceId: string, userId: string): void {
   console.log(`🧹 [COUNTS CACHE] Cleared cache for workspace: ${workspaceId}, user: ${userId}`);
 }
 
+export async function POST(request: NextRequest) {
+  try {
+    // Clear all counts cache
+    countsCache.clear();
+    console.log('🧹 [COUNTS API] Cleared all counts cache');
+    
+    return createSuccessResponse({ message: 'Cache cleared successfully' }, {
+      responseTime: 0
+    });
+  } catch (error) {
+    console.error('❌ [COUNTS API] Error clearing cache:', error);
+    return createErrorResponse(
+      'Failed to clear cache',
+      'CLEAR_CACHE_ERROR',
+      500
+    );
+  }
+}
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
-      try {
+  // Check for cache-busting parameter
+  const url = new URL(request.url);
+  const forceRefresh = url.searchParams.has('t');
+  
+  try {
         // 1. Authenticate and authorize user
         const { context, response } = await getSecureApiContext(request, {
           requireAuth: true,
@@ -44,11 +67,11 @@ export async function GET(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const userId = context.userId;
     
-    // 🚀 PERFORMANCE: Check cache first
+    // 🚀 PERFORMANCE: Check cache first (unless force refresh)
     const cacheKey = `counts-${workspaceId}-${userId}`;
     const cached = countsCache.get(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < COUNTS_CACHE_TTL) {
+    if (!forceRefresh && cached && Date.now() - cached.timestamp < COUNTS_CACHE_TTL) {
       console.log(`⚡ [COUNTS API] Cache hit - returning cached counts in ${Date.now() - startTime}ms`);
       return createSuccessResponse(cached.data, {
         userId: context.userId,
@@ -59,7 +82,18 @@ export async function GET(request: NextRequest) {
       });
     }
     
+    if (forceRefresh) {
+      console.log(`🔄 [COUNTS API] Force refresh requested - bypassing cache`);
+    }
+    
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
+    
+    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace
+    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
+                      userId === 'demo-user-2025' || 
+                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
     // 🚀 PERFORMANCE: Run all count queries in parallel
     const [
@@ -129,13 +163,22 @@ export async function GET(request: NextRequest) {
         }
       }).catch(() => 0),
       
-      // Sellers count - only count from sellers table (redundant people table sellers removed)
-      prisma.sellers.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }).catch(() => 0),
+      // Sellers count - count from both sellers table AND people table with role 'seller'
+      Promise.all([
+        prisma.sellers.count({
+          where: {
+            workspaceId,
+            deletedAt: null
+          }
+        }).catch(() => 0),
+        prisma.people.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            role: 'seller'
+          }
+        }).catch(() => 0)
+      ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
       // Speedrun count - count actual speedrun leads
       prisma.leads.count({

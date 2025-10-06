@@ -263,18 +263,8 @@ export function useAcquisitionOSData(
     
     console.log('🚀 [ACQUISITION OS DATA] Loading fast counts first:', fastCountsUrl.toString());
     
-    // Load fast counts immediately
-    const fastCountsResult = await fetch(fastCountsUrl.toString(), requestOptions);
-    if (!fastCountsResult.ok) {
-      console.warn('⚠️ [FAST COUNTS] Failed to load fast counts, proceeding with full data load');
-    } else {
-      const fastCountsData = await fastCountsResult.json();
-      if (fastCountsData.success && fastCountsData.data) {
-        console.log('⚡ [FAST COUNTS] Loaded counts in background:', fastCountsData.data);
-        // Store fast counts for immediate use
-        // This will be used by the left panel while full data loads
-      }
-    }
+    // REMOVED: Duplicate fast counts API call - useFastCounts hook already handles this
+    // This was causing multiple simultaneous API calls to /api/data/counts
     
     // Now load full data in background
     const url = new URL('/api/data/unified', window.location.origin);
