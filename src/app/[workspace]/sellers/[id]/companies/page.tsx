@@ -123,9 +123,11 @@ export default function SellerCompaniesPage() {
           if (foundSeller) {
             setSeller(foundSeller);
             
-            // Load companies data
+            // Load companies data with cache-busting
             console.log('🔍 Loading companies for seller:', foundSeller.id);
-            const companiesResponse = await fetch(`/api/data/section?section=companies&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=1000`);
+            const companiesUrl = `/api/data/section?section=companies&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=1000&t=${Date.now()}`;
+            console.log('🔄 [SELLER COMPANIES] Forcing refresh for companies API:', companiesUrl);
+            const companiesResponse = await fetch(companiesUrl);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
