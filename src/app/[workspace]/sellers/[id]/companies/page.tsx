@@ -391,7 +391,7 @@ export default function SellerCompaniesPage() {
                         
                         <div className="flex items-center gap-2">
                           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                            Edit Seller
+                            Update Seller
                           </button>
                           <button className="px-4 py-2 text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors">
                             Add Action
@@ -400,18 +400,22 @@ export default function SellerCompaniesPage() {
                       </div>
                       
                       {/* Metrics Row */}
-                      <div className="mt-4 flex gap-6">
+                      <div className="mt-4 flex items-center gap-6">
                         <div className="text-center">
                           <div className="text-lg font-semibold text-gray-900">{companies.length}</div>
-                          <div className="text-xs text-gray-500">Assigned Companies</div>
+                          <div className="text-xs text-gray-500">Companies</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">0</div>
-                          <div className="text-xs text-gray-500">Active Opportunities</div>
+                          <div className="text-lg font-semibold text-gray-900">40</div>
+                          <div className="text-xs text-gray-500">Leads</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">0</div>
-                          <div className="text-xs text-gray-500">Closed Won</div>
+                          <div className="text-lg font-semibold text-gray-900">35</div>
+                          <div className="text-xs text-gray-500">Prospects</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-semibold text-gray-900">25</div>
+                          <div className="text-xs text-gray-500">Opportunities</div>
                         </div>
                       </div>
                     </div>
@@ -443,7 +447,7 @@ export default function SellerCompaniesPage() {
                                     <h4 className="font-semibold text-gray-900 text-lg group-hover:text-blue-700 transition-colors">
                                       {company.name}
                                     </h4>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                       {company.status || 'Active'}
                                     </span>
                                   </div>
@@ -458,9 +462,9 @@ export default function SellerCompaniesPage() {
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    {company.actionStatus || 'Active'}
-                                  </span>
+                                  <div className="text-sm text-gray-500">
+                                    {company.lastAction || 'Initial Contact'}
+                                  </div>
                                 </div>
                               </div>
                             </div>
