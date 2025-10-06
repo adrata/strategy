@@ -54,16 +54,10 @@ export async function GET(request: NextRequest) {
       take: 2000 // Increased limit to prevent pagination issues
     });
 
-    console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);
-
-    await prisma.$disconnect();
-
-    return createSuccessResponse(data, meta);
+    console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);return createSuccessResponse(data, meta);
 
   } catch (error) {
-    console.error('❌ Error fetching opportunities:', error);
-    await prisma.$disconnect();
-    return NextResponse.json(
+    console.error('❌ Error fetching opportunities:', error);return NextResponse.json(
       { error: 'Failed to fetch opportunities', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     );
@@ -111,16 +105,10 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    console.log(`✅ [DATA OPPORTUNITIES] Created opportunity: ${opportunity.id}`);
-
-    await prisma.$disconnect();
-
-    return createSuccessResponse(data, meta);
+    console.log(`✅ [DATA OPPORTUNITIES] Created opportunity: ${opportunity.id}`);return createSuccessResponse(data, meta);
 
   } catch (error) {
-    console.error('❌ Error creating opportunity:', error);
-    await prisma.$disconnect();
-    return NextResponse.json(
+    console.error('❌ Error creating opportunity:', error);return NextResponse.json(
       { error: 'Failed to create opportunity', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     );

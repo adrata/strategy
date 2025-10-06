@@ -58,27 +58,17 @@ export async function GET(request: NextRequest) {
         assignedTo: account.assignedUserId,
         createdAt: account.createdAt,
         updatedAt: account.updatedAt
-      }));
-
-      await prisma.$disconnect();
-
-      return NextResponse.json({
+      }));return NextResponse.json({
         success: true,
         partnerships: partnershipData,
         count: partnershipData.length,
       });
-    }
-
-    await prisma.$disconnect();
-    return NextResponse.json(
+    }return NextResponse.json(
       { success: false, error: "Invalid type parameter" },
       { status: 400 },
     );
   } catch (error) {
-    console.error("❌ [CONVERSIONS API] Error getting data:", error);
-    await prisma.$disconnect();
-
-    return NextResponse.json(
+    console.error("❌ [CONVERSIONS API] Error getting data:", error);return NextResponse.json(
       {
         success: false,
         error: "Failed to get data",
@@ -113,18 +103,13 @@ export async function POST(request: NextRequest) {
       case "create_person_from_lead":
         return await createPersonFromLead(workspaceId, userId, data);
 
-      default:
-        await prisma.$disconnect();
-        return NextResponse.json(
+      default:return NextResponse.json(
           { success: false, error: "Invalid action" },
           { status: 400 },
         );
     }
   } catch (error) {
-    console.error("❌ [CONVERSIONS API] Error processing conversion:", error);
-    await prisma.$disconnect();
-
-    return NextResponse.json(
+    console.error("❌ [CONVERSIONS API] Error processing conversion:", error);return NextResponse.json(
       {
         success: false,
         error: "Failed to process conversion",
@@ -143,9 +128,7 @@ async function convertLeadToOpportunity(
 ) {
   const { leadId, opportunityName } = data;
 
-  if (!leadId) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!leadId) {return NextResponse.json(
       { success: false, error: "leadId is required" },
       { status: 400 },
     );
@@ -160,9 +143,7 @@ async function convertLeadToOpportunity(
     },
   });
 
-  if (!lead) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!lead) {return NextResponse.json(
       { success: false, error: "Lead not found" },
       { status: 404 },
     );
@@ -203,11 +184,7 @@ async function convertLeadToOpportunity(
 
   console.log(
     `✅ [CONVERSIONS API] Converted lead to opportunity: ${opportunity.id}`,
-  );
-
-  await prisma.$disconnect();
-
-  return NextResponse.json({
+  );return NextResponse.json({
     success: true,
     opportunity: {
       id: opportunity.id,
@@ -227,9 +204,7 @@ async function createCompanyFromLead(
 ) {
   const { leadId, companyName } = data;
 
-  if (!leadId) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!leadId) {return NextResponse.json(
       { success: false, error: "leadId is required" },
       { status: 400 },
     );
@@ -244,9 +219,7 @@ async function createCompanyFromLead(
     },
   });
 
-  if (!lead) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!lead) {return NextResponse.json(
       { success: false, error: "Lead not found" },
       { status: 404 },
     );
@@ -263,11 +236,7 @@ async function createCompanyFromLead(
     },
   });
 
-  console.log(`✅ [CONVERSIONS API] Created company from lead: ${company.id}`);
-
-  await prisma.$disconnect();
-
-  return NextResponse.json({
+  console.log(`✅ [CONVERSIONS API] Created company from lead: ${company.id}`);return NextResponse.json({
     success: true,
     company: {
       id: company.id,
@@ -286,9 +255,7 @@ async function createPersonFromLead(
 ) {
   const { leadId, companyId } = data;
 
-  if (!leadId) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!leadId) {return NextResponse.json(
       { success: false, error: "leadId is required" },
       { status: 400 },
     );
@@ -303,9 +270,7 @@ async function createPersonFromLead(
     },
   });
 
-  if (!lead) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!lead) {return NextResponse.json(
       { success: false, error: "Lead not found" },
       { status: 404 },
     );
@@ -340,11 +305,7 @@ async function createPersonFromLead(
     },
   });
 
-  console.log(`✅ [CONVERSIONS API] Created person from lead: ${person.id}`);
-
-  await prisma.$disconnect();
-
-  return NextResponse.json({
+  console.log(`✅ [CONVERSIONS API] Created person from lead: ${person.id}`);return NextResponse.json({
     success: true,
     person: {
       id: person.id,
@@ -367,9 +328,7 @@ async function convertProspectToLead(
 ) {
   const { prospectId } = data;
 
-  if (!prospectId) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!prospectId) {return NextResponse.json(
       { success: false, error: "prospectId is required" },
       { status: 400 },
     );
@@ -384,9 +343,7 @@ async function convertProspectToLead(
     },
   });
 
-  if (!prospect) {
-    await prisma.$disconnect();
-    return NextResponse.json(
+  if (!prospect) {return NextResponse.json(
       { success: false, error: "Prospect not found" },
       { status: 404 },
     );
@@ -450,11 +407,7 @@ async function convertProspectToLead(
 
   console.log(
     `✅ [CONVERSIONS API] Converted prospect to lead: ${lead.id}`,
-  );
-
-  await prisma.$disconnect();
-
-  return NextResponse.json({
+  );return NextResponse.json({
     success: true,
     lead: {
       id: lead.id,

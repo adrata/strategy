@@ -62,10 +62,7 @@ export async function GET(request: NextRequest) {
     console.error(
       "❌ [BUYER GROUPS API] Error getting buyer groups data:",
       error,
-    );
-    await prisma.$disconnect();
-
-    return createErrorResponse(
+    );return createErrorResponse(
       "Failed to get buyer groups data",
       "BUYER_GROUPS_ERROR",
       500
@@ -122,10 +119,7 @@ export async function POST(request: NextRequest) {
     console.error(
       "❌ [BUYER GROUPS API] Error processing buyer groups action:",
       error,
-    );
-    await prisma.$disconnect();
-
-    return createErrorResponse(
+    );return createErrorResponse(
       "Failed to process buyer groups action",
       "BUYER_GROUPS_ACTION_ERROR",
       500
@@ -213,11 +207,7 @@ async function getBuyerGroups(workspaceId: string, userId: string) {
     })),
   }));
 
-  console.log(`✅ [BUYER GROUPS API] Found ${buyerGroups.length} buyer groups`);
-
-  await prisma.$disconnect();
-
-  return createSuccessResponse(data, meta);
+  console.log(`✅ [BUYER GROUPS API] Found ${buyerGroups.length} buyer groups`);return createSuccessResponse(data, meta);
 }
 
 async function getBuyerGroupMembers(buyerGroupId: string) {
@@ -226,9 +216,7 @@ async function getBuyerGroupMembers(buyerGroupId: string) {
     where: { id: buyerGroupId , deletedAt: null},
   });
 
-  if (!account) {
-    await prisma.$disconnect();
-    return createErrorResponse(
+  if (!account) {return createErrorResponse(
       "Buyer group not found",
       "BUYER_GROUP_NOT_FOUND",
       404
@@ -268,11 +256,7 @@ async function getBuyerGroupMembers(buyerGroupId: string) {
 
   console.log(
     `✅ [BUYER GROUPS API] Retrieved ${members.length} members for buyer group: ${buyerGroupId}`,
-  );
-
-  await prisma.$disconnect();
-
-  return createSuccessResponse(data, meta);
+  );return createSuccessResponse(data, meta);
 }
 
 async function createBuyerGroup(
@@ -282,9 +266,7 @@ async function createBuyerGroup(
 ) {
   const { name, description, company_id } = data;
 
-  if (!name || !company_id) {
-    await prisma.$disconnect();
-    return createErrorResponse(
+  if (!name || !company_id) {return createErrorResponse(
       "Name and company_id are required",
       "VALIDATION_ERROR",
       400
@@ -300,9 +282,7 @@ async function createBuyerGroup(
     },
   });
 
-  if (!existingAccount) {
-    await prisma.$disconnect();
-    return createErrorResponse(
+  if (!existingAccount) {return createErrorResponse(
       "Company not found",
       "COMPANY_NOT_FOUND",
       404
@@ -321,19 +301,13 @@ async function createBuyerGroup(
 
   console.log(
     `✅ [BUYER GROUPS API] Created buyer group: ${name} for company: ${company_id}`,
-  );
-
-  await prisma.$disconnect();
-
-  return createSuccessResponse(data, meta);
+  );return createSuccessResponse(data, meta);
 }
 
 async function addBuyerGroupMember(data: any) {
   const { buyer_group_id, lead_id, role, influence_level } = data;
 
-  if (!buyer_group_id || !lead_id) {
-    await prisma.$disconnect();
-    return createErrorResponse(
+  if (!buyer_group_id || !lead_id) {return createErrorResponse(
       "buyer_group_id and lead_id are required",
       "VALIDATION_ERROR",
       400
@@ -345,9 +319,7 @@ async function addBuyerGroupMember(data: any) {
     where: { id: lead_id , deletedAt: null},
   });
 
-  if (!contact) {
-    await prisma.$disconnect();
-    return createErrorResponse(
+  if (!contact) {return createErrorResponse(
       "Contact/Lead not found",
       "CONTACT_NOT_FOUND",
       404
@@ -369,11 +341,7 @@ async function addBuyerGroupMember(data: any) {
 
   console.log(
     `✅ [BUYER GROUPS API] Added member to buyer group: ${buyer_group_id}`,
-  );
-
-  await prisma.$disconnect();
-
-  return createSuccessResponse(data, meta);
+  );return createSuccessResponse(data, meta);
 }
 
 // Helper functions

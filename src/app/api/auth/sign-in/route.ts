@@ -535,7 +535,5 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     errorResponse.headers.set('Access-Control-Allow-Credentials', 'true');
     
     return errorResponse;
-  } finally {
-    await prisma.$disconnect();
   }
 }

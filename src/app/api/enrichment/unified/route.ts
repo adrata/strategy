@@ -286,9 +286,7 @@ async function checkSystemHealth(): Promise<any> {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
     await prisma.$queryRaw`SELECT 1`;
-    health.checks.database = true;
-    await prisma.$disconnect();
-  } catch (error) {
+    health.checks.database = true;} catch (error) {
     console.error('Database health check failed:', error);
   }
   

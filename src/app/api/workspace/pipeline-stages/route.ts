@@ -24,9 +24,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(defaultStages);
       }
 
-      const result = NextResponse.json(stages);
-      await prisma.$disconnect();
-      return result;
+      const result = NextResponse.json(stages);return result;
     } catch (dbError) {
       console.error('Database error fetching pipeline stages:', dbError);
       // Return default stages if database error

@@ -76,7 +76,4 @@ async function generateScenarioSellers(scenario: string, workspaceId: string) {
   } catch (error) {
     console.error('❌ [DEMO SELLERS API] Error loading sellers:', error);
     return [];
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+  }}

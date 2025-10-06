@@ -153,7 +153,4 @@ export async function GET(
       'COMPANY_LOAD_ERROR',
       500
     );
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+  }}

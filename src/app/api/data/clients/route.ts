@@ -163,20 +163,13 @@ export async function POST(request: NextRequest) {
 
     console.log(
       `✅ [CLIENTS API] Client created: ${newClient.accountId} (ID: ${newClient.id})`,
-    );
-
-    await prisma.$disconnect();
-
-    return createSuccessResponse(transformedClient, {
+    );return createSuccessResponse(transformedClient, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role
     });
   } catch (error) {
-    console.error("❌ [CLIENTS API] Error creating client:", error);
-    await prisma.$disconnect();
-
-    return createErrorResponse(
+    console.error("❌ [CLIENTS API] Error creating client:", error);return createErrorResponse(
       "Failed to create client",
       "CREATE_CLIENT_ERROR",
       500

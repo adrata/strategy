@@ -25,10 +25,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error generating report:', error);
     return NextResponse.json({ error: 'Failed to generate report' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+  }}
 
 async function getRecordWithContext(recordId: string, recordType: string, workspaceId: string) {
   const baseWhere = { id: recordId, workspaceId };

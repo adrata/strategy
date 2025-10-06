@@ -396,16 +396,9 @@ export async function GET(request: NextRequest) {
       console.log(`🐌 [SLOW API] GET companies took ${duration}ms - consider optimization`);
     } else {
       console.log(`⚡ [FAST API] GET companies completed in ${duration}ms`);
-    }
-
-    await prisma.$disconnect();
-
-    return createSuccessResponse(data, meta);
+    }return createSuccessResponse(data, meta);
   } catch (error) {
-    console.error("❌ [COMPANIES API] Error getting companies:", error);
-    await prisma.$disconnect();
-
-    return createErrorResponse(
+    console.error("❌ [COMPANIES API] Error getting companies:", error);return createErrorResponse(
       "Failed to get companies",
       "GET_COMPANIES_ERROR",
       500
@@ -464,16 +457,9 @@ export async function POST(request: NextRequest) {
 
     console.log(
       `✅ [COMPANIES API] Company created: ${newAccount.name} (ID: ${newAccount.id}, Entity ID: ${entityRecord.id})`,
-    );
-
-    await prisma.$disconnect();
-
-    return createSuccessResponse(data, meta);
+    );return createSuccessResponse(data, meta);
   } catch (error) {
-    console.error("❌ [COMPANIES API] Error creating company:", error);
-    await prisma.$disconnect();
-
-    return createErrorResponse(
+    console.error("❌ [COMPANIES API] Error creating company:", error);return createErrorResponse(
       "Failed to create company",
       "CREATE_COMPANY_ERROR",
       500

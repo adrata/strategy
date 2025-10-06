@@ -70,10 +70,7 @@ export async function POST(request: NextRequest) {
           'UNSUPPORTED_PLATFORM',
           400
         );
-      }
-      
-      await prisma.$disconnect();
-    } else if (workspaceId) {
+      }} else if (workspaceId) {
       // Sync all accounts in workspace
       // TODO: Get all accounts for workspace and sync each
       console.log(`📧 Workspace sync not yet implemented for: ${workspaceId}`);
