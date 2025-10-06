@@ -239,12 +239,6 @@ export default function SellerCompaniesPage() {
 
                     {/* Content */}
                     <div className="flex-1 overflow-auto px-6 py-6">
-                      <div className="mb-6">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-2">Associated Companies</h2>
-                        <p className="text-sm text-gray-600 mb-6">
-                          {companies.length} companies assigned to {seller.name}
-                        </p>
-                      </div>
 
                       {companies.length === 0 ? (
                         <div className="text-center py-12">

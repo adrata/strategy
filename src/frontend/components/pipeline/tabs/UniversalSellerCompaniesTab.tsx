@@ -74,13 +74,6 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Associated Companies
-        </h3>
-        <p className="text-sm text-gray-600 mb-6">
-          {associatedCompanies.length} companies assigned to {record?.fullName || record?.name || 'this seller'}
-        </p>
         
         {associatedCompanies['length'] === 0 ? (
           <div className="text-center py-12">

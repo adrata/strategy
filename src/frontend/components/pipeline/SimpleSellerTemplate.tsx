@@ -56,15 +56,6 @@ export function SimpleSellerTemplate({ record, onBack }: SimpleSellerTemplatePro
         </div>
       </div>
 
-      {/* Associated Companies */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Associated Companies</h2>
-        <div className="text-center py-8">
-          <div className="text-gray-400 text-6xl mb-4">🏢</div>
-          <p className="text-gray-600">Companies will be loaded here</p>
-          <p className="text-sm text-gray-500 mt-2">This seller should have 5 companies assigned</p>
-        </div>
-      </div>
     </div>
   );
 }
