@@ -50,14 +50,17 @@ export function useWorkspaceSwitch() {
         return false;
       }
 
-      // Call the workspace switch API
-      const response = await fetch('/api/auth/switch-workspace', {
+      // Call the unified auth API with switch-workspace action
+      const response = await fetch('/api/auth/unified', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.accessToken}`,
         },
-        body: JSON.stringify({ workspaceId: workspace.id }),
+        body: JSON.stringify({ 
+          action: 'switch-workspace',
+          workspaceId: workspace.id 
+        }),
         credentials: 'include',
       });
 
@@ -68,9 +71,9 @@ export function useWorkspaceSwitch() {
 
       const result = await response.json();
       
-      if (result['success'] && result.newToken) {
+      if (result['success'] && result.auth?.token) {
         // Update the session with the new token
-        session['accessToken'] = result.newToken;
+        session['accessToken'] = result.auth.token;
         await UnifiedAuthService.storeSession(session);
         
         // 🆕 CRITICAL: Clear cache before dispatching event to ensure clean workspace switch

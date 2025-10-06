@@ -117,13 +117,16 @@ export class WorkspaceDataRouter {
                 try {
                   const session = await UnifiedAuthService.getSession();
                   if (session?.accessToken) {
-                    const response = await fetch('/api/auth/switch-workspace', {
+                    const response = await fetch('/api/auth/unified', {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${session.accessToken}`,
                       },
-                      body: JSON.stringify({ workspaceId }),
+                      body: JSON.stringify({ 
+                        action: 'switch-workspace',
+                        workspaceId 
+                      }),
                       credentials: 'include',
                     });
                     
@@ -132,8 +135,8 @@ export class WorkspaceDataRouter {
                       console.log(`✅ [WORKSPACE SWITCH] Successfully switched to workspace ${workspaceId} via API`);
                       
                       // Update the session with the new token
-                      if (result.newToken) {
-                        session['accessToken'] = result.newToken;
+                      if (result.auth?.token) {
+                        session['accessToken'] = result.auth.token;
                         await storeSession(session);
                         console.log(`✅ [WORKSPACE SWITCH] Updated session with new JWT token`);
                       }
