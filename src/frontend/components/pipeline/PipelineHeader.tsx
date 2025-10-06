@@ -934,7 +934,7 @@ export function PipelineHeader({
                             }
                           }}
                           disabled={loading}
-                          className="bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-blue-100 text-blue-800 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {(sectionInfo as any).secondaryActionButton}
                         </button>
