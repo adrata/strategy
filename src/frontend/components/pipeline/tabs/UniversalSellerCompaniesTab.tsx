@@ -74,8 +74,7 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
 
   return (
     <div className="space-y-6">
-        
-        {associatedCompanies['length'] === 0 ? (
+      {associatedCompanies['length'] === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
