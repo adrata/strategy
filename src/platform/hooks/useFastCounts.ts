@@ -7,7 +7,7 @@
  * Performance Target: <100ms response time
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { authFetch } from '@/platform/auth-fetch';
 
@@ -54,6 +54,9 @@ export function useFastCounts(): UseFastCountsReturn {
 
   const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const userId = authUser?.id;
+  
+  // Create a ref to store the fetch function to avoid circular dependencies
+  const fetchCountsRef = useRef<typeof fetchCounts>();
 
   const fetchCounts = useCallback(async (forceRefresh = false) => {
     console.log('🔍 [FAST COUNTS] fetchCounts called with:', { workspaceId, userId, authLoading, forceRefresh });
@@ -130,11 +133,14 @@ export function useFastCounts(): UseFastCountsReturn {
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, userId, authLoading, authUser]);
+  }, [workspaceId, userId, authLoading, authUser, hasLoaded, loading]);
 
-  // 🚀 PERFORMANCE: Only load counts once when workspace/user is available
+  // Store the fetch function in the ref
+  fetchCountsRef.current = fetchCounts;
+
+  // 🚀 PERFORMANCE: Load counts when workspace/user is available
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && !hasLoaded) {
+    if (workspaceId && userId && !authLoading && fetchCountsRef.current) {
       // Clear any existing cache on first load to ensure fresh data
       if (typeof window !== 'undefined') {
         // Clear localStorage cache
@@ -142,10 +148,11 @@ export function useFastCounts(): UseFastCountsReturn {
         const cacheKeys = keys.filter(key => key.includes('counts') || key.includes('fastCounts'));
         cacheKeys.forEach(key => localStorage.removeItem(key));
       }
-      console.log('🚀 [FAST COUNTS] Starting initial load for workspace:', workspaceId);
-      fetchCounts();
+      console.log('🚀 [FAST COUNTS] Starting load for workspace:', workspaceId);
+      fetchCountsRef.current();
     }
   }, [workspaceId, userId, authLoading]);
+
 
   // 🚀 PERFORMANCE: Add timeout to prevent stuck loading state
   useEffect(() => {
@@ -204,8 +211,7 @@ export function useFastCounts(): UseFastCountsReturn {
           sellers: 0, // 🆕 FIX: Add sellers count to reset
           speedrun: 0
         });
-        // Force refresh for new workspace
-        fetchCounts();
+        // Let the main useEffect handle the fetch when workspaceId changes
       }
     };
 
