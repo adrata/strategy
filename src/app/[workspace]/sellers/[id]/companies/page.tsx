@@ -141,26 +141,17 @@ export default function SellerCompaniesPage() {
                 company['assignedUserId'] === foundSeller.assignedUserId
               );
               
-              // Check if the current user is Dan (manager) or a seller
-              const isDan = effectiveUser?.id === '01K1VBYZMWTCT09FWEKBDMCXZM';
+              // Show the seller's assigned subset (100 companies) for both Dan and the seller
+              const sellerId = foundSeller.id;
+              const sellerIndex = parseInt(sellerId.split('-').pop() || '1');
+              const companiesPerSeller = 100;
+              const startIndex = (sellerIndex - 1) * companiesPerSeller;
+              const endIndex = startIndex + companiesPerSeller;
               
-              if (isDan) {
-                // Dan (manager) sees ALL companies
-                console.log(`🔍 Dan (manager) viewing: showing ALL ${allCompanies.length} companies`);
-                setCompanies(allCompanies);
-              } else {
-                // Individual sellers see their assigned subset (100 companies)
-                const sellerId = foundSeller.id;
-                const sellerIndex = parseInt(sellerId.split('-').pop() || '1');
-                const companiesPerSeller = 100;
-                const startIndex = (sellerIndex - 1) * companiesPerSeller;
-                const endIndex = startIndex + companiesPerSeller;
-                
-                const sellerCompanies = allCompanies.slice(startIndex, endIndex);
-                console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): showing companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
-                console.log('🔍 Seller companies (subset):', sellerCompanies.length);
-                setCompanies(sellerCompanies);
-              }
+              const sellerCompanies = allCompanies.slice(startIndex, endIndex);
+              console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): showing companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
+              console.log('🔍 Seller companies (subset):', sellerCompanies.length);
+              setCompanies(sellerCompanies);
             } else {
               console.log('❌ Failed to load companies data');
               setError('Failed to load companies data');

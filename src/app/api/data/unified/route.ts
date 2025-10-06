@@ -1508,7 +1508,7 @@ async function getMultipleRecords(
           { rank: 'asc' },                                // Primary sort by rank
           { updatedAt: 'desc' }                           // Secondary sort by update time
         ],
-        take: pagination?.limit || 100, // 🚀 PERFORMANCE: Reduced from 5000 to 100 for faster loading
+        take: pagination?.limit || 5000, // 🚀 PERFORMANCE: Increased limit to show all companies
         select: { 
           // 🚀 PERFORMANCE: Only select essential fields for list view
           id: true, 
