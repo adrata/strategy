@@ -91,12 +91,13 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const section = url.searchParams.get('section') || 'speedrun';
     const limit = parseInt(url.searchParams.get('limit') || '30');
+    const forceRefresh = url.searchParams.has('t'); // Check for cache-busting timestamp
     
-    // 🚀 PERFORMANCE: Check cache first
+    // 🚀 PERFORMANCE: Check cache first (unless force refresh)
     const cacheKey = `section-${section}-${workspaceId}-${userId}-${limit}`;
     const cached = sectionCache.get(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
+    if (!forceRefresh && cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
       // Only log in development
       if (process.env.NODE_ENV === 'development') {
         console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
@@ -107,6 +108,10 @@ export async function GET(request: NextRequest) {
         responseTime: Date.now() - startTime,
         fromCache: true
       });
+    }
+    
+    if (forceRefresh) {
+      console.log(`🔄 [SECTION API] Force refresh requested for ${section} - bypassing cache`);
     }
     
     // Only log in development
