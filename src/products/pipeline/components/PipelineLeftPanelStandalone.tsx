@@ -389,6 +389,14 @@ function PipelineSections({
   const productionCounts = fastCounts && Object.keys(fastCounts).length > 0 ? fastCounts : finalCounts;
   
   console.log('⚡ [LEFT PANEL] Displaying counts:', productionCounts, '(FROM HOOKS)');
+  console.log('🔍 [LEFT PANEL] Seller count debug:', {
+    fastCountsSellers: fastCounts?.sellers,
+    sellersDataCount: sellersData.count,
+    finalCountsSellers: finalCounts.sellers,
+    productionCountsSellers: productionCounts.sellers,
+    fastCountsKeys: fastCounts ? Object.keys(fastCounts) : 'no fastCounts',
+    fastCountsLength: fastCounts ? Object.keys(fastCounts).length : 0
+  });
   console.log('🔍 [LEFT PANEL] Debug info:', {
     hookDataCounts: {
       leads: leadsData.count,
@@ -726,7 +734,7 @@ function PipelineSections({
       description: "Sales Team",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : sellersData.count, // Use actual count from data
+      ) : productionCounts.sellers, // Use production counts like other sections
       visible: isDemoMode // Show only for demo workspace
     },
     {
@@ -835,7 +843,15 @@ export function PipelineLeftPanelStandalone({
   const { data: acquisitionData } = useAcquisitionOS();
   
   // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
-  const { counts: fastCounts, loading: fastCountsLoading } = useFastCounts();
+  const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
+
+  // 🔄 FORCE REFRESH: Ensure we get the latest counts when component mounts
+  useEffect(() => {
+    if (currentWorkspaceId && currentUserId && !fastCountsLoading) {
+      console.log('🔄 [LEFT PANEL] Force refreshing counts to ensure latest data');
+      forceRefreshCounts();
+    }
+  }, [currentWorkspaceId, currentUserId, fastCountsLoading]);
 
   // Pipeline context for profile functionality (not Monaco)
   const {

@@ -28,6 +28,7 @@ interface UseFastCountsReturn {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  forceRefresh: () => Promise<void>;
 }
 
 /**
@@ -54,7 +55,7 @@ export function useFastCounts(): UseFastCountsReturn {
   const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const userId = authUser?.id;
 
-  const fetchCounts = useCallback(async () => {
+  const fetchCounts = useCallback(async (forceRefresh = false) => {
     if (!workspaceId || !userId || authLoading) {
       setLoading(false);
       return;
@@ -68,8 +69,8 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
-    // 🚀 PERFORMANCE: Only fetch if we haven't loaded counts yet
-    if (hasLoaded) {
+    // 🚀 PERFORMANCE: Only fetch if we haven't loaded counts yet, unless force refresh
+    if (hasLoaded && !forceRefresh) {
       console.log('⚡ [FAST COUNTS] Skipping fetch - already loaded');
       return;
     }
@@ -96,6 +97,7 @@ export function useFastCounts(): UseFastCountsReturn {
         setCounts(data.data);
         setHasLoaded(true);
         console.log('⚡ [FAST COUNTS] Loaded counts:', data.data);
+        console.log('🔍 [FAST COUNTS] Sellers count specifically:', data.data.sellers);
       } else {
         throw new Error(data.error || 'Failed to load counts');
       }
@@ -113,7 +115,7 @@ export function useFastCounts(): UseFastCountsReturn {
     if (workspaceId && userId && !authLoading && !hasLoaded) {
       fetchCounts();
     }
-  }, [workspaceId, userId, authLoading, hasLoaded, fetchCounts]);
+  }, [workspaceId, userId, authLoading, hasLoaded]);
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded state only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
@@ -175,6 +177,7 @@ export function useFastCounts(): UseFastCountsReturn {
     counts,
     loading,
     error,
-    refresh: fetchCounts
+    refresh: fetchCounts,
+    forceRefresh: () => fetchCounts(true)
   };
 }

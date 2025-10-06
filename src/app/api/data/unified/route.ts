@@ -458,7 +458,46 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       )
     );
     
-    const sellers = sellerWorkspaceUsers.map((wu, index) => {
+    // 🆕 FIX: Load sellers from sellers table only (redundant people table sellers removed)
+    const sellersTableData = await prisma.sellers.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
+      },
+      select: {
+        id: true,
+        name: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        title: true,
+        department: true,
+        company: true,
+        assignedUserId: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
+    
+    // Convert sellers table data to unified format
+    const sellersTableFormatted = sellersTableData.map(seller => ({
+      id: seller.id,
+      name: seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim(),
+      email: seller.email,
+      title: seller.title || 'Sales Representative',
+      company: seller.company || 'Winning Variant',
+      isOnline: true,
+      assignedCompanies: [],
+      assignedProspects: prospects.filter(p => p['assignedUserId'] === seller.id).length,
+      assignedLeads: leads.filter(l => l['assignedUserId'] === seller.id).length,
+      assignedOpportunities: opportunities.filter(o => o['assignedUserId'] === seller.id).length,
+      role: 'SELLER',
+      department: seller.department || 'Sales',
+      seniorityLevel: 'Mid-Level'
+    }));
+    
+    // Combine workspace users and sellers table data
+    const workspaceSellers = sellerWorkspaceUsers.map((wu, index) => {
       const user = sellerUsers[index];
       if (!user) return null;
       
@@ -478,6 +517,14 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         seniorityLevel: user.seniorityLevel || 'Mid-Level'
       };
     }).filter(Boolean);
+    
+    // Combine workspace sellers and sellers table data, remove duplicates by ID
+    const allSellers = [...workspaceSellers, ...sellersTableFormatted];
+    const uniqueSellers = allSellers.filter((seller, index, self) => 
+      index === self.findIndex(s => s.id === seller.id)
+    );
+    
+    const sellers = uniqueSellers;
 
     // Map database data to unified format - prioritize database data for leads
     // For people, combine realPeople (from buyer groups) with actual people from database

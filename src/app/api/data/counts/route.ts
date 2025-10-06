@@ -129,22 +129,13 @@ export async function GET(request: NextRequest) {
         }
       }).catch(() => 0),
       
-      // Sellers count - check both sellers table and people table with role 'seller'
-      Promise.all([
-        prisma.sellers.count({
-          where: {
-            workspaceId,
-            deletedAt: null
-          }
-        }),
-        prisma.people.count({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            role: 'seller'
-          }
-        })
-      ]).then(([sellersCount, peopleSellersCount]) => sellersCount + peopleSellersCount).catch(() => 0),
+      // Sellers count - only count from sellers table (redundant people table sellers removed)
+      prisma.sellers.count({
+        where: {
+          workspaceId,
+          deletedAt: null
+        }
+      }).catch(() => 0),
       
       // Speedrun count - count actual speedrun leads
       prisma.leads.count({
