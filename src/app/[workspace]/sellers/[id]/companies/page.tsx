@@ -122,14 +122,14 @@ export default function SellerCompaniesPage() {
             
             console.log('🔍 Companies API response:', companiesResult);
             
-            if (companiesResult['success'] && companiesResult.data && companiesResult.data.data) {
+            if (companiesResult['success'] && companiesResult.data) {
               // Filter companies assigned to this seller
-              const sellerCompanies = companiesResult.data.data.filter((company: Company) => 
+              const sellerCompanies = companiesResult.data.filter((company: Company) => 
                 company['assignedUserId'] === foundSeller.id
               );
               console.log('🔍 Seller companies:', sellerCompanies);
               console.log('🔍 Found seller ID:', foundSeller.id);
-              console.log('🔍 Company assigned user IDs:', companiesResult.data.data.map((c: Company) => c.assignedUserId));
+              console.log('🔍 Company assigned user IDs:', companiesResult.data.map((c: Company) => c.assignedUserId));
               setCompanies(sellerCompanies);
             }
           } else {

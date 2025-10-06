@@ -166,16 +166,12 @@ export function useFastCounts(): UseFastCountsReturn {
         console.log('⏰ [FAST COUNTS] Loading timeout - resetting loading state');
         setLoading(false);
         setError('Request timeout');
-        // Force a refresh after timeout
-        setTimeout(() => {
-          console.log('🔄 [FAST COUNTS] Auto-retrying after timeout');
-          fetchCounts(true);
-        }, 1000);
-      }, 5000); // 5 second timeout
+        // Don't auto-retry to prevent infinite loops
+      }, 10000); // 10 second timeout
 
       return () => clearTimeout(timeout);
     }
-  }, [loading, fetchCounts]);
+  }, [loading]);
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded state only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
