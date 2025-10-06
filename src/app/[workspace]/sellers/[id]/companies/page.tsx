@@ -216,7 +216,7 @@ export default function SellerCompaniesPage() {
                           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             Edit Seller
                           </button>
-                          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-400 rounded-lg hover:bg-blue-500 transition-colors">
                             Add Action
                           </button>
                         </div>
@@ -253,7 +253,7 @@ export default function SellerCompaniesPage() {
                           <p className="text-sm text-gray-500 mt-1">This seller doesn't have any companies assigned yet</p>
                         </div>
                       ) : (
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {companies.map((company) => (
                             <div
                               key={company.id}
