@@ -1476,7 +1476,7 @@ async function getMultipleRecords(
     }
     
     // 🚀 PERFORMANCE: Add simple memory cache for companies
-    const cacheKey = `companies-${workspaceId}-${userId}`;
+    const cacheKey = `companies-${workspaceId}-${userId}-${sellerId || 'all'}`;
     const startTime = Date.now();
     
     let companies;

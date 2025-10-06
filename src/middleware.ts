@@ -14,13 +14,19 @@ export async function middleware(request: NextRequest) {
   // Handle private routes (existing functionality)
   if (pathname.startsWith('/private/')) {
     const response = NextResponse.next();
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
-    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');                                                                            
+    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');                                                                      
     return response;
   }
   
+  // Skip authentication for auth endpoints
+  if (isAuthEndpoint(pathname)) {
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
+    return NextResponse.next();
+  }
+  
   // Protect all API endpoints with authentication
-  if (pathname.startsWith('/api/') && !isAuthEndpoint(pathname)) {
+  if (pathname.startsWith('/api/')) {
     try {
       console.log(`🔐 [MIDDLEWARE] Protecting API endpoint: ${pathname}`);
       
