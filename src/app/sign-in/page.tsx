@@ -36,9 +36,7 @@ export default function SignInPage() {
         return;
       }
       
-      console.log("🔐 [SIGN-IN PAGE] Domain check passed:", { currentHostname, isProduction, isLocalhost, isStaging });
-
-      console.log("🔐 [SIGN-IN PAGE] Clearing logout flags...");
+      // Debug logs removed for production
 
       // Check if this was a logout redirect
       const urlParams = new URLSearchParams(window.location.search);
@@ -46,9 +44,7 @@ export default function SignInPage() {
         urlParams.get("logout") || urlParams.get("emergency");
 
       if (isLogoutRedirect) {
-        console.log(
-          "🔐 [SIGN-IN PAGE] Logout redirect detected - completing logout cleanup",
-        );
+        // Logout redirect detected - completing cleanup
       }
 
       // Clear all logout flags to allow fresh sign-in
@@ -61,8 +57,6 @@ export default function SignInPage() {
 
       // Check for auto-login only if this is NOT a logout redirect
       if (!isLogoutRedirect) {
-        console.log("🔐 [SIGN-IN PAGE] Checking for auto-login...");
-        
         // Load remember me preference from cookies
         const savedRememberMe = document.cookie
           .split("; ")
@@ -72,20 +66,12 @@ export default function SignInPage() {
         const savedEmail = localStorage.getItem("adrata_remembered_email");
         const savedPassword = localStorage.getItem("adrata_remembered_password");
         
-        console.log("🔐 [SIGN-IN PAGE] Auto-login check:", {
-          rememberMe: savedRememberMe,
-          hasEmail: !!savedEmail,
-          hasPassword: !!savedPassword
-        });
-        
         if (savedRememberMe && savedEmail && savedPassword) {
-          console.log("🚀 [SIGN-IN PAGE] Auto-login conditions met - logging in automatically...");
           setEmail(savedEmail);
           setRememberMe(true);
           
           // Auto-login after a brief delay to allow state to update
           setTimeout(async () => {
-            console.log("🔐 [SIGN-IN PAGE] Starting auto-login...");
             setIsLoading(true);
             
             try {
@@ -132,7 +118,7 @@ export default function SignInPage() {
           }, 500);
         } else if (savedRememberMe && savedEmail) {
           // Just populate the email field if we have it but no password
-          console.log("🔐 [SIGN-IN PAGE] Populating remembered email:", savedEmail);
+          // Populating remembered email
           setEmail(savedEmail);
           setRememberMe(true);
         }
@@ -149,24 +135,14 @@ export default function SignInPage() {
     setError("");
     setIsLoading(true);
 
-    console.log("🔐 [SIGN-IN PAGE] Starting authentication...");
-    console.log("🔐 [SIGN-IN PAGE] Email/Username:", email);
-    console.log(
-      "🔐 [SIGN-IN PAGE] Using UnifiedAuthService for cross-platform auth",
-    );
+    // Starting authentication
+    // Using UnifiedAuthService for cross-platform auth
 
     try {
-      console.log("🔐 [SIGN-IN PAGE] Calling UnifiedAuthService.signIn...");
       const result = await authSignIn(email, password);
 
-      console.log("🔐 [SIGN-IN PAGE] Authentication result:", result);
-      console.log("🔐 [SIGN-IN PAGE] Result type:", typeof result);
-      console.log("🔐 [SIGN-IN PAGE] Result keys:", Object.keys(result || {}));
-      console.log("🔐 [SIGN-IN PAGE] Result success:", result?.success);
-      console.log("🔐 [SIGN-IN PAGE] Result session:", result?.session);
-
       if (result.success) {
-        console.log("✅ [SIGN-IN PAGE] Authentication successful!");
+        // Authentication successful
 
         // Handle remember me functionality
         if (typeof window !== "undefined") {

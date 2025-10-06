@@ -40,31 +40,18 @@ export class NotificationService {
       return this.hasPermission;
     }
 
-    console.log(
-      "🔔 [NOTIFICATIONS] Initializing notification service (2024)...",
-    );
-
     try {
       if (isDesktop()) {
-        console.log(
-          "🔔 [NOTIFICATIONS] Desktop mode - using official Tauri plugin",
-        );
         this['hasPermission'] = await this.initializeTauriNotifications();
       } else {
-        console.log(
-          "🔔 [NOTIFICATIONS] Web mode - using browser notifications",
-        );
         this['hasPermission'] = await this.initializeBrowserNotifications();
       }
 
       this['isInitialized'] = true;
-      console.log(
-        `✅ [NOTIFICATIONS] Service initialized. Permission: ${this.hasPermission}`,
-      );
 
       return this.hasPermission;
     } catch (error) {
-      console.error("❌ [NOTIFICATIONS] Initialization failed:", error);
+      // Initialization failed - silent error handling
       this['isInitialized'] = true; // Don't retry constantly
       return false;
     }

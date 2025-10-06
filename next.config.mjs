@@ -43,6 +43,9 @@ const buildConfig = {
     optimizeCss: true, // CSS optimization
     serverComponentsHmrCache: false, // Disable for stability
     
+    // CSS optimization to prevent preload warnings
+    cssChunking: 'strict', // Strict CSS chunking to prevent unused CSS preloading
+    
     // Optimize package imports for web
     optimizePackageImports: [
       '@heroicons/react',

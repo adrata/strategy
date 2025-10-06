@@ -52,24 +52,17 @@ let cachedConfig: PlatformConfig | null = null;
 export const getPlatform = (): Platform => {
   // Return cached result for maximum performance
   if (cachedPlatform) {
-    console.log("🔍 [PLATFORM] Using cached platform:", cachedPlatform);
     return cachedPlatform;
   }
 
   // Server-side detection
   if (typeof window === "undefined") {
     cachedPlatform = "web";
-    console.log("🔍 [PLATFORM] Server-side detected as web");
     return cachedPlatform;
   }
 
   try {
-    console.log("🔍 [PLATFORM] Client-side platform detection starting...");
-    console.log("🔍 [PLATFORM] Window location:", window.location.href);
-    console.log("🔍 [PLATFORM] Protocol:", window.location.protocol);
-    console.log("🔍 [PLATFORM] Hostname:", window.location.hostname);
-    console.log("🔍 [PLATFORM] Pathname:", window.location.pathname);
-    console.log("🔍 [PLATFORM] User Agent:", navigator.userAgent);
+    // Client-side platform detection
 
     // CRITICAL: Safari Detection - Must check this FIRST
     const safariInfo = detectSafari();
@@ -77,9 +70,7 @@ export const getPlatform = (): Platform => {
     // CRITICAL: If Safari (mobile or desktop), force web platform
     if (safariInfo.isSafari) {
       cachedPlatform = "web";
-      console.log("🔍 [PLATFORM] Safari detected - forcing web platform");
-      console.log("🔍 [PLATFORM] Safari version:", safariInfo.version);
-      console.log("🔍 [PLATFORM] Safari mobile:", safariInfo.isSafariMobile);
+      // Safari detected - forcing web platform
       
       // CRITICAL: Override any Tauri detection for Safari
       if (typeof window !== 'undefined') {
@@ -109,26 +100,23 @@ export const getPlatform = (): Platform => {
 
     if (isWebProtocol && isWebDomain) {
       cachedPlatform = "web";
-      console.log("🔍 [PLATFORM] Web protocol and domain detected - forcing web platform");
+      // Web protocol and domain detected - forcing web platform
       return cachedPlatform;
     }
 
     // FAST: Build-time environment variable detection (highest priority)
     if (process['env']['NEXT_PUBLIC_IS_DESKTOP'] === "true") {
       cachedPlatform = "desktop";
-      console.log("🔍 [PLATFORM] Environment variable detected as desktop");
+      // Environment variable detected as desktop
       return cachedPlatform;
     }
 
     // FAST: Capacitor detection (mobile runtime)
     if (typeof window !== "undefined" && (window as any).Capacitor) {
-      console.log("🔍 [PLATFORM] Capacitor detected");
       const isNative = typeof (window as any).Capacitor['isNativePlatform'] === 'function' && 
         (window as any).Capacitor.isNativePlatform();
-      console.log("🔍 [PLATFORM] Is native platform:", isNative);
       if (isNative) {
         cachedPlatform = "mobile";
-        console.log("🔍 [PLATFORM] Detected as mobile (Capacitor native)");
         return cachedPlatform;
       }
     }
@@ -142,17 +130,12 @@ export const getPlatform = (): Platform => {
       windowObj.__TAURI_INTERNALS__
     );
 
-    console.log("🔍 [PLATFORM] Tauri indicators:", {
-      __TAURI__: !!windowObj.__TAURI__,
-      __TAURI_METADATA__: !!windowObj.__TAURI_METADATA__,
-      __TAURI_IPC__: !!windowObj.__TAURI_IPC__,
-      __TAURI_INTERNALS__: !!windowObj.__TAURI_INTERNALS__,
-    });
+    // Tauri indicators detected
 
     // Only consider Tauri if we're NOT in a web browser context
     if (hasTauriRuntime && !isWebProtocol) {
       cachedPlatform = "desktop";
-      console.log("🔍 [PLATFORM] Detected as desktop (Tauri)");
+      // Detected as desktop (Tauri)
       return cachedPlatform;
     }
 
@@ -160,19 +143,18 @@ export const getPlatform = (): Platform => {
     if (window['location']['protocol'] === "file:" && 
         window.location.pathname.includes("index.html")) {
       cachedPlatform = "desktop";
-      console.log("🔍 [PLATFORM] Detected as desktop (file protocol)");
+      // Detected as desktop (file protocol)
       return cachedPlatform;
     }
 
     // Default to web for all web browser contexts
     cachedPlatform = "web";
-    console.log("🔍 [PLATFORM] Defaulting to web platform");
+    // Defaulting to web platform
     return cachedPlatform;
   } catch (error) {
     // Silent fallback for production performance
-    console.error("🔍 [PLATFORM] Error in platform detection:", error);
+    // Error in platform detection - fallback to web
     cachedPlatform = "web";
-    console.log("🔍 [PLATFORM] Fallback to web due to error");
     return cachedPlatform;
   }
 };

@@ -434,7 +434,6 @@ export class DesktopErrorBoundary extends Component<Props, State> {
       );
     }
 
-    console.log("🛡️ DesktopErrorBoundary: Rendering children (no error)");
     return this.props.children;
   }
 }

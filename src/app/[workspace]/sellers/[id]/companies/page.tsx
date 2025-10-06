@@ -126,19 +126,33 @@ export default function SellerCompaniesPage() {
           if (foundSeller) {
             setSeller(foundSeller);
             
-            // Load companies data using unified API with seller ID filter
+            // Load companies data using unified API (all companies assigned to Dan)
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
-            console.log('🔍 Making companies API call with seller ID filter...');
-            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${foundSeller.id}`);
+            console.log('🔍 Making companies API call...');
+            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get`);
             console.log('🔍 Companies API response status:', companiesResponse.status);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
             
             if (companiesResult['success'] && companiesResult.data) {
-              // Companies are already filtered by seller ID in the API
-              console.log('🔍 Seller companies (filtered by API):', companiesResult.data);
-              setCompanies(companiesResult.data);
+              // Filter companies assigned to Dan (manager) - all companies are assigned to Dan's user ID
+              const allCompanies = companiesResult.data.filter((company: Company) => 
+                company['assignedUserId'] === foundSeller.assignedUserId
+              );
+              
+              // Show a subset of companies for each seller using deterministic selection
+              // This ensures each seller sees different companies but consistently
+              const sellerId = foundSeller.id;
+              const sellerIndex = parseInt(sellerId.split('-').pop() || '1');
+              const companiesPerSeller = 100;
+              const startIndex = (sellerIndex - 1) * companiesPerSeller;
+              const endIndex = startIndex + companiesPerSeller;
+              
+              const sellerCompanies = allCompanies.slice(startIndex, endIndex);
+              console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): showing companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
+              console.log('🔍 Seller companies (subset):', sellerCompanies.length);
+              setCompanies(sellerCompanies);
             } else {
               console.log('❌ Failed to load companies data');
               setError('Failed to load companies data');

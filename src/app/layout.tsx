@@ -131,27 +131,14 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeNotifications = async () => {
       try {
-        console.log("🔔 [APP_STARTUP] Initializing notification service...");
         const success = await notificationService.initialize();
 
         if (success && isDesktop()) {
-          console.log(
-            "✅ [APP_STARTUP] Notifications initialized successfully - Dock badges enabled",
-          );
           // Clear any existing badge on startup
           await notificationService.clearDockBadge();
-        } else if (success) {
-          console.log("✅ [APP_STARTUP] Notifications initialized for web");
-        } else {
-          console.warn(
-            "⚠️ [APP_STARTUP] Notification initialization failed (non-critical)",
-          );
         }
       } catch (error) {
-        console.warn(
-          "⚠️ [APP_STARTUP] Notification initialization error (non-critical):",
-          error,
-        );
+        // Silent error handling for production
       }
     };
 
@@ -196,15 +183,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log("🏗️ [ROOT LAYOUT] Rendering with children");
-  console.log(
-    "🏗️ [ROOT LAYOUT] Window available:",
-    typeof window !== "undefined",
-  );
-  console.log(
-    "🏗️ [ROOT LAYOUT] Current URL:",
-    typeof window !== "undefined" ? window.location.href : "N/A",
-  );
+  // Debug logs removed for production
 
   return (
     <html

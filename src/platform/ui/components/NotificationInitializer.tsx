@@ -12,30 +12,14 @@ export function NotificationInitializer() {
   useEffect(() => {
     const initializeNotifications = async () => {
       try {
-        console.log("🔔 [APP_STARTUP] Initializing notification service...");
         const success = await notificationService.initialize();
 
         if (success && isDesktop()) {
-          console.log(
-            "✅ [APP_STARTUP] Notifications initialized successfully - Dock badges enabled",
-          );
           // Clear any existing badge on startup
           await notificationService.clearDockBadge();
-          console.log(
-            "🍎 [DOCK_BADGE] Cleared startup badge - ready for new messages",
-          );
-        } else if (success) {
-          console.log("✅ [APP_STARTUP] Notifications initialized for web");
-        } else {
-          console.warn(
-            "⚠️ [APP_STARTUP] Notification initialization failed (non-critical)",
-          );
         }
       } catch (error) {
-        console.warn(
-          "⚠️ [APP_STARTUP] Notification initialization error (non-critical):",
-          error,
-        );
+        // Silent error handling for production
       }
     };
 

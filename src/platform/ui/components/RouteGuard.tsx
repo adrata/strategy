@@ -86,14 +86,12 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
 
       // Authenticated user on root or bare /aos -> redirect to main app
       if (isAuthenticated && (isRoot || pathname === "/aos")) {
-        console.log("🛡️ Fast redirect to /speedrun");
         router.replace("/speedrun");
         return;
       }
 
       // Unauthenticated user on protected route -> redirect to sign-in
       if (!isAuthenticated && !isPublicRoute && !isRoot) {
-        console.log("🛡️ Fast redirect to sign-in");
         // Ensure we redirect to the correct domain
         if (typeof window !== "undefined" && window.location.hostname !== "action.adrata.com" && window.location.hostname !== "localhost") {
           console.log("🔄 RouteGuard: Redirecting to correct domain");
