@@ -429,9 +429,9 @@ Create opportunities for ongoing engagement and relationship development. Provid
     console.log('Member clicked:', member);
     
     try {
-      // Generate person slug and navigate to people page
+      // Generate person slug and navigate to buyer group person detail page
       const personSlug = generateSlug(member.name, member.id);
-      router.push(`/people/${personSlug}`);
+      router.push(`/demo/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`);
     } catch (error) {
       console.error('Error handling member click:', error);
     }
