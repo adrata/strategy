@@ -683,6 +683,70 @@ export async function GET(request: NextRequest) {
         }
         break;
         
+      case 'sellers':
+        // 🚀 SELLERS: Load sellers data from sellers table
+        const sellersData = await prisma.sellers.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          },
+          orderBy: [
+            { rank: 'asc' }, // Use seller rank if available
+            { updatedAt: 'desc' } // Then by update time
+          ],
+          take: limit,
+          select: {
+            id: true,
+            name: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            title: true,
+            department: true,
+            company: true,
+            assignedUserId: true,
+            workspaceId: true,
+            tags: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        });
+        
+        // 🎯 DEDUPLICATION: Remove duplicate sellers by name (keep first occurrence)
+        const seenSellerNames = new Set();
+        const deduplicatedSellers = sellersData.filter(seller => {
+          const fullName = seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim();
+          if (seenSellerNames.has(fullName)) {
+            return false; // Skip duplicate
+          }
+          seenSellerNames.add(fullName);
+          return true;
+        });
+        
+        sectionData = deduplicatedSellers.map((seller, index) => ({
+          id: seller.id,
+          rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
+          name: seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
+          firstName: seller.firstName,
+          lastName: seller.lastName,
+          email: seller.email || 'Unknown Email',
+          phone: seller.phone || 'Unknown Phone',
+          title: seller.title || 'Unknown Title',
+          department: seller.department || 'Unknown Department',
+          company: seller.company || 'Unknown Company',
+          assignedUserId: seller.assignedUserId,
+          workspaceId: seller.workspaceId,
+          tags: seller.tags || [],
+          createdAt: seller.createdAt,
+          updatedAt: seller.updatedAt
+        }));
+        break;
+        
       default:
         sectionData = [];
     }
@@ -771,6 +835,15 @@ export async function GET(request: NextRequest) {
             }
           });
           totalCount = Math.min(speedrunPeople.length, 30); // Speedrun is capped at 30
+          break;
+        case 'sellers':
+          // Use same logic as counts API (sellers table without user filters)
+          totalCount = await prisma.sellers.count({
+            where: {
+              workspaceId,
+              deletedAt: null
+            }
+          });
           break;
         default:
           totalCount = sectionData.length;
