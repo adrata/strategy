@@ -83,7 +83,10 @@ export async function middleware(request: NextRequest) {
  */
 function isAuthEndpoint(pathname: string): boolean {
   const authEndpoints = [
-    '/api/auth',
+    '/api/auth/sign-in',
+    '/api/auth/sign-out',
+    '/api/auth/forgot-password',
+    '/api/auth/reset-password',
     '/api/health',
     '/api/webhooks'
   ];

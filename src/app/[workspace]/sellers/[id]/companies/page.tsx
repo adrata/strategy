@@ -130,7 +130,9 @@ export default function SellerCompaniesPage() {
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
             console.log('🔍 Making companies API call...');
             // Pass Dan's user ID as sellerId to ensure we get all companies assigned to him
-            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${foundSeller.assignedUserId}`);
+            const apiUrl = `/api/data/unified?type=companies&action=get&sellerId=${foundSeller.assignedUserId}`;
+            console.log('🔍 Companies API URL:', apiUrl);
+            const companiesResponse = await authFetch(apiUrl);
             console.log('🔍 Companies API response status:', companiesResponse.status);
             const companiesResult = await companiesResponse.json();
             
