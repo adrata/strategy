@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * 🏢 FORTUNE 500 DEMO DATA GENERATOR
+ * 🔒 CYBERSECURITY DEMO DATA GENERATOR
  * 
- * Generates comprehensive Fortune 500-style demo data including:
- * - 2,000 Fortune 500 companies with realistic data
- * - 19,234 people across these companies
- * - 20 sellers with detailed profiles
- * - 50 speedrun items (top companies/people)
+ * Generates comprehensive cybersecurity enterprise demo data including:
+ * - 2,000 cybersecurity companies and enterprises
+ * - 19,234 cybersecurity professionals with realistic job roles
+ * - 20 cybersecurity sales professionals
+ * - 50 speedrun items (top cybersecurity opportunities)
  * - All data tagged as demo data for easy identification
+ * - Focus on realistic buyer groups for enterprise cybersecurity platforms
  */
 
 const { PrismaClient } = require('@prisma/client');
