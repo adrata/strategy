@@ -134,12 +134,16 @@ export default function SellerCompaniesPage() {
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
+            console.log('🔍 Companies API data length:', companiesResult.data?.length);
             
             if (companiesResult['success'] && companiesResult.data) {
               // Filter companies assigned to Dan (manager) - all companies are assigned to Dan's user ID
               const allCompanies = companiesResult.data.filter((company: Company) => 
                 company['assignedUserId'] === foundSeller.assignedUserId
               );
+              
+              console.log('🔍 All companies after filtering:', allCompanies.length);
+              console.log('🔍 Sample companies:', allCompanies.slice(0, 3));
               
               // Show the seller's assigned subset (100 companies) for both Dan and the seller
               const sellerId = foundSeller.id;
@@ -148,9 +152,11 @@ export default function SellerCompaniesPage() {
               const startIndex = (sellerIndex - 1) * companiesPerSeller;
               const endIndex = startIndex + companiesPerSeller;
               
+              console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): looking for companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
+              
               const sellerCompanies = allCompanies.slice(startIndex, endIndex);
-              console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): showing companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
               console.log('🔍 Seller companies (subset):', sellerCompanies.length);
+              console.log('🔍 Sample seller companies:', sellerCompanies.slice(0, 3));
               setCompanies(sellerCompanies);
             } else {
               console.log('❌ Failed to load companies data');
