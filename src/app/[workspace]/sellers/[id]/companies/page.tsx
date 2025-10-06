@@ -151,6 +151,26 @@ export default function SellerCompaniesPage() {
               console.log('🔍 Seller companies:', sellerCompanies);
               console.log('🔍 Found seller ID:', foundSeller.id);
               console.log('🔍 Company assigned user IDs:', companiesResult.data.data.map((c: Company) => c.assignedUserId));
+              
+              // Debug the filtering logic
+              console.log('🔍 DEBUG: Filtering companies by assignedUserId');
+              console.log('🔍 DEBUG: Looking for assignedUserId:', foundSeller.id);
+              console.log('🔍 DEBUG: Sample company assignedUserIds:', companiesResult.data.data.slice(0, 5).map((c: Company) => ({
+                name: c.name,
+                assignedUserId: c.assignedUserId,
+                matches: c.assignedUserId === foundSeller.id
+              })));
+              
+              // Check if any companies have the exact seller ID
+              const exactMatches = companiesResult.data.data.filter((c: Company) => c.assignedUserId === foundSeller.id);
+              console.log('🔍 DEBUG: Exact matches found:', exactMatches.length);
+              
+              // Check for partial matches
+              const partialMatches = companiesResult.data.data.filter((c: Company) => 
+                c.assignedUserId && c.assignedUserId.includes('cybersecurity-seller')
+              );
+              console.log('🔍 DEBUG: Partial matches (cybersecurity-seller):', partialMatches.length);
+              console.log('🔍 DEBUG: Partial match assignedUserIds:', partialMatches.slice(0, 5).map((c: Company) => c.assignedUserId));
               setCompanies(sellerCompanies);
             } else {
               console.log('❌ Companies data is not an array or API failed');
