@@ -37,11 +37,21 @@ import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation"
 
 interface PipelineViewProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun' | 'metrics' | 'dashboard';
+  sellerId?: string;
+  companyId?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 // PERFORMANCE: Memoize component to prevent unnecessary re-renders
-export const PipelineView = React.memo(function PipelineView({ section }: PipelineViewProps) {
-  console.log('🔍 [PipelineView] Component rendered for section:', section);
+export const PipelineView = React.memo(function PipelineView({ 
+  section, 
+  sellerId, 
+  companyId, 
+  title, 
+  subtitle 
+}: PipelineViewProps) {
+  console.log('🔍 [PipelineView] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
   
   
   const router = useRouter();
@@ -995,11 +1005,19 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     // Use the ULID (record.id) for all record types including sellers
     const recordId = record.id;
     
-    // For sellers, navigate to the companies page instead of the main seller page
+    // Handle navigation based on current context
     if (section === 'sellers') {
       // Navigate to seller companies page
       const slug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
       window['location']['href'] = `/demo/zeropoint/sellers/${slug}/companies`;
+    } else if (section === 'companies' && sellerId) {
+      // Navigate from seller companies to buyer group
+      const companySlug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
+      window['location']['href'] = `/demo/zeropoint/sellers/${sellerId}/companies/${companySlug}/buyer-group`;
+    } else if (section === 'people' && sellerId && companyId) {
+      // Navigate from buyer group to person record
+      const personSlug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
+      window['location']['href'] = `/demo/zeropoint/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`;
     } else {
       navigateToPipelineItem(section, recordId, recordName);
     }
@@ -1007,7 +1025,7 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
     const navEndTime = performance.now();
     const totalTime = navEndTime - clickStartTime;
     console.log(`⚡ [PERFORMANCE] Total click-to-navigation took ${totalTime.toFixed(2)}ms (navigation: ${(navEndTime - navStartTime).toFixed(2)}ms)`);
-  }, [section]);
+  }, [section, sellerId, companyId]);
 
   // Navigation functions for record detail view
   const handleNavigatePrevious = useCallback(() => {
@@ -1395,6 +1413,8 @@ export const PipelineView = React.memo(function PipelineView({ section }: Pipeli
         onRefresh={handleRefresh}
         onClearCache={handleClearCache}
         onAddRecord={handleAddRecord}
+        title={title}
+        subtitle={subtitle}
         recordCount={(() => {
           const fastCount = fastSectionData.count;
           const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;

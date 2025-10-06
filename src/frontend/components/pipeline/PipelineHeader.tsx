@@ -55,6 +55,8 @@ interface PipelineHeaderProps {
   onAddRecord?: () => void;
   loading?: boolean;
   recordCount?: number;
+  title?: string;
+  subtitle?: string;
 }
 
 export function PipelineHeader({ 
@@ -65,7 +67,9 @@ export function PipelineHeader({
   onClearCache, 
   onAddRecord,
   loading,
-  recordCount
+  recordCount,
+  title,
+  subtitle
 }: PipelineHeaderProps) {
   const { user } = useUnifiedAuth();
   const { navigateToPipeline } = useWorkspaceNavigation();
@@ -375,6 +379,16 @@ export function PipelineHeader({
   
   // Get section display info
   const getSectionInfo = () => {
+    // Use custom title and subtitle if provided
+    if (title && subtitle) {
+      return {
+        title: title,
+        subtitle: subtitle,
+        actionButton: 'Add Record',
+        secondaryActionButton: 'Add Action'
+      };
+    }
+    
     const sectionTitle = section.charAt(0).toUpperCase() + section.slice(1);
     
     // Format record count with comma for thousands
