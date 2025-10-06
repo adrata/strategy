@@ -136,23 +136,14 @@ export default function SellerCompaniesPage() {
             console.log('🔍 Companies API response:', companiesResult);
             
             if (companiesResult['success'] && companiesResult.data) {
-              // Filter companies assigned to Dan (manager) - all companies are assigned to Dan's user ID
+              // Show ALL companies assigned to Dan (manager) - no subset filtering
               const allCompanies = companiesResult.data.filter((company: Company) => 
                 company['assignedUserId'] === foundSeller.assignedUserId
               );
               
-              // Show a subset of companies for each seller using deterministic selection
-              // This ensures each seller sees different companies but consistently
-              const sellerId = foundSeller.id;
-              const sellerIndex = parseInt(sellerId.split('-').pop() || '1');
-              const companiesPerSeller = 100;
-              const startIndex = (sellerIndex - 1) * companiesPerSeller;
-              const endIndex = startIndex + companiesPerSeller;
-              
-              const sellerCompanies = allCompanies.slice(startIndex, endIndex);
-              console.log(`🔍 Seller ${sellerId} (index ${sellerIndex}): showing companies ${startIndex}-${endIndex} of ${allCompanies.length} total`);
-              console.log('🔍 Seller companies (subset):', sellerCompanies.length);
-              setCompanies(sellerCompanies);
+              console.log(`🔍 Showing ALL companies assigned to Dan: ${allCompanies.length} total`);
+              console.log('🔍 All companies for seller:', allCompanies.length);
+              setCompanies(allCompanies);
             } else {
               console.log('❌ Failed to load companies data');
               setError('Failed to load companies data');
