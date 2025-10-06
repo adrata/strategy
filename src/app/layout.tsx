@@ -18,6 +18,7 @@ import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvid
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { DynamicFavicon } from "@/platform/ui/components/DynamicFavicon";
 import { DynamicTitle } from "@/platform/ui/components/DynamicTitle";
+import { SafariImmediateFix } from "@/platform/components/SafariImmediateFix";
 import { usePathname } from "next/navigation";
 
 // Import desktop auto-updater (only works in desktop environment)
@@ -40,7 +41,7 @@ import "@/platform/safari-platform-override";
 import "@/platform/safari-2025-fix";
 
 // ✅ CRITICAL: Immediate Safari fix - must run before any other code
-import "@/platform/safari-immediate-fix";
+// import "@/platform/safari-immediate-fix"; // Moved to client-side component
 
 // ✅ CRITICAL: Safari error suppression - must run before any other code
 import "@/platform/safari-error-suppression";
@@ -180,6 +181,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
     >
               <DynamicFavicon isWebsite={isWebsite} defaultColor="#3b82f6" />
       <DynamicTitle />
+      <SafariImmediateFix />
       <DesktopErrorBoundary>
         <ThemeProvider>
           <Suspense fallback={<SuspenseLoading />}>{children}</Suspense>

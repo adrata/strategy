@@ -438,7 +438,7 @@ export const PipelineView = React.memo(function PipelineView({
       const preloadSpeedrunData = async () => {
         try {
           const { authFetch } = await import('@/platform/auth-fetch');
-          await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=30`);
+          await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }
@@ -1007,17 +1007,27 @@ export const PipelineView = React.memo(function PipelineView({
     
     // Handle navigation based on current context
     if (section === 'sellers') {
-      // Navigate to seller companies page
+      // Navigate to seller companies page - use proper workspace slug
       const slug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
-      window['location']['href'] = `/demo/zeropoint/sellers/${slug}/companies`;
+      const currentWorkspace = user?.workspaces?.find(w => w.id === user?.activeWorkspaceId);
+      // Use proper workspace slug generation
+      const workspaceSlug = currentWorkspace?.name === 'Demo Workspace' ? 'demo' : 
+                           currentWorkspace?.name?.toLowerCase().replace(/\s+/g, '-') || 'demo';
+      window['location']['href'] = `/${workspaceSlug}/sellers/${slug}/companies`;
     } else if (section === 'companies' && sellerId) {
-      // Navigate from seller companies to buyer group
+      // Navigate from seller companies to buyer group - use proper workspace slug
       const companySlug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
-      window['location']['href'] = `/demo/zeropoint/sellers/${sellerId}/companies/${companySlug}/buyer-group`;
+      const currentWorkspace = user?.workspaces?.find(w => w.id === user?.activeWorkspaceId);
+      const workspaceSlug = currentWorkspace?.name === 'Demo Workspace' ? 'demo' : 
+                           currentWorkspace?.name?.toLowerCase().replace(/\s+/g, '-') || 'demo';
+      window['location']['href'] = `/${workspaceSlug}/sellers/${sellerId}/companies/${companySlug}/buyer-group`;
     } else if (section === 'people' && sellerId && companyId) {
-      // Navigate from buyer group to person record
+      // Navigate from buyer group to person record - use proper workspace slug
       const personSlug = `${recordName.toLowerCase().replace(/\s+/g, '-')}-${recordId}`;
-      window['location']['href'] = `/demo/zeropoint/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`;
+      const currentWorkspace = user?.workspaces?.find(w => w.id === user?.activeWorkspaceId);
+      const workspaceSlug = currentWorkspace?.name === 'Demo Workspace' ? 'demo' : 
+                           currentWorkspace?.name?.toLowerCase().replace(/\s+/g, '-') || 'demo';
+      window['location']['href'] = `/${workspaceSlug}/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`;
     } else {
       navigateToPipelineItem(section, recordId, recordName);
     }
@@ -1521,7 +1531,7 @@ export const PipelineView = React.memo(function PipelineView({
                 sortField={sortField}
                 sortDirection={sortDirection}
                 visibleColumns={visibleColumns}
-                pageSize={30} // Speedrun shows 30 items per page
+                pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
                 totalCount={fastSectionData.count} // Pass total count for correct pagination
               />
@@ -1587,172 +1597,21 @@ export const PipelineView = React.memo(function PipelineView({
                   totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
-                // Buyer Group style design for Sellers
-            <div className="bg-white rounded-lg border border-gray-200">
-              {/* Header Section */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <span className="text-white font-bold text-xl">S</span>
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Sales Team</h1>
-                    <p className="text-gray-600">4 sellers mapped • Enterprise Sales</p>
-                  </div>
-                </div>
-                
-                {/* Summary Cards */}
-                <div className="flex gap-4">
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                    <div className="text-2xl font-bold text-gray-900">2</div>
-                    <div className="text-sm text-gray-600">Ahead of Target</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                    <div className="text-2xl font-bold text-gray-900">2</div>
-                    <div className="text-sm text-gray-600">On Track</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                    <div className="text-2xl font-bold text-gray-900">3</div>
-                    <div className="text-sm text-gray-600">Online Now</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                    <div className="text-2xl font-bold text-gray-900">149</div>
-                    <div className="text-sm text-gray-600">Active Buyer Groups</div>
-                  </div>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                    <div className="text-2xl font-bold text-gray-900">875</div>
-                    <div className="text-sm text-gray-600">Total Stakeholders</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Sellers List */}
-              <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
-                {filteredData?.filter(seller => seller != null).map((seller: any, index: number) => {
-                  // Seller data matching the buyer group style
-                  const sellerData = [
-                    {
-                      name: 'Kirk Harbaugh',
-                      title: 'Senior Account Executive',
-                      region: 'Enterprise West',
-                      activeGroups: 40,
-                      maxGroups: 50,
-                      dmEngagement: 89,
-                      stakeholders: 213,
-                      isOnline: true,
-                      pacing: 'Ahead',
-                      percentToGoal: 105,
-                      status: 'Online'
-                    },
-                    {
-                      name: 'Sarah Chen',
-                      title: 'Strategic Account Manager',
-                      region: 'Fortune 500',
-                      activeGroups: 42,
-                      maxGroups: 60,
-                      dmEngagement: 92,
-                      stakeholders: 341,
-                      isOnline: false,
-                      pacing: 'On Track',
-                      percentToGoal: 95,
-                      status: 'Offline'
-                    },
-                    {
-                      name: 'Marcus Rodriguez',
-                      title: 'Enterprise Sales Director',
-                      region: 'Financial Services',
-                      activeGroups: 38,
-                      maxGroups: 45,
-                      dmEngagement: 85,
-                      stakeholders: 187,
-                      isOnline: true,
-                      pacing: 'Ahead',
-                      percentToGoal: 115,
-                      status: 'Online'
-                    },
-                    {
-                      name: 'Amanda Thompson',
-                      title: 'Account Executive',
-                      region: 'Technology Sector',
-                      activeGroups: 29,
-                      maxGroups: 40,
-                      dmEngagement: 78,
-                      stakeholders: 134,
-                      isOnline: false,
-                      pacing: 'On Track',
-                      percentToGoal: 88,
-                      status: 'Offline'
-                    }
-                  ];
-                  
-                  const data = sellerData[index] || sellerData[0];
-                  
-                  return (
-                    <div
-                      key={seller?.id || `seller-${index}`}
-                      onClick={() => handleRecordClick(seller)}
-                      className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 flex-1">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-semibold text-sm">
-                              {data.name.split(' ').map(n => n[0]).join('')}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
-                                {data.name}
-                              </h4>
-                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                                data['pacing'] === 'Ahead' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : data['pacing'] === 'Behind'
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-blue-100 text-blue-800'
-                              }`}>
-                                {data.pacing}
-                              </span>
-                            </div>
-                            <div className="text-sm text-gray-600 mb-1">
-                              {data.title}
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-sm text-gray-500">
-                                {data.region}
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                {data.activeGroups}/{data.maxGroups} Groups
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                {data.dmEngagement}% DM Engagement
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className="text-sm font-medium text-gray-900">
-                              {data.stakeholders} Stakeholders
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {data.percentToGoal}% to Goal
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${data.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                            <span className="text-xs text-gray-600">
-                              {data.status}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+                // Sellers table with same design as people and companies
+                <PipelineTable
+                  section={section}
+                  data={filteredData || []}
+                  onRecordClick={handleRecordClick}
+                  onReorderRecords={handleReorderRecords}
+                  onColumnSort={handleColumnSort}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  visibleColumns={visibleColumns}
+                  pageSize={100}
+                  isLoading={isLoading}
+                  searchQuery={searchQuery}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                />
           ) : (
             <PipelineTable
               section={section}

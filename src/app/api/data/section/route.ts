@@ -119,62 +119,25 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // Load speedrun data (people with company relationships who are buyer group members) - FIXED: Use company ranking
-        const people = await prisma.people.findMany({
+        // 🆕 FIX: Load speedrun data from leads table with speedrun tag
+        const speedrunLeads = await prisma.leads.findMany({
           where: {
             workspaceId,
             deletedAt: null,
-            companyId: { not: null },
-            customFields: {
-              path: ['isBuyerGroupMember'],
-              equals: true
-            } as any,
+            tags: { has: 'speedrun' },
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
             ]
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // Use company rank first
-            { updatedAt: 'desc' } // Then by person update time
+            { updatedAt: 'desc' }
           ],
-          take: 200,
-          include: {
-            company: {
-              select: {
-                id: true,
-                name: true,
-                industry: true,
-                vertical: true,
-                size: true,
-                rank: true // Include company rank for proper ordering
-              }
-            }
-          }
+          take: 200
         });
         
-        // Transform to speedrun format with proper action structure
-        // 🚫 FILTER: Exclude user's own company from speedrun and ensure buyer group membership
-        const filteredPeople = people.filter(person => {
-          // Check if person is in buyer group (fallback filter)
-          const isBuyerGroupMember = (person.customFields as any)?.isBuyerGroupMember === true;
-          const shouldExclude = shouldExcludeCompany(person.company?.name);
-          
-          return isBuyerGroupMember && !shouldExclude;
-        });
-        
-        // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
-        const seenSpeedrunNames = new Set();
-        const deduplicatedPeople = filteredPeople.filter(person => {
-          const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
-          if (seenSpeedrunNames.has(fullName)) {
-            return false; // Skip duplicate
-          }
-          seenSpeedrunNames.add(fullName);
-          return true;
-        });
-        
-        sectionData = deduplicatedPeople.slice(0, limit).map((person, index) => {
+        // Transform speedrun leads to speedrun format
+        sectionData = speedrunLeads.slice(0, limit).map((lead, index) => {
           // Safe string truncation utility
           const safeString = (str: any, maxLength: number = 1000): string => {
             if (!str || typeof str !== 'string') return '';
@@ -182,62 +145,34 @@ export async function GET(request: NextRequest) {
             return str.substring(0, maxLength) + '...';
           };
 
-          // 🎯 DETERMINE STAGE: Check if person is a lead, prospect, or opportunity
-          let stage = 'Prospect'; // Default to Prospect
-          if ((person.customFields as any)?.buyerGroupRole) {
-            const role = (person.customFields as any).buyerGroupRole.toLowerCase();
-            if (role.includes('decision') || role.includes('champion')) {
-              stage = 'Opportunity';
-            } else if (role.includes('influencer') || role.includes('stakeholder')) {
-              stage = 'Lead';
-            }
-          }
-
-          // 🎯 BUYER GROUP ROLE: Extract from intelligence data and convert to proper buyer group roles
-          let buyerGroupRole = (person.customFields as any)?.buyerGroupRole;
+          // 🎯 DETERMINE STAGE: Use lead status
+          let stage = lead.status || 'Prospect';
           
-          // If no specific buyer group role, derive from influence level and other factors
-          if (!buyerGroupRole) {
-            const influenceLevel = (person.customFields as any)?.influenceLevel;
-            const decisionPower = (person.customFields as any)?.decisionPower;
-            const seniority = (person.customFields as any)?.seniority;
-            
-            // Determine buyer group role based on intelligence data
-            if (influenceLevel === 'High' && decisionPower > 80) {
-              buyerGroupRole = 'Decision Maker';
-            } else if (influenceLevel === 'High' && seniority === 'Executive') {
-              buyerGroupRole = 'Champion';
-            } else if (influenceLevel === 'High') {
-              buyerGroupRole = 'Champion'; // High influence = Champion, not Influencer
-            } else if (influenceLevel === 'Medium') {
-              buyerGroupRole = 'Stakeholder';
-            } else {
-              buyerGroupRole = 'Stakeholder';
-            }
-          }
+          // 🎯 BUYER GROUP ROLE: Default for speedrun leads
+          let buyerGroupRole = 'Stakeholder';
 
           return {
-            id: person.id,
-            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
-            name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
-            company: safeString(person.company?.name || 'Unknown Company', 200),
-            title: safeString(person.jobTitle || 'Unknown Title', 300),
+            id: lead.id,
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
+            name: safeString(lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown', 200),
+            company: safeString(lead.company || 'Unknown Company', 200),
+            title: safeString(lead.jobTitle || 'Unknown Title', 300),
             role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
             stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
-            email: safeString(person.email || 'Unknown Email', 300),
-            phone: safeString(person.phone || 'Unknown Phone', 50),
-            linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
-            status: safeString(person.status || 'Unknown', 20),
-            lastAction: safeString(person.lastAction || 'No action taken', 500),
-            lastActionDate: person.lastActionDate || null,
-            nextAction: safeString(person.nextAction || 'No next action', 500),
-            nextActionDate: person.nextActionDate || null,
-            assignedUserId: person.assignedUserId || null,
-            workspaceId: person.workspaceId,
-            createdAt: person.createdAt,
-            updatedAt: person.updatedAt,
+            email: safeString(lead.email || 'Unknown Email', 300),
+            phone: safeString(lead.phone || 'Unknown Phone', 50),
+            linkedin: safeString(lead.linkedinUrl || 'Unknown LinkedIn', 500),
+            status: safeString(lead.status || 'Unknown', 20),
+            lastAction: safeString(lead.lastAction || 'No action taken', 500),
+            lastActionDate: lead.lastActionDate || null,
+            nextAction: safeString(lead.nextAction || 'No next action', 500),
+            nextActionDate: lead.nextActionDate || null,
+            assignedUserId: lead.assignedUserId || null,
+            workspaceId: lead.workspaceId,
+            createdAt: lead.createdAt,
+            updatedAt: lead.updatedAt,
             // Remove customFields to avoid large JSON data issues
-            tags: person.tags || []
+            tags: lead.tags || []
           };
         });
         break;
@@ -684,42 +619,80 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'sellers':
-        // 🚀 SELLERS: Load sellers data from sellers table
-        const sellersData = await prisma.sellers.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
-            ]
-          },
-          orderBy: [
-            { updatedAt: 'desc' } // Order by update time (sellers table doesn't have rank field)
-          ],
-          take: limit,
-          select: {
-            id: true,
-            name: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            phone: true,
-            title: true,
-            department: true,
-            company: true,
-            assignedUserId: true,
-            workspaceId: true,
-            tags: true,
-            createdAt: true,
-            updatedAt: true
-          }
-        });
+        // 🚀 SELLERS: Load sellers data from both sellers table and people table with role 'seller'
+        const [sellersTableData, peopleSellersData] = await Promise.all([
+          // Check sellers table
+          prisma.sellers.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            },
+            orderBy: [
+              { updatedAt: 'desc' }
+            ],
+            take: limit,
+            select: {
+              id: true,
+              name: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              phone: true,
+              title: true,
+              department: true,
+              company: true,
+              assignedUserId: true,
+              workspaceId: true,
+              tags: true,
+              createdAt: true,
+              updatedAt: true
+            }
+          }),
+          // Check people table for sellers
+          prisma.people.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              role: 'seller',
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
+            },
+            orderBy: [
+              { updatedAt: 'desc' }
+            ],
+            take: limit,
+            select: {
+              id: true,
+              fullName: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              phone: true,
+              jobTitle: true,
+              department: true,
+              company: true,
+              assignedUserId: true,
+              workspaceId: true,
+              tags: true,
+              createdAt: true,
+              updatedAt: true
+            }
+          })
+        ]);
+        
+        // Combine both data sources
+        const allSellersData = [...sellersTableData, ...peopleSellersData];
         
         // 🎯 DEDUPLICATION: Remove duplicate sellers by name (keep first occurrence)
         const seenSellerNames = new Set();
-        const deduplicatedSellers = sellersData.filter(seller => {
-          const fullName = seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim();
+        const deduplicatedSellers = allSellersData.filter(seller => {
+          const fullName = seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim();
           if (seenSellerNames.has(fullName)) {
             return false; // Skip duplicate
           }
@@ -730,12 +703,12 @@ export async function GET(request: NextRequest) {
         sectionData = deduplicatedSellers.map((seller, index) => ({
           id: seller.id,
           rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
-          name: seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
+          name: seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
           firstName: seller.firstName,
           lastName: seller.lastName,
           email: seller.email || 'Unknown Email',
           phone: seller.phone || 'Unknown Phone',
-          title: seller.title || 'Unknown Title',
+          title: seller.title || seller.jobTitle || 'Unknown Title',
           department: seller.department || 'Unknown Department',
           company: seller.company || 'Unknown Company',
           assignedUserId: seller.assignedUserId,
@@ -805,35 +778,14 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // For speedrun, use the same logic as the data fetch - FIXED: Use company ranking
-          const speedrunPeople = await prisma.people.findMany({
+          // 🆕 FIX: Count speedrun leads instead of people
+          totalCount = await prisma.leads.count({
             where: {
               workspaceId,
               deletedAt: null,
-              companyId: { not: null }, // Only people with company relationships
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
-            },
-            orderBy: [
-              { company: { rank: 'asc' } }, // Use company rank first
-              { updatedAt: 'desc' } // Then by person update time
-            ],
-            take: 200,
-            include: {
-              company: {
-                select: {
-                  id: true,
-                  name: true,
-                  industry: true,
-                  size: true,
-                  rank: true // Include company rank for proper ordering
-                }
-              }
+              tags: { has: 'speedrun' }
             }
           });
-          totalCount = Math.min(speedrunPeople.length, 30); // Speedrun is capped at 30
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)

@@ -70,6 +70,7 @@ export async function GET(request: NextRequest) {
       peopleCount,
       clientsCount,
       partnersCount,
+      sellersCount,
       speedrunCount
     ] = await Promise.all([
       // Leads count
@@ -128,54 +129,31 @@ export async function GET(request: NextRequest) {
         }
       }).catch(() => 0),
       
-      // Speedrun count - use the same logic as dashboard API
-      (async () => {
-        try {
-          // Load people for speedrun with proper company relationships (same as dashboard)
-          const people = await prisma.people.findMany({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              companyId: { not: null }, // Only load people with company relationships
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
-            },
-            orderBy: { updatedAt: 'desc' },
-            take: 200, // Load enough people for proper speedrun ranking
-            include: {
-              company: {
-                select: {
-                  id: true,
-                  name: true,
-                  industry: true,
-                  vertical: true,
-                  size: true
-                }
-              }
-            }
-          });
-
-          // Transform people data to speedrun format (same as dashboard)
-          const speedrunItems = people.slice(0, 30).map((person, index) => ({
-            id: person.id,
-            rank: index + 1,
-            name: person.fullName || `${person.firstName} ${person.lastName}`,
-            company: person.company?.name || 'Unknown Company',
-            industry: person.company?.industry || 'Unknown',
-            size: person.company?.size || 'Unknown',
-            stage: 'Prospect',
-            lastAction: 'No action taken',
-            nextAction: 'No action planned'
-          }));
-
-          return Math.min(speedrunItems.length, 30);
-        } catch (error) {
-          console.error('❌ [SPEEDRUN COUNT] Error:', error);
-          return 0;
+      // Sellers count - check both sellers table and people table with role 'seller'
+      Promise.all([
+        prisma.sellers.count({
+          where: {
+            workspaceId,
+            deletedAt: null
+          }
+        }),
+        prisma.people.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            role: 'seller'
+          }
+        })
+      ]).then(([sellersCount, peopleSellersCount]) => sellersCount + peopleSellersCount).catch(() => 0),
+      
+      // Speedrun count - count actual speedrun leads
+      prisma.leads.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          tags: { has: 'speedrun' }
         }
-      })()
+      }).catch(() => 0)
     ]);
     
     const counts = {
@@ -186,6 +164,7 @@ export async function GET(request: NextRequest) {
       people: peopleCount,
       clients: clientsCount,
       partners: partnersCount,
+      sellers: sellersCount,
       speedrun: speedrunCount
     };
     

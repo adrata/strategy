@@ -188,6 +188,20 @@ async function generateCybersecurityDemoData() {
     const OWNER_USER_ID = await resolveDanUserId(prisma);
     console.log('🔐 Target workspace:', DEMO_WORKSPACE_ID, 'ownerUser:', OWNER_USER_ID || 'none');
 
+    // Check if demo data already exists
+    const existingCompanies = await prisma.companies.count({
+      where: {
+        workspaceId: DEMO_WORKSPACE_ID,
+        tags: { has: 'demo-data' }
+      }
+    });
+    
+    if (existingCompanies > 0) {
+      console.log(`⚠️  Demo data already exists (${existingCompanies} companies found). Skipping generation.`);
+      console.log('🎉 Demo data is ready to use!');
+      return;
+    }
+
     // 1. Create 2,000 cybersecurity companies
     console.log('🏢 Creating 2,000 cybersecurity companies...');
     const companies = [];
@@ -197,20 +211,32 @@ async function generateCybersecurityDemoData() {
       const companyData = {
         id: `cybersecurity-company-${i + 1}`,
         workspaceId: DEMO_WORKSPACE_ID,
-        name: i < 50 ? company.name : `${company.name} ${i > 50 ? `(${Math.floor(Math.random() * 100) + 1})` : ''}`,
+        name: company.name, // Use clean company names without random numbers
         industry: company.industry,
         revenue: company.revenue + (Math.random() * 1000 - 500), // Add some variation
-        employees: company.employees + Math.floor(Math.random() * 1000 - 500),
-        headquarters: company.hq,
+        size: `${company.employees + Math.floor(Math.random() * 1000 - 500)}`, // Convert to string for size field
+        city: company.hq.split(',')[0], // Extract city from headquarters
+        state: company.hq.split(',')[1]?.trim(), // Extract state from headquarters
+        country: company.hq.includes('UK') ? 'United Kingdom' : 
+                company.hq.includes('Israel') ? 'Israel' :
+                company.hq.includes('Japan') ? 'Japan' :
+                company.hq.includes('Russia') ? 'Russia' :
+                company.hq.includes('Slovakia') ? 'Slovakia' :
+                company.hq.includes('Romania') ? 'Romania' :
+                company.hq.includes('Canada') ? 'Canada' :
+                company.hq.includes('Netherlands') ? 'Netherlands' :
+                company.hq.includes('Czech Republic') ? 'Czech Republic' : 'United States',
         website: company.domain,
-        focus: company.focus,
+        description: `Cybersecurity company focused on ${company.focus}`,
         // Demo data tags
         tags: ['demo-data', 'cybersecurity', 'enterprise-security'],
         assignedUserId: OWNER_USER_ID,
-        // Store seller relationship in metadata for navigation
-        metadata: {
+        // Store seller relationship in customFields for navigation
+        customFields: {
           sellerId: `cybersecurity-seller-${Math.floor(i / 100) + 1}`, // Each seller manages 100 companies
-          navigationContext: 'seller-companies'
+          navigationContext: 'seller-companies',
+          focus: company.focus,
+          originalEmployees: company.employees
         },
         createdAt: new Date(),
         updatedAt: new Date()
@@ -243,16 +269,17 @@ async function generateCybersecurityDemoData() {
         firstName: firstName,
         lastName: lastName,
         fullName: `${firstName} ${lastName}`,
-        title: jobTitle,
+        jobTitle: jobTitle,
         email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${company.website}`,
         phone: `+1-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
         // Demo data tags
         tags: ['demo-data', 'cybersecurity', 'enterprise-professional'],
         assignedUserId: OWNER_USER_ID,
-        // Store seller relationship in metadata for navigation
-        metadata: {
-          sellerId: company.metadata?.sellerId, // Inherit from company
-          navigationContext: 'buyer-group'
+        // Store seller relationship in customFields for navigation
+        customFields: {
+          sellerId: company.customFields?.sellerId, // Inherit from company
+          navigationContext: 'buyer-group',
+          isBuyerGroupMember: true // 🆕 CRITICAL: Add buyer group membership for speedrun section
         },
         createdAt: new Date(),
         updatedAt: new Date()
@@ -335,13 +362,16 @@ async function generateCybersecurityDemoData() {
       const speedrunData = {
         id: `cybersecurity-speedrun-${i + 1}`,
         workspaceId: DEMO_WORKSPACE_ID,
-        title: `${company.name} - ${company.focus} Opportunity`,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: person.fullName,
+        email: person.email,
+        company: company.name,
+        jobTitle: person.jobTitle,
+        status: ['new', 'qualified', 'proposal', 'negotiation', 'closed-won'][Math.floor(Math.random() * 5)],
+        priority: ['high', 'medium', 'low'][Math.floor(Math.random() * 3)],
+        estimatedValue: Math.floor(Math.random() * 500000) + 50000, // $50k - $550k
         description: `High-priority cybersecurity opportunity with ${company.name} focusing on ${company.focus}`,
-        companyId: company.id,
-        contactId: person.id,
-        status: ['New', 'Qualified', 'Proposal', 'Negotiation', 'Closed Won'][Math.floor(Math.random() * 5)],
-        priority: ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)],
-        value: Math.floor(Math.random() * 500000) + 50000, // $50k - $550k
         // Demo data tags
         tags: ['demo-data', 'cybersecurity', 'speedrun', 'high-priority'],
         assignedUserId: OWNER_USER_ID,
@@ -352,7 +382,7 @@ async function generateCybersecurityDemoData() {
       speedrunItems.push(speedrunData);
     }
 
-    await prisma.speedrun.createMany({ data: speedrunItems });
+    await prisma.leads.createMany({ data: speedrunItems });
     console.log('✅ Created 50 speedrun items');
 
     console.log('\n🎉 Cybersecurity demo data generation complete!');

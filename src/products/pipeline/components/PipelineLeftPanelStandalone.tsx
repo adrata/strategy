@@ -345,7 +345,7 @@ function PipelineSections({
     });
     
     const hookCounts = {
-      speedrun: 30, // Fixed: Speedrun should always show 30 (the API returns 30 items)
+      speedrun: fastCounts?.speedrun || 0, // Use actual speedrun count from API
       opportunities: openOpportunities.length, // Only open opportunities
       leads: leadsData.count,
       prospects: prospectsData.count,
@@ -353,7 +353,7 @@ function PipelineSections({
       partners: partnersData.count,
       companies: companiesData.count, // Use actual companies count from database
       people: finalCounts.people || 0, // Use database count directly to ensure accuracy
-      sellers: sellersData.count
+      sellers: fastCounts?.sellers || sellersData.count // Use fast counts for sellers
     };
     
   // Only update counts if they've actually changed to prevent infinite loops
@@ -1024,7 +1024,6 @@ export function PipelineLeftPanelStandalone({
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
-                                    (workspaceId && workspaceId.includes('demo')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
                   // Calculate revenue from closed won opportunities
@@ -1055,7 +1054,6 @@ export function PipelineLeftPanelStandalone({
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
-                                    (workspaceId && workspaceId.includes('demo')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
                   // Calculate total pipeline value from all open opportunities
@@ -1089,7 +1087,6 @@ export function PipelineLeftPanelStandalone({
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
-                                    (workspaceId && workspaceId.includes('demo')) ||
                                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
                   
                   // Calculate coverage as pipeline / quarterly target

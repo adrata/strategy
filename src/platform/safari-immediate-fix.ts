@@ -7,6 +7,11 @@
 (function() {
   'use strict';
   
+  // Only run in browser environment
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return;
+  }
+  
   // Detect Safari immediately
   const userAgent = navigator.userAgent;
   const isSafariMobile = /iPhone|iPad|iPod/.test(userAgent) && 

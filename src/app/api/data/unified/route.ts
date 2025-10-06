@@ -969,7 +969,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           industry: true,
           website: true,
           size: true,
-          employeeCount: true,
+          // employeeCount: true, // 🆕 FIX: Remove employeeCount to prevent 500 error
           city: true,
           state: true,
           country: true,

@@ -53,6 +53,19 @@ export function extractIdFromSlug(slug: string): string {
     return parts.slice(zpIndex).join('-');
   }
   
+  // 🆕 FIX: Handle demo data IDs (cybersecurity-company-*, cybersecurity-person-*, etc.)
+  // Look for patterns like "cybersecurity-company-123" or "cybersecurity-person-456"
+  const demoPatterns = ['cybersecurity-company', 'cybersecurity-person', 'cybersecurity-seller'];
+  for (const pattern of demoPatterns) {
+    if (slug.includes(pattern)) {
+      // Find the pattern in the slug and extract everything from that point
+      const patternIndex = slug.indexOf(pattern);
+      if (patternIndex !== -1) {
+        return slug.substring(patternIndex);
+      }
+    }
+  }
+  
   // Check if the last part is a ULID (26 characters starting with 0 or c for legacy custom ULIDs) or Zoho ID
   const lastPart = parts[parts.length - 1];
   if (lastPart && (

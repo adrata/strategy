@@ -19,6 +19,7 @@ interface FastCounts {
   people: number;
   clients: number;
   partners: number;
+  sellers: number; // 🆕 FIX: Add sellers count
   speedrun: number;
 }
 
@@ -43,6 +44,7 @@ export function useFastCounts(): UseFastCountsReturn {
     people: 0,
     clients: 0,
     partners: 0,
+    sellers: 0, // 🆕 FIX: Add sellers count
     speedrun: 0
   });
   const [loading, setLoading] = useState(true);
@@ -130,6 +132,7 @@ export function useFastCounts(): UseFastCountsReturn {
         people: 0,
         clients: 0,
         partners: 0,
+        sellers: 0, // 🆕 FIX: Add sellers count to reset
         speedrun: 0
       }); // Reset counts to prevent showing stale data
       setLastWorkspaceId(workspaceId);
@@ -152,6 +155,7 @@ export function useFastCounts(): UseFastCountsReturn {
           people: 0,
           clients: 0,
           partners: 0,
+          sellers: 0, // 🆕 FIX: Add sellers count to reset
           speedrun: 0
         });
         // Force refresh for new workspace

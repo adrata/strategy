@@ -7,7 +7,11 @@
 (function() {
   'use strict';
   
-  // Detect Safari immediately
+  // Detect Safari immediately - check if navigator exists (SSR safety)
+  if (typeof navigator === 'undefined') {
+    return; // Exit early if navigator is not available (SSR)
+  }
+  
   const userAgent = navigator.userAgent;
   const isSafariMobile = /iPhone|iPad|iPod/.test(userAgent) && 
                         /Safari/.test(userAgent) && 
