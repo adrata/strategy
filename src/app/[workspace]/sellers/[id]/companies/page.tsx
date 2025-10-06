@@ -12,6 +12,7 @@ import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { FullPanelSkeleton } from "@/platform/ui/components/skeletons/FullPanelSkeleton";
 import { generateSlug } from "@/platform/utils/url-utils";
+import { authFetch } from "@/platform/auth-fetch";
 
 interface Seller {
   id: string;
@@ -65,7 +66,7 @@ export default function SellerCompaniesPage() {
         console.log('🔍 Workspace:', workspace);
         
         // Load seller data using the unified API
-        const sellerResponse = await fetch(`/api/data/unified?type=sellers&action=get`);
+        const sellerResponse = await authFetch(`/api/data/unified?type=sellers&action=get`);
         const sellerResult = await sellerResponse.json();
         
         console.log('🔍 Seller API response:', sellerResult);
@@ -79,7 +80,7 @@ export default function SellerCompaniesPage() {
             
             // Load companies data using unified API
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
-            const companiesResponse = await fetch(`/api/data/unified?type=companies&action=get`);
+            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${foundSeller.id}`);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);

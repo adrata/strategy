@@ -1450,6 +1450,9 @@ async function getMultipleRecords(
   
   // Special handling for companies - show all companies in workspace
   if (type === 'companies') {
+    // Check for sellerId parameter to filter companies for specific seller
+    const sellerId = searchParams.get('sellerId');
+    
     // Check for force refresh and bypass cache
     const forceRefresh = false; // TODO: Pass searchParams to this function
     const bypassCache = false; // TODO: Pass searchParams to this function
@@ -1476,15 +1479,27 @@ async function getMultipleRecords(
       // Ensure database connection is active
       await prisma.$connect();
       
+      // Build where clause based on whether sellerId is provided
+      let whereClause: any = {
+        workspaceId,
+        deletedAt: null
+      };
+      
+      if (sellerId) {
+        // If sellerId is provided, get companies assigned to that seller
+        whereClause.assignedUserId = sellerId;
+        console.log(`🔍 [COMPANIES API] Filtering companies for seller: ${sellerId}`);
+      } else {
+        // Default behavior: get companies assigned to user or unassigned
+        whereClause.OR = [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ];
+        console.log(`🔍 [COMPANIES API] Getting companies for user: ${userId}`);
+      }
+      
       companies = await prisma.companies.findMany({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
-        },
+        where: whereClause,
         // 🚀 PERFORMANCE: Simplified ordering for faster queries
         orderBy: [
           { rank: 'asc' },                                // Primary sort by rank
