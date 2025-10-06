@@ -37,27 +37,13 @@ export function useWorkspaceNavigation() {
 
   // Navigate to a path with workspace context
   const navigateWithWorkspace = useCallback((path: string) => {
-    // Check if we're in demo mode
-    const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-    
     console.log(`🔗 [Workspace Navigation] navigateWithWorkspace called:`, {
       path,
-      isDemoMode,
       currentPathname: typeof window !== "undefined" ? window.location.pathname : 'server'
     });
     
-    if (isDemoMode) {
-      // In demo mode, preserve the demo context
-      const demoMatch = window.location.pathname.match(/^\/demo\/([^\/]+)/);
-      if (demoMatch) {
-        const scenarioSlug = demoMatch[1];
-        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-        const demoPath = `/demo/${scenarioSlug}/${cleanPath}`;
-        console.log(`🎯 [Demo Navigation] Navigating to: ${demoPath} (from path: ${path})`);
-        router.push(demoPath);
-        return;
-      }
-    }
+    // TODO: Remove demo concept - treat demo as regular workspace
+    // const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
     
     const workspaceSlug = getCurrentWorkspaceSlug();
     
@@ -141,18 +127,8 @@ export function useWorkspaceNavigation() {
 
   // Get workspace-aware URL for a path
   const getWorkspaceUrl = (path: string): string => {
-    // Check if we're in demo mode
-    const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-    
-    if (isDemoMode) {
-      // In demo mode, preserve the demo context
-      const demoMatch = window.location.pathname.match(/^\/demo\/([^\/]+)/);
-      if (demoMatch) {
-        const scenarioSlug = demoMatch[1];
-        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-        return `/demo/${scenarioSlug}/${cleanPath}`;
-      }
-    }
+    // TODO: Remove demo concept - treat demo as regular workspace
+    // const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
     
     const workspaceSlug = getCurrentWorkspaceSlug();
     

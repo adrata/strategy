@@ -121,10 +121,11 @@ function PipelineSections({
   // Use actual counts from API instead of limited array lengths
   const actualCounts = acquisitionData?.acquireData?.counts || {};
   
-  // Check if we're in demo workspace (by workspace name or URL)
-  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
-                    (workspaceId && workspaceId.includes('demo')) ||
-                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+  // TODO: Remove demo concept - treat demo as regular workspace
+  // const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+  //                   (workspaceId && workspaceId.includes('demo')) ||
+  //                   (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+  const isDemoMode = false; // Disabled - demo is now a regular workspace
   console.log('🔍 [LEFT PANEL] Demo mode check:', { 
     isDemoMode, 
     workspaceId,
