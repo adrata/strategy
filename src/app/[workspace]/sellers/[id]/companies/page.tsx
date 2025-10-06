@@ -59,7 +59,7 @@ export default function SellerCompaniesPage() {
       try {
         setLoading(true);
         
-        // Extract seller ID from slug - look for ULID pattern
+        // Extract seller ID from slug - look for ULID pattern first, then seller pattern
         const slugParts = sellerId.split('-');
         let actualSellerId = null;
         
@@ -72,8 +72,16 @@ export default function SellerCompaniesPage() {
           }
         }
         
-        // If no ULID found, extract name from slug for matching
-        const sellerName = slugParts.slice(0, -1).join(' ').replace(/-/g, ' ');
+        // If no ULID found, look for seller pattern (cybersecurity-seller-X)
+        if (!actualSellerId && slugParts.length >= 3) {
+          const lastThreeParts = slugParts.slice(-3);
+          if (lastThreeParts[0] === 'cybersecurity' && lastThreeParts[1] === 'seller' && !isNaN(parseInt(lastThreeParts[2]))) {
+            actualSellerId = lastThreeParts.join('-');
+          }
+        }
+        
+        // If still no ID found, extract name from slug for matching
+        const sellerName = slugParts.slice(0, -3).join(' ').replace(/-/g, ' ');
         
         console.log('🔍 Slug parts:', slugParts);
         console.log('🔍 Extracted seller ID:', actualSellerId);
