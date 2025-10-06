@@ -39,6 +39,7 @@ interface BuyerGroupMember {
   decisionPower: number;
   company: string;
   industry: string;
+  directionalIntelligence?: string;
 }
 
 export default function BuyerGroupPage() {
@@ -47,6 +48,39 @@ export default function BuyerGroupPage() {
   const { user } = useUnifiedAuth();
   const sellerId = params['id'] as string;
   const companyId = params['companyId'] as string;
+
+  const getDirectionalIntelligence = (buyerRole: string, title: string, department: string) => {
+    const strategies = {
+      'Decision Maker': [
+        `Focus on ROI and business impact. Present case studies from similar companies. Schedule executive-level meetings.`,
+        `Emphasize security compliance and risk reduction. Highlight cost savings and operational efficiency gains.`,
+        `Present comprehensive security solution with clear implementation roadmap and success metrics.`
+      ],
+      'Champion': [
+        `Build relationship through technical discussions. Provide detailed product demos and pilot opportunities.`,
+        `Leverage their influence to schedule meetings with decision makers. Offer co-marketing opportunities.`,
+        `Focus on technical benefits and integration capabilities. Provide technical documentation and support.`
+      ],
+      'Stakeholder': [
+        `Understand their specific needs and pain points. Provide targeted solutions for their department.`,
+        `Build consensus by addressing their concerns and showing how the solution benefits their team.`,
+        `Engage through department-specific use cases and success stories from similar organizations.`
+      ],
+      'Blocker': [
+        `Address their specific concerns directly. Provide additional information and reassurance.`,
+        `Identify their objections and develop targeted responses. Consider involving a third-party advocate.`,
+        `Focus on risk mitigation and compliance. Provide detailed security and compliance documentation.`
+      ],
+      'Opener': [
+        `Build initial relationship through educational content and industry insights.`,
+        `Provide valuable resources and thought leadership to establish credibility.`,
+        `Focus on understanding their current challenges and offering preliminary solutions.`
+      ]
+    };
+
+    const roleStrategies = strategies[buyerRole as keyof typeof strategies] || strategies['Stakeholder'];
+    return roleStrategies[Math.floor(Math.random() * roleStrategies.length)];
+  };
   
   const [company, setCompany] = useState<CompanyData | null>(null);
   const [buyerGroupMembers, setBuyerGroupMembers] = useState<BuyerGroupMember[]>([]);
@@ -132,9 +166,15 @@ export default function BuyerGroupPage() {
 
         if (peopleResult['success'] && peopleResult.data) {
           // Filter people assigned to this company
+          const companyNameFromSlug = actualCompanyId.split('-')[0];
           const companyPeople = peopleResult.data.filter((person: any) => 
-            person.companyId === actualCompanyId || person.company === company?.name
+            person.companyId === actualCompanyId || 
+            person.company === company?.name ||
+            (typeof person.company === 'string' && person.company.toLowerCase().includes(companyNameFromSlug.toLowerCase())) ||
+            (typeof person.company === 'string' && companyNameFromSlug.toLowerCase().includes(person.company.toLowerCase()))
           );
+
+          console.log('🔍 [BUYER GROUP] Found company people:', companyPeople.length);
 
           if (companyPeople.length > 0) {
             const members: BuyerGroupMember[] = companyPeople.map((person: any, index: number) => ({
@@ -148,47 +188,130 @@ export default function BuyerGroupPage() {
               influence: getInfluenceForRole(getBuyerRoleForIndex(index)),
               decisionPower: getDecisionPowerForRole(getBuyerRoleForIndex(index)),
               company: company?.name || 'Unknown Company',
-              industry: company?.industry || 'Unknown Industry'
+              industry: company?.industry || 'Unknown Industry',
+              directionalIntelligence: getDirectionalIntelligence(getBuyerRoleForIndex(index), person.title || person.jobTitle || 'Unknown Title', person.department || 'Unknown Department')
             }));
             setBuyerGroupMembers(members);
           } else {
-            // Create mock buyer group data
+            console.log('🔍 [BUYER GROUP] No company people found, creating expanded mock data...');
+            // Create expanded mock buyer group data (9-10 people per company)
             const mockMembers: BuyerGroupMember[] = [
               {
                 id: 'person-1',
                 name: 'Alexei Volkov',
                 title: 'Chief Information Security Officer',
                 department: 'IT Security',
-                email: 'alexei.volkov@kaspersky.com',
+                email: 'alexei.volkov@company.com',
                 buyerRole: 'Decision Maker',
                 influence: 95,
                 decisionPower: 90,
                 company: company?.name || 'Auth0',
-                industry: 'Cybersecurity'
+                industry: 'Cybersecurity',
+                directionalIntelligence: 'Focus on ROI and business impact. Present case studies from similar companies. Schedule executive-level meetings.'
               },
               {
                 id: 'person-2',
                 name: 'Maria Petrov',
                 title: 'Security Operations Manager',
-                department: 'IT Security',
-                email: 'maria.petrov@kaspersky.com',
+                department: 'Security Operations',
+                email: 'maria.petrov@company.com',
                 buyerRole: 'Champion',
-                influence: 85,
+                influence: 80,
                 decisionPower: 70,
                 company: company?.name || 'Auth0',
-                industry: 'Cybersecurity'
+                industry: 'Cybersecurity',
+                directionalIntelligence: 'Build relationship through technical discussions. Provide detailed product demos and pilot opportunities.'
               },
               {
                 id: 'person-3',
                 name: 'Dmitri Sokolov',
                 title: 'IT Director',
                 department: 'Information Technology',
-                email: 'dmitri.sokolov@kaspersky.com',
+                email: 'dmitri.sokolov@company.com',
                 buyerRole: 'Stakeholder',
+                influence: 60,
+                decisionPower: 50,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Stakeholder', 'IT Director', 'Information Technology')
+              },
+              {
+                id: 'person-4',
+                name: 'Elena Kuznetsova',
+                title: 'VP of Engineering',
+                department: 'Engineering',
+                email: 'elena.kuznetsova@company.com',
+                buyerRole: 'Decision Maker',
+                influence: 85,
+                decisionPower: 80,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Decision Maker', 'VP of Engineering', 'Engineering')
+              },
+              {
+                id: 'person-5',
+                name: 'Ivan Petrov',
+                title: 'Security Architect',
+                department: 'Security',
+                email: 'ivan.petrov@company.com',
+                buyerRole: 'Champion',
                 influence: 75,
+                decisionPower: 65,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Champion', 'Security Architect', 'Security')
+              },
+              {
+                id: 'person-6',
+                name: 'Anna Smirnova',
+                title: 'Product Manager',
+                department: 'Product',
+                email: 'anna.smirnova@company.com',
+                buyerRole: 'Stakeholder',
+                influence: 70,
                 decisionPower: 60,
                 company: company?.name || 'Auth0',
-                industry: 'Cybersecurity'
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Stakeholder', 'Product Manager', 'Product')
+              },
+              {
+                id: 'person-7',
+                name: 'Sergei Volkov',
+                title: 'DevOps Manager',
+                department: 'Engineering',
+                email: 'sergei.volkov@company.com',
+                buyerRole: 'Stakeholder',
+                influence: 65,
+                decisionPower: 55,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Stakeholder', 'DevOps Manager', 'Engineering')
+              },
+              {
+                id: 'person-8',
+                name: 'Olga Ivanova',
+                title: 'Compliance Officer',
+                department: 'Legal & Compliance',
+                email: 'olga.ivanova@company.com',
+                buyerRole: 'Blocker',
+                influence: 50,
+                decisionPower: 40,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Blocker', 'Compliance Officer', 'Legal & Compliance')
+              },
+              {
+                id: 'person-9',
+                name: 'Mikhail Petrov',
+                title: 'Finance Director',
+                department: 'Finance',
+                email: 'mikhail.petrov@company.com',
+                buyerRole: 'Stakeholder',
+                influence: 60,
+                decisionPower: 50,
+                company: company?.name || 'Auth0',
+                industry: 'Cybersecurity',
+                directionalIntelligence: getDirectionalIntelligence('Stakeholder', 'Finance Director', 'Finance')
               }
             ];
             setBuyerGroupMembers(mockMembers);
@@ -425,6 +548,12 @@ export default function BuyerGroupPage() {
                           </div>
                           <div className="text-sm text-gray-600">Blockers</div>
                         </div>
+                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-gray-900">
+                            {buyerGroupMembers.filter(m => m.buyerRole === 'Opener').length}
+                          </div>
+                          <div className="text-sm text-gray-600">Introducers</div>
+                        </div>
                       </div>
                     </div>
 
@@ -500,7 +629,7 @@ export default function BuyerGroupPage() {
                                       <div className="text-sm text-gray-600 mb-1">
                                         {title}
                                       </div>
-                                      <div className="flex items-center gap-3">
+                                      <div className="flex items-center gap-3 mb-2">
                                         <span className="text-sm text-gray-500">
                                           {status}
                                         </span>
@@ -510,6 +639,14 @@ export default function BuyerGroupPage() {
                                           </span>
                                         )}
                                       </div>
+                                      {member.directionalIntelligence && (
+                                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                          <div className="text-xs font-medium text-blue-800 mb-1">Directional Intelligence</div>
+                                          <div className="text-sm text-blue-700">
+                                            {member.directionalIntelligence}
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
