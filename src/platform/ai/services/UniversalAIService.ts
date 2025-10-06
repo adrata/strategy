@@ -470,6 +470,5 @@ export class UniversalAIService {
    * Cleanup and disconnect
    */
   static async cleanup() {
-    await prisma.$disconnect();
-  }
+    }
 }

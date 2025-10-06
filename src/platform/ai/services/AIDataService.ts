@@ -805,6 +805,5 @@ export class AIDataService {
    * Cleanup and disconnect
    */
   static async disconnect() {
-    await prisma.$disconnect();
-  }
+    }
 }

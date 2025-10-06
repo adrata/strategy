@@ -119,8 +119,7 @@ RESPONSE REQUIREMENTS:
 - Be consistent with this personality in all interactions`;
       }
       
-      await prisma.$disconnect();
-    } catch (error) {
+      } catch (error) {
       console.warn('⚠️ [AI CONTEXT] Failed to load user preferences:', error);
     }
 

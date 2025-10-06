@@ -85,8 +85,7 @@ class EffortlessBuyerGroupAI {
             this.stats.errors++;
             throw error;
         } finally {
-            await prisma.$disconnect();
-        }
+            }
     }
 
     /**

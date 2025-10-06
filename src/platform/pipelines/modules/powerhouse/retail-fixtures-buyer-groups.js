@@ -166,8 +166,7 @@ class RetailFixturesBuyerGroupDiscovery {
             console.error('❌ Buyer group discovery failed:', error);
             throw error;
         } finally {
-            await prisma.$disconnect();
-        }
+            }
     }
 
     /**

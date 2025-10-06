@@ -75,8 +75,7 @@ export class CompanyEngagementConversionService {
       console.error('❌ Error processing company engagement conversions:', error);
       throw error;
     } finally {
-      await prisma.$disconnect();
-    }
+      }
   }
   
   /**
@@ -240,8 +239,7 @@ export class CompanyEngagementConversionService {
       console.error('❌ Error processing lead engagement update:', error);
       throw error;
     } finally {
-      await prisma.$disconnect();
-    }
+      }
   }
   
   /**
@@ -283,8 +281,7 @@ export class CompanyEngagementConversionService {
       };
       
     } finally {
-      await prisma.$disconnect();
-    }
+      }
   }
 }
 
