@@ -131,6 +131,17 @@ export default function SellerCompaniesPage() {
             console.log('🔍 Companies API response:', companiesResult);
             console.log('🔍 Companies data type:', typeof companiesResult.data);
             console.log('🔍 Companies data is array:', Array.isArray(companiesResult.data));
+            console.log('🔍 Companies data.data type:', typeof companiesResult.data?.data);
+            console.log('🔍 Companies data.data is array:', Array.isArray(companiesResult.data?.data));
+            console.log('🔍 Companies data structure:', {
+              success: companiesResult.success,
+              hasData: !!companiesResult.data,
+              dataType: typeof companiesResult.data,
+              hasDataData: !!companiesResult.data?.data,
+              dataDataType: typeof companiesResult.data?.data,
+              dataDataIsArray: Array.isArray(companiesResult.data?.data),
+              dataDataLength: companiesResult.data?.data?.length
+            });
             
             if (companiesResult['success'] && companiesResult.data && companiesResult.data.data && Array.isArray(companiesResult.data.data)) {
               // Filter companies assigned to this seller
