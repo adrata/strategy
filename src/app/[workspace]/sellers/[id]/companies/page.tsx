@@ -126,22 +126,19 @@ export default function SellerCompaniesPage() {
           if (foundSeller) {
             setSeller(foundSeller);
             
-            // Load companies data using unified API
+            // Load companies data using unified API with seller ID filter
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
-            console.log('🔍 Making companies API call...');
-            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get`);
+            console.log('🔍 Making companies API call with seller ID filter...');
+            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${foundSeller.id}`);
             console.log('🔍 Companies API response status:', companiesResponse.status);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
             
             if (companiesResult['success'] && companiesResult.data) {
-              // Filter companies assigned to Dan (manager) - all companies are assigned to Dan's user ID
-              const sellerCompanies = companiesResult.data.filter((company: Company) => 
-                company['assignedUserId'] === foundSeller.assignedUserId
-              );
-              console.log('🔍 Seller companies (filtered by Dan\'s user ID):', sellerCompanies);
-              setCompanies(sellerCompanies);
+              // Companies are already filtered by seller ID in the API
+              console.log('🔍 Seller companies (filtered by API):', companiesResult.data);
+              setCompanies(companiesResult.data);
             } else {
               console.log('❌ Failed to load companies data');
               setError('Failed to load companies data');
