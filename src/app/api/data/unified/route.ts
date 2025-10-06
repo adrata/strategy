@@ -3695,6 +3695,13 @@ function calculateActionPriorityScore(record: any): number {
 const speedrunCache = new Map<string, { data: any; timestamp: number }>();
 const SPEEDRUN_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache
 
+// 🧹 WORKSPACE SWITCH CACHE CLEARING: Clear speedrun cache when workspace changes
+export function clearSpeedrunCache(workspaceId: string, userId: string): void {
+  const cacheKey = `speedrun:${workspaceId}:${userId}`;
+  speedrunCache.delete(cacheKey);
+  console.log(`🧹 [SPEEDRUN CACHE] Cleared cache for workspace: ${workspaceId}, user: ${userId}`);
+}
+
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {

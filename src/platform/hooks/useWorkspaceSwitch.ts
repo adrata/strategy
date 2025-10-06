@@ -73,10 +73,28 @@ export function useWorkspaceSwitch() {
         session['accessToken'] = result.newToken;
         await UnifiedAuthService.storeSession(session);
         
+        // 🆕 CRITICAL: Clear cache before dispatching event to ensure clean workspace switch
+        try {
+          const { cache } = await import('@/platform/services/unified-cache');
+          const currentWorkspaceId = authUser?.activeWorkspaceId;
+          if (currentWorkspaceId && currentWorkspaceId !== workspace.id) {
+            console.log(`🧹 [WORKSPACE SWITCH] Clearing cache before workspace switch event: ${currentWorkspaceId} -> ${workspace.id}`);
+            await cache.clearWorkspaceCache(currentWorkspaceId, workspace.id);
+            console.log(`✅ [WORKSPACE SWITCH] Cache cleared before workspace switch event`);
+          }
+        } catch (error) {
+          console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear cache before event:', error);
+        }
+        
         // Dispatch event to notify other components
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('adrata-workspace-switched', {
-            detail: { workspaceId: workspace.id, workspaceName: workspace.name }
+            detail: { 
+              workspaceId: workspace.id, 
+              workspaceName: workspace.name,
+              previousWorkspaceId: authUser?.activeWorkspaceId,
+              cacheCleared: true
+            }
           }));
         }
         

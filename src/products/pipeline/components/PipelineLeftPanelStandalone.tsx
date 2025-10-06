@@ -121,9 +121,15 @@ function PipelineSections({
   // Use actual counts from API instead of limited array lengths
   const actualCounts = acquisitionData?.acquireData?.counts || {};
   
-  // Check if we're in demo mode and use demo counts
-  const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-  console.log('🔍 [LEFT PANEL] Demo mode check:', { isDemoMode, pathname: typeof window !== "undefined" ? window.location.pathname : 'server' });
+  // Check if we're in demo workspace (by workspace name or URL)
+  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+                    (workspaceId && workspaceId.includes('demo')) ||
+                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
+  console.log('🔍 [LEFT PANEL] Demo mode check:', { 
+    isDemoMode, 
+    workspaceId,
+    pathname: typeof window !== "undefined" ? window.location.pathname : 'server' 
+  });
   
   // For demo mode, override visibility to only show the 4 required sections
   const demoModeVisibility = {
@@ -713,7 +719,7 @@ function PipelineSections({
       ) : (isDemoMode ? 25 : productionCounts.companies),
       visible: true
     },
-    // SELLERS: Hidden for now as requested
+    // SELLERS: Show only for demo workspace
     {
       id: "sellers",
       name: "Sellers",
@@ -721,7 +727,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : (isDemoMode ? 10 : sellersData.count), // Use actual count from data
-      visible: false
+      visible: isDemoMode // Show only for demo workspace
     },
     {
       id: "metrics",

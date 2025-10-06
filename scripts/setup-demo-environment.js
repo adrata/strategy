@@ -43,8 +43,8 @@ async function setupDemoEnvironment() {
       update: {},
       create: {
         id: 'demo-workspace-2025',
-        name: 'Winning Variant',
-        slug: 'winning-variant',
+        name: 'demo',
+        slug: 'demo',
         description: 'Demo workspace for Winning Variant CRO platform',
         createdAt: new Date(),
         updatedAt: new Date()

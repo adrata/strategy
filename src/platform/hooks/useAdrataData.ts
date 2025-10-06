@@ -205,16 +205,26 @@ export function useAdrataData<T>(
 
   // 🆕 WORKSPACE CHANGE DETECTION: Force refresh when workspace changes
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
+  const [isWorkspaceSwitching, setIsWorkspaceSwitching] = useState(false);
   
   useEffect(() => {
     if (workspaceId && workspaceId !== lastWorkspaceId && lastWorkspaceId !== null) {
       console.log(`🔄 [WORKSPACE SWITCH] useAdrataData detected workspace change from ${lastWorkspaceId} to ${workspaceId}`);
       
+      // 🆕 CRITICAL: Set switching flag to prevent premature data fetching
+      setIsWorkspaceSwitching(true);
+      
       // Clear cache and force refresh
       clearCache();
       swrMutate();
       
-      setLastWorkspaceId(workspaceId);
+      // 🆕 CRITICAL: Wait a moment before allowing data fetching to ensure cache is cleared
+      setTimeout(() => {
+        setIsWorkspaceSwitching(false);
+        setLastWorkspaceId(workspaceId);
+        console.log(`✅ [WORKSPACE SWITCH] useAdrataData workspace switch completed for: ${workspaceId}`);
+      }, 150); // Small delay to ensure cache clearing is complete
+      
     } else if (workspaceId && lastWorkspaceId === null) {
       // Initial load - just set the workspace ID
       setLastWorkspaceId(workspaceId);

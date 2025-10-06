@@ -166,19 +166,25 @@ export default function WorkspacesPage() {
               localStorage.setItem('adrata_last_active_workspace', workspace.id);
               console.log(`💾 [WORKSPACE SWITCH] Saved last active workspace to localStorage: ${workspace.id}`);
               
-            // 🆕 CRITICAL FIX: Clear all workspace-related cache before dispatching session update
+            // 🆕 CRITICAL FIX: Clear all workspace-related cache BEFORE dispatching session update
             try {
               const { cache } = await import('@/platform/services/unified-cache');
               const currentWorkspaceId = currentSession?.user?.activeWorkspaceId;
               if (currentWorkspaceId && currentWorkspaceId !== workspace.id) {
-                await cache.clearWorkspaceCache(currentWorkspaceId, workspace.id);
-                console.log(`🧹 [WORKSPACE SWITCH] Cleared cache for workspace switch: ${currentWorkspaceId} -> ${workspace.id}`);
+                console.log(`🧹 [WORKSPACE SWITCH] Starting cache clearing for workspace switch: ${currentWorkspaceId} -> ${workspace.id}`);
+                const clearedCount = await cache.clearWorkspaceCache(currentWorkspaceId, workspace.id);
+                console.log(`🧹 [WORKSPACE SWITCH] Cleared ${clearedCount} cache entries for workspace switch: ${currentWorkspaceId} -> ${workspace.id}`);
+                
+                // 🆕 CRITICAL: Wait for cache clearing to complete before proceeding
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure cache clearing is complete
+                console.log(`✅ [WORKSPACE SWITCH] Cache clearing completed, proceeding with session update`);
               }
             } catch (error) {
               console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear workspace cache:', error);
             }
             
             // 🆕 CRITICAL FIX: Dispatch custom event to notify useUnifiedAuth of session change
+            // This happens AFTER cache clearing is complete
             window.dispatchEvent(new CustomEvent('adrata-session-updated'));
             console.log("🔄 [WORKSPACE SWITCH] Dispatched session update event");
             

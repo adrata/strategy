@@ -7,6 +7,7 @@
  */
 
 import { UnifiedAuthService } from "@/platform/auth-unified";
+import { storeSession } from "@/platform/auth/session";
 import { PrismaClient } from "@prisma/client";
 import { prisma } from '@/platform/database/prisma-client';
 import * as jwt from "jsonwebtoken";
@@ -73,33 +74,20 @@ export class WorkspaceDataRouter {
         idCheck,
         finalIsDemo: isDemo,
         workspacesCount: user.workspaces?.length || 0,
-        firstWorkspaceId: user.workspaces?.[0]?.workspaceId
+        firstWorkspaceId: user.workspaces?.[0]?.id
       });
 
       // Route workspace based on user
       let workspaceId: string;
       
-      // Check if this is a demo scenario URL
-      const isDemoScenario = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-      
-      if (isDemo || isDemoScenario) {
-        // Determine the correct demo workspace based on the scenario
-        if (isDemoScenario && typeof window !== "undefined") {
-          const pathParts = window.location.pathname.split('/');
-          const scenarioSlug = pathParts[2]; // /demo/[scenarioSlug]/...
-          
-          if (scenarioSlug === 'zeropoint') {
-            workspaceId = "zeropoint-demo-2025";
-            console.log(`🎯 [DEMO SCENARIO] Using ZeroPoint demo workspace for scenario: ${scenarioSlug}`);
-          } else {
-            workspaceId = "demo-workspace-2025"; // Default demo workspace for other scenarios
-            console.log(`🎯 [DEMO SCENARIO] Using default demo workspace for scenario: ${scenarioSlug}`);
-          }
-        } else {
-          workspaceId = "demo-workspace-2025"; // Use separate demo workspace, NOT real user data
-          console.log(`🎯 [DEMO SCENARIO] Using demo workspace for scenario: ${isDemoScenario ? 'URL-based' : 'user-based'}`);
-        }
+      if (isDemo) {
+        // Use the user's actual workspace from their account
+        workspaceId = user.activeWorkspaceId || user.workspaces?.[0]?.id;
+        console.log(`🎯 [DEMO USER] Using user's actual workspace: ${workspaceId}`);
       } else {
+        // Initialize workspaceId for non-demo users
+        workspaceId = "";
+        
         // 🆕 NEW: Check for URL-based workspace selection first (for complete data separation)
         if (typeof window !== "undefined") {
           const currentPath = window.location.pathname;
@@ -146,7 +134,7 @@ export class WorkspaceDataRouter {
                       // Update the session with the new token
                       if (result.newToken) {
                         session['accessToken'] = result.newToken;
-                        await UnifiedAuthService.storeSession(session);
+                        await storeSession(session);
                         console.log(`✅ [WORKSPACE SWITCH] Updated session with new JWT token`);
                       }
                     } else {
@@ -166,7 +154,7 @@ export class WorkspaceDataRouter {
                   const session = await UnifiedAuthService.getSession();
                   if (session && session.user) {
                     session['user']['activeWorkspaceId'] = workspaceId;
-                    await UnifiedAuthService.storeSession(session);
+                        await storeSession(session);
                     console.log(`✅ [WORKSPACE SWITCH] Session updated with new activeWorkspaceId: ${workspaceId}`);
                   }
                 } catch (error) {
@@ -381,6 +369,8 @@ export class WorkspaceDataRouter {
       if (isDemo) {
         workspaceId = "demo-workspace-2025";
       } else {
+        // Initialize workspaceId for non-demo users
+        workspaceId = "";
         // 🆕 NEW: Check for URL-based workspace selection first (for complete data separation)
         const url = request.nextUrl || new URL(request.url);
         const pathname = url.pathname;

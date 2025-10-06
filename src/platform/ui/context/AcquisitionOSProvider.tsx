@@ -100,39 +100,6 @@ export function AcquisitionOSProvider({
   const lastAuthUserActiveWorkspaceId = useRef<string | null>(null);
   
   useEffect(() => {
-    // Check if we're in demo mode first
-    const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-    
-    if (isDemoMode) {
-      console.log("🎯 [PROVIDER] Demo mode detected, setting up demo workspace");
-      
-      // Determine the correct demo workspace based on the URL
-      const pathParts = window.location.pathname.split('/');
-      const scenarioSlug = pathParts[2]; // /demo/[scenarioSlug]/...
-      
-      let demoWorkspace;
-      if (scenarioSlug === 'zeropoint') {
-        demoWorkspace = {
-          id: "zeropoint-demo-2025",
-          name: "ZeroPoint",
-          slug: "zeropoint",
-          description: "Demo workspace for ZeroPoint VP of Sales scenario"
-        };
-      } else {
-        demoWorkspace = {
-          id: "demo-workspace-2025",
-          name: "Winning Variant",
-          slug: "winning-variant",
-          description: "Demo workspace for Winning Variant CRO platform"
-        };
-      }
-      
-      // Set demo workspace
-      ui.setActiveWorkspace(demoWorkspace);
-      hasSetupWorkspace['current'] = true;
-      console.log("✅ [PROVIDER] Demo workspace set:", demoWorkspace);
-      return;
-    }
     
     // CRITICAL FIX: Only proceed if we have a valid authenticated user
     if (!auth.authUser || !auth.isAuthenticated) {
@@ -244,7 +211,7 @@ export function AcquisitionOSProvider({
       console.log("📊 [MODULAR] Final context state:", {
         hasAuth: !!auth.authUser,
         authReady: auth.isReady,
-        dataLoaded: !data.isLoading,
+        dataLoaded: !data.loading,
         leadsCount: data.acquireData.leads.length,
         activeApp: ui.activeSubApp,
         activeSection: ui.activeSection,

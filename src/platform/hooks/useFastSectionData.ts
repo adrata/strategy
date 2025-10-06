@@ -189,6 +189,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     if (workspaceId && userId && (workspaceId !== lastWorkspaceId || userId !== lastUserId) && lastWorkspaceId !== null) {
       console.log(`🔄 [FAST SECTION DATA] Workspace/user changed, resetting loaded sections for ${section}`);
       setLoadedSections(new Set());
+      setData([]); // Clear data to prevent showing stale data
+      setCount(0);
       setLastWorkspaceId(workspaceId);
       setLastUserId(userId);
     } else if (workspaceId && userId && lastWorkspaceId === null) {
@@ -197,6 +199,29 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       setLastUserId(userId);
     }
   }, [workspaceId, userId, lastWorkspaceId, lastUserId, section]);
+
+  // 🧹 LISTEN FOR WORKSPACE SWITCH EVENTS: Clear cache when workspace switch event is fired
+  useEffect(() => {
+    const handleWorkspaceSwitch = (event: CustomEvent) => {
+      const { workspaceId: newWorkspaceId } = event.detail;
+      if (newWorkspaceId && newWorkspaceId !== workspaceId) {
+        console.log(`🔄 [FAST SECTION DATA] Received workspace switch event for: ${newWorkspaceId}, clearing ${section} data`);
+        setLoadedSections(new Set());
+        setData([]); // Clear data to prevent showing stale data
+        setCount(0);
+        setError(null);
+        // Force refresh for new workspace
+        fetchSectionData();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      return () => {
+        window.removeEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      };
+    }
+  }, [workspaceId, section, fetchSectionData]);
 
   // 🚀 CACHE OPTIMIZATION: Removed debug force refresh that was causing unnecessary reloads
 

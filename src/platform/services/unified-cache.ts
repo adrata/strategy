@@ -611,6 +611,8 @@ export class UnifiedCache {
    * 🔄 WORKSPACE SWITCH CACHE CLEARING: Comprehensive cache clearing for workspace changes
    */
   static async clearWorkspaceCache(oldWorkspaceId: string, newWorkspaceId: string): Promise<number> {
+    console.log(`🧹 [WORKSPACE SWITCH] Starting comprehensive cache clearing: ${oldWorkspaceId} -> ${newWorkspaceId}`);
+    
     const patterns = [
       `ws:${oldWorkspaceId}`,
       `ws:${newWorkspaceId}`,
@@ -634,6 +636,14 @@ export class UnifiedCache {
       `contacts:${newWorkspaceId}`,
       `clients:${oldWorkspaceId}`,
       `clients:${newWorkspaceId}`,
+      // 🆕 ADDITIONAL PATTERNS: More comprehensive workspace-specific patterns
+      `data:${oldWorkspaceId}`,
+      `data:${newWorkspaceId}`,
+      `cache:${oldWorkspaceId}`,
+      `cache:${newWorkspaceId}`,
+      `user:${oldWorkspaceId}`,
+      `user:${newWorkspaceId}`,
+      // Generic patterns that might contain workspace data
       'acquisition-os',
       'pipeline',
       'leads',
@@ -653,13 +663,17 @@ export class UnifiedCache {
 
     let totalInvalidated = 0;
     
-    // Clear unified cache
+    // 🆕 STEP 1: Clear unified cache with detailed logging
+    console.log(`🧹 [WORKSPACE SWITCH] Clearing unified cache patterns...`);
     totalInvalidated += await this.invalidate(patterns);
+    console.log(`🧹 [WORKSPACE SWITCH] Unified cache cleared: ${totalInvalidated} entries`);
     
-    // Clear SWR cache globally if available
+    // 🆕 STEP 2: Clear SWR cache globally if available
     if (typeof window !== 'undefined') {
       try {
         const { mutate } = await import('swr');
+        
+        console.log(`🧹 [WORKSPACE SWITCH] Clearing SWR cache...`);
         
         // Clear all SWR cache entries
         await mutate(() => true, undefined, { revalidate: false });
@@ -669,10 +683,38 @@ export class UnifiedCache {
           await mutate(pattern, undefined, { revalidate: false });
         }
         
-        console.log(`🧹 [WORKSPACE SWITCH] Cleared SWR cache for workspace switch: ${oldWorkspaceId} -> ${newWorkspaceId}`);
+        console.log(`🧹 [WORKSPACE SWITCH] SWR cache cleared for workspace switch: ${oldWorkspaceId} -> ${newWorkspaceId}`);
       } catch (error) {
         console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear SWR cache:', error);
       }
+    }
+    
+    // 🆕 STEP 3: Clear any remaining memory caches
+    try {
+      // Clear any global memory caches that might exist
+      if (typeof window !== 'undefined' && (window as any).__ADRATA_CACHE_CLEAR__) {
+        await (window as any).__ADRATA_CACHE_CLEAR__();
+        console.log(`🧹 [WORKSPACE SWITCH] Global memory cache cleared`);
+      }
+    } catch (error) {
+      console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear global memory cache:', error);
+    }
+    
+    // 🆕 STEP 4: Clear API-level caches
+    try {
+      // Clear counts cache
+      const { clearCountsCache } = await import('@/app/api/data/counts/route');
+      clearCountsCache(oldWorkspaceId, 'any'); // Clear for any user in old workspace
+      clearCountsCache(newWorkspaceId, 'any'); // Clear for any user in new workspace
+      console.log(`🧹 [WORKSPACE SWITCH] Cleared counts API cache`);
+      
+      // Clear speedrun cache
+      const { clearSpeedrunCache } = await import('@/app/api/data/unified/route');
+      clearSpeedrunCache(oldWorkspaceId, 'any'); // Clear for any user in old workspace
+      clearSpeedrunCache(newWorkspaceId, 'any'); // Clear for any user in new workspace
+      console.log(`🧹 [WORKSPACE SWITCH] Cleared speedrun API cache`);
+    } catch (error) {
+      console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear API caches:', error);
     }
     
     console.log(`🔄 [WORKSPACE SWITCH] Total cache entries cleared: ${totalInvalidated}`);

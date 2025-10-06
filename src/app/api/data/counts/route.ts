@@ -15,6 +15,13 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const countsCache = new Map<string, { data: any; timestamp: number }>();
 
+// 🧹 WORKSPACE SWITCH CACHE CLEARING: Clear counts cache when workspace changes
+export function clearCountsCache(workspaceId: string, userId: string): void {
+  const cacheKey = `counts-${workspaceId}-${userId}`;
+  countsCache.delete(cacheKey);
+  console.log(`🧹 [COUNTS CACHE] Cleared cache for workspace: ${workspaceId}, user: ${userId}`);
+}
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   

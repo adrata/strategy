@@ -122,10 +122,50 @@ export function useFastCounts(): UseFastCountsReturn {
     if (workspaceId !== lastWorkspaceId || userId !== lastUserId) {
       console.log('🔄 [FAST COUNTS] Workspace/user changed, resetting loaded state');
       setHasLoaded(false);
+      setCounts({
+        leads: 0,
+        prospects: 0,
+        opportunities: 0,
+        companies: 0,
+        people: 0,
+        clients: 0,
+        partners: 0,
+        speedrun: 0
+      }); // Reset counts to prevent showing stale data
       setLastWorkspaceId(workspaceId);
       setLastUserId(userId);
     }
   }, [workspaceId, userId, lastWorkspaceId, lastUserId]);
+
+  // 🧹 LISTEN FOR WORKSPACE SWITCH EVENTS: Clear cache when workspace switch event is fired
+  useEffect(() => {
+    const handleWorkspaceSwitch = (event: CustomEvent) => {
+      const { workspaceId: newWorkspaceId } = event.detail;
+      if (newWorkspaceId && newWorkspaceId !== workspaceId) {
+        console.log(`🔄 [FAST COUNTS] Received workspace switch event for: ${newWorkspaceId}`);
+        setHasLoaded(false);
+        setCounts({
+          leads: 0,
+          prospects: 0,
+          opportunities: 0,
+          companies: 0,
+          people: 0,
+          clients: 0,
+          partners: 0,
+          speedrun: 0
+        });
+        // Force refresh for new workspace
+        fetchCounts();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      return () => {
+        window.removeEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      };
+    }
+  }, [workspaceId, fetchCounts]);
 
   return {
     counts,

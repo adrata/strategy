@@ -43,11 +43,6 @@ interface PipelineContextType {
   user: { name: string; initial: string };
   company: string;
   workspace: string;
-  
-  // Demo Scenario Support
-  currentDemoScenario: string | null;
-  onDemoScenarioChange?: (scenarioSlug: string) => void;
-  refreshDemoData: () => Promise<void>;
 }
 
 const PipelineContext = createContext<PipelineContextType | undefined>(undefined);
@@ -76,25 +71,8 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
   }>>([]);
   const [chatInput, setChatInput] = useState("");
 
-  // Check if we're in demo mode
-  const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
-  
-  // User Data - use demo user in demo mode, otherwise use actual auth context
-  const user = isDemoMode ? (() => {
-    // Check if we're in ZeroPoint demo scenario
-    const isZeroPointDemo = typeof window !== "undefined" && window.location.pathname.includes('/demo/zeropoint/');
-    if (isZeroPointDemo) {
-      return { 
-        name: "John Sylvester", 
-        initial: "J"
-      };
-    } else {
-      return { 
-        name: "Kirk Morales", 
-        initial: "K"
-      };
-    }
-  })() : { 
+  // User Data - use actual auth context
+  const user = { 
     name: authUser?.name || "", 
     initial: authUser?.name ? authUser.name
       .split(" ")
@@ -108,13 +86,8 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
   const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId);
   const company = "Adrata"; // Always display Adrata as the company name
   
-  // Determine workspace name based on demo scenario
+  // Use the actual workspace name from the user's account
   let workspace = activeWorkspace?.name || "";
-  if (isDemoMode) {
-    // Check if we're in ZeroPoint demo scenario
-    const isZeroPointDemo = typeof window !== "undefined" && window.location.pathname.includes('/demo/zeropoint/');
-    workspace = isZeroPointDemo ? "ZeroPoint" : "Winning Variant";
-  }
   
   // Update workspace when activeWorkspaceId changes
   useEffect(() => {
@@ -126,28 +99,6 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
   
   console.log(`🏢 Pipeline Context: User: ${user.name}, Company: ${company}, Workspace: ${workspace}`);
 
-  // Demo Scenario State
-  const [currentDemoScenario, setCurrentDemoScenario] = useState<string | null>(null);
-
-  // Load demo scenario on mount
-  useEffect(() => {
-    // REMOVED: Demo data refresh - prevents default workspace pollution
-    console.log('✅ Pipeline Context: Demo data refresh disabled (prevents default workspace calls)');
-  }, []);
-
-  // Demo scenario change handler
-  const onDemoScenarioChange = async (scenarioSlug: string) => {
-    console.log('🔄 Pipeline Context: Changing demo scenario to:', scenarioSlug);
-    // REMOVED: Demo data refresh - prevents default workspace pollution
-    console.log('✅ Pipeline Context: Demo data refresh disabled (prevents default workspace calls)');
-  };
-
-  // Refresh demo data
-  const refreshDemoData = async () => {
-    console.log('🔄 Pipeline Context: Refreshing demo data...');
-    // REMOVED: Demo data refresh - prevents default workspace pollution
-    console.log('✅ Pipeline Context: Demo data refresh disabled (prevents default workspace calls)');
-  };
 
   const value: PipelineContextType = {
     // UI State
@@ -172,11 +123,6 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
     user,
     company,
     workspace,
-    
-    // Demo Scenario Support
-    currentDemoScenario,
-    onDemoScenarioChange,
-    refreshDemoData,
   };
 
   return (
