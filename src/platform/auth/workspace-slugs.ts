@@ -18,6 +18,7 @@ const WORKSPACE_SLUGS: Record<string, string> = {
   'Adrata': 'adrata',
   'TOP Engineering Plus': 'top', // Correct name from database
   'TOP Engineers Plus': 'top',   // Fallback for potential variations
+  'Demo Workspace': 'demo',      // Demo workspace should use /demo/ URLs
   // Add more mappings as needed
 };
 
