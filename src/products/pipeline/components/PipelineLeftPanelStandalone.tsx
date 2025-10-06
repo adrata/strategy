@@ -648,7 +648,7 @@ function PipelineSections({
         if (isWeekend) {
           return "Weekend";
         }
-        return isDemoMode ? 25 : (productionCounts.speedrun || 0);
+        return isDemoMode ? 50 : (productionCounts.speedrun || 0);
       })(),
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
@@ -707,7 +707,7 @@ function PipelineSections({
       description: "Individual entities",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 60 : productionCounts.people),
+      ) : (isDemoMode ? 19234 : productionCounts.people),
       visible: true
     },
     {
@@ -716,7 +716,7 @@ function PipelineSections({
       description: "Business entities",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 25 : productionCounts.companies),
+      ) : (isDemoMode ? 2000 : productionCounts.companies),
       visible: true
     },
     // SELLERS: Show only for demo workspace
@@ -726,7 +726,7 @@ function PipelineSections({
       description: "Sales Team",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 10 : sellersData.count), // Use actual count from data
+      ) : (isDemoMode ? 20 : sellersData.count), // Use actual count from data
       visible: isDemoMode // Show only for demo workspace
     },
     {
