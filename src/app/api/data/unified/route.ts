@@ -1455,6 +1455,8 @@ async function getMultipleRecords(
   if (type === 'companies') {
     // Check for sellerId parameter to filter companies for specific seller
     const sellerId = searchParams?.get('sellerId');
+    console.log(`🔍 [COMPANIES API] sellerId parameter:`, sellerId);
+    console.log(`🔍 [COMPANIES API] searchParams:`, searchParams);
     
     // Check for force refresh and bypass cache
     const forceRefresh = false; // TODO: Pass searchParams to this function
