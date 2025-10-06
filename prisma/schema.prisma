@@ -23,12 +23,12 @@ model Chat {
 }
 
 model entities {
-  id          String    @id @default(ulid())
-  type        String    @db.VarChar(50)
+  id           String    @id @default(ulid())
+  type         String    @db.VarChar(50)
   workspace_id String
-  created_at  DateTime  @default(now())
-  updated_at  DateTime? @default(now())
-  metadata    Json?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime? @default(now())
+  metadata     Json?
 
   @@index([workspace_id])
   @@index([type])
@@ -549,69 +549,44 @@ model companies {
   uniqueValuePropositions String[]            @default([])
   rank                    Int?                @default(0)
   situationAnalysis       String?
-  
-  // Intelligence Fields - Overview Tab
-  linkedinUrl             String?             @db.VarChar(500)
-  foundedYear             Int?
-  employeeCount           Int?
-  activeJobPostings       Int?
-  linkedinFollowers       Int?
-  
-  // Intelligence Fields - Industry Classification
-  naicsCodes              String[]
-  sicCodes                String[]
-  
-  // Intelligence Fields - Social Media
-  facebookUrl             String?             @db.VarChar(500)
-  twitterUrl              String?             @db.VarChar(500)
-  instagramUrl            String?             @db.VarChar(500)
-  youtubeUrl              String?             @db.VarChar(500)
-  githubUrl               String?             @db.VarChar(500)
-  
-  // Intelligence Fields - Business Intelligence
-  technologiesUsed        String[]
+  complications           String?
   competitors             String[]
-  revenueCurrency         String?             @db.VarChar(3)
+  activeJobPostings       Int?
+  employeeCount           Int?
+  facebookUrl             String?             @db.VarChar(500)
+  foundedYear             Int?
+  githubUrl               String?             @db.VarChar(500)
+  instagramUrl            String?             @db.VarChar(500)
   lastFundingAmount       BigInt?
   lastFundingDate         DateTime?           @db.Date
-  
-  // Intelligence Fields - Strategic Intelligence
-  complications           String?
+  linkedinFollowers       Int?
+  linkedinUrl             String?             @db.VarChar(500)
+  naicsCodes              String[]
+  revenueCurrency         String?             @db.VarChar(3)
+  sicCodes                String[]
   strategicIntelligence   String?
-  
-  // CoreSignal Enrichment Fields - Company Status
+  technologiesUsed        String[]
+  twitterUrl              String?             @db.VarChar(500)
+  youtubeUrl              String?             @db.VarChar(500)
   isPublic                Boolean?
   stockSymbol             String?             @db.VarChar(20)
   logoUrl                 String?             @db.VarChar(500)
-  
-  // CoreSignal Enrichment Fields - Domain and Website
   domain                  String?             @db.VarChar(255)
-  
-  // CoreSignal Enrichment Fields - Headquarters Location
   hqLocation              String?             @db.VarChar(255)
   hqFullAddress           String?             @db.VarChar(500)
   hqCity                  String?             @db.VarChar(100)
   hqState                 String?             @db.VarChar(100)
   hqStreet                String?             @db.VarChar(255)
   hqZipcode               String?             @db.VarChar(20)
-  
-  // CoreSignal Enrichment Fields - Social Media Followers
   twitterFollowers        Int?
   owlerFollowers          Int?
-  
-  // CoreSignal Enrichment Fields - Company Updates and Activity
   companyUpdates          Json?
   numTechnologiesUsed     Int?
-  
-  // CoreSignal Enrichment Fields - Enhanced Descriptions
   descriptionEnriched     String?
   descriptionMetadataRaw  String?
-  
-  // CoreSignal Enrichment Fields - Regional Information
   hqRegion                String[]
   hqCountryIso2           String?             @db.VarChar(2)
   hqCountryIso3           String?             @db.VarChar(3)
-  
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])
@@ -1635,61 +1610,61 @@ model user_ai_preferences {
 }
 
 model users {
-  id                      String      @id @default(ulid())
+  id                      String        @id @default(ulid())
   email                   String
   password                String?
   name                    String
   firstName               String?
   lastName                String?
   displayName             String?
-  preferredLanguage       String      @default("en") @db.VarChar(10)
-  countryCode             String?     @db.VarChar(2)
-  timezone                String?     @db.VarChar(50)
-  locale                  String?     @db.VarChar(10)
-  textDirection           String      @default("ltr") @db.VarChar(3)
+  preferredLanguage       String        @default("en") @db.VarChar(10)
+  countryCode             String?       @db.VarChar(2)
+  timezone                String?       @db.VarChar(50)
+  locale                  String?       @db.VarChar(10)
+  textDirection           String        @default("ltr") @db.VarChar(3)
   address                 String?
   city                    String?
   state                   String?
   country                 String?
-  postalCode              String?     @db.VarChar(20)
+  postalCode              String?       @db.VarChar(20)
   bio                     String?
   notes                   String?
-  createdAt               DateTime    @default(now())
+  createdAt               DateTime      @default(now())
   updatedAt               DateTime
   lastLoginAt             DateTime?
   externalId              String?
-  isSSO                   Boolean     @default(false)
-  isActive                Boolean     @default(true)
+  isSSO                   Boolean       @default(false)
+  isActive                Boolean       @default(true)
   scimSource              String?
   lastSyncAt              DateTime?
   ssoProviderId           String?
   resetToken              String?
   resetTokenExpiry        DateTime?
-  communicationStyle      String?     @default("consultative") @db.VarChar(30)
-  coreSignalCreditsLimit  Int?        @default(500)
-  coreSignalCreditsUsed   Int?        @default(0)
-  coreSignalLastReset     DateTime?   @default(now())
-  dashboardConfig         Json?       @default("{\"kpis\": [], \"widgets\": [], \"defaultView\": \"speedrun\"}")
-  department              String?     @db.VarChar(50)
-  intelligenceFocus       Json?       @default("{\"buyingSignals\": true, \"competitorMentions\": false, \"stakeholderMapping\": true}")
-  linkedinUrl             String?     @db.VarChar(255)
-  manager                 String?     @db.VarChar(30)
-  notificationPreferences Json?       @default("{\"urgency\": \"medium\", \"channels\": [\"in_app\"], \"frequency\": \"hourly\"}")
-  phoneNumber             String?     @db.VarChar(20)
-  preferredDetailLevel    String?     @default("detailed") @db.VarChar(20)
-  profilePictureUrl       String?     @db.VarChar(255)
-  quota                   Decimal?    @db.Decimal(15, 2)
-  seniorityLevel          String?     @db.VarChar(20)
+  communicationStyle      String?       @default("consultative") @db.VarChar(30)
+  coreSignalCreditsLimit  Int?          @default(500)
+  coreSignalCreditsUsed   Int?          @default(0)
+  coreSignalLastReset     DateTime?     @default(now())
+  dashboardConfig         Json?         @default("{\"kpis\": [], \"widgets\": [], \"defaultView\": \"speedrun\"}")
+  department              String?       @db.VarChar(50)
+  intelligenceFocus       Json?         @default("{\"buyingSignals\": true, \"competitorMentions\": false, \"stakeholderMapping\": true}")
+  linkedinUrl             String?       @db.VarChar(255)
+  manager                 String?       @db.VarChar(30)
+  notificationPreferences Json?         @default("{\"urgency\": \"medium\", \"channels\": [\"in_app\"], \"frequency\": \"hourly\"}")
+  phoneNumber             String?       @db.VarChar(20)
+  preferredDetailLevel    String?       @default("detailed") @db.VarChar(20)
+  profilePictureUrl       String?       @db.VarChar(255)
+  quota                   Decimal?      @db.Decimal(15, 2)
+  seniorityLevel          String?       @db.VarChar(20)
   startDate               DateTime?
-  territory               String?     @db.VarChar(100)
-  title                   String?     @db.VarChar(100)
-  activeWorkspaceId       String?     @db.VarChar(30)
-  createdBy               String?     @db.VarChar(30)
-  updatedBy               String?     @db.VarChar(30)
-  version                 Int         @default(1)
-  username                String?     @unique @db.VarChar(50)
-  workspaces              workspaces? @relation(fields: [activeWorkspaceId], references: [id])
+  territory               String?       @db.VarChar(100)
+  title                   String?       @db.VarChar(100)
+  activeWorkspaceId       String?       @db.VarChar(30)
+  createdBy               String?       @db.VarChar(30)
+  updatedBy               String?       @db.VarChar(30)
+  version                 Int           @default(1)
+  username                String?       @unique @db.VarChar(50)
   resetTokens             resetTokens[]
+  workspaces              workspaces?   @relation(fields: [activeWorkspaceId], references: [id])
 
   @@index([activeWorkspaceId], map: "idx_users_active_workspace")
   @@index([createdBy], map: "idx_users_created_by")
@@ -1704,9 +1679,8 @@ model resetTokens {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
-  
   user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([token])
   @@index([userId])
   @@index([expiresAt])
@@ -2189,22 +2163,22 @@ model marketIntelligence {
 }
 
 model sellers {
-  id            String    @id @default(ulid())
-  workspaceId   String    @db.VarChar(30)
-  name          String    @db.VarChar(255)
-  firstName     String?   @db.VarChar(100)
-  lastName      String?   @db.VarChar(100)
-  email         String?   @db.VarChar(255)
-  phone         String?   @db.VarChar(50)
-  title         String?   @db.VarChar(255)
-  department    String?   @db.VarChar(100)
-  company       String?   @db.VarChar(255)
-  assignedUserId String?  @db.VarChar(30)
-  tags          String[]  @default([])
-  metadata      Json?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
-  deletedAt     DateTime?
+  id             String    @id @default(ulid())
+  workspaceId    String    @db.VarChar(30)
+  name           String    @db.VarChar(255)
+  firstName      String?   @db.VarChar(100)
+  lastName       String?   @db.VarChar(100)
+  email          String?   @db.VarChar(255)
+  phone          String?   @db.VarChar(50)
+  title          String?   @db.VarChar(255)
+  department     String?   @db.VarChar(100)
+  company        String?   @db.VarChar(255)
+  assignedUserId String?   @db.VarChar(30)
+  tags           String[]  @default([])
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  deletedAt      DateTime?
 
   @@index([workspaceId])
   @@index([assignedUserId])

@@ -13,7 +13,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
-// Removed deleted PipelineDataStore - using unified data system
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';

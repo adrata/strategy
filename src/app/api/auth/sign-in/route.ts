@@ -21,6 +21,8 @@ interface SignInRequest {
   email: string;
   password: string;
   platform?: string;
+  deviceId?: string;
+  preferredWorkspaceId?: string;
 }
 
 interface AuthResponse {
@@ -70,7 +72,7 @@ async function getCachedUser(email: string): Promise<any | null> {
   return null;
 }
 
-async function setCachedUser(email: string, user: any): void {
+async function setCachedUser(email: string, user: any): Promise<void> {
   const cacheKey = `user:${email.toLowerCase()}`;
   userLookupCache.set(cacheKey, {
     user,
@@ -102,7 +104,10 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Debug logs removed for production
+    // Production error logging
+    console.log("🔐 [AUTH API] Sign-in request received");
+    console.log("🔐 [AUTH API] Environment:", process.env.NODE_ENV);
+    console.log("🔐 [AUTH API] Database URL exists:", !!process.env.DATABASE_URL);
 
     // SECURITY: Check for URL-based credential attempts
     const url = new URL(request.url);
@@ -130,8 +135,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const credentials: SignInRequest = await request.json();
+    console.log("🔐 [AUTH API] Credentials received:", { email: credentials.email, hasPassword: !!credentials.password });
 
     if (!validateCredentials(credentials)) {
+      console.log("❌ [AUTH API] Invalid credentials format");
       return NextResponse.json(
         { success: false, error: "Email and password are required" },
         { 
@@ -146,12 +153,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Debug logs removed for production
 
     // Database connection is handled by singleton client
+    console.log("🔐 [AUTH API] Starting database query for user:", email);
 
     // Support both email and username login
     const isEmail = email.includes("@");
+    console.log("🔐 [AUTH API] Is email format:", isEmail);
 
     // 🚀 PERFORMANCE: Check cache first, then database
     let user = await getCachedUser(email);
+    console.log("🔐 [AUTH API] Cache lookup result:", !!user);
     
     if (!user) {
       
@@ -165,23 +175,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       orConditions.push({ name: email }); // Fallback: name login
       
       // User lookup conditions
+      console.log("🔐 [AUTH API] Database query conditions:", orConditions);
       
-      user = await prisma.users.findFirst({
-        where: {
-          OR: orConditions,
-          isActive: true,
-        },
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          name: true,
-          displayName: true,
-          password: true,
-          isActive: true,
-          activeWorkspaceId: true,
-        }
-      });
+      try {
+        user = await prisma.users.findFirst({
+          where: {
+            OR: orConditions,
+            isActive: true,
+          },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            name: true,
+            displayName: true,
+            password: true,
+            isActive: true,
+            activeWorkspaceId: true,
+          }
+        });
+        console.log("🔐 [AUTH API] Database query result:", !!user);
+      } catch (dbError) {
+        console.error("❌ [AUTH API] Database query failed:", dbError);
+        throw dbError;
+      }
       
       // Cache the user if found
       if (user) {
@@ -201,29 +218,47 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 🚀 PERFORMANCE: Get workspace memberships first, then batch fetch workspace details
     // Querying workspace memberships for user
-    const workspaceMemberships = await prisma.workspace_users.findMany({
-      where: { 
-        userId: user.id,
-      },
-      select: {
-        id: true,
-        role: true,
-        workspaceId: true,
-      }
-    });
+    console.log("🔐 [AUTH API] Querying workspace memberships for user:", user.id);
+    
+    let workspaceMemberships;
+    try {
+      workspaceMemberships = await prisma.workspace_users.findMany({
+        where: { 
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          role: true,
+          workspaceId: true,
+        }
+      });
+      console.log("🔐 [AUTH API] Workspace memberships found:", workspaceMemberships.length);
+    } catch (workspaceError) {
+      console.error("❌ [AUTH API] Workspace query failed:", workspaceError);
+      throw workspaceError;
+    }
 
     // 🚀 PERFORMANCE: Batch fetch workspace details in a single query
     const workspaceIds = workspaceMemberships.map(m => m.workspaceId);
-    const workspaceDetails = await prisma.workspaces.findMany({
-      where: {
-        id: { in: workspaceIds }
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      }
-    });
+    console.log("🔐 [AUTH API] Fetching workspace details for IDs:", workspaceIds);
+    
+    let workspaceDetails;
+    try {
+      workspaceDetails = await prisma.workspaces.findMany({
+        where: {
+          id: { in: workspaceIds }
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        }
+      });
+      console.log("🔐 [AUTH API] Workspace details found:", workspaceDetails.length);
+    } catch (workspaceDetailsError) {
+      console.error("❌ [AUTH API] Workspace details query failed:", workspaceDetailsError);
+      throw workspaceDetailsError;
+    }
 
     // 🚀 PERFORMANCE: Create a lookup map for O(1) workspace access
     const workspaceMap = new Map(workspaceDetails.map(w => [w.id, w]));
@@ -320,24 +355,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Generate JWT token
+    console.log("🔐 [AUTH API] Generating JWT token");
     const secret =
       process['env']['NEXTAUTH_SECRET'] ||
       process['env']['JWT_SECRET'] ||
       "dev-secret-key-change-in-production";
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        name: user.name,
-        workspaceId: finalActiveWorkspaceId,
-        activeWorkspaceId: finalActiveWorkspaceId,
-        platform,
-        deviceId,
-        iat: Math.floor(Date.now() / 1000),
-      },
-      secret,
-      { expiresIn: '7d' }
-    );
+    
+    console.log("🔐 [AUTH API] JWT secret exists:", !!secret);
+    
+    let token;
+    try {
+      token = jwt.sign(
+        {
+          userId: user.id,
+          email: user.email,
+          name: user.name,
+          workspaceId: finalActiveWorkspaceId,
+          activeWorkspaceId: finalActiveWorkspaceId,
+          platform,
+          deviceId,
+          iat: Math.floor(Date.now() / 1000),
+        },
+        secret,
+        { expiresIn: '7d' }
+      );
+      console.log("🔐 [AUTH API] JWT token generated successfully");
+    } catch (jwtError) {
+      console.error("❌ [AUTH API] JWT generation failed:", jwtError);
+      throw jwtError;
+    }
 
     // Format user data
     const userData = {
@@ -461,6 +507,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return response;
   } catch (error) {
     // Sign-in error
+    console.error("❌ [AUTH API] Sign-in error:", error);
+    console.error("❌ [AUTH API] Error stack:", error instanceof Error ? error.stack : 'No stack trace');
     
     // Provide more detailed error information for debugging
     let errorMessage = "Authentication failed";
@@ -468,10 +516,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     
     if (error instanceof Error) {
       errorDetails = error.message;
+      console.error("❌ [AUTH API] Error message:", error.message);
+      
       if (error.message.includes("prisma") || error.message.includes("database")) {
         errorMessage = "Database connection error";
+        console.error("❌ [AUTH API] Database error detected");
       } else if (error.message.includes("jwt") || error.message.includes("token")) {
         errorMessage = "Token generation error";
+        console.error("❌ [AUTH API] JWT error detected");
+      } else if (error.message.includes("ENOTFOUND") || error.message.includes("ECONNREFUSED")) {
+        errorMessage = "Database connection failed";
+        console.error("❌ [AUTH API] Network error detected");
       }
     }
     

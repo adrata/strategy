@@ -24,8 +24,15 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
   log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error']
 });
 
-// Store in global variable in development to prevent hot reload issues
-if (process['env']['NODE_ENV'] !== 'production') {
+// Test database connection on startup
+prisma.$connect().catch((error) => {
+  console.error('❌ [PRISMA] Database connection failed:', error);
+  console.error('❌ [PRISMA] DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+  console.error('❌ [PRISMA] NODE_ENV:', process.env.NODE_ENV);
+});
+
+// Store in global variable to prevent multiple instances
+if (!globalThis.__prisma) {
   globalThis['__prisma'] = prisma;
 }
 

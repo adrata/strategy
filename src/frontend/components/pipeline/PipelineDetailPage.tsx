@@ -512,6 +512,29 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
 
   // Handle back navigation
   const handleBack = () => {
+    // Check if we're in a complex nested route (like buyer-group with person parameter)
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    const currentSearch = typeof window !== 'undefined' ? window.location.search : '';
+    
+    console.log('🔍 [BACK NAVIGATION] Current path:', currentPath, 'Search:', currentSearch);
+    
+    // If we're in a buyer-group route with a person parameter, navigate back to the buyer group
+    if (currentPath.includes('/buyer-group') && currentSearch.includes('person=')) {
+      console.log('🔍 [BACK NAVIGATION] Detected buyer-group with person, navigating back to buyer group');
+      // Remove the person parameter to go back to the buyer group
+      const newUrl = currentPath; // Keep the same path, just remove the person parameter
+      router.push(newUrl);
+      return;
+    }
+    
+    // For regular person detail pages, navigate to the people list
+    if (section === 'people') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to people list');
+      navigateToPipeline('people');
+      return;
+    }
+    
+    // Default behavior
     navigateToPipeline(section);
   };
 
