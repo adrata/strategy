@@ -397,7 +397,12 @@ export async function GET(request: NextRequest) {
       console.log(`🐌 [SLOW API] GET companies took ${duration}ms - consider optimization`);
     } else {
       console.log(`⚡ [FAST API] GET companies completed in ${duration}ms`);
-    }return createSuccessResponse(data, meta);
+    }
+
+    const data = { companies: uniqueCompanies };
+    const meta = { total: uniqueCompanies.length, limit, offset };
+    
+    return createSuccessResponse(data, meta);
   } catch (error) {
     console.error("❌ [COMPANIES API] Error getting companies:", error);return createErrorResponse(
       "Failed to get companies",
@@ -458,7 +463,12 @@ export async function POST(request: NextRequest) {
 
     console.log(
       `✅ [COMPANIES API] Company created: ${newAccount.name} (ID: ${newAccount.id}, Entity ID: ${entityRecord.id})`,
-    );return createSuccessResponse(data, meta);
+    );
+
+    const data = { company: newAccount };
+    const meta = { created: true };
+    
+    return createSuccessResponse(data, meta);
   } catch (error) {
     console.error("❌ [COMPANIES API] Error creating company:", error);return createErrorResponse(
       "Failed to create company",

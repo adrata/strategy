@@ -1491,9 +1491,10 @@ async function getMultipleRecords(
       };
       
       if (sellerId) {
-        // If sellerId is provided, get companies assigned to that seller
+        // If sellerId is provided, filter companies by that assignedUserId directly
+        // The frontend passes the seller's assignedUserId as sellerId
         whereClause.assignedUserId = sellerId;
-        console.log(`🔍 [COMPANIES API] Filtering companies for seller: ${sellerId}`);
+        console.log(`🔍 [COMPANIES API] Filtering companies for assignedUserId: ${sellerId}`);
       } else {
         // Default behavior: get companies assigned to user or unassigned
         whereClause.OR = [
