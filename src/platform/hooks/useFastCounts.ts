@@ -130,7 +130,7 @@ export function useFastCounts(): UseFastCountsReturn {
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, userId, authLoading, hasLoaded, authUser]);
+  }, [workspaceId, userId, authLoading, authUser]);
 
   // 🚀 PERFORMANCE: Only load counts once when workspace/user is available
   useEffect(() => {
@@ -146,18 +146,6 @@ export function useFastCounts(): UseFastCountsReturn {
       fetchCounts();
     }
   }, [workspaceId, userId, authLoading, hasLoaded]);
-
-  // 🔄 FORCE REFRESH: Add a fallback to force refresh if counts are still 0 after 5 seconds
-  useEffect(() => {
-    if (hasLoaded && counts.leads === 0 && counts.companies === 0 && counts.people === 0) {
-      const timeout = setTimeout(() => {
-        console.log('🔄 [FAST COUNTS] Counts are 0 after loading - forcing refresh');
-        fetchCounts(true);
-      }, 5000);
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [hasLoaded, counts, fetchCounts]);
 
   // 🚀 PERFORMANCE: Add timeout to prevent stuck loading state
   useEffect(() => {
