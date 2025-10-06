@@ -42,6 +42,10 @@ const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
     speedrun: {
       columns: ['Rank', 'Company', 'Person', 'Title', 'Role', 'Last Action', 'Next Action', 'Actions'],
       columnOrder: ['rank', 'company', 'person', 'title', 'role', 'lastAction', 'nextAction', 'actions']
+    },
+    sellers: {
+      columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions']
     }
   }
 };
@@ -73,6 +77,10 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
       columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
       hiddenColumns: ['stage', 'status', 'details'] // Remove company from hidden columns
+    },
+    sellers: {
+      columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions']
     }
   }
 };

@@ -366,6 +366,45 @@ export function PipelineTable({
                       case 'value':
                         cellContent = record['value'] || record['amount'] || record['revenue'] || 'Unknown';
                         break;
+                      case 'details':
+                        // For sellers, show title and department
+                        const sellerTitle = record['title'] || record['jobTitle'] || '';
+                        const sellerDepartment = record['department'] || '';
+                        if (sellerTitle && sellerDepartment) {
+                          cellContent = `${sellerTitle} • ${sellerDepartment}`;
+                        } else if (sellerTitle) {
+                          cellContent = sellerTitle;
+                        } else if (sellerDepartment) {
+                          cellContent = sellerDepartment;
+                        } else {
+                          cellContent = 'Sales Team';
+                        }
+                        break;
+                      case 'status':
+                        // For sellers, show online/offline status with indicator
+                        const metadata = record['metadata'] || {};
+                        const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
+                        const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
+                        
+                        if (isOnline) {
+                          cellContent = 'Online';
+                        } else if (lastSeen) {
+                          const lastSeenDate = new Date(lastSeen);
+                          const now = new Date();
+                          const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
+                          
+                          if (diffHours < 1) {
+                            cellContent = 'Online';
+                          } else if (diffHours < 24) {
+                            cellContent = `Offline (${diffHours}h ago)`;
+                          } else {
+                            const diffDays = Math.floor(diffHours / 24);
+                            cellContent = `Offline (${diffDays}d ago)`;
+                          }
+                        } else {
+                          cellContent = 'Offline';
+                        }
+                        break;
                       default:
                         cellContent = record[header.toLowerCase()] || record[header] || '';
                     }
@@ -384,6 +423,49 @@ export function PipelineTable({
                                     {timing.text}
                                   </span>
                                   <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                                    {cellContent}
+                                  </span>
+                                </>
+                              );
+                            })()}
+                          </div>
+                        ) : header.toLowerCase() === 'status' ? (
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const metadata = record['metadata'] || {};
+                              const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
+                              const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
+                              
+                              let statusColor = 'bg-gray-100 text-gray-800';
+                              let statusIcon = '●';
+                              
+                              if (isOnline) {
+                                statusColor = 'bg-green-100 text-green-800';
+                                statusIcon = '●';
+                              } else if (lastSeen) {
+                                const lastSeenDate = new Date(lastSeen);
+                                const now = new Date();
+                                const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
+                                
+                                if (diffHours < 1) {
+                                  statusColor = 'bg-green-100 text-green-800';
+                                  statusIcon = '●';
+                                } else if (diffHours < 24) {
+                                  statusColor = 'bg-yellow-100 text-yellow-800';
+                                  statusIcon = '●';
+                                } else {
+                                  statusColor = 'bg-gray-100 text-gray-800';
+                                  statusIcon = '●';
+                                }
+                              } else {
+                                statusColor = 'bg-gray-100 text-gray-800';
+                                statusIcon = '●';
+                              }
+                              
+                              return (
+                                <>
+                                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+                                    <span className="text-xs">{statusIcon}</span>
                                     {cellContent}
                                   </span>
                                 </>
