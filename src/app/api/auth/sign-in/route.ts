@@ -236,13 +236,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       workspace: workspaceMap.get(membership.workspaceId) || null
     }));
 
-    if (!user) {
-      // User not found
-      return NextResponse.json(
-        { success: false, error: "Invalid credentials" },
-        { status: 401 },
-      );
-    }
+    // User check was already done above, remove duplicate check
 
     // 🚀 PERFORMANCE: Optimized password validation with early returns
     let isValidPassword = false;
@@ -393,36 +387,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       else if (!isDemo && userData.workspaces.length > 0) {
         // Use the user's active workspace for routing
         const activeWorkspace = userData.workspaces.find(w => w['id'] === userData.activeWorkspaceId) || userData['workspaces'][0];
-        const workspaceSlug = generateWorkspaceSlug(activeWorkspace.name);
         
-        // Workspace routing debug
-        
-        // Generate native workspace-specific URLs (not redirects)
-        if (platformRoute.path.startsWith('/pipeline')) {
-          // Routes become workspace-native: /rps/dashboard (new default)
-          const pipelineSection = platformRoute.path.replace('/pipeline', '') || '/dashboard';
-          platformRoute['path'] = `/${workspaceSlug}${pipelineSection}`;
-        } else if (platformRoute.path.startsWith('/aos')) {
-          // AOS routes get workspace query parameter
-          platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
-        } else if (platformRoute.path.startsWith('/monaco')) {
-          // Monaco routes get workspace query parameter  
-          platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
-        } else if (platformRoute.path.startsWith('/speedrun')) {
-          // Speedrun routes get workspace prefix for proper routing
-          platformRoute['path'] = `/${workspaceSlug}/speedrun`;
+        // Add safety check for workspace data
+        if (!activeWorkspace || !activeWorkspace.name) {
+          console.warn("⚠️ [AUTH API] Invalid workspace data, using fallback route");
+          platformRoute = {
+            path: "/monaco/sellers",
+            app: "monaco",
+            section: "sellers"
+          };
         } else {
-          // Default to workspace-specific speedrun for authenticated users
-          platformRoute['path'] = `/${workspaceSlug}/speedrun`;
-        }
+          const workspaceSlug = generateWorkspaceSlug(activeWorkspace.name);
         
-        // Workspace-aware route determined
+          // Workspace routing debug
+          
+          // Generate native workspace-specific URLs (not redirects)
+          if (platformRoute.path.startsWith('/pipeline')) {
+            // Routes become workspace-native: /rps/dashboard (new default)
+            const pipelineSection = platformRoute.path.replace('/pipeline', '') || '/dashboard';
+            platformRoute['path'] = `/${workspaceSlug}${pipelineSection}`;
+          } else if (platformRoute.path.startsWith('/aos')) {
+            // AOS routes get workspace query parameter
+            platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
+          } else if (platformRoute.path.startsWith('/monaco')) {
+            // Monaco routes get workspace query parameter  
+            platformRoute['path'] = `${platformRoute.path}?workspace=${workspaceSlug}`;
+          } else if (platformRoute.path.startsWith('/speedrun')) {
+            // Speedrun routes get workspace prefix for proper routing
+            platformRoute['path'] = `/${workspaceSlug}/speedrun`;
+          } else {
+            // Default to workspace-specific speedrun for authenticated users
+            platformRoute['path'] = `/${workspaceSlug}/speedrun`;
+          }
+          
+          // Workspace-aware route determined
+        }
       } else {
         // Platform route determined
       }
       
     } catch (error) {
       // Platform routing error
+      console.error("❌ [AUTH API] Platform routing error:", error);
       platformRoute = PlatformAccessRouter.getDemoRoute(); // Fallback
     }
 

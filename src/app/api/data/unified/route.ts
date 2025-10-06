@@ -4286,6 +4286,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
 // 🚀 MAIN API HANDLERS
 export async function GET(request: NextRequest) {
   console.log("🚨 [DEBUG] UNIFIED API ROUTE CALLED - SERVER IS RUNNING UPDATED CODE");
+  console.log("🚀 [UNIFIED API] GET request received:", request.url);
   const startTime = Date.now();
   
   // 1. Authenticate and authorize user

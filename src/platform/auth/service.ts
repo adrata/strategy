@@ -366,7 +366,21 @@ export class UnifiedAuthService {
       return authResult;
     } catch (error) {
       console.error("❌ Database auth failed:", error);
-      return { success: false, error: "Network error" };
+      
+      // Provide more specific error messages based on the error type
+      if (error instanceof Error) {
+        if (error.message.includes("500")) {
+          return { success: false, error: "Server error - please try again" };
+        } else if (error.message.includes("401")) {
+          return { success: false, error: "Invalid credentials" };
+        } else if (error.message.includes("403")) {
+          return { success: false, error: "Access denied" };
+        } else if (error.message.includes("Network")) {
+          return { success: false, error: "Network error - please check your connection" };
+        }
+      }
+      
+      return { success: false, error: "Authentication failed - please try again" };
     }
   }
 
