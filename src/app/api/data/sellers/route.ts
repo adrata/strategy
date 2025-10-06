@@ -1,57 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authFetch } from '@/platform/auth-fetch';
+import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
-    const userId = searchParams.get('userId');
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     
     console.log(`🎯 [SELLERS API] Loading sellers for workspace: ${workspaceId}, user: ${userId}`);
     
-    // For demo purposes, return hardcoded sellers data
-    const sellers = [
-      {
-        id: 'demo-user-2025',
-        name: 'Kirk Morales',
-        email: 'demo@winning-variant.com',
-        title: 'Founder & CEO',
-        company: 'Winning Variant',
-        assignedCompanies: ['Brex', 'First Premier Bank'],
-        assignedProspects: 6,
-        assignedLeads: 0,
-        assignedOpportunities: 0
+    // Fetch sellers from database
+    const sellers = await prisma.sellers.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null
       },
-      {
-        id: 'david-beitler-2025',
-        name: 'David Beitler',
-        email: 'david@winning-variant.com',
-        title: 'Co-Founder',
-        company: 'Winning Variant',
-        assignedCompanies: ['Match Group'],
-        assignedProspects: 4,
-        assignedLeads: 0,
-        assignedOpportunities: 1
+      orderBy: {
+        createdAt: 'desc'
       }
-    ];
+    });
     
-    console.log(`✅ [SELLERS API] Returning ${sellers.length} sellers`);
+    console.log(`✅ [SELLERS API] Returning ${sellers.length} sellers from database`);
     
-    return NextResponse.json({
-      success: true,
-      data: sellers,
+    return createSuccessResponse(sellers, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role,
       count: sellers.length
     });
     
   } catch (error) {
     console.error('❌ [SELLERS API] Error loading sellers:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to load sellers',
-        data: []
-      },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to load sellers',
+      'FETCH_SELLERS_ERROR',
+      500
     );
   }
 }
