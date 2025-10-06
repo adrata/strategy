@@ -65,7 +65,7 @@ export default function SellerCompaniesPage() {
         
         // Load seller data
         console.log('🔍 Loading seller with ID:', sellerId);
-        const sellerResponse = await fetch(`/api/data/unified?type=sellers&action=get&workspaceId=zeropoint-demo-2025&userId=demo-user-2025`);
+        const sellerResponse = await fetch(`/api/data/unified?type=sellers&action=get&workspaceId=01K1VBYX2YERMXBFJ60RC6J194&userId=demo-user-2025`);
         const sellerResult = await sellerResponse.json();
         
         console.log('🔍 Seller API response:', sellerResult);
@@ -79,15 +79,16 @@ export default function SellerCompaniesPage() {
             
             // Load companies data
             console.log('🔍 Loading companies for seller:', foundSeller.userId);
-            const companiesResponse = await fetch(`/api/data/unified?type=companies&action=get&workspaceId=zeropoint-demo-2025&userId=demo-user-2025`);
+            const companiesResponse = await fetch(`/api/data/unified?type=companies&action=get&workspaceId=01K1VBYX2YERMXBFJ60RC6J194&userId=demo-user-2025`);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
             
             if (companiesResult['success'] && companiesResult.data) {
-              // Filter companies assigned to this seller
+              // Filter companies assigned to this seller - try both assignedUserId and seller ID
               const sellerCompanies = companiesResult.data.filter((company: Company) => 
-                company['assignedUserId'] === foundSeller.userId
+                company['assignedUserId'] === foundSeller.assignedUserId || 
+                company['assignedUserId'] === foundSeller.id
               );
               console.log('🔍 Seller companies:', sellerCompanies);
               setCompanies(sellerCompanies);
