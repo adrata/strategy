@@ -677,6 +677,7 @@ export async function GET(request: NextRequest) {
               assignedUserId: true,
               workspaceId: true,
               tags: true,
+              metadata: true,
               createdAt: true,
               updatedAt: true
             }
@@ -731,23 +732,33 @@ export async function GET(request: NextRequest) {
           return true;
         });
         
-        sectionData = deduplicatedSellers.map((seller, index) => ({
-          id: seller.id,
-          rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
-          name: seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
-          firstName: seller.firstName,
-          lastName: seller.lastName,
-          email: seller.email || 'Unknown Email',
-          phone: seller.phone || 'Unknown Phone',
-          title: seller.title || seller.jobTitle || 'Unknown Title',
-          department: seller.department || 'Unknown Department',
-          company: seller.company || 'Unknown Company',
-          assignedUserId: seller.assignedUserId,
-          workspaceId: seller.workspaceId,
-          tags: seller.tags || [],
-          createdAt: seller.createdAt,
-          updatedAt: seller.updatedAt
-        }));
+        sectionData = deduplicatedSellers.map((seller, index) => {
+          // Extract status from metadata
+          const metadata = seller.metadata || {};
+          const status = metadata.status || 'offline';
+          const isOnline = status === 'online';
+          
+          return {
+            id: seller.id,
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
+            name: seller.name || seller.fullName || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller',
+            firstName: seller.firstName,
+            lastName: seller.lastName,
+            email: seller.email || 'Unknown Email',
+            phone: seller.phone || 'Unknown Phone',
+            title: seller.title || seller.jobTitle || 'Unknown Title',
+            department: seller.department || 'Unknown Department',
+            company: seller.company || 'Unknown Company',
+            assignedUserId: seller.assignedUserId,
+            workspaceId: seller.workspaceId,
+            tags: seller.tags || [],
+            status: status,
+            isOnline: isOnline,
+            metadata: metadata,
+            createdAt: seller.createdAt,
+            updatedAt: seller.updatedAt
+          };
+        });
         break;
         
       default:

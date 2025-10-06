@@ -79,8 +79,8 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
-    // 🚀 PERFORMANCE: Prevent rapid successive calls
-    if (loading) {
+    // 🚀 PERFORMANCE: Prevent rapid successive calls, but allow force refresh
+    if (loading && !forceRefresh) {
       console.log('⚡ [FAST COUNTS] Already loading - skipping duplicate call');
       return;
     }
@@ -166,11 +166,16 @@ export function useFastCounts(): UseFastCountsReturn {
         console.log('⏰ [FAST COUNTS] Loading timeout - resetting loading state');
         setLoading(false);
         setError('Request timeout');
-      }, 10000); // 10 second timeout
+        // Force a refresh after timeout
+        setTimeout(() => {
+          console.log('🔄 [FAST COUNTS] Auto-retrying after timeout');
+          fetchCounts(true);
+        }, 1000);
+      }, 5000); // 5 second timeout
 
       return () => clearTimeout(timeout);
     }
-  }, [loading]);
+  }, [loading, fetchCounts]);
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded state only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
