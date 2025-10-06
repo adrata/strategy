@@ -133,14 +133,14 @@ export function useFastCounts(): UseFastCountsReturn {
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, userId, authLoading, authUser, hasLoaded, loading]);
+  }, [workspaceId, userId, authLoading, authUser]);
 
   // Store the fetch function in the ref
   fetchCountsRef.current = fetchCounts;
 
   // 🚀 PERFORMANCE: Load counts when workspace/user is available
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && fetchCountsRef.current) {
+    if (workspaceId && userId && !authLoading && !hasLoaded && fetchCountsRef.current) {
       // Clear any existing cache on first load to ensure fresh data
       if (typeof window !== 'undefined') {
         // Clear localStorage cache
@@ -151,7 +151,7 @@ export function useFastCounts(): UseFastCountsReturn {
       console.log('🚀 [FAST COUNTS] Starting load for workspace:', workspaceId);
       fetchCountsRef.current();
     }
-  }, [workspaceId, userId, authLoading]);
+  }, [workspaceId, userId, authLoading, hasLoaded]);
 
 
   // 🚀 PERFORMANCE: Add timeout to prevent stuck loading state
@@ -190,8 +190,14 @@ export function useFastCounts(): UseFastCountsReturn {
       }); // Reset counts to prevent showing stale data
       setLastWorkspaceId(workspaceId);
       setLastUserId(userId);
+      
+      // Force a fetch for the new workspace
+      if (workspaceId && userId && !authLoading && fetchCountsRef.current) {
+        console.log('🚀 [FAST COUNTS] Triggering fetch for new workspace:', workspaceId);
+        fetchCountsRef.current(true);
+      }
     }
-  }, [workspaceId, userId, lastWorkspaceId, lastUserId]);
+  }, [workspaceId, userId, lastWorkspaceId, lastUserId, authLoading]);
 
   // 🧹 LISTEN FOR WORKSPACE SWITCH EVENTS: Clear cache when workspace switch event is fired
   useEffect(() => {
