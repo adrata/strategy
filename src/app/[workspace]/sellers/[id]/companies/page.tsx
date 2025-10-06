@@ -129,8 +129,31 @@ export default function SellerCompaniesPage() {
             // Load companies data using unified API (all companies assigned to Dan)
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
             console.log('🔍 Making companies API call...');
+            
+            // Clear any client-side cache by adding timestamp
+            const cacheBuster = Date.now();
+            console.log('🔍 Cache buster:', cacheBuster);
+            
+            // Clear localStorage cache for companies
+            try {
+              const keysToRemove = [];
+              for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('acquisition-os') || key.includes('companies'))) {
+                  keysToRemove.push(key);
+                }
+              }
+              keysToRemove.forEach(key => {
+                console.log('🔍 Clearing cache key:', key);
+                localStorage.removeItem(key);
+              });
+              console.log('🔍 Cleared', keysToRemove.length, 'cache entries');
+            } catch (error) {
+              console.warn('🔍 Failed to clear cache:', error);
+            }
+            
             // Pass Dan's user ID as sellerId to ensure we get all companies assigned to him
-            const apiUrl = `/api/data/unified?type=companies&action=get&sellerId=${foundSeller.assignedUserId}`;
+            const apiUrl = `/api/data/unified?type=companies&action=get&sellerId=${foundSeller.assignedUserId}&_t=${cacheBuster}`;
             console.log('🔍 Companies API URL:', apiUrl);
             const companiesResponse = await authFetch(apiUrl);
             console.log('🔍 Companies API response status:', companiesResponse.status);
