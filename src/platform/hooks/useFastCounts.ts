@@ -145,7 +145,7 @@ export function useFastCounts(): UseFastCountsReturn {
       console.log('🚀 [FAST COUNTS] Starting initial load for workspace:', workspaceId);
       fetchCounts();
     }
-  }, [workspaceId, userId, authLoading, hasLoaded]);
+  }, [workspaceId, userId, authLoading]);
 
   // 🚀 PERFORMANCE: Add timeout to prevent stuck loading state
   useEffect(() => {
@@ -215,7 +215,7 @@ export function useFastCounts(): UseFastCountsReturn {
         window.removeEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
       };
     }
-  }, [workspaceId, fetchCounts]);
+  }, [workspaceId]);
 
   return {
     counts,
