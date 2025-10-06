@@ -24,12 +24,7 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
   log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error']
 });
 
-// Test database connection on startup
-prisma.$connect().catch((error) => {
-  console.error('❌ [PRISMA] Database connection failed:', error);
-  console.error('❌ [PRISMA] DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
-  console.error('❌ [PRISMA] NODE_ENV:', process.env.NODE_ENV);
-});
+// Database connection will be tested when first query is made
 
 // Store in global variable to prevent multiple instances
 if (!globalThis.__prisma) {

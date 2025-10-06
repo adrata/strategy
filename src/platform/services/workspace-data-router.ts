@@ -8,11 +8,22 @@
 
 import { UnifiedAuthService } from "@/platform/auth-unified";
 import { storeSession } from "@/platform/auth/session";
-import { PrismaClient } from "@prisma/client";
-import { prisma } from '@/platform/database/prisma-client';
-import * as jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 import { parseWorkspaceFromUrl, getWorkspaceBySlug, generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";
+
+// Server-side only imports
+let prisma: any = null;
+let jwt: any = null;
+
+if (typeof window === 'undefined') {
+  // Only import on server-side
+  const { PrismaClient } = require("@prisma/client");
+  const { prisma: prismaClient } = require('@/platform/database/prisma-client');
+  const jwtLib = require("jsonwebtoken");
+  
+  prisma = prismaClient;
+  jwt = jwtLib;
+}
 
 export interface WorkspaceContext {
   workspaceId: string;
@@ -312,6 +323,12 @@ export class WorkspaceDataRouter {
    */
   private static async getServerSideContext(request: NextRequest): Promise<WorkspaceContext> {
     try {
+      // Check if we're on server-side and have the required modules
+      if (typeof window !== 'undefined' || !prisma || !jwt) {
+        console.log("🔍 WorkspaceDataRouter: Not server-side or missing modules, returning demo fallback");
+        return this.getDemoFallback();
+      }
+      
       // Try to get JWT token from cookies or Authorization header
       const cookieToken = request.cookies.get("auth-token")?.value || 
                          request.cookies.get("auth_token")?.value ||
