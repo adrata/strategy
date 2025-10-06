@@ -25,24 +25,18 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
         
         console.log('Loading companies for seller:', { record, workspaceId, userId, assignedUserId });
         
-        // Fetch companies directly from the unified API
-        const response = await authFetch(`/api/data/unified?type=companies&action=get`);
+        // Fetch companies directly from the unified API with sellerId parameter
+        const sellerId = record?.id || record?.userId;
+        const response = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${sellerId}`);
         const result = await response.json();
         
         if (result['success'] && result.data) {
           const companies = result.data;
           
-          // Ensure companies is an array before filtering
+          // Ensure companies is an array - API already filters by sellerId
           if (Array.isArray(companies)) {
-            // Filter companies assigned to this seller - try all possible ID fields
-            const sellerCompanies = companies.filter((company: any) => 
-              company['assignedUserId'] === record?.assignedUserId || 
-              company['assignedUserId'] === record?.userId || 
-              company['assignedUserId'] === record?.id
-            );
-            
-            setAssociatedCompanies(sellerCompanies);
-            console.log('Associated companies for seller:', sellerCompanies);
+            setAssociatedCompanies(companies);
+            console.log('Associated companies for seller:', companies);
           } else {
             console.error('Companies data is not an array:', companies);
             setAssociatedCompanies([]);
