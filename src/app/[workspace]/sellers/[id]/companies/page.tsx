@@ -406,16 +406,12 @@ export default function SellerCompaniesPage() {
                           <div className="text-xs text-gray-500">Companies</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">40</div>
-                          <div className="text-xs text-gray-500">Leads</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">35</div>
-                          <div className="text-xs text-gray-500">Prospects</div>
-                        </div>
-                        <div className="text-center">
                           <div className="text-lg font-semibold text-gray-900">25</div>
                           <div className="text-xs text-gray-500">Opportunities</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-semibold text-gray-900">12</div>
+                          <div className="text-xs text-gray-500">Closed Won</div>
                         </div>
                       </div>
                     </div>
