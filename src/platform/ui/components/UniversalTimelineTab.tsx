@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { formatDistanceToNow, format } from 'date-fns';
+import { 
+  EnvelopeIcon, 
+  PhoneIcon, 
+  CalendarIcon, 
+  DocumentTextIcon, 
+  UserIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 
 interface TimelineEvent {
   id: string;
@@ -171,7 +180,6 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
       
       if (entityData?.createdAt) {
         const entityName = entityType === 'account' ? 'company' : 
-                          entityType === 'people' ? 'person' : 
                           entityType.slice(0, -1);
         const creationEvent = {
           id: 'record_created',
@@ -269,29 +277,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     );
   };
 
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'record_created': return '●';
-      case 'activity': return '●';
-      case 'email': return '●';
-      case 'note': return '●';
-      case 'status_change': return '●';
-      case 'assignment_change': return '●';
-      default: return '●';
-    }
-  };
 
-  const getEventColor = (type: string) => {
-    switch (type) {
-      case 'record_created': return 'bg-blue-500';
-      case 'activity': return 'bg-green-500';
-      case 'email': return 'bg-purple-500';
-      case 'note': return 'bg-yellow-500';
-      case 'status_change': return 'bg-orange-500';
-      case 'assignment_change': return 'bg-gray-500';
-      default: return 'bg-gray-400';
-    }
-  };
 
   const formatEventTitle = (title: string) => {
     // Capitalize first letter of each word
@@ -312,6 +298,56 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     return user;
   };
 
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'email':
+      case 'email_conversation':
+        return <EnvelopeIcon className="w-4 h-4" />;
+      case 'call':
+      case 'phone_call':
+        return <PhoneIcon className="w-4 h-4" />;
+      case 'meeting':
+      case 'appointment':
+        return <CalendarIcon className="w-4 h-4" />;
+      case 'note':
+        return <DocumentTextIcon className="w-4 h-4" />;
+      case 'record_created':
+      case 'created':
+        return <UserIcon className="w-4 h-4" />;
+      case 'status_change':
+        return <CheckCircleIcon className="w-4 h-4" />;
+      case 'assignment_change':
+        return <ExclamationTriangleIcon className="w-4 h-4" />;
+      default:
+        return <DocumentTextIcon className="w-4 h-4" />;
+    }
+  };
+
+  const getEventColor = (type: string) => {
+    switch (type) {
+      case 'email':
+      case 'email_conversation':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'call':
+      case 'phone_call':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'meeting':
+      case 'appointment':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'note':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'record_created':
+      case 'created':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'status_change':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'assignment_change':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
   const renderUnifiedTimeline = () => (
     <div className="space-y-4">
       {timelineEvents['length'] === 0 ? (
@@ -322,7 +358,9 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
         timelineEvents.map((event, index) => (
           <div key={event.id} className="flex items-start gap-4">
             <div className="flex flex-col items-center pt-1">
-              <div className="w-2 h-2 rounded bg-white border border-gray-300" />
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${getEventColor(event.type)}`}>
+                {getEventIcon(event.type)}
+              </div>
               {index < timelineEvents.length - 1 && (
                 <div className="w-px h-8 bg-gray-200 mt-2" />
               )}
