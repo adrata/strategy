@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 // GET: Retrieve companies (matches Tauri get_companies command)
 export async function GET(request: NextRequest) {
+  console.log('🏢 [COMPANIES API] GET request received:', request.url);
   const startTime = Date.now();
   try {
     // 1. Authenticate and authorize user
