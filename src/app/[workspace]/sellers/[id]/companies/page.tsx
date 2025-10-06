@@ -11,7 +11,7 @@ import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/Pipe
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { FullPanelSkeleton } from "@/platform/ui/components/skeletons/FullPanelSkeleton";
-import { generateSlug } from "@/platform/utils/url-utils";
+import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
 import { authFetch } from "@/platform/auth-fetch";
 
 interface Seller {
@@ -42,7 +42,8 @@ interface Company {
 export default function SellerCompaniesPage() {
   const params = useParams();
   const router = useRouter();
-  const sellerId = params['id'] as string;
+  const sellerSlug = params['id'] as string;
+  const sellerId = extractIdFromSlug(sellerSlug);
   const workspace = params['workspace'] as string;
   
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -62,7 +63,8 @@ export default function SellerCompaniesPage() {
       try {
         setLoading(true);
         
-        console.log('🔍 Loading seller with ID:', sellerId);
+        console.log('🔍 Loading seller with slug:', sellerSlug);
+        console.log('🔍 Extracted seller ID:', sellerId);
         console.log('🔍 Workspace:', workspace);
         
         // Load seller data using the unified API
