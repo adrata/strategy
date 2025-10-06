@@ -1913,8 +1913,8 @@ async function getMultipleRecords(
         personId: true,
         person: true
       };
-    } else {
-      // Default for leads, prospects, etc.
+    } else if (type !== 'sellers') {
+      // Default for leads, prospects, etc. (exclude sellers)
       selectFields = {
         ...selectFields,
         firstName: true,
