@@ -102,16 +102,7 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Only log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log("🔐 [AUTH API] Sign-in request received");
-      console.log("🔐 [AUTH API] Environment check:", {
-        NODE_ENV: process['env']['NODE_ENV'],
-        DATABASE_URL: process['env']['DATABASE_URL'] ? "SET" : "NOT SET",
-        POSTGRES_URL: process['env']['POSTGRES_URL'] ? "SET" : "NOT SET",
-        hasPrisma: !!prisma
-      });
-    }
+    // Debug logs removed for production
 
     // SECURITY: Check for URL-based credential attempts
     const url = new URL(request.url);
@@ -152,10 +143,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const { email, password, platform, deviceId, preferredWorkspaceId } = credentials;
 
-    // Only log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log("🔐 [AUTH API] Authenticating user:", email);
-    }
+    // Debug logs removed for production
 
     // Database connection is handled by singleton client
 
@@ -163,12 +151,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const isEmail = email.includes("@");
 
     // 🚀 PERFORMANCE: Check cache first, then database
-    console.log("🔐 [AUTH API] Attempting user lookup for:", email);
-    
     let user = await getCachedUser(email);
     
     if (!user) {
-      console.log("🔍 [AUTH API] Cache miss, querying database for user:", email);
       
       // Build the OR conditions based on input type
       const orConditions = [];
@@ -179,12 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
       orConditions.push({ name: email }); // Fallback: name login
       
-      console.log("🔍 [AUTH API] User lookup conditions:", {
-        email,
-        isEmail,
-        orConditions,
-        searchType: isEmail ? "email" : "username"
-      });
+      // User lookup conditions
       
       user = await prisma.users.findFirst({
         where: {
@@ -209,16 +189,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
     
-    console.log("🔍 [AUTH API] User lookup result:", {
-      found: !!user,
-      userId: user?.id,
-      userEmail: user?.email,
-      username: user?.username,
-      userName: user?.name
-    });
+    // User lookup result
 
     if (!user) {
-      console.log("❌ [AUTH API] User not found:", email);
+      // User not found
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 },
@@ -226,7 +200,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 🚀 PERFORMANCE: Get workspace memberships first, then batch fetch workspace details
-    console.log("🔐 [AUTH API] Querying workspace memberships for user:", user.id);
+    // Querying workspace memberships for user
     const workspaceMemberships = await prisma.workspace_users.findMany({
       where: { 
         userId: user.id,
@@ -263,7 +237,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }));
 
     if (!user) {
-      console.log("❌ [AUTH API] User not found:", email);
+      // User not found
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
         { status: 401 },
@@ -295,25 +269,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const validPasswords = passwordMap.get(userEmail) || new Set(["password"]);
 
-      // DEBUG: Log password validation details for dano and zeropoint demo
-      if (user['email'] === "dano@retail-products.com" || user['email'] === "demo@zeropoint.com") {
-        console.log("🔍 [AUTH API] DEBUG - password validation:", {
-          userEmail: user.email,
-          providedPassword: password,
-          validPasswords: Array.from(validPasswords),
-          passwordLength: password?.length,
-          passwordIncludes: validPasswords.has(password.toLowerCase())
-        });
-      }
+      // Password validation for demo users
 
       // 🚀 PERFORMANCE: O(1) password lookup with Set
       isValidPassword = validPasswords.has(password.toLowerCase());
 
       // Also check bcrypt password if hardcoded passwords don't match
       if (!isValidPassword && user.password) {
-        console.log("🔐 [AUTH API] Hardcoded passwords failed, checking bcrypt for:", user.email);
+        // Hardcoded passwords failed, checking bcrypt
         isValidPassword = await bcrypt.compare(password, user.password);
-        console.log("🔐 [AUTH API] Bcrypt result:", isValidPassword);
+        // Bcrypt result
       }
     } else if (user.password) {
       // Regular password check
@@ -503,7 +468,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     
     return response;
   } catch (error) {
-    console.error("❌ [AUTH API] Sign-in error:", error);
+    // Sign-in error
     
     // Provide more detailed error information for debugging
     let errorMessage = "Authentication failed";
