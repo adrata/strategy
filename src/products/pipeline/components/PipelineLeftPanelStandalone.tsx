@@ -121,11 +121,10 @@ function PipelineSections({
   // Use actual counts from API instead of limited array lengths
   const actualCounts = acquisitionData?.acquireData?.counts || {};
   
-  // TODO: Remove demo concept - treat demo as regular workspace
-  // const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
-  //                   (workspaceId && workspaceId.includes('demo')) ||
-  //                   (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
-  const isDemoMode = false; // Disabled - demo is now a regular workspace
+  // Check if we're in demo workspace (by workspace name or URL)
+  const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
+                    (workspaceId && workspaceId.includes('demo')) ||
+                    (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
   console.log('🔍 [LEFT PANEL] Demo mode check:', { 
     isDemoMode, 
     workspaceId,
@@ -649,7 +648,7 @@ function PipelineSections({
         if (isWeekend) {
           return "Weekend";
         }
-        return isDemoMode ? 50 : (productionCounts.speedrun || 0);
+        return productionCounts.speedrun || 0;
       })(),
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
@@ -708,7 +707,7 @@ function PipelineSections({
       description: "Individual entities",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 19234 : productionCounts.people),
+      ) : productionCounts.people,
       visible: true
     },
     {
@@ -717,7 +716,7 @@ function PipelineSections({
       description: "Business entities",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 2000 : productionCounts.companies),
+      ) : productionCounts.companies,
       visible: true
     },
     // SELLERS: Show only for demo workspace
@@ -727,7 +726,7 @@ function PipelineSections({
       description: "Sales Team",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (isDemoMode ? 20 : sellersData.count), // Use actual count from data
+      ) : sellersData.count, // Use actual count from data
       visible: isDemoMode // Show only for demo workspace
     },
     // REVENUE PIPELINE COVERAGE: Show only for demo workspace
