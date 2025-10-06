@@ -303,7 +303,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    console.log("✅ [AUTH API] Authentication successful for:", email);
+    // Authentication successful
 
     // Determine the user's active workspace - use their last active workspace or fallback to first
     // Priority: 1) Database activeWorkspaceId, 2) Preferred workspace from client, 3) First workspace
@@ -313,23 +313,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const hasAccessToActiveWorkspace = workspaces.some(w => w.workspace?.id === userActiveWorkspaceId);
     const finalActiveWorkspaceId = hasAccessToActiveWorkspace ? userActiveWorkspaceId : (workspaces[0]?.workspace?.id || "adrata");
     
-    console.log("🎯 [AUTH API] Workspace selection:", {
-      userActiveWorkspaceId: user.activeWorkspaceId,
-      preferredWorkspaceId,
-      firstWorkspaceId: workspaces[0]?.workspace?.id,
-      hasAccessToActive: hasAccessToActiveWorkspace,
-      finalActiveWorkspaceId,
-      availableWorkspaces: workspaces.map(w => ({ id: w.workspace?.id, name: w.workspace?.name }))
-    });
+    // Workspace selection
 
     // 🆕 CRITICAL FIX: Update user's activeWorkspaceId in database if it's not set or invalid
     if (!user.activeWorkspaceId || !hasAccessToActiveWorkspace) {
-      console.log("🔄 [AUTH API] Updating user's activeWorkspaceId in database:", finalActiveWorkspaceId);
+      // Updating user's activeWorkspaceId in database
       await prisma.users.update({
         where: { id: user.id },
         data: { activeWorkspaceId: finalActiveWorkspaceId }
       });
-      console.log("✅ [AUTH API] User's activeWorkspaceId updated successfully");
+      // User's activeWorkspaceId updated successfully
     }
 
     // Generate JWT token
@@ -366,7 +359,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       })),
     };
 
-    console.log("✅ [AUTH API] Returning successful authentication response");
+    // Returning successful authentication response
 
     // Get platform routing information with workspace-aware URLs
     let platformRoute;
@@ -394,7 +387,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           app: "pipeline",
           section: "speedrun"
         };
-        console.log("🎯 [AUTH API] ZeroPoint demo routing:", platformRoute.path);
+        // ZeroPoint demo routing
       }
       // Make the route workspace-aware for non-demo users
       else if (!isDemo && userData.workspaces.length > 0) {
@@ -402,14 +395,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const activeWorkspace = userData.workspaces.find(w => w['id'] === userData.activeWorkspaceId) || userData['workspaces'][0];
         const workspaceSlug = generateWorkspaceSlug(activeWorkspace.name);
         
-        console.log(`🎯 [AUTH API] Workspace routing debug:`, {
-          userEmail: user.email,
-          workspaces: userData.workspaces.map(w => ({ id: w.id, name: w.name })),
-          activeWorkspaceId: userData.activeWorkspaceId,
-          activeWorkspace: { id: activeWorkspace.id, name: activeWorkspace.name },
-          workspaceSlug,
-          originalRoute: platformRoute.path
-        });
+        // Workspace routing debug
         
         // Generate native workspace-specific URLs (not redirects)
         if (platformRoute.path.startsWith('/pipeline')) {
@@ -430,13 +416,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           platformRoute['path'] = `/${workspaceSlug}/speedrun`;
         }
         
-        console.log("🎯 [AUTH API] Workspace-aware route determined:", platformRoute.path, "for workspace:", activeWorkspace.name);
+        // Workspace-aware route determined
       } else {
-        console.log("🎯 [AUTH API] Platform route determined:", platformRoute.path, "isDemo:", isDemo, "workspaces:", userData.workspaces.length);
+        // Platform route determined
       }
       
     } catch (error) {
-      console.error("❌ [AUTH API] Platform routing error:", error);
+      // Platform routing error
       platformRoute = PlatformAccessRouter.getDemoRoute(); // Fallback
     }
 
