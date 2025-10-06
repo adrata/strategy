@@ -2187,3 +2187,27 @@ model marketIntelligence {
   @@index([relevance])
   @@index([isActive])
 }
+
+model sellers {
+  id            String    @id @default(ulid())
+  workspaceId   String    @db.VarChar(30)
+  name          String    @db.VarChar(255)
+  firstName     String?   @db.VarChar(100)
+  lastName      String?   @db.VarChar(100)
+  email         String?   @db.VarChar(255)
+  phone         String?   @db.VarChar(50)
+  title         String?   @db.VarChar(255)
+  department    String?   @db.VarChar(100)
+  company       String?   @db.VarChar(255)
+  assignedUserId String?  @db.VarChar(30)
+  tags          String[]  @default([])
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  deletedAt     DateTime?
+
+  @@index([workspaceId])
+  @@index([assignedUserId])
+  @@index([deletedAt])
+  @@index([workspaceId, deletedAt])
+}
