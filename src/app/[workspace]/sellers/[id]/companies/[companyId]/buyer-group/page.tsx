@@ -52,29 +52,79 @@ export default function BuyerGroupPage() {
   const getDirectionalIntelligence = (buyerRole: string, title: string, department: string) => {
     const strategies = {
       'Decision Maker': [
-        `Focus on ROI and business impact. Present case studies from similar companies. Schedule executive-level meetings.`,
-        `Emphasize security compliance and risk reduction. Highlight cost savings and operational efficiency gains.`,
-        `Present comprehensive security solution with clear implementation roadmap and success metrics.`
+        `Focus on ROI and business impact when approaching this decision maker. Present comprehensive case studies from similar companies in their industry, highlighting measurable outcomes and success metrics. Schedule executive-level meetings to discuss strategic alignment and long-term value proposition.
+
+Emphasize security compliance and risk reduction as primary drivers. Highlight specific cost savings and operational efficiency gains that directly impact their bottom line. Present detailed implementation roadmaps with clear milestones and success criteria.
+
+Address their concerns about budget allocation and resource requirements. Provide detailed financial analysis showing payback periods and total cost of ownership. Offer flexible implementation options and phased rollout strategies to minimize risk.
+
+Build relationships with other C-level executives who can provide references and endorsements. Leverage industry connections and thought leadership to establish credibility and trust. Prepare for detailed technical and business discussions with supporting documentation.`,
+        
+        `Develop a comprehensive approach that addresses both technical and business requirements. Present detailed security assessments and compliance frameworks that align with their industry standards. Schedule multiple touchpoints to build relationship and understanding.
+
+Focus on demonstrating clear value proposition through pilot programs and proof-of-concept implementations. Provide detailed ROI calculations and business case documentation. Engage with their procurement and legal teams early in the process.
+
+Leverage industry expertise and thought leadership to position yourself as a trusted advisor. Provide insights into market trends and competitive landscape. Offer strategic consulting beyond just product implementation.`
       ],
       'Champion': [
-        `Build relationship through technical discussions. Provide detailed product demos and pilot opportunities.`,
-        `Leverage their influence to schedule meetings with decision makers. Offer co-marketing opportunities.`,
-        `Focus on technical benefits and integration capabilities. Provide technical documentation and support.`
+        `Build strong technical relationship through in-depth product discussions and demonstrations. Provide comprehensive technical documentation, integration guides, and API specifications. Offer hands-on pilot opportunities and sandbox environments for testing.
+
+Leverage their technical expertise and influence to schedule meetings with decision makers and other stakeholders. Provide them with compelling talking points and presentation materials to advocate internally. Offer co-marketing opportunities and technical partnership benefits.
+
+Focus on technical benefits, integration capabilities, and scalability features that align with their technical roadmap. Provide detailed technical support and training resources. Engage in technical forums and communities where they participate.
+
+Support their internal advocacy efforts with technical validation and proof points. Provide case studies from similar technical implementations. Offer technical consulting and best practices sharing beyond the product relationship.`,
+        
+        `Establish credibility through technical expertise and industry knowledge. Provide valuable technical insights and thought leadership content. Engage in technical discussions about architecture, security, and implementation strategies.
+
+Build relationship through collaborative problem-solving and technical consultation. Offer to participate in their technical planning and architecture discussions. Provide technical resources and documentation that help them succeed in their role.
+
+Create opportunities for them to showcase their technical expertise and influence within their organization. Provide technical content they can share internally. Offer technical training and certification opportunities for their team.`
       ],
       'Stakeholder': [
-        `Understand their specific needs and pain points. Provide targeted solutions for their department.`,
-        `Build consensus by addressing their concerns and showing how the solution benefits their team.`,
-        `Engage through department-specific use cases and success stories from similar organizations.`
+        `Understand their specific departmental needs and pain points through detailed discovery conversations. Provide targeted solutions that address their unique requirements and challenges. Demonstrate how the solution directly benefits their team and department.
+
+Build consensus by addressing their concerns and objections proactively. Show how the solution integrates with their existing workflows and processes. Provide department-specific use cases and success stories from similar organizations.
+
+Engage through department-specific value propositions and ROI calculations. Provide detailed implementation plans that consider their departmental constraints and requirements. Offer training and support tailored to their team's needs and skill levels.
+
+Create internal champions by providing them with tools and resources to advocate for the solution. Offer department-specific pilot programs and proof-of-concept implementations. Provide ongoing support and consultation throughout the evaluation process.`,
+        
+        `Develop department-specific value propositions that address their unique challenges and opportunities. Provide detailed implementation plans that consider their team structure and workflow requirements. Offer customized training and support programs.
+
+Build relationships with other department stakeholders to create a coalition of support. Provide cross-departmental use cases and integration scenarios. Offer collaborative planning sessions to ensure successful implementation.
+
+Address their specific concerns about change management and user adoption. Provide detailed training plans and support resources. Offer ongoing consultation and support throughout the implementation process.`
       ],
       'Blocker': [
-        `Address their specific concerns directly. Provide additional information and reassurance.`,
-        `Identify their objections and develop targeted responses. Consider involving a third-party advocate.`,
-        `Focus on risk mitigation and compliance. Provide detailed security and compliance documentation.`
+        `Address their specific concerns and objections directly through detailed discussions and documentation. Provide comprehensive information and reassurance about security, compliance, and risk mitigation. Develop targeted responses to their specific objections and concerns.
+
+Identify the root causes of their resistance and develop customized approaches to address each concern. Consider involving third-party advocates, industry experts, or existing customers who can provide credible references and endorsements.
+
+Focus on risk mitigation and compliance by providing detailed security documentation, compliance certifications, and audit reports. Offer additional security measures and safeguards to address their specific concerns. Provide detailed implementation plans that address their risk concerns.
+
+Build trust through transparency and open communication about potential challenges and mitigation strategies. Offer flexible terms and conditions that address their specific concerns. Provide ongoing support and consultation to ensure successful implementation.`,
+        
+        `Develop a comprehensive approach to address their specific concerns and objections. Provide detailed documentation and evidence to counter their resistance. Engage in open dialogue to understand and address their underlying concerns.
+
+Leverage industry expertise and third-party validation to address their concerns. Provide detailed risk assessments and mitigation strategies. Offer additional safeguards and security measures to address their specific concerns.
+
+Build trust through consistent communication and follow-through on commitments. Provide detailed implementation plans that address their specific concerns. Offer ongoing support and consultation to ensure successful resolution of their concerns.`
       ],
       'Opener': [
-        `Build initial relationship through educational content and industry insights.`,
-        `Provide valuable resources and thought leadership to establish credibility.`,
-        `Focus on understanding their current challenges and offering preliminary solutions.`
+        `Build initial relationship through valuable educational content and industry insights. Provide thought leadership materials, whitepapers, and case studies that demonstrate expertise and value. Focus on understanding their current challenges and offering preliminary solutions.
+
+Establish credibility through industry knowledge and expertise. Provide valuable resources and insights that help them in their role. Engage in educational discussions about industry trends and best practices.
+
+Focus on relationship building and trust establishment before introducing product discussions. Provide valuable consultation and advice that demonstrates expertise. Offer to participate in their planning and strategy discussions.
+
+Create opportunities for ongoing engagement through valuable content and insights. Provide industry analysis and competitive intelligence. Offer to participate in their professional development and learning opportunities.`,
+        
+        `Develop a long-term relationship strategy focused on value creation and trust building. Provide ongoing educational content and industry insights. Offer consultation and advice that helps them succeed in their role.
+
+Build credibility through consistent value delivery and expertise demonstration. Provide resources and tools that help them in their daily work. Engage in collaborative problem-solving and strategic discussions.
+
+Create opportunities for ongoing engagement and relationship development. Provide valuable content and insights that demonstrate expertise. Offer to participate in their professional development and learning opportunities.`
       ]
     };
 
@@ -605,10 +655,10 @@ export default function BuyerGroupPage() {
                                 onClick={() => handleMemberClick(member)}
                                 className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
                               >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3 flex-1">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                      <span className="text-white font-semibold text-sm">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-start gap-3 flex-1">
+                                    <div className="w-10 h-10 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
+                                      <span className="text-gray-700 font-semibold text-sm">
                                         {member.name.split(' ').map(n => n[0]).join('')}
                                       </span>
                                     </div>
@@ -640,9 +690,9 @@ export default function BuyerGroupPage() {
                                         )}
                                       </div>
                                       {member.directionalIntelligence && (
-                                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                          <div className="text-xs font-medium text-blue-800 mb-1">Directional Intelligence</div>
-                                          <div className="text-sm text-blue-700">
+                                        <div className="mt-2">
+                                          <div className="text-xs font-medium text-gray-600 mb-1">Directional Intelligence</div>
+                                          <div className="text-sm text-gray-700">
                                             {member.directionalIntelligence}
                                           </div>
                                         </div>
