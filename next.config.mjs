@@ -60,6 +60,10 @@ const buildConfig = {
     // SCALING: Optimize bundle loading
     optimizeServerReact: true,
     
+    // CSS optimization settings
+    optimizeCss: true,
+    cssChunking: 'strict',
+    
     // SCALING: Enable partial prerendering for hybrid performance (disabled for stable Next.js)
     // ppr: 'incremental', // Requires Next.js canary
   },
@@ -174,6 +178,10 @@ const buildConfig = {
     if (!dev) {
       config.optimization = {
         ...config.optimization,
+        // CSS optimization to prevent preload warnings
+        removeAvailableModules: true,
+        removeEmptyChunks: true,
+        mergeDuplicateChunks: true,
         // SCALING: Intelligent code splitting for high-traffic apps
         splitChunks: {
           ...config.optimization.splitChunks,
