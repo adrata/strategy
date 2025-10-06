@@ -675,10 +675,18 @@ export function PipelineHeader({
       return metricItems;
     }
     
-    // Special handling for Sellers section - Simple metrics like Companies/People
+    // Special handling for Sellers section - Show Total count like other sections
     if (section === 'sellers') {
-      // Use the same simple format as Companies and People
-      return metricItems; // This will use the default metrics (Hours Left, Today, This Week, All Time)
+      // Use recordCount for sellers section
+      const totalCount = recordCount || 0;
+      
+      metricItems.push({
+        label: 'Total',
+        value: totalCount.toString(),
+        color: 'text-gray-900'
+      });
+      
+      return metricItems;
     }
     
     // Default metrics for other sections
