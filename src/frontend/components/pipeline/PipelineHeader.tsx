@@ -675,29 +675,10 @@ export function PipelineHeader({
       return metricItems;
     }
     
-    // Special handling for Sellers section - Monaco-style metrics
+    // Special handling for Sellers section - Simple metrics like Companies/People
     if (section === 'sellers') {
-      metricItems.push({
-        label: 'Qualification Score',
-        value: '83%',
-        color: 'text-gray-900'
-      });
-      metricItems.push({
-        label: 'People',
-        value: '12',
-        color: 'text-gray-900'
-      });
-      metricItems.push({
-        label: 'Daily Target',
-        value: '200/day',
-        color: 'text-gray-900'
-      });
-      metricItems.push({
-        label: 'Weekly',
-        value: '150/400',
-        color: 'text-gray-900'
-      });
-      return metricItems;
+      // Use the same simple format as Companies and People
+      return metricItems; // This will use the default metrics (Hours Left, Today, This Week, All Time)
     }
     
     // Default metrics for other sections
@@ -935,7 +916,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                          className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors flex items-center gap-2"
                         >
                           {sectionInfo.actionButton}
                         </button>
