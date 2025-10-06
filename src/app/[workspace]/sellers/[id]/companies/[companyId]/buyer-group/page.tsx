@@ -518,7 +518,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     <div className="border-b border-gray-200 px-6 py-3 bg-white">
                       <nav className="flex items-center space-x-2 text-sm">
                         <button
-                          onClick={() => router.push('/sellers')}
+                          onClick={() => router.push(`/${workspace}/sellers`)}
                           className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -530,7 +530,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                         <button
-                          onClick={() => router.push(`/sellers/${sellerId}/companies`)}
+                          onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
                           className="text-gray-500 hover:text-gray-700 transition-colors"
                         >
                           Companies
