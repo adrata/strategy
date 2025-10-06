@@ -916,7 +916,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors flex items-center gap-2"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
                         >
                           {sectionInfo.actionButton}
                         </button>
