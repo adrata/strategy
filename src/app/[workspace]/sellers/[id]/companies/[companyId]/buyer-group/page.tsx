@@ -55,18 +55,18 @@ export default function BuyerGroupPage() {
 
   // Extract company ID from slug
   const getCompanyIdFromSlug = (slug: string) => {
+    console.log('🔍 [BUYER GROUP] Extracting company ID from slug:', slug);
+    
+    // If it's already a valid ID format, return as is
     if (slug.length === 26 && (slug.startsWith('01') || slug.startsWith('c'))) {
+      console.log('🔍 [BUYER GROUP] Slug is already a valid ID:', slug);
       return slug;
-    } else {
-      const parts = slug.split('-');
-      if (parts.length >= 2) {
-        const potentialId = parts[parts.length - 1];
-        if (potentialId.length === 26 && (potentialId.startsWith('01') || potentialId.startsWith('c'))) {
-          return potentialId;
-        }
-      }
     }
-    return slug;
+    
+    // For URL slugs like "auth0-cybersecurity-company-1805", we need to find the actual company
+    // by searching for companies with similar names
+    console.log('🔍 [BUYER GROUP] Slug needs to be resolved to actual company ID');
+    return slug; // We'll handle the lookup in the useEffect
   };
 
   useEffect(() => {
@@ -83,19 +83,42 @@ export default function BuyerGroupPage() {
         const companyResult = await companyResponse.json();
 
         if (companyResult['success'] && companyResult.data) {
-          const foundCompany = companyResult.data.find((c: CompanyData) => c.id === actualCompanyId);
+          // First try to find by exact ID match
+          let foundCompany = companyResult.data.find((c: CompanyData) => c.id === actualCompanyId);
+          
+          // If not found by ID, try to find by name (for URL slugs like "auth0-cybersecurity-company-1805")
+          if (!foundCompany) {
+            console.log('🔍 [BUYER GROUP] Company not found by ID, searching by name...');
+            
+            // Extract company name from slug (e.g., "auth0" from "auth0-cybersecurity-company-1805")
+            const companyNameFromSlug = actualCompanyId.split('-')[0];
+            console.log('🔍 [BUYER GROUP] Looking for company with name containing:', companyNameFromSlug);
+            
+            foundCompany = companyResult.data.find((c: CompanyData) => 
+              c.name.toLowerCase().includes(companyNameFromSlug.toLowerCase()) ||
+              companyNameFromSlug.toLowerCase().includes(c.name.toLowerCase())
+            );
+            
+            if (foundCompany) {
+              console.log('🔍 [BUYER GROUP] Found company by name:', foundCompany.name);
+            }
+          }
+          
           if (foundCompany) {
+            console.log('🔍 [BUYER GROUP] Using found company:', foundCompany.name);
             setCompany(foundCompany);
           } else {
-            // Fallback: create mock company data
+            console.log('🔍 [BUYER GROUP] Company not found, using fallback data');
+            // Fallback: create mock company data based on the slug
+            const companyNameFromSlug = actualCompanyId.split('-')[0];
             const mockCompany: CompanyData = {
               id: actualCompanyId,
-              name: "Kaspersky",
+              name: companyNameFromSlug.charAt(0).toUpperCase() + companyNameFromSlug.slice(1),
               industry: "Cybersecurity",
               size: "3,900 employees",
-              location: "Moscow, Russia",
-              website: "kaspersky.com",
-              description: "Leading cybersecurity company",
+              location: "San Francisco, CA",
+              website: `${companyNameFromSlug.toLowerCase()}.com`,
+              description: `Leading ${companyNameFromSlug} company`,
               createdAt: new Date().toISOString(),
               notes: "Demo company for buyer group analysis"
             };
@@ -140,7 +163,7 @@ export default function BuyerGroupPage() {
                 buyerRole: 'Decision Maker',
                 influence: 95,
                 decisionPower: 90,
-                company: company?.name || 'Kaspersky',
+                company: company?.name || 'Auth0',
                 industry: 'Cybersecurity'
               },
               {
@@ -152,7 +175,7 @@ export default function BuyerGroupPage() {
                 buyerRole: 'Champion',
                 influence: 85,
                 decisionPower: 70,
-                company: company?.name || 'Kaspersky',
+                company: company?.name || 'Auth0',
                 industry: 'Cybersecurity'
               },
               {
@@ -164,7 +187,7 @@ export default function BuyerGroupPage() {
                 buyerRole: 'Stakeholder',
                 influence: 75,
                 decisionPower: 60,
-                company: company?.name || 'Kaspersky',
+                company: company?.name || 'Auth0',
                 industry: 'Cybersecurity'
               }
             ];
