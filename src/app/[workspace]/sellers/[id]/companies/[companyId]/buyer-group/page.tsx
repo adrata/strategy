@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
@@ -45,9 +45,11 @@ interface BuyerGroupMember {
 export default function BuyerGroupPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUnifiedAuth();
   const sellerId = params['id'] as string;
   const companyId = params['companyId'] as string;
+  const selectedPersonSlug = searchParams.get('person');
 
   const getDirectionalIntelligence = (buyerRole: string, title: string, department: string) => {
     const strategies = {
@@ -134,6 +136,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
   
   const [company, setCompany] = useState<CompanyData | null>(null);
   const [buyerGroupMembers, setBuyerGroupMembers] = useState<BuyerGroupMember[]>([]);
+  const [selectedPerson, setSelectedPerson] = useState<BuyerGroupMember | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -380,6 +383,19 @@ Create opportunities for ongoing engagement and relationship development. Provid
     }
   }, [companyId, user?.activeWorkspaceId, user?.id]);
 
+  // Handle selected person from URL parameter
+  useEffect(() => {
+    if (selectedPersonSlug && buyerGroupMembers.length > 0) {
+      const foundPerson = buyerGroupMembers.find(member => {
+        const memberSlug = generateSlug(member.name, member.id);
+        return memberSlug === selectedPersonSlug;
+      });
+      setSelectedPerson(foundPerson || null);
+    } else {
+      setSelectedPerson(null);
+    }
+  }, [selectedPersonSlug, buyerGroupMembers]);
+
   // Helper functions for buyer roles and influence
   const getBuyerRoleForIndex = (index: number): string => {
     const roles = ['Decision Maker', 'Decision Maker', 'Champion', 'Champion', 'Stakeholder', 'Stakeholder', 'Stakeholder', 'Stakeholder', 'Blocker', 'Blocker', 'Opener', 'Opener'];
@@ -429,9 +445,11 @@ Create opportunities for ongoing engagement and relationship development. Provid
     console.log('Member clicked:', member);
     
     try {
-      // Generate person slug and navigate to buyer group person detail page
+      // Generate person slug and add as URL parameter
       const personSlug = generateSlug(member.name, member.id);
-      router.push(`/demo/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`);
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('person', personSlug);
+      router.push(newUrl.pathname + newUrl.search);
     } catch (error) {
       console.error('Error handling member click:', error);
     }
@@ -712,6 +730,65 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         </div>
                       )}
                     </div>
+
+                    {/* Person Detail View */}
+                    {selectedPerson && (
+                      <div className="border-t border-gray-200 bg-gray-50">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900">Person Details</h3>
+                            <button
+                              onClick={() => {
+                                const newUrl = new URL(window.location.href);
+                                newUrl.searchParams.delete('person');
+                                router.push(newUrl.pathname + newUrl.search);
+                              }}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          
+                          <div className="bg-white rounded-lg border border-gray-200 p-6">
+                            <div className="flex items-start gap-4">
+                              <div className="w-16 h-16 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
+                                <span className="text-gray-700 font-semibold text-lg">
+                                  {selectedPerson.name.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="text-xl font-semibold text-gray-900 mb-1">{selectedPerson.name}</h4>
+                                <p className="text-gray-600 mb-2">{selectedPerson.title}</p>
+                                <p className="text-sm text-gray-500 mb-4">{selectedPerson.department} • {selectedPerson.company}</p>
+                                
+                                <div className="flex gap-2 mb-4">
+                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRoleColor(selectedPerson.buyerRole)}`}>
+                                    {selectedPerson.buyerRole}
+                                  </span>
+                                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    {selectedPerson.status}
+                                  </span>
+                                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                                    {selectedPerson.riskStatus}
+                                  </span>
+                                </div>
+                                
+                                {selectedPerson.directionalIntelligence && (
+                                  <div className="mt-4">
+                                    <h5 className="text-sm font-medium text-gray-700 mb-2">Directional Intelligence</h5>
+                                    <div className="text-sm text-gray-600 leading-relaxed">
+                                      {selectedPerson.directionalIntelligence}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 }
                 rightPanel={<AIRightPanel />}
