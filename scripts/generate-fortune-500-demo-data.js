@@ -21,9 +21,32 @@ const prisma = new PrismaClient({
   }
 });
 
-// Demo workspace configuration
-const DEMO_WORKSPACE_ID = 'demo-workspace-2025';
-const DEMO_USER_ID = 'demo-user-2025';
+// Demo workspace and user configuration (resolved dynamically for safety)
+async function resolveDemoWorkspaceId(prisma) {
+  // Prefer explicit DEMO_WORKSPACE_ID env if provided
+  if (process.env.DEMO_WORKSPACE_ID && process.env.DEMO_WORKSPACE_ID.trim() !== '') {
+    return process.env.DEMO_WORKSPACE_ID.trim();
+  }
+
+  // Try slug 'demo' first
+  const bySlug = await prisma.workspaces.findFirst({ where: { slug: 'demo' } });
+  if (bySlug?.id) return bySlug.id;
+
+  // Fallback: any workspace with name containing 'demo'
+  const byName = await prisma.workspaces.findFirst({ where: { name: { contains: 'demo', mode: 'insensitive' } } });
+  if (byName?.id) return byName.id;
+
+  throw new Error('Demo workspace not found. Please create a workspace with slug "demo" or set DEMO_WORKSPACE_ID env.');
+}
+
+async function resolveDanUserId(prisma) {
+  // Try to find Dan
+  const dan = await prisma.users.findFirst({ where: { email: 'dan@adrata.com' } });
+  if (dan?.id) return dan.id;
+  // Fallback to demo user if present
+  const demoUser = await prisma.users.findFirst({ where: { id: 'demo-user-2025' } });
+  return demoUser?.id || null;
+}
 
 // Fortune 500 companies data (top 50 for speedrun, then 1,950 more)
 const FORTUNE_500_COMPANIES = [
@@ -107,6 +130,11 @@ const SELLER_NAMES = [
 async function generateFortune500DemoData() {
   try {
     console.log('🚀 Starting Fortune 500 demo data generation...\n');
+
+    // Resolve safe targets
+    const DEMO_WORKSPACE_ID = await resolveDemoWorkspaceId(prisma);
+    const OWNER_USER_ID = await resolveDanUserId(prisma);
+    console.log('🔐 Target workspace:', DEMO_WORKSPACE_ID, 'ownerUser:', OWNER_USER_ID || 'none');
 
     // 1. Create 2,000 companies
     console.log('🏢 Creating 2,000 Fortune 500 companies...');
@@ -202,7 +230,7 @@ async function generateFortune500DemoData() {
         title: ['Senior Account Executive', 'Strategic Account Manager', 'Enterprise Sales Director', 'Account Executive'][i % 4],
         department: 'Sales',
         role: 'seller',
-        assignedUserId: DEMO_USER_ID,
+        assignedUserId: OWNER_USER_ID || undefined,
         isDemoData: true,
         createdAt: new Date(),
         updatedAt: new Date()
