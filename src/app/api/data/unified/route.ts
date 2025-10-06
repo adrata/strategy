@@ -356,7 +356,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         realBuyerGroupData = await buyerGroupsResponse.json();
         console.log(`✅ [DEMO DATA] Loaded real buyer group data: ${realBuyerGroupData.buyerGroups.length} groups`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('❌ [DEMO DATA] Error fetching real buyer group data:', error);
     }
     
@@ -364,15 +364,15 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     const realBuyerGroups = realBuyerGroupData.buyerGroups || [];
     
     // Extract people from buyer groups and map to leads/prospects/opportunities
-    const matchGroupPeople = realBuyerGroups
+    const matchGroupPeople = (realBuyerGroups as any[])
       .find(bg => bg['accountName'] === 'Match Group')?.people || [];
-    const brexPeople = realBuyerGroups
+    const brexPeople = (realBuyerGroups as any[])
       .find(bg => bg['accountName'] === 'Brex')?.people || [];
-    const firstPremierPeople = realBuyerGroups
+    const firstPremierPeople = (realBuyerGroups as any[])
       .find(bg => bg['accountName'] === 'First Premier Bank')?.people || [];
     
     // Create leads from Match Group people (10 people)
-    const realLeads = matchGroupPeople.map((person, index) => ({
+    const realLeads = matchGroupPeople.map((person: any, index: number) => ({
       id: ulid(), // Generate proper ULID
       fullName: person.name,
       firstName: person.name.split(' ')[0] || 'First',
@@ -394,9 +394,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     
     // Create prospects from Brex people (8 people, excluding introducers if any)
     const realProspects = brexPeople
-      .filter(person => person.buyerGroupRole !== 'Introducer')
+      .filter((person: any) => person.buyerGroupRole !== 'Introducer')
       .slice(0, 8) // Take first 8 people
-      .map((person, index) => ({
+      .map((person: any, index: number) => ({
         id: ulid(), // Generate proper ULID
         fullName: person.name,
         firstName: person.name.split(' ')[0] || 'First',
@@ -413,7 +413,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         workspaceId: workspaceId,
         isDemoData: true,
         demoScenarioId: demoScenario.id,
-        buyerGroupRole: person.buyerGroupRole || 'Stakeholder'
+        buyerGroupRole: (person as any).buyerGroupRole || 'Stakeholder'
       }));
     
     // Create single opportunity from First Premier Bank
@@ -488,9 +488,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       company: seller.company || 'Winning Variant',
       isOnline: true,
       assignedCompanies: [],
-      assignedProspects: prospects.filter(p => p['assignedUserId'] === seller.id).length,
-      assignedLeads: leads.filter(l => l['assignedUserId'] === seller.id).length,
-      assignedOpportunities: opportunities.filter(o => o['assignedUserId'] === seller.id).length,
+      assignedProspects: prospects.filter(p => (p as any)['assignedUserId'] === seller.id).length,
+      assignedLeads: leads.filter(l => (l as any)['assignedUserId'] === seller.id).length,
+      assignedOpportunities: opportunities.filter(o => (o as any)['assignedUserId'] === seller.id).length,
       role: 'SELLER',
       department: seller.department || 'Sales',
       seniorityLevel: 'Mid-Level'
@@ -509,9 +509,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         company: 'Winning Variant',
         isOnline: true, // Demo users are always online
         assignedCompanies: [], // Will be populated based on actual assignments
-        assignedProspects: prospects.filter(p => p['assignedUserId'] === user.id).length,
-        assignedLeads: leads.filter(l => l['assignedUserId'] === user.id).length,
-        assignedOpportunities: opportunities.filter(o => o['assignedUserId'] === user.id).length,
+        assignedProspects: prospects.filter(p => (p as any)['assignedUserId'] === user.id).length,
+        assignedLeads: leads.filter(l => (l as any)['assignedUserId'] === user.id).length,
+        assignedOpportunities: opportunities.filter(o => (o as any)['assignedUserId'] === user.id).length,
         role: wu.role,
         department: user.department || 'Sales',
         seniorityLevel: user.seniorityLevel || 'Mid-Level'
@@ -581,7 +581,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     });
     
     return demoData;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('❌ [DEMO DATA] Error loading demo data:', error);
     return {
       leads: [],
@@ -720,8 +720,8 @@ async function getOptimizedWorkspaceContext(request: NextRequest, requestBody?: 
           userId: decoded.userId,
           userEmail: decoded.email
         };
-      } catch (jwtError) {
-        console.error('❌ [WORKSPACE CONTEXT] JWT verification failed:', jwtError.message);
+      } catch (jwtError: unknown) {
+        console.error('❌ [WORKSPACE CONTEXT] JWT verification failed:', (jwtError as Error).message);
         console.log('🔍 [WORKSPACE CONTEXT] Falling back to environment variables...');
         // Continue to fallback logic below
       }
@@ -884,7 +884,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       phone: person.phone,
       linkedinUrl: person.linkedinUrl,
       title: person.jobTitle,
-      company: person.company?.name || 'Unknown Company',
+      company: (person as any).company?.name || 'Unknown Company',
       companyId: person.companyId,
       industry: person.company?.industry,
       website: person.company?.website,
@@ -1432,17 +1432,17 @@ async function getMultipleRecords(
       // Add basic ranking and formatting, filter out user's company
       const peopleWithRanking = people
         .filter(person => !shouldExcludeCompany(person.company?.name))
-        .map((person, index) => ({
+        .map((person: any, index: number) => ({
           ...person,
           masterRank: person.rank || (index + 1),
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          company: person.company || 'Unknown Company'
+          company: (person as any).company || 'Unknown Company'
         }));
       
       return { success: true, data: peopleWithRanking };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('❌ [PEOPLE API] Error loading people:', error);
-      return { success: false, data: [], error: error.message };
+      return { success: false, data: [], error: (error as Error).message };
     }
   }
   
@@ -3712,7 +3712,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           
           // Monthly Performance
           monthlyNewOpportunities: opportunitiesData.filter(opp => 
-            new Date(opp.createdAt) >= startOfMonth
+            new Date(opp.createdAt || new Date()) >= startOfMonth
           ).length,
           monthlyPipelineValue: totalPipelineValue,
           monthlyConversionRate: conversionRate,
@@ -4059,7 +4059,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         lastAction = (record as any).lastAction || 'Start outreach';
       } else if (record.createdAt) {
         // No real last action, show when data was added
-        const daysSince = Math.floor((new Date().getTime() - new Date(record.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+        const daysSince = Math.floor((new Date().getTime() - new Date(record.createdAt || new Date()).getTime()) / (1000 * 60 * 60 * 24));
         if (daysSince === 0) lastActionTime = 'Today';
         else if (daysSince === 1) lastActionTime = 'Yesterday';
         else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
