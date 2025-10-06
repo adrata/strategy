@@ -5,6 +5,7 @@ import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
+import { PipelineTable } from '@/frontend/components/pipeline/PipelineTable';
 
 interface Seller {
   id: string;
@@ -17,6 +18,12 @@ interface Seller {
   assignedProspects: number;
   assignedLeads: number;
   assignedOpportunities: number;
+  // Table display fields
+  rank: number;
+  department: string;
+  lastAction: string;
+  nextAction: string;
+  status: string;
 }
 
 export function SellersView() {
@@ -30,6 +37,8 @@ export function SellersView() {
   const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<any>(null);
+  const [sellerCompanies, setSellerCompanies] = useState<any[]>([]);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
 
   console.log('🔍 [SELLERS VIEW] Current state:', { sellers: sellers.length, loading });
 
@@ -44,12 +53,8 @@ export function SellersView() {
         console.log('🔍 [SELLERS VIEW] Starting to load sellers...');
         setLoading(true);
         
-        // Use unified API for demo mode compatibility
-        const timestamp = Date.now();
-        // Determine the correct workspace ID based on the current demo scenario
-        const isZeroPointDemo = typeof window !== "undefined" && window.location.pathname.includes('/demo/zeropoint/');
-        const workspaceId = isZeroPointDemo ? 'zeropoint-demo-2025' : 'demo-workspace-2025';
-        const response = await authFetch(`/api/data/unified`);
+        // Use unified API for production data
+        const response = await authFetch(`/api/data/unified?type=sellers&action=get`);
         console.log('🔍 [SELLERS VIEW] Fetch response status:', response.status);
         const sellersData = await response.json();
         
@@ -57,86 +62,35 @@ export function SellersView() {
         
         if (sellersData['success'] && sellersData.data) {
           // Transform the data to our Seller interface
-          const transformedSellers: Seller[] = sellersData.data.map((seller: any) => ({
+          const transformedSellers: Seller[] = sellersData.data.map((seller: any, index: number) => ({
             id: seller.id,
             name: seller.name,
             email: seller.email,
             title: seller.title || 'Sales Rep',
-            company: seller.company || 'Winning Variant',
+            company: seller.company || 'ZeroPoint',
             isOnline: true, // Simulate online status
             assignedCompanies: seller.assignedCompanies || [],
             assignedProspects: seller.assignedProspects || 0,
             assignedLeads: seller.assignedLeads || 0,
-            assignedOpportunities: seller.assignedOpportunities || 0
+            assignedOpportunities: seller.assignedOpportunities || 0,
+            // Add fields needed for table display
+            rank: index + 1,
+            department: seller.department || 'Sales',
+            lastAction: 'Never No action',
+            nextAction: 'No date set No action planned',
+            status: 'Online'
           }));
           
           console.log('🔍 [SELLERS VIEW] Transformed sellers:', transformedSellers);
           setSellers(transformedSellers);
           console.log('🔍 [SELLERS VIEW] setSellers called with', transformedSellers.length, 'sellers');
         } else {
-          console.log('🔍 [SELLERS VIEW] API response was not successful, using fallback demo data');
-          // Fallback to demo data
-          const demoSellers: Seller[] = [
-            {
-              id: 'demo-user-2025',
-              name: 'Kirk Morales',
-              email: 'demo@winning-variant.com',
-              title: 'Founder & CEO',
-              company: 'Winning Variant',
-              isOnline: true,
-              assignedCompanies: ['Brex', 'First Premier Bank'],
-              assignedProspects: 6,
-              assignedLeads: 0,
-              assignedOpportunities: 0
-            },
-            {
-              id: 'david-beitler-2025',
-              name: 'David Beitler',
-              email: 'david@winning-variant.com',
-              title: 'Co-Founder',
-              company: 'Winning Variant',
-              isOnline: true,
-              assignedCompanies: ['Match Group'],
-              assignedProspects: 3,
-              assignedLeads: 0,
-              assignedOpportunities: 0
-            }
-          ];
-          console.log('🔍 [SELLERS VIEW] Setting fallback demo sellers:', demoSellers.length);
-          setSellers(demoSellers);
+          console.log('🔍 [SELLERS VIEW] API response was not successful');
+          setSellers([]);
         }
       } catch (error) {
         console.error('Error loading sellers:', error);
-        console.log('🔍 [SELLERS VIEW] Using error fallback demo data');
-        // Fallback to demo data on error
-        const demoSellers: Seller[] = [
-          {
-            id: 'demo-user-2025',
-            name: 'Kirk Morales',
-            email: 'demo@winning-variant.com',
-            title: 'Founder & CEO',
-            company: 'Winning Variant',
-            isOnline: true,
-            assignedCompanies: ['Brex', 'First Premier Bank'],
-            assignedProspects: 6,
-            assignedLeads: 0,
-            assignedOpportunities: 0
-          },
-          {
-            id: 'david-beitler-2025',
-            name: 'David Beitler',
-            email: 'david@winning-variant.com',
-            title: 'Co-Founder',
-            company: 'Winning Variant',
-            isOnline: true,
-            assignedCompanies: ['Match Group'],
-            assignedProspects: 3,
-            assignedLeads: 0,
-            assignedOpportunities: 0
-          }
-        ];
-        console.log('🔍 [SELLERS VIEW] Setting error fallback demo sellers:', demoSellers.length);
-        setSellers(demoSellers);
+        setSellers([]);
       } finally {
         setLoading(false);
         console.log('🔍 [SELLERS VIEW] Loading completed, final sellers count:', sellers.length);
@@ -147,9 +101,40 @@ export function SellersView() {
   }, []); // Run on mount only for demo mode
 
   const handleSellerClick = (seller: Seller) => {
+    console.log(`🔍 [SellersView] Seller clicked:`, seller);
     setSelectedSeller(seller);
     setSelectedCompany(null);
     setSelectedPerson(null);
+    
+    // Load companies for this seller
+    loadSellerCompanies(seller.id);
+  };
+
+  const loadSellerCompanies = async (sellerId: string) => {
+    console.log(`🔍 [SellersView] Loading companies for seller: ${sellerId}`);
+    setCompaniesLoading(true);
+    
+    try {
+      const response = await fetch(`/api/data/section?section=companies&workspaceId=${authUser?.activeWorkspaceId}&userId=${authUser?.id}&limit=1000&t=${Date.now()}`);
+      const result = await response.json();
+      
+      if (result.success && result.data && result.data.data) {
+        // Filter companies assigned to this seller
+        const companies = result.data.data.filter((company: any) => 
+          company.assignedUserId === sellerId
+        );
+        console.log(`🔍 [SellersView] Found ${companies.length} companies for seller ${sellerId}`);
+        setSellerCompanies(companies);
+      } else {
+        console.log('❌ [SellersView] Failed to load companies:', result);
+        setSellerCompanies([]);
+      }
+    } catch (error) {
+      console.error('❌ [SellersView] Error loading companies:', error);
+      setSellerCompanies([]);
+    } finally {
+      setCompaniesLoading(false);
+    }
   };
 
   // Check if current user is Kirk (leader) to show all records
@@ -537,7 +522,7 @@ export function SellersView() {
             <div>
               <div className="flex items-center mb-1">
                 <h1 className="text-3xl font-bold text-gray-900">{selectedSeller.name}</h1>
-                {isCurrentUserLeader && selectedSeller['id'] === 'demo-user-2025' && (
+                {isCurrentUserLeader && (
                   <span className="ml-3 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                     Leader
                   </span>
@@ -573,83 +558,103 @@ export function SellersView() {
         </div>
 
         {/* Companies Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(isCurrentUserLeader ? ['Brex', 'First Premier Bank', 'Match Group'] : selectedSeller.assignedCompanies).map((company, index) => (
-            <div 
-              key={index} 
-              onClick={() => handleCompanyClick(company)}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">{company}</h3>
-                  <p className="text-gray-600">Technology • 500-1000 employees</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-500">Revenue</div>
-                  <div className="text-lg font-semibold text-gray-900">$100M+</div>
-                </div>
+        {companiesLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sellerCompanies.length > 0 ? (
+              sellerCompanies.map((company, index) => (
+                <div 
+                  key={company.id || index} 
+                  onClick={() => handleCompanyClick(company.name)}
+                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{company.name}</h3>
+                      <p className="text-gray-600">{company.industry || 'Unknown'} • {company.size || 'Unknown'}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Revenue</div>
+                      <div className="text-lg font-semibold text-gray-900">$100M+</div>
+                    </div>
+                  </div>
               
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Buyer Group Identified</span>
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                    Complete
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Deal Size</span>
-                  <span className="text-sm font-medium text-gray-900">$250K</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Buyer Group Engaged</span>
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                    Active
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Priority</span>
-                  <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
-                    High
-                  </span>
-                </div>
-              </div>
+                  <div className="space-y-3 mb-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Buyer Group Identified</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                        Complete
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Deal Size</span>
+                      <span className="text-sm font-medium text-gray-900">$250K</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Buyer Group Engaged</span>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                        Active
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Priority</span>
+                      <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
+                        High
+                      </span>
+                    </div>
+                  </div>
 
-              <div className="pt-4 border-t border-gray-100">
-                <div className="text-right">
-                  <span className="text-blue-600 text-sm font-medium group-hover:text-blue-700">
-                    View Buyer Group →
-                  </span>
+                  <div className="pt-4 border-t border-gray-100">
+                    <div className="text-right">
+                      <span className="text-blue-600 text-sm font-medium group-hover:text-blue-700">
+                        View Buyer Group →
+                      </span>
+                    </div>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <div className="text-gray-500 text-lg">No companies assigned to this seller</div>
+                <div className="text-gray-400 text-sm mt-2">Companies will appear here once they are assigned</div>
               </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }
+
 
   return (
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Sellers</h1>
-        <p className="text-gray-600 text-lg">Organize momentum</p>
+        <p className="text-gray-600 text-lg">Sales Team</p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-4 gap-6 mb-8">
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-2xl font-bold text-blue-600 mb-1">2</div>
+          <div className="text-2xl font-bold text-blue-600 mb-1">{sellers.length}</div>
           <div className="text-sm text-gray-500">Active Sellers</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-2xl font-bold text-green-600 mb-1">3</div>
+          <div className="text-2xl font-bold text-green-600 mb-1">{sellers.reduce((sum, seller) => sum + seller.assignedCompanies.length, 0)}</div>
           <div className="text-sm text-gray-500">Total Companies</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-2xl font-bold text-purple-600 mb-1">12</div>
-          <div className="text-sm text-gray-500">Buyer Groups</div>
+          <div className="text-2xl font-bold text-purple-600 mb-1">{sellers.reduce((sum, seller) => sum + seller.assignedProspects + seller.assignedLeads, 0)}</div>
+          <div className="text-sm text-gray-500">Total Prospects</div>
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="text-2xl font-bold text-orange-600 mb-1">89%</div>
@@ -657,70 +662,16 @@ export function SellersView() {
         </div>
       </div>
 
-      {/* Sellers Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {sellers.map((seller) => (
-          <div
-            key={seller.id}
-            onClick={() => handleSellerClick(seller)}
-            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
-          >
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4 group-hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-xl">
-                    {seller.name.split(' ').map(n => n[0]).join('')}
-                  </span>
-                </div>
-                <div>
-                  <div className="flex items-center mb-1">
-                    <h3 className="text-xl font-semibold text-gray-900">{seller.name}</h3>
-                    {isCurrentUserLeader && seller['id'] === 'demo-user-2025' && (
-                      <span className="ml-3 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-                        Leader
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-600 text-lg">{seller.title}</p>
-                  <div className="flex items-center mt-2">
-                    <div className={`w-3 h-3 rounded-full mr-2 ${seller.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                    <span className="text-sm text-gray-500">{seller.isOnline ? 'Online' : 'Offline'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Performance Metrics */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-lg font-bold text-blue-600 mb-1">{seller.assignedCompanies.length}</div>
-                <div className="text-sm text-gray-500">Active Companies</div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-lg font-bold text-green-600 mb-1">{seller.assignedProspects + seller.assignedLeads}</div>
-                <div className="text-sm text-gray-500">Total Prospects</div>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mb-4">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>Pipeline Progress</span>
-                <span>85%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full" style={{width: '85%'}}></div>
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <div className="text-right">
-              <span className="text-blue-600 text-sm font-medium group-hover:text-blue-700">
-                View Companies →
-              </span>
-            </div>
-          </div>
-        ))}
+      {/* Sellers Table */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <PipelineTable
+          section="sellers"
+          data={sellers}
+          onRecordClick={handleSellerClick}
+          visibleColumns={['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']}
+          pageSize={20}
+          isLoading={loading}
+        />
       </div>
     </div>
   );

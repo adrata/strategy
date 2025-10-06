@@ -61,7 +61,7 @@ export class WorkspaceDataRouter {
       // Determine if this is a demo user - ONLY if explicitly demo credentials
       const emailCheck = user['email'] === "demo@adrata.com";
       const idCheck = user['id'] === "demo-user-2025";
-      const workspaceCheck = user['activeWorkspaceId'] === "demo-workspace-2025";
+      const workspaceCheck = user['activeWorkspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194";
       const isDemo = emailCheck || idCheck || workspaceCheck;
       
       // REMOVED: Hardcoded user mappings that cause data leakage between workspaces
@@ -365,12 +365,12 @@ export class WorkspaceDataRouter {
       // Determine if this is a demo user
             const isDemo = decoded['email'] === "demo@adrata.com" ||
                      decoded['userId'] === "demo-user-2025" ||
-                     decoded['workspaceId'] === "demo-workspace-2025";
+                     decoded['workspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194";
       
       // SECURITY: Validate workspace access for the user
       let workspaceId: string;
       if (isDemo) {
-        workspaceId = "demo-workspace-2025";
+        workspaceId = "01K1VBYX2YERMXBFJ60RC6J194";
       } else {
         // Initialize workspaceId for non-demo users
         workspaceId = "";
@@ -482,7 +482,7 @@ export class WorkspaceDataRouter {
    */
   private static getDemoFallback(): WorkspaceContext {
     return {
-      workspaceId: "demo-workspace-2025", // Use separate demo workspace, NOT real user data
+      workspaceId: "01K1VBYX2YERMXBFJ60RC6J194", // Use the actual Demo Workspace ID from database
       userId: "demo-user-2025", 
       userEmail: "demo@adrata.com",
       isDemo: true,

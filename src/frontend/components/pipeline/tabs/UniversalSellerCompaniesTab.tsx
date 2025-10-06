@@ -18,26 +18,35 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
       try {
         setLoading(true);
         
-        // Determine workspace ID from the record or use demo workspace
-        const workspaceId = record?.workspaceId || 'zeropoint-demo-2025';
-        const userId = record?.userId || record?.id || 'demo-user-2025';
+        // Use the record's workspace and user ID
+        const workspaceId = record?.workspaceId;
+        const userId = record?.userId || record?.id;
+        const assignedUserId = record?.assignedUserId;
         
-        console.log('Loading companies for seller:', { record, workspaceId, userId });
+        console.log('Loading companies for seller:', { record, workspaceId, userId, assignedUserId });
         
         // Fetch companies directly from the unified API
-        const response = await authFetch(`/api/data/unified`);
+        const response = await authFetch(`/api/data/unified?type=companies&action=get`);
         const result = await response.json();
         
         if (result['success'] && result.data) {
           const companies = result.data;
           
-          // Filter companies assigned to this seller
-          const sellerCompanies = companies.filter((company: any) => 
-            company['assignedUserId'] === record?.userId || company['assignedUserId'] === record?.id
-          );
-          
-          setAssociatedCompanies(sellerCompanies);
-          console.log('Associated companies for seller:', sellerCompanies);
+          // Ensure companies is an array before filtering
+          if (Array.isArray(companies)) {
+            // Filter companies assigned to this seller - try all possible ID fields
+            const sellerCompanies = companies.filter((company: any) => 
+              company['assignedUserId'] === record?.assignedUserId || 
+              company['assignedUserId'] === record?.userId || 
+              company['assignedUserId'] === record?.id
+            );
+            
+            setAssociatedCompanies(sellerCompanies);
+            console.log('Associated companies for seller:', sellerCompanies);
+          } else {
+            console.error('Companies data is not an array:', companies);
+            setAssociatedCompanies([]);
+          }
         } else {
           console.error('Failed to load companies:', result.error);
           setAssociatedCompanies([]);

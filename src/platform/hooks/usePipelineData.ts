@@ -262,15 +262,16 @@ export function usePipelineData({
       startIndex,
       endIndex,
       paginatedDataLength: result.length,
+      totalCount,
       samplePaginatedData: result.slice(0, 2)
     });
     
     return result;
-  }, [sortedData, currentPage, pageSize, data.length, filteredData.length]);
+  }, [sortedData, currentPage, pageSize, data.length, filteredData.length, totalCount]);
   
-  // Pagination info
-  const totalPages = Math.ceil((totalCount || sortedData.length) / pageSize);
-  const totalItems = totalCount || sortedData.length;
+  // Pagination info - use local data length for client-side pagination
+  const totalPages = Math.ceil(sortedData.length / pageSize);
+  const totalItems = sortedData.length;
   
   // Actions
   const clearFilters = useCallback(() => {
