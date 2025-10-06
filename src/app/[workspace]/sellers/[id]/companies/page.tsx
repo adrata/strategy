@@ -234,7 +234,7 @@ export default function SellerCompaniesPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           {/* Avatar - White with gray border like person records */}
-                          <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-2xl flex items-center justify-center shadow-sm">
                             <span className="text-lg font-semibold text-gray-700">
                               {seller.firstName?.[0] || seller.name?.[0] || 'S'}
                             </span>
@@ -249,7 +249,7 @@ export default function SellerCompaniesPage() {
                           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             Edit Seller
                           </button>
-                          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+                          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-400 rounded-lg hover:bg-blue-500 transition-colors">
                             Add Action
                           </button>
                         </div>

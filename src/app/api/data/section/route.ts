@@ -493,6 +493,7 @@ export async function GET(request: NextRequest) {
             industry: true,
             vertical: true,
             size: true,
+            assignedUserId: true,
             createdAt: true,
             updatedAt: true,
             rank: true,
