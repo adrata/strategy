@@ -525,6 +525,7 @@ export async function GET(request: NextRequest) {
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
+          assignedUserId: company.assignedUserId, // 🆕 FIX: Include assignedUserId for company assignment filtering
           lastAction: company.lastAction || 'Never',
           nextAction: company.nextAction || 'No action planned',
           createdAt: company.createdAt,
