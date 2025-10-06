@@ -730,6 +730,16 @@ function PipelineSections({
       ) : (isDemoMode ? 20 : sellersData.count), // Use actual count from data
       visible: isDemoMode // Show only for demo workspace
     },
+    // REVENUE PIPELINE COVERAGE: Show only for demo workspace
+    {
+      id: "revenue-pipeline-coverage",
+      name: "Revenue Pipeline Coverage",
+      description: "Pipeline Coverage Analysis",
+      count: loading ? (
+        <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
+      ) : (isDemoMode ? "87%" : "N/A"), // Demo shows 87% coverage
+      visible: isDemoMode // Show only for demo workspace
+    },
     {
       id: "metrics",
       name: "Metrics",
