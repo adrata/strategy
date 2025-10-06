@@ -47,6 +47,7 @@ export default function BuyerGroupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUnifiedAuth();
+  const workspace = params.workspace as string;
   const sellerId = params['id'] as string;
   const companyId = params['companyId'] as string;
   const selectedPersonSlug = searchParams.get('person');
