@@ -795,14 +795,15 @@ async function handleDataOperation(
   filters?: any,
   pagination?: any,
   search?: any,
-  request?: any
+  request?: any,
+  searchParams?: URLSearchParams
 ): Promise<any> {
   
   console.log(`🔧 [DATA OP] ${action.toUpperCase()} ${type}${id ? ` (${id})` : ''}`);
   
   switch (action) {
     case 'get':
-      return await handleGet(type, workspaceId, userId, id, filters, pagination, request);
+      return await handleGet(type, workspaceId, userId, id, filters, pagination, request, searchParams);
     case 'create':
       return await handleCreate(type, workspaceId, userId, requestData);
     case 'update':
@@ -830,7 +831,8 @@ async function handleGet(
   id?: string,
   filters?: any,
   pagination?: any,
-  request?: any
+  request?: any,
+  searchParams?: URLSearchParams
 ): Promise<any> {
   
   if (id) {
@@ -838,7 +840,7 @@ async function handleGet(
     return await getSingleRecord(type, workspaceId, userId, id, request);
   } else {
     // Get multiple records
-    return await getMultipleRecords(type, workspaceId, userId, filters, pagination);
+    return await getMultipleRecords(type, workspaceId, userId, filters, pagination, searchParams);
   }
 }
 
@@ -1360,7 +1362,8 @@ async function getMultipleRecords(
   workspaceId: string,
   userId: string,
   filters?: any,
-  pagination?: any
+  pagination?: any,
+  searchParams?: URLSearchParams
 ): Promise<any> {
   
   // 🚫 REMOVED: Demo data generation - no more fake/fallback data
@@ -1451,7 +1454,7 @@ async function getMultipleRecords(
   // Special handling for companies - show all companies in workspace
   if (type === 'companies') {
     // Check for sellerId parameter to filter companies for specific seller
-    const sellerId = searchParams.get('sellerId');
+    const sellerId = searchParams?.get('sellerId');
     
     // Check for force refresh and bypass cache
     const forceRefresh = false; // TODO: Pass searchParams to this function
@@ -4357,7 +4360,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Execute operation
-    const requestPromise = handleDataOperation(type, action, workspaceId, userId, undefined, id, filters, pagination, search, request);
+    const requestPromise = handleDataOperation(type, action, workspaceId, userId, undefined, id, filters, pagination, search, request, url.searchParams);
     pendingRequests.set(cacheKey, requestPromise);
     
     try {
