@@ -884,7 +884,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   };
   
   // Only add deletedAt filter for models that have this field
-  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners'].includes(type)) {
+  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'].includes(type)) {
     whereClause['deletedAt'] = null;
   }
   
@@ -1023,7 +1023,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           // 🚫 REMOVED: 40+ enrichment fields (customFields, description, address, etc.) for better performance
         };
       }
-    } else if (type === 'leads' || type === 'prospects' || type === 'opportunities' || type === 'clients' || type === 'partners' || type === 'sellers') {
+    } else if (type === 'leads' || type === 'prospects' || type === 'opportunities' || type === 'clients' || type === 'partners') {
       if (isEssentialFields) {
         // 🚀 OVERVIEW TAB: Select all fields needed for complete Overview tab display
         selectFields = {
@@ -1079,6 +1079,43 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           nextActionDate: true,
           workspaceId: true,
           assignedUserId: true
+        };
+      }
+    } else if (type === 'sellers') {
+      // 🆕 SELLERS: Select fields specific to sellers table
+      if (isEssentialFields) {
+        selectFields = {
+          id: true,
+          name: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          title: true,
+          department: true,
+          company: true,
+          assignedUserId: true,
+          workspaceId: true,
+          tags: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true
+        };
+      } else {
+        selectFields = {
+          id: true,
+          name: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          title: true,
+          department: true,
+          company: true,
+          assignedUserId: true,
+          workspaceId: true,
+          tags: true,
+          createdAt: true,
+          updatedAt: true
         };
       }
     }
@@ -1738,7 +1775,7 @@ async function getMultipleRecords(
   };
   
   // Only add deletedAt filter for models that have this field
-  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners'].includes(type)) {
+  if (['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'].includes(type)) {
     whereClause['deletedAt'] = null;
   }
   
@@ -3039,7 +3076,7 @@ function getPrismaModel(type: string): any {
     people: prisma.people,
     clients: prisma.clients,
     partners: prisma.partners,
-    sellers: prisma.workspace_users, // 🆕 FIX: Add sellers support
+    sellers: prisma.sellers, // 🆕 FIX: Add sellers support
     notes: prisma.notes,
     activities: prisma.actions
   };
