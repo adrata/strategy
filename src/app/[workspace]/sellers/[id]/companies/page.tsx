@@ -121,8 +121,10 @@ export default function SellerCompaniesPage() {
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
+            console.log('🔍 Companies data type:', typeof companiesResult.data);
+            console.log('🔍 Companies data is array:', Array.isArray(companiesResult.data));
             
-            if (companiesResult['success'] && companiesResult.data) {
+            if (companiesResult['success'] && companiesResult.data && Array.isArray(companiesResult.data)) {
               // Filter companies assigned to this seller
               const sellerCompanies = companiesResult.data.filter((company: Company) => 
                 company['assignedUserId'] === foundSeller.id
@@ -131,6 +133,11 @@ export default function SellerCompaniesPage() {
               console.log('🔍 Found seller ID:', foundSeller.id);
               console.log('🔍 Company assigned user IDs:', companiesResult.data.map((c: Company) => c.assignedUserId));
               setCompanies(sellerCompanies);
+            } else {
+              console.log('❌ Companies data is not an array or API failed');
+              console.log('❌ API success:', companiesResult['success']);
+              console.log('❌ Data exists:', !!companiesResult.data);
+              console.log('❌ Data type:', typeof companiesResult.data);
             }
           } else {
             console.log('❌ Seller not found');
