@@ -832,34 +832,11 @@ export function PipelineLeftPanelStandalone({
   // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
   const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
 
-  // 🔄 FORCE REFRESH: Ensure we get the latest counts when component mounts
-  useEffect(() => {
-    console.log('🔍 [LEFT PANEL DEBUG] Force refresh check:', {
-      currentWorkspaceId,
-      currentUserId,
-      fastCountsLoading,
-      authLoading,
-      hasAuthUser: !!authUser,
-      authUserWorkspaces: authUser?.workspaces?.length
-    });
-    
-    if (currentWorkspaceId && currentUserId && !fastCountsLoading) {
-      console.log('🔄 [LEFT PANEL] Force refreshing counts to ensure latest data');
-      forceRefreshCounts();
-    }
-  }, [currentWorkspaceId, currentUserId, fastCountsLoading]);
+  // 🔄 REMOVED: Force refresh was causing infinite loop
+  // The useFastCounts hook handles loading automatically
 
-  // 🔄 ADDITIONAL FORCE REFRESH: If counts are still 0 after 3 seconds, force refresh again
-  useEffect(() => {
-    if (fastCounts && Object.values(fastCounts).every(count => count === 0)) {
-      const timeout = setTimeout(() => {
-        console.log('🔄 [LEFT PANEL] Counts are still 0 after 3 seconds - forcing refresh');
-        forceRefreshCounts();
-      }, 3000);
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [fastCounts, forceRefreshCounts]);
+  // 🔄 REMOVED: Force refresh on 0 counts was causing infinite loop
+  // The useFastCounts hook will handle loading counts properly
 
   // Pipeline context for profile functionality (not Monaco)
   const {
