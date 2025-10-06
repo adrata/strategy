@@ -340,9 +340,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         platform,
         deviceId,
         iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
       },
       secret,
+      { expiresIn: '7d' }
     );
 
     // Format user data
