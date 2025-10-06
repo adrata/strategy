@@ -43,6 +43,7 @@ export function useWorkspaceSwitch() {
     try {
       // Get the current session
       const { UnifiedAuthService } = await import('@/platform/auth/service');
+      const { storeSession } = await import('@/platform/auth/session');
       const session = await UnifiedAuthService.getSession();
       
       if (!session?.accessToken) {
@@ -74,7 +75,7 @@ export function useWorkspaceSwitch() {
       if (result['success'] && result.auth?.token) {
         // Update the session with the new token
         session['accessToken'] = result.auth.token;
-        await UnifiedAuthService.storeSession(session);
+        await storeSession(session);
         
         // 🆕 CRITICAL: Clear cache before dispatching event to ensure clean workspace switch
         try {

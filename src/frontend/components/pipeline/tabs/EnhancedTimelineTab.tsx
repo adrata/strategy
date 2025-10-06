@@ -160,8 +160,17 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       if (activitiesResponse.ok) {
         const activitiesData = await activitiesResponse.json();
         if (activitiesData['success'] && activitiesData.data) {
+          // Handle dashboard data structure - extract activities from all sections
+          const allActivities: any[] = [];
+          const sections = ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'];
+          sections.forEach(section => {
+            if (activitiesData.data[section] && Array.isArray(activitiesData.data[section])) {
+              allActivities.push(...activitiesData.data[section]);
+            }
+          });
+          
           // Filter activities for this specific record
-          const recordActivities = activitiesData.data.filter((activity: any) => {
+          const recordActivities = allActivities.filter((activity: any) => {
             return (
               activity['leadId'] === record.id ||
               activity['opportunityId'] === record.id ||
@@ -203,8 +212,17 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       if (notesResponse.ok) {
         const notesData = await notesResponse.json();
         if (notesData['success'] && notesData.data) {
+          // Handle dashboard data structure - extract notes from all sections
+          const allNotes: any[] = [];
+          const sections = ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'];
+          sections.forEach(section => {
+            if (notesData.data[section] && Array.isArray(notesData.data[section])) {
+              allNotes.push(...notesData.data[section]);
+            }
+          });
+          
           // Filter notes for this specific record
-          const recordNotes = notesData.data.filter((note: any) => {
+          const recordNotes = allNotes.filter((note: any) => {
             return (
               note['leadId'] === record.id ||
               note['opportunityId'] === record.id ||

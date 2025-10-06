@@ -3,93 +3,113 @@ const prisma = new PrismaClient();
 
 async function assignCompaniesToSellers() {
   try {
-    console.log('🔄 Starting company assignment to sellers...');
+    console.log('🔄 Assigning companies to sellers...');
     
-    // Get the demo workspace ID
-    const DEMO_WORKSPACE_ID = '01K1VBYX2YERMXBFJ60RC6J194';
-    
-    // Get all sellers in the demo workspace
+    // Get all sellers
     const sellers = await prisma.sellers.findMany({
-      where: {
-        workspaceId: DEMO_WORKSPACE_ID,
-        deletedAt: null
-      }
+      where: { deletedAt: null },
+      select: { id: true, name: true, assignedUserId: true }
     });
     
     console.log(`📊 Found ${sellers.length} sellers`);
     
-    // Get all companies in the demo workspace
+    // Get some companies to assign
     const companies = await prisma.companies.findMany({
-      where: {
-        workspaceId: DEMO_WORKSPACE_ID,
-        deletedAt: null
-      }
+      where: { 
+        deletedAt: null,
+        assignedUserId: null // Only get unassigned companies
+      },
+      select: { id: true, name: true },
+      take: 100 // Take first 100 unassigned companies
     });
     
-    console.log(`🏢 Found ${companies.length} companies`);
+    console.log(`📊 Found ${companies.length} unassigned companies`);
     
-    if (sellers.length === 0 || companies.length === 0) {
-      console.log('❌ No sellers or companies found. Please ensure demo data exists.');
-      return;
-    }
-    
-    // Assign companies to sellers (distribute evenly)
-    const companiesPerSeller = Math.ceil(companies.length / sellers.length);
-    console.log(`📈 Assigning ~${companiesPerSeller} companies per seller`);
-    
-    let companyIndex = 0;
-    
-    for (let i = 0; i < sellers.length; i++) {
-      const seller = sellers[i];
-      const sellerCompanies = [];
+    if (companies.length === 0) {
+      console.log('⚠️ No unassigned companies found, will reassign existing ones');
       
-      // Assign companies to this seller
-      for (let j = 0; j < companiesPerSeller && companyIndex < companies.length; j++) {
-        const company = companies[companyIndex];
-        sellerCompanies.push(company);
-        companyIndex++;
-      }
-      
-      // Update companies with seller assignment
-      if (sellerCompanies.length > 0) {
-        const companyIds = sellerCompanies.map(c => c.id);
-        
-        await prisma.companies.updateMany({
-          where: {
-            id: { in: companyIds }
-          },
-          data: {
-            assignedUserId: seller.id, // Assign to seller ID, not user ID
-            updatedAt: new Date()
-          }
-        });
-        
-        console.log(`✅ Assigned ${sellerCompanies.length} companies to ${seller.name}`);
-      }
-    }
-    
-    // Verify assignments
-    const assignedCompanies = await prisma.companies.count({
-      where: {
-        workspaceId: DEMO_WORKSPACE_ID,
-        assignedUserId: { not: null },
-        deletedAt: null
-      }
-    });
-    
-    console.log(`✅ Successfully assigned ${assignedCompanies} companies to sellers`);
-    
-    // Show distribution
-    for (const seller of sellers) {
-      const sellerCompanyCount = await prisma.companies.count({
-        where: {
-          workspaceId: DEMO_WORKSPACE_ID,
-          assignedUserId: seller.id,
-          deletedAt: null
-        }
+      // Get some companies that are already assigned
+      const assignedCompanies = await prisma.companies.findMany({
+        where: { 
+          deletedAt: null,
+          assignedUserId: { not: null }
+        },
+        select: { id: true, name: true, assignedUserId: true },
+        take: 100
       });
-      console.log(`👤 ${seller.name}: ${sellerCompanyCount} companies`);
+      
+      console.log(`📊 Found ${assignedCompanies.length} assigned companies to reassign`);
+      
+      // Reassign companies to sellers
+      const companiesPerSeller = Math.floor(assignedCompanies.length / sellers.length);
+      
+      for (let i = 0; i < sellers.length; i++) {
+        const seller = sellers[i];
+        const startIndex = i * companiesPerSeller;
+        const endIndex = Math.min(startIndex + companiesPerSeller, assignedCompanies.length);
+        
+        console.log(`🔄 Assigning companies ${startIndex}-${endIndex} to ${seller.name}`);
+        
+        for (let j = startIndex; j < endIndex; j++) {
+          const company = assignedCompanies[j];
+          
+          await prisma.companies.update({
+            where: { id: company.id },
+            data: {
+              assignedUserId: seller.assignedUserId, // Use the seller's assignedUserId
+              updatedAt: new Date()
+            }
+          });
+          
+          console.log(`✅ Assigned ${company.name} to ${seller.name}`);
+        }
+      }
+    } else {
+      // Assign unassigned companies to sellers
+      const companiesPerSeller = Math.floor(companies.length / sellers.length);
+      
+      for (let i = 0; i < sellers.length; i++) {
+        const seller = sellers[i];
+        const startIndex = i * companiesPerSeller;
+        const endIndex = Math.min(startIndex + companiesPerSeller, companies.length);
+        
+        console.log(`🔄 Assigning companies ${startIndex}-${endIndex} to ${seller.name}`);
+        
+        for (let j = startIndex; j < endIndex; j++) {
+          const company = companies[j];
+          
+          await prisma.companies.update({
+            where: { id: company.id },
+            data: {
+              assignedUserId: seller.assignedUserId, // Use the seller's assignedUserId
+              updatedAt: new Date()
+            }
+          });
+          
+          console.log(`✅ Assigned ${company.name} to ${seller.name}`);
+        }
+      }
     }
+    
+    // Verify the assignments
+    console.log('\n📊 Verifying company assignments...');
+    
+    for (const seller of sellers) {
+      const assignedCompanies = await prisma.companies.findMany({
+        where: {
+          deletedAt: null,
+          assignedUserId: seller.assignedUserId
+        },
+        select: { id: true, name: true }
+      });
+      
+      console.log(`👤 ${seller.name}: ${assignedCompanies.length} companies assigned`);
+      if (assignedCompanies.length > 0) {
+        console.log(`   Sample companies: ${assignedCompanies.slice(0, 3).map(c => c.name).join(', ')}`);
+      }
+    }
+    
+    console.log('\n✅ Successfully assigned companies to sellers');
     
   } catch (error) {
     console.error('❌ Error assigning companies to sellers:', error);
@@ -100,10 +120,7 @@ async function assignCompaniesToSellers() {
 
 if (require.main === module) {
   assignCompaniesToSellers()
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    });
+    .catch(console.error);
 }
 
 module.exports = { assignCompaniesToSellers };

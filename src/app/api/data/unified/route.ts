@@ -1978,8 +1978,23 @@ async function getMultipleRecords(
         personId: true,
         person: true
       };
-    } else if (type !== 'sellers') {
-      // Default for leads, prospects, etc. (exclude sellers)
+    } else if (type === 'sellers') {
+      // Special fields for sellers table
+      selectFields = {
+        ...selectFields,
+        name: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        title: true,
+        department: true,
+        company: true,
+        tags: true,
+        metadata: true
+      };
+    } else {
+      // Default for leads, prospects, etc.
       selectFields = {
         ...selectFields,
         firstName: true,

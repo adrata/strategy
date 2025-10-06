@@ -13,6 +13,7 @@ import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { FullPanelSkeleton } from "@/platform/ui/components/skeletons/FullPanelSkeleton";
 import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
 import { authFetch } from "@/platform/auth-fetch";
+import { useUnifiedAuth } from "@/platform/auth-unified";
 
 interface Seller {
   id: string;
@@ -28,20 +29,26 @@ interface Seller {
 interface Company {
   id: string;
   name: string;
-  domain: string;
   industry: string;
+  size: string;
   employeeCount: string;
   revenue: string;
-  location: string;
-  icpScore: number;
-  lastUpdated: string;
+  city: string;
+  state: string;
+  country: string;
+  website: string;
+  description: string;
+  tags: string[];
+  updatedAt: string;
   status: string;
   assignedUserId: string;
+  icpScore?: number;
 }
 
 export default function SellerCompaniesPage() {
   const params = useParams();
   const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useUnifiedAuth();
   const sellerSlug = params['id'] as string;
   const sellerId = extractIdFromSlug(sellerSlug);
   const workspace = params['workspace'] as string;
@@ -60,15 +67,51 @@ export default function SellerCompaniesPage() {
 
   useEffect(() => {
     const loadSellerAndCompanies = async () => {
+      // Wait for authentication to be ready
+      if (authLoading) {
+        console.log('🔍 Waiting for authentication...');
+        return;
+      }
+      
+      // Check if we're in demo workspace
+      const isDemoWorkspace = workspace === 'demo';
+      console.log('🔍 Demo workspace detected:', isDemoWorkspace);
+      
+      // For demo workspace, we might not have full authentication but still need to load data
+      if (!isDemoWorkspace && (!isAuthenticated || !user)) {
+        console.log('🔍 Not authenticated, skipping data load');
+        setError('Authentication required');
+        setLoading(false);
+        return;
+      }
+      
+      // For demo workspace, create a mock user context if needed
+      const effectiveUser = user || (isDemoWorkspace ? {
+        id: '01K1VBYYV7TRPY04NW4TW4XWRB',
+        name: 'Dan Mirolli',
+        email: 'dan@adrata.com',
+        activeWorkspaceId: '01K1VBYX2YERMXBFJ60RC6J194'
+      } : null);
+      
+      if (!effectiveUser) {
+        console.log('🔍 No effective user context');
+        setError('User context required');
+        setLoading(false);
+        return;
+      }
+      
       try {
         setLoading(true);
         
         console.log('🔍 Loading seller with slug:', sellerSlug);
         console.log('🔍 Extracted seller ID:', sellerId);
         console.log('🔍 Workspace:', workspace);
+        console.log('🔍 User authenticated:', effectiveUser.name, effectiveUser.id);
         
         // Load seller data using the unified API
+        console.log('🔍 Making seller API call...');
         const sellerResponse = await authFetch(`/api/data/unified?type=sellers&action=get`);
+        console.log('🔍 Seller API response status:', sellerResponse.status);
         const sellerResult = await sellerResponse.json();
         
         console.log('🔍 Seller API response:', sellerResult);
@@ -76,24 +119,28 @@ export default function SellerCompaniesPage() {
         if (sellerResult['success'] && sellerResult.data) {
           const foundSeller = sellerResult.data.find((s: Seller) => s['id'] === sellerId);
           console.log('🔍 Found seller:', foundSeller);
+          console.log('🔍 Seller name:', foundSeller?.name);
+          console.log('🔍 Seller firstName:', foundSeller?.firstName);
+          console.log('🔍 Seller lastName:', foundSeller?.lastName);
           
           if (foundSeller) {
             setSeller(foundSeller);
             
             // Load companies data using unified API
             console.log('🔍 Loading companies for seller:', foundSeller.id, 'assignedUserId:', foundSeller.assignedUserId);
-            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${foundSeller.id}`);
+            console.log('🔍 Making companies API call...');
+            const companiesResponse = await authFetch(`/api/data/unified?type=companies&action=get`);
+            console.log('🔍 Companies API response status:', companiesResponse.status);
             const companiesResult = await companiesResponse.json();
             
             console.log('🔍 Companies API response:', companiesResult);
             
             if (companiesResult['success'] && companiesResult.data) {
-              // Filter companies assigned to this seller - try both assignedUserId and seller ID
+              // Filter companies assigned to Dan (manager) - all companies are assigned to Dan's user ID
               const sellerCompanies = companiesResult.data.filter((company: Company) => 
-                company['assignedUserId'] === foundSeller.assignedUserId || 
-                company['assignedUserId'] === foundSeller.id
+                company['assignedUserId'] === foundSeller.assignedUserId
               );
-              console.log('🔍 Seller companies:', sellerCompanies);
+              console.log('🔍 Seller companies (filtered by Dan\'s user ID):', sellerCompanies);
               setCompanies(sellerCompanies);
             } else {
               console.log('❌ Failed to load companies data');
@@ -115,10 +162,10 @@ export default function SellerCompaniesPage() {
       }
     };
 
-    if (sellerId) {
+    if (sellerId && !authLoading) {
       loadSellerAndCompanies();
     }
-  }, [sellerId, workspace]);
+  }, [sellerId, workspace, authLoading, isAuthenticated, user]);
 
   // Handle company card click
   const handleCompanyClick = (company: Company) => {
@@ -129,6 +176,11 @@ export default function SellerCompaniesPage() {
     // Navigate to the buyer group page
     router.push(`/${workspace}/sellers/${sellerId}/companies/${slug}/buyer-group`);
   };
+
+  // Show loading while authentication is loading
+  if (authLoading) {
+    return <FullPanelSkeleton />;
+  }
 
   if (loading) {
     return <FullPanelSkeleton />;
@@ -201,13 +253,15 @@ export default function SellerCompaniesPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           {/* Avatar */}
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
-                            <span className="text-lg font-semibold text-white">
+                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-2xl flex items-center justify-center shadow-sm">
+                            <span className="text-lg font-semibold text-gray-700">
                               {seller.firstName?.[0] || seller.name?.[0] || 'S'}
                             </span>
                           </div>
                           <div>
-                            <h1 className="text-2xl font-bold text-gray-900 mb-1">{seller.name}</h1>
+                            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                              {seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller'}
+                            </h1>
                             <p className="text-sm text-gray-600">{seller.role || 'Sales Representative'} • {workspace}</p>
                           </div>
                         </div>
@@ -216,7 +270,7 @@ export default function SellerCompaniesPage() {
                           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                             Edit Seller
                           </button>
-                          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-400 rounded-lg hover:bg-blue-500 transition-colors">
+                          <button className="px-4 py-2 text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors">
                             Add Action
                           </button>
                         </div>
@@ -271,13 +325,13 @@ export default function SellerCompaniesPage() {
                                     </span>
                                   </div>
                                   <div className="text-sm text-gray-600 space-y-1">
-                                    <div>{company.industry || 'Unknown Industry'}</div>
-                                    <div>{company.employeeCount || 'Unknown Size'}</div>
-                                    <div>{company.revenue || 'Unknown Revenue'}</div>
-                                    <div>{company.location || 'Unknown Location'}</div>
+                                    <div>{company.industry}</div>
+                                    <div>{company.size ? `${company.size} employees` : company.employeeCount}</div>
+                                    <div>{company.revenue ? `$${company.revenue}M` : company.revenue}</div>
+                                    <div>{company.city && company.state ? `${company.city}, ${company.state}` : company.country}</div>
                                   </div>
                                   <div className="mt-2 text-sm text-gray-500">
-                                    Last Updated: {new Date(company.lastUpdated).toLocaleDateString()}
+                                    Last Updated: {company.updatedAt ? new Date(company.updatedAt).toLocaleDateString() : 'N/A'}
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
