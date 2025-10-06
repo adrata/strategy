@@ -25,7 +25,7 @@ interface Workspace {
 export default function WorkspacesPage() {
   const router = useRouter();
   const { navigateToPipeline } = useWorkspaceNavigation();
-  const { user: authUser } = useUnifiedAuth();
+  const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
@@ -43,6 +43,11 @@ export default function WorkspacesPage() {
       setWorkspaces(userWorkspaces);
     }
   }, [authUser?.workspaces, authUser?.activeWorkspaceId]);
+
+  // Show loading state while auth is loading
+  if (authLoading) {
+    return <PipelineSkeleton message="Loading workspaces..." />;
+  }
 
   const handleWorkspaceSelect = async (workspace: Workspace) => {
     setIsSwitching(true);
@@ -283,7 +288,7 @@ export default function WorkspacesPage() {
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-700">
-                  {authUser?.name?.charAt(0).toUpperCase() || "U"}
+                  {authUser?.name ? authUser.name.charAt(0).toUpperCase() : "U"}
                 </span>
               </div>
               <span className="text-sm text-gray-700">{authUser?.name}</span>
