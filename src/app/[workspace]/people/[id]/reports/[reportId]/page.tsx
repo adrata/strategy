@@ -92,19 +92,19 @@ export default function DeepValueReportPage() {
       <ZoomProvider>
         <PipelineProvider>
           <PanelLayout
-            leftPanel={<PipelineLeftPanelStandalone />}
+            leftPanel={<PipelineLeftPanelStandalone activeSection="people" onSectionChange={() => {}} />}
+            middlePanel={
+              <DeepValueReportViewer
+                reportId={reportId}
+                reportData={reportData}
+                isLoading={isLoading}
+                error={error}
+                onBack={handleBack}
+                record={currentRecord}
+              />
+            }
             rightPanel={<AIRightPanel />}
-            header={<ProfileBox />}
-          >
-            <DeepValueReportViewer
-              reportId={reportId}
-              reportData={reportData}
-              isLoading={isLoading}
-              error={error}
-              onBack={handleBack}
-              record={currentRecord}
-            />
-          </PanelLayout>
+          />
         </PipelineProvider>
       </ZoomProvider>
     </AcquisitionOSProvider>

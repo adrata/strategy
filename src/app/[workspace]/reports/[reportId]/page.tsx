@@ -11,8 +11,8 @@ export default function WorkspacePublicReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const workspace = params.workspace as string;
-  const reportId = params.reportId as string;
+  const workspace = params['workspace'] as string;
+  const reportId = params['reportId'] as string;
 
   useEffect(() => {
     if (reportId) {

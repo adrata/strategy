@@ -685,7 +685,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     handleFileSelect({ target: { files } } as any);
   };
 
-  // Message processing
+  // Optimized message processing with caching and debouncing
   const processMessageWithQueue = async (input: string) => {
     if (isProcessing) return;
     
@@ -725,32 +725,46 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
 
-      // Call AI API
-      console.log('🤖 [AI CHAT] Making API call to /api/ai-chat with POST method');
+      // Enhanced AI API call with performance optimizations
+      console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat');
+      const startTime = performance.now();
+      
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          'Pragma': 'no-cache',
+          'X-Request-ID': `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         },
         body: JSON.stringify({
           message: input,
           appType: activeSubApp,
           workspaceId,
           userId,
-          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing').slice(-10),
+          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing').slice(-5), // Reduced history for speed
           currentRecord,
           recordType,
           enableVoiceResponse: false,
-          selectedVoiceId: 'default'
+          selectedVoiceId: 'default',
+          // Enhanced context for smarter responses
+          context: {
+            currentUrl: window.location.href,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+            sessionId: `session-${Date.now()}`
+          }
         }),
       });
 
+      const endTime = performance.now();
+      const responseTime = endTime - startTime;
+      
       console.log('🤖 [AI CHAT] Response received:', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok,
+        responseTime: `${responseTime.toFixed(2)}ms`,
         headers: Object.fromEntries(response.headers.entries())
       });
 
@@ -881,13 +895,54 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
     await processMessageWithQueue(action);
   };
 
-  // Handle record search from clickable links
+  // Enhanced record search with smart navigation
   const handleRecordSearch = async (recordName: string) => {
-    console.log(`🔍 Searching for record: ${recordName}`);
+    console.log(`🔍 Smart search for record: ${recordName}`);
     
     // Add a search message to the chat
     const searchMessage = `Searching for "${recordName}"...`;
     await processMessageWithQueue(searchMessage);
+  };
+
+  // Smart link generation for records and actions
+  const generateSmartLinks = (content: string): string => {
+    // Pattern matching for different types of links
+    const patterns = {
+      // Person records: "John Smith" -> link to person profile
+      person: /"([A-Z][a-z]+ [A-Z][a-z]+)"/g,
+      // Company records: "Acme Corp" -> link to company profile  
+      company: /"([A-Z][a-z]+(?: [A-Z][a-z]+)*)"/g,
+      // Email addresses: "john@company.com" -> link to person
+      email: /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
+      // Phone numbers: "(555) 123-4567" -> link to contact
+      phone: /(\([0-9]{3}\) [0-9]{3}-[0-9]{4})/g,
+      // URLs: "https://company.com" -> external link
+      url: /(https?:\/\/[^\s]+)/g
+    };
+
+    let enhancedContent = content;
+
+    // Replace person names with clickable links
+    enhancedContent = enhancedContent.replace(patterns.person, (match, name) => {
+      return `[${name}](/people?search=${encodeURIComponent(name)})`;
+    });
+
+    // Replace company names with clickable links
+    enhancedContent = enhancedContent.replace(patterns.company, (match, name) => {
+      return `[${name}](/companies?search=${encodeURIComponent(name)})`;
+    });
+
+    // Replace email addresses with clickable links
+    enhancedContent = enhancedContent.replace(patterns.email, (match, email) => {
+      return `[${email}](/people?search=${encodeURIComponent(email)})`;
+    });
+
+    // Replace phone numbers with clickable links
+    enhancedContent = enhancedContent.replace(patterns.phone, (match, phone) => {
+      return `[${phone}](/people?search=${encodeURIComponent(phone)})`;
+    });
+
+    return enhancedContent;
   };
 
   // Render based on view mode

@@ -34,6 +34,8 @@ export interface ClaudeChatResponse {
 export class ClaudeAIService {
   private anthropic: Anthropic;
   private model: string = 'claude-sonnet-4-5';
+  private responseCache: Map<string, ClaudeChatResponse> = new Map();
+  private cacheTimeout: number = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -53,6 +55,19 @@ export class ClaudeAIService {
     const startTime = Date.now();
     
     try {
+      // Generate cache key for request
+      const cacheKey = this.generateCacheKey(request);
+      
+      // Check cache first for performance
+      const cachedResponse = this.responseCache.get(cacheKey);
+      if (cachedResponse && (Date.now() - cachedResponse.processingTime) < this.cacheTimeout) {
+        console.log('🚀 [CLAUDE AI] Using cached response for performance');
+        return {
+          ...cachedResponse,
+          processingTime: Date.now() - startTime
+        };
+      }
+      
       // Check if this is a person search query and search database first
       const personSearchResult = await this.handlePersonSearchQuery(request);
       
@@ -93,13 +108,21 @@ export class ClaudeAIService {
 
       console.log(`✅ [CLAUDE AI] Enhanced response generated in ${processingTime}ms`);
 
-      return {
+      const claudeResponse = {
         response: responseText,
         confidence: 0.95, // Claude responses are generally high confidence
         model: this.model,
         tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
         processingTime: processingTime
       };
+
+      // Cache the response for future use
+      this.responseCache.set(cacheKey, claudeResponse);
+      
+      // Clean up old cache entries
+      this.cleanupCache();
+
+      return claudeResponse;
 
     } catch (error) {
       console.error('❌ Claude AI Service Error:', error);
@@ -649,6 +672,32 @@ I can assist you with sales strategy, buyer research, pipeline optimization, and
     return `Hey there! I'm experiencing a brief technical issue, but I'm still ready to help you with your sales process.
 
 I can help with prospecting, pipeline analysis, buyer research, and closing strategies. What's on your mind today?`;
+  }
+
+  /**
+   * Generate cache key for request
+   */
+  private generateCacheKey(request: ClaudeChatRequest): string {
+    const keyData = {
+      message: request.message,
+      workspaceId: request.workspaceId,
+      userId: request.userId,
+      recordType: request.recordType,
+      appType: request.appType
+    };
+    return `claude-${JSON.stringify(keyData)}`;
+  }
+
+  /**
+   * Clean up old cache entries
+   */
+  private cleanupCache(): void {
+    const now = Date.now();
+    for (const [key, response] of this.responseCache.entries()) {
+      if (now - response.processingTime > this.cacheTimeout) {
+        this.responseCache.delete(key);
+      }
+    }
   }
 
   /**

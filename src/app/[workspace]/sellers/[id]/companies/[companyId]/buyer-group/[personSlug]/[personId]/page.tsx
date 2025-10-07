@@ -25,8 +25,6 @@ export default function PersonRecordPage() {
               <PipelineDetailPage
                 section="people"
                 slug={personId}
-                sellerId={sellerId}
-                companyId={companyId}
               />
             </ProfilePopupProvider>
           </RecordContextProvider>

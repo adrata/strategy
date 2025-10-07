@@ -23,7 +23,6 @@ export default function SellerProfilePage() {
               <PipelineDetailPage
                 section="sellers"
                 slug={sellerId}
-                showCompaniesFirst={true}
               />
             </ProfilePopupProvider>
           </RecordContextProvider>

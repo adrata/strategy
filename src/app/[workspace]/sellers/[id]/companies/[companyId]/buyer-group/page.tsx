@@ -48,7 +48,7 @@ export default function BuyerGroupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUnifiedAuth();
-  const workspace = params.workspace as string;
+  const workspace = params['workspace'] as string;
   const sellerId = params['id'] as string;
   const companyId = params['companyId'] as string;
   const selectedPersonSlug = searchParams.get('person');
@@ -431,11 +431,11 @@ Create opportunities for ongoing engagement and relationship development. Provid
             email: `${selectedPerson.name.toLowerCase().replace(' ', '.')}@${selectedPerson.company.toLowerCase()}.com`,
             phone: '+1 (555) 123-4567',
             location: 'San Francisco, CA',
-            status: selectedPerson.status,
+            status: 'active',
             buyerRole: selectedPerson.buyerRole,
             influence: selectedPerson.influence,
             decisionPower: selectedPerson.decisionPower,
-            riskStatus: selectedPerson.riskStatus,
+            riskStatus: 'low',
             directionalIntelligence: selectedPerson.directionalIntelligence,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -593,10 +593,10 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         return;
                       } else if (section === 'companies') {
                         // Navigate to companies page
-                        router.push(`/${workspaceId}/sellers/${sellerId}/companies`);
+                        router.push(`/${workspace}/sellers/${sellerId}/companies`);
                       } else {
                         // Navigate to other sections
-                        router.push(`/${workspaceId}/${section}`);
+                        router.push(`/${workspace}/${section}`);
                       }
                     }}
                   />

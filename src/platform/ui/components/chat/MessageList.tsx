@@ -200,8 +200,8 @@ export function MessageList({
               />
             ) : (
               <div className="whitespace-pre-line">
-                {/* Render content with clickable links and record references */}
-                {message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+))/g).map((part, index) => {
+                {/* Enhanced content rendering with smart links and record references */}
+                {message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+)|"([A-Z][a-z]+ [A-Z][a-z]+)"|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
                   // Handle markdown-style links [text](url)
                   const markdownLinkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
                   if (markdownLinkMatch) {
@@ -253,6 +253,57 @@ export function MessageList({
                         className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-blue-50 px-1 rounded"
                       >
                         @{recordName}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle quoted person names "John Smith"
+                  const quotedPersonMatch = part.match(/^"([A-Z][a-z]+ [A-Z][a-z]+)"$/);
+                  if (quotedPersonMatch) {
+                    const [, personName] = quotedPersonMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(personName);
+                        }}
+                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-green-50 px-1 rounded border border-green-200"
+                      >
+                        {personName}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle email addresses
+                  const emailMatch = part.match(/^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/);
+                  if (emailMatch) {
+                    const [, email] = emailMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(email);
+                        }}
+                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-purple-50 px-1 rounded border border-purple-200"
+                      >
+                        {email}
+                      </button>
+                    );
+                  }
+                  
+                  // Handle phone numbers
+                  const phoneMatch = part.match(/^(\([0-9]{3}\) [0-9]{3}-[0-9]{4})$/);
+                  if (phoneMatch) {
+                    const [, phone] = phoneMatch;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          handleRecordSearch(phone);
+                        }}
+                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-orange-50 px-1 rounded border border-orange-200"
+                      >
+                        {phone}
                       </button>
                     );
                   }
