@@ -63,7 +63,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
     response.headers.set('X-User-ID', user.id);
     response.headers.set('X-User-Email', user.email);
-    response.headers.set('X-Workspace-ID', user.activeWorkspaceId || '');
+    response.headers.set('X-Workspace-ID', user.workspaceId || '');
     
     return response;
     
