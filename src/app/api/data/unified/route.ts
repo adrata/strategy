@@ -915,54 +915,21 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   if (type === 'speedrun') {
     console.log(`🔍 [SPEEDRUN SINGLE] Loading speedrun record: ${id}`);
     
-    // Speedrun records are actually people records with specific criteria
-    // Try to find the person record first
-    const person = await prisma.people.findUnique({
-      where: { id },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            website: true,
-            rank: true
-          }
-        }
-      }
-    });
+    // Speedrun records are dynamically generated from people data
+    // Load the full speedrun data and find the specific record
+    const speedrunData = await loadSpeedrunData(workspaceId, userId);
     
-    if (!person) {
-      throw new Error(`Speedrun record not found: ${id}`);
+    if (!speedrunData.success) {
+      throw new Error(`Failed to load speedrun data: ${speedrunData.error}`);
     }
     
-    // Transform person record to speedrun format
-    const speedrunRecord = {
-      id: person.id,
-      rank: person.rank || 1,
-      name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-      fullName: person.fullName,
-      firstName: person.firstName,
-      lastName: person.lastName,
-      email: person.email,
-      phone: person.phone,
-      linkedinUrl: person.linkedinUrl,
-      title: person.jobTitle,
-      company: person.company || 'Unknown Company',
-      companyId: person.companyId,
-      industry: null,
-      website: null,
-      customFields: person.customFields,
-      tags: person.tags,
-      lastAction: person.lastAction,
-      lastActionDate: person.lastActionDate,
-      nextAction: person.nextAction,
-      nextActionDate: person.nextActionDate,
-      assignedUserId: person.assignedUserId,
-      workspaceId: person.workspaceId,
-      createdAt: person.createdAt,
-      updatedAt: person.updatedAt
-    };
+    // Find the specific speedrun record by ID
+    const speedrunItems = speedrunData.data.speedrunItems || [];
+    const speedrunRecord = speedrunItems.find((item: any) => item.id === id);
+    
+    if (!speedrunRecord) {
+      throw new Error(`Speedrun record not found: ${id}`);
+    }
     
     console.log(`✅ [SPEEDRUN SINGLE] Found speedrun record: ${speedrunRecord.name} at ${speedrunRecord.company}`);
     
