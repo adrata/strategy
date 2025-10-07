@@ -9,8 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUnifiedAuthUser } from "@/platform/api-auth";
 
 export async function middleware(request: NextRequest) {
-  try {
-    const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl;
   
   // Handle private routes (existing functionality)
   if (pathname.startsWith('/private/')) {
@@ -22,7 +21,6 @@ export async function middleware(request: NextRequest) {
   
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
     const response = NextResponse.next();
     // Add CORS headers for auth endpoints
     response.headers.set('Access-Control-Allow-Origin', '*');
@@ -33,30 +31,24 @@ export async function middleware(request: NextRequest) {
   
   // Skip authentication for debug endpoints
   if (pathname.startsWith('/api/debug/')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for debug endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
   // Skip authentication for health check endpoints
   if (pathname.startsWith('/api/health')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for health endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
   // Skip authentication for webhook endpoints
   if (pathname.startsWith('/api/webhooks')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for webhook endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
   // For all other API endpoints, require authentication
   try {
-    console.log(`🔐 [MIDDLEWARE] Checking authentication for: ${pathname}`);
-    
     const user = await getUnifiedAuthUser(request);
     
     if (!user) {
-      console.log(`❌ [MIDDLEWARE] No authenticated user for: ${pathname}`);
       const response = NextResponse.json(
         { success: false, error: "Authentication required" },
         { status: 401 }
@@ -68,8 +60,6 @@ export async function middleware(request: NextRequest) {
       return response;
     }
     
-    console.log(`✅ [MIDDLEWARE] Authenticated user for: ${pathname}`);
-    
     // Add user info to headers for downstream processing
     const response = NextResponse.next();
     response.headers.set('X-User-ID', user.id);
@@ -79,8 +69,6 @@ export async function middleware(request: NextRequest) {
     return response;
     
   } catch (error) {
-    console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);
-    
     const response = NextResponse.json(
       { 
         success: false, 
@@ -90,33 +78,6 @@ export async function middleware(request: NextRequest) {
       { status: 401 }
     );
     // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return response;
-  }
-  } catch (middlewareError) {
-    console.error(`❌ [MIDDLEWARE] Critical middleware error:`, middlewareError);
-    
-    // For auth endpoints, don't fail the middleware - let the endpoint handle it
-    if (isAuthEndpoint(request.nextUrl.pathname)) {
-      console.log(`🔓 [MIDDLEWARE] Allowing auth endpoint despite middleware error: ${request.nextUrl.pathname}`);
-      const response = NextResponse.next();
-      response.headers.set('Access-Control-Allow-Origin', '*');
-      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      return response;
-    }
-    
-    // For other endpoints, return error
-    const response = NextResponse.json(
-      { 
-        success: false, 
-        error: "Middleware error",
-        details: middlewareError instanceof Error ? middlewareError.message : 'Unknown middleware error'
-      },
-      { status: 500 }
-    );
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
