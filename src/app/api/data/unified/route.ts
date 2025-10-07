@@ -1431,12 +1431,12 @@ async function getMultipleRecords(
       
       // Add basic ranking and formatting, filter out user's company
       const peopleWithRanking = people
-        .filter(person => !shouldExcludeCompany(person.company?.name))
+        .filter(person => !shouldExcludeCompany(person.company))
         .map((person: any, index: number) => ({
           ...person,
           masterRank: person.rank || (index + 1),
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          company: (person as any).company || 'Unknown Company'
+          company: person.company || 'Unknown Company'
         }));
       
       return { success: true, data: peopleWithRanking };
