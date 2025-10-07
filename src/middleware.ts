@@ -21,44 +21,43 @@ export async function middleware(request: NextRequest) {
   
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
-    const response = NextResponse.next();
-    // Add CORS headers for auth endpoints
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return response;
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);                                                                      
+    return NextResponse.next();
   }
   
   // Skip authentication for debug endpoints
   if (pathname.startsWith('/api/debug/')) {
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for debug endpoint: ${pathname}`);                                                                     
     return NextResponse.next();
   }
   
   // Skip authentication for health check endpoints
   if (pathname.startsWith('/api/health')) {
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for health endpoint: ${pathname}`);                                                                    
     return NextResponse.next();
   }
   
   // Skip authentication for webhook endpoints
   if (pathname.startsWith('/api/webhooks')) {
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for webhook endpoint: ${pathname}`);                                                                   
     return NextResponse.next();
   }
   
   // For all other API endpoints, require authentication
   try {
+    console.log(`🔐 [MIDDLEWARE] Checking authentication for: ${pathname}`);
+    
     const user = await getUnifiedAuthUser(request);
     
     if (!user) {
-      const response = NextResponse.json(
+      console.log(`❌ [MIDDLEWARE] No authenticated user for: ${pathname}`);
+      return NextResponse.json(
         { success: false, error: "Authentication required" },
         { status: 401 }
       );
-      // Add CORS headers
-      response.headers.set('Access-Control-Allow-Origin', '*');
-      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      return response;
     }
+    
+    console.log(`✅ [MIDDLEWARE] Authenticated user for: ${pathname}`);
     
     // Add user info to headers for downstream processing
     const response = NextResponse.next();
@@ -69,7 +68,9 @@ export async function middleware(request: NextRequest) {
     return response;
     
   } catch (error) {
-    const response = NextResponse.json(
+    console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);                                                                              
+    
+    return NextResponse.json(
       { 
         success: false, 
         error: "Authentication failed",
@@ -77,11 +78,6 @@ export async function middleware(request: NextRequest) {
       },
       { status: 401 }
     );
-    // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return response;
   }
 }
 
@@ -121,12 +117,10 @@ function getWorkspaceIdFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-// Protect API routes only - static pages handle their own authentication
+// Protect all API routes
 export const config = {
   matcher: [
-    '/api/:path*'  // Only protect API routes
+    '/api/:path*',
+    '/private/:path*'
   ],
 };
-
-// Ensure middleware runs in Edge Runtime for better performance
-// Note: Removed runtime export as it's causing Vercel deployment issues
