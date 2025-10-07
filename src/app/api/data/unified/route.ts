@@ -1270,7 +1270,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       console.log(`🔍 [GET SINGLE] Applying Coresignal transformation for ${type} record: ${id}`);
     console.log(`🚨 [DEBUG] SERVER IS RUNNING UPDATED CODE - CORESIGNAL TRANSFORMATION ACTIVE`);
       // Extract Coresignal data (cast customFields to any for JSON field access)
-      const coresignalData = (record.customFields as any)?.coresignalData || (record.customFields as any)?.coresignal || {};
+      const coresignalData = ((record as any).customFields as any)?.coresignalData || ((record as any).customFields as any)?.coresignal || {};
       console.log(`🔍 [GET SINGLE] Extracted Coresignal data:`, {
         full_name: coresignalData.full_name,
         active_experience_title: coresignalData.active_experience_title,
