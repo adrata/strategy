@@ -117,7 +117,7 @@ export function HierarchicalBreadcrumb({
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          All {recordType}
+          All {recordType === 'people' ? 'People' : recordType}
         </button>
         <span className="text-sm text-gray-400">/</span>
         <span className="text-sm font-medium text-gray-900">{getDisplayName()}</span>
@@ -135,7 +135,7 @@ export function HierarchicalBreadcrumb({
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
-        All {recordType}
+        All {recordType === 'people' ? 'People' : recordType}
       </button>
       <span className="text-sm text-gray-400">/</span>
       
