@@ -11,19 +11,10 @@ import { storeSession } from "@/platform/auth/session";
 import { NextRequest } from "next/server";
 import { parseWorkspaceFromUrl, getWorkspaceBySlug, generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";
 
-// Server-side only imports
-let prisma: any = null;
-let jwt: any = null;
-
-if (typeof window === 'undefined') {
-  // Only import on server-side
-  const { PrismaClient } = require("@prisma/client");
-  const { prisma: prismaClient } = require('@/platform/database/prisma-client');
-  const jwtLib = require("jsonwebtoken");
-  
-  prisma = prismaClient;
-  jwt = jwtLib;
-}
+// Server-side only imports - Edge Runtime compatible
+import { PrismaClient } from "@prisma/client";
+import { prisma } from '@/platform/database/prisma-client';
+import jwt from "jsonwebtoken";
 
 export interface WorkspaceContext {
   workspaceId: string;
