@@ -22,7 +22,12 @@ export async function middleware(request: NextRequest) {
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
     console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Add CORS headers for auth endpoints
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return response;
   }
   
   // Skip authentication for debug endpoints
@@ -51,10 +56,15 @@ export async function middleware(request: NextRequest) {
     
     if (!user) {
       console.log(`❌ [MIDDLEWARE] No authenticated user for: ${pathname}`);
-      return NextResponse.json(
+      const response = NextResponse.json(
         { success: false, error: "Authentication required" },
         { status: 401 }
       );
+      // Add CORS headers
+      response.headers.set('Access-Control-Allow-Origin', '*');
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return response;
     }
     
     console.log(`✅ [MIDDLEWARE] Authenticated user for: ${pathname}`);
@@ -70,7 +80,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);
     
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
         success: false, 
         error: "Authentication failed",
@@ -78,6 +88,11 @@ export async function middleware(request: NextRequest) {
       },
       { status: 401 }
     );
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return response;
   }
 }
 
