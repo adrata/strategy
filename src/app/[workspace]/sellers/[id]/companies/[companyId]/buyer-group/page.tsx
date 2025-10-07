@@ -585,7 +585,20 @@ Create opportunities for ongoing engagement and relationship development. Provid
                 leftPanel={
                   <PipelineLeftPanelStandalone
                     activeSection="people"
-                    onSectionChange={() => {}}
+                    onSectionChange={(section) => {
+                      console.log('🔄 Left panel section clicked:', section);
+                      // Navigate to the appropriate section
+                      if (section === 'people') {
+                        // Already on people section, do nothing
+                        return;
+                      } else if (section === 'companies') {
+                        // Navigate to companies page
+                        router.push(`/${workspaceId}/sellers/${sellerId}/companies`);
+                      } else {
+                        // Navigate to other sections
+                        router.push(`/${workspaceId}/${section}`);
+                      }
+                    }}
                   />
                 }
                 middlePanel={
