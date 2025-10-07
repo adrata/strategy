@@ -108,6 +108,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.log("🔐 [AUTH API] Sign-in request received");
     console.log("🔐 [AUTH API] Environment:", process.env.NODE_ENV);
     console.log("🔐 [AUTH API] Database URL exists:", !!process.env['DATABASE_URL']);
+    
+    // Test database connection early
+    try {
+      await prisma.$connect();
+      console.log("🔐 [AUTH API] Database connection successful");
+    } catch (dbConnectError) {
+      console.error("❌ [AUTH API] Database connection failed:", dbConnectError);
+      throw new Error(`Database connection failed: ${dbConnectError instanceof Error ? dbConnectError.message : 'Unknown error'}`);
+    }
 
     // SECURITY: Check for URL-based credential attempts
     const url = new URL(request.url);
@@ -362,6 +371,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       "dev-secret-key-change-in-production";
     
     console.log("🔐 [AUTH API] JWT secret exists:", !!secret);
+    
+    if (!secret || secret === "dev-secret-key-change-in-production") {
+      console.warn("⚠️ [AUTH API] Using default JWT secret - this should be changed in production");
+    }
     
     let token;
     try {
