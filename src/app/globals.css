@@ -41,6 +41,17 @@ html {
 [data-nextjs-scroll-focus-boundary] {
   height: 100%;
   overflow: hidden;
+  background-color: #ffffff; /* Prevent black flicker */
+}
+
+/* Prevent black background flicker during navigation */
+body {
+  background-color: #ffffff !important;
+}
+
+/* App-specific background override */
+body:not(.website) {
+  background-color: #ffffff !important;
 }
 
 /* Safari viewport units fix */

@@ -162,7 +162,8 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
       }`}
       style={{
         // Ensure consistent background during navigation transitions
-        backgroundColor: isWebsite ? '#000000' : '#ffffff'
+        backgroundColor: isWebsite ? '#000000' : '#ffffff',
+        transition: 'background-color 0.1s ease-in-out'
       }}
       suppressHydrationWarning
     >
