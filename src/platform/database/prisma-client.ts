@@ -24,10 +24,8 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
   log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error']
 });
 
-// Database connection will be tested when first query is made
-
-// Store in global variable to prevent multiple instances
-if (!globalThis.__prisma) {
+// Store in global variable in development to prevent hot reload issues
+if (process['env']['NODE_ENV'] !== 'production') {
   globalThis['__prisma'] = prisma;
 }
 
