@@ -1250,18 +1250,18 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       throw new Error(`${type} not found`);
     }
     
-    console.log(`✅ [GET SINGLE] Found ${type} record:`, record.id);
+    console.log(`✅ [GET SINGLE] Found ${type} record:`, (record as any).id);
     
     // For people records, manually lookup company information
-    if (type === 'people' && record.companyId) {
+    if (type === 'people' && (record as any).companyId) {
       try {
         const companyData = await prisma.companies.findUnique({
-          where: { id: record.companyId },
+          where: { id: (record as any).companyId },
           select: { id: true, name: true, industry: true, vertical: true }
         });
-        record.company = companyData;
+        (record as any).company = companyData;
       } catch (error) {
-        console.warn(`Failed to lookup company for person ${record.id}:`, error);
+        console.warn(`Failed to lookup company for person ${(record as any).id}:`, error);
       }
     }
     
