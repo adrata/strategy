@@ -9,20 +9,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUnifiedAuthUser } from "@/platform/api-auth";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  try {
+    const { pathname } = request.nextUrl;
   
-  // Handle private routes (existing functionality)
+  // Handle private routes with proper headers but no authentication
   if (pathname.startsWith('/private/')) {
+    console.log(`🔓 [MIDDLEWARE] Handling private route: ${pathname}`);
     const response = NextResponse.next();
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');                                                                            
-    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');                                                                      
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     return response;
   }
   
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
     console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);                                                                      
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Add CORS headers for auth endpoints
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
+    return response;
   }
   
   // Skip authentication for debug endpoints
@@ -51,10 +58,15 @@ export async function middleware(request: NextRequest) {
     
     if (!user) {
       console.log(`❌ [MIDDLEWARE] No authenticated user for: ${pathname}`);
-      return NextResponse.json(
+      const response = NextResponse.json(
         { success: false, error: "Authentication required" },
         { status: 401 }
       );
+      // Add CORS headers
+      response.headers.set('Access-Control-Allow-Origin', '*');
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                      
+      return response;
     }
     
     console.log(`✅ [MIDDLEWARE] Authenticated user for: ${pathname}`);
@@ -70,7 +82,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);                                                                              
     
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
         success: false, 
         error: "Authentication failed",
@@ -78,6 +90,38 @@ export async function middleware(request: NextRequest) {
       },
       { status: 401 }
     );
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
+    return response;
+  }
+  } catch (middlewareError) {
+    console.error(`❌ [MIDDLEWARE] Critical middleware error:`, middlewareError);                                                                               
+    
+    // For auth endpoints, don't fail the middleware - let the endpoint handle it                                                                               
+    if (isAuthEndpoint(request.nextUrl.pathname)) {
+      console.log(`🔓 [MIDDLEWARE] Allowing auth endpoint despite middleware error: ${request.nextUrl.pathname}`);                                              
+      const response = NextResponse.next();
+      response.headers.set('Access-Control-Allow-Origin', '*');
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                      
+      return response;
+    }
+    
+    // For other endpoints, return error
+    const response = NextResponse.json(
+      { 
+        success: false, 
+        error: "Middleware error",
+        details: middlewareError instanceof Error ? middlewareError.message : 'Unknown middleware error'                                                        
+      },
+      { status: 500 }
+    );
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
+    return response;
   }
 }
 
@@ -92,7 +136,8 @@ function isAuthEndpoint(pathname: string): boolean {
     '/api/auth/reset-password',
     '/api/auth/verify-email',
     '/api/auth/refresh-token',
-    '/api/auth/unified'
+    '/api/auth/unified',
+    '/sign-in'  // Add the sign-in page route
   ];
   
   return authEndpoints.some(endpoint => pathname.startsWith(endpoint));
@@ -117,10 +162,10 @@ function getWorkspaceIdFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-// Protect all API routes
+// Protect API routes and handle private routes
 export const config = {
   matcher: [
-    '/api/:path*',
-    '/private/:path*'
+    '/api/:path*',     // Protect API routes
+    '/private/:path*'  // Handle private routes
   ],
 };
