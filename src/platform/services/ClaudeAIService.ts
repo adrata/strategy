@@ -82,7 +82,7 @@ export class ClaudeAIService {
       // Call Claude API with enhanced context
       const response = await this.anthropic.messages.create({
         model: this.model,
-        max_tokens: 3000,
+        max_tokens: 1500, // Reduced for faster responses
         system: systemPrompt,
         messages: messages,
         temperature: 0.7, // Balanced creativity and consistency
@@ -133,7 +133,10 @@ export class ClaudeAIService {
       /search for (.+)/i,
       /who is (.+)/i,
       /tell me about (.+)/i,
-      /get me (.+)/i
+      /get me (.+)/i,
+      /can you find (.+)/i,
+      /do you know (.+)/i,
+      /(.+) in the database/i
     ];
 
     let personName = null;
@@ -152,7 +155,7 @@ export class ClaudeAIService {
     console.log(`🔍 [PERSON SEARCH] Searching for: "${personName}"`);
 
     try {
-      // Search for people in the database
+      // Search for people in the database with comprehensive matching
       const people = await prisma.people.findMany({
         where: {
           workspaceId: request.workspaceId,
@@ -179,6 +182,19 @@ export class ClaudeAIService {
             {
               email: {
                 contains: personName,
+                mode: 'insensitive'
+              }
+            },
+            // Also search for partial matches
+            {
+              firstName: {
+                contains: personName.split(' ')[0],
+                mode: 'insensitive'
+              }
+            },
+            {
+              lastName: {
+                contains: personName.split(' ')[1] || personName.split(' ')[0],
                 mode: 'insensitive'
               }
             }
@@ -453,8 +469,8 @@ ${results.map((person: any, index: number) => {
   const company = person.company?.name || 'Unknown Company';
   const industry = person.company?.industry || 'Unknown Industry';
   const recentActions = person.actions?.slice(0, 3).map((action: any) => 
-    `  • ${action.type}: ${action.description} (${new Date(action.createdAt).toLocaleDateString()})`
-  ).join('\n') || '  • No recent actions';
+    `  - ${action.type}: ${action.description} (${new Date(action.createdAt).toLocaleDateString()})`
+  ).join('\n') || '  - No recent actions';
   
   return `${index + 1}. ${person.fullName || `${person.firstName} ${person.lastName}`}
      Title: ${person.jobTitle || 'Unknown'}
@@ -471,6 +487,13 @@ ${recentActions}`;
 
 🎯 YOUR ROLE:
 You're like a trusted sales consultant who's always available to help. You understand the user's business, their prospects, and their challenges. You provide practical, actionable advice in a conversational, supportive tone.
+
+💬 RESPONSE STYLE:
+- Use emojis to make responses engaging and friendly
+- Be warm, encouraging, and helpful
+- Keep responses concise and fast
+- Use simple, clear language
+- Show enthusiasm for helping with sales success
 
 📊 YOUR EXPERTISE:
 - B2B sales strategies and methodologies
@@ -505,13 +528,13 @@ ${personSearchContext}
 - Be their sounding board for sales strategies
 
 📝 RESPONSE FORMATTING:
-- Use clear, readable text formatting
-- Use bullet points (•) for lists
-- Use numbered lists for steps
-- Use clear section breaks with line spacing
-- Keep responses well-structured and easy to scan
-- Write in a conversational, professional tone
-- Avoid markdown syntax - use plain text formatting
+- Use emojis to make responses engaging and friendly
+- Write in a conversational, warm tone
+- Use simple text formatting without any special characters
+- Keep responses concise and fast
+- Use line breaks for readability
+- Be helpful and encouraging
+- NO markdown syntax, NO bullet points, NO special formatting
 
 Remember: You're not just providing information - you're being a helpful partner in their sales success. Be encouraging, practical, and focused on helping them achieve their goals.`;
   }
