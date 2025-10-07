@@ -180,14 +180,36 @@ export async function GET(request: NextRequest) {
         }).catch(() => 0)
       ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
-      // Speedrun count - count actual speedrun leads
-      prisma.leads.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          tags: { has: 'speedrun' }
+      // Speedrun count - count speedrun leads, fallback to people if no speedrun leads
+      (async () => {
+        try {
+          // First try to count speedrun-tagged leads
+          const speedrunLeadsCount = await prisma.leads.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              tags: { has: 'speedrun' }
+            }
+          });
+          
+          // If no speedrun leads found, count people with company relationships as fallback
+          if (speedrunLeadsCount === 0) {
+            console.log(`🔄 [COUNTS API] No speedrun leads found, falling back to people count for workspace: ${workspaceId}`);
+            return await prisma.people.count({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                companyId: { not: null }
+              }
+            });
+          }
+          
+          return speedrunLeadsCount;
+        } catch (error) {
+          console.error('❌ [COUNTS API] Error counting speedrun data:', error);
+          return 0;
         }
-      }).catch(() => 0)
+      })()
     ]);
     
     const counts = {

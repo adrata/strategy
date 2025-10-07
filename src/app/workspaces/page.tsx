@@ -166,6 +166,15 @@ export default function WorkspacesPage() {
               console.warn("⚠️ [WORKSPACE SWITCH] Failed to refresh auth state:", error);
             }
             
+            // 🚨 CRITICAL FIX: Clear all caches to prevent data leakage
+            try {
+              const { WorkspaceCacheClearer } = await import("@/platform/services/workspace-cache-clearer");
+              await WorkspaceCacheClearer.clearAllWorkspaceCaches(currentSession?.user?.activeWorkspaceId || '', workspace.id);
+              console.log("🧹 [WORKSPACE SWITCH] All caches cleared");
+            } catch (error) {
+              console.warn("⚠️ [WORKSPACE SWITCH] Failed to clear caches:", error);
+            }
+            
             // 🆕 PERSIST LAST ACTIVE WORKSPACE: Save to localStorage for login persistence
             if (typeof window !== 'undefined') {
               localStorage.setItem('adrata_last_active_workspace', workspace.id);

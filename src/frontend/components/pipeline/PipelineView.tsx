@@ -184,13 +184,75 @@ export const PipelineView = React.memo(function PipelineView({
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
-  const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
+  // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
+  const getCurrentWorkspaceId = useCallback(async () => {
+    try {
+      // 1. First try to get from JWT token (most reliable)
+      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
+      if (session?.accessToken) {
+        try {
+          const jwt = await import('jsonwebtoken');
+          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
+          const decoded = jwt.verify(session.accessToken, secret) as any;
+          if (decoded?.workspaceId) {
+            console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
+            return decoded.workspaceId;
+          }
+        } catch (error) {
+          console.warn('⚠️ [PIPELINE VIEW] Failed to decode JWT token:', error);
+        }
+      }
+      
+      // 2. Fallback to acquisitionData
+      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
+        return acquisitionData.auth.authUser.activeWorkspaceId;
+      }
+      
+      // 3. Fallback to user activeWorkspaceId
+      if (user?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
+        return user.activeWorkspaceId;
+      }
+      
+      // 4. Last resort: first workspace
+      if (user?.workspaces?.[0]?.id) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
+        return user.workspaces[0].id;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('❌ [PIPELINE VIEW] Error getting workspace ID:', error);
+      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
+    }
+  }, [acquisitionData, user]);
+
+  // 🆕 CRITICAL FIX: Update workspace ID when it changes
+  useEffect(() => {
+    const updateWorkspaceId = async () => {
+      const newWorkspaceId = await getCurrentWorkspaceId();
+      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
+        console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
+        setCurrentWorkspaceId(newWorkspaceId);
+        setCurrentUserId(user?.id || null);
+      }
+    };
+    
+    updateWorkspaceId();
+  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
+
+  const workspaceId = currentWorkspaceId;
   
-  console.log('🔍 [WORKSPACE DEBUG] Using provider workspace:', {
+  console.log('🔍 [WORKSPACE DEBUG] Using real-time workspace:', {
     acquisitionDataExists: !!acquisitionData,
     providerWorkspaceId: workspaceId,
-    userActiveWorkspaceId: user?.activeWorkspaceId
+    userActiveWorkspaceId: user?.activeWorkspaceId,
+    currentWorkspaceId
   });
   // Map workspace to correct user ID
   const getUserIdForWorkspace = (workspaceId: string) => {

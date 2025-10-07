@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from "react";
 // CRITICAL FIX: Remove demo scenario service to eliminate demo data loading
 // import { demoScenarioService } from "@/platform/services/DemoScenarioService";
 import { getSpeedrunDataService } from "@/platform/services/speedrun-data-service";
@@ -100,7 +100,8 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
   console.log(`🏢 Pipeline Context: User: ${user.name}, Company: ${company}, Workspace: ${workspace}`);
 
 
-  const value: PipelineContextType = {
+  // 🚨 CRITICAL FIX: Memoize context value to prevent unnecessary re-renders
+  const value: PipelineContextType = useMemo(() => ({
     // UI State
     activeSpace,
     setActiveSpace,
@@ -123,7 +124,18 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
     user,
     company,
     workspace,
-  };
+  }), [
+    activeSpace,
+    isRightPanelVisible,
+    isProfileOpen,
+    profileAnchor,
+    isThemeModalOpen,
+    chatMessages,
+    chatInput,
+    user,
+    company,
+    workspace
+  ]);
 
   return (
     <PipelineContext.Provider value={value}>

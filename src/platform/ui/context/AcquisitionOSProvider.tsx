@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect, useRef, useMemo } from "react";
 import type { AcquisitionOSContextType } from "../../types";
 
 // Import all the modular hooks
@@ -94,6 +94,17 @@ export function AcquisitionOSProvider({
   const chat = useAcquisitionOSChat();
   const forms = useAcquisitionOSForms();
   const progress = useAcquisitionOSProgress();
+
+  // 🚨 CRITICAL FIX: ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue: AcquisitionOSContextType = useMemo(() => ({
+    auth,
+    ui,
+    data,
+    chat,
+    forms,
+    progress,
+  }), [auth, ui, data, chat, forms, progress]);
 
   // Auto-select workspace on successful authentication or provide development fallback
   const hasSetupWorkspace = useRef(false);
@@ -203,71 +214,26 @@ export function AcquisitionOSProvider({
     return null;
   }
 
-  try {
-    // Reduced logging for performance - only log in debug mode
-    if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
-      console.log("🔥 [DEBUG] About to create context value...");
-      console.log("🎉 [MODULAR AcquisitionOSProvider] INITIALIZATION COMPLETE");
-      console.log("📊 [MODULAR] Final context state:", {
-        hasAuth: !!auth.authUser,
-        authReady: auth.isReady,
-        dataLoaded: !data.loading,
-        leadsCount: data.acquireData.leads.length,
-        activeApp: ui.activeSubApp,
-        activeSection: ui.activeSection,
-      });
-      console.log("🔥 [DEBUG] About to return JSX from AcquisitionOSProvider");
-    }
-
-    // Compose the context value from all hooks to match AcquisitionOSContextType exactly
-    const contextValue: AcquisitionOSContextType = {
-      auth,
-      ui,
-      data,
-      chat,
-      forms,
-      progress,
-    };
-    return (
-      <AcquisitionOSContext.Provider value={contextValue}>
-        {children}
-      </AcquisitionOSContext.Provider>
-    );
-  } catch (error) {
-    console.error("🚨🚨🚨 [CRITICAL] AcquisitionOSProvider ERROR:", error);
-    console.error(
-      "🚨 [ERROR] Stack:",
-      error instanceof Error ? error.stack : "No stack",
-    );
-
-    // Return error fallback
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50">
-        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
-          <div className="text-6xl mb-4">🚨</div>
-          <h2 className="text-xl font-bold text-red-600 mb-2">
-            Provider Error
-          </h2>
-          <p className="text-gray-600 mb-4">
-            AcquisitionOSProvider crashed:{" "}
-            {error instanceof Error ? error.message : "Unknown error"}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Reload App
-          </button>
-          <details className="mt-4 text-left">
-            <summary className="cursor-pointer">Error Details</summary>
-            <pre className="text-xs mt-2 p-2 bg-gray-100 rounded overflow-auto max-h-32">
-              {error instanceof Error ? error.stack : "No stack trace"}
-            </pre>
-          </details>
-        </div>
-      </div>
-    );
+  // Reduced logging for performance - only log in debug mode
+  if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
+    console.log("🔥 [DEBUG] About to create context value...");
+    console.log("🎉 [MODULAR AcquisitionOSProvider] INITIALIZATION COMPLETE");
+    console.log("📊 [MODULAR] Final context state:", {
+      hasAuth: !!auth.authUser,
+      authReady: auth.isReady,
+      dataLoaded: !data.loading,
+      leadsCount: data.acquireData.leads.length,
+      activeApp: ui.activeSubApp,
+      activeSection: ui.activeSection,
+    });
+    console.log("🔥 [DEBUG] About to return JSX from AcquisitionOSProvider");
   }
+
+  return (
+    <AcquisitionOSContext.Provider value={contextValue}>
+      {children}
+    </AcquisitionOSContext.Provider>
+  );
 }
 
 // Hook to use the context
