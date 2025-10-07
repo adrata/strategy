@@ -59,6 +59,8 @@ class UnifiedCache {
   static get(key: string) { return null; }
   static set(key: string, value: any, ttl?: number) { return true; }
   static del(key: string) { return true; }
+  static initialize() { return Promise.resolve(true); }
+  static invalidate(key: string) { return true; }
 }
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
