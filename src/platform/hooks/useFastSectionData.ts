@@ -165,7 +165,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     if (workspaceId && userId && !authLoading && !loadedSections.has(section)) {
       fetchSectionData();
     }
-  }, [section, workspaceId, userId, authLoading, loadedSections, fetchSectionData]);
+  }, [section, workspaceId, userId, authLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
 
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {
@@ -178,7 +178,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
       return () => clearTimeout(retryTimeout);
     }
-  }, [error, section, fetchSectionData]);
+  }, [error, section]); // Removed fetchSectionData to prevent infinite loops
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded sections only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);

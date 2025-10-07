@@ -118,7 +118,7 @@ const DASHBOARD_TTL = 1800; // 30 minutes for dashboard data (ultra-aggressive c
 const INDIVIDUAL_DATA_TTL = 3600; // 60 minutes for individual data types (ultra-aggressive caching)
 
 // 🎯 DEMO SCENARIO SUPPORT
-const DEMO_WORKSPACE_ID = "demo-workspace-2025";
+const DEMO_WORKSPACE_ID = "01K1VBYX2YERMXBFJ60RC6J194"; // Use the actual demo workspace ID from database
 const ZEROPOINT_DEMO_WORKSPACE_ID = "zeropoint-demo-2025";
 
 // Load demo data directly from database
@@ -3827,7 +3827,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     const cached = speedrunCache.get(cacheKey);
     
     // 🚨 DEMO DATA FIX: Force cache refresh for demo data to ensure fresh load
-    const isDemoWorkspace = workspaceId.includes('demo') || workspaceId.includes('01K1VBYX2YERMXBFJ60RC6J194');
+    const isDemoWorkspace = workspaceId.includes('demo') || workspaceId === '01K1VBYX2YERMXBFJ60RC6J194';
     const forceRefresh = isDemoWorkspace && Date.now() - (cached?.timestamp || 0) > 5000; // 5 seconds for demo
     
     if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL && !forceRefresh) {
@@ -3848,12 +3848,24 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       console.log(`🏆 [SPEEDRUN API] Using optimized database ranking for performance...`);
       
       // Use direct database query with only essential fields
-      const speedrunPeople = await prisma.people.findMany({
-        where: {
-          workspaceId: workspaceId,
-          assignedUserId: userId,
-          deletedAt: null
+      // For demo workspace, get people assigned to any user in the workspace
+      const whereClause: any = {
+        workspaceId: workspaceId,
+        deletedAt: null,
+        // 🚨 SPEEDRUN FIX: Filter out generic seller records and prioritize people with company relationships
+        NOT: {
+          id: { contains: 'seller-' }
         },
+        companyId: { not: null } // Only people with company relationships
+      };
+      
+      // For demo workspace, don't filter by assignedUserId to get all people
+      if (workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194') {
+        whereClause.assignedUserId = userId;
+      }
+      
+      const speedrunPeople = await prisma.people.findMany({
+        where: whereClause,
         select: {
           id: true,
           firstName: true,
@@ -3928,16 +3940,22 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       console.warn(`⚠️ [SPEEDRUN API] Failed to use unified ranking, falling back to database ranking:`, error);
       
       // Fallback to database ranking
+      const fallbackWhereClause: any = {
+        workspaceId,
+        deletedAt: null,
+        companyId: { not: null } // Only load people with company relationships
+      };
+      
+      // For demo workspace, get all people with company relationships
+      if (workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194') {
+        fallbackWhereClause.OR = [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ];
+      }
+      
       people = await prisma.people.findMany({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          companyId: { not: null }, // Only load people with company relationships
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
-        },
+        where: fallbackWhereClause,
         orderBy: [
           { company: { rank: 'asc' } }, // Use company rank first
           { updatedAt: 'desc' } // Then by person update time

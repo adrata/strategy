@@ -649,6 +649,12 @@ export class UniversalRankingEngine {
    * 🚨 CRITICAL: Check if prospect was contacted today
    */
   private static wasContactedToday(prospect: SpeedrunPerson): boolean {
+    // 🚨 DEMO FIX: For demo data, never consider anyone as contacted today
+    if (prospect.id.toString().includes('demo') || prospect.id.toString().includes('seller-')) {
+      console.log(`🔍 [DEMO FIX] Skipping contact check for demo record: ${prospect.id}`);
+      return false;
+    }
+    
     // Use the comprehensive activity tracker
     if (TodayActivityTracker.wasContactedToday(prospect.id.toString())) {
       return true;

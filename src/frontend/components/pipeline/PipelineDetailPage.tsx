@@ -226,7 +226,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         }
       }
     }
-  }, [section, speedrunData, selectedRecord, slug, directRecordLoading]);
+  }, [section, speedrunData, selectedRecord, slug]); // Removed directRecordLoading to prevent infinite loops
   
   // Debug speedrun data loading
   if (section === 'speedrun') {
@@ -275,7 +275,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     }
     
     // Prevent infinite retries
-    if (directRecordError && directRecordError.includes('Record not found')) {
+    if (directRecordError && (directRecordError.includes('Record not found') || directRecordError.includes('Speedrun record not found'))) {
       console.log(`🚫 [DIRECT LOAD] Skipping retry for non-existent record: ${recordId}`);
       return;
     }
@@ -403,29 +403,26 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       return;
     }
     
-    // 🚫 PREVENT CACHE CLEARING: Don't clear cache unnecessarily
-    // if (section === 'companies') {
-    //   console.log(`🔄 [COMPANY CACHE FIX] Clearing cache for company: ${recordId}`);
-    //   // Clear company-related cache
-    //   if (typeof window !== 'undefined') {
-    //     sessionStorage.removeItem(`cached-companies-${recordId}`);
-    //     sessionStorage.removeItem(`current-record-companies`);
-    //   }
-    // }
-    
-    // If we have data loaded, try to find the record in it
-    if (data.length > 0) {
-      console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
-      console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
-      console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
+    // 🚫 PREVENT INFINITE LOOPS: Add debounce to prevent rapid-fire calls
+    const timeoutId = setTimeout(() => {
+      // Check again after timeout to ensure we still need to load
+      if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+        return;
+      }
       
-      // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
-      const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
-      
-      console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
-      console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
-      console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
-      
+      // If we have data loaded, try to find the record in it
+      if (data.length > 0) {
+        console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
+        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
+        console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
+        
+        // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
+        const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
+        
+        console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
+        console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
+        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
+        
         if (record) {
           console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
             id: record.id,
@@ -435,74 +432,42 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             source: 'cached'
           });
           
-          // 🚀 PRELOAD: For companies, preload buyer group data for faster tab switching
-          if (section === 'companies') {
-            console.log(`🚀 [BUYER GROUP PRELOAD] Preloading buyer group data for company: ${record.id}`);
-            // Preload buyer group data in background
-            authFetch(`/api/data/buyer-groups/fast`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.success) {
-                  console.log(`⚡ [BUYER GROUP PRELOAD] Preloaded ${data.members.length} buyer group members`);
-                  // Cache the preloaded data
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem(`buyer-groups-${record.id}-${workspaceId}`, JSON.stringify(data.members));
-                  }
-                }
-              })
-              .catch(error => {
-                console.log('⚠️ [BUYER GROUP PRELOAD] Failed to preload:', error);
-              });
-          }
-          
-          // 🚫 REMOVED: Overly aggressive company record validation that was causing loading issues
-          // Just use the cached record if we have it
-          console.log(`✅ [COMPANY FIX] Using cached company record:`, {
-            id: record.id,
-            name: record.name,
-            hasDescription: !!record.description,
-            hasWebsite: !!record.website,
-            hasIndustry: !!record.industry
-          });
-          
           // Keep the previous record in case we need to fall back
           if (selectedRecord && selectedRecord.id !== record.id) {
             setPreviousRecord(selectedRecord);
           }
           setSelectedRecord(record);
           return;
-      } else {
-        console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
-      }
-    }
-    
-    // If data is still loading but we have the record, continue
-    if (loading) {
-      console.log(`🔄 [Direct URL] Data still loading, but continuing with available record...`);
-      // Don't return - continue to show the record if we have it
-    }
-    
-    // If we have data but no record found, or no data at all, try direct loading
-    if (!selectedRecord || selectedRecord.id !== recordId) {
-      console.log(`🔍 [Direct URL] Record not found in data, attempting direct load for: ${recordId}`);
-      
-      // Check if this is an external ID (Coresignal format) - these should not be used for navigation
-      if (recordId && recordId.includes('coresignal')) {
-        console.error(`❌ [Direct URL] External Coresignal ID detected: ${recordId}. These should not be used for navigation.`);
-        setDirectRecordError('External ID detected. This record may not exist in the current workspace.');
-        return;
+        } else {
+          console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
+        }
       }
       
-      // Only attempt direct loading if we have a valid recordId and not already loading
-      if (recordId && recordId !== 'undefined' && recordId !== 'null' && !directRecordLoading) {
-        loadDirectRecord(recordId);
-      } else if (directRecordLoading) {
-        console.log(`⏳ [Direct URL] Already loading record, skipping duplicate request`);
-      } else {
-        console.error(`❌ [Direct URL] Invalid record ID: ${recordId}`);
-        setDirectRecordError('Invalid record ID');
+      // If we have data but no record found, or no data at all, try direct loading
+      if (!selectedRecord || selectedRecord.id !== recordId) {
+        console.log(`🔍 [Direct URL] Record not found in data, attempting direct load for: ${recordId}`);
+        
+        // Check if this is an external ID (Coresignal format) - these should not be used for navigation
+        if (recordId && recordId.includes('coresignal')) {
+          console.error(`❌ [Direct URL] External Coresignal ID detected: ${recordId}. These should not be used for navigation.`);
+          setDirectRecordError('External ID detected. This record may not exist in the current workspace.');
+          return;
+        }
+        
+        // Only attempt direct loading if we have a valid recordId and not already loading
+        if (recordId && recordId !== 'undefined' && recordId !== 'null' && !directRecordLoading) {
+          loadDirectRecord(recordId);
+        } else if (directRecordLoading) {
+          console.log(`⏳ [Direct URL] Already loading record, skipping duplicate request`);
+        } else {
+          console.error(`❌ [Direct URL] Invalid record ID: ${recordId}`);
+          setDirectRecordError('Invalid record ID');
+        }
       }
-    }
+    }, 100); // 100ms debounce to prevent rapid-fire calls
+    
+    // Cleanup timeout on unmount or dependency change
+    return () => clearTimeout(timeoutId);
   }, [slug, section]); // 🚫 FIXED: Removed data, loading, selectedRecord to prevent infinite loops
 
   // Handle section navigation

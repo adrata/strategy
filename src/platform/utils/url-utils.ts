@@ -55,7 +55,7 @@ export function extractIdFromSlug(slug: string): string {
   
   // 🆕 FIX: Handle demo data IDs (cybersecurity-company-*, cybersecurity-person-*, etc.)
   // Look for patterns like "cybersecurity-company-123" or "cybersecurity-person-456"
-  const demoPatterns = ['cybersecurity-company', 'cybersecurity-person', 'cybersecurity-seller'];
+  const demoPatterns = ['cybersecurity-company', 'cybersecurity-person', 'cybersecurity-seller', 'cybersecurity-speedrun'];
   for (const pattern of demoPatterns) {
     if (slug.includes(pattern)) {
       // Find the pattern in the slug and extract everything from that point
