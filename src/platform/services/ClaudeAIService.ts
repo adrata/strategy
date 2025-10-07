@@ -453,15 +453,15 @@ ${results.map((person: any, index: number) => {
   const company = person.company?.name || 'Unknown Company';
   const industry = person.company?.industry || 'Unknown Industry';
   const recentActions = person.actions?.slice(0, 3).map((action: any) => 
-    `  - ${action.type}: ${action.description} (${new Date(action.createdAt).toLocaleDateString()})`
-  ).join('\n') || '  - No recent actions';
+    `  • ${action.type}: ${action.description} (${new Date(action.createdAt).toLocaleDateString()})`
+  ).join('\n') || '  • No recent actions';
   
-  return `${index + 1}. **${person.fullName || `${person.firstName} ${person.lastName}`}**
-     - Title: ${person.jobTitle || 'Unknown'}
-     - Company: ${company} (${industry})
-     - Email: ${person.email || 'Not available'}
-     - Phone: ${person.phone || 'Not available'}
-     - Recent Actions:
+  return `${index + 1}. ${person.fullName || `${person.firstName} ${person.lastName}`}
+     Title: ${person.jobTitle || 'Unknown'}
+     Company: ${company} (${industry})
+     Email: ${person.email || 'Not available'}
+     Phone: ${person.phone || 'Not available'}
+     Recent Actions:
 ${recentActions}`;
 }).join('\n\n')}
 `;
@@ -505,12 +505,13 @@ ${personSearchContext}
 - Be their sounding board for sales strategies
 
 📝 RESPONSE FORMATTING:
-- Use **bold** for important information
-- Use bullet points for lists
+- Use clear, readable text formatting
+- Use bullet points (•) for lists
 - Use numbered lists for steps
-- Use code blocks for data/technical information
-- Use headers (##) for major sections
+- Use clear section breaks with line spacing
 - Keep responses well-structured and easy to scan
+- Write in a conversational, professional tone
+- Avoid markdown syntax - use plain text formatting
 
 Remember: You're not just providing information - you're being a helpful partner in their sales success. Be encouraging, practical, and focused on helping them achieve their goals.`;
   }
