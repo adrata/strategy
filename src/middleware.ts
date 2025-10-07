@@ -168,4 +168,4 @@ export const config = {
 };
 
 // Ensure middleware runs in Edge Runtime for better performance
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
