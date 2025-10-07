@@ -46,7 +46,7 @@ export class UniversalRankingEngine {
     // Step 0: 🚨 SMART COMPANY FILTERING - Prioritize other people at same company
     const companiesContactedToday = TodayActivityTracker.getCompaniesContactedToday();
     const availableProspects = prospects.filter(prospect => {
-      const company = prospect.company || "Unknown Company";
+      const company = (typeof prospect.company === 'string' ? prospect.company : prospect.company?.name) || "Unknown Company";
       const isCompanyContactedToday = companiesContactedToday.has(company);
       
       // Only filter out if THIS SPECIFIC PERSON was contacted today
@@ -319,7 +319,7 @@ export class UniversalRankingEngine {
     const factors: string[] = [];
     
     const commission = prospect.commission || "50K";
-    const company = (prospect.company || "").toLowerCase();
+    const company = (typeof prospect.company === 'string' ? prospect.company : prospect.company?.name || "").toLowerCase();
     const title = (prospect.title || "").toLowerCase();
     const monacoData = prospect.customFields?.monacoEnrichment;
     
@@ -455,7 +455,7 @@ export class UniversalRankingEngine {
     let score = 0;
     const factors: string[] = [];
     
-    const company = (prospect.company || "").toLowerCase();
+    const company = (typeof prospect.company === 'string' ? prospect.company : prospect.company?.name || "").toLowerCase();
     const interests = prospect.interests || [];
     const status = (prospect.status || "").toLowerCase();
     
@@ -584,7 +584,7 @@ export class UniversalRankingEngine {
     const grouped = new Map<string, RankedSpeedrunPerson[]>();
     
     prospects.forEach(prospect => {
-      const company = prospect.company || "Unknown Company";
+      const company = (typeof prospect.company === 'string' ? prospect.company : prospect.company?.name) || "Unknown Company";
       if (!grouped.has(company)) {
         grouped.set(company, []);
       }
@@ -681,21 +681,6 @@ export class UniversalRankingEngine {
     return today_indicators.some(indicator => recentActivity.includes(indicator));
   }
   
-  /**
-   * 🚨 Get companies that have been contacted today
-   */
-  private static getCompaniesContactedToday(prospects: SpeedrunPerson[]): Set<string> {
-    const companiesContactedToday = new Set<string>();
-    
-    prospects.forEach(prospect => {
-      if (this.wasContactedToday(prospect)) {
-        const company = prospect.company || "Unknown Company";
-        companiesContactedToday.add(company);
-      }
-    });
-    
-    return companiesContactedToday;
-  }
   
   /**
    * Get today's completed leads from localStorage

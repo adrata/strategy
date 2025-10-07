@@ -56,6 +56,13 @@ export class TodayActivityTracker {
    * Check if a prospect was contacted today
    */
   static wasContactedToday(leadId: string): boolean {
+    // 🚨 SERVER-SIDE FIX: Check if we're running on server side
+    if (typeof window === 'undefined') {
+      // On server side, we don't have localStorage, so assume no one was contacted today
+      // This prevents the infinite filtering that was causing all prospects to be removed
+      return false;
+    }
+    
     const today = new Date().toDateString();
     const key = `${this.STORAGE_KEY_PREFIX}-${today}`;
     

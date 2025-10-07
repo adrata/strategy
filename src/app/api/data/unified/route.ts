@@ -484,7 +484,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       workspaceId: workspaceId,
       isDemoData: true,
       demoScenarioId: demoScenario.id,
-      buyerGroupId: realBuyerGroups.find((bg: any) => bg.companyName === 'First Premier Bank')?.id,
+      buyerGroupId: realBuyerGroups.find((bg: any) => bg.companyName === 'First Premier Bank')?.id || null,
       people: firstPremierPeople.length
     }];
     
@@ -1293,20 +1293,20 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       // Transform the record with Coresignal data
       const transformedRecord = {
         ...record,
-        fullName: coresignalData.full_name || record.fullName,
-        email: coresignalData.primary_professional_email || record.email,
+        fullName: coresignalData.full_name || (record as any).fullName,
+        email: coresignalData.primary_professional_email || (record as any).email,
         // Use Coresignal data for company info (no fallbacks to database)
         company: coresignalCompany || '-',
         companyName: coresignalCompany || '-',
         industry: coresignalIndustry || '-',
-        jobTitle: coresignalTitle || record.jobTitle || '-',
+        jobTitle: coresignalTitle || (record as any).jobTitle || '-',
         title: coresignalTitle || (record as any).title || '-',
         // Include Coresignal data for detail views
-        customFields: record.customFields
+        customFields: (record as any).customFields
       };
       
       console.log(`🔍 [GET SINGLE] Applied Coresignal transformation for ${type}:`, {
-        originalCompany: record.company,
+        originalCompany: (record as any).company,
         coresignalCompany: coresignalCompany,
         finalCompany: transformedRecord.company
       });
@@ -1382,7 +1382,7 @@ async function getMultipleRecords(
       console.log(`👥 [PEOPLE API] Starting people data load for workspace: ${workspaceId}, user: ${userId}`);
       
       // 🚀 PERFORMANCE: Use optimized pagination
-      const optimizedPagination = getOptimizedPagination('people', pagination);
+      const optimizedPagination = getOptimizedPagination(pagination);
       
       // Use direct query for better performance and reliability with monitoring
       const people = await trackQueryPerformance(
@@ -1564,8 +1564,8 @@ async function getMultipleRecords(
         return 1;
       }
       // For companies without ranks, sort by updatedAt descending, then by name alphabetically
-      const dateA = new Date(a.updatedAt).getTime();
-      const dateB = new Date(b.updatedAt).getTime();
+      const dateA = new Date(a.updatedAt || new Date()).getTime();
+      const dateB = new Date(b.updatedAt || new Date()).getTime();
       if (dateA !== dateB) {
         return dateB - dateA;
       }
