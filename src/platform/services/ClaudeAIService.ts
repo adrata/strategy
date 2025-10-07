@@ -53,8 +53,16 @@ export class ClaudeAIService {
     const startTime = Date.now();
     
     try {
+      // Check if this is a person search query and search database first
+      const personSearchResult = await this.handlePersonSearchQuery(request);
+      
       // Get comprehensive data context for the AI
       const dataContext = await this.getDataContext(request);
+      
+      // Add person search results to context if found
+      if (personSearchResult) {
+        dataContext.personSearchResults = personSearchResult;
+      }
       
       // Build the enhanced system prompt with data context
       const systemPrompt = this.buildEnhancedSystemPrompt(request, dataContext);
@@ -67,7 +75,8 @@ export class ClaudeAIService {
         recordType: request.recordType,
         appType: request.appType,
         conversationLength: request.conversationHistory?.length || 0,
-        dataContextSize: JSON.stringify(dataContext).length
+        dataContextSize: JSON.stringify(dataContext).length,
+        hasPersonSearchResults: !!personSearchResult
       });
       
       // Call Claude API with enhanced context
@@ -103,6 +112,111 @@ export class ClaudeAIService {
         tokensUsed: 0,
         processingTime: Date.now() - startTime
       };
+    }
+  }
+
+  /**
+   * Handle person search queries by searching the database first
+   */
+  private async handlePersonSearchQuery(request: ClaudeChatRequest): Promise<any> {
+    if (!request.workspaceId) {
+      return null;
+    }
+
+    const message = request.message.toLowerCase();
+    
+    // Check if this is a person search query
+    const personSearchPatterns = [
+      /show me (.+)/i,
+      /find (.+)/i,
+      /look up (.+)/i,
+      /search for (.+)/i,
+      /who is (.+)/i,
+      /tell me about (.+)/i,
+      /get me (.+)/i
+    ];
+
+    let personName = null;
+    for (const pattern of personSearchPatterns) {
+      const match = message.match(pattern);
+      if (match && match[1]) {
+        personName = match[1].trim();
+        break;
+      }
+    }
+
+    if (!personName) {
+      return null;
+    }
+
+    console.log(`🔍 [PERSON SEARCH] Searching for: "${personName}"`);
+
+    try {
+      // Search for people in the database
+      const people = await prisma.people.findMany({
+        where: {
+          workspaceId: request.workspaceId,
+          deletedAt: null,
+          OR: [
+            {
+              firstName: {
+                contains: personName,
+                mode: 'insensitive'
+              }
+            },
+            {
+              lastName: {
+                contains: personName,
+                mode: 'insensitive'
+              }
+            },
+            {
+              fullName: {
+                contains: personName,
+                mode: 'insensitive'
+              }
+            },
+            {
+              email: {
+                contains: personName,
+                mode: 'insensitive'
+              }
+            }
+          ]
+        },
+        include: {
+          company: {
+            select: {
+              name: true,
+              industry: true,
+              size: true,
+              website: true
+            }
+          },
+          actions: {
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+            select: {
+              type: true,
+              description: true,
+              createdAt: true
+            }
+          }
+        },
+        take: 10
+      });
+
+      console.log(`✅ [PERSON SEARCH] Found ${people.length} matches for "${personName}"`);
+
+      return {
+        query: personName,
+        results: people,
+        count: people.length
+      };
+
+    } catch (error) {
+      console.error('❌ [PERSON SEARCH] Error:', error);
+      return null;
     }
   }
 
@@ -327,6 +441,32 @@ ${dataContext.recentActivities.slice(0, 5).map(activity =>
 `;
     }
 
+    // Add person search results context
+    let personSearchContext = '';
+    if (dataContext.personSearchResults) {
+      const { query, results, count } = dataContext.personSearchResults;
+      personSearchContext = `
+PERSON SEARCH RESULTS FOR "${query}":
+Found ${count} matches in your database:
+
+${results.map((person: any, index: number) => {
+  const company = person.company?.name || 'Unknown Company';
+  const industry = person.company?.industry || 'Unknown Industry';
+  const recentActions = person.actions?.slice(0, 3).map((action: any) => 
+    `  - ${action.type}: ${action.description} (${new Date(action.createdAt).toLocaleDateString()})`
+  ).join('\n') || '  - No recent actions';
+  
+  return `${index + 1}. **${person.fullName || `${person.firstName} ${person.lastName}`}**
+     - Title: ${person.jobTitle || 'Unknown'}
+     - Company: ${company} (${industry})
+     - Email: ${person.email || 'Not available'}
+     - Phone: ${person.phone || 'Not available'}
+     - Recent Actions:
+${recentActions}`;
+}).join('\n\n')}
+`;
+    }
+
     return `You are Adrata, a friendly and knowledgeable sales acceleration AI assistant. You have full access to the user's CRM data and help sales professionals succeed.
 
 🎯 YOUR ROLE:
@@ -344,6 +484,7 @@ ${contextInfo}
 ${workspaceContext}
 ${workspaceBusinessContext}
 ${activitiesContext}
+${personSearchContext}
 
 💬 CONVERSATION STYLE:
 - Be warm, professional, and encouraging
@@ -353,6 +494,7 @@ ${activitiesContext}
 - Reference their actual data and context when relevant
 - Be concise but thorough
 - Show genuine interest in their success
+- Use proper markdown formatting for better readability
 
 🚀 HOW TO HELP:
 - Listen to what they're trying to accomplish
@@ -361,6 +503,14 @@ ${activitiesContext}
 - Help them think through challenges and opportunities
 - Share insights from their CRM data when helpful
 - Be their sounding board for sales strategies
+
+📝 RESPONSE FORMATTING:
+- Use **bold** for important information
+- Use bullet points for lists
+- Use numbered lists for steps
+- Use code blocks for data/technical information
+- Use headers (##) for major sections
+- Keep responses well-structured and easy to scan
 
 Remember: You're not just providing information - you're being a helpful partner in their sales success. Be encouraging, practical, and focused on helping them achieve their goals.`;
   }
