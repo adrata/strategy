@@ -9,8 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUnifiedAuthUser } from "@/platform/api-auth";
 
 export async function middleware(request: NextRequest) {
-  try {
-    const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl;
   
   // Handle private routes with proper headers but no authentication
   if (pathname.startsWith('/private/')) {
@@ -23,30 +22,30 @@ export async function middleware(request: NextRequest) {
   
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);                                                                      
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
     const response = NextResponse.next();
     // Add CORS headers for auth endpoints
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return response;
   }
   
   // Skip authentication for debug endpoints
   if (pathname.startsWith('/api/debug/')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for debug endpoint: ${pathname}`);                                                                     
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for debug endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
   // Skip authentication for health check endpoints
   if (pathname.startsWith('/api/health')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for health endpoint: ${pathname}`);                                                                    
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for health endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
   // Skip authentication for webhook endpoints
   if (pathname.startsWith('/api/webhooks')) {
-    console.log(`🔓 [MIDDLEWARE] Skipping authentication for webhook endpoint: ${pathname}`);                                                                   
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for webhook endpoint: ${pathname}`);
     return NextResponse.next();
   }
   
@@ -65,7 +64,7 @@ export async function middleware(request: NextRequest) {
       // Add CORS headers
       response.headers.set('Access-Control-Allow-Origin', '*');
       response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                      
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
       return response;
     }
     
@@ -80,7 +79,7 @@ export async function middleware(request: NextRequest) {
     return response;
     
   } catch (error) {
-    console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);                                                                              
+    console.error(`❌ [MIDDLEWARE] Authentication error for ${pathname}:`, error);
     
     const response = NextResponse.json(
       { 
@@ -93,34 +92,7 @@ export async function middleware(request: NextRequest) {
     // Add CORS headers
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
-    return response;
-  }
-  } catch (middlewareError) {
-    console.error(`❌ [MIDDLEWARE] Critical middleware error:`, middlewareError);                                                                               
-    
-    // For auth endpoints, don't fail the middleware - let the endpoint handle it                                                                               
-    if (isAuthEndpoint(request.nextUrl.pathname)) {
-      console.log(`🔓 [MIDDLEWARE] Allowing auth endpoint despite middleware error: ${request.nextUrl.pathname}`);                                              
-      const response = NextResponse.next();
-      response.headers.set('Access-Control-Allow-Origin', '*');
-      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                      
-      return response;
-    }
-    
-    // For other endpoints, return error
-    const response = NextResponse.json(
-      { 
-        success: false, 
-        error: "Middleware error",
-        details: middlewareError instanceof Error ? middlewareError.message : 'Unknown middleware error'                                                        
-      },
-      { status: 500 }
-    );
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                                        
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return response;
   }
 }
