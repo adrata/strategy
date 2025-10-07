@@ -584,7 +584,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
               <PanelLayout
                 leftPanel={
                   <PipelineLeftPanelStandalone
-                    activeSection="sellers"
+                    activeSection="people"
                     onSectionChange={() => {}}
                   />
                 }
@@ -597,6 +597,12 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         record={personRecord}
                         recordType="people"
                         recordIndex={1}
+                        onBack={() => {
+                          // Navigate back to buyer group without person parameter
+                          const newUrl = new URL(window.location.href);
+                          newUrl.searchParams.delete('person');
+                          router.push(newUrl.pathname + newUrl.search);
+                        }}
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full">
