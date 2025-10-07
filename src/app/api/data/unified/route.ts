@@ -884,10 +884,10 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       phone: person.phone,
       linkedinUrl: person.linkedinUrl,
       title: person.jobTitle,
-      company: (person as any).company?.name || 'Unknown Company',
+      company: person.company || 'Unknown Company',
       companyId: person.companyId,
-      industry: person.company?.industry,
-      website: person.company?.website,
+      industry: null,
+      website: null,
       customFields: person.customFields,
       tags: person.tags,
       lastAction: person.lastAction,
@@ -914,18 +914,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
   if (!model) throw new Error(`Unsupported type: ${type}`);
   
   // Add include for contacts to get account relationship
-  const includeClause = type === 'people' ? {
-    include: {
-      company: {
-        select: {
-          id: true,
-          name: true,
-          industry: true,
-          website: true
-        }
-      }
-    }
-  } : {};
+  const includeClause = type === 'people' ? {} : {};
   
   const whereClause: any = {
     id,
@@ -1193,16 +1182,6 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
             where: {
               id: id,
               workspaceId: workspaceId
-            },
-            include: {
-              company: {
-                select: {
-                  id: true,
-                  name: true,
-                  industry: true,
-                  website: true
-                }
-              }
             }
           });
           
@@ -1239,7 +1218,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
             };
             
             console.log(`🔍 [GET SINGLE] Applied Coresignal transformation from person record for ${type}:`, {
-              originalCompany: personRecord.company?.name,
+              originalCompany: (personRecord as any).company,
               coresignalCompany: coresignalCompany,
               finalCompany: transformedRecord.company
             });
@@ -1431,12 +1410,12 @@ async function getMultipleRecords(
       
       // Add basic ranking and formatting, filter out user's company
       const peopleWithRanking = people
-        .filter(person => !shouldExcludeCompany(person.company))
+        .filter(person => !shouldExcludeCompany((person as any).company))
         .map((person: any, index: number) => ({
           ...person,
           masterRank: person.rank || (index + 1),
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          company: person.company || 'Unknown Company'
+          company: (person as any).company || 'Unknown Company'
         }));
       
       return { success: true, data: peopleWithRanking };
