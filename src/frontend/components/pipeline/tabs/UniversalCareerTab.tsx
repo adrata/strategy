@@ -41,6 +41,11 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   const coresignalEducation = coresignalData?.education || coresignalProfile?.education || [];
   const coresignalTotalExperience = coresignalData?.total_experience_duration_months || coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
   
+  // Check if we're in a demo workspace
+  const isDemoWorkspace = record?.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || 
+                         record?.workspaceId === 'demo' ||
+                         window.location.pathname.includes('/demo/');
+
   // Use CoreSignal data with proper data extraction
   const careerData = {
     department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
@@ -120,15 +125,21 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.department || 'Not available'}</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {careerData.department || (isDemoWorkspace ? 'Information Security' : 'Not available')}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.companyName || 'Not available'}</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {careerData.companyName || (isDemoWorkspace ? 'Current Company' : 'Not available')}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Total Experience:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.totalExperience || 'Not available'}</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {careerData.totalExperience || (isDemoWorkspace ? '15+ years' : 'Not available')}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Data Fields:</span>

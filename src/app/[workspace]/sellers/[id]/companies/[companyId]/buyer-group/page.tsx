@@ -250,9 +250,13 @@ Create opportunities for ongoing engagement and relationship development. Provid
             }));
             setBuyerGroupMembers(members);
           } else {
-            console.log('🔍 [BUYER GROUP] No company people found, creating expanded mock data...');
-            // Create expanded mock buyer group data (9-10 people per company)
-            const mockMembers: BuyerGroupMember[] = [
+            // Only create mock data in demo workspace
+            const isDemoWorkspace = workspace === 'demo' || workspace === '01K1VBYXHD0J895XAN0HGFBKJP';
+            
+            if (isDemoWorkspace) {
+              console.log('🔍 [BUYER GROUP] No company people found, creating expanded mock data for demo workspace...');
+              // Create expanded mock buyer group data (9-10 people per company)
+              const mockMembers: BuyerGroupMember[] = [
               {
                 id: 'person-1',
                 name: 'Alexei Volkov',
@@ -372,6 +376,10 @@ Create opportunities for ongoing engagement and relationship development. Provid
               }
             ];
             setBuyerGroupMembers(mockMembers);
+            } else {
+              console.log('🔍 [BUYER GROUP] No company people found and not in demo workspace - showing empty state');
+              setBuyerGroupMembers([]);
+            }
           }
         }
       } catch (err) {
@@ -421,8 +429,12 @@ Create opportunities for ongoing engagement and relationship development. Provid
           setPersonRecord(personResult.data);
           console.log('🔍 [PERSON RECORD] Loaded person record:', personResult.data);
         } else {
-          // If no real data found, create a comprehensive mock record based on buyer group member
-          const mockRecord = {
+          // Only create mock records in demo workspace
+          const isDemoWorkspace = workspace === 'demo' || workspace === '01K1VBYXHD0J895XAN0HGFBKJP';
+          
+          if (isDemoWorkspace) {
+            // If no real data found, create a comprehensive mock record based on buyer group member
+            const mockRecord = {
             id: selectedPerson.id,
             name: selectedPerson.name,
             title: selectedPerson.title,
@@ -606,6 +618,10 @@ Create opportunities for ongoing engagement and relationship development. Provid
           };
           setPersonRecord(mockRecord);
           console.log('🔍 [PERSON RECORD] Using comprehensive mock record:', mockRecord);
+          } else {
+            console.log('🔍 [PERSON RECORD] Not in demo workspace - no mock data generated');
+            setPersonRecord(null);
+          }
         }
       } catch (error) {
         console.error('🔍 [PERSON RECORD] Error loading person record:', error);
