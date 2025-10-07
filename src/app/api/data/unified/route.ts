@@ -1431,7 +1431,7 @@ async function getMultipleRecords(
         .filter(person => !shouldExcludeCompany((person as any).company))
         .map((person: any, index: number) => ({
           ...person,
-          masterRank: person.rank || (index + 1),
+          masterRank: index + 1, // Use sequential ranking to match People list
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
           company: (person as any).company || 'Unknown Company'
         }));
@@ -3438,7 +3438,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         // Add basic ranking and formatting
         return people.map((person, index) => ({
           ...person,
-          masterRank: person.rank || (index + 1),
+          masterRank: index + 1, // Use sequential ranking to match People list
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
           company: (person as any).company || 'Unknown Company'
         }));
@@ -3455,16 +3455,65 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         take: 10, // Only load 10 most recent partners
         select: { id: true, name: true, email: true, updatedAt: true }
       }).catch(() => []), // Fallback to empty array if partners table has issues
-      // 🚀 PERFORMANCE: Load limited speedrun data for dashboard
-      loadSpeedrunData(workspaceId, userId).then(result => {
-        if (result.success) {
-          // Return first 30 items for speedrun
-          return result.data.speedrunItems.slice(0, 30);
-        } else {
-          console.error('❌ [DASHBOARD] Failed to load speedrun data:', result.error);
-          return [];
-        }
-      })
+      // 🚀 SPEEDRUN: Use people data as the source for Speedrun (first 30 ranked people)
+      (async () => {
+        console.log(`🏆 [SPEEDRUN] Loading people data for Speedrun ranking...`);
+        
+        // Get people data for Speedrun
+        const peopleData = await prisma.people.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            companyId: { not: null } // Only people with companies
+          },
+          include: {
+            company: true
+          },
+          orderBy: [
+            { rank: 'asc' },
+            { updatedAt: 'desc' }
+          ],
+          take: 30 // Limit to 30 for Speedrun
+        });
+        
+        console.log(`🏆 [SPEEDRUN] Found ${peopleData.length} people for Speedrun ranking`);
+        
+        // Transform people data to Speedrun format
+        const speedrunItems = peopleData.map((person, index) => ({
+          id: person.id,
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          fullName: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          firstName: person.firstName || 'First',
+          lastName: person.lastName || 'Last',
+          email: person.email || '',
+          phone: person.phone || '',
+          title: person.jobTitle || 'Title',
+          company: person.company?.name || 'Unknown Company',
+          location: person.company?.city || person.company?.state || '',
+          status: 'active',
+          priority: 'high',
+          source: 'speedrun',
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt,
+          rank: index + 1, // Simple 1-30 ranking
+          nextActionTiming: index === 0 ? 'Now' : 'Today',
+          nextAction: index === 0 ? 'Call immediately - highest priority' : 'Schedule Discovery Call',
+          lastAction: 'research_completed',
+          lastActionDate: person.updatedAt,
+          nextActionDate: new Date(Date.now() + (index + 1) * 24 * 60 * 60 * 1000).toISOString(),
+          priorityScore: 100 - (index * 3), // Decreasing priority score
+          buyerGroupRole: 'Decision Maker',
+          currentStage: 'Prospect',
+          stage: 'Prospect',
+          state: person.company?.state || 'State',
+          jobTitle: person.jobTitle || 'Title',
+          companyName: person.company?.name || 'Unknown Company'
+        }));
+        
+        console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} people into Speedrun items`);
+        
+        return speedrunItems;
+      })()
     ]);
     
     console.log(`✅ [DASHBOARD] Loaded data: leads=${leadsData.length}, prospects=${prospectsData.length}, opportunities=${opportunitiesData.length}, speedrun=${speedrunData.length}`);
@@ -3844,28 +3893,54 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     let people: any[] = [];
     
     try {
-      // 🚀 OPTIMIZED: Use fast database query with minimal fields for speedrun
-      console.log(`🏆 [SPEEDRUN API] Using optimized database ranking for performance...`);
+      // 🏢 HIERARCHICAL RANKING: Companies first, then people within each company
+      console.log(`🏆 [SPEEDRUN API] Using hierarchical ranking system...`);
       
-      // Use direct database query with only essential fields
-      // For demo workspace, get people assigned to any user in the workspace
-      const whereClause: any = {
-        workspaceId: workspaceId,
-        deletedAt: null,
-        // 🚨 SPEEDRUN FIX: Filter out generic seller records and prioritize people with company relationships
-        NOT: {
-          id: { contains: 'seller-' }
+      // Step 1: Get companies in ranked order (same as Companies section)
+      const rankedCompanies = await prisma.companies.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' ? {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          } : {})
         },
-        companyId: { not: null } // Only people with company relationships
-      };
+        orderBy: [
+          { rank: 'asc' }, // Use company ranking first
+          { updatedAt: 'desc' }
+        ],
+        take: 15, // Limit to top 15 companies for speedrun
+        select: {
+          id: true,
+          name: true,
+          industry: true,
+          vertical: true,
+          size: true,
+          rank: true,
+          updatedAt: true
+        }
+      });
       
-      // For demo workspace, don't filter by assignedUserId to get all people
-      if (workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194') {
-        whereClause.assignedUserId = userId;
-      }
+      console.log(`🏢 [SPEEDRUN] Loaded ${rankedCompanies.length} ranked companies`);
       
+      // Step 2: Get people for each company, ordered by company rank then person rank
       const speedrunPeople = await prisma.people.findMany({
-        where: whereClause,
+        where: {
+          workspaceId,
+          deletedAt: null,
+          companyId: {
+            in: rankedCompanies.map(c => c.id)
+          }
+        },
+        orderBy: [
+          { company: { rank: 'asc' } }, // First by company rank
+          { rank: 'asc' }, // Then by person rank within company
+          { updatedAt: 'desc' }
+        ],
+        take: 30, // Limit to top 30 people total
         select: {
           id: true,
           firstName: true,
@@ -3881,21 +3956,18 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           nextActionDate: true,
           customFields: true,
           companyId: true,
+          rank: true, // Include rank field for proper ordering
           company: {
             select: {
               id: true,
               name: true,
               industry: true,
               vertical: true,
-              size: true
+              size: true,
+              rank: true
             }
           }
-        },
-        orderBy: [
-          { updatedAt: 'desc' },
-          { createdAt: 'desc' }
-        ],
-        take: 30 // Limit to top 30 for speedrun
+        }
       });
       
       console.log(`🏆 [SPEEDRUN API] Loaded ${speedrunPeople.length} people for speedrun`);
@@ -3937,128 +4009,38 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       }
       
     } catch (error) {
-      console.warn(`⚠️ [SPEEDRUN API] Failed to use unified ranking, falling back to database ranking:`, error);
-      
-      // Fallback to database ranking
-      const fallbackWhereClause: any = {
-        workspaceId,
-        deletedAt: null,
-        companyId: { not: null } // Only load people with company relationships
-      };
-      
-      // For demo workspace, get all people with company relationships
-      if (workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194') {
-        fallbackWhereClause.OR = [
-          { assignedUserId: userId },
-          { assignedUserId: null }
-        ];
-      }
-      
-      people = await prisma.people.findMany({
-        where: fallbackWhereClause,
-        orderBy: [
-          { company: { rank: 'asc' } }, // Use company rank first
-          { updatedAt: 'desc' } // Then by person update time
-        ],
-        take: 200, // Load enough people for proper speedrun ranking
-        include: {
-          company: {
-            select: {
-              id: true,
-              name: true,
-              industry: true,
-              vertical: true,
-              size: true,
-              rank: true // Include company rank for proper ordering
-            }
-          }
-        }
-      });
+      console.warn(`⚠️ [SPEEDRUN API] Failed to load speedrun data:`, error);
+      people = []; // Return empty array instead of fallback
     }
 
-    // Transform people data to speedrun format with Coresignal data priority
-    const prospectsWithCompanies = people.map(person => {
-      // Extract Coresignal data
-      const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
-      
-      // Get company from Coresignal data (active experience)
-      const coresignalCompany = coresignalData.active_experience_company || 
-                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
-                                coresignalData.experience?.[0]?.company_name;
-      
-      // Get industry from Coresignal data
-      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
-                                coresignalData.experience?.[0]?.company_industry;
-      
-      // Get title from Coresignal data
-      const coresignalTitle = coresignalData.active_experience_title;
-      
-      return {
-        id: person.id,
-        firstName: person.firstName,
-        lastName: person.lastName,
-        fullName: coresignalData.full_name || person.fullName,
-        email: coresignalData.primary_professional_email || person.email,
-        // Use Coresignal data for company info (no fallbacks to database)
-        company: coresignalCompany || null,
-        companyId: person.companyId,
-        companyName: coresignalCompany || null,
-        industry: coresignalIndustry || null,
-        vertical: person.company?.vertical || null,
-        companySize: person.company?.size || null,
-        jobTitle: coresignalTitle || person.jobTitle,
-        title: coresignalTitle || person.jobTitle,
-        status: person.status,
-        createdAt: person.createdAt,
-        updatedAt: person.updatedAt,
-        lastContactDate: person.lastActionDate,
-        lastActionDate: person.lastActionDate,
-        nextAction: person.nextAction,
-        nextActionDate: person.nextActionDate,
-        // Add company data for ranking
-        companyData: person.company,
-      // CRITICAL: Include customFields with buyer group data
+    // 🚀 SPEEDRUN: Use same data format as People list (no complex Coresignal transformation)
+    const prospectsWithCompanies = people.map(person => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      fullName: person.fullName,
+      email: person.email,
+      jobTitle: person.jobTitle,
+      title: person.jobTitle,
+      status: person.status,
+      createdAt: person.createdAt,
+      updatedAt: person.updatedAt,
+      lastActionDate: person.lastActionDate,
+      nextAction: person.nextAction,
+      nextActionDate: person.nextActionDate,
       customFields: person.customFields,
-      // Map buyer group data from customFields to top level for easy access
-      buyerGroupRole: (person.customFields as any)?.buyerGroupRole || null,
-      influenceLevel: (person.customFields as any)?.influenceLevel || null,
-      engagementPriority: (person.customFields as any)?.engagementPriority || null,
-      decisionPower: (person.customFields as any)?.decisionPower || null,
-      communicationStyle: (person.customFields as any)?.communicationStyle || null,
-      decisionMakingStyle: (person.customFields as any)?.decisionMakingStyle || null,
-      painPoints: (person.customFields as any)?.painPoints || null,
-      interests: (person.customFields as any)?.interests || null,
-      personalGoals: (person.customFields as any)?.personalGoals || null,
-      professionalGoals: (person.customFields as any)?.professionalGoals || null
-      };
-    });
+      companyId: person.companyId,
+      // Use database company data (same as People list) - show dash for empty companies
+      company: person.company?.name || '-',
+      companyName: person.company?.name || '-',
+      industry: person.company?.industry || null,
+      vertical: person.company?.vertical || null,
+      companySize: person.company?.size || null,
+      // Include rank for proper ordering
+      rank: person.rank
+    }));
     
     console.log(`📊 [SPEEDRUN] Loaded ${prospectsWithCompanies.length} people with company data`);
-    
-    // DEBUG: Log first few records to see company data
-    console.log('🔍 [SPEEDRUN DEBUG] First 3 records:');
-    prospectsWithCompanies.slice(0, 3).forEach((person, index) => {
-      console.log(`  ${index + 1}. ${person.fullName} -> Company: "${person.company}"`);
-    });
-    
-    // DEBUG: Log raw database company data
-    console.log('🔍 [SPEEDRUN DEBUG] Raw database company data (first 3):');
-    people.slice(0, 3).forEach((person, index) => {
-      console.log(`  ${index + 1}. ${person.fullName}:`);
-      console.log(`    - company object:`, person.company);
-      console.log(`    - company.name: ${person.company?.name}`);
-      console.log(`    - companyId: ${person.companyId}`);
-    });
-    
-    // DEBUG: Log raw database data
-    console.log('🔍 [SPEEDRUN DEBUG] Raw database data (first 3):');
-    people.slice(0, 3).forEach((person, index) => {
-      console.log(`  ${index + 1}. ${person.fullName}:`);
-      console.log(`    - workspaceId: ${person.workspaceId}`);
-      console.log(`    - companyId: ${person.companyId}`);
-      console.log(`    - company string: "${person.company}"`);
-      console.log(`    - company relationship:`, person.company);
-    });
     
     // Use people data as speedrun data
     let speedrunData = prospectsWithCompanies;
@@ -4139,7 +4121,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         email: record.email || (record as any).workEmail,
         phone: (record as any).phone || (record as any).workPhone || (record as any).mobilePhone,
         title: record.jobTitle || record.title || 'Title',
-        company: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company',
+        company: (typeof record.company === 'object' && record.company?.name) || record.company || '-',
         location: (record as any).city || (record as any).state || (record as any).country,
         status: record.status || 'new',
         priority: (record as any).priority || 'high',
@@ -4163,116 +4145,50 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         stage: currentStage,
         state: (record as any).state || (record as any).city || 'State',
         jobTitle: record.jobTitle || record.title || 'Title',
-        companyName: (typeof record.company === 'object' && record.company?.name) || record.company || 'Unknown Company'
+        companyName: (typeof record.company === 'object' && record.company?.name) || record.company || '-'
       };
     });
     
-    // 🏆 ENHANCED: Use UniversalRankingEngine for proper 1-30 ranking
+    // 🚀 SPEEDRUN: Use simple database ranking (same as section API)
     let speedrunItems: any[] = [];
     
-    try {
-      // Import UniversalRankingEngine
-      const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
+    // Use hierarchical ranking: Companies first, then people within each company
+    speedrunItems = speedrunItemsWithScores.map((item: any, index: number) => {
+      const rank = index + 1; // Use sequential ranking (1, 2, 3...) based on hierarchical order
       
-      // Transform data to SpeedrunPerson format for ranking
-      const transformedData = speedrunItemsWithScores.map((item: any) => ({
-        id: item.id || `speedrun-${Math.random()}`,
+      return {
+        id: item.id,
+        rank: rank,
         name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
-        email: item.email || '',
-        company: item.company || item.companyName || 'Unknown Company',
+        company: item.company || item.companyName || '-',
         title: item.title || item.jobTitle || 'Unknown Title',
+        email: item.email || '',
         phone: item.phone || '',
-        location: item.location || '',
-        industry: 'Technology',
         status: item.status || 'active',
-        priority: item.priority || 'medium',
-        lastContact: item.lastActionDate || item.updatedAt,
-        notes: '',
-        tags: [],
-        source: item.source || 'speedrun',
-        enrichmentScore: item.priorityScore || 0,
-        buyerGroupRole: 'unknown',
-        currentStage: item.currentStage || 'initial',
-        nextAction: item.nextAction || '',
-        nextActionDate: item.nextActionDate || '',
-        createdAt: item.createdAt || new Date().toISOString(),
-        updatedAt: item.updatedAt || new Date().toISOString(),
-        assignedUser: null,
-        workspaceId: workspaceId,
-        relationship: 'prospect',
-        bio: '',
-        interests: [],
-        recentActivity: '',
-        engagementScore: 0,
-        dealPotential: 0,
-        urgencyLevel: 'Medium',
-        bestContactTime: 'Morning',
-        valueDriver: '',
-        decisionMakingPower: 'medium',
-        relationshipWarmth: 'cold',
-        timingUrgency: 'medium',
-        dealValue: 0,
-        strategicAccountValue: 0,
-        engagementReadiness: 'low'
-      }));
-      
-      // Apply UniversalRankingEngine for proper 1-30 ranking
-      const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
-      
-      // Transform back to speedrun format with proper rankings
-      speedrunItems = rankedProspects.map((prospect: any, index: number) => {
-        const originalItem = speedrunItemsWithScores.find(item => item.id === prospect.id);
-        const finalRank = prospect.winningScore?.rank || (index + 1);
-        
-        // 🚀 SPEEDRUN LOGIC: Set next action timing based on final ranking
-        let nextActionTiming = 'Today';
-        const rankNum = parseInt(finalRank) || (index + 1);
-        if (rankNum === 1) {
-          nextActionTiming = 'Now';
-        } else {
-          // All ranks 2-30 should be "Today"
-          nextActionTiming = 'Today';
-        }
-        
-        return {
-          ...originalItem,
-          rank: finalRank,
-          nextActionTiming, // Override with Speedrun logic
-          winningScore: prospect.winningScore?.totalScore || 0,
-          winFactors: prospect.winningScore?.winFactors || [],
-          urgencyLevel: prospect.winningScore?.urgencyLevel || 'Medium',
-          bestContactTime: prospect.winningScore?.bestContactTime || 'Morning',
-          dealPotential: prospect.winningScore?.dealPotential || 0
-        };
-      });
-      
-      console.log(`🏆 [SPEEDRUN] Applied UniversalRankingEngine: ${speedrunItems.length} prospects ranked`);
-      
-    } catch (error) {
-      console.warn('⚠️ [SPEEDRUN] UniversalRankingEngine failed, falling back to simple ranking:', error);
-      
-      // Fallback to simple ranking
-      speedrunItems = speedrunItemsWithScores
-        .sort((a, b) => b.priorityScore - a.priorityScore)
-        .map((item, index) => {
-          const rank = index + 1;
-          
-          // 🚀 SPEEDRUN LOGIC: Set next action timing based on ranking
-          let nextActionTiming = 'Today';
-          if (rank === 1) {
-            nextActionTiming = 'Now';
-          } else {
-            // All ranks 2-30 should be "Today"
-            nextActionTiming = 'Today';
-          }
-          
-          return {
-            ...item,
-            rank,
-            nextActionTiming // Override with Speedrun logic
-          };
-        });
-    }
+        lastAction: item.lastAction || 'No action taken',
+        lastActionDate: item.lastActionDate || null,
+        nextAction: item.nextAction || 'No next action',
+        nextActionDate: item.nextActionDate || null,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        // Add all other fields for compatibility
+        fullName: item.fullName || item.name,
+        firstName: item.firstName || 'First',
+        lastName: item.lastName || 'Last',
+        jobTitle: item.jobTitle || item.title,
+        companyName: item.companyName || item.company,
+        industry: item.industry || null,
+        vertical: item.vertical || null,
+        companySize: item.companySize || null,
+        customFields: item.customFields || {},
+        companyId: item.companyId || null,
+        workspaceId: item.workspaceId || workspaceId,
+        assignedUserId: item.assignedUserId || userId,
+        tags: item.tags || ['speedrun']
+      };
+    });
+    
+    console.log(`🏆 [SPEEDRUN] Applied simple database ranking (same as People list): ${speedrunItems.length} prospects ranked`);
     
     console.log(`🏆 [SPEEDRUN] Transformed ${speedrunItems.length} speedrun items from ${dataSource}`);
     

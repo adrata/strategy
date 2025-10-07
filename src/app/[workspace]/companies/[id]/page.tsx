@@ -7,6 +7,7 @@ import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { CompaniesErrorBoundary } from "@/frontend/components/pipeline/CompaniesErrorBoundary";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -24,10 +25,20 @@ export default function CompanyDetailPage() {
         <SpeedrunDataProvider>
           <RecordContextProvider>
             <ProfilePopupProvider>
-              <PipelineDetailPage
-                section="companies"
-                slug={slug}
-              />
+              <CompaniesErrorBoundary
+                onError={(error, errorInfo) => {
+                  console.error('🚨 [COMPANY DETAIL] Error caught by boundary:', error, errorInfo);
+                }}
+                onRetry={() => {
+                  console.log('🔄 [COMPANY DETAIL] Retrying after error...');
+                }}
+                maxRetries={3}
+              >
+                <PipelineDetailPage
+                  section="companies"
+                  slug={slug}
+                />
+              </CompaniesErrorBoundary>
             </ProfilePopupProvider>
           </RecordContextProvider>
         </SpeedrunDataProvider>

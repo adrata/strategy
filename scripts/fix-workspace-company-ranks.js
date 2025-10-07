@@ -1,24 +1,22 @@
 #!/usr/bin/env node
 
 /**
- * Fix TOP Workspace Company Ranks Script
+ * Fix Workspace Company Ranks Script
  * 
- * This script assigns proper ranks to companies within the TOP workspace.
- * Sets Hillenmeyer Companies to rank 1, then other important companies.
+ * This script assigns proper ranks to companies within a specific workspace.
+ * Sets Hillenmeyer Companies to rank 1 for Dan's workspace.
  */
 
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function fixTopWorkspaceRanks() {
-  const workspaceId = '01K1VBYXHD0J895XAN0HGFBKJP'; // TOP workspace
-  
+async function fixWorkspaceCompanyRanks(workspaceId = '01K1VBYXHD0J895XAN0HGFBKJP') {
   try {
-    console.log(`🔧 Starting TOP workspace company ranks fix for workspace: ${workspaceId}...`);
+    console.log(`🔧 Starting workspace company ranks fix for workspace: ${workspaceId}...`);
     
     // First, reset all ranks for this workspace to null
-    console.log('🔄 Resetting all company ranks for TOP workspace...');
+    console.log('🔄 Resetting all company ranks for this workspace...');
     await prisma.companies.updateMany({
       where: {
         workspaceId: workspaceId,
@@ -29,7 +27,7 @@ async function fixTopWorkspaceRanks() {
       }
     });
     
-    // Set specific companies to specific ranks for TOP workspace
+    // Set specific companies to specific ranks for this workspace
     const targetCompanies = [
       { name: 'Hillenmeyer Companies: Weed Man & Mosquito Authority', rank: 1 },
       { name: 'Alabama Power Company', rank: 2 },
@@ -43,9 +41,9 @@ async function fixTopWorkspaceRanks() {
       { name: 'Blue Ridge Electric Membership Corporation', rank: 10 }
     ];
     
-    console.log(`📊 Setting specific ranks for ${targetCompanies.length} companies in TOP workspace...`);
+    console.log(`📊 Setting specific ranks for ${targetCompanies.length} companies in workspace ${workspaceId}...`);
     
-    // Update each target company with unique rank for TOP workspace
+    // Update each target company with unique rank for this workspace
     for (const target of targetCompanies) {
       try {
         const result = await prisma.companies.updateMany({
@@ -60,17 +58,17 @@ async function fixTopWorkspaceRanks() {
         });
         
         if (result.count > 0) {
-          console.log(`✅ Set ${target.name} to rank ${target.rank} in TOP workspace`);
+          console.log(`✅ Set ${target.name} to rank ${target.rank} in workspace ${workspaceId}`);
         } else {
-          console.log(`⚠️  Company not found in TOP workspace: ${target.name}`);
+          console.log(`⚠️  Company not found in workspace: ${target.name}`);
         }
       } catch (error) {
         console.error(`❌ Error updating ${target.name}:`, error.message);
       }
     }
     
-    // Get remaining companies in TOP workspace and assign sequential ranks
-    console.log('🔄 Setting remaining companies in TOP workspace to sequential ranks...');
+    // Set remaining companies in this workspace to ranks 11+
+    console.log('🔄 Setting remaining companies in workspace to ranks 11+...');
     const remainingCompanies = await prisma.companies.findMany({
       where: {
         workspaceId: workspaceId,
@@ -87,25 +85,32 @@ async function fixTopWorkspaceRanks() {
       }
     });
     
-    console.log(`📊 Found ${remainingCompanies.length} remaining companies in TOP workspace to rank...`);
+    console.log(`📊 Found ${remainingCompanies.length} remaining companies in workspace to rank...`);
     
-    // Update remaining companies with sequential ranks starting from 11
+    // Update remaining companies in batches
+    const batchSize = 50;
     let currentRank = 11;
-    for (const company of remainingCompanies) {
-      try {
-        await prisma.companies.update({
-          where: { id: company.id },
-          data: { rank: currentRank }
-        });
-        currentRank++;
-      } catch (error) {
-        console.error(`❌ Error updating ${company.name}:`, error.message);
+    
+    for (let i = 0; i < remainingCompanies.length; i += batchSize) {
+      const batch = remainingCompanies.slice(i, i + batchSize);
+      
+      for (let j = 0; j < batch.length; j++) {
+        const company = batch[j];
+        try {
+          await prisma.companies.update({
+            where: { id: company.id },
+            data: { rank: currentRank + j }
+          });
+        } catch (error) {
+          console.error(`❌ Error updating ${company.name}:`, error.message);
+        }
       }
+      
+      currentRank += batch.length;
+      console.log(`✅ Updated batch ${Math.floor(i / batchSize) + 1} (companies ${i + 1}-${Math.min(i + batchSize, remainingCompanies.length)})`);
     }
     
-    console.log(`✅ Updated ${remainingCompanies.length} remaining companies with sequential ranks`);
-    
-    // Verify the results for TOP workspace
+    // Verify the results for this workspace
     const topCompanies = await prisma.companies.findMany({
       where: {
         workspaceId: workspaceId,
@@ -120,24 +125,15 @@ async function fixTopWorkspaceRanks() {
       }
     });
     
-    console.log(`\n🔍 Verification - Top 15 companies in TOP workspace:`);
+    console.log(`\n🔍 Verification - Top 15 companies in workspace ${workspaceId}:`);
     topCompanies.forEach(company => {
       console.log(`  Rank ${company.rank}: ${company.name}`);
     });
     
-    // Count total companies in TOP workspace
-    const totalCompanies = await prisma.companies.count({
-      where: {
-        workspaceId: workspaceId,
-        deletedAt: null
-      }
-    });
-    
-    console.log(`\n📊 Total companies in TOP workspace: ${totalCompanies}`);
-    console.log(`✅ TOP workspace company ranks fix completed!`);
+    console.log(`\n✅ Workspace company ranks fix completed for workspace ${workspaceId}!`);
     
   } catch (error) {
-    console.error('❌ Error fixing TOP workspace company ranks:', error);
+    console.error('❌ Error fixing company ranks:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -145,10 +141,9 @@ async function fixTopWorkspaceRanks() {
 }
 
 // Run the script
-fixTopWorkspaceRanks()
+fixWorkspaceCompanyRanks()
   .then(() => {
-    console.log('🎉 TOP workspace script completed successfully');
-    console.log('💡 Next: Run similar scripts for other workspaces');
+    console.log('🎉 Script completed successfully');
     process.exit(0);
   })
   .catch((error) => {

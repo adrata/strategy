@@ -22,6 +22,29 @@ model Chat {
   @@index([workspaceId, type])
 }
 
+model RankingEvent {
+  id           String    @id @default(ulid())
+  workspaceId  String    @db.VarChar(30)
+  userId       String?     @db.VarChar(30)
+  eventType    String    @db.VarChar(50)
+  entityType   String    @db.VarChar(50)
+  entityId     String    @db.VarChar(30)
+  eventData    Json?
+  impactScore  Int       @default(0)
+  processed    Boolean   @default(false)
+  processedAt  DateTime?
+  retryCount   Int       @default(0)
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([processed])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([workspaceId, processed])
+  @@map("ranking_events")
+}
+
 model entities {
   id           String    @id @default(ulid())
   type         String    @db.VarChar(50)

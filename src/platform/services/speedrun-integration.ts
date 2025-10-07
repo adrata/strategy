@@ -9,7 +9,8 @@
  * ✅ AI-powered next action recommendations
  */
 
-import { SpeedrunRealtimeEngine, type SpeedrunContact } from './speedrun-realtime-engine';
+import { RankingSystem } from './ranking-system';
+import type { RankingScore } from './ranking-system/types';
 import { intelligentPainValueEngine } from './intelligent-pain-value-engine';
 
 // Integration with existing Speedrun types
@@ -47,7 +48,7 @@ export interface SpeedrunProspect {
 }
 
 export class SpeedrunIntegrationService {
-  private realtimeEngine: SpeedrunRealtimeEngine;
+  private rankingSystem: RankingSystem;
   private static instances: Map<string, SpeedrunIntegrationService> = new Map();
   private listeners: Array<(prospects: SpeedrunProspect[]) => void> = [];
   private workspaceId: string;
@@ -56,7 +57,7 @@ export class SpeedrunIntegrationService {
   private constructor(workspaceId: string, userId: string) {
     this['workspaceId'] = workspaceId;
     this['userId'] = userId;
-    this['realtimeEngine'] = new SpeedrunRealtimeEngine(workspaceId, userId);
+    this['rankingSystem'] = RankingSystem.getInstance();
     this.setupRealtimeSubscription();
   }
 
@@ -72,8 +73,8 @@ export class SpeedrunIntegrationService {
    * Get today's intelligent Speedrun list
    */
   async getTodaysSpeedrunList(): Promise<SpeedrunProspect[]> {
-    const contacts = await this.realtimeEngine.getDailySpeedrunList();
-    return this.transformContactsToProspects(contacts);
+    const rankings = await this.rankingSystem.getSystemRankings(this.workspaceId, 'people', 30);
+    return this.transformRankingsToProspects(rankings);
   }
 
   /**
@@ -197,6 +198,43 @@ export class SpeedrunIntegrationService {
       const prospects = this.transformContactsToProspects(contacts);
       this.notifyListeners(prospects);
     });
+  }
+
+  /**
+   * Transform rankings to prospects format
+   */
+  private transformRankingsToProspects(rankings: RankingScore[]): SpeedrunProspect[] {
+    return rankings.map((ranking, index) => ({
+      id: ranking.entityId,
+      rank: ranking.rank.toString(),
+      name: `Contact ${ranking.entityId}`, // TODO: Get actual name from database
+      title: 'Professional', // TODO: Get actual title
+      company: 'Company', // TODO: Get actual company
+      priority: ranking.score > 80 ? 'high' : ranking.score > 50 ? 'medium' : 'low',
+      buyingSignal: 'Active', // TODO: Determine from factors
+      dealSize: 'TBD', // TODO: Calculate from factors
+      closeProb: 'TBD', // TODO: Calculate from factors
+      nextAction: 'Research', // TODO: Determine from factors
+      pain: 'TBD', // TODO: Extract from factors
+      valueDriver: 'TBD', // TODO: Extract from factors
+      timeline: 'TBD', // TODO: Calculate from factors
+      email: 'contact@company.com', // TODO: Get actual email
+      phone: 'TBD', // TODO: Get actual phone
+      linkedin: 'TBD', // TODO: Get actual LinkedIn
+      location: 'TBD', // TODO: Get actual location
+      department: 'TBD', // TODO: Get actual department
+      seniority: 'TBD', // TODO: Get actual seniority
+      buyerRole: 'TBD', // TODO: Get actual buyer role
+      influence: 'TBD', // TODO: Get actual influence
+      score: ranking.score.toString(),
+      status: 'Active',
+      budget: 'TBD', // TODO: Get actual budget
+      realtimeTrigger: {
+        type: 'ranking_update',
+        timestamp: ranking.lastUpdated,
+        priority: ranking.score > 80 ? 'high' : 'medium'
+      }
+    }));
   }
 
   /**

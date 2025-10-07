@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface PasswordProtectionProps {
   children: React.ReactNode;
@@ -11,11 +11,30 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  // Hard-coded password validation - no external dependencies
+  const validatePassword = (inputPassword: string): boolean => {
+    return inputPassword === correctPassword;
+  };
+
+  // Check for existing authentication on component mount
+  useEffect(() => {
+    setMounted(true);
+    
+    // Check if already authenticated in this session
+    const sessionAuth = sessionStorage.getItem('hardcoded_auth');
+    if (sessionAuth === correctPassword) {
+      setIsAuthenticated(true);
+    }
+  }, [correctPassword]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === correctPassword) {
+    if (validatePassword(password)) {
       setIsAuthenticated(true);
+      // Store in session storage for this session only
+      sessionStorage.setItem('hardcoded_auth', correctPassword);
       setError('');
     } else {
       setError('Incorrect password. Please try again.');
@@ -23,8 +42,67 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
     }
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('hardcoded_auth');
+    setPassword('');
+  };
+
+  // Prevent hydration mismatch by showing consistent state until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Absorb LMS Access</h1>
+            <p className="text-gray-600">Enter the access code to view the athenahealth Buyer Group Intelligence Report</p>
+          </div>
+          <form className="space-y-6">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Access Code
+              </label>
+              <input
+                type="password"
+                id="password"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter access code"
+                disabled
+              />
+            </div>
+            <button
+              type="button"
+              className="w-full bg-green-600 text-white py-2 px-4 rounded-md opacity-50 cursor-not-allowed"
+              disabled
+            >
+              Loading...
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (isAuthenticated) {
-    return <div style={{ height: '100vh', overflow: 'auto' }}>{children}</div>;
+    return (
+      <div className="relative" style={{ height: '100vh', overflow: 'auto' }}>
+        {/* Logout button */}
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={handleLogout}
+            className="bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+        {children}
+      </div>
+    );
   }
 
   return (

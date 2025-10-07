@@ -176,8 +176,8 @@ export function TableRow({
               case 'rank':
                 // Use alphanumeric rank (1A, 1B, 2A) if available, fallback to numeric rank
                 const winningRank = record['winningScore']?.rank;
-                // For People section, use masterRank; for others use rank
-                const numericRank = section === 'people' ? record['masterRank'] : record['rank'] || (index + 1);
+                // For People section, use masterRank; for others use sequential rank
+                const numericRank = section === 'people' ? record['masterRank'] : (index + 1);
                 const displayRank = winningRank || numericRank;
                 return (
                   <td key="rank" className={textClasses}>

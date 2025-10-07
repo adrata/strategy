@@ -267,34 +267,34 @@ export async function GET(request: NextRequest) {
     // Combine both sources
     const allCompanies = [...companiesWithPeople, ...companiesFromLeads];
 
-    // 🎯 USE UNIFIED RANKING ENGINE for consistent ranking with Speedrun
-    console.log(`🏆 [COMPANIES API] Using UnifiedMasterRankingEngine for consistent ranking...`);
+    // 🎯 USE NEW UNIFIED RANKING SYSTEM for consistent ranking with Speedrun
+    console.log(`🏆 [COMPANIES API] Using new unified ranking system for consistent ranking...`);
     console.log(`🏆 [COMPANIES API] WorkspaceId: ${workspaceId}, UserId: ${userId}`);
     
     try {
-      // Import the UnifiedMasterRankingEngine
-      console.log(`🏆 [COMPANIES API] Importing UnifiedMasterRankingEngine...`);
-      const { UnifiedMasterRankingEngine } = await import('@/platform/services/unified-master-ranking');
-      console.log(`🏆 [COMPANIES API] Successfully imported UnifiedMasterRankingEngine`);
+      // Import the new unified ranking system
+      console.log(`🏆 [COMPANIES API] Importing new unified ranking system...`);
+      const { RankingSystem } = await import('@/platform/services/ranking-system');
+      console.log(`🏆 [COMPANIES API] Successfully imported new unified ranking system`);
       
-      // Generate unified ranking
+      // Generate unified ranking using new system
       console.log(`🏆 [COMPANIES API] Generating unified ranking...`);
-      const unifiedRanking = await UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId);
-      console.log(`🏆 [COMPANIES API] Generated unified ranking with ${unifiedRanking.companies.length} companies`);
+      const rankingSystem = RankingSystem.getInstance();
+      const rankings = await rankingSystem.getSystemRankings(workspaceId, 'companies', 100);
+      console.log(`🏆 [COMPANIES API] Generated unified ranking with ${rankings.length} companies`);
       
-      // Create a map of company names to their unified ranks
+      // Create a map of company IDs to their unified ranks
       const companyRankMap = new Map();
-      unifiedRanking.companies.forEach(company => {
-        companyRankMap.set(company.name, company.masterRank);
+      rankings.forEach(ranking => {
+        companyRankMap.set(ranking.entityId, ranking.rank);
       });
       
       console.log(`🏆 [COMPANIES API] Unified ranking companies (first 5):`);
-      unifiedRanking.companies.slice(0, 5).forEach(company => {
-        console.log(`  ${company.masterRank}. ${company.name}`);
+      rankings.slice(0, 5).forEach(ranking => {
+        console.log(`  ${ranking.rank}. Company ID: ${ranking.entityId}`);
       });
       
-      console.log(`🏆 [COMPANIES API] Total companies in unified ranking: ${unifiedRanking.companies.length}`);
-      console.log(`🏆 [COMPANIES API] Total people in unified ranking: ${unifiedRanking.people.length}`);
+      console.log(`🏆 [COMPANIES API] Total companies in unified ranking: ${rankings.length}`);
       
       console.log(`🏆 [COMPANIES API] All companies before ranking (first 5):`);
       allCompanies.slice(0, 5).forEach(company => {
@@ -303,8 +303,8 @@ export async function GET(request: NextRequest) {
       
       // Sort companies using unified ranking
       allCompanies.sort((a, b) => {
-        const rankA = companyRankMap.get(a.name) || 999999; // High number for unranked
-        const rankB = companyRankMap.get(b.name) || 999999;
+        const rankA = companyRankMap.get(a.id) || 999999; // High number for unranked
+        const rankB = companyRankMap.get(b.id) || 999999;
         
         if (rankA !== rankB) {
           return rankA - rankB; // Lower rank number = higher priority
@@ -321,7 +321,7 @@ export async function GET(request: NextRequest) {
       
       console.log(`🏆 [COMPANIES API] Companies after unified ranking (first 5):`);
       allCompanies.slice(0, 5).forEach(company => {
-        const unifiedRank = companyRankMap.get(company.name) || 'unranked';
+        const unifiedRank = companyRankMap.get(company.id) || 'unranked';
         console.log(`  ${unifiedRank}. ${company.name}`);
       });
       

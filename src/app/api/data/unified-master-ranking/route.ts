@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UnifiedMasterRankingEngine } from '@/platform/services/unified-master-ranking';
-
+import { RankingSystem } from '@/platform/services/ranking-system';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 /**
@@ -39,13 +38,14 @@ export async function GET(request: NextRequest) {
     
     console.log(`🏆 [UNIFIED MASTER RANKING API] Generating master ranking for workspace: ${workspaceId}, user: ${userId}`);
     
-    // Generate unified master ranking
-    const unifiedRanking = await UnifiedMasterRankingEngine.generateMasterRanking(workspaceId, userId);
+    // Generate unified master ranking using new system
+    const rankingSystem = RankingSystem.getInstance();
+    const rankings = await rankingSystem.getSystemRankings(workspaceId, 'people', 100);
     
     const processingTime = Date.now() - startTime;
     console.log(`✅ [UNIFIED MASTER RANKING API] Generated ranking in ${processingTime}ms`);
     
-    return createSuccessResponse(unifiedRanking, {
+    return createSuccessResponse(rankings, {
       processingTime: Date.now() - startTime,
       userId: context.userId,
       workspaceId: context.workspaceId,

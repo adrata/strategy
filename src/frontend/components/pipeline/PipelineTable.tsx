@@ -385,7 +385,7 @@ export function PipelineTable({
                     switch (header.toLowerCase()) {
                       case 'rank':
                         // Use the actual rank from the record, fallback to sequential if not available
-                        const recordRank = record.rank || record.masterRank || 0;
+                        const recordRank = record.rank || record.masterRank || record.winningScore?.rank || 0;
                         const displayRank = recordRank > 0 ? recordRank : (currentPage - 1) * pageSize + index + 1;
                         cellContent = String(displayRank);
                         break;

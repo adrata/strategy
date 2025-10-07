@@ -33,6 +33,8 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const { user } = useUnifiedAuth();
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
+  
+  // 🚀 HYDRATION FIX: Initialize all state with consistent values
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [previousRecord, setPreviousRecord] = useState<any>(null);
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
@@ -44,9 +46,17 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   
+  // 🚀 HYDRATION FIX: Add hydration state to prevent mismatches
+  const [isHydrated, setIsHydrated] = useState(false);
+  
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
   
+  // 🚀 HYDRATION FIX: Set hydration state after component mounts
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   // Listen for section transitions to show unified loading state
   useEffect(() => {
     const handleSectionTransition = (event: CustomEvent) => {
@@ -74,8 +84,69 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // Load data for navigation - REQUIRED for navigation arrows to work
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
-  const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
+  // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
+  const getCurrentWorkspaceId = useCallback(async () => {
+    try {
+      // 1. First try to get from JWT token (most reliable)
+      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
+      if (session?.accessToken) {
+        try {
+          const jwt = await import('jsonwebtoken');
+          const secret = process.env['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production";
+          const decoded = jwt.verify(session.accessToken, secret) as any;
+          if (decoded?.workspaceId) {
+            console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from JWT: ${decoded.workspaceId}`);
+            return decoded.workspaceId;
+          }
+        } catch (error) {
+          console.warn('⚠️ [PIPELINE DETAIL] Failed to decode JWT token:', error);
+        }
+      }
+      
+      // 2. Fallback to acquisitionData
+      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
+        return acquisitionData.auth.authUser.activeWorkspaceId;
+      }
+      
+      // 3. Fallback to user activeWorkspaceId
+      if (user?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from user: ${user.activeWorkspaceId}`);
+        return user.activeWorkspaceId;
+      }
+      
+      // 4. Last resort: first workspace
+      if (user?.workspaces?.[0]?.id) {
+        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
+        return user.workspaces[0].id;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('❌ [PIPELINE DETAIL] Error getting workspace ID:', error);
+      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
+    }
+  }, [acquisitionData, user]);
+
+  // 🆕 CRITICAL FIX: Update workspace ID when it changes
+  useEffect(() => {
+    const updateWorkspaceId = async () => {
+      const newWorkspaceId = await getCurrentWorkspaceId();
+      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
+        console.log(`🔄 [PIPELINE DETAIL] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
+        setCurrentWorkspaceId(newWorkspaceId);
+        setCurrentUserId(user?.id || null);
+      }
+    };
+    
+    updateWorkspaceId();
+  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
+
+  const workspaceId = currentWorkspaceId;
   // Map workspace to correct user ID
   const getUserIdForWorkspace = (workspaceId: string) => {
     switch (workspaceId) {
@@ -92,11 +163,11 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
-  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
-  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000, workspaceId, userId);
-  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500, workspaceId, userId);
-  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000, workspaceId, userId);
-  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000, workspaceId, userId);
+  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30);
+  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000);
+  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500);
+  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000);
+  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000);
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -127,7 +198,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     console.log(`🔍 [DATA PIPELINE] Section ${section} data:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map(r => r.id),
+      sampleIds: data.slice(0, 3).map((r: any) => r.id),
       section: section,
       hasAcquisitionData: !!acquisitionData,
       acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data',
@@ -171,7 +242,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     console.log(`🔍 [NAVIGATION DATA] Navigation data for ${section}:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map(r => r.id)
+      sampleIds: data.slice(0, 3).map((r: any) => r.id)
     });
     
     return data;
@@ -240,10 +311,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     });
   }
   
-  // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
-  // For speedrun records, don't show loading if we have the record from speedrun data
-  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
-  const error = acquisitionData.error || directRecordError;
+  // 🚀 HYDRATION FIX: Don't show loading/error states until hydrated to prevent flashing
+  const loading = isHydrated && (acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord));
+  const error = isHydrated ? (acquisitionData.error || directRecordError) : null;
   
   console.log(`🔍 [LOADING STATE] Loading states:`, {
     acquisitionDataLoading: acquisitionData.isLoading,
@@ -413,7 +483,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // If we have data loaded, try to find the record in it
       if (data.length > 0) {
         console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
-        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
+        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map((r: any) => ({ id: r.id, name: r.name })));
         console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
         
         // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
@@ -421,7 +491,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         
         console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
         console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
-        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
+        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name })));
         
         if (record) {
           console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
@@ -577,6 +647,113 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       console.log(`❌ [NAVIGATION] Cannot go next - already at last record (index: ${currentIndex}, total: ${data.length})`);
     }
   }, [data, selectedRecord, section, navigateToPipelineItem]);
+
+  // 🚀 HYDRATION FIX: Show loading skeleton during hydration to prevent flashing
+  if (!isHydrated) {
+    return (
+      <PanelLayout
+        thinLeftPanel={null}
+        leftPanel={
+          <PipelineLeftPanelStandalone 
+            activeSection={section}
+            onSectionChange={handleSectionChange}
+            isSpeedrunVisible={isSpeedrunVisible}
+            setIsSpeedrunVisible={setIsSpeedrunVisible}
+            isOpportunitiesVisible={isOpportunitiesVisible}
+            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+          />
+        }
+        middlePanel={
+          <div className="h-full flex flex-col bg-white">
+            {/* Hydration Loading Skeleton */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div>
+                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Tabs Skeleton */}
+            <div className="flex-shrink-0 px-6 pt-2 pb-1">
+              <div className="flex items-center gap-8">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Content Skeleton */}
+            <div className="flex-1 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex justify-between">
+                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="text-center">
+                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        rightPanel={<AIRightPanel />}
+        zoom={zoom}
+        isLeftPanelVisible={isLeftPanelVisible}
+        isRightPanelVisible={isRightPanelVisible}
+        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+      />
+    );
+  }
 
   // Loading state - Only show loading for direct record loading, not general data loading
   if (directRecordLoading) {
@@ -763,7 +940,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                     dataLength: data.length,
                     foundIndex: index,
                     calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+                    dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name, rank: r.rank }))
                   });
                   return recordIndex;
                 } else {
@@ -776,7 +953,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                     dataLength: data.length,
                     foundIndex: index,
                     calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+                    dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name }))
                   });
                   return recordIndex;
                 }
@@ -905,7 +1082,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                   if (dbRank && dbRank > 0) {
                     return dbRank;
                   } else {
-                    const index = data.findIndex(r => r['id'] === selectedRecord.id);
+                    const index = data.findIndex((r: any) => r['id'] === selectedRecord.id);
                     return index >= 0 ? index + 1 : 1;
                   }
                 })()}

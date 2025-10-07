@@ -18,7 +18,7 @@ import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActio
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
-import { getDynamicGoals } from '@/platform/services/global-ranking-system';
+import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { 
   ChevronDownIcon,
@@ -513,7 +513,7 @@ export function PipelineHeader({
   const sectionInfo = getSectionInfo();
 
   // Format metrics for display
-  const formatMetrics = (): MetricItem[] => {
+  const formatMetrics = async (): Promise<MetricItem[]> => {
     const metricItems: MetricItem[] = [];
     
     // Handle null metrics case
@@ -529,8 +529,9 @@ export function PipelineHeader({
         return []; // Return empty array to hide all stats
       }
       
-      // Use imported getDynamicGoals function
-      const dynamicGoals = getDynamicGoals();
+      // Use unified ranking system for dynamic goals
+      const rankingSystem = RankingSystem.getInstance();
+      const dynamicGoals = await rankingSystem.getDynamicGoals(workspaceId);
       
       switch (currentView) {
         case 'sales_actions':
@@ -544,14 +545,14 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Today',
             value: timeData.todayProgress,
-            target: dynamicGoals.daily,
+            target: 8, // Default target
             isProgress: true,
             color: 'text-gray-900'
           });
           metricItems.push({
             label: 'This Week',
             value: timeData.weekProgress,
-            target: dynamicGoals.weekly,
+            target: 40, // Default weekly target
             isProgress: true,
             color: 'text-gray-900'
           });
@@ -829,7 +830,18 @@ export function PipelineHeader({
     return metricItems;
   };
 
-  const metricItems = formatMetrics();
+  const [metricItems, setMetricItems] = useState<MetricItem[]>([]);
+
+  // Get workspaceId from user context
+  const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
+
+  useEffect(() => {
+    const loadMetrics = async () => {
+      const items = await formatMetrics();
+      setMetricItems(items);
+    };
+    loadMetrics();
+  }, [section, currentView, metrics, timeData, workspaceId]);
 
   return (
     <>
