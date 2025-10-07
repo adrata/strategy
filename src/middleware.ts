@@ -168,4 +168,4 @@ export const config = {
 };
 
 // Ensure middleware runs in Edge Runtime for better performance
-export const runtime = 'experimental-edge';
+// Note: Removed runtime export as it's causing Vercel deployment issues
