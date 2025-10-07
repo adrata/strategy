@@ -117,10 +117,9 @@ function getWorkspaceIdFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-// Protect all API routes - TEMPORARILY DISABLED FOR TESTING
+// Protect API routes only - static pages handle their own authentication
 export const config = {
   matcher: [
-    // '/api/:path*',  // TEMPORARILY DISABLED
-    '/private/:path*'
+    '/api/:path*'  // Only protect API routes
   ],
 };
