@@ -41,16 +41,16 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   const coresignalEducation = coresignalData?.education || coresignalProfile?.education || [];
   const coresignalTotalExperience = coresignalData?.total_experience_duration_months || coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
   
-  // Use CoreSignal data ONLY (no fallbacks to database)
+  // Use CoreSignal data with proper data extraction
   const careerData = {
-    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-',
-    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-',
-    totalExperience: coresignalTotalExperience > 0 ? `${Math.floor(coresignalTotalExperience / 12)} years` : '-',
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
+    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || null,
+    totalExperience: coresignalTotalExperience > 0 ? `${Math.floor(coresignalTotalExperience / 12)} years` : null,
     education: coresignalEducation || [],
     skills: coresignalSkills || [],
     experience: coresignalExperience || [],
     totalFields: Object.keys(coresignalData).length || 0,
-    lastEnrichedAt: record.customFields?.lastEnrichedAt || coresignalData.lastEnrichedAt || coresignalData.enrichedAt || record.updatedAt || '-'
+    lastEnrichedAt: record.customFields?.lastEnrichedAt || coresignalData.lastEnrichedAt || coresignalData.enrichedAt || record.updatedAt || null
   };
 
   // Debug: Log the actual CoreSignal data structure
@@ -120,15 +120,15 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.department}</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.department || 'Not available'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.companyName}</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.companyName || 'Not available'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Total Experience:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.totalExperience}</span>
+                <span className="text-sm font-medium text-gray-900">{careerData.totalExperience || 'Not available'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Data Fields:</span>

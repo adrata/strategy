@@ -421,11 +421,12 @@ Create opportunities for ongoing engagement and relationship development. Provid
           setPersonRecord(personResult.data);
           console.log('🔍 [PERSON RECORD] Loaded person record:', personResult.data);
         } else {
-          // If no real data found, create a mock record based on buyer group member
+          // If no real data found, create a comprehensive mock record based on buyer group member
           const mockRecord = {
             id: selectedPerson.id,
             name: selectedPerson.name,
             title: selectedPerson.title,
+            jobTitle: selectedPerson.title,
             department: selectedPerson.department,
             company: selectedPerson.company,
             email: `${selectedPerson.name.toLowerCase().replace(' ', '.')}@${selectedPerson.company.toLowerCase()}.com`,
@@ -438,10 +439,173 @@ Create opportunities for ongoing engagement and relationship development. Provid
             riskStatus: 'low',
             directionalIntelligence: selectedPerson.directionalIntelligence,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
+            // Add comprehensive customFields for career and intelligence data
+            customFields: {
+              // Intelligence Profile Data
+              influenceLevel: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : selectedPerson.buyerRole === 'Champion' ? 'Medium' : 'Low',
+              engagementStrategy: selectedPerson.buyerRole === 'Decision Maker' ? 'Executive Outreach' : 'Standard Outreach',
+              isBuyerGroupMember: true,
+              seniority: selectedPerson.buyerRole === 'Decision Maker' ? 'Executive' : 'Mid-Level',
+              influenceScore: selectedPerson.influence,
+              decisionPower: selectedPerson.decisionPower,
+              primaryRole: selectedPerson.title,
+              engagementLevel: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : 'Medium',
+              communicationStyle: selectedPerson.buyerRole === 'Decision Maker' ? 'Direct and Technical' : 'Professional',
+              decisionMaking: selectedPerson.buyerRole === 'Decision Maker' ? 'Data-Driven and Risk-Aware' : 'Collaborative',
+              preferredContact: 'Email and LinkedIn',
+              responseTime: '24-48 hours',
+              
+              // Career Data
+              department: selectedPerson.department,
+              totalExperience: '15+ years',
+              
+              // Pain Points and Interests
+              painPoints: [
+                'Cybersecurity threats and compliance',
+                'Data protection and privacy regulations',
+                'Security infrastructure scalability',
+                'Team training and awareness'
+              ],
+              interests: [
+                'Cybersecurity best practices',
+                'Risk management frameworks',
+                'Security automation',
+                'Compliance standards'
+              ],
+              goals: [
+                'Strengthen security posture',
+                'Improve compliance posture',
+                'Enhance team capabilities',
+                'Reduce security incidents'
+              ],
+              challenges: [
+                'Balancing security with usability',
+                'Managing security across multiple systems',
+                'Keeping up with evolving threats',
+                'Budget constraints for security tools'
+              ],
+              opportunities: [
+                'Advanced security solutions',
+                'Automated compliance monitoring',
+                'Security awareness training',
+                'Integrated security platforms'
+              ],
+              
+              // Intelligence Summary
+              intelligenceSummary: `${selectedPerson.name} serves as a ${selectedPerson.title} with ${selectedPerson.influence >= 80 ? 'high' : selectedPerson.influence >= 60 ? 'moderate' : 'limited'} influence and ${selectedPerson.decisionPower >= 80 ? 'strong' : selectedPerson.decisionPower >= 60 ? 'moderate' : 'limited'} decision-making authority in their organization. They prefer ${selectedPerson.buyerRole === 'Decision Maker' ? 'direct and technical' : 'professional'} communication and make decisions based on ${selectedPerson.buyerRole === 'Decision Maker' ? 'data-driven and risk-aware' : 'collaborative'} analysis. Current engagement level is ${selectedPerson.buyerRole === 'Decision Maker' ? 'High' : 'Medium'}, indicating ${selectedPerson.buyerRole === 'Decision Maker' ? 'positive' : 'moderate'} receptivity to outreach.`,
+              
+              // CoreSignal-style data
+              coresignal: {
+                id: `${selectedPerson.name.toLowerCase().replace(' ', '_')}_001`,
+                employeeId: `${selectedPerson.name.toLowerCase().replace(' ', '_')}_001`,
+                followersCount: 1250,
+                connectionsCount: 850,
+                isDecisionMaker: selectedPerson.buyerRole === 'Decision Maker' ? 1 : 0,
+                totalExperienceMonths: 180,
+                lastEnrichedAt: new Date().toISOString(),
+                skills: [
+                  'Cybersecurity',
+                  'Risk Management',
+                  'Compliance',
+                  'Security Architecture',
+                  'Team Leadership',
+                  'Incident Response',
+                  'Security Auditing',
+                  'Policy Development'
+                ],
+                education: [
+                  {
+                    degree: 'Master of Science',
+                    field: 'Cybersecurity',
+                    institution: 'Carnegie Mellon University',
+                    year: '2010'
+                  },
+                  {
+                    degree: 'Bachelor of Science',
+                    field: 'Computer Science',
+                    institution: 'University of California, Berkeley',
+                    year: '2008'
+                  }
+                ],
+                experience: [
+                  {
+                    company_name: selectedPerson.company,
+                    title: selectedPerson.title,
+                    department: selectedPerson.department,
+                    start_date: '2020-01-01',
+                    end_date: null,
+                    active_experience: 1,
+                    description: `Leading comprehensive ${selectedPerson.department.toLowerCase()} strategy and operations`
+                  },
+                  {
+                    company_name: 'Previous Security Firm',
+                    title: 'Senior Security Manager',
+                    department: 'Security Operations',
+                    start_date: '2017-06-01',
+                    end_date: '2019-12-31',
+                    active_experience: 0,
+                    description: 'Managed security operations and incident response'
+                  },
+                  {
+                    company_name: 'Tech Corporation',
+                    title: 'Security Analyst',
+                    department: 'Information Security',
+                    start_date: '2012-03-01',
+                    end_date: '2017-05-31',
+                    active_experience: 0,
+                    description: 'Conducted security assessments and vulnerability analysis'
+                  }
+                ],
+                active_experience_department: selectedPerson.department,
+                total_experience_duration_months: 180,
+                inferred_skills: [
+                  'Cybersecurity',
+                  'Risk Management',
+                  'Compliance',
+                  'Security Architecture',
+                  'Team Leadership',
+                  'Incident Response',
+                  'Security Auditing',
+                  'Policy Development'
+                ]
+              },
+              
+              // Buyer Group Data
+              buyerGroupRole: selectedPerson.buyerRole,
+              influenceLevel: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : selectedPerson.buyerRole === 'Champion' ? 'Medium' : 'Low',
+              engagementPriority: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : 'Medium',
+              decisionPower: selectedPerson.decisionPower,
+              communicationStyle: selectedPerson.buyerRole === 'Decision Maker' ? 'Direct and Technical' : 'Professional',
+              decisionMakingStyle: selectedPerson.buyerRole === 'Decision Maker' ? 'Data-Driven and Risk-Aware' : 'Collaborative',
+              painPoints: [
+                'Cybersecurity threats and compliance',
+                'Data protection and privacy regulations',
+                'Security infrastructure scalability',
+                'Team training and awareness'
+              ],
+              interests: [
+                'Cybersecurity best practices',
+                'Risk management frameworks',
+                'Security automation',
+                'Compliance standards'
+              ],
+              personalGoals: [
+                'Strengthen security posture',
+                'Improve compliance posture',
+                'Enhance team capabilities',
+                'Reduce security incidents'
+              ],
+              professionalGoals: [
+                'Advanced security solutions',
+                'Automated compliance monitoring',
+                'Security awareness training',
+                'Integrated security platforms'
+              ]
+            }
           };
           setPersonRecord(mockRecord);
-          console.log('🔍 [PERSON RECORD] Using mock record:', mockRecord);
+          console.log('🔍 [PERSON RECORD] Using comprehensive mock record:', mockRecord);
         }
       } catch (error) {
         console.error('🔍 [PERSON RECORD] Error loading person record:', error);
@@ -737,7 +901,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         <div className="space-y-4">
                           {buyerGroupMembers.map((member, index) => {
                             const role = member.buyerRole;
-                            const title = member.title;
+                            const title = member.title || member.jobTitle || member.role || 'Professional';
                             
                             // Assign status and risk based on role for demo
                             const getStatusForRole = (buyerRole: string) => {

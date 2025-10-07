@@ -54,21 +54,21 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   // Extract CoreSignal data from the correct location
   const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
   
-  // Use AI-generated intelligence data (prioritize over fallbacks)
+  // Use AI-generated intelligence data with proper null handling
   const insightsData = {
     // AI-generated intelligence fields
-    influenceLevel: record.customFields?.influenceLevel || '-',
-    engagementStrategy: record.customFields?.engagementStrategy || '-',
+    influenceLevel: record.customFields?.influenceLevel || null,
+    engagementStrategy: record.customFields?.engagementStrategy || null,
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
-    seniority: record.customFields?.seniority || '-',
+    seniority: record.customFields?.seniority || null,
     influenceScore: record.customFields?.influenceScore || 0,
     decisionPower: record.customFields?.decisionPower || 0,
-    primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || '-',
-    engagementLevel: record.customFields?.engagementLevel || '-',
-    communicationStyle: record.customFields?.communicationStyle || '-',
-    decisionMaking: record.customFields?.decisionMaking || '-',
-    preferredContact: record.customFields?.preferredContact || '-',
-    responseTime: record.customFields?.responseTime || '-',
+    primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || null,
+    engagementLevel: record.customFields?.engagementLevel || null,
+    communicationStyle: record.customFields?.communicationStyle || null,
+    decisionMaking: record.customFields?.decisionMaking || null,
+    preferredContact: record.customFields?.preferredContact || null,
+    responseTime: record.customFields?.responseTime || null,
     painPoints: record.customFields?.painPoints || [],
     interests: record.customFields?.interests || [],
     goals: record.customFields?.goals || [],
@@ -77,9 +77,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     intelligenceSummary: record.customFields?.intelligenceSummary || '',
     
     // CoreSignal profile data
-    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-',
-    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-',
-    employeeId: coresignalData.id || coresignalData.employeeId || '-',
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
+    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || null,
+    employeeId: coresignalData.id || coresignalData.employeeId || null,
     followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
     connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
     isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
@@ -182,9 +182,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           <div className="text-sm text-gray-900 leading-relaxed">
             {intelligenceSummary || (
               <>
-                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{primaryRole}</span> with <span className="font-semibold text-green-600">{influenceScore >= 80 ? 'high' : influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{decisionPowerValue >= 80 ? 'strong' : decisionPowerValue >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
-                They prefer <span className="font-medium text-gray-800">{communicationStyle.toLowerCase()}</span> communication and make decisions based on <span className="font-medium text-gray-800">{decisionMaking.toLowerCase()}</span> analysis. 
-                Current engagement level is <span className="font-medium text-gray-800">{engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(engagementLevel || 'Medium').includes('High') ? 'positive' : (engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
+                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+                They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
+                Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
               </>
             )}
           </div>
