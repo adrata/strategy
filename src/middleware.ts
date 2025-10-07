@@ -11,15 +11,6 @@ import { getUnifiedAuthUser } from "@/platform/api-auth";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Handle private routes with proper headers but no authentication
-  if (pathname.startsWith('/private/')) {
-    console.log(`🔓 [MIDDLEWARE] Handling private route: ${pathname}`);
-    const response = NextResponse.next();
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
-    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    return response;
-  }
-  
   // Skip authentication for auth endpoints to prevent circular dependency
   if (isAuthEndpoint(pathname)) {
     console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
@@ -134,10 +125,9 @@ function getWorkspaceIdFromRequest(request: NextRequest): string | null {
   return null;
 }
 
-// Protect API routes and handle private routes
+// Protect API routes only - private routes handle their own authentication
 export const config = {
   matcher: [
-    '/api/:path*',     // Protect API routes
-    '/private/:path*'  // Handle private routes
+    '/api/:path*'  // Only protect API routes
   ],
 };
