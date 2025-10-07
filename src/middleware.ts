@@ -9,7 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUnifiedAuthUser } from "@/platform/api-auth";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  try {
+    const { pathname } = request.nextUrl;
   
   // Handle private routes (existing functionality)
   if (pathname.startsWith('/private/')) {
@@ -89,6 +90,33 @@ export async function middleware(request: NextRequest) {
       { status: 401 }
     );
     // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return response;
+  }
+  } catch (middlewareError) {
+    console.error(`❌ [MIDDLEWARE] Critical middleware error:`, middlewareError);
+    
+    // For auth endpoints, don't fail the middleware - let the endpoint handle it
+    if (isAuthEndpoint(request.nextUrl.pathname)) {
+      console.log(`🔓 [MIDDLEWARE] Allowing auth endpoint despite middleware error: ${request.nextUrl.pathname}`);
+      const response = NextResponse.next();
+      response.headers.set('Access-Control-Allow-Origin', '*');
+      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return response;
+    }
+    
+    // For other endpoints, return error
+    const response = NextResponse.json(
+      { 
+        success: false, 
+        error: "Middleware error",
+        details: middlewareError instanceof Error ? middlewareError.message : 'Unknown middleware error'
+      },
+      { status: 500 }
+    );
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
