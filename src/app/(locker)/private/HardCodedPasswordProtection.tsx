@@ -3,12 +3,21 @@
 import { useState, useEffect } from 'react';
 import { Loader } from '@/platform/ui/components/Loader';
 
-interface PasswordProtectionProps {
+interface HardCodedPasswordProtectionProps {
   children: React.ReactNode;
   correctPassword: string;
+  title?: string;
+  description?: string;
+  brandColor?: 'green' | 'blue' | 'black';
 }
 
-export default function PasswordProtection({ children, correctPassword }: PasswordProtectionProps) {
+export default function HardCodedPasswordProtection({ 
+  children, 
+  correctPassword,
+  title = "Private Content",
+  description = "This content is private",
+  brandColor = 'black'
+}: HardCodedPasswordProtectionProps) {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
@@ -55,8 +64,8 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
       <div className="h-screen bg-white flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
         <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">TOP Adrata</h1>
-            <p className="text-gray-600">This content is private</p>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">{title}</h1>
+            <p className="text-gray-600">{description}</p>
           </div>
           <form className="space-y-4">
             <div>
@@ -102,12 +111,41 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
     );
   }
 
+  // Color theme configuration
+  const colorConfig = {
+    green: {
+      button: 'bg-green-600 hover:bg-green-700',
+      focus: 'focus:ring-green-500 focus:border-green-500',
+      icon: 'text-green-600',
+      bg: 'bg-green-100'
+    },
+    blue: {
+      button: 'bg-blue-600 hover:bg-blue-700',
+      focus: 'focus:ring-blue-500 focus:border-blue-500',
+      icon: 'text-blue-600',
+      bg: 'bg-blue-100'
+    },
+    black: {
+      button: 'bg-black hover:bg-gray-800',
+      focus: 'focus:ring-gray-500 focus:border-gray-500',
+      icon: 'text-gray-600',
+      bg: 'bg-gray-100'
+    }
+  };
+
+  const colors = colorConfig[brandColor];
+
   return (
     <div className="h-screen bg-white flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
       <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
         <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">TOP Adrata</h1>
-            <p className="text-gray-600">This content is private</p>
+          <div className={`mx-auto w-16 h-16 ${colors.bg} rounded-full flex items-center justify-center mb-4`}>
+            <svg className={`w-8 h-8 ${colors.icon}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">{title}</h1>
+          <p className="text-gray-600">{description}</p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,15 +153,15 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Passcode
             </label>
-              <input
-                type="password"
-                id="password"
-                value={password || ''}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-                placeholder="Enter passcode"
-                required
-              />
+            <input
+              type="password"
+              id="password"
+              value={password || ''}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 ${colors.focus}`}
+              placeholder="Enter passcode"
+              required
+            />
             {error && (
               <p className="mt-1 text-sm text-red-600">{error}</p>
             )}
@@ -131,7 +169,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
           
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors font-medium"
+            className={`w-full ${colors.button} text-white py-2 px-4 rounded-md transition-colors font-medium`}
           >
             Access Content
           </button>
@@ -139,4 +177,4 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
       </div>
     </div>
   );
-} 
+}
