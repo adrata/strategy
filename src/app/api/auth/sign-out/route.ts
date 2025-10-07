@@ -50,7 +50,7 @@ async function validateToken(token: string): Promise<{ userId?: string; email?: 
   try {
     if (!token) return null;
     
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as any;
     return {
       userId: decoded.userId,
       email: decoded.email,

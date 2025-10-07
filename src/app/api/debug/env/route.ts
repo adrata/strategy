@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
     // Check critical environment variables
     const envCheck = {
       NODE_ENV: process.env.NODE_ENV,
-      DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
+      DATABASE_URL: process.env['DATABASE_URL'] ? 'Set' : 'Not set',
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'Set' : 'Not set',
-      JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set',
-      VERCEL_REGION: process.env.VERCEL_REGION,
-      VERCEL_ENV: process.env.VERCEL_ENV,
+      JWT_SECRET: process.env['JWT_SECRET'] ? 'Set' : 'Not set',
+      VERCEL_REGION: process.env['VERCEL_REGION'],
+      VERCEL_ENV: process.env['VERCEL_ENV'],
     };
 
     return NextResponse.json({

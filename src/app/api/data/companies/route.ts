@@ -168,8 +168,6 @@ export async function GET(request: NextRequest) {
         company: true,
         fullName: true,
         jobTitle: true,
-        email: true,
-        phone: true,
       },
       distinct: ["company"],
     });
@@ -185,7 +183,7 @@ export async function GET(request: NextRequest) {
       if (!company.revenue) {
         const estimate = RevenueEstimationService.estimateRevenue(
           company.industry,
-          company.vertical,
+          company.vertical || 'Unknown',
           company.size
         );
         

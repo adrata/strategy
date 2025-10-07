@@ -107,7 +107,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Production error logging
     console.log("🔐 [AUTH API] Sign-in request received");
     console.log("🔐 [AUTH API] Environment:", process.env.NODE_ENV);
-    console.log("🔐 [AUTH API] Database URL exists:", !!process.env.DATABASE_URL);
+    console.log("🔐 [AUTH API] Database URL exists:", !!process.env['DATABASE_URL']);
 
     // SECURITY: Check for URL-based credential attempts
     const url = new URL(request.url);

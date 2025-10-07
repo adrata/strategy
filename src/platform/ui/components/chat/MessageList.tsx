@@ -202,6 +202,11 @@ export function MessageList({
               <div className="whitespace-pre-line">
                 {/* Enhanced content rendering with smart links and record references */}
                 {message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+)|"([A-Z][a-z]+ [A-Z][a-z]+)"|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
+                  // CRITICAL: Handle undefined parts from split operation
+                  if (!part) {
+                    return null;
+                  }
+                  
                   // Handle markdown-style links [text](url)
                   const markdownLinkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
                   if (markdownLinkMatch) {
