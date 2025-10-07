@@ -11,25 +11,25 @@ import { getUnifiedAuthUser } from "@/platform/api-auth";
 export async function middleware(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
-    
-    // Handle private routes (existing functionality)
-    if (pathname.startsWith('/private/')) {
-      const response = NextResponse.next();
-      response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');                                                                            
-      response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');                                                                      
-      return response;
-    }
-    
-    // Skip authentication for auth endpoints to prevent circular dependency
-    if (isAuthEndpoint(pathname)) {
-      console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
-      const response = NextResponse.next();
-      // Add CORS headers for auth endpoints
-      response.headers.set('Access-Control-Allow-Origin', '*');
-      response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      return response;
-    }
+  
+  // Handle private routes (existing functionality)
+  if (pathname.startsWith('/private/')) {
+    const response = NextResponse.next();
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');                                                                            
+    response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');                                                                      
+    return response;
+  }
+  
+  // Skip authentication for auth endpoints to prevent circular dependency
+  if (isAuthEndpoint(pathname)) {
+    console.log(`🔓 [MIDDLEWARE] Skipping authentication for auth endpoint: ${pathname}`);
+    const response = NextResponse.next();
+    // Add CORS headers for auth endpoints
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return response;
+  }
   
   // Skip authentication for debug endpoints
   if (pathname.startsWith('/api/debug/')) {
