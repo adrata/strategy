@@ -100,7 +100,7 @@ async function generateSophisticatedIntelligence(company: any, coresignalData: C
         
         // Analyze company updates for business unit mentions
         if (company.companyUpdates && company.companyUpdates.length > 0) {
-          company.companyUpdates.forEach(update => {
+          company.companyUpdates.forEach((update: any) => {
             const description = update.description || '';
             
             // Detect business units from content

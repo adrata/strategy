@@ -484,16 +484,16 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       workspaceId: workspaceId,
       isDemoData: true,
       demoScenarioId: demoScenario.id,
-      buyerGroupId: realBuyerGroups.find(bg => bg['companyName'] === 'First Premier Bank')?.id,
+      buyerGroupId: realBuyerGroups.find((bg: any) => bg.companyName === 'First Premier Bank')?.id,
       people: firstPremierPeople.length
     }];
     
     // Extract all people from real buyer groups
-    const realPeople = realBuyerGroups.flatMap(bg =>
-      Object.values(bg.roles).flat().map(role => ({
-        id: (role as any).id || ulid(),
-        name: (role as any).name || 'Unknown',
-        title: (role as any).title || 'Unknown',
+    const realPeople = realBuyerGroups.flatMap((bg: any) =>
+      Object.values(bg.roles || {}).flat().map((role: any) => ({
+        id: role.id || ulid(),
+        name: role.name || 'Unknown',
+        title: role.title || 'Unknown',
         companyId: bg.companyId,
         companyName: bg.companyName,
         buyerGroupId: bg.id,
@@ -573,8 +573,8 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     
     // Combine workspace sellers and sellers table data, remove duplicates by ID
     const allSellers = [...workspaceSellers, ...sellersTableFormatted];
-    const uniqueSellers = allSellers.filter((seller, index, self) => 
-      index === self.findIndex(s => s.id === seller.id)
+    const uniqueSellers = allSellers.filter((seller: any, index: number, self: any[]) => 
+      index === self.findIndex((s: any) => s.id === seller.id)
     );
     
     const sellers = uniqueSellers;
@@ -608,8 +608,8 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       buyerGroups: realBuyerGroups.length > 0 ? realBuyerGroups : buyerGroups,
       catalyst: [],
       calendar: [],
-      champions: realPeople.filter(p => p['buyerGroupRole'] === 'Champion'),
-      decisionMakers: realPeople.filter(p => p['buyerGroupRole'] === 'Decision Maker'),
+      champions: realPeople.filter((p: any) => p.buyerGroupRole === 'Champion'),
+      decisionMakers: realPeople.filter((p: any) => p.buyerGroupRole === 'Decision Maker'),
       speedrunItems: prospects.length > 0 ? prospects : realProspects, // Use database prospects as speedrun items
       sellers: sellers,
       counts: {
@@ -4137,8 +4137,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     
     try {
       // Import UniversalRankingEngine
-      // const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
-      // Temporarily disabled - use simple ranking instead
+      const { UniversalRankingEngine } = await import('@/products/speedrun/UniversalRankingEngine');
       
       // Transform data to SpeedrunPerson format for ranking
       const transformedData = speedrunItemsWithScores.map((item: any) => ({
@@ -4183,8 +4182,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       }));
       
       // Apply UniversalRankingEngine for proper 1-30 ranking
-      // const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
-      const rankedProspects = transformedData; // Temporarily disabled ranking
+      const rankedProspects = UniversalRankingEngine.rankProspectsForWinning(transformedData, 'Adrata');
       
       // Transform back to speedrun format with proper rankings
       speedrunItems = rankedProspects.map((prospect: any, index: number) => {
@@ -4303,8 +4301,7 @@ export async function GET(request: NextRequest) {
     const userId = context.userId;
 
     try {
-    const context = await getOptimizedWorkspaceContext(request);
-    const { workspaceId, userId } = context;
+    // Context already obtained above
     
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || 'dashboard';

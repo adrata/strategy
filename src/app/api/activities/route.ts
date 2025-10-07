@@ -54,10 +54,10 @@ export async function POST(request: NextRequest) {
         status,
         scheduledAt: scheduledDate ? new Date(scheduledDate) : null,
         scheduledDate: scheduledDate ? new Date(scheduledDate) : null,
-        contactId: contactId || null,
+        // contactId not available in actions schema
         opportunityId: opportunityId || null,
         leadId: leadId || null,
-        accountId: accountId || null,
+        // accountId not available in actions schema
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -152,10 +152,10 @@ export async function GET(request: NextRequest) {
         completedAt: true,
         createdAt: true,
         updatedAt: true,
-        contactId: true,
+        // contactId not available in actions schema
         opportunityId: true,
         leadId: true,
-        accountId: true,
+        // accountId not available in actions schema,
         userId: true
       }
     });

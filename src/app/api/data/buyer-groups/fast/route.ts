@@ -13,9 +13,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get("companyId");
-    // Use secure context instead of query parameters
+    
+    // Get secure context
+    const context = await getSecureApiContext(request);
     const workspaceId = context.workspaceId;
-    // Use secure context instead of query parameters
     const userId = context.userId;
     
     if (!companyId || !workspaceId || !userId) {
@@ -139,9 +140,12 @@ export async function GET(request: NextRequest) {
     console.log(`🔍 [FAST BUYER GROUPS] Filtering: Only people IN buyer group (buyerGroupStatus: 'in' or today's enrichment)`);
     
     // Debug: Show breakdown of people found
-    const peopleWithInStatus = people.filter(p => p.customFields?.buyerGroupStatus === 'in');
+    const peopleWithInStatus = people.filter(p => {
+      const customFields = p.customFields as Record<string, any> || {};
+      return customFields.buyerGroupStatus === 'in';
+    });
     const peopleFromToday = people.filter(p => 
-      p.createdAt.toISOString().split('T')[0] === '2025-09-30' && p.buyerGroupRole
+      p.createdAt && p.createdAt.toISOString().split('T')[0] === '2025-09-30' && p.buyerGroupRole
     );
     
     console.log(`📊 [FAST BUYER GROUPS] Breakdown:`);
@@ -149,7 +153,13 @@ export async function GET(request: NextRequest) {
     console.log(`   People from today's enrichment: ${peopleFromToday.length}`);
     console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
 
-    return createSuccessResponse(data, meta);
+    return createSuccessResponse(buyerGroupMembers, {
+      userId,
+      workspaceId,
+      companyId,
+      totalMembers: buyerGroupMembers.length,
+      processingTime: Date.now() - startTime
+    });
 
   } catch (error) {
     console.error("❌ [FAST BUYER GROUPS] Error:", error);

@@ -43,8 +43,7 @@ export async function GET(request: NextRequest) {
       // Generate comprehensive audit report
       const report = await verificationService.generateDataQualityReport(workspaceId);
       
-      return createSuccessResponse(data, {
-      ...meta,
+      return createSuccessResponse(report, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role
@@ -53,8 +52,7 @@ export async function GET(request: NextRequest) {
       // Apply high confidence fixes
       const fixResults = await verificationService.applyHighConfidenceFixes(workspaceId);
       
-      return createSuccessResponse(data, {
-      ...meta,
+      return createSuccessResponse(fixResults, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role

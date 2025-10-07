@@ -139,8 +139,7 @@ export async function GET(
       employeeCount: company.employeeCount
     });
     
-    return createSuccessResponse(data, {
-      ...meta,
+    return createSuccessResponse(company, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role

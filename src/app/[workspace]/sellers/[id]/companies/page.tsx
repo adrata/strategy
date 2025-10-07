@@ -32,18 +32,24 @@ interface Company {
   name: string;
   industry: string;
   size: string;
-  employeeCount: string;
   revenue: string;
-  city: string;
-  state: string;
-  country: string;
   website: string;
-  description: string;
-  tags: string[];
-  updatedAt: string;
-  status: string;
+  location: string;
+  lastAction: string;
+  lastActionDate: string;
+  nextAction: string;
+  nextActionDate: string;
+  actionStatus: string;
   assignedUserId: string;
+  rank: number;
+  updatedAt: string;
   icpScore?: number;
+  // Additional properties used in template
+  status?: string;
+  employeeCount?: string;
+  city?: string;
+  state?: string;
+  country?: string;
 }
 
 export default function SellerCompaniesPage() {

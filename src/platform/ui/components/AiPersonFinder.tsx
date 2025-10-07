@@ -473,7 +473,7 @@ export function AiPersonFinder({
                         onClick={() =>
                           window.open(person.linkedinUrl, "_blank")
                         }
-                        className="text-xs text-gray-600 hover:text-gray-700 hover:underline"
+                        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-200 border border-gray-200 hover:border-gray-300"
                       >
                         LinkedIn
                       </button>

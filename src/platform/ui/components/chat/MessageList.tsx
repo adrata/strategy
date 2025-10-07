@@ -222,7 +222,7 @@ export function MessageList({
                             window.open(linkUrl, '_blank');
                           }
                         }}
-                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 cursor-pointer border border-blue-200 hover:border-blue-300"
                       >
                         {linkText}
                       </button>
@@ -237,7 +237,7 @@ export function MessageList({
                         href={part}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 border border-blue-200 hover:border-blue-300"
                       >
                         {part}
                       </a>
@@ -255,7 +255,7 @@ export function MessageList({
                           // Search for and navigate to the record
                           handleRecordSearch(recordName);
                         }}
-                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-blue-50 px-1 rounded"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 cursor-pointer border border-blue-200 hover:border-blue-300"
                       >
                         @{recordName}
                       </button>
@@ -272,7 +272,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(personName);
                         }}
-                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-green-50 px-1 rounded border border-green-200"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-200 cursor-pointer border border-green-200 hover:border-green-300"
                       >
                         {personName}
                       </button>
@@ -289,7 +289,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(email);
                         }}
-                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-purple-50 px-1 rounded border border-purple-200"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800 transition-colors duration-200 cursor-pointer border border-purple-200 hover:border-purple-300"
                       >
                         {email}
                       </button>
@@ -306,7 +306,7 @@ export function MessageList({
                         onClick={() => {
                           handleRecordSearch(phone);
                         }}
-                        className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-orange-50 px-1 rounded border border-orange-200"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-orange-50 text-orange-700 hover:bg-orange-100 hover:text-orange-800 transition-colors duration-200 cursor-pointer border border-orange-200 hover:border-orange-300"
                       >
                         {phone}
                       </button>

@@ -64,7 +64,8 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         console.error(`❌ Error with ${personData.fullName}:`, error);
-        results.push({ name: personData.fullName, status: 'error', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        results.push({ name: personData.fullName, status: 'error', error: errorMessage });
       }
     }
 
@@ -76,8 +77,9 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating people:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json({ 
       success: false, 
-      error: error.message 
+      error: errorMessage 
     }, { status: 500 });
   }}

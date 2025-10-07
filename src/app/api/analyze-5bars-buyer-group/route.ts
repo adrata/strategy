@@ -109,8 +109,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Analyze existing buyer group data
-    const buyerGroupAnalysis = company.customFields?.buyerGroupAnalysis || null;
-    const coresignalData = company.customFields?.coresignalData || null;
+    const customFields = company.customFields as Record<string, any> || {};
+    const buyerGroupAnalysis = customFields['buyerGroupAnalysis'] || null;
+    const coresignalData = customFields['coresignalData'] || null;
 
     // Count people by buyer group role
     const peopleByRole = {
@@ -122,7 +123,8 @@ export async function GET(request: NextRequest) {
     };
 
     company.people.forEach(person => {
-      const role = person.customFields?.buyerGroupRole;
+      const personCustomFields = person.customFields as Record<string, any> || {};
+      const role = personCustomFields['buyerGroupRole'];
       if (role === 'Decision Maker') peopleByRole.decisionMakers++;
       else if (role === 'Champion') peopleByRole.champions++;
       else if (role === 'Influencer') peopleByRole.influencers++;
