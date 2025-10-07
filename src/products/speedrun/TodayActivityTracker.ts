@@ -81,6 +81,13 @@ export class TodayActivityTracker {
    * Get all companies contacted today
    */
   static getCompaniesContactedToday(): Set<string> {
+    // 🚨 SERVER-SIDE FIX: Check if we're running on server side
+    if (typeof window === 'undefined') {
+      // On server side, we don't have localStorage, so return empty set
+      // This prevents the infinite filtering that was causing all prospects to be removed
+      return new Set<string>();
+    }
+    
     const today = new Date().toDateString();
     const key = `${this.STORAGE_KEY_PREFIX}-${today}`;
     const companies = new Set<string>();
