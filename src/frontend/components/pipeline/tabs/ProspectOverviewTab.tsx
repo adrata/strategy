@@ -124,10 +124,10 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     phone: String(record?.phone || coresignalData.phone || '-'),
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
-    // Company Information - Coresignal data only
-    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),
+    // Company Information - Database fields first, then CoreSignal fallback
+    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-'),
     companyId: record.companyId || null,
-    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || '-'),
+    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || 'Stakeholder',

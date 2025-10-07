@@ -43,8 +43,8 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
   
   // Use CoreSignal data ONLY (no fallbacks to database)
   const careerData = {
-    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-',
-    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-',
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-',
+    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-',
     totalExperience: coresignalTotalExperience > 0 ? `${Math.floor(coresignalTotalExperience / 12)} years` : '-',
     education: coresignalEducation || [],
     skills: coresignalSkills || [],

@@ -67,10 +67,10 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     phone: String(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone || '-'),
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
-    // Company info - Coresignal data only
-    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || '-'),
-    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || '-'),
-    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
+    // Company info - Database fields first, then CoreSignal fallback
+    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-'),
+    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
+    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-'),
     
     // Location info - Coresignal data only
     location: String(coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || '-'),

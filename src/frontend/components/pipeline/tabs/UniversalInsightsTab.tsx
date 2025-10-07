@@ -63,7 +63,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     seniority: record.customFields?.seniority || '-',
     influenceScore: record.customFields?.influenceScore || 0,
     decisionPower: record.customFields?.decisionPower || 0,
-    primaryRole: record.customFields?.primaryRole || '-',
+    primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || '-',
     engagementLevel: record.customFields?.engagementLevel || '-',
     communicationStyle: record.customFields?.communicationStyle || '-',
     decisionMaking: record.customFields?.decisionMaking || '-',
