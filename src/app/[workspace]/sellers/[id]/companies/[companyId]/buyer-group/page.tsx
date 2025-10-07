@@ -583,25 +583,10 @@ Create opportunities for ongoing engagement and relationship development. Provid
                 ]
               },
               
-              // Buyer Group Data
+              // Buyer Group Data (avoiding duplicates)
               buyerGroupRole: selectedPerson.buyerRole,
-              influenceLevel: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : selectedPerson.buyerRole === 'Champion' ? 'Medium' : 'Low',
               engagementPriority: selectedPerson.buyerRole === 'Decision Maker' ? 'High' : 'Medium',
-              decisionPower: selectedPerson.decisionPower,
-              communicationStyle: selectedPerson.buyerRole === 'Decision Maker' ? 'Direct and Technical' : 'Professional',
               decisionMakingStyle: selectedPerson.buyerRole === 'Decision Maker' ? 'Data-Driven and Risk-Aware' : 'Collaborative',
-              painPoints: [
-                'Cybersecurity threats and compliance',
-                'Data protection and privacy regulations',
-                'Security infrastructure scalability',
-                'Team training and awareness'
-              ],
-              interests: [
-                'Cybersecurity best practices',
-                'Risk management frameworks',
-                'Security automation',
-                'Compliance standards'
-              ],
               personalGoals: [
                 'Strengthen security posture',
                 'Improve compliance posture',
@@ -917,7 +902,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         <div className="space-y-4">
                           {buyerGroupMembers.map((member, index) => {
                             const role = member.buyerRole;
-                            const title = member.title || member.jobTitle || member.role || 'Professional';
+                            const title = member.title || 'Professional';
                             
                             // Assign status and risk based on role for demo
                             const getStatusForRole = (buyerRole: string) => {
