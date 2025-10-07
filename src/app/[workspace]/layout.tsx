@@ -66,11 +66,11 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
   }, [authUser, isLoading, router]);
 
   // EMERGENCY BYPASS: Skip authentication blocking for production demo
-  if (false) { // TEMPORARILY DISABLED
-    return (
-      <PipelineSkeleton message="Loading workspace..." />
-    );
-  }
+  // if (false) { // TEMPORARILY DISABLED
+  //   return (
+  //     <PipelineSkeleton message="Loading workspace..." />
+  //   );
+  // }
 
   return <>{children}</>;
 }

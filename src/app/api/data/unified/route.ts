@@ -1180,10 +1180,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
 
     // 🚀 PERFORMANCE: Execute query with monitoring
     const record = await trackQueryPerformance(
-      'findFirst',
-      type,
-      workspaceId,
-      userId,
+      `findFirst-${type}`,
       () => model.findFirst({
         where: whereClause,
         ...(Object.keys(includeClause).length > 0 ? includeClause : { select: selectFields })
@@ -1389,10 +1386,7 @@ async function getMultipleRecords(
       
       // Use direct query for better performance and reliability with monitoring
       const people = await trackQueryPerformance(
-        'findMany',
-        'people',
-        workspaceId,
-        userId,
+        'findMany-people',
         () => prisma.people.findMany({
           where: {
             workspaceId,
@@ -3892,7 +3886,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           fullName: person.fullName,
           email: person.email,
           jobTitle: person.jobTitle,
-          title: (person as any).title,
+          title: person.jobTitle, // Use jobTitle as title
           status: person.status,
           createdAt: person.createdAt,
           updatedAt: person.updatedAt,
@@ -3902,11 +3896,11 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           customFields: person.customFields,
           company: {
             id: person.companyId,
-            name: person.company,
-            industry: (person as any).industry,
-            vertical: (person as any).vertical,
-            size: (person as any).companySize,
-            rank: (person as any).masterRank
+            name: person.company?.name || 'Unknown',
+            industry: person.company?.industry || 'Unknown',
+            vertical: person.company?.vertical || 'Unknown',
+            size: person.company?.size || 'Unknown',
+            rank: 0 // Default rank
           },
           companyId: person.companyId
         }));
@@ -3978,7 +3972,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         vertical: person.company?.vertical || null,
         companySize: person.company?.size || null,
         jobTitle: coresignalTitle || person.jobTitle,
-        title: coresignalTitle || person.title,
+        title: coresignalTitle || person.jobTitle,
         status: person.status,
         createdAt: person.createdAt,
         updatedAt: person.updatedAt,
@@ -3991,16 +3985,16 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       // CRITICAL: Include customFields with buyer group data
       customFields: person.customFields,
       // Map buyer group data from customFields to top level for easy access
-      buyerGroupRole: person.customFields?.buyerGroupRole || person.buyerGroupRole,
-      influenceLevel: person.customFields?.influenceLevel || person.influenceLevel,
-      engagementPriority: person.customFields?.engagementPriority || person.engagementPriority,
-      decisionPower: person.customFields?.decisionPower || person.decisionPower,
-      communicationStyle: person.customFields?.communicationStyle || person.communicationStyle,
-      decisionMakingStyle: person.customFields?.decisionMakingStyle || person.decisionMakingStyle,
-      painPoints: person.customFields?.painPoints || person.painPoints,
-      interests: person.customFields?.interests || person.interests,
-      personalGoals: person.customFields?.personalGoals || person.personalGoals,
-      professionalGoals: person.customFields?.professionalGoals || person.professionalGoals
+      buyerGroupRole: (person.customFields as any)?.buyerGroupRole || null,
+      influenceLevel: (person.customFields as any)?.influenceLevel || null,
+      engagementPriority: (person.customFields as any)?.engagementPriority || null,
+      decisionPower: (person.customFields as any)?.decisionPower || null,
+      communicationStyle: (person.customFields as any)?.communicationStyle || null,
+      decisionMakingStyle: (person.customFields as any)?.decisionMakingStyle || null,
+      painPoints: (person.customFields as any)?.painPoints || null,
+      interests: (person.customFields as any)?.interests || null,
+      personalGoals: (person.customFields as any)?.personalGoals || null,
+      professionalGoals: (person.customFields as any)?.professionalGoals || null
       };
     });
     

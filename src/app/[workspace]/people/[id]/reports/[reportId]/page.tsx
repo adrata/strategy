@@ -20,9 +20,9 @@ export default function DeepValueReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const workspace = params.workspace as string;
-  const personId = params.id as string;
-  const reportId = params.reportId as string;
+  const workspace = params['workspace'] as string;
+  const personId = params['id'] as string;
+  const reportId = params['reportId'] as string;
 
   useEffect(() => {
     if (currentRecord && reportId) {
@@ -73,14 +73,14 @@ export default function DeepValueReportPage() {
         <ZoomProvider>
           <PipelineProvider>
             <PanelLayout
-              leftPanel={<PipelineLeftPanelStandalone />}
+              leftPanel={<PipelineLeftPanelStandalone activeSection="people" onSectionChange={() => {}} />}
+              middlePanel={
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-gray-500">Loading record...</div>
+                </div>
+              }
               rightPanel={<AIRightPanel />}
-              header={<ProfileBox />}
-            >
-              <div className="flex items-center justify-center h-64">
-                <div className="text-gray-500">Loading record...</div>
-              </div>
-            </PanelLayout>
+            />
           </PipelineProvider>
         </ZoomProvider>
       </AcquisitionOSProvider>
