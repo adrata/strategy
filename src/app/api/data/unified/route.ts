@@ -914,9 +914,13 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
     
     // Find the specific speedrun record by ID
     const speedrunItems = speedrunData.data.speedrunItems || [];
+    console.log(`🔍 [SPEEDRUN SINGLE DEBUG] Looking for ID: ${id}`);
+    console.log(`🔍 [SPEEDRUN SINGLE DEBUG] Available IDs:`, speedrunItems.slice(0, 10).map((item: any) => item.id));
+    
     const speedrunRecord = speedrunItems.find((item: any) => item.id === id);
     
     if (!speedrunRecord) {
+      console.log(`❌ [SPEEDRUN SINGLE DEBUG] Record not found. Total items: ${speedrunItems.length}`);
       throw new Error(`Speedrun record not found: ${id}`);
     }
     
@@ -3806,7 +3810,7 @@ function calculateActionPriorityScore(record: any): number {
 
 // 🚀 PERFORMANCE: Speedrun data cache
 const speedrunCache = new Map<string, { data: any; timestamp: number }>();
-const SPEEDRUN_CACHE_TTL = 2 * 60 * 1000; // 2 minutes cache
+const SPEEDRUN_CACHE_TTL = 10 * 1000; // 10 seconds cache (force refresh for demo data)
 
 // 🧹 WORKSPACE SWITCH CACHE CLEARING: Clear speedrun cache when workspace changes
 export function clearSpeedrunCache(workspaceId: string, userId: string): void {
@@ -3818,13 +3822,21 @@ export function clearSpeedrunCache(workspaceId: string, userId: string): void {
 // 🚀 SPEEDRUN DATA LOADING
 async function loadSpeedrunData(workspaceId: string, userId: string): Promise<any> {
   try {
-    // 🚀 PERFORMANCE: Check cache first
+    // 🚀 PERFORMANCE: Check cache first (with cache-busting for demo data)
     const cacheKey = `speedrun:${workspaceId}:${userId}`;
     const cached = speedrunCache.get(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL) {
+    // 🚨 DEMO DATA FIX: Force cache refresh for demo data to ensure fresh load
+    const isDemoWorkspace = workspaceId.includes('demo') || workspaceId.includes('01K1VBYX2YERMXBFJ60RC6J194');
+    const forceRefresh = isDemoWorkspace && Date.now() - (cached?.timestamp || 0) > 5000; // 5 seconds for demo
+    
+    if (cached && Date.now() - cached.timestamp < SPEEDRUN_CACHE_TTL && !forceRefresh) {
       console.log('⚡ [SPEEDRUN] Cache hit for workspace:', workspaceId);
       return cached.data;
+    }
+    
+    if (forceRefresh) {
+      console.log('🔄 [SPEEDRUN] Force refresh for demo data');
     }
 
     console.log(`🚀 [SPEEDRUN] Loading speedrun data for workspace: ${workspaceId}, user: ${userId}`);
@@ -3906,6 +3918,11 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         }));
       
       console.log(`🏆 [SPEEDRUN API] Applied unified ranking to ${people.length} speedrun items`);
+      
+      // 🚨 DEBUG: Log the first few speedrun item IDs to see what's being loaded
+      if (people.length > 0) {
+        console.log(`🔍 [SPEEDRUN DEBUG] First 5 speedrun item IDs:`, people.slice(0, 5).map(p => p.id));
+      }
       
     } catch (error) {
       console.warn(`⚠️ [SPEEDRUN API] Failed to use unified ranking, falling back to database ranking:`, error);
