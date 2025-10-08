@@ -384,9 +384,24 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // Use the actual rank from the record, fallback to sequential if not available
-                        const recordRank = record.rank || record.masterRank || record.winningScore?.rank || 0;
-                        const displayRank = recordRank > 0 ? recordRank : (currentPage - 1) * pageSize + index + 1;
+                        // 🏆 HIERARCHICAL RANKING: Display company rank and person rank
+                        const companyRank = record['companyRank'] || record['company']?.rank || 0;
+                        const personRank = record['personRank'] || record['rank'] || 0;
+                        const globalRank = record['globalPersonRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
+                        
+                        // Display hierarchical ranking based on section
+                        let displayRank;
+                        if (section === 'people' && companyRank > 0) {
+                          // Show "Company Rank: Person Rank" format
+                          displayRank = `${companyRank}:${personRank}`;
+                        } else if (section === 'speedrun' && companyRank > 0) {
+                          // Show "Company Rank: Person Rank" format for speedrun
+                          displayRank = `${companyRank}:${personRank}`;
+                        } else {
+                          // Fallback to global rank
+                          displayRank = globalRank;
+                        }
+                        
                         cellContent = String(displayRank);
                         break;
                       case 'company':

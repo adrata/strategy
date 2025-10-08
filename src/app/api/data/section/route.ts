@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
         // 🏢 HIERARCHICAL RANKING: Companies first, then people within each company
         console.log(`🏆 [SPEEDRUN SECTION] Loading hierarchical ranking data for workspace: ${workspaceId}, user: ${userId}`);
         
-        // Step 1: Get companies in ranked order (same as Companies section)
+        // Step 1: Get top companies using hierarchical ranking (1-400) or fallback to existing ranking
         const rankedCompanies = await prisma.companies.findMany({
           where: {
             workspaceId,
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
             })
           },
           orderBy: [
-            { rank: 'asc' }, // Use company ranking first
+            { rank: 'asc' }, // Use hierarchical company ranking (1-400) if available
             { updatedAt: 'desc' }
           ],
           take: 15, // Limit to top 15 companies for speedrun
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
         
         console.log(`🏢 [SPEEDRUN] Loaded ${rankedCompanies.length} ranked companies`);
         
-        // Step 2: Get people for each company, ordered by company rank then person rank
+        // Step 2: Get people for each company using hierarchical ranking (1-4000 per company) or fallback
         const speedrunPeople = await prisma.people.findMany({
           where: {
             workspaceId,
@@ -164,11 +164,11 @@ export async function GET(request: NextRequest) {
             }
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // First by company rank
-            { rank: 'asc' }, // Then by person rank within company
+            { company: { rank: 'asc' } }, // First by company rank (1-400) if available
+            { rank: 'asc' }, // Then by person rank within company (1-4000) if available
             { updatedAt: 'desc' }
           ],
-          take: 30, // Limit to top 30 people total
+          take: 50, // Limit to top 50 people total for speedrun
           select: {
             id: true,
             firstName: true,
@@ -606,7 +606,8 @@ export async function GET(request: NextRequest) {
               // 🚀 PEOPLE: Use EXACT same query as unified API (no additional filters)
             },
             orderBy: [
-              { rank: 'asc' }, // Use same ranking as unified API
+              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
+              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
               { updatedAt: 'desc' }
             ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
@@ -673,10 +674,11 @@ export async function GET(request: NextRequest) {
 
             return {
               id: person.id,
-              rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
+              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
               companyRank: person.company?.rank || 0, // Include company rank for proper ordering
+              personRank: person.rank || (index + 1), // Include person rank within company
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),

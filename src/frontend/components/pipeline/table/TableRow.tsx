@@ -174,14 +174,34 @@ export function TableRow({
             
             switch (column) {
               case 'rank':
-                // Use alphanumeric rank (1A, 1B, 2A) if available, fallback to numeric rank
-                const winningRank = record['winningScore']?.rank;
-                // For People section, use masterRank; for others use sequential rank
-                const numericRank = section === 'people' ? record['masterRank'] : (index + 1);
-                const displayRank = winningRank || numericRank;
+                // 🏆 HIERARCHICAL RANKING: Display company rank and person rank
+                const companyRank = record['companyRank'] || record['company']?.rank || 0;
+                const personRank = record['personRank'] || record['rank'] || (index + 1);
+                const globalRank = record['globalPersonRank'] || record['rank'] || (index + 1);
+                
+                // Display hierarchical ranking based on section
+                let displayRank;
+                if (section === 'people' && companyRank > 0) {
+                  // Show "Company Rank: Person Rank" format
+                  displayRank = `${companyRank}:${personRank}`;
+                } else if (section === 'speedrun' && companyRank > 0) {
+                  // Show "Company Rank: Person Rank" format for speedrun
+                  displayRank = `${companyRank}:${personRank}`;
+                } else {
+                  // Fallback to global rank
+                  displayRank = globalRank;
+                }
+                
                 return (
                   <td key="rank" className={textClasses}>
-                    <div className="text-left font-medium">{displayRank}</div>
+                    <div className="text-left font-medium">
+                      <div className="text-sm font-semibold">{displayRank}</div>
+                      {companyRank > 0 && (
+                        <div className="text-xs text-gray-500">
+                          Company #{companyRank}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 );
               case 'company':

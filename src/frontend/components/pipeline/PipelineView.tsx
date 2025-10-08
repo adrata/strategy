@@ -1379,8 +1379,8 @@ export const PipelineView = React.memo(function PipelineView({
   }
   
 
-  // Error state
-  if (error) {
+  // 🚀 CACHE ERROR FIX: Only show error state for persistent errors, not during loading
+  if (error && !finalLoading && finalData.length === 0) {
     return (
       <div className="h-full flex items-center justify-center bg-white">
         <div className="text-center max-w-md">
