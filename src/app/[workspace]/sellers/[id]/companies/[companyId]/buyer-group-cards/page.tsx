@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineProvider } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
@@ -284,7 +284,7 @@ export default function CompanyBuyerGroupCardsPage() {
                     />
                   }
                   middlePanel={<MiddlePanelSkeleton />}
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -319,7 +319,7 @@ export default function CompanyBuyerGroupCardsPage() {
                       </div>
                     </div>
                   }
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -530,7 +530,7 @@ export default function CompanyBuyerGroupCardsPage() {
                     </div>
                   </div>
                 }
-                rightPanel={<AIRightPanel />}
+                rightPanel={<RightPanel />}
                 isLeftPanelVisible={true}
                 isRightPanelVisible={true}
               />

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 
 interface PipelineRightPanelStandaloneProps {
   activeSection: string;
@@ -10,10 +10,10 @@ interface PipelineRightPanelStandaloneProps {
 export function PipelineRightPanelStandalone({
   activeSection
 }: PipelineRightPanelStandaloneProps) {
-  // Reuse the existing AIRightPanel 
+  // Reuse the existing RightPanel 
   // which already works well for Pipeline
   
   return (
-    <AIRightPanel />
+    <RightPanel />
   );
 }

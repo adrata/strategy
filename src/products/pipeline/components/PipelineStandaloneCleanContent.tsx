@@ -6,7 +6,7 @@ import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvid
 import { AcquisitionOSLayout } from "@/platform/ui/components/ActionPlatformLayout";
 import { AcquisitionOSLeftPanel } from "@/platform/ui/components/ActionPlatformLeftPanel";
 import { AcquisitionOSMiddlePanel } from "@/platform/ui/components/ActionPlatformMiddlePanel";
-import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 
 import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-context";
 
@@ -121,7 +121,7 @@ export function PipelineStandaloneCleanContent() {
           <AcquisitionOSLayout
             leftPanel={<AcquisitionOSLeftPanel />}
             middlePanel={<AcquisitionOSMiddlePanel />}
-            rightPanel={<AIRightPanel />}
+            rightPanel={<RightPanel />}
             shouldShowLeftPanel={true}
             shouldShowThinLeftPanel={false}
           />

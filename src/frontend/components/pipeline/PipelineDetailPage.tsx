@@ -9,7 +9,7 @@ import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -798,7 +798,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             </div>
           </div>
         }
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}
@@ -905,7 +905,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             </div>
           </div>
         }
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}
@@ -944,7 +944,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             </div>
           </div>
         }
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}
@@ -1028,7 +1028,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               }}
             />
           }
-          rightPanel={<AIRightPanel />}
+          rightPanel={<RightPanel />}
           zoom={zoom}
           isLeftPanelVisible={isLeftPanelVisible}
           isRightPanelVisible={isRightPanelVisible}
@@ -1140,7 +1140,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                 onComplete={() => setIsSpeedrunEngineModalOpen(true)}
               />
             }
-          rightPanel={<AIRightPanel />}
+          rightPanel={<RightPanel />}
           zoom={zoom}
           isLeftPanelVisible={isLeftPanelVisible}
           isRightPanelVisible={isRightPanelVisible}
@@ -1306,7 +1306,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             </div>
           </div>
         }
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}

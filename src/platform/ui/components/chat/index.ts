@@ -7,13 +7,13 @@ export { MessageInput } from "./MessageInput";
 export { ConversationsList } from "./ConversationsList";
 export { ChatWindow } from "./ChatWindow";
 export { AIProcessor, useAIProcessor } from "./AIProcessor";
-export { AIRightPanel } from "./AIRightPanel";
+export { RightPanel } from "./RightPanel";
 
 // Type exports for external usage
 export type { ProcessingResult } from "./AIProcessor";
 
 // Component organization:
-// - AIRightPanel: Main component that assembles all the modular parts (200 lines)
+// - RightPanel: Main component that assembles all the modular parts (200 lines)
 // - ChatHeader: Handles model selection, view mode switching, and navigation (156 lines)
 // - MessageInput: Manages message input, file uploads, drag/drop, and emojis (250 lines)
 // - ConversationsList: Displays and manages the list of conversations (167 lines)
@@ -29,4 +29,4 @@ export type { ProcessingResult } from "./AIProcessor";
 // ✅ Better collaboration - Developers can work on different components simultaneously
 
 // READY TO REPLACE: The original ActionPlatformRightPanel.tsx can now be safely removed
-// and replaced with AIRightPanel in all imports
+// and replaced with RightPanel in all imports

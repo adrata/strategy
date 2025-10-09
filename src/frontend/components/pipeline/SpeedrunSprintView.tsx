@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';
 import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
@@ -529,7 +529,7 @@ export function SpeedrunSprintView() {
             </div>
           </div>
         }
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}
@@ -778,7 +778,7 @@ export function SpeedrunSprintView() {
         thinLeftPanel={null}
         leftPanel={sprintCardList}
         middlePanel={sprintDetailView}
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={isLeftPanelVisible}
         isRightPanelVisible={isRightPanelVisible}

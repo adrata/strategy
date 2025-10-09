@@ -22,7 +22,7 @@ import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
 interface DashboardDetailPageProps {
@@ -615,7 +615,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
           </div>
         </div>
       }
-      rightPanel={<AIRightPanel />}
+      rightPanel={<RightPanel />}
       zoom={zoom}
       isLeftPanelVisible={true}
       isRightPanelVisible={true}

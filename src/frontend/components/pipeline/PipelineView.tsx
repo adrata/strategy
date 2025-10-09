@@ -16,7 +16,7 @@ import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 // import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
@@ -1603,7 +1603,7 @@ export const PipelineView = React.memo(function PipelineView({
           />
         }
         middlePanel={middlePanel}
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={ui.isLeftPanelVisible}
         isRightPanelVisible={ui.isRightPanelVisible}

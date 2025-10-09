@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
-import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueReportViewer";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
@@ -79,7 +79,7 @@ export default function DeepValueReportPage() {
                   <div className="text-gray-500">Loading record...</div>
                 </div>
               }
-              rightPanel={<AIRightPanel />}
+              rightPanel={<RightPanel />}
             />
           </PipelineProvider>
         </ZoomProvider>
@@ -103,7 +103,7 @@ export default function DeepValueReportPage() {
                 record={currentRecord}
               />
             }
-            rightPanel={<AIRightPanel />}
+            rightPanel={<RightPanel />}
           />
         </PipelineProvider>
       </ZoomProvider>

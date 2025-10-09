@@ -9,7 +9,7 @@ import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvid
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
-import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { MiddlePanelSkeleton } from "@/platform/ui/components/skeletons/MiddlePanelSkeleton";
 import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
 // Removed authFetch import - using standard fetch
@@ -276,7 +276,7 @@ export default function SellerCompaniesPage() {
                     />
                   }
                   middlePanel={<MiddlePanelSkeleton />}
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -303,7 +303,7 @@ export default function SellerCompaniesPage() {
                     />
                   }
                   middlePanel={<MiddlePanelSkeleton />}
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -476,7 +476,7 @@ export default function SellerCompaniesPage() {
                     </div>
                   </div>
                 }
-                rightPanel={<AIRightPanel />}
+                rightPanel={<RightPanel />}
                 isLeftPanelVisible={true}
                 isRightPanelVisible={true}
                 onToggleLeftPanel={() => {}}

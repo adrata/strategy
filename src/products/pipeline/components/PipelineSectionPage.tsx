@@ -6,7 +6,7 @@ import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { MiddlePanel } from "@/products/pipeline/components/MiddlePanel";
-import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { useZoom, ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
@@ -230,7 +230,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
           />
         }
         middlePanel={<MiddlePanel activeSection={section} />}
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={ui.isLeftPanelVisible}
         isRightPanelVisible={ui.isRightPanelVisible}

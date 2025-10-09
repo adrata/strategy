@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineProvider } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
@@ -675,7 +675,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     />
                   }
                   middlePanel={<MiddlePanelSkeleton />}
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -710,7 +710,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                       </div>
                     </div>
                   }
-                  rightPanel={<AIRightPanel />}
+                  rightPanel={<RightPanel />}
                   isLeftPanelVisible={true}
                   isRightPanelVisible={true}
                 />
@@ -987,7 +987,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     </div>
                   )
                 }
-                rightPanel={<AIRightPanel />}
+                rightPanel={<RightPanel />}
                 isLeftPanelVisible={true}
                 isRightPanelVisible={true}
               />

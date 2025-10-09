@@ -70,7 +70,7 @@ interface ContextFile {
 }
 
 /**
- * 🤖 AI RIGHT PANEL - MODULAR VERSION
+ * 🤖 RIGHT PANEL - MODULAR VERSION
  * 
  * Intelligent AI assistant panel with contextual awareness:
  * - Real AI provider integration (OpenAI API)
@@ -81,7 +81,7 @@ interface ContextFile {
  * - Clean, streamlined chat experience
  * - Modular component architecture
  */
-export function AIRightPanel() {
+export function RightPanel() {
   const { ui, chat } = useAcquisitionOS();
   const router = useRouter();
   
