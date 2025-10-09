@@ -31,12 +31,12 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     if (!userId || userId === 'System') return 'System';
     const user = users.find(u => u['id'] === userId);
     if (user) {
-      // Check if this is the current user
-      const currentUser = users.find(u => u.isCurrentUser);
+      // Check if this is the current user (using available properties)
+      const currentUser = users.find(u => (u as any).isCurrentUser);
       if (currentUser && user.id === currentUser.id) {
         return 'Me';
       }
-      return user.fullName || user.name || user.displayName || user.email || userId;
+      return (user as any).fullName || user.name || (user as any).displayName || user.email || userId;
     }
     return userId;
   }, [users]);
@@ -168,13 +168,6 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     setTimelineEvents(events);
   }, [record, recordType, getUserName]);
 
-  useEffect(() => {
-    if (record) {
-      generateTimelineFromRecord();
-      loadTimelineFromAPI();
-    }
-  }, [record, users, generateTimelineFromRecord]);
-
   const loadTimelineFromAPI = useCallback(async () => {
     if (!record?.id) {
       console.log('🚨 [TIMELINE] No record ID, skipping API load');
@@ -258,118 +251,68 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         
         // Filter activities for this specific record
         const recordActivities = allActivities.filter((activity: any) => {
-              // Check if this activity is related to our record
-              return (
-                activity['leadId'] === record.id ||
-                activity['prospectId'] === record.id ||
-                activity['opportunityId'] === record.id ||
-                activity['contactId'] === record.id ||
-                activity['accountId'] === record.id ||
-                activity['companyId'] === record.id ||
-                activity['id'] === record.id // Also check if the activity itself matches our record
-              );
-            });
-            
-            console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
+          // Check if this activity is related to our record
+          return (
+            activity['leadId'] === record.id ||
+            activity['prospectId'] === record.id ||
+            activity['opportunityId'] === record.id ||
+            activity['contactId'] === record.id ||
+            activity['accountId'] === record.id ||
+            activity['companyId'] === record.id ||
+            activity['id'] === record.id // Also check if the activity itself matches our record
+          );
+        });
+        
+        console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
 
-            // 🚫 FIX: Handle case where no activities are found
-            if (recordActivities.length === 0) {
-              console.log('📅 [TIMELINE] No activities found for this record, creating placeholder events');
-              
-              // Create some basic timeline events from the record itself
-              const recordEvents = [];
-              
-              if (record.createdAt) {
-                recordEvents.push({
-                  id: `${record.id}-created`,
-                  type: 'created',
-                  title: 'Record Created',
-                  description: `${record.name || 'Record'} was created`,
-                  date: new Date(record.createdAt),
-                  icon: 'plus',
-                  color: 'blue'
-                });
-              }
-              
-              if (record.updatedAt && record.updatedAt !== record.createdAt) {
-                recordEvents.push({
-                  id: `${record.id}-updated`,
-                  type: 'updated',
-                  title: 'Record Updated',
-                  description: `${record.name || 'Record'} was last updated`,
-                  date: new Date(record.updatedAt),
-                  icon: 'edit',
-                  color: 'green'
-                });
-              }
-              
-              activityEvents = recordEvents;
-            } else {
-              // Convert activities to timeline events
-              activityEvents = recordActivities.map((activity: any) => ({
-                id: activity.id,
-                type: 'activity',
-                date: new Date(activity.completedAt || activity.createdAt || Date.now()),
-                title: activity.subject || activity.type || 'Activity',
-                description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
-              content: activity.description || activity.outcome || '', // Full content for expansion
-              user: getUserName(activity.userId || 'System'),
-              metadata: {
-                type: activity.type,
-                status: activity.status,
-                priority: activity.priority
-              }
-            }));
-            }
+        // 🚫 FIX: Handle case where no activities are found
+        if (recordActivities.length === 0) {
+          console.log('📅 [TIMELINE] No activities found for this record, creating placeholder events');
+          
+          // Create some basic timeline events from the record itself
+          const recordEvents: TimelineEvent[] = [];
+          
+          if (record.createdAt) {
+            recordEvents.push({
+              id: `${record.id}-created`,
+              type: 'created' as const,
+              title: 'Record Created',
+              description: `${record.name || 'Record'} was created`,
+              date: new Date(record.createdAt)
+            });
           }
+          
+          if (record.updatedAt && record.updatedAt !== record.createdAt) {
+            recordEvents.push({
+              id: `${record.id}-updated`,
+              type: 'updated' as const,
+              title: 'Record Updated',
+              description: `${record.name || 'Record'} was last updated`,
+              date: new Date(record.updatedAt)
+            });
+          }
+          
+          activityEvents = recordEvents;
+        } else {
+          // Convert activities to timeline events
+          activityEvents = recordActivities.map((activity: any) => ({
+            id: activity.id,
+            type: 'activity' as const,
+            date: new Date(activity.completedAt || activity.createdAt || Date.now()),
+            title: activity.subject || activity.type || 'Activity',
+            description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
+            content: activity.description || activity.outcome || '', // Full content for expansion
+            user: getUserName(activity.userId || 'System'),
+            metadata: {
+              type: activity.type,
+              status: activity.status,
+              priority: activity.priority
+            }
+          }));
         }
 
         // TODO: Load notes for this specific record using v1 API when available
-        // const notesUrl = `/api/v1/notes?workspaceId=${workspaceId}&userId=${userId}`;
-        // console.log('🔍 [TIMELINE] Fetching notes from:', notesUrl);
-        
-        // const notesResponse = await fetch(notesUrl);
-        // console.log('📝 [TIMELINE] Notes response status:', notesResponse.status);
-        
-        // if (notesResponse.ok) {
-        //   const notesData = await notesResponse.json();
-        //   console.log('📝 [TIMELINE] Notes data:', notesData);
-          
-        //   if (notesData['success'] && notesData.data) {
-        //     // Filter notes for this specific record
-        //     const recordNotes = notesData.data.filter((note: any) => {
-        //       return (
-        //         note['leadId'] === record.id ||
-        //         note['opportunityId'] === record.id ||
-        //         note['contactId'] === record.id ||
-        //         note['accountId'] === record.id ||
-        //         note['personId'] === record.id ||
-        //         note['companyId'] === record.id
-        //       );
-        //     });
-
-        //     // Convert notes to timeline events
-        //     noteEvents = recordNotes.map((note: any) => ({
-        //       id: note.id,
-        //       type: 'note',
-        //       date: new Date(note.createdAt),
-        //       title: note.title || 'Note added',
-        //       description: note.content ? note.content.substring(0, 100) + (note.content.length > 100 ? '...' : '') : '',
-        //       content: note.content || note.summary || '', // Full content for expansion
-        //       user: getUserName(note.authorId || 'System'),
-        //       metadata: {
-        //         type: note.type,
-        //         priority: note.priority,
-        //         isPrivate: note.isPrivate
-        //       }
-        //     }));
-        //     console.log('📝 [TIMELINE] Converted notes to events:', noteEvents);
-        //   } else {
-        //     console.log('📝 [TIMELINE] No notes found or API error:', notesData);
-        //   }
-        // } else {
-        //   console.error('📝 [TIMELINE] Notes API error:', notesResponse.status, notesResponse.statusText);
-        // }
+        // Notes functionality will be implemented when the notes API is ready
         
         // Cache the data
         localStorage.setItem(cacheKey, JSON.stringify({
@@ -409,8 +352,14 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     } finally {
       setLoading(false);
     }
-  }, [record, getUserName]);
+  }, [record, recordType, getUserName]);
 
+  useEffect(() => {
+    if (record) {
+      generateTimelineFromRecord();
+      loadTimelineFromAPI();
+    }
+  }, [record, users, generateTimelineFromRecord, loadTimelineFromAPI]);
 
   const isPastEvent = (date: Date) => date <= new Date();
 
