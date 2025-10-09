@@ -193,39 +193,40 @@ export function useAcquisitionOSData(
     
     // 🆕 IMPROVED AUTHENTICATION HANDLING: Better error handling for missing/invalid tokens
     if (!session?.accessToken) {
-      console.warn('⚠️ [AUTH] No authentication token available, attempting unauthenticated request');
+      console.warn('⚠️ [AUTH] No authentication token available, using v1 APIs');
       
-      // Fallback to unauthenticated request with explicit workspace/user parameters
-      const url = new URL('/api/data/unified', window.location.origin);
-      url.searchParams.set('type', 'dashboard');
-      url.searchParams.set('action', 'get');
-      // Remove forceRefresh to use cache for better performance
-      // url.searchParams.set('forceRefresh', 'true');
-      url.searchParams.set('workspaceId', activeWorkspace.id);
+      // 🚀 NEW: Use v1 APIs instead of old unified API
+      const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+        fetch('/api/v1/people?status=LEAD'),
+        fetch('/api/v1/people?status=PROSPECT'),
+        fetch('/api/v1/companies?status=OPPORTUNITY'),
+        fetch('/api/v1/companies'),
+        fetch('/api/v1/people')
+      ]);
       
-      // In demo mode, use a demo user ID, otherwise use the authenticated user ID
-      const userId = isDemoMode ? 'demo-user-2025' : authUser.id;
-      url.searchParams.set('userId', userId);
-      
-      const result = await fetch(url.toString(), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      // Process v1 API responses
+      const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult] = await Promise.all([
+        leadsResponse.json(),
+        prospectsResponse.json(),
+        opportunitiesResponse.json(),
+        companiesResponse.json(),
+        peopleResponse.json()
+      ]);
 
-      if (!result.ok) {
-        console.error(`❌ [API ERROR] Unauthenticated request failed: ${result.status} ${result.statusText}`);
-        throw new Error(`API error: ${result.status} - ${result.statusText}`);
-      }
-
-      const response = await result.json();
-      if (!response.success) {
-        throw new Error(response.error || 'API request failed');
+      // Check for errors
+      if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success) {
+        throw new Error('One or more v1 API calls failed');
       }
       
-      const apiData = response.data || {};
+      // Map v1 API data to acquisition format
+      const apiData = {
+        leads: leadsResult.data || [],
+        prospects: prospectsResult.data || [],
+        opportunities: opportunitiesResult.data || [],
+        companies: companiesResult.data || [],
+        people: peopleResult.data || []
+      };
+      
       return mapApiDataToAcquisitionFormat(apiData);
     }
 
@@ -253,70 +254,45 @@ export function useAcquisitionOSData(
       useAuthenticatedRequest = false;
     }
 
-    // 🚀 PERFORMANCE: Load fast counts first, then full data in background
-    const fastCountsUrl = new URL('/api/data/counts', window.location.origin);
-    fastCountsUrl.searchParams.set('workspaceId', activeWorkspace.id);
+    // 🚀 NEW: Use v1 APIs for all data fetching
+    console.log('🚀 [ACQUISITION OS DATA] Loading data using v1 APIs');
     
-    // In demo mode, use a demo user ID, otherwise use the authenticated user ID
-    const userId = isDemoMode ? 'demo-user-2025' : authUser.id;
-    fastCountsUrl.searchParams.set('userId', userId);
+    // Fetch all data using v1 APIs
+    const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+      fetch('/api/v1/people?status=LEAD'),
+      fetch('/api/v1/people?status=PROSPECT'),
+      fetch('/api/v1/companies?status=OPPORTUNITY'),
+      fetch('/api/v1/companies'),
+      fetch('/api/v1/people')
+    ]);
     
-    console.log('🚀 [ACQUISITION OS DATA] Loading fast counts first:', fastCountsUrl.toString());
+    // Process v1 API responses
+    const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult] = await Promise.all([
+      leadsResponse.json(),
+      prospectsResponse.json(),
+      opportunitiesResponse.json(),
+      companiesResponse.json(),
+      peopleResponse.json()
+    ]);
+
+    // Check for errors
+    if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success) {
+      throw new Error('One or more v1 API calls failed');
+    }
     
-    // REMOVED: Duplicate fast counts API call - useFastCounts hook already handles this
-    // This was causing multiple simultaneous API calls to /api/data/counts
-    
-    // Now load full data in background using v1 APIs
-    const url = new URL('/api/v1/companies', window.location.origin);
-    url.searchParams.set('counts', 'true');
-    // Force refresh to get updated data
-    url.searchParams.set('timestamp', Date.now().toString()); // Cache busting
-    url.searchParams.set('workspaceId', activeWorkspace.id);
-    url.searchParams.set('userId', userId);
-    
-    console.log('🔍 [ACQUISITION OS DATA] API request details:', {
-      isDemoMode,
-      workspaceId: activeWorkspace.id,
-      userId,
-      url: url.toString()
-    });
-    
-    // Make request with or without authentication
-    const requestOptions: RequestInit = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
+    // Map v1 API data to acquisition format
+    const apiData = {
+      leads: leadsResult.data || [],
+      prospects: prospectsResult.data || [],
+      opportunities: opportunitiesResult.data || [],
+      companies: companiesResult.data || [],
+      people: peopleResult.data || []
     };
 
-    if (useAuthenticatedRequest) {
-      requestOptions['headers'] = {
-        ...requestOptions.headers,
-        'Authorization': `Bearer ${session.accessToken}`,
-      };
-    }
-    
-    const result = await fetch(url.toString(), requestOptions);
-
-    if (!result.ok) {
-      console.error(`❌ [API ERROR] Request failed: ${result.status} ${result.statusText}`);
-      const errorText = await result.text();
-      console.error(`❌ [API ERROR] Error details:`, errorText);
-      throw new Error(`API error: ${result.status} - ${result.statusText}`);
-    }
-
-    const response = await result.json();
-    if (!response.success) {
-      throw new Error(response.error || 'API request failed');
-    }
-    
-    const apiData = response.data || {};
-
     console.log('✅ [ACQUISITION OS DATA] API response received:', {
-      success: response.success,
-      hasData: !!response.data,
-      dataKeys: response.data ? Object.keys(response.data) : [],
+      success: true,
+      hasData: !!apiData,
+      dataKeys: apiData ? Object.keys(apiData) : [],
       prospectsCount: apiData.prospects?.length || 0,
       leadsCount: apiData.leads?.length || 0,
       speedrunItemsCount: apiData.speedrunItems?.length || 0,
