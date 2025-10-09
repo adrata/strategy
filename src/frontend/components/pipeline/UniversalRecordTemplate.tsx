@@ -14,6 +14,7 @@ import { TabErrorBoundary } from './TabErrorBoundary';
 import { Loader, CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { SuccessMessage } from '@/platform/ui/components/SuccessMessage';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { getCategoryColors } from '@/platform/config/color-palette';
 import { useInlineEdit } from '@/platform/hooks/useInlineEdit';
 import { ProfileImageUploadModal } from './ProfileImageUploadModal';
 import { PipelineProgress } from './PipelineProgress';

@@ -6,6 +6,7 @@ import {
   PlusIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface AddLeadsModalProps {
   isOpen: boolean;
@@ -145,7 +146,22 @@ export function AddLeadsModal({
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 bg-blue-200 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-300 transition-colors font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{
+              backgroundColor: getCategoryColors('leads').light,
+              borderColor: getCategoryColors('leads').border,
+              color: getCategoryColors('leads').text,
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.backgroundColor = getCategoryColors('leads').bgHover;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.backgroundColor = getCategoryColors('leads').light;
+              }
+            }}
           >
             {isLoading ? (
               <>

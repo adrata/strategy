@@ -19,6 +19,7 @@ import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { getCategoryColors } from '@/platform/config/color-palette';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { 
@@ -998,7 +999,18 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className={`${(section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'companies' || section === 'people') ? 'bg-purple-100 text-purple-800 border border-purple-200 hover:bg-purple-200' : 'bg-white text-black border border-gray-300 hover:bg-gray-50'} px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2`}
+                          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                          style={{
+                            backgroundColor: getCategoryColors(section).light,
+                            borderColor: getCategoryColors(section).border,
+                            color: getCategoryColors(section).text,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = getCategoryColors(section).bgHover;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = getCategoryColors(section).light;
+                          }}
                         >
                           {
                             (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :

@@ -21,20 +21,7 @@ export interface CategoryColorScheme {
 
 export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
   speedrun: {
-    primary: '#2563EB', // Blue-600
-    secondary: '#3B82F6', // Blue-500
-    light: '#DBEAFE', // Blue-100
-    dark: '#1D4ED8', // Blue-700
-    bg: '#EFF6FF', // Blue-50
-    bgHover: '#DBEAFE', // Blue-100
-    border: '#93C5FD', // Blue-300
-    text: '#1E40AF', // Blue-800
-    textLight: '#3B82F6', // Blue-500
-    icon: '#2563EB', // Blue-600
-    iconBg: '#DBEAFE', // Blue-100
-  },
-  leads: {
-    primary: '#059669', // Emerald-600
+    primary: '#059669', // Emerald-600 - Growth, success, forward momentum
     secondary: '#10B981', // Emerald-500
     light: '#D1FAE5', // Emerald-100
     dark: '#047857', // Emerald-700
@@ -46,34 +33,21 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     icon: '#059669', // Emerald-600
     iconBg: '#D1FAE5', // Emerald-100
   },
+  leads: {
+    primary: '#EAB308', // Yellow-600 - Optimism, energy, potential
+    secondary: '#FACC15', // Yellow-500
+    light: '#FEF3C7', // Yellow-100
+    dark: '#CA8A04', // Yellow-700
+    bg: '#FEFCE8', // Yellow-50
+    bgHover: '#FEF3C7', // Yellow-100
+    border: '#FDE047', // Yellow-300
+    text: '#713F12', // Yellow-800
+    textLight: '#FACC15', // Yellow-500
+    icon: '#EAB308', // Yellow-600
+    iconBg: '#FEF3C7', // Yellow-100
+  },
   prospects: {
-    primary: '#DC2626', // Red-600
-    secondary: '#EF4444', // Red-500
-    light: '#FEE2E2', // Red-100
-    dark: '#B91C1C', // Red-700
-    bg: '#FEF2F2', // Red-50
-    bgHover: '#FEE2E2', // Red-100
-    border: '#FCA5A5', // Red-300
-    text: '#991B1B', // Red-800
-    textLight: '#EF4444', // Red-500
-    icon: '#DC2626', // Red-600
-    iconBg: '#FEE2E2', // Red-100
-  },
-  opportunities: {
-    primary: '#7C3AED', // Violet-600
-    secondary: '#8B5CF6', // Violet-500
-    light: '#EDE9FE', // Violet-100
-    dark: '#6D28D9', // Violet-700
-    bg: '#F5F3FF', // Violet-50
-    bgHover: '#EDE9FE', // Violet-100
-    border: '#C4B5FD', // Violet-300
-    text: '#5B21B6', // Violet-800
-    textLight: '#8B5CF6', // Violet-500
-    icon: '#7C3AED', // Violet-600
-    iconBg: '#EDE9FE', // Violet-100
-  },
-  people: {
-    primary: '#EA580C', // Orange-600
+    primary: '#EA580C', // Orange-600 - Enthusiasm, warmth, creativity
     secondary: '#F97316', // Orange-500
     light: '#FED7AA', // Orange-100
     dark: '#C2410C', // Orange-700
@@ -85,18 +59,44 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     icon: '#EA580C', // Orange-600
     iconBg: '#FED7AA', // Orange-100
   },
+  opportunities: {
+    primary: '#2563EB', // Blue-600 - Trust, professionalism, reliability
+    secondary: '#3B82F6', // Blue-500
+    light: '#DBEAFE', // Blue-100
+    dark: '#1D4ED8', // Blue-700
+    bg: '#EFF6FF', // Blue-50
+    bgHover: '#DBEAFE', // Blue-100
+    border: '#93C5FD', // Blue-300
+    text: '#1E40AF', // Blue-800
+    textLight: '#3B82F6', // Blue-500
+    icon: '#2563EB', // Blue-600
+    iconBg: '#DBEAFE', // Blue-100
+  },
+  people: {
+    primary: '#7C3AED', // Violet-600 - Individuality, creativity, uniqueness
+    secondary: '#8B5CF6', // Violet-500
+    light: '#EDE9FE', // Violet-100
+    dark: '#6D28D9', // Violet-700
+    bg: '#F5F3FF', // Violet-50
+    bgHover: '#EDE9FE', // Violet-100
+    border: '#C4B5FD', // Violet-300
+    text: '#5B21B6', // Violet-800
+    textLight: '#8B5CF6', // Violet-500
+    icon: '#7C3AED', // Violet-600
+    iconBg: '#EDE9FE', // Violet-100
+  },
   companies: {
-    primary: '#0891B2', // Cyan-600
-    secondary: '#06B6D4', // Cyan-500
-    light: '#A7F3D0', // Cyan-100 (using emerald-200 for better contrast)
-    dark: '#0E7490', // Cyan-700
-    bg: '#ECFEFF', // Cyan-50
-    bgHover: '#A7F3D0', // Cyan-100
-    border: '#67E8F9', // Cyan-300
-    text: '#155E75', // Cyan-800
-    textLight: '#06B6D4', // Cyan-500
-    icon: '#0891B2', // Cyan-600
-    iconBg: '#A7F3D0', // Cyan-100
+    primary: '#6B7280', // Gray-500 - Stability, professionalism, balance
+    secondary: '#9CA3AF', // Gray-400
+    light: '#F3F4F6', // Gray-100
+    dark: '#374151', // Gray-700
+    bg: '#F9FAFB', // Gray-50
+    bgHover: '#F3F4F6', // Gray-100
+    border: '#D1D5DB', // Gray-300
+    text: '#111827', // Gray-900
+    textLight: '#6B7280', // Gray-500
+    icon: '#6B7280', // Gray-500
+    iconBg: '#F3F4F6', // Gray-100
   },
 };
 

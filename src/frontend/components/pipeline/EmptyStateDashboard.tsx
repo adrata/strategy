@@ -1,5 +1,6 @@
 import React from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface EmptyStateDashboardProps {
   section: string;
@@ -76,7 +77,17 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
           <div className="flex items-center gap-2">
             <button
               onClick={onAddRecord}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: getCategoryColors(section).primary,
+                color: 'white',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = getCategoryColors(section).dark;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = getCategoryColors(section).primary;
+              }}
             >
               Add {section.slice(0, -1)}
             </button>

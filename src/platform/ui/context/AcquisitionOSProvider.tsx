@@ -65,7 +65,7 @@ export function AcquisitionOSProvider({
   const ui = useUI();
   
   // INSTANT LOADING FIX: Set initial app/section IMMEDIATELY after hook creation
-  // This overrides the hardcoded "Speedrun" default in useAcquisitionOSUI
+  // This overrides the hardcoded "Speedrun" default in useUI
   if (initialApp && !initialAppSetRef.current) {
     if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PROVIDER'] === 'true') {
       console.log(`⚡ [PROVIDER] Setting initial app INSTANTLY: ${initialApp}`);

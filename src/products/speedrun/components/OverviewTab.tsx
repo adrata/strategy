@@ -6,7 +6,7 @@ import {
   generatePersonalNeeds,
 } from "../utils/monacoExtractors";
 import { IntelligentStageProgression } from "../IntelligentStageProgression";
-import { useAcquisitionOSAuth } from "@/platform/hooks/useAcquisitionOSAuth";
+import { useAuth } from "@/platform/hooks/useAuth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 interface OverviewTabProps {
@@ -40,7 +40,7 @@ export function OverviewTab({
   onInlineFieldSave,
 }: OverviewTabProps) {
   // Get auth context to check workspace
-  const { authUser } = useAcquisitionOSAuth();
+  const { authUser } = useAuth();
   
   // Handle inline field updates for speedrun
   const handleSpeedrunInlineFieldSave = onInlineFieldSave || (async (field: string, value: string, recordId: string, recordType: string) => {

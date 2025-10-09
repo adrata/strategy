@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import type { Workspace } from "@/platform/auth-unified";
 
-interface UseWorkspaceUIReturn {
+interface UseUIReturn {
   // App & Section State
   activeSubApp: string;
   activeSection: string;
@@ -95,15 +95,15 @@ interface UseWorkspaceUIReturn {
 }
 
 /**
- * WORKSPACE UI HOOK
- * Manages all UI state for Workspace
+ * UI HOOK
+ * Manages all UI state for the platform
  * - App & section navigation
  * - Panel visibility
  * - Modal state
  * - Filters & search
  * - Record selection
  */
-export function useWorkspaceUI(): UseWorkspaceUIReturn {
+export function useUI(): UseUIReturn {
   // Check if we're on client side
   const isClient = typeof window !== "undefined";
 
@@ -765,4 +765,4 @@ export function useWorkspaceUI(): UseWorkspaceUIReturn {
 }
 
 // Legacy alias for backwards compatibility
-export const useActionPlatformUI = useWorkspaceUI;
+export const useActionPlatformUI = useUI;

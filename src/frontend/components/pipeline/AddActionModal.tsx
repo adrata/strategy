@@ -10,6 +10,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 export interface ActionLogData {
   person: string;
@@ -259,11 +260,22 @@ export function AddActionModal({
             <button
               type="submit"
               disabled={isLoading}
-              className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
-                section === 'speedrun' 
-                  ? 'bg-green-600 text-white border-green-600 hover:bg-green-700 disabled:bg-green-300 disabled:border-green-300' 
-                  : 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:border-blue-300'
-              }`}
+              className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm"
+              style={{
+                backgroundColor: getCategoryColors(section).primary,
+                borderColor: getCategoryColors(section).primary,
+                color: 'white',
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = getCategoryColors(section).dark;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = getCategoryColors(section).primary;
+                }
+              }}
             >
               {isLoading ? 'Adding...' : `Add Action (${getCommonShortcut('SUBMIT')})`}
             </button>
