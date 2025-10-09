@@ -1,5 +1,5 @@
 /**
- * 🚀 ACQUISITION OS DATA HOOK - UNIFIED CACHE SYSTEM
+ * WORKWPSACE DATA HOOK - UNIFIED CACHE SYSTEM
  * Uses the new unified caching system for optimal performance
  */
 
