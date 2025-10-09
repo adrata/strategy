@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/platform/prisma';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-
-const prisma = new PrismaClient();
 
 // Response cache for ultra-fast performance
 const responseCache = new Map<string, { data: any, timestamp: number }>();
@@ -90,7 +88,7 @@ export async function GET(request: NextRequest) {
     let result;
     
     if (countsOnly) {
-      // Fast count query
+      // Fast count query using Prisma ORM
       const statusCounts = await prisma.companies.groupBy({
         by: ['status'],
         where,
@@ -104,7 +102,7 @@ export async function GET(request: NextRequest) {
 
       result = { success: true, data: counts };
     } else {
-      // Optimized query with minimal includes
+      // Optimized query with Prisma ORM for reliability
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,

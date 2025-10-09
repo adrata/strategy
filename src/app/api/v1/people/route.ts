@@ -115,51 +115,58 @@ export async function GET(request: NextRequest) {
     let result;
     
     if (countsOnly) {
-      // Ultra-fast count query using raw SQL for maximum performance
-      const counts = await prisma.$queryRaw<Array<{ status: string; count: bigint }>>`
-        SELECT status, COUNT(*) as count 
-        FROM "People" 
-        WHERE "workspaceId" = ${context.workspaceId} AND "deletedAt" IS NULL 
-        GROUP BY status
-      `;
+      // Fast count query using Prisma ORM
+      const counts = await prisma.people.groupBy({
+        by: ['status'],
+        where,
+        _count: { status: true }
+      });
       
       const countMap = counts.reduce((acc, item) => {
-        acc[item.status] = Number(item.count);
+        acc[item.status] = item._count.status;
         return acc;
       }, {} as Record<string, number>);
       
       result = { success: true, data: countMap };
     } else {
-      // Ultra-optimized query with raw SQL for maximum performance
+      // Optimized query with Prisma ORM for reliability
       const [people, totalCount] = await Promise.all([
-        prisma.$queryRaw<Array<any>>`
-          SELECT 
-            p.id, p."fullName", p."firstName", p."lastName", p.email, p.status, 
-            p."globalRank", p."lastAction", p."nextAction", p."lastActionDate", 
-            p."nextActionDate", p."companyId", c.name as "companyName"
-          FROM "People" p
-          LEFT JOIN "Companies" c ON p."companyId" = c.id
-          WHERE p."workspaceId" = ${context.workspaceId} 
-            AND p."deletedAt" IS NULL
-            ${status ? prisma.$queryRaw`AND p.status = ${status}` : prisma.$queryRaw``}
-          ORDER BY p."${sortBy === 'rank' ? 'globalRank' : sortBy}" ${sortOrder}
-          LIMIT ${limit} OFFSET ${offset}
-        `,
-        prisma.$queryRaw<Array<{ count: bigint }>>`
-          SELECT COUNT(*) as count 
-          FROM "People" p
-          WHERE p."workspaceId" = ${context.workspaceId} 
-            AND p."deletedAt" IS NULL
-            ${status ? prisma.$queryRaw`AND p.status = ${status}` : prisma.$queryRaw``}
-        `,
+        prisma.people.findMany({
+          where,
+          orderBy: { 
+            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+          },
+          skip: offset,
+          take: limit,
+          select: {
+            id: true,
+            fullName: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            status: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            companyId: true,
+            company: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }),
+        prisma.people.count({ where }),
       ]);
 
       result = createSuccessResponse(people, {
         pagination: {
           page,
           limit,
-          totalCount: Number(totalCount[0]?.count || 0),
-          totalPages: Math.ceil(Number(totalCount[0]?.count || 0) / limit),
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
         },
         filters: { search, status, priority, companyId, sortBy, sortOrder },
         userId: context.userId,

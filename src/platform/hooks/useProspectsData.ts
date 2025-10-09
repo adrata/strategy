@@ -87,7 +87,7 @@ export function useProspectsData(): UseProspectsDataReturn {
         localStorage.setItem(storageKey, JSON.stringify({ prospects: transformedProspects, ts: Date.now() }));
       } catch {}
     } catch (err) {
-      console.error('❌ [useProspectsData] Error fetching prospects:', err);
+      console.error('[useProspectsData] Error fetching prospects:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch prospects');
       setProspects([]);
       setCount(0);

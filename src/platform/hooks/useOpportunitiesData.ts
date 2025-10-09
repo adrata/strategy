@@ -84,7 +84,7 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         localStorage.setItem(storageKey, JSON.stringify({ opportunities: transformedOpportunities, ts: Date.now() }));
       } catch {}
     } catch (err) {
-      console.error('❌ [useOpportunitiesData] Error fetching opportunities:', err);
+      console.error('[useOpportunitiesData] Error fetching opportunities:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch opportunities');
       setOpportunities([]);
       setCount(0);
