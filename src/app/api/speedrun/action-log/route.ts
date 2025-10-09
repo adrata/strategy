@@ -38,28 +38,29 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Missing required fields: personId, actionType, and notes are required', 'VALIDATION_ERROR', 400);
     }
 
-    // Create the action log - match the schema field names
-    const actionLog = await prisma.speedrun_action_logs.create({
+    // Create the action log - use the correct model name and field mappings
+    const actionLog = await prisma.actions.create({
       data: {
         personId: personId.toString(),
-        personName: personName || 'Unknown',
-        actionLog: notes, // Map notes to actionLog field
-        type: actionType, // Map actionType to type field
-        notes: notes, // Also store in notes field
-        nextAction: nextAction || null,
-        nextActionDate: nextActionDate ? new Date(nextActionDate) : null,
+        type: actionType,
+        subject: `${actionType} - ${personName || 'Unknown'}`,
+        description: notes,
+        outcome: nextAction || null,
+        scheduledAt: nextActionDate ? new Date(nextActionDate) : null,
+        completedAt: new Date(),
+        status: 'completed',
         workspaceId,
         userId,
-        actionPerformedBy: actionPerformedBy || userId,
-        timestamp: new Date()
+        assignedUserId: actionPerformedBy || userId,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     });
 
     console.log('✅ [SPEEDRUN ACTION LOG] Created action log:', {
       id: actionLog.id,
       personId: actionLog.personId,
-      personName: actionLog.personName,
-      actionType: actionLog.actionType,
+      type: actionLog.type,
       workspaceId: actionLog.workspaceId,
       userId: actionLog.userId
     });
@@ -69,13 +70,13 @@ export async function POST(request: NextRequest) {
       data: {
         id: actionLog.id,
         personId: actionLog.personId,
-        personName: actionLog.personName,
-        actionType: actionLog.type, // Map type back to actionType
-        notes: actionLog.notes,
-        nextAction: actionLog.nextAction,
-        nextActionDate: actionLog.nextActionDate,
-        actionPerformedBy: actionLog.actionPerformedBy,
-        timestamp: actionLog.timestamp
+        personName: personName || 'Unknown',
+        actionType: actionLog.type,
+        notes: actionLog.description,
+        nextAction: actionLog.outcome,
+        nextActionDate: actionLog.scheduledAt,
+        actionPerformedBy: actionLog.assignedUserId,
+        timestamp: actionLog.completedAt
       }
     });
 
@@ -125,10 +126,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch action logs
-    const actionLogs = await prisma.speedrunActionLogs.findMany({
+    const actionLogs = await prisma.actions.findMany({
       where,
       orderBy: {
-        timestamp: 'desc'
+        completedAt: 'desc'
       },
       take: limit
     });
@@ -146,6 +147,72 @@ export async function GET(request: NextRequest) {
     return createErrorResponse(
       'Failed to fetch action logs',
       'ACTION_LOG_FETCH_ERROR',
+      500
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const body = await request.json();
+    const { actionId, personId } = body;
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+
+    // Validate required fields
+    if (!actionId) {
+      return createErrorResponse('Missing required field: actionId', 'VALIDATION_ERROR', 400);
+    }
+
+    // Delete the action log
+    const deletedAction = await prisma.actions.delete({
+      where: {
+        id: actionId,
+        workspaceId: workspaceId, // Ensure user can only delete their own workspace actions
+        userId: userId // Ensure user can only delete their own actions
+      }
+    });
+
+    console.log('✅ [SPEEDRUN ACTION LOG] Deleted action log:', {
+      id: deletedAction.id,
+      personId: deletedAction.personId,
+      type: deletedAction.type,
+      workspaceId: deletedAction.workspaceId,
+      userId: deletedAction.userId
+    });
+
+    return createSuccessResponse({
+      success: true,
+      data: {
+        id: deletedAction.id,
+        personId: deletedAction.personId,
+        actionType: deletedAction.type,
+        deleted: true
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ [SPEEDRUN ACTION LOG] Failed to delete action log:', error);
+    
+    return createErrorResponse(
+      'Failed to delete action log',
+      'ACTION_LOG_DELETE_ERROR',
       500
     );
   }

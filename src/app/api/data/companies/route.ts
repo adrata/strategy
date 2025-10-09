@@ -388,6 +388,20 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ [COMPANIES API] Found ${uniqueCompanies.length} unique companies`);
 
+    // Get the actual total count of companies in the database for correct pagination
+    const totalCompaniesCount = await prisma.companies.count({
+      where: {
+        workspaceId: workspaceId,
+        OR: [
+          { assignedUserId: userId },
+          { assignedUserId: null }
+        ],
+        deletedAt: null
+      }
+    });
+
+    console.log(`📊 [COMPANIES API] Total companies in database: ${totalCompaniesCount}, returning: ${uniqueCompanies.length}`);
+
     const endTime = Date.now();
     const duration = endTime - startTime;
     
@@ -398,7 +412,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = { companies: uniqueCompanies };
-    const meta = { total: uniqueCompanies.length, limit, offset };
+    const meta = { total: totalCompaniesCount, limit, offset };
     
     return createSuccessResponse(data, meta);
   } catch (error) {
@@ -413,7 +427,22 @@ export async function GET(request: NextRequest) {
 // POST: Add new company (matches Tauri add_company command)
 export async function POST(request: NextRequest) {
   try {
-    const { workspaceId, userId, companyData } = await request.json();
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const { companyData } = await request.json();
+    const { workspaceId, userId } = context;
 
     console.log(
       `📝 [COMPANIES API] Adding company for workspace: ${workspaceId}, user: ${userId}`,
@@ -468,7 +497,8 @@ export async function POST(request: NextRequest) {
     
     return createSuccessResponse(data, meta);
   } catch (error) {
-    console.error("❌ [COMPANIES API] Error creating company:", error);return createErrorResponse(
+    console.error("❌ [COMPANIES API] Error creating company:", error);
+    return createErrorResponse(
       "Failed to create company",
       "CREATE_COMPANY_ERROR",
       500

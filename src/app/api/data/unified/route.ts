@@ -17,6 +17,7 @@ import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 
 // Temporarily comment out problematic imports to fix 404 errors
@@ -37,7 +38,7 @@ function createSuccessResponse(data: any, meta?: any) {
 async function getSecureApiContext(request: NextRequest, options: any) {
   // Simplified implementation to fix 404 errors - allow demo access
   const url = new URL(request.url);
-  const workspaceId = url.searchParams.get('workspaceId') || '01K1VBYX2YERMXBFJ60RC6J194'; // Demo workspace
+  const workspaceId = url.searchParams.get('workspaceId') || '01K1VBYXHD0J895XAN0HGFBKJP'; // Dan's workspace
   const userId = url.searchParams.get('userId') || '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan user
   
   // Temporarily allow all requests to fix login issues
@@ -108,8 +109,6 @@ if (typeof window === 'undefined') {
 const UnifiedMasterRankingEngine = {
   calculateRanking: async (data: any) => ({ score: 0, reasons: [] })
 };
-
-const createEntityRecord = async (data: any) => ({ id: ulid() });
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for lightning speed
 const WORKSPACE_CONTEXT_TTL = 300; // 5 minutes
@@ -2125,6 +2124,9 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     workspaceId
   };
   
+  // Remove duplicate fields that might be in the data object
+  delete createData.userId; // Remove userId from data object to avoid conflicts
+  
   // Only add assignedUserId for records that have this field
   if (type !== 'notes') {
     createData.assignedUserId = userId;
@@ -2136,23 +2138,22 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     createData.updatedAt = new Date();
   }
 
-  // Generate ID for records that require it
-  if (!createData.id) {
-    if (type === 'companies') {
-      createData['id'] = `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } else if (type === 'leads') {
-      createData['id'] = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } else if (type === 'prospects') {
-      createData['id'] = `prospect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } else if (type === 'opportunities') {
-      createData['id'] = `opp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } else if (type === 'people') {
-      createData['id'] = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    } else if (type === 'partners') {
-      createData['id'] = `partner_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    }
-  }
+  // Let Prisma auto-generate ULID IDs (schema has @default(ulid()) for all tables)
+  // No need to manually generate IDs - Prisma handles this automatically
 
+  // Handle special field requirements for companies
+  if (type === 'companies') {
+    // Remove fields that don't exist in the companies table
+    delete createData.title; // Companies don't have a title field
+    delete createData.contactIds; // This is handled separately
+    delete createData.contractValue; // This is for clients, not companies
+    delete createData.renewalDate; // This is for clients, not companies
+    delete createData.firstName; // Companies don't have firstName
+    delete createData.lastName; // Companies don't have lastName
+    delete createData.fullName; // Companies don't have fullName
+    delete createData.userId; // This is mapped to assignedUserId
+  }
+  
   // Handle special field requirements for leads, prospects, partners, and clients
   if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
     // If name is provided but firstName/lastName are not, split the name
@@ -2164,68 +2165,99 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     }
     
     // Comprehensive field mapping for frontend to database consistency
-    const fieldMappings = {
-      // Name fields
-      'name': 'fullName',
-      'jobTitle': 'title',
-      'companyName': 'company',
-      'workEmail': 'workEmail',
-      'personalEmail': 'personalEmail',
-      'mobilePhone': 'mobilePhone',
-      'workPhone': 'workPhone',
-      'linkedinUrl': 'linkedinUrl',
-      'companyDomain': 'companyDomain',
-      'companySize': 'companySize',
-      'department': 'department',
-      'industry': 'industry',
-      'vertical': 'vertical',
-      'address': 'address',
-      'city': 'city',
-      'state': 'state',
-      'country': 'country',
-      'postalCode': 'postalCode',
-      'notes': 'notes',
-      'description': 'description',
-      'tags': 'tags',
-      'customFields': 'customFields',
-      'preferredLanguage': 'preferredLanguage',
-      'timezone': 'timezone',
-      'status': 'status',
-      'priority': 'priority',
-      'source': 'source',
-      'estimatedValue': 'estimatedValue',
-      'currency': 'currency'
-    };
-    
-    // Apply field mappings
-    Object.entries(fieldMappings).forEach(([frontendField, dbField]) => {
-      if (createData[frontendField] !== undefined && !createData[dbField]) {
-        createData[dbField] = createData[frontendField];
-      }
-      // Remove the frontend field after mapping
-      delete createData[frontendField];
-    });
+    // Only apply person-related field mappings for person-related records
+    if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
+      const fieldMappings = {
+        // Name fields
+        'name': 'fullName',
+        'jobTitle': 'title',
+        'companyName': 'company',
+        'workEmail': 'workEmail',
+        'personalEmail': 'personalEmail',
+        'mobilePhone': 'mobilePhone',
+        'workPhone': 'workPhone',
+        'linkedinUrl': 'linkedinUrl',
+        'companyDomain': 'companyDomain',
+        'companySize': 'companySize',
+        'department': 'department',
+        'industry': 'industry',
+        'vertical': 'vertical',
+        'address': 'address',
+        'city': 'city',
+        'state': 'state',
+        'country': 'country',
+        'postalCode': 'postalCode',
+        'notes': 'notes',
+        'description': 'description',
+        'tags': 'tags',
+        'customFields': 'customFields',
+        'preferredLanguage': 'preferredLanguage',
+        'timezone': 'timezone',
+        'status': 'status',
+        'priority': 'priority',
+        'source': 'source',
+        'estimatedValue': 'estimatedValue',
+        'currency': 'currency'
+      };
+      
+      // Apply field mappings
+      Object.entries(fieldMappings).forEach(([frontendField, dbField]) => {
+        if (createData[frontendField] !== undefined && !createData[dbField]) {
+          createData[dbField] = createData[frontendField];
+        }
+        // Remove the frontend field after mapping
+        delete createData[frontendField];
+      });
+    }
     
     // Ensure required fields have defaults - these are required by the schema
-    if (!createData.firstName) createData['firstName'] = 'First';
-    if (!createData.lastName) createData['lastName'] = 'Last';
-    if (!createData.fullName) createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+    // Only apply person-related defaults for person-related records
+    if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
+      if (!createData.firstName) createData['firstName'] = 'First';
+      if (!createData.lastName) createData['lastName'] = 'Last';
+      if (!createData.fullName) createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+      
+      // Remove frontend-specific fields that don't exist in database
+      delete createData.name; // We've already split this into firstName/lastName/fullName
+      delete createData.title; // We've mapped this to jobTitle
+      delete createData.userId; // This is mapped to assignedUserId
+    }
     
-    // Ensure updatedAt is set
+    // Ensure updatedAt is set for all records
     if (!createData.updatedAt) createData['updatedAt'] = new Date();
-    
-    // Remove frontend-specific fields that don't exist in database
-    delete createData.name; // We've already split this into firstName/lastName/fullName
-    delete createData.title; // We've mapped this to jobTitle
-    delete createData.userId; // This is mapped to assignedUserId
   }
   
   console.log(`🔧 [CREATE] Creating ${type} with data:`, JSON.stringify(createData, null, 2));
+  console.log(`🔧 [CREATE] Model for ${type}:`, model);
+  console.log(`🔧 [CREATE] WorkspaceId: ${workspaceId}, UserId: ${userId}`);
+  console.log(`🔧 [CREATE] Data field lengths:`, Object.entries(createData).map(([key, value]) => ({
+    field: key,
+    value: typeof value === 'string' ? value.substring(0, 50) + (value.length > 50 ? '...' : '') : value,
+    length: typeof value === 'string' ? value.length : 'N/A'
+  })));
   
   try {
     // For person-related records (leads, prospects, partners), create person and company records first
     if (type === 'leads' || type === 'prospects' || type === 'partners') {
       return await createPersonRelatedRecord(type, createData, workspaceId, userId);
+    }
+    
+    // For companies, create entity record first (2025 best practice)
+    if (type === 'companies') {
+      const entityRecord = await createEntityRecord({
+        type: 'company',
+        workspaceId: workspaceId,
+        metadata: {
+          name: createData.name,
+          industry: createData.industry,
+          website: createData.website
+        }
+      });
+      
+      // Add entity_id to the create data
+      createData.entity_id = entityRecord.id;
+      
+      console.log(`✅ [CREATE] Created entity record for company: ${entityRecord.id}`);
     }
     
     const record = await model.create({
@@ -2283,7 +2315,6 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
         // Create new company record with entity_id
         const newCompany = await prisma.companies.create({
           data: {
-            id: `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             entity_id: companyEntityRecord.id, // Link to entity record
             workspaceId,
             name: createData.company,
@@ -2400,7 +2431,6 @@ async function handleClientCreate(workspaceId: string, userId: string, data: any
     // First create the account record with entity_id
     const account = await prisma.companies.create({
       data: {
-        id: `account_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         entity_id: companyEntityRecord.id, // Link to entity record
         name: data.name,
         website: data.website || null,
@@ -2414,7 +2444,6 @@ async function handleClientCreate(workspaceId: string, userId: string, data: any
     // Then create the client record
     const client = await prisma.clients.create({
       data: {
-        id: `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         workspaceId,
         companyId: account.id,
         customerSince: new Date(),
@@ -3171,6 +3200,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     
     // 🚫 REMOVED: Demo data generation - no more fake/fallback data
     
+    
     // 🚀 PERFORMANCE: Load counts and data in fewer queries
     const [
       leadsCount,
@@ -3190,10 +3220,17 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       partnersData,
       speedrunData
     ] = await Promise.all([
-      prisma.leads.count({ 
-        where: { 
-          workspaceId, 
-          deletedAt: null
+      // Leads count - count from people table (same as individual leads endpoint)
+      prisma.people.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          } : {})
         }
       }),
       prisma.prospects.count({ 
@@ -3221,7 +3258,13 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         }
       }),
       prisma.clients.count({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId }
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            assignedUserId: userId
+          } : {})
+        }
       }).catch(() => 0), // Fallback to 0 if clients table has issues
       prisma.partners.count({ 
         where: { workspaceId, deletedAt: null }
@@ -3232,7 +3275,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           where: {
             workspaceId,
             deletedAt: null,
-            assignedUserId: userId,
+            ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+              assignedUserId: userId
+            } : {}),
             status: {
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
             }
@@ -3242,32 +3287,39 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           where: {
             workspaceId,
             deletedAt: null,
-            assignedUserId: userId,
+            ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+              assignedUserId: userId
+            } : {}),
             status: {
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
             }
           }
         })
       ]).then(([leadsCount, prospectsCount]) => leadsCount + prospectsCount),
-      // 🚀 PERFORMANCE: Load minimal data for dashboard display only
-      prisma.leads.findMany({ 
-        where: { 
-          workspaceId, 
-          deletedAt: null
-          // Removed assignedUserId filter to show all leads (matching sidebar count)
+      // 🚀 PERFORMANCE: Load leads data from people table (same as individual leads endpoint)
+      prisma.people.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          } : {})
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10000, // 🚀 PERFORMANCE: Load all leads for dashboard to support pagination
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          fullName: true,
-          email: true,
-          company: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              vertical: true,
+              size: true
+            }
+          }
         }
       }),
       prisma.prospects.findMany({ 
@@ -3294,10 +3346,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         where: { 
           workspaceId, 
           deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          } : {})
         },
         orderBy: [{ updatedAt: 'desc' }],
         take: 50, // Load only recent opportunities for dashboard
@@ -3316,10 +3370,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         where: { 
           workspaceId, 
           deletedAt: null, 
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          } : {})
         },
         orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
         take: 100, // 🚀 PERFORMANCE: Reduced from 500 to 100 for faster loading
@@ -3444,7 +3500,13 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         }));
       }),
       prisma.clients.findMany({ 
-        where: { workspaceId, deletedAt: null, assignedUserId: userId },
+        where: { 
+          workspaceId, 
+          deletedAt: null, 
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+            assignedUserId: userId
+          } : {})
+        },
         orderBy: [{ updatedAt: 'desc' }],
         take: 10, // Only load 10 most recent clients
         select: { id: true, customerStatus: true, totalLifetimeValue: true, updatedAt: true }
@@ -3519,14 +3581,56 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     console.log(`✅ [DASHBOARD] Loaded data: leads=${leadsData.length}, prospects=${prospectsData.length}, opportunities=${opportunitiesData.length}, speedrun=${speedrunData.length}`);
     
     
-    // Transform data to ensure consistent field mapping
-    const transformedLeads = leadsData.map(lead => ({
-      ...lead,
-      name: lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Name',
-      // Ensure firstName and lastName are available for display logic
-      firstName: lead.firstName || lead.fullName?.split(' ')[0] || 'First',
-      lastName: lead.lastName || lead.fullName?.split(' ').slice(1).join(' ') || 'Last'
-    }));
+    // Transform people data to leads format (same as individual leads endpoint)
+    const transformedLeads = leadsData.map(person => {
+      // Extract Coresignal data
+      const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
+      
+      // Get company from Coresignal data (active experience)
+      const coresignalCompany = coresignalData.active_experience_company || 
+                                coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
+                                coresignalData.experience?.[0]?.company_name;
+      
+      // Get industry from Coresignal data
+      const coresignalIndustry = coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_industry || 
+                                coresignalData.experience?.[0]?.company_industry;
+      
+      // Get title from Coresignal data
+      const coresignalTitle = coresignalData.active_experience_title;
+      
+      return {
+        id: person.id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        fullName: coresignalData.full_name || person.fullName,
+        name: coresignalData.full_name || person.fullName,
+        email: coresignalData.primary_professional_email || person.email,
+        // Use Coresignal data for company info (no fallbacks to database)
+        company: coresignalCompany || '-',
+        companyId: person.companyId,
+        companyName: coresignalCompany || '-',
+        industry: coresignalIndustry || '-',
+        vertical: person.company?.vertical || '-',
+        companySize: person.company?.size || '-',
+        jobTitle: coresignalTitle || person.jobTitle || '-',
+        title: coresignalTitle || (person as any).title || '-',
+        status: person.status,
+        priority: 'medium',
+        source: 'people',
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        lastContactDate: person.lastActionDate,
+        lastActionDate: person.lastActionDate,
+        nextAction: person.nextAction,
+        nextActionDate: person.nextActionDate,
+        workspaceId: person.workspaceId,
+        assignedUserId: person.assignedUserId,
+        // Add company data for better relationships
+        companyData: person.company,
+        // Include Coresignal data for detail views
+        customFields: person.customFields
+      };
+    });
     
     const transformedProspects = prospectsData.map(prospect => {
       // Calculate smart action data for prospects
@@ -3656,7 +3760,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     const pipelineMetrics = await prisma.opportunities.aggregate({
       where: {
         workspaceId,
-        assignedUserId: userId,
+        ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+          assignedUserId: userId
+        } : {}),
         deletedAt: null
       },
       _sum: { amount: true },
@@ -3668,7 +3774,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     const monthlyClosedWon = await prisma.opportunities.count({
       where: {
         workspaceId,
-        assignedUserId: userId,
+        ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+          assignedUserId: userId
+        } : {}),
         stage: { in: ['Closed Won', 'Won', 'Closed'] },
         actualCloseDate: { gte: startOfMonth },
         deletedAt: null
@@ -3679,7 +3787,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
     const ytdClosedWon = await prisma.opportunities.count({
       where: {
         workspaceId,
-        assignedUserId: userId,
+        ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
+          assignedUserId: userId
+        } : {}),
         stage: { in: ['Closed Won', 'Won', 'Closed'] },
         actualCloseDate: { gte: startOfYear },
         deletedAt: null
@@ -3901,7 +4011,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         where: {
           workspaceId,
           deletedAt: null,
-          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' ? {
+          ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
               { assignedUserId: userId },
               { assignedUserId: null }
@@ -4403,30 +4513,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
-  // 1. Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
-      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
-    }
-
-    const { searchParams } = new URL(request.url);
-    
-    // Use authenticated user's workspace and ID
-    const workspaceId = context.workspaceId;
-    const userId = context.userId;
-
-    try {
+  try {
     const body: UnifiedDataRequest = await request.json();
     const { type, action, data, id, filters, pagination, search } = body;
     
+    // Get workspace context from request body or authentication
     const context = await getOptimizedWorkspaceContext(request, body);
     const { workspaceId, userId } = context;
     
@@ -4474,9 +4565,15 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('❌ [UNIFIED API] Error:', error);
+    console.error('❌ [UNIFIED API] POST Error:', error);
+    console.error('❌ [UNIFIED API] POST Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('❌ [UNIFIED API] POST Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      name: error instanceof Error ? error.name : 'Unknown',
+      cause: error instanceof Error ? error.cause : undefined
+    });
     return createErrorResponse(
-      'Failed to process unified data request',
+      `Failed to process unified data request: ${error instanceof Error ? error.message : 'Unknown error'}`,
       'UNIFIED_DATA_ERROR',
       500
     );
@@ -4486,27 +4583,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const startTime = Date.now();
   
-  // 1. Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
-      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
-    }
-
-    const { searchParams } = new URL(request.url);
-    
-    // Use authenticated user's workspace and ID
-    const workspaceId = context.workspaceId;
-    const userId = context.userId;
-
-    try {
+  try {
     const body: UnifiedDataRequest = await request.json();
     const context = await getOptimizedWorkspaceContext(request, body);
     const { workspaceId, userId } = context;
@@ -4529,7 +4606,7 @@ export async function PUT(request: NextRequest) {
       }
     };
     
-    console.log(`✅ [SUCCESS] UPDATE ${type} (${id}) completed in ${response.meta.responseTime}ms`);
+    console.log(`✅ [SUCCESS] PUT ${type} (${id}) completed in ${response.meta.responseTime}ms`);
     
     return createSuccessResponse(response.data, {
       ...response.meta,
@@ -4539,10 +4616,55 @@ export async function PUT(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('❌ [UNIFIED API] Error:', error);
+    console.error('❌ [UNIFIED API] PUT Error:', error);
     return createErrorResponse(
-      'Failed to process unified data request',
-      'UNIFIED_DATA_ERROR',
+      'Failed to process put request',
+      'PUT_ERROR',
+      500
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  const startTime = Date.now();
+  
+  try {
+    const body: UnifiedDataRequest = await request.json();
+    const context = await getOptimizedWorkspaceContext(request, body);
+    const { workspaceId, userId } = context;
+    const { type, action, data, id } = body;
+    
+    if (!type || !id || !data) {
+      return createErrorResponse('Missing required parameters', 'MISSING_PARAMETERS', 400);
+    }
+    
+    // Execute update operation
+    const result = await handleDataOperation(type, 'update', workspaceId, userId, data, id);
+    
+    // Add metadata
+    const response = {
+      ...result,
+      meta: {
+        timestamp: new Date().toISOString(),
+        cacheHit: false,
+        responseTime: Date.now() - startTime
+      }
+    };
+    
+    console.log(`✅ [SUCCESS] PATCH ${type} (${id}) completed in ${response.meta.responseTime}ms`);
+    
+    return createSuccessResponse(response.data, {
+      ...response.meta,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      userEmail: context.userEmail
+    });
+    
+  } catch (error) {
+    console.error('❌ [UNIFIED API] PATCH Error:', error);
+    return createErrorResponse(
+      'Failed to process patch request',
+      'PATCH_ERROR',
       500
     );
   }

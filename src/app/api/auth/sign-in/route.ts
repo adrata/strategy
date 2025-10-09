@@ -301,7 +301,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         ["ross@adrata.com", new Set(["password", "rosspass", "ross", user.name?.toLowerCase()].filter(Boolean))],
         ["dan@adrata.com", new Set(["password", "danpass", "dan", user.name?.toLowerCase()].filter(Boolean))],
         ["demo@adrata.com", new Set(["password", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))],
-        ["dano@retail-products.com", new Set(["password", "DanoISGreat01!", "danopass", "dano", user.name?.toLowerCase()].filter(Boolean))],
+        ["dano@retail-products.com", new Set(["password", "DanoGoat23!", "danopass", "dano", user.name?.toLowerCase()].filter(Boolean))],
         ["demo@zeropoint.com", new Set(["password", "VPGoat90!", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))]
       ]);
 

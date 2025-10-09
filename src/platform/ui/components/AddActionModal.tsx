@@ -159,21 +159,30 @@ export function AddActionModal({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) return;
       
-      // Command+Enter to submit
+      // Command+Enter to submit (works in all fields)
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         handleSubmit(event as any);
       }
       
       // Escape to close
       if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, formData]);
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, formData, onClose]);
 
   if (!isOpen) return null;
 

@@ -746,4 +746,3 @@ interface TechSpendingProfile {
   spendingPattern: 'aggressive' | 'moderate' | 'conservative';
 }
 
-export { ComprehensiveCompanyIntelligence };

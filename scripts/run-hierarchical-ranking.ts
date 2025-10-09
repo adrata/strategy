@@ -310,3 +310,4 @@ if (require.main === module) {
 }
 
 export { runHierarchicalRanking };
+

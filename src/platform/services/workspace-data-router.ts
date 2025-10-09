@@ -10,6 +10,7 @@ import { UnifiedAuthService } from "@/platform/auth-unified";
 import { storeSession } from "@/platform/auth/session";
 import { NextRequest } from "next/server";
 import { parseWorkspaceFromUrl, getWorkspaceBySlug, generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";
+import { DemoAccessValidator } from "@/platform/services/demo-access-validator";
 
 // Server-side only imports - Edge Runtime compatible
 import { PrismaClient } from "@prisma/client";
@@ -60,11 +61,19 @@ export class WorkspaceDataRouter {
 
       const user = session.user;
       
-      // Determine if this is a demo user - ONLY if explicitly demo credentials
+      // Determine if this is a demo user - ONLY Dan and Ross can access demo workspace
       const emailCheck = user['email'] === "demo@adrata.com";
       const idCheck = user['id'] === "demo-user-2025";
       const workspaceCheck = user['activeWorkspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194";
-      const isDemo = emailCheck || idCheck || workspaceCheck;
+      
+      // Use centralized demo access validation
+      const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
+        user['id'], 
+        user['email'], 
+        user['activeWorkspaceId'] || ''
+      );
+      
+      const isDemo = (emailCheck || idCheck || workspaceCheck) && demoAccessResult.hasAccess;
       
       // REMOVED: Hardcoded user mappings that cause data leakage between workspaces
       // All users should get their actual workspace data from database queries
@@ -370,10 +379,16 @@ export class WorkspaceDataRouter {
         return this.getDemoFallback();
       }
       
-      // Determine if this is a demo user
-            const isDemo = decoded['email'] === "demo@adrata.com" ||
+      // Determine if this is a demo user - ONLY Dan and Ross can access demo workspace
+      const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
+        decoded['userId'] || '', 
+        decoded['email'] || '', 
+        decoded['workspaceId'] || ''
+      );
+      
+      const isDemo = (decoded['email'] === "demo@adrata.com" ||
                      decoded['userId'] === "demo-user-2025" ||
-                     decoded['workspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194";
+                     decoded['workspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194") && demoAccessResult.hasAccess;
       
       // SECURITY: Validate workspace access for the user
       let workspaceId: string;

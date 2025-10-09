@@ -38,6 +38,7 @@ export function SpeedrunSprintView() {
   const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [snoozedRecords, setSnoozedRecords] = useState<string[]>([]);
+  const [completedRecords, setCompletedRecords] = useState<string[]>([]);
 
   // Get workspace info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
@@ -46,10 +47,77 @@ export function SpeedrunSprintView() {
   // 🚀 PERFORMANCE: Use fast section data loading system with aggressive caching
   const fastSectionData = useFastSectionData('speedrun', 1000); // Load up to 1000 records
   
-  const allData = fastSectionData.data || [];
+  const rawData = fastSectionData.data || [];
   const loading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
   const refresh = fastSectionData.refresh || (() => {});
+
+  // 🏆 APPLY STRATEGIC RANKING: Apply the same ranking logic as PipelineView
+  const allData = React.useMemo(() => {
+    if (!rawData || rawData.length === 0) return [];
+    
+    try {
+      // Import and apply the UniversalRankingEngine
+      const { UniversalRankingEngine } = require('@/products/speedrun/UniversalRankingEngine');
+      
+      // Transform data to SpeedrunPerson format for ranking
+      const transformedData = rawData.map((item: any) => ({
+        id: item.id || `speedrun-${Math.random()}`,
+        name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
+        email: item.email || '',
+        company: item.company || item.companyName || '-',
+        title: item.title || item.jobTitle || '-',
+        phone: item.phone || item.phoneNumber || '',
+        location: item.location || item.city || '',
+        industry: item.industry || 'Technology',
+        status: item.status || 'active',
+        priority: item.priority || 'medium',
+        lastContact: item.lastContact || item.updatedAt,
+        notes: item.notes || '',
+        tags: item.tags || [],
+        source: item.source || 'speedrun',
+        enrichmentScore: item.enrichmentScore || 0,
+        buyerGroupRole: item.buyerGroupRole || 'unknown',
+        currentStage: item.currentStage || 'initial',
+        nextAction: item.nextAction || '',
+        nextActionDate: item.nextActionDate || '',
+        createdAt: item.createdAt || new Date().toISOString(),
+        updatedAt: item.updatedAt || new Date().toISOString(),
+        assignedUser: item.assignedUser || null,
+        workspaceId: item.workspaceId || '',
+        relationship: item.relationship || 'prospect',
+        bio: item.bio || '',
+        interests: item.interests || [],
+        recentActivity: item.recentActivity || '',
+        commission: item.commission || '50K',
+        linkedin: item.linkedin || item.linkedinUrl || '',
+        photo: item.photo || null,
+        ...item // Include any additional fields
+      }));
+      
+      // Apply strategic ranking
+      const rankedData = UniversalRankingEngine.rankProspectsForWinning(
+        transformedData,
+        'workspace'
+      );
+      
+      console.log('🏆 [SPEEDRUN SPRINT RANKING] Applied strategic ranking:', {
+        originalCount: rawData.length,
+        rankedCount: rankedData.length,
+        sampleRanks: rankedData.slice(0, 5).map(p => ({
+          name: p.name,
+          company: p.company,
+          rank: p.winningScore?.rank,
+          totalScore: p.winningScore?.totalScore
+        }))
+      });
+      
+      return rankedData;
+    } catch (error) {
+      console.error('❌ [SPEEDRUN SPRINT RANKING] Failed to apply strategic ranking:', error);
+      return rawData; // Fallback to original data
+    }
+  }, [rawData]);
   
   // 🚀 PERFORMANCE: Pre-load speedrun data on component mount
   useEffect(() => {
@@ -66,6 +134,14 @@ export function SpeedrunSprintView() {
   
 
   
+  // Load completed records from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedCompleted = JSON.parse(localStorage.getItem('speedrunCompletedRecords') || '[]');
+      setCompletedRecords(storedCompleted);
+    }
+  }, []);
+
   // Clean up expired snoozes on mount and when allData changes
   useEffect(() => {
     if (typeof window !== 'undefined' && allData) {
@@ -85,14 +161,15 @@ export function SpeedrunSprintView() {
     }
   }, [allData]);
   
-  // Filter out snoozed records (without modifying localStorage in render)
+  // Filter out snoozed records and organize completed records (without modifying localStorage in render)
   const filteredData = useMemo(() => {
     if (!allData || typeof window === 'undefined') return allData || [];
     
     const snoozedRecords = JSON.parse(localStorage.getItem('snoozedRecords') || '[]');
     const now = new Date();
     
-    return allData.filter(record => {
+    // First filter out snoozed records
+    const activeRecords = allData.filter(record => {
       const snoozedRecord = snoozedRecords.find((snooze: any) => snooze['recordId'] === record.id);
       
       if (snoozedRecord) {
@@ -103,7 +180,24 @@ export function SpeedrunSprintView() {
       
       return true;
     });
-  }, [allData]);
+
+    // Separate completed and active records
+    const active = activeRecords.filter(record => !completedRecords.includes(record.id));
+    const completed = activeRecords.filter(record => completedRecords.includes(record.id));
+    
+    // Debug: Log completed records found
+    if (completedRecords.length > 0) {
+      console.log('🔍 [FILTERED DATA] Completed records debug:', {
+        completedRecordsIds: completedRecords,
+        completedRecordsFound: completed.map(r => ({ id: r.id, name: r.name, rank: r.rank })),
+        totalActiveRecords: active.length,
+        totalCompletedRecords: completed.length
+      });
+    }
+    
+    // Return active records first, then completed records at the bottom
+    return [...active, ...completed];
+  }, [allData, completedRecords]);
   
   // Log fixed sprint configuration
   useEffect(() => {
@@ -112,7 +206,56 @@ export function SpeedrunSprintView() {
     }
   }, [filteredData?.length]);
   
-  const data = filteredData ? filteredData.slice(currentSprintIndex * SPRINT_SIZE, (currentSprintIndex + 1) * SPRINT_SIZE) : [];
+  // 🏃‍♂️ SPRINT LOGIC: Show 10 total items per sprint with completed ones at bottom
+  const data = React.useMemo(() => {
+    if (!filteredData || filteredData.length === 0) return [];
+    
+    // Separate active and completed records
+    const activeRecords = filteredData.filter(record => !completedRecords.includes(record.id));
+    const completedRecordsInSprint = filteredData.filter(record => completedRecords.includes(record.id));
+    
+    // Calculate sprint boundaries based on strategic rank, not array position
+    const sprintStartIndex = currentSprintIndex * SPRINT_SIZE;
+    const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
+    
+    // Get active records for this sprint based on their strategic rank
+    // Sort active records by their rank to ensure proper order
+    const sortedActiveRecords = activeRecords.sort((a, b) => {
+      const rankA = a.rank || 999999;
+      const rankB = b.rank || 999999;
+      return rankA - rankB;
+    });
+    
+    const activeInSprint = sortedActiveRecords.slice(sprintStartIndex, sprintEndIndex);
+    
+    // Always show completed records at the bottom, but limit total to SPRINT_SIZE
+    const maxActiveSlots = SPRINT_SIZE - completedRecordsInSprint.length;
+    const finalActiveInSprint = activeInSprint.slice(0, Math.max(0, maxActiveSlots));
+    const completedInSprint = completedRecordsInSprint;
+    
+    // Combine active first, then completed
+    const sprintData = [...finalActiveInSprint, ...completedInSprint];
+    
+    console.log(`🏃‍♂️ [SPRINT ${currentSprintIndex + 1}] Sprint data:`, {
+      sprintIndex: currentSprintIndex,
+      activeInSprint: finalActiveInSprint.length,
+      completedInSprint: completedInSprint.length,
+      totalInSprint: sprintData.length,
+      maxActiveSlots,
+      activeRecords: finalActiveInSprint.map(r => ({ 
+        name: r.name, 
+        rank: r.rank,
+        displayRank: r.rank
+      })),
+      completedRecords: completedInSprint.map(r => ({ 
+        name: r.name, 
+        rank: r.rank 
+      }))
+    });
+    
+    return sprintData;
+  }, [filteredData, currentSprintIndex, completedRecords]);
+  
   const totalSprints = TOTAL_SPRINTS; // Fixed at 3 sprints
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
   const currentSprintNumber = currentSprintIndex + 1;
@@ -137,6 +280,17 @@ export function SpeedrunSprintView() {
   // Keyboard shortcuts for Command+Enter
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if any modal is already open - if so, don't interfere
+      const hasOpenModal = document.querySelector('[role="dialog"]') || 
+                          document.querySelector('.fixed.inset-0') ||
+                          document.querySelector('.z-50') ||
+                          showCompleteModal ||
+                          showAddActionModal;
+      
+      if (hasOpenModal) {
+        return; // Let the modal handle its own keyboard shortcuts
+      }
+      
       // Command+Enter for completing as DONE
       if (
         (event.metaKey || event.ctrlKey) &&
@@ -255,29 +409,26 @@ export function SpeedrunSprintView() {
       const result = await response.json();
       console.log(`✅ Action log saved for ${selectedRecord.name || selectedRecord.fullName}:`, result);
 
-      // Mark the current record as completed and move it to the bottom
+      // Mark the current record as completed
+      const newCompletedRecords = [...completedRecords, selectedRecord.id];
+      setCompletedRecords(newCompletedRecords);
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('speedrunCompletedRecords', JSON.stringify(newCompletedRecords));
+      }
+      
+      // Move to next record
       const currentIndex = data.findIndex(r => r['id'] === selectedRecord.id);
-      if (currentIndex >= 0) {
-        // Remove from current position and add to end
-        const completedRecord = data[currentIndex];
-        const updatedData = [...data];
-        updatedData.splice(currentIndex, 1);
-        updatedData.push(completedRecord);
-        
-        // Update the data state by refreshing the data
-        // Note: The data will be updated through the state change above
-        
-        // Move to next record (which is now at the same index)
-        const nextRecord = updatedData[currentIndex];
-        if (nextRecord) {
-          setSelectedRecord(nextRecord);
-        } else if (hasNextSprint) {
-          // Current sprint done, move to next sprint
-          setCurrentSprintIndex(currentSprintIndex + 1);
-        } else {
-          // All sprints done, go back to speedrun list
-          navigateToPipeline('speedrun');
-        }
+      const nextRecord = data[currentIndex + 1];
+      if (nextRecord) {
+        setSelectedRecord(nextRecord);
+      } else if (hasNextSprint) {
+        // Current sprint done, move to next sprint
+        setCurrentSprintIndex(currentSprintIndex + 1);
+      } else {
+        // All sprints done, go back to speedrun list
+        navigateToPipeline('speedrun');
       }
 
       // Close modal
@@ -422,12 +573,6 @@ export function SpeedrunSprintView() {
           <p className="text-gray-600 mb-4">
             No speedrun records found. Add some prospects to your speedrun to get started.
           </p>
-          <button
-            onClick={() => navigateToPipeline('speedrun')}
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            Back to Speedrun
-          </button>
         </div>
       </div>
     );
@@ -443,7 +588,7 @@ export function SpeedrunSprintView() {
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
             </div>
-            <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{data.length}/{SPRINT_SIZE}</span>
+            <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
           </div>
           <div className="text-xs text-gray-500">
             {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
@@ -465,39 +610,65 @@ export function SpeedrunSprintView() {
         
         {data.map((record: any, index: number) => {
           const isSelected = selectedRecord?.id === record.id;
+          const isCompleted = completedRecords.includes(record.id);
           const displayName = record.fullName || 
                              (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
                              record.name || 
                              'Unknown';
+          
+          // Calculate the correct display number based on strategic rank
+          const actualRank = record.rank || 999999;
+          const displayNumber = isCompleted ? '✓' : actualRank;
           
           return (
             <div
               key={record.id || index}
               onClick={() => handleRecordSelect(record)}
               className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
-                isSelected 
-                  ? 'bg-gray-100 text-gray-900 border-gray-200 shadow-sm' 
-                  : 'bg-white hover:bg-gray-50 border-gray-100 hover:border-gray-200 hover:shadow-sm'
+                isCompleted
+                  ? 'bg-gray-50 text-gray-400 border-gray-200 opacity-60'
+                  : isSelected 
+                    ? 'bg-gray-100 text-gray-900 border-gray-200 shadow-sm' 
+                    : 'bg-white hover:bg-gray-50 border-gray-100 hover:border-gray-200 hover:shadow-sm'
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-2xl ${
-                      isSelected 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-600'
+                      isCompleted
+                        ? 'bg-green-100 text-green-800'
+                        : isSelected 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-600'
                     }`}>
-                      {index + 1}
+                      {displayNumber}
                     </span>
-                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-gray-900' : 'text-gray-900'}`}>
+                    <h3 className={`text-sm font-semibold truncate ${
+                      isCompleted 
+                        ? 'text-gray-400' 
+                        : isSelected ? 'text-gray-900' : 'text-gray-900'
+                    }`}>
                       {displayName}
                     </h3>
+                    {isCompleted && (
+                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                        SUCCESS
+                      </span>
+                    )}
                   </div>
-                  <p className={`text-xs truncate mb-1 ${isSelected ? 'text-gray-600' : 'text-gray-600'}`}>
+                  <p className={`text-xs truncate mb-1 ${
+                    isCompleted 
+                      ? 'text-gray-400' 
+                      : isSelected ? 'text-gray-600' : 'text-gray-600'
+                  }`}>
                     {record.title || record.jobTitle || 'No Title'}
                   </p>
-                  <p className={`text-xs truncate ${isSelected ? 'text-gray-500' : 'text-gray-500'}`}>
+                  <p className={`text-xs truncate ${
+                    isCompleted 
+                      ? 'text-gray-400' 
+                      : isSelected ? 'text-gray-500' : 'text-gray-500'
+                  }`}>
                     {record.company || 'Unknown Company'}
                   </p>
                 </div>
@@ -507,15 +678,6 @@ export function SpeedrunSprintView() {
         })}
       </div>
 
-      {/* Navigation Footer */}
-      <div className="p-4 border-t border-gray-100 bg-white">
-        <button
-          onClick={() => navigateToPipeline('speedrun')}
-          className="w-full px-4 py-2.5 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-        >
-          Back to Speedrun
-        </button>
-      </div>
     </div>
   );
 

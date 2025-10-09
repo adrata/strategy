@@ -72,10 +72,53 @@ export function OverviewTab({
   const activityContext = IntelligentStageProgression.getEnhancedRankingContext(person);
 
   return (
-    <>
+    <div className="space-y-6">
+      {/* Header - Outside the box like intelligence design */}
+      <div>
+        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+          Lead Overview
+        </h2>
+        <p className="text-[var(--muted)]">
+          Comprehensive lead information and engagement insights
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => {
+            // TODO: Implement update record functionality
+            console.log('Update Record clicked for:', person.name);
+          }}
+          className="px-4 py-2 bg-white border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+        >
+          Update Record
+        </button>
+        
+        <button
+          onClick={() => {
+            // TODO: Implement advance to prospect functionality
+            console.log('Advance to Prospect clicked for:', person.name);
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          Advance to Prospect
+        </button>
+        
+        <button
+          onClick={() => {
+            // TODO: Implement add action functionality
+            console.log('Add Action clicked for:', person.name);
+          }}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors"
+        >
+          Add Action
+        </button>
+      </div>
+
       {/* Contextual Activity Banner */}
       {contextualInsight && (
-        <div className={`mb-6 p-4 rounded-lg border ${
+        <div className={`p-4 rounded-lg border ${
           activityContext?.priority === 'high' ? 'bg-red-50 border-red-200' :
           activityContext?.priority === 'medium' ? 'bg-orange-50 border-orange-200' :
           'bg-gray-50 border-gray-200'
@@ -112,13 +155,22 @@ export function OverviewTab({
         </div>
       )}
 
-      {/* At a Glance */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
-          At a Glance
-        </h2>
+      {/* At a Glance - Now in a box */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              At a Glance
+            </h3>
+            <p className="text-sm text-[var(--muted)] mt-1">
+              Key metrics and status information
+            </p>
+          </div>
+        </div>
+        
         <div className="flex flex-wrap gap-4">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">Role</div>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getRoleColor(person.customFields?.monacoEnrichment?.buyerGroupAnalysis?.role || person.relationship || "Contact")}`}
@@ -129,7 +181,7 @@ export function OverviewTab({
                 "Contact"}
             </span>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">
               Last Engagement
             </div>
@@ -146,7 +198,7 @@ export function OverviewTab({
               })()}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">
               Next Step
             </div>
@@ -162,12 +214,20 @@ export function OverviewTab({
         </div>
       </div>
 
-      {/* Main info */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
-            Basic Information
-          </h2>
+      {/* Main info - Now in boxes */}
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                Basic Information
+              </h3>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Contact details and personal information
+              </p>
+            </div>
+          </div>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[var(--muted)]">
@@ -357,10 +417,18 @@ export function OverviewTab({
             </div>
           </div>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
-            Lead Information
-          </h2>
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+                <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                Lead Information
+              </h3>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Lead status and engagement details
+              </p>
+            </div>
+          </div>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[var(--muted)]">
@@ -413,31 +481,56 @@ export function OverviewTab({
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        <div className="space-y-2">
-          <div className="text-xl font-semibold text-[var(--foreground)] mb-1 flex items-center gap-2">
-            Wants
-          </div>
-          <div className="text-lg text-[var(--foreground)]">
-            {generatePersonalWants(person)}
+      {/* Wants and Needs - Now in a box */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+              Wants & Needs Analysis
+            </h3>
+            <p className="text-sm text-[var(--muted)] mt-1">
+              Personal motivations and requirements
+            </p>
           </div>
         </div>
-        <div className="space-y-2">
-          <div className="text-xl font-semibold text-[var(--foreground)] mb-1 flex items-center gap-2">
-            Needs
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <div className="text-lg font-semibold text-[var(--foreground)] mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+              Wants
+            </div>
+            <div className="text-[var(--foreground)] bg-white border border-[var(--border)] rounded-lg p-4">
+              {generatePersonalWants(person)}
+            </div>
           </div>
-          <div className="text-lg text-[var(--foreground)]">
-            {generatePersonalNeeds(person)}
+          <div className="space-y-2">
+            <div className="text-lg font-semibold text-[var(--foreground)] mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+              Needs
+            </div>
+            <div className="text-[var(--foreground)] bg-white border border-[var(--border)] rounded-lg p-4">
+              {generatePersonalNeeds(person)}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Deep Value Reports - Hidden for Dano's workspace */}
       {!isDanoWorkspace && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
-            Deep Value Reports
-          </h2>
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                Deep Value Reports
+              </h3>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                AI-generated personalized value propositions
+              </p>
+            </div>
+          </div>
           {isLoadingReports ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
@@ -480,6 +573,6 @@ export function OverviewTab({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }

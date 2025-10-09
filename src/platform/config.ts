@@ -135,9 +135,6 @@ export const QUICK_ACTIONS: Record<string, string[]> = {
 
 export const DEFAULT_FORM_DATA = {
   name: "",
-  email: "",
-  phone: "",
-  company: "",
   title: "",
   source: "Website",
   notes: "",

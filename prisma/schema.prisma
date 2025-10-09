@@ -25,7 +25,7 @@ model Chat {
 model RankingEvent {
   id           String    @id @default(ulid())
   workspaceId  String    @db.VarChar(30)
-  userId       String?     @db.VarChar(30)
+  userId       String?   @db.VarChar(30)
   eventType    String    @db.VarChar(50)
   entityType   String    @db.VarChar(50)
   entityId     String    @db.VarChar(30)
@@ -610,6 +610,13 @@ model companies {
   hqRegion                String[]
   hqCountryIso2           String?             @db.VarChar(2)
   hqCountryIso3           String?             @db.VarChar(3)
+  status                  String?             @default("active") @db.VarChar(20)
+  parentCompanyName       String?             @map("parent_company_name") @db.VarChar(255)
+  parentCompanyDomain     String?             @map("parent_company_domain") @db.VarChar(255)
+  confidence              Decimal?            @db.Decimal(5, 2)
+  sources                 String[]            @default([])
+  acquisitionDate         DateTime?           @db.Timestamp(6)
+  lastVerified            DateTime?           @db.Timestamp(6)
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])

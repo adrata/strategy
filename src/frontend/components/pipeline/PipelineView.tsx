@@ -122,23 +122,23 @@ export const PipelineView = React.memo(function PipelineView({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['Rank', 'Company', 'Name', 'Status', 'Last Action', 'Next Action', 'Actions'];
+        return ['rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'];
       case 'companies':
-        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
+        return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
       case 'leads':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
       case 'prospects':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
       case 'opportunities':
-        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
+        return ['rank', 'name', 'company', 'status', 'nextAction', 'lastAction', 'actions'];
       case 'people':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
       case 'clients':
-        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
+        return ['rank', 'company', 'industry', 'status', 'nextAction', 'lastAction', 'actions'];
       case 'partners':
-        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action', 'Actions'];
+        return ['rank', 'company', 'nextAction', 'lastAction', 'actions'];
       default:
-        return ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Actions'];
+        return ['rank', 'company', 'name', 'title', 'lastAction', 'actions'];
     }
   };
   
@@ -198,7 +198,7 @@ export const PipelineView = React.memo(function PipelineView({
         try {
           const jwt = await import('jsonwebtoken');
           const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.verify(session.accessToken, secret) as any;
+          const decoded = jwt.default.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
             console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return decoded.workspaceId;

@@ -13,6 +13,7 @@ import { InlineEditField } from './InlineEditField';
 import { TabErrorBoundary } from './TabErrorBoundary';
 import { Loader, CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { SuccessMessage } from '@/platform/ui/components/SuccessMessage';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { useInlineEdit } from '@/platform/hooks/useInlineEdit';
 import { ProfileImageUploadModal } from './ProfileImageUploadModal';
 import { PipelineProgress } from './PipelineProgress';
@@ -302,17 +303,49 @@ export function UniversalRecordTemplate({
     };
   }, [record?.id, recordType]);
 
-  // Keyboard shortcut for Add Action (⌘⏎)
+  // Keyboard shortcut for Add Action (⌘⏎) and Start Speedrun (⌘⏎)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if we're in an input field or textarea
+      const target = event.target as HTMLElement;
+      const isInputField =
+        target['tagName'] === "INPUT" ||
+        target['tagName'] === "TEXTAREA" ||
+        target['contentEditable'] === "true";
+
+      // Check if any modal or popup is open that should take precedence
+      const hasOpenModal = document.querySelector('[role="dialog"]') || 
+                          document.querySelector('.fixed.inset-0') ||
+                          document.querySelector('[data-slide-up]') ||
+                          document.querySelector('.slide-up-visible') ||
+                          document.querySelector('.z-50'); // CompleteActionModal uses z-50
+
       // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        // Only trigger if we're on a speedrun sprint page and have a record
-        const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
-        if (isOnSprintPage && record && recordType === 'speedrun') {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && !isInputField && !hasOpenModal) {
+        // Only trigger if we have a record
+        if (record && recordType === 'speedrun') {
           event.preventDefault();
-          console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
-          setIsAddActionModalOpen(true);
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          
+          // Check if we're on a speedrun sprint page (Add Action) or individual record page (Start Speedrun)
+          const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
+          
+          if (isOnSprintPage) {
+            console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
+            setIsAddActionModalOpen(true);
+          } else {
+            console.log('⌨️ [UniversalRecordTemplate] Start Speedrun keyboard shortcut triggered');
+            // Navigate to speedrun/sprint page
+            const currentPath = window.location.pathname;
+            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+            if (workspaceMatch) {
+              const workspaceSlug = workspaceMatch[1];
+              window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+            } else {
+              window.location.href = '/speedrun/sprint';
+            }
+          }
         }
       }
     };
@@ -563,8 +596,8 @@ export function UniversalRecordTemplate({
       if (updatedData['bestContactMethod']) updatePayload['bestContactMethod'] = updatedData['bestContactMethod'];
       
       // Make API call to update the record using unified API
-      const response = await fetch('/api/data/unified', {
-        method: 'PUT',
+      const response = await authFetch('/api/data/unified', {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -964,7 +997,7 @@ export function UniversalRecordTemplate({
       console.log('⬆️ [UNIVERSAL] Advancing to prospect:', record.id);
       
       // Make API call to advance lead to prospect
-      const response = await fetch('/api/data/unified', {
+      const response = await authFetch('/api/data/unified', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1221,6 +1254,12 @@ export function UniversalRecordTemplate({
     try {
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Saving record updates...');
+      console.log('🔍 [DEBUG] Record object:', {
+        id: record?.id,
+        fullName: record?.fullName,
+        company: record?.company,
+        workspaceId: record?.workspaceId
+      });
       
       // Collect form data from all tabs using the modal element
       const modalElement = document.querySelector('[data-edit-modal]');
@@ -1276,22 +1315,34 @@ export function UniversalRecordTemplate({
         valueDriver: (modalElement.querySelector('input[placeholder*="What drives value"]') as HTMLInputElement)?.value || record?.valueDriver,
       };
       
-      // Make API call to update the record
-      const response = await fetch(`/api/records/${record?.id}/update`, {
-        method: 'PUT',
+      // Make API call to update the record using unified API
+      const requestPayload = {
+        type: recordType,
+        action: 'update',
+        id: record?.id,
+        data: formData,
+        workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
+        userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+      };
+      
+      console.log('🔍 [DEBUG] API Request Payload:', requestPayload);
+      
+      const response = await authFetch('/api/data/unified', {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          recordType: recordType,
-          workspaceId: record?.workspaceId || 'default',
-          userId: record?.userId || 'default'
-        }),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to update record: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('❌ [DEBUG] API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText
+        });
+        throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const result = await response.json();
@@ -1316,6 +1367,51 @@ export function UniversalRecordTemplate({
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error updating record:', error);
       showMessage(`Error: ${error instanceof Error ? error.message : 'Failed to update record'}`, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRecordFromModal = async () => {
+    if (!record?.id) return;
+    
+    const recordName = record.fullName || record.name || record.companyName || 'this record';
+    
+    if (deleteConfirmName !== recordName) {
+      alert(`Please type "${recordName}" to confirm deletion.`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Perform soft delete via API
+      const response = await fetch('/api/data/unified', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: recordType,
+          id: record.id,
+          action: 'soft_delete'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
+      }
+
+      showMessage('Record deleted successfully!', 'success');
+      setIsEditRecordModalOpen(false);
+      
+      // Call onBack to return to the previous view
+      if (onBack) {
+        onBack();
+      }
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      showMessage('Failed to delete record. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -1364,7 +1460,7 @@ export function UniversalRecordTemplate({
             onClick={() => setIsAddActionModalOpen(true)}
             className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
           >
-            Add Action (⌘⏎)
+            Add Action ({getCommonShortcut('SUBMIT')})
           </button>
         );
       } else {
@@ -1385,11 +1481,37 @@ export function UniversalRecordTemplate({
             }}
             className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
           >
-            Start Speedrun
+            Start Speedrun ({getCommonShortcut('SUBMIT')})
           </button>
         );
       }
     } else {
+      // Context-aware advance button (moved before Add Action)
+      if (recordType === 'leads') {
+        // Advance to Lead button - LIGHT GRAY BUTTON (for leads)
+        buttons.push(
+          <button
+            key="advance-to-prospect"
+            onClick={handleAdvanceToProspect}
+            className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+          >
+            Advance to Prospect
+          </button>
+        );
+      } else if (recordType === 'prospects') {
+        // Advance to Opportunity button - LIGHT BLUE BUTTON (matching list page style)
+        buttons.push(
+          <button
+            key="advance-to-opportunity"
+            onClick={handleAdvanceToOpportunity}
+            className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+          >
+            Advance to Opportunity
+          </button>
+        );
+      }
+
+      // Add Action button - BLUE BUTTON (matching list page style)
       buttons.push(
         <button
           key="add-action"
@@ -1401,30 +1523,6 @@ export function UniversalRecordTemplate({
       );
     }
 
-    // Context-aware advance button
-    if (recordType === 'leads') {
-      // Advance to Lead button - LIGHT GRAY BUTTON (for leads)
-      buttons.push(
-        <button
-          key="advance-to-prospect"
-          onClick={handleAdvanceToProspect}
-          className="px-3 py-1.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
-        >
-          Advance to Prospect
-        </button>
-      );
-    } else if (recordType === 'prospects') {
-      // Advance to Opportunity button - LIGHT BLUE BUTTON (matching list page style)
-      buttons.push(
-        <button
-          key="advance-to-opportunity"
-          onClick={handleAdvanceToOpportunity}
-          className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
-        >
-          Advance to Opportunity
-        </button>
-      );
-    }
 
 
     return buttons;
@@ -2053,7 +2151,8 @@ export function UniversalRecordTemplate({
                   { id: 'intelligence', label: 'Intelligence' },
                   { id: 'career', label: 'Career' },
                   { id: 'activity', label: 'Activity' },
-                  { id: 'notes', label: 'Notes' }
+                  { id: 'notes', label: 'Notes' },
+                  { id: 'delete', label: 'Delete' }
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -2507,22 +2606,92 @@ export function UniversalRecordTemplate({
                   </div>
                 </div>
               )}
+
+              {activeEditTab === 'delete' && (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Delete Record
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6">
+                      This action cannot be undone. This will soft delete the record and remove it from your active lists.
+                    </p>
+                  </div>
+
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-red-800">
+                          Are you sure you want to delete this record?
+                        </h3>
+                        <div className="mt-2 text-sm text-red-700">
+                          <p>
+                            To confirm, type <strong>"{record?.fullName || record?.name || 'this record'}"</strong> in the box below:
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700 mb-2">
+                      Type the name to confirm deletion
+                    </label>
+                    <input
+                      id="delete-confirm"
+                      type="text"
+                      value={deleteConfirmName}
+                      onChange={(e) => setDeleteConfirmName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      placeholder={`Type "${record?.fullName || record?.name || 'this record'}" to confirm`}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-              <button
-                onClick={() => setIsEditRecordModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveRecord}
-                className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
-              >
-                Save Changes
-              </button>
+              {activeEditTab === 'delete' ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setDeleteConfirmName('');
+                      setActiveEditTab('overview');
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteRecordFromModal}
+                    disabled={loading || deleteConfirmName !== (record?.fullName || record?.name || 'this record')}
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loading ? 'Deleting...' : 'Delete Record'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setIsEditRecordModalOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveRecord}
+                    className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

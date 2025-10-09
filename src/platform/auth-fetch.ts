@@ -12,25 +12,27 @@ export async function authFetch(
   url: string,
   options: AuthFetchOptions = {},
 ): Promise<Response> {
-  // CRITICAL: In desktop mode, use mock responses for /api/ routes
-  // EXCEPTION: Ross-Dan chat should use real API even in desktop mode
-  if (isDesktop()) {
-    // For /api/ routes, return mock authenticated responses
-    // EXCEPT for Ross-Dan chat which needs real data
-    if (url.startsWith("/api/") && !url.includes("/api/chat/ross-dan")) {
-      const mockData = {
-        user: { id: "1", name: "Desktop User", email: "user@adrata.com" },
-        status: "success",
-        message: "Desktop mode - mock authenticated response",
-      };
+  // TEMPORARILY DISABLED: Mock responses for desktop mode
+  // TODO: Re-enable with proper platform detection
+  // if (isDesktop()) {
+  //   // For /api/ routes, return mock authenticated responses
+  //   // EXCEPT for data operations and Ross-Dan chat which need real data
+  //   if (url.startsWith("/api/") && 
+  //       !url.includes("/api/chat/ross-dan") &&
+  //       !url.includes("/api/data/")) {
+  //     const mockData = {
+  //       user: { id: "1", name: "Desktop User", email: "user@adrata.com" },
+  //       status: "success",
+  //       message: "Desktop mode - mock authenticated response",
+  //     };
 
-      return new Response(JSON.stringify(mockData), {
-        status: 200,
-        statusText: "OK",
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  }
+  //     return new Response(JSON.stringify(mockData), {
+  //       status: 200,
+  //       statusText: "OK",
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //   }
+  // }
 
   // Web mode - normal authenticated fetch
   const session = await UnifiedAuthService.getSession();

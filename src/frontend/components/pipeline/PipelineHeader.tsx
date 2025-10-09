@@ -18,6 +18,7 @@ import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActio
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { 
@@ -374,6 +375,53 @@ export function PipelineHeader({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleAction, section]);
+
+  // Add keyboard shortcut for Cmd+Enter (Start Speedrun or Add Action)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if we're in an input field or textarea
+      const target = event.target as HTMLElement;
+      const isInputField =
+        target['tagName'] === "INPUT" ||
+        target['tagName'] === "TEXTAREA" ||
+        target['contentEditable'] === "true";
+
+      // Check if any modal or popup is open that should take precedence
+      const hasOpenModal = document.querySelector('[role="dialog"]') || 
+                          document.querySelector('.fixed.inset-0') ||
+                          document.querySelector('[data-slide-up]') ||
+                          document.querySelector('.slide-up-visible');
+
+      // Command+Enter - only when not in input fields and no modals open
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        (event['key'] === "Enter" || event['keyCode'] === 13) &&
+        !isInputField &&
+        !hasOpenModal
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        if (section === 'speedrun') {
+          // Start Speedrun for speedrun section
+          console.log(`⌨️ Command+Enter pressed for Start Speedrun`);
+          navigateToPipeline('speedrun/sprint');
+        } else {
+          // Add Action for other sections
+          console.log(`⌨️ Command+Enter pressed for Add Action in ${section} section`);
+          setSelectedRecord(null);
+          setShowAddActionModal(true);
+        }
+        
+        return false;
+      }
+    };
+
+    // Add event listener with capture to ensure we get the event first
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
+  }, [section, navigateToPipeline]);
 
 
   
@@ -970,7 +1018,7 @@ export function PipelineHeader({
                           disabled={loading}
                           className="bg-blue-100 text-blue-800 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {(sectionInfo as any).secondaryActionButton}
+                          {section === 'speedrun' ? `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>
                       )}
                     </>
@@ -1006,7 +1054,7 @@ export function PipelineHeader({
                           disabled={loading}
                           className="bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {(sectionInfo as any).secondaryActionButton}
+                          {`${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>
                       )}
                     </>

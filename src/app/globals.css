@@ -644,8 +644,26 @@ button:focus {
 /* Add Modal specific focus styles - override global focus removal */
 .add-modal-input:focus {
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
-  border-color: #3b82f6 !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+/* Override browser default validation styles for required inputs */
+.add-modal-input:required:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+}
+
+.add-modal-input:required:invalid {
+  border-color: var(--border) !important;
+  box-shadow: none !important;
+}
+
+.add-modal-input:required:invalid:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: var(--border) !important;
 }
 
 /* Override default link colors globally */

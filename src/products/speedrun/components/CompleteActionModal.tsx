@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
+import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
 
 interface CompleteActionModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface CompleteActionModalProps {
   personName: string;
   isLoading?: boolean;
   section?: string; // The section type to determine color scheme
+  initialData?: ActionLogData; // For undo functionality
 }
 
 export interface ActionLogData {
@@ -28,17 +30,45 @@ export function CompleteActionModal({
   onSubmit,
   personName,
   isLoading = false,
-  section = 'speedrun'
+  section = 'speedrun',
+  initialData
 }: CompleteActionModalProps) {
   const { users, currentUser } = useWorkspaceUsers();
+  const notesRef = useRef<HTMLTextAreaElement>(null);
   
-  const [formData, setFormData] = useState<ActionLogData>({
-    person: personName,
-    type: 'LinkedIn Friend Request',
-    time: 'Now',
-    action: '',
-    actionPerformedBy: currentUser?.id || ''
+  const [formData, setFormData] = useState<ActionLogData>(() => {
+    // Use initialData if provided (for undo), otherwise use defaults
+    return initialData ? {
+      ...initialData,
+      person: personName // Always use current personName
+    } : {
+      person: personName,
+      type: 'LinkedIn Friend Request',
+      time: 'Now',
+      action: '',
+      actionPerformedBy: currentUser?.id || ''
+    };
   });
+
+  // Update form data when initialData changes (for undo functionality)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        ...initialData,
+        person: personName // Always use current personName
+      });
+    }
+  }, [initialData, personName]);
+
+  // Auto-focus notes field when modal opens
+  useEffect(() => {
+    if (isOpen && notesRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        notesRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,18 +76,103 @@ export function CompleteActionModal({
       alert('Please enter action details');
       return;
     }
+    
+    // Check if this is an undo action (has initialData)
+    const isUndoAction = !!initialData;
+    
+    if (isUndoAction) {
+      console.log('🔄 Resubmitting action after undo - will save to database');
+    }
+    
     onSubmit(formData);
+  };
+
+  // Cross-platform keyboard shortcut detection
+  const isModifierKeyPressed = (event: KeyboardEvent | React.KeyboardEvent) => {
+    // Mac: metaKey (⌘), Windows/Linux: ctrlKey (Ctrl)
+    return event.metaKey || event.ctrlKey;
   };
 
   // Handle keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    if (isModifierKeyPressed(e) && e.key === 'Enter') {
       e.preventDefault();
       if (!isLoading && formData.action.trim()) {
         handleSubmit(e as any);
       }
     }
   };
+
+  // Document-level keyboard shortcut handler for better reliability
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      // Handle action type shortcuts (1-5) with cycling
+      // Check both key and code for better cross-platform compatibility
+      const isNumberKey = (event.key >= '1' && event.key <= '5') || 
+                         (event.code >= 'Digit1' && event.code <= 'Digit5') ||
+                         (event.code >= 'Numpad1' && event.code <= 'Numpad5');
+      
+      if (isNumberKey) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        const actionTypes: ActionLogData['type'][] = [
+          'LinkedIn Friend Request',
+          'LinkedIn InMail', 
+          'LinkedIn DM',
+          'Phone',
+          'Email'
+        ];
+        
+        // Extract number from key or code
+        let pressedNumber: number;
+        if (event.key >= '1' && event.key <= '5') {
+          pressedNumber = parseInt(event.key);
+        } else if (event.code.includes('Digit')) {
+          pressedNumber = parseInt(event.code.replace('Digit', ''));
+        } else if (event.code.includes('Numpad')) {
+          pressedNumber = parseInt(event.code.replace('Numpad', ''));
+        } else {
+          return; // Fallback if we can't determine the number
+        }
+        
+        const currentType = formData.type;
+        const currentIndex = actionTypes.indexOf(currentType);
+        
+        // If pressing the same number as current selection, cycle to next option
+        if (currentIndex === pressedNumber - 1) {
+          const nextIndex = (currentIndex + 1) % actionTypes.length;
+          setFormData(prev => ({ ...prev, type: actionTypes[nextIndex] }));
+        } else {
+          // Otherwise, select the pressed number
+          setFormData(prev => ({ ...prev, type: actionTypes[pressedNumber - 1] }));
+        }
+        return;
+      }
+
+      // Handle submit shortcut
+      if (isModifierKeyPressed(event) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        if (!isLoading && formData.action.trim()) {
+          handleSubmit(event as any);
+        }
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleDocumentKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleDocumentKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleDocumentKeyDown, true);
+      document.removeEventListener('keydown', handleDocumentKeyDown, false);
+    };
+  }, [isOpen, isLoading, formData.action, formData.type]);
 
   const handleClose = () => {
     if (!isLoading) {
@@ -88,10 +203,13 @@ export function CompleteActionModal({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-[var(--foreground)]">
-                  Complete Action
+                  {initialData ? '🔄 Undo Action' : 'Complete Action'}
                 </h2>
                 <p className="text-sm text-[var(--muted)]">
-                  Log your interaction with {personName}
+                  {initialData 
+                    ? `Resubmit your interaction with ${personName} (undo mode - will resave to database)`
+                    : `Log your interaction with ${personName}`
+                  }
                 </p>
               </div>
             </div>
@@ -130,12 +248,20 @@ export function CompleteActionModal({
                 className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors`}
                 disabled={isLoading}
               >
-                <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
-                <option value="LinkedIn InMail">LinkedIn InMail</option>
-                <option value="LinkedIn DM">LinkedIn DM</option>
-                <option value="Phone">Phone</option>
-                <option value="Email">Email</option>
+                <option value="LinkedIn Friend Request">1. LinkedIn Friend Request</option>
+                <option value="LinkedIn InMail">2. LinkedIn InMail</option>
+                <option value="LinkedIn DM">3. LinkedIn DM</option>
+                <option value="Phone">4. Phone</option>
+                <option value="Email">5. Email</option>
               </select>
+              <p className="text-xs text-[var(--muted)] mt-1">
+                Press 1-5 to select, press same number to cycle through options
+                {!initialData && (
+                  <span className="block mt-1">
+                    After completing an action, press {getCommonShortcut('UNDO')} to undo
+                  </span>
+                )}
+              </p>
             </div>
 
             {/* Notes */}
@@ -144,6 +270,7 @@ export function CompleteActionModal({
                 Notes
               </label>
               <textarea
+                ref={notesRef}
                 id="action"
                 value={formData.action}
                 onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
@@ -183,7 +310,7 @@ export function CompleteActionModal({
                       ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' // Default state
                       : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
-                title="Complete action (⌘+Enter)"
+                title={`Complete action (${getCommonShortcut('SUBMIT')})`}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
@@ -191,7 +318,7 @@ export function CompleteActionModal({
                     Completing...
                   </div>
                 ) : (
-                  'Complete'
+                  initialData ? `Resubmit (${getCommonShortcut('SUBMIT')})` : `Complete (${getCommonShortcut('SUBMIT')})`
                 )}
               </button>
             </div>

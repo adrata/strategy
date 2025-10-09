@@ -121,134 +121,108 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // 🏢 HIERARCHICAL RANKING: Companies first, then people within each company
-        console.log(`🏆 [SPEEDRUN SECTION] Loading hierarchical ranking data for workspace: ${workspaceId}, user: ${userId}`);
+        // 🏆 SPEEDRUN: Use EXACT same logic as people section
+        console.log(`🏆 [SPEEDRUN SECTION] Loading speedrun data (same as people) for workspace: ${workspaceId}, user: ${userId}`);
         
-        // Step 1: Get top companies using hierarchical ranking (1-400) or fallback to existing ranking
-        const rankedCompanies = await prisma.companies.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            ...(isDemoMode ? {} : {
-              OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
-              ]
-            })
-          },
-          orderBy: [
-            { rank: 'asc' }, // Use hierarchical company ranking (1-400) if available
-            { updatedAt: 'desc' }
-          ],
-          take: 15, // Limit to top 15 companies for speedrun
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            vertical: true,
-            size: true,
-            rank: true,
-            updatedAt: true
-          }
-        });
-        
-        console.log(`🏢 [SPEEDRUN] Loaded ${rankedCompanies.length} ranked companies`);
-        
-        // Step 2: Get people for each company using hierarchical ranking (1-4000 per company) or fallback
-        const speedrunPeople = await prisma.people.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            companyId: {
-              in: rankedCompanies.map(c => c.id)
-            }
-          },
-          orderBy: [
-            { company: { rank: 'asc' } }, // First by company rank (1-400) if available
-            { rank: 'asc' }, // Then by person rank within company (1-4000) if available
-            { updatedAt: 'desc' }
-          ],
-          take: 50, // Limit to top 50 people total for speedrun
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            fullName: true,
-            email: true,
-            jobTitle: true,
-            phone: true,
-            linkedinUrl: true,
-            status: true,
-            lastAction: true,
-            lastActionDate: true,
-            nextAction: true,
-            nextActionDate: true,
-            assignedUserId: true,
-            workspaceId: true,
-            createdAt: true,
-            updatedAt: true,
-            rank: true,
-            companyId: true,
-            company: {
-              select: {
-                id: true,
-                name: true,
-                industry: true,
-                vertical: true,
-                size: true,
-                rank: true
+        try {
+          const speedrunPeople = await prisma.people.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null
+              // 🚀 SPEEDRUN: Use EXACT same query as people section
+            },
+            orderBy: [
+              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
+              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
+              { updatedAt: 'desc' }
+            ],
+            take: 50, // Limit to top 50 people for speedrun
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              fullName: true,
+              email: true,
+              jobTitle: true,
+              companyId: true,
+              phone: true,
+              linkedinUrl: true,
+              tags: true,
+              status: true,
+              rank: true,
+              lastAction: true,
+              lastActionDate: true,
+              nextAction: true,
+              nextActionDate: true,
+              assignedUserId: true,
+              workspaceId: true,
+              createdAt: true,
+              updatedAt: true,
+              // Include company relationship to get company name
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  rank: true
+                }
               }
             }
-          }
-        });
-        
-        console.log(`🏆 [SPEEDRUN SECTION] Loaded ${speedrunPeople.length} people in hierarchical order`);
-        
-        // Step 3: Create hierarchical ranking with company-based ordering
-        let globalRank = 1;
-        const companyRankMap = new Map();
-        rankedCompanies.forEach(company => {
-          companyRankMap.set(company.id, company.rank || 999999);
-        });
-        
-        // Transform people to speedrun format with hierarchical ranking
-        sectionData = speedrunPeople.map((person, index) => {
-          // Safe string truncation utility
-          const safeString = (str: any, maxLength: number = 1000): string => {
-            if (!str || typeof str !== 'string') return '';
-            if (str.length <= maxLength) return str;
-            return str.substring(0, maxLength) + '...';
-          };
-
-          // Calculate hierarchical rank: Company rank determines priority, person rank within company
-          const companyRank = companyRankMap.get(person.companyId) || 999999;
-          const personRank = person.rank || 999999;
+          });
           
-          return {
-            id: person.id,
-            rank: globalRank++, // Use global sequential ranking (1, 2, 3...)
-            companyRank: companyRank, // Store company rank for reference
-            personRank: personRank, // Store person rank within company
-            name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
-            company: safeString(person.company?.name || '-', 200), // Use dash instead of Unknown Company
-            title: safeString(person.jobTitle || 'Unknown Title', 300),
-            role: 'Stakeholder', // Default buyer group role
-            stage: 'Prospect', // Default stage
-            email: safeString(person.email || 'Unknown Email', 300),
-            phone: safeString(person.phone || 'Unknown Phone', 50),
-            linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
-            status: safeString(person.status || 'Unknown', 20),
-            lastAction: safeString(person.lastAction || 'No action taken', 500),
-            lastActionDate: person.lastActionDate || null,
-            nextAction: safeString(person.nextAction || 'No next action', 500),
-            nextActionDate: person.nextActionDate || null,
-            assignedUserId: person.assignedUserId || null,
-            workspaceId: person.workspaceId,
-            createdAt: person.createdAt,
-            updatedAt: person.updatedAt,
-            tags: ['speedrun'] // Add speedrun tag for consistency
-          };
-        });
+          console.log(`🏆 [SPEEDRUN SECTION] Found ${speedrunPeople.length} people`);
+          
+          // Apply same filtering and processing as people section
+          const filteredSpeedrunData = speedrunPeople.filter(person => 
+            !shouldExcludeCompany(person.company?.name)
+          );
+          
+          // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
+          const seenSpeedrunNames = new Set();
+          const deduplicatedSpeedrun = filteredSpeedrunData.filter(person => {
+            const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+            if (seenSpeedrunNames.has(fullName)) {
+              return false; // Skip duplicate
+            }
+            seenSpeedrunNames.add(fullName);
+            return true;
+          });
+          
+          sectionData = deduplicatedSpeedrun.map((person, index) => {
+            // Safe string truncation utility
+            const safeString = (str: any, maxLength: number = 1000): string => {
+              if (!str || typeof str !== 'string') return '';
+              if (str.length <= maxLength) return str;
+              return str.substring(0, maxLength) + '...';
+            };
+
+            return {
+              id: person.id,
+              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
+              name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
+              company: safeString(person.company?.name || 'Unknown Company', 200),
+              companyRank: person.company?.rank || 0, // Include company rank for proper ordering
+              personRank: person.rank || (index + 1), // Include person rank within company
+              title: safeString(person.jobTitle || 'Unknown Title', 300),
+              email: safeString(person.email || 'Unknown Email', 300),
+              phone: safeString(person.phone || 'Unknown Phone', 50),
+              linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
+              status: safeString(person.status || 'Unknown', 20),
+              lastAction: safeString(person.lastAction || 'No action taken', 500),
+              lastActionDate: person.lastActionDate || null,
+              nextAction: safeString(person.nextAction || 'No next action', 500),
+              nextActionDate: person.nextActionDate || null,
+              assignedUserId: person.assignedUserId || null,
+              workspaceId: person.workspaceId,
+              createdAt: person.createdAt,
+              updatedAt: person.updatedAt,
+              tags: person.tags || []
+            };
+          });
+          
+        } catch (dbError) {
+          console.error('❌ [SPEEDRUN SECTION] Database error loading speedrun people:', dbError);                                                              
+          sectionData = [];
+        }
         break;
         
       case 'leads':
@@ -267,13 +241,15 @@ export async function GET(request: NextRequest) {
                 ]
               })
             }),
-            // Filter for people who are leads - use specific lead filters
+            // Filter for people who are leads - use actual data structure
             AND: [
               {
                 OR: [
                   { funnelStage: 'Lead' },
+                  { funnelStage: 'Prospect' }, // 🚀 FIX: Include 'Prospect' funnelStage
                   { status: 'new' },
-                  { status: 'lead' }
+                  { status: 'lead' },
+                  { status: 'active' } // 🚀 FIX: Include 'active' status (actual data)
                 ]
               }
             ]

@@ -6,11 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
-import { extractIdFromSlug } from '@/platform/utils/url-utils';
+import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
-// import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -33,6 +32,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const { user } = useUnifiedAuth();
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
+  
+  // Get user data from PipelineContext to match PipelineLeftPanelStandalone
+  const { user: pipelineUser, company, workspace } = usePipeline();
   
   // 🚀 HYDRATION FIX: Initialize all state with consistent values
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
@@ -97,7 +99,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         try {
           const jwt = await import('jsonwebtoken');
           const secret = process.env['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production";
-          const decoded = jwt.verify(session.accessToken, secret) as any;
+          const decoded = jwt.default.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
             console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return decoded.workspaceId;
@@ -412,7 +414,44 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       
       if (!response.ok) {
         if (response['status'] === 404) {
-          throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
+          // 🚀 ID MISMATCH FIX: Try to find record by name when ID doesn't exist
+          console.log(`🔄 [ID MISMATCH] Record with ID ${recordId} not found, trying to find by name...`);
+          
+          // Extract name from slug for fallback search
+          const nameFromSlug = slug.split('-').slice(0, -1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
+          console.log(`🔍 [FALLBACK SEARCH] Searching for record with name: "${nameFromSlug}"`);
+          
+          // Try to find record by name in the section data
+          const fallbackRecord = sectionData.find((record: any) => {
+            const recordName = record.fullName || record.name || '';
+            return recordName.toLowerCase().includes(nameFromSlug.toLowerCase()) ||
+                   nameFromSlug.toLowerCase().includes(recordName.toLowerCase());
+          });
+          
+          if (fallbackRecord) {
+            console.log(`✅ [FALLBACK SUCCESS] Found record by name: ${fallbackRecord.fullName || fallbackRecord.name} (ID: ${fallbackRecord.id})`);
+            
+            // 🚀 URL CORRECTION: Update the URL to use the correct record ID
+            const correctSlug = generateSlug(fallbackRecord.fullName || fallbackRecord.name || 'record', fallbackRecord.id);
+            const currentPath = window.location.pathname;
+            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+            
+            if (workspaceMatch) {
+              const workspaceSlug = workspaceMatch[1];
+              const correctUrl = `/${workspaceSlug}/${section}/${correctSlug}`;
+              
+              // Only update URL if it's different from current
+              if (currentPath !== correctUrl) {
+                console.log(`🔧 [URL CORRECTION] Updating URL from ${currentPath} to ${correctUrl}`);
+                window.history.replaceState({}, '', correctUrl);
+              }
+            }
+            
+            setSelectedRecord(fallbackRecord);
+            return;
+          } else {
+            throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
+          }
         }
         throw new Error(`Failed to load ${section} record: ${response.status}`);
       }
@@ -906,9 +945,6 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   if (selectedRecord || (previousRecord && slug)) {
     const recordToShow = selectedRecord || previousRecord;
     
-    // Get user data from PipelineContext to match PipelineLeftPanelStandalone
-    const { user: pipelineUser, company, workspace } = usePipeline();
-    
     return (
       <>
         <PanelLayout
@@ -1051,9 +1087,6 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   if (data.length > 0 && !slug) {
     return <PipelineView section={section} />;
   }
-
-  // Get user data from PipelineContext to match PipelineLeftPanelStandalone
-  const { user: pipelineUser, company, workspace } = usePipeline();
 
   // If we have a selected record, show it immediately
   if (selectedRecord) {

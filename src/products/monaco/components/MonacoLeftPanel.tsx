@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useMonacoData } from "@/products/monaco/hooks/useMonacoData";
 import { useMonaco } from "@/products/monaco/context/MonacoContext";
+import { useFastCounts } from "@/platform/hooks/useFastCounts";
 
 interface MonacoLeftPanelProps {
   activeSection: string;
@@ -19,11 +20,14 @@ function MonacoSections({
   getRealStatsForSection, 
   currentSubApp 
 }: Omit<MonacoLeftPanelProps, 'getSectionTitle'>) {
-  // Core sections matching standalone Monaco (no RTP)
+  // Get real counts from the API instead of hardcoded values
+  const { counts: fastCounts, loading: fastCountsLoading } = useFastCounts();
+  
+  // Core sections matching standalone Monaco (no RTP) - using real data
   const allSections = [
-    { id: "companies", name: "Companies", description: "Find buyer groups", count: 590 },
-    { id: "people", name: "People", description: "Know everyone", count: 2847 },
-    { id: "sellers", name: "Sellers", description: "Organize momentum", count: 39 },
+    { id: "companies", name: "Companies", description: "Find buyer groups", count: fastCounts?.companies || 0 },
+    { id: "people", name: "People", description: "Know everyone", count: fastCounts?.people || 0 },
+    { id: "sellers", name: "Sellers", description: "Organize momentum", count: fastCounts?.sellers || 0 },
   ];
 
   return (
