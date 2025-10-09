@@ -38,14 +38,14 @@ interface DataLoadingState {
   lastLoadTime: string | null;
 }
 
-interface UseAcquisitionOSDataProps {
+interface UseDataProps {
   authUser: UnifiedUser | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
   activeWorkspace: Workspace | null;
 }
 
-interface UseAcquisitionOSDataReturn {
+interface UseDataReturn {
   acquireData: {
     leads: Lead[];
     prospects: any[];
@@ -80,15 +80,15 @@ interface UseAcquisitionOSDataReturn {
 }
 
 /**
- * 🚀 ACQUISITION OS DATA HOOK - UNIFIED CACHE SYSTEM
+ * DATA HOOK - UNIFIED CACHE SYSTEM
  * Uses the new unified caching system for optimal performance
  */
-// 🚀 PERFORMANCE: Add request deduplication
+// PERFORMANCE: Add request deduplication
 const pendingRequests = new Map<string, Promise<any>>();
 
-export function useAcquisitionOSData(
-  props: UseAcquisitionOSDataProps,
-): UseAcquisitionOSDataReturn {
+export function useData(
+  props: UseDataProps,
+): UseDataReturn {
   const { authUser, isAuthenticated, isAuthLoading, activeWorkspace } = props;
   
   // Simplified cache key - let useAdrataData handle workspace-specific caching
@@ -96,8 +96,8 @@ export function useAcquisitionOSData(
   const cacheKey = authUser?.id && activeWorkspace?.id ? 
     `acquisition-os:v4:${activeWorkspace.id}:${authUser.id}` : null;
 
-  // Helper function to map API data to acquisition format
-  const mapApiDataToAcquisitionFormat = useCallback((apiData: any) => {
+  // Helper function to map API data to platform format
+  const mapApiDataToPlatformFormat = useCallback((apiData: any) => {
     // Transform leads and prospects to ensure consistent field mapping
     const transformPersonData = (records: any[]) => {
       return records.map(record => ({
@@ -113,7 +113,7 @@ export function useAcquisitionOSData(
     const transformedLeads = transformPersonData(apiData.leads || []);
     const transformedProspects = transformPersonData(apiData.prospects || []);
     
-    console.log('🔍 [DATA TRANSFORMATION DEBUG] Transformed leads sample:', transformedLeads.slice(0, 2).map(item => ({
+    console.log('[DATA TRANSFORMATION DEBUG] Transformed leads sample:', transformedLeads.slice(0, 2).map(item => ({
       id: item.id,
       fullName: item.fullName,
       firstName: item.firstName,
@@ -122,7 +122,7 @@ export function useAcquisitionOSData(
       company: item.company
     })));
     
-    console.log('🔍 [DATA TRANSFORMATION DEBUG] Transformed prospects sample:', transformedProspects.slice(0, 2).map(item => ({
+    console.log('[DATA TRANSFORMATION DEBUG] Transformed prospects sample:', transformedProspects.slice(0, 2).map(item => ({
       id: item.id,
       fullName: item.fullName,
       firstName: item.firstName,
@@ -152,8 +152,8 @@ export function useAcquisitionOSData(
   }, []);
 
   // Fetch function for unified data
-  const fetchAcquisitionData = useCallback(async () => {
-    console.log('🚀 [ACQUISITION OS DATA] fetchAcquisitionData called with:', {
+  const fetchPlatformData = useCallback(async () => {
+    console.log('[DATA] fetchPlatformData called with:', {
       authUserId: authUser?.id,
       activeWorkspaceId: activeWorkspace?.id
     });
@@ -162,7 +162,7 @@ export function useAcquisitionOSData(
     const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
     
     if (!activeWorkspace?.id) {
-      console.error('❌ [ACQUISITION OS DATA] Missing workspace ID:', {
+      console.error('[DATA] Missing workspace ID:', {
         hasActiveWorkspaceId: !!activeWorkspace?.id
       });
       throw new Error('Workspace is required');
@@ -170,18 +170,18 @@ export function useAcquisitionOSData(
     
     // In demo mode, we can proceed without authUser
     if (!isDemoMode && !authUser?.id) {
-      console.error('❌ [ACQUISITION OS DATA] Missing user ID (non-demo mode):', {
+      console.error('[DATA] Missing user ID (non-demo mode):', {
         hasAuthUserId: !!authUser?.id,
         isDemoMode
       });
       throw new Error('User is required in non-demo mode');
     }
 
-    // 🚀 PERFORMANCE: Check for existing request to prevent duplicates
+    // PERFORMANCE: Check for existing request to prevent duplicates
     const requestKey = `acquisition-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
     const existingRequest = pendingRequests.get(requestKey);
     if (existingRequest) {
-      console.log('⚡ [DEDUP] Waiting for existing acquisition data request:', requestKey);
+      console.log('[DEDUP] Waiting for existing data request:', requestKey);
       return await existingRequest;
     }
 
@@ -191,11 +191,11 @@ export function useAcquisitionOSData(
       const { UnifiedAuthService } = await import('@/platform/auth/service');
       const session = await UnifiedAuthService.getSession();
     
-    // 🆕 IMPROVED AUTHENTICATION HANDLING: Better error handling for missing/invalid tokens
+    // IMPROVED AUTHENTICATION HANDLING: Better error handling for missing/invalid tokens
     if (!session?.accessToken) {
-      console.warn('⚠️ [AUTH] No authentication token available, using v1 APIs');
+      console.warn('[AUTH] No authentication token available, using v1 APIs');
       
-      // 🚀 NEW: Use v1 APIs instead of old unified API
+      // NEW: Use v1 APIs instead of old unified API
       const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
         fetch('/api/v1/people?status=LEAD'),
         fetch('/api/v1/people?status=PROSPECT'),
@@ -227,10 +227,10 @@ export function useAcquisitionOSData(
         people: peopleResult.data || []
       };
       
-      return mapApiDataToAcquisitionFormat(apiData);
+      return mapApiDataToPlatformFormat(apiData);
     }
 
-    // 🆕 IMPROVED JWT TOKEN VALIDATION: Better error handling and fallback
+    // IMPROVED JWT TOKEN VALIDATION: Better error handling and fallback
     let useAuthenticatedRequest = true;
     try {
       const tokenPayload = JSON.parse(atob(session.accessToken.split('.')[1]));
@@ -239,23 +239,23 @@ export function useAcquisitionOSData(
       
       // Check if token is expired
       if (tokenExp && Date.now() >= tokenExp * 1000) {
-        console.warn('⚠️ [JWT] Token is expired, falling back to unauthenticated request');
+        console.warn('[JWT] Token is expired, falling back to unauthenticated request');
         useAuthenticatedRequest = false;
       }
       
       // Check workspace mismatch
       if (tokenWorkspaceId !== activeWorkspace.id) {
-        console.warn(`⚠️ [WORKSPACE MISMATCH] JWT token workspace (${tokenWorkspaceId}) doesn't match active workspace (${activeWorkspace.id})`);
+        console.warn(`[WORKSPACE MISMATCH] JWT token workspace (${tokenWorkspaceId}) doesn't match active workspace (${activeWorkspace.id})`);
         useAuthenticatedRequest = false;
       }
     } catch (error) {
-      console.error('❌ [JWT VERIFICATION] Failed to verify JWT token:', error);
-      console.log('🔄 [JWT FIX] Falling back to unauthenticated request');
+      console.error('[JWT VERIFICATION] Failed to verify JWT token:', error);
+      console.log('[JWT FIX] Falling back to unauthenticated request');
       useAuthenticatedRequest = false;
     }
 
-    // 🚀 NEW: Use v1 APIs for all data fetching
-    console.log('🚀 [ACQUISITION OS DATA] Loading data using v1 APIs');
+    // NEW: Use v1 APIs for all data fetching
+    console.log('[DATA] Loading data using v1 APIs');
     
     // Fetch all data using v1 APIs
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
@@ -289,7 +289,7 @@ export function useAcquisitionOSData(
       people: peopleResult.data || []
     };
 
-    console.log('✅ [ACQUISITION OS DATA] API response received:', {
+    console.log('[DATA] API response received:', {
       success: true,
       hasData: !!apiData,
       dataKeys: apiData ? Object.keys(apiData) : [],
@@ -301,9 +301,9 @@ export function useAcquisitionOSData(
     });
 
     // Map the API response to the expected structure
-    const mappedData = mapApiDataToAcquisitionFormat(apiData);
+    const mappedData = mapApiDataToPlatformFormat(apiData);
 
-    console.log('📊 [ACQUISITION OS DATA] Mapped data:', {
+    console.log('[DATA] Mapped data:', {
       prospectsLength: mappedData.prospects.length,
       leadsLength: mappedData.leads.length,
       speedrunItemsLength: mappedData.speedrunItems.length,
@@ -327,7 +327,7 @@ export function useAcquisitionOSData(
 
   // Debug the enabled condition
   const enabled = isAuthenticated && !isAuthLoading && !!authUser?.id && !!activeWorkspace?.id;
-  console.log('🔍 [ACQUISITION OS DATA] Enabled condition check:', {
+  console.log('[DATA] Enabled condition check:', {
     isAuthenticated,
     isAuthLoading,
     hasAuthUserId: !!authUser?.id,
@@ -344,38 +344,38 @@ export function useAcquisitionOSData(
     error, 
     refresh,
     clearCache 
-  } = useAdrataData(cacheKey, fetchAcquisitionData, {
-    ttl: 300000, // 🚀 PERFORMANCE: 5 minutes cache for better user experience
+  } = useAdrataData(cacheKey, fetchPlatformData, {
+    ttl: 300000, // PERFORMANCE: 5 minutes cache for better user experience
     priority: 'high',
-    tags: ['acquisition-os', activeWorkspace?.id || '', authUser?.id || ''],
+    tags: ['platform-data', activeWorkspace?.id || '', authUser?.id || ''],
     revalidateOnReconnect: true,
     enabled,
-    // 🆕 CRITICAL FIX: Pass workspace and user IDs for workspace-specific caching
+    // CRITICAL FIX: Pass workspace and user IDs for workspace-specific caching
     workspaceId: activeWorkspace?.id,
     userId: authUser?.id
   });
 
-  // 🧹 WORKSPACE SWITCH DETECTION: Force refresh when workspace changes
+  // WORKSPACE SWITCH DETECTION: Force refresh when workspace changes
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
   const [isWorkspaceSwitching, setIsWorkspaceSwitching] = useState(false);
   
   useEffect(() => {
     // Only clear cache and refresh when workspace actually changes (not on initial load)
     if (activeWorkspace?.id && activeWorkspace.id !== lastWorkspaceId && lastWorkspaceId !== null) {
-      console.log(`🔄 [WORKSPACE SWITCH] Detected workspace change from ${lastWorkspaceId} to ${activeWorkspace.id}`);
+      console.log(`[WORKSPACE SWITCH] Detected workspace change from ${lastWorkspaceId} to ${activeWorkspace.id}`);
       
-      // 🆕 CRITICAL: Set switching flag to prevent premature data fetching
+      // CRITICAL: Set switching flag to prevent premature data fetching
       setIsWorkspaceSwitching(true);
       
       // Clear cache and force refresh only on actual workspace change
       clearCache();
       refresh();
       
-      // 🆕 CRITICAL: Wait a moment before allowing data fetching to ensure cache is cleared
+      // CRITICAL: Wait a moment before allowing data fetching to ensure cache is cleared
       setTimeout(() => {
         setIsWorkspaceSwitching(false);
         setLastWorkspaceId(activeWorkspace.id);
-        console.log(`✅ [WORKSPACE SWITCH] Workspace switch completed for: ${activeWorkspace.id}`);
+        console.log(`[WORKSPACE SWITCH] Workspace switch completed for: ${activeWorkspace.id}`);
       }, 150); // Small delay to ensure cache clearing is complete
       
     } else if (activeWorkspace?.id && lastWorkspaceId === null) {
@@ -384,12 +384,12 @@ export function useAcquisitionOSData(
     }
   }, [activeWorkspace?.id, lastWorkspaceId, clearCache, refresh]);
 
-  // 🧹 LISTEN FOR WORKSPACE SWITCH EVENTS: Force refresh when workspace switch event is fired
+  // LISTEN FOR WORKSPACE SWITCH EVENTS: Force refresh when workspace switch event is fired
   useEffect(() => {
     const handleWorkspaceSwitch = (event: CustomEvent) => {
       const { workspaceId } = event.detail;
       if (workspaceId && workspaceId !== lastWorkspaceId) {
-        console.log(`🔄 [WORKSPACE SWITCH EVENT] Received workspace switch event for: ${workspaceId}`);
+        console.log(`[WORKSPACE SWITCH EVENT] Received workspace switch event for: ${workspaceId}`);
         clearCache();
         refresh();
         setLastWorkspaceId(workspaceId);
@@ -435,7 +435,7 @@ export function useAcquisitionOSData(
       contacts: [],
       partnerships: [],
       clients: [],
-      sellers: [], // 🆕 FIX: Add sellers to fallback data
+      sellers: [], // FIX: Add sellers to fallback data
       buyerGroups: [],
       catalyst: [],
       calendar: [],
@@ -450,8 +450,8 @@ export function useAcquisitionOSData(
         contacts: 0,
         partners: 0,
         clients: 0,
-        sellers: 0, // 🆕 FIX: Add sellers count to fallback data
-        speedrun: 0, // 🆕 FIX: Add speedrun count to fallback data
+        sellers: 0, // FIX: Add sellers count to fallback data
+        speedrun: 0, // FIX: Add speedrun count to fallback data
       },
     },
     loading,

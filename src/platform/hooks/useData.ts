@@ -1,5 +1,5 @@
 /**
- * WORKSPACE DATA HOOK - UNIFIED CACHE SYSTEM
+ * WORKWPSACE DATA HOOK - UNIFIED CACHE SYSTEM
  * Uses the new unified caching system for optimal performance
  */
 
@@ -38,14 +38,14 @@ interface DataLoadingState {
   lastLoadTime: string | null;
 }
 
-interface UseWorkspaceDataProps {
+interface UseDataProps {
   authUser: UnifiedUser | null;
   isAuthenticated: boolean;
   isAuthLoading: boolean;
   activeWorkspace: Workspace | null;
 }
 
-interface UseWorkspaceDataReturn {
+interface UseDataReturn {
   acquireData: {
     leads: Lead[];
     prospects: any[];
@@ -54,7 +54,7 @@ interface UseWorkspaceDataReturn {
     contacts: any[];
     partnerships: any[];
     clients: any[];
-    sellers: any[]; // FIX: Add sellers to interface
+    sellers: any[]; // 🆕 FIX: Add sellers to interface
     buyerGroups: any[];
     catalyst: any[];
     calendar: any[];
@@ -69,8 +69,8 @@ interface UseWorkspaceDataReturn {
       people: number;
       partners: number;
       clients: number;
-      sellers: number; // FIX: Add sellers count to interface
-      speedrun: number; // FIX: Add speedrun count to interface
+      sellers: number; // 🆕 FIX: Add sellers count to interface
+      speedrun: number; // 🆕 FIX: Add speedrun count to interface
     };
   };
   loading: DataLoadingState;
@@ -80,24 +80,24 @@ interface UseWorkspaceDataReturn {
 }
 
 /**
- * WORKSPACE DATA HOOK - UNIFIED CACHE SYSTEM
+ * DATA HOOK - UNIFIED CACHE SYSTEM
  * Uses the new unified caching system for optimal performance
  */
 // PERFORMANCE: Add request deduplication
 const pendingRequests = new Map<string, Promise<any>>();
 
-export function useWorkspaceData(
-  props: UseWorkspaceDataProps,
-): UseWorkspaceDataReturn {
+export function useData(
+  props: UseDataProps,
+): UseDataReturn {
   const { authUser, isAuthenticated, isAuthLoading, activeWorkspace } = props;
   
   // Simplified cache key - let useAdrataData handle workspace-specific caching
   // Add version to force cache refresh when data transformation is updated
   const cacheKey = authUser?.id && activeWorkspace?.id ? 
-    `workspace-data:v4:${activeWorkspace.id}:${authUser.id}` : null;
+    `acquisition-os:v4:${activeWorkspace.id}:${authUser.id}` : null;
 
-  // Helper function to map API data to workspace format
-  const mapApiDataToWorkspaceFormat = useCallback((apiData: any) => {
+  // Helper function to map API data to platform format
+  const mapApiDataToPlatformFormat = useCallback((apiData: any) => {
     // Transform leads and prospects to ensure consistent field mapping
     const transformPersonData = (records: any[]) => {
       return records.map(record => ({
@@ -139,7 +139,7 @@ export function useWorkspaceData(
       people: apiData.people || [], // Use people directly
       partnerships: apiData.partners || [], // API uses 'partners', interface expects 'partnerships'
       clients: apiData.clients || [],
-      sellers: apiData.sellers || [], // FIX: Include sellers data
+      sellers: apiData.sellers || [], // 🆕 FIX: Include sellers data
       buyerGroups: apiData.buyerGroups || [],
       catalyst: apiData.catalyst || [],
       calendar: apiData.calendar || [],
@@ -152,8 +152,8 @@ export function useWorkspaceData(
   }, []);
 
   // Fetch function for unified data
-  const fetchWorkspaceData = useCallback(async () => {
-    console.log('[WORKSPACE DATA] fetchWorkspaceData called with:', {
+  const fetchPlatformData = useCallback(async () => {
+    console.log('[DATA] fetchPlatformData called with:', {
       authUserId: authUser?.id,
       activeWorkspaceId: activeWorkspace?.id
     });
@@ -162,7 +162,7 @@ export function useWorkspaceData(
     const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
     
     if (!activeWorkspace?.id) {
-      console.error('[WORKSPACE DATA] Missing workspace ID:', {
+      console.error('[DATA] Missing workspace ID:', {
         hasActiveWorkspaceId: !!activeWorkspace?.id
       });
       throw new Error('Workspace is required');
@@ -170,7 +170,7 @@ export function useWorkspaceData(
     
     // In demo mode, we can proceed without authUser
     if (!isDemoMode && !authUser?.id) {
-      console.error('[WORKSPACE DATA] Missing user ID (non-demo mode):', {
+      console.error('[DATA] Missing user ID (non-demo mode):', {
         hasAuthUserId: !!authUser?.id,
         isDemoMode
       });
@@ -178,10 +178,10 @@ export function useWorkspaceData(
     }
 
     // PERFORMANCE: Check for existing request to prevent duplicates
-    const requestKey = `workspace-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
+    const requestKey = `acquisition-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
     const existingRequest = pendingRequests.get(requestKey);
     if (existingRequest) {
-      console.log('[DEDUP] Waiting for existing workspace data request:', requestKey);
+      console.log('[DEDUP] Waiting for existing data request:', requestKey);
       return await existingRequest;
     }
 
@@ -218,7 +218,7 @@ export function useWorkspaceData(
         throw new Error('One or more v1 API calls failed');
       }
       
-      // Map v1 API data to workspace format
+      // Map v1 API data to acquisition format
       const apiData = {
         leads: leadsResult.data || [],
         prospects: prospectsResult.data || [],
@@ -227,7 +227,7 @@ export function useWorkspaceData(
         people: peopleResult.data || []
       };
       
-      return mapApiDataToWorkspaceFormat(apiData);
+      return mapApiDataToPlatformFormat(apiData);
     }
 
     // IMPROVED JWT TOKEN VALIDATION: Better error handling and fallback
@@ -255,7 +255,7 @@ export function useWorkspaceData(
     }
 
     // NEW: Use v1 APIs for all data fetching
-    console.log('[WORKSPACE DATA] Loading data using v1 APIs');
+    console.log('[DATA] Loading data using v1 APIs');
     
     // Fetch all data using v1 APIs
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
@@ -280,7 +280,7 @@ export function useWorkspaceData(
       throw new Error('One or more v1 API calls failed');
     }
     
-    // Map v1 API data to workspace format
+    // Map v1 API data to acquisition format
     const apiData = {
       leads: leadsResult.data || [],
       prospects: prospectsResult.data || [],
@@ -289,7 +289,7 @@ export function useWorkspaceData(
       people: peopleResult.data || []
     };
 
-    console.log('[WORKSPACE DATA] API response received:', {
+    console.log('[DATA] API response received:', {
       success: true,
       hasData: !!apiData,
       dataKeys: apiData ? Object.keys(apiData) : [],
@@ -301,9 +301,9 @@ export function useWorkspaceData(
     });
 
     // Map the API response to the expected structure
-    const mappedData = mapApiDataToWorkspaceFormat(apiData);
+    const mappedData = mapApiDataToPlatformFormat(apiData);
 
-    console.log('[WORKSPACE DATA] Mapped data:', {
+    console.log('[DATA] Mapped data:', {
       prospectsLength: mappedData.prospects.length,
       leadsLength: mappedData.leads.length,
       speedrunItemsLength: mappedData.speedrunItems.length,
@@ -327,7 +327,7 @@ export function useWorkspaceData(
 
   // Debug the enabled condition
   const enabled = isAuthenticated && !isAuthLoading && !!authUser?.id && !!activeWorkspace?.id;
-  console.log('[WORKSPACE DATA] Enabled condition check:', {
+  console.log('[DATA] Enabled condition check:', {
     isAuthenticated,
     isAuthLoading,
     hasAuthUserId: !!authUser?.id,
@@ -339,15 +339,15 @@ export function useWorkspaceData(
 
   // Use unified data hook
   const { 
-    data: workspaceData, 
+    data: acquireData, 
     isLoading, 
     error, 
     refresh,
     clearCache 
-  } = useAdrataData(cacheKey, fetchWorkspaceData, {
+  } = useAdrataData(cacheKey, fetchPlatformData, {
     ttl: 300000, // PERFORMANCE: 5 minutes cache for better user experience
     priority: 'high',
-    tags: ['workspace-data', activeWorkspace?.id || '', authUser?.id || ''],
+    tags: ['platform-data', activeWorkspace?.id || '', authUser?.id || ''],
     revalidateOnReconnect: true,
     enabled,
     // CRITICAL FIX: Pass workspace and user IDs for workspace-specific caching
@@ -409,12 +409,12 @@ export function useWorkspaceData(
   // Transform loading state
   const loading: DataLoadingState = {
     isLoading,
-    isLoaded: !isLoading && !error && !!workspaceData,
+    isLoaded: !isLoading && !error && !!acquireData,
     error: error?.message || null,
-    lastLoadTime: workspaceData ? new Date().toISOString() : null,
+    lastLoadTime: acquireData ? new Date().toISOString() : null,
   };
 
-  const dataSource = workspaceData ? "unified-cache" : "none";
+  const dataSource = acquireData ? "unified-cache" : "none";
 
   // Refresh function
   const refreshData = useCallback(async () => {
@@ -427,7 +427,7 @@ export function useWorkspaceData(
   }, [clearCache]);
 
   return {
-    acquireData: workspaceData || {
+    acquireData: acquireData || {
       leads: [],
       prospects: [],
       opportunities: [],

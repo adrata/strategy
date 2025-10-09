@@ -4,7 +4,7 @@
  * 🚀 ADRATA UNIFIED DATA HOOK - 2025 WORLD-CLASS
  * 
  * Single source of truth for ALL data fetching across the platform
- * Replaces: useUnifiedData, useAcquisitionOSData, usePipelineData, useDataService, useSpeedrunData
+ * Replaces: useUnifiedData, useData, usePipelineData, useDataService, useSpeedrunData
  * 
  * Features:
  * - Unified caching with intelligent promotion

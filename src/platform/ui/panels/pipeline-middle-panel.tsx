@@ -46,7 +46,7 @@ export function PipelineMiddlePanel() {
       return leadsData.leads || [];
     }
     
-    // The useAcquisitionOSData hook returns acquireData, not data
+    // The useData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
     
     switch (section) {

@@ -26,7 +26,7 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
   
   // Map acquisition data to the requested section
   const getSectionData = (section: string) => {
-    // The useWorkspaceData hook returns acquireData, not data
+    // The useData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
     switch (section) {
       case 'leads': return acquireData.leads || [];

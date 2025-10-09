@@ -157,7 +157,7 @@ export interface AcquisitionOSState {
 export type AcquisitionOSContextType = {
   auth: ReturnType<typeof useAuth>;
   ui: ReturnType<typeof useUI>;
-  data: ReturnType<typeof useWorkspaceData>;
+  data: ReturnType<typeof useData>;
   chat: ReturnType<typeof useChat>;
   forms: ReturnType<typeof useForms>;
   progress: ReturnType<typeof useProgress>;

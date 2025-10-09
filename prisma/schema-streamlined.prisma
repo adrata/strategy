@@ -414,7 +414,6 @@ model actions {
   completedAt DateTime? @db.Timestamp(3)
   status      ActionStatus @default(PLANNED)
   priority    ActionPriority @default(NORMAL)
-  rank        Int?      @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime
   deletedAt   DateTime?

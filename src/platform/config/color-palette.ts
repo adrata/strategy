@@ -34,19 +34,6 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     iconBg: '#D1FAE5', // Emerald-100
   },
   leads: {
-    primary: '#EAB308', // Yellow-600 - Optimism, energy, potential
-    secondary: '#FACC15', // Yellow-500
-    light: '#FEF3C7', // Yellow-100
-    dark: '#CA8A04', // Yellow-700
-    bg: '#FEFCE8', // Yellow-50
-    bgHover: '#FEF3C7', // Yellow-100
-    border: '#FDE047', // Yellow-300
-    text: '#713F12', // Yellow-800
-    textLight: '#FACC15', // Yellow-500
-    icon: '#EAB308', // Yellow-600
-    iconBg: '#FEF3C7', // Yellow-100
-  },
-  prospects: {
     primary: '#EA580C', // Orange-600 - Enthusiasm, warmth, creativity
     secondary: '#F97316', // Orange-500
     light: '#FED7AA', // Orange-100
@@ -58,6 +45,19 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     textLight: '#F97316', // Orange-500
     icon: '#EA580C', // Orange-600
     iconBg: '#FED7AA', // Orange-100
+  },
+  prospects: {
+    primary: '#0891B2', // Cyan-600 - Professional, trustworthy, corporate
+    secondary: '#06B6D4', // Cyan-500
+    light: '#A7F3D0', // Cyan-100 (using emerald-200 for better contrast)
+    dark: '#0E7490', // Cyan-700
+    bg: '#ECFEFF', // Cyan-50
+    bgHover: '#A7F3D0', // Cyan-100
+    border: '#67E8F9', // Cyan-300
+    text: '#155E75', // Cyan-800
+    textLight: '#06B6D4', // Cyan-500
+    icon: '#0891B2', // Cyan-600
+    iconBg: '#A7F3D0', // Cyan-100
   },
   opportunities: {
     primary: '#2563EB', // Blue-600 - Trust, professionalism, reliability
@@ -86,17 +86,17 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     iconBg: '#EDE9FE', // Violet-100
   },
   companies: {
-    primary: '#6B7280', // Gray-500 - Stability, professionalism, balance
-    secondary: '#9CA3AF', // Gray-400
-    light: '#F3F4F6', // Gray-100
-    dark: '#374151', // Gray-700
-    bg: '#F9FAFB', // Gray-50
-    bgHover: '#F3F4F6', // Gray-100
-    border: '#D1D5DB', // Gray-300
-    text: '#111827', // Gray-900
-    textLight: '#6B7280', // Gray-500
-    icon: '#6B7280', // Gray-500
-    iconBg: '#F3F4F6', // Gray-100
+    primary: '#EAB308', // Yellow-600 - Optimism, energy, potential
+    secondary: '#FACC15', // Yellow-500
+    light: '#FEF3C7', // Yellow-100
+    dark: '#CA8A04', // Yellow-700
+    bg: '#FEFCE8', // Yellow-50
+    bgHover: '#FEF3C7', // Yellow-100
+    border: '#FDE047', // Yellow-300
+    text: '#713F12', // Yellow-800
+    textLight: '#FACC15', // Yellow-500
+    icon: '#EAB308', // Yellow-600
+    iconBg: '#FEF3C7', // Yellow-100
   },
 };
 
