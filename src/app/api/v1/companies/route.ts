@@ -1,18 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse,
-  createAuthErrorResponse,
-  getRequestId 
-} from '../utils';
-import { 
-  CreateCompanySchema, 
-  CompanySearchSchema,
-  type CreateCompanyInput,
-  type CompanySearchInput 
-} from '../schemas';
+import { getV1AuthUser } from '../auth';
 
 const prisma = new PrismaClient();
 
@@ -24,69 +12,64 @@ const prisma = new PrismaClient();
 
 // GET /api/v1/companies - List companies with search and pagination
 export async function GET(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-    
-    // Validate query parameters
-    const validationResult = CompanySearchSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid query parameters',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const {
-      page,
-      limit,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-      q,
-      status,
-      priority,
-      industry,
-      assignedUserId,
-      tags,
-      createdAfter,
-      createdBefore,
-    } = validationResult.data;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const priority = searchParams.get('priority') || '';
+    const industry = searchParams.get('industry') || '';
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    const offset = (page - 1) * limit;
 
-    // Build where clause
+    // Enhanced where clause for pipeline management
     const where: any = {};
     
-    if (q) {
+    if (search) {
       where.OR = [
-        { name: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-        { industry: { contains: q, mode: 'insensitive' } },
+        { name: { contains: search, mode: 'insensitive' } },
+        { legalName: { contains: search, mode: 'insensitive' } },
+        { tradingName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { website: { contains: search, mode: 'insensitive' } },
+        { domain: { contains: search, mode: 'insensitive' } },
       ];
     }
-    
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (industry) where.industry = industry;
-    if (assignedUserId) where.assignedUserId = assignedUserId;
-    if (tags && tags.length > 0) where.tags = { hasSome: tags };
-    
-    if (createdAfter || createdBefore) {
-      where.createdAt = {};
-      if (createdAfter) where.createdAt.gte = new Date(createdAfter);
-      if (createdBefore) where.createdAt.lte = new Date(createdBefore);
+
+    // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE)
+    if (status) {
+      where.status = status;
     }
 
-    // Calculate pagination
-    const skip = (page - 1) * limit;
-    
-    // Execute queries in parallel
-    const [companies, total] = await Promise.all([
+    // Priority filtering (LOW, MEDIUM, HIGH)
+    if (priority) {
+      where.priority = priority;
+    }
+
+    // Industry filtering
+    if (industry) {
+      where.industry = { contains: industry, mode: 'insensitive' };
+    }
+
+    // Get companies
+    const [companies, totalCount] = await Promise.all([
       prisma.companies.findMany({
         where,
-        skip,
-        take: limit,
         orderBy: { [sortBy]: sortOrder },
+        skip: offset,
+        take: limit,
         include: {
           assignedUser: {
             select: {
@@ -106,58 +89,70 @@ export async function GET(request: NextRequest) {
       prisma.companies.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return createSuccessResponse({
-      companies,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
+    return NextResponse.json({
+      success: true,
+      data: companies,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        filters: { search, status, priority, industry, sortBy, sortOrder },
       },
     });
 
   } catch (error) {
     console.error('Error fetching companies:', error);
-    return createErrorResponse('Failed to fetch companies', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch companies' },
+      { status: 500 }
+    );
   }
 }
 
 // POST /api/v1/companies - Create a new company
 export async function POST(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    const body = await request.json();
-    
-    // Validate input
-    const validationResult = CreateCompanySchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid company data',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const companyData: CreateCompanyInput = validationResult.data;
-    
-    // TODO: Get workspaceId from authenticated user
-    const workspaceId = 'default-workspace'; // This should come from auth
-    
+    const body = await request.json();
+
+    // Basic validation
+    if (!body.name) {
+      return NextResponse.json(
+        { success: false, error: 'Company name is required' },
+        { status: 400 }
+      );
+    }
+
     // Create company
     const company = await prisma.companies.create({
       data: {
-        ...companyData,
-        workspaceId,
-        // TODO: Set assignedUserId from authenticated user
-        assignedUserId: null,
+        name: body.name,
+        legalName: body.legalName,
+        email: body.email,
+        website: body.website,
+        phone: body.phone,
+        address: body.address,
+        city: body.city,
+        state: body.state,
+        country: body.country,
+        industry: body.industry,
+        status: body.status || 'ACTIVE',
+        priority: body.priority || 'MEDIUM',
+        workspaceId: authUser.workspaceId || 'default-workspace',
+        assignedUserId: body.assignedUserId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       include: {
         assignedUser: {
@@ -167,25 +162,31 @@ export async function POST(request: NextRequest) {
             email: true,
           },
         },
-        _count: {
-          select: {
-            people: true,
-            actions: true,
-          },
-        },
       },
     });
 
-    return createSuccessResponse(company, 201);
+    return NextResponse.json({
+      success: true,
+      data: company,
+      meta: {
+        message: 'Company created successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error creating company:', error);
     
     // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Company with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Company with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to create company', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to create company' },
+      { status: 500 }
+    );
   }
 }

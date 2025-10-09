@@ -1,18 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse,
-  createNotFoundErrorResponse,
-  createAuthErrorResponse,
-  getRequestId 
-} from '../utils';
-import { 
-  UpdatePersonSchema, 
-  PersonIdSchema,
-  type UpdatePersonInput 
-} from '../schemas';
+import { getV1AuthUser } from '../../auth';
 
 const prisma = new PrismaClient();
 
@@ -29,24 +17,17 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // Validate person ID
-    const idValidation = PersonIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid person ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
-    
-    // TODO: Add authentication and workspace filtering
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-    // const workspaceId = user.activeWorkspaceId;
+    const { id } = params;
 
     const person = await prisma.people.findUnique({
       where: { id },
@@ -55,10 +36,10 @@ export async function GET(
           select: {
             id: true,
             name: true,
+            website: true,
             industry: true,
             status: true,
-            website: true,
-            phone: true,
+            priority: true,
           },
         },
         assignedUser: {
@@ -78,7 +59,7 @@ export async function GET(
             scheduledAt: true,
             completedAt: true,
           },
-          take: 10, // Limit to first 10 actions
+          take: 10,
           orderBy: { createdAt: 'desc' },
         },
         _count: {
@@ -90,14 +71,23 @@ export async function GET(
     });
 
     if (!person) {
-      return createNotFoundErrorResponse('Person not found');
+      return NextResponse.json(
+        { success: false, error: 'Person not found' },
+        { status: 404 }
+      );
     }
 
-    return createSuccessResponse(person);
+    return NextResponse.json({
+      success: true,
+      data: person,
+    });
 
   } catch (error) {
     console.error('Error fetching person:', error);
-    return createErrorResponse('Failed to fetch person', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch person' },
+      { status: 500 }
+    );
   }
 }
 
@@ -106,50 +96,43 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate person ID
-    const idValidation = PersonIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid person ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
+    const { id } = params;
     const body = await request.json();
-    
-    // Validate input (PUT requires all fields)
-    const validationResult = UpdatePersonSchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid person data',
-        validationResult.error.flatten().fieldErrors
-      );
-    }
 
-    const personData: UpdatePersonInput = validationResult.data;
-    
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
       where: { id },
     });
 
     if (!existingPerson) {
-      return createNotFoundErrorResponse('Person not found');
+      return NextResponse.json(
+        { success: false, error: 'Person not found' },
+        { status: 404 }
+      );
     }
 
-    // Update person (full replacement)
+    // Update full name if names changed
+    if (body.firstName || body.lastName) {
+      const firstName = body.firstName || existingPerson.firstName;
+      const lastName = body.lastName || existingPerson.lastName;
+      body.fullName = `${firstName} ${lastName}`;
+    }
+
+    // Update person
     const updatedPerson = await prisma.people.update({
       where: { id },
       data: {
-        ...personData,
+        ...body,
         updatedAt: new Date(),
       },
       include: {
@@ -157,8 +140,8 @@ export async function PUT(
           select: {
             id: true,
             name: true,
+            website: true,
             industry: true,
-            status: true,
           },
         },
         assignedUser: {
@@ -176,17 +159,28 @@ export async function PUT(
       },
     });
 
-    return createSuccessResponse(updatedPerson);
+    return NextResponse.json({
+      success: true,
+      data: updatedPerson,
+      meta: {
+        message: 'Person updated successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error updating person:', error);
     
-    // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Person with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Person with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to update person', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to update person' },
+      { status: 500 }
+    );
   }
 }
 
@@ -195,50 +189,43 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate person ID
-    const idValidation = PersonIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid person ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
+    const { id } = params;
     const body = await request.json();
-    
-    // Validate input (PATCH allows partial updates)
-    const validationResult = UpdatePersonSchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid person data',
-        validationResult.error.flatten().fieldErrors
-      );
-    }
 
-    const personData: UpdatePersonInput = validationResult.data;
-    
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
       where: { id },
     });
 
     if (!existingPerson) {
-      return createNotFoundErrorResponse('Person not found');
+      return NextResponse.json(
+        { success: false, error: 'Person not found' },
+        { status: 404 }
+      );
     }
 
-    // Update person (partial update)
+    // Update full name if names changed
+    if (body.firstName || body.lastName) {
+      const firstName = body.firstName || existingPerson.firstName;
+      const lastName = body.lastName || existingPerson.lastName;
+      body.fullName = `${firstName} ${lastName}`;
+    }
+
+    // Update person with partial data
     const updatedPerson = await prisma.people.update({
       where: { id },
       data: {
-        ...personData,
+        ...body,
         updatedAt: new Date(),
       },
       include: {
@@ -246,8 +233,8 @@ export async function PATCH(
           select: {
             id: true,
             name: true,
+            website: true,
             industry: true,
-            status: true,
           },
         },
         assignedUser: {
@@ -265,17 +252,28 @@ export async function PATCH(
       },
     });
 
-    return createSuccessResponse(updatedPerson);
+    return NextResponse.json({
+      success: true,
+      data: updatedPerson,
+      meta: {
+        message: 'Person updated successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error updating person:', error);
     
-    // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Person with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Person with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to update person', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to update person' },
+      { status: 500 }
+    );
   }
 }
 
@@ -284,24 +282,18 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate person ID
-    const idValidation = PersonIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid person ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
-    
+    const { id } = params;
+
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
       where: { id },
@@ -315,14 +307,17 @@ export async function DELETE(
     });
 
     if (!existingPerson) {
-      return createNotFoundErrorResponse('Person not found');
+      return NextResponse.json(
+        { success: false, error: 'Person not found' },
+        { status: 404 }
+      );
     }
 
     // Check if person has related data
     if (existingPerson._count.actions > 0) {
-      return createErrorResponse(
-        'Cannot delete person with associated actions. Please remove or reassign them first.',
-        409
+      return NextResponse.json(
+        { success: false, error: 'Cannot delete person with associated actions. Please remove or reassign them first.' },
+        { status: 409 }
       );
     }
 
@@ -331,13 +326,19 @@ export async function DELETE(
       where: { id },
     });
 
-    return createSuccessResponse(
-      { message: 'Person deleted successfully', id },
-      200
-    );
+    return NextResponse.json({
+      success: true,
+      data: null,
+      meta: {
+        message: 'Person deleted successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error deleting person:', error);
-    return createErrorResponse('Failed to delete person', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete person' },
+      { status: 500 }
+    );
   }
 }

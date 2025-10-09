@@ -1,0 +1,80 @@
+import { type NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
+import { getToken } from 'next-auth/jwt';
+
+type AuthUser = {
+  id: string;
+  email: string;
+  name?: string;
+  workspaceId?: string;
+};
+
+/**
+ * Simple, clean authentication for API v1
+ * Integrates with your existing NextAuth.js system
+ */
+export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> {
+  try {
+    // 1. Try NextAuth.js token first (primary authentication)
+    const nextAuthToken = await getToken({ 
+      req, 
+      secret: process.env.NEXTAUTH_SECRET 
+    });
+
+    if (nextAuthToken) {
+      console.log("✅ V1 Auth: NextAuth token found for:", nextAuthToken.email);
+      return {
+        id: nextAuthToken.sub || nextAuthToken.userId || '',
+        email: nextAuthToken.email || '',
+        name: nextAuthToken.name,
+        workspaceId: nextAuthToken.workspaceId || "local-workspace",
+      };
+    }
+
+    // 2. Fallback to custom JWT token (for API clients)
+    const authHeader = req.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1] || "";
+      if (!token) {
+        return null;
+      }
+      
+      const decoded = decodeJWT(token);
+      if (decoded) {
+        console.log("✅ V1 Auth: Custom JWT token found for:", decoded.email);
+        return {
+          id: decoded.userId || decoded.id,
+          email: decoded.email,
+          name: decoded.name,
+          workspaceId: decoded.workspaceId || "local-workspace",
+        };
+      }
+    }
+
+    console.log("❌ V1 Auth: No valid authentication found");
+    return null;
+  } catch (error) {
+    console.error("❌ V1 Auth: Error during authentication check:", error);
+    return null;
+  }
+}
+
+/**
+ * Simple JWT decoder (reusing your existing pattern)
+ */
+function decodeJWT(token: string): any | null {
+  try {
+    const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "dev-secret-key-change-in-production";
+    
+    const decoded = jwt.verify(token, secret);
+    
+    if (decoded.exp && decoded.exp < Date.now() / 1000) {
+      return null;
+    }
+    
+    return decoded;
+  } catch (error) {
+    console.warn("⚠️ V1 JWT verification failed:", error.message);
+    return null;
+  }
+}

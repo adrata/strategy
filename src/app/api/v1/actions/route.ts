@@ -1,18 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse,
-  createAuthErrorResponse,
-  getRequestId 
-} from '../utils';
-import { 
-  CreateActionSchema, 
-  ActionSearchSchema,
-  type CreateActionInput,
-  type ActionSearchInput 
-} from '../schemas';
+import { getV1AuthUser } from '../auth';
 
 const prisma = new PrismaClient();
 
@@ -24,80 +12,87 @@ const prisma = new PrismaClient();
 
 // GET /api/v1/actions - List actions with search and pagination
 export async function GET(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-    
-    // Validate query parameters
-    const validationResult = ActionSearchSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid query parameters',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const {
-      page,
-      limit,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-      q,
-      status,
-      priority,
-      type,
-      companyId,
-      personId,
-      userId,
-      scheduledAfter,
-      scheduledBefore,
-    } = validationResult.data;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const priority = searchParams.get('priority') || '';
+    const type = searchParams.get('type') || '';
+    const companyId = searchParams.get('companyId') || '';
+    const personId = searchParams.get('personId') || '';
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    const offset = (page - 1) * limit;
 
-    // Build where clause
+    // Enhanced where clause for action management
     const where: any = {};
     
-    if (q) {
+    if (search) {
       where.OR = [
-        { subject: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-        { type: { contains: q, mode: 'insensitive' } },
-        { company: { name: { contains: q, mode: 'insensitive' } } },
-        { person: { fullName: { contains: q, mode: 'insensitive' } } },
+        { subject: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { outcome: { contains: search, mode: 'insensitive' } },
       ];
     }
-    
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (type) where.type = type;
-    if (companyId) where.companyId = companyId;
-    if (personId) where.personId = personId;
-    if (userId) where.userId = userId;
-    
-    if (scheduledAfter || scheduledBefore) {
-      where.scheduledAt = {};
-      if (scheduledAfter) where.scheduledAt.gte = new Date(scheduledAfter);
-      if (scheduledBefore) where.scheduledAt.lte = new Date(scheduledBefore);
+
+    // Status filtering (PLANNED, IN_PROGRESS, COMPLETED, CANCELLED)
+    if (status) {
+      where.status = status;
     }
 
-    // Calculate pagination
-    const skip = (page - 1) * limit;
-    
-    // Execute queries in parallel
-    const [actions, total] = await Promise.all([
+    // Priority filtering (LOW, NORMAL, HIGH, URGENT)
+    if (priority) {
+      where.priority = priority;
+    }
+
+    // Type filtering
+    if (type) {
+      where.type = { contains: type, mode: 'insensitive' };
+    }
+
+    // Company filtering
+    if (companyId) {
+      where.companyId = companyId;
+    }
+
+    // Person filtering
+    if (personId) {
+      where.personId = personId;
+    }
+
+    // Get actions
+    const [actions, totalCount] = await Promise.all([
       prisma.actions.findMany({
         where,
-        skip,
-        take: limit,
         orderBy: { [sortBy]: sortOrder },
+        skip: offset,
+        take: limit,
         include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
           company: {
             select: {
               id: true,
               name: true,
+              website: true,
               industry: true,
-              status: true,
             },
           },
           person: {
@@ -110,78 +105,88 @@ export async function GET(request: NextRequest) {
               email: true,
             },
           },
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
         },
       }),
       prisma.actions.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return createSuccessResponse({
-      actions,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
+    return NextResponse.json({
+      success: true,
+      data: actions,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        filters: { search, status, priority, type, companyId, personId, sortBy, sortOrder },
       },
     });
 
   } catch (error) {
     console.error('Error fetching actions:', error);
-    return createErrorResponse('Failed to fetch actions', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch actions' },
+      { status: 500 }
+    );
   }
 }
 
 // POST /api/v1/actions - Create a new action
 export async function POST(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    const body = await request.json();
-    
-    // Validate input
-    const validationResult = CreateActionSchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid action data',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const actionData: CreateActionInput = validationResult.data;
-    
-    // TODO: Get workspaceId and userId from authenticated user
-    const workspaceId = 'default-workspace'; // This should come from auth
-    const userId = 'default-user'; // This should come from auth
-    
+    const body = await request.json();
+
+    // Basic validation
+    if (!body.type || !body.subject) {
+      return NextResponse.json(
+        { success: false, error: 'Type and subject are required' },
+        { status: 400 }
+      );
+    }
+
     // Create action
     const action = await prisma.actions.create({
       data: {
-        ...actionData,
-        workspaceId,
-        userId,
+        type: body.type,
+        subject: body.subject,
+        description: body.description,
+        outcome: body.outcome,
+        scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
+        completedAt: body.completedAt ? new Date(body.completedAt) : null,
+        status: body.status || 'PLANNED',
+        priority: body.priority || 'NORMAL',
+        workspaceId: authUser.workspaceId || 'default-workspace',
+        userId: authUser.id,
+        companyId: body.companyId,
+        personId: body.personId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
         company: {
           select: {
             id: true,
             name: true,
+            website: true,
             industry: true,
-            status: true,
           },
         },
         person: {
@@ -194,20 +199,23 @@ export async function POST(request: NextRequest) {
             email: true,
           },
         },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
       },
     });
 
-    return createSuccessResponse(action, 201);
+    return NextResponse.json({
+      success: true,
+      data: action,
+      meta: {
+        message: 'Action created successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error creating action:', error);
-    return createErrorResponse('Failed to create action', 500);
+    
+    return NextResponse.json(
+      { success: false, error: 'Failed to create action' },
+      { status: 500 }
+    );
   }
 }

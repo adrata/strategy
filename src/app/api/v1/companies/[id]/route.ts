@@ -1,18 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse,
-  createNotFoundErrorResponse,
-  createAuthErrorResponse,
-  getRequestId 
-} from '../utils';
-import { 
-  UpdateCompanySchema, 
-  CompanyIdSchema,
-  type UpdateCompanyInput 
-} from '../schemas';
+import { getV1AuthUser } from '../../auth';
 
 const prisma = new PrismaClient();
 
@@ -29,24 +17,17 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // Validate company ID
-    const idValidation = CompanyIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid company ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
-    
-    // TODO: Add authentication and workspace filtering
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-    // const workspaceId = user.activeWorkspaceId;
+    const { id } = params;
 
     const company = await prisma.companies.findUnique({
       where: { id },
@@ -68,7 +49,7 @@ export async function GET(
             email: true,
             status: true,
           },
-          take: 10, // Limit to first 10 people
+          take: 10,
         },
         actions: {
           select: {
@@ -80,7 +61,7 @@ export async function GET(
             scheduledAt: true,
             completedAt: true,
           },
-          take: 10, // Limit to first 10 actions
+          take: 10,
           orderBy: { createdAt: 'desc' },
         },
         _count: {
@@ -93,14 +74,23 @@ export async function GET(
     });
 
     if (!company) {
-      return createNotFoundErrorResponse('Company not found');
+      return NextResponse.json(
+        { success: false, error: 'Company not found' },
+        { status: 404 }
+      );
     }
 
-    return createSuccessResponse(company);
+    return NextResponse.json({
+      success: true,
+      data: company,
+    });
 
   } catch (error) {
     console.error('Error fetching company:', error);
-    return createErrorResponse('Failed to fetch company', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch company' },
+      { status: 500 }
+    );
   }
 }
 

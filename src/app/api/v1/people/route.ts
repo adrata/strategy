@@ -1,18 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse,
-  createAuthErrorResponse,
-  getRequestId 
-} from '../utils';
-import { 
-  CreatePersonSchema, 
-  PersonSearchSchema,
-  type CreatePersonInput,
-  type PersonSearchInput 
-} from '../schemas';
+import { getV1AuthUser } from '../auth';
 
 const prisma = new PrismaClient();
 
@@ -24,79 +12,72 @@ const prisma = new PrismaClient();
 
 // GET /api/v1/people - List people with search and pagination
 export async function GET(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-    
-    // Validate query parameters
-    const validationResult = PersonSearchSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid query parameters',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const {
-      page,
-      limit,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-      q,
-      status,
-      priority,
-      companyId,
-      assignedUserId,
-      tags,
-      createdAfter,
-      createdBefore,
-    } = validationResult.data;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const priority = searchParams.get('priority') || '';
+    const companyId = searchParams.get('companyId') || '';
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    const offset = (page - 1) * limit;
 
-    // Build where clause
+    // Enhanced where clause for pipeline management
     const where: any = {};
     
-    if (q) {
+    if (search) {
       where.OR = [
-        { firstName: { contains: q, mode: 'insensitive' } },
-        { lastName: { contains: q, mode: 'insensitive' } },
-        { fullName: { contains: q, mode: 'insensitive' } },
-        { email: { contains: q, mode: 'insensitive' } },
-        { jobTitle: { contains: q, mode: 'insensitive' } },
-        { company: { name: { contains: q, mode: 'insensitive' } } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { fullName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { workEmail: { contains: search, mode: 'insensitive' } },
+        { jobTitle: { contains: search, mode: 'insensitive' } },
+        { department: { contains: search, mode: 'insensitive' } },
       ];
     }
-    
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (companyId) where.companyId = companyId;
-    if (assignedUserId) where.assignedUserId = assignedUserId;
-    if (tags && tags.length > 0) where.tags = { hasSome: tags };
-    
-    if (createdAfter || createdBefore) {
-      where.createdAt = {};
-      if (createdAfter) where.createdAt.gte = new Date(createdAfter);
-      if (createdBefore) where.createdAt.lte = new Date(createdBefore);
+
+    // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)
+    if (status) {
+      where.status = status;
     }
 
-    // Calculate pagination
-    const skip = (page - 1) * limit;
-    
-    // Execute queries in parallel
-    const [people, total] = await Promise.all([
+    // Priority filtering (LOW, MEDIUM, HIGH)
+    if (priority) {
+      where.priority = priority;
+    }
+
+    // Company filtering
+    if (companyId) {
+      where.companyId = companyId;
+    }
+
+    // Get people
+    const [people, totalCount] = await Promise.all([
       prisma.people.findMany({
         where,
-        skip,
-        take: limit,
         orderBy: { [sortBy]: sortOrder },
+        skip: offset,
+        take: limit,
         include: {
           company: {
             select: {
               id: true,
               name: true,
+              website: true,
               industry: true,
-              status: true,
             },
           },
           assignedUser: {
@@ -116,66 +97,113 @@ export async function GET(request: NextRequest) {
       prisma.people.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return createSuccessResponse({
-      people,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
+    return NextResponse.json({
+      success: true,
+      data: people,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        filters: { search, status, priority, companyId, sortBy, sortOrder },
       },
     });
 
   } catch (error) {
     console.error('Error fetching people:', error);
-    return createErrorResponse('Failed to fetch people', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch people' },
+      { status: 500 }
+    );
   }
 }
 
 // POST /api/v1/people - Create a new person
 export async function POST(request: NextRequest) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    const body = await request.json();
-    
-    // Validate input
-    const validationResult = CreatePersonSchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid person data',
-        validationResult.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const personData: CreatePersonInput = validationResult.data;
-    
-    // TODO: Get workspaceId from authenticated user
-    const workspaceId = 'default-workspace'; // This should come from auth
-    
+    const body = await request.json();
+
+    // Basic validation
+    if (!body.firstName || !body.lastName) {
+      return NextResponse.json(
+        { success: false, error: 'First name and last name are required' },
+        { status: 400 }
+      );
+    }
+
+    // Create full name
+    const fullName = `${body.firstName} ${body.lastName}`;
+
     // Create person
     const person = await prisma.people.create({
       data: {
-        ...personData,
-        workspaceId,
-        // TODO: Set assignedUserId from authenticated user
-        assignedUserId: null,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        fullName: fullName,
+        displayName: body.displayName,
+        salutation: body.salutation,
+        suffix: body.suffix,
+        jobTitle: body.jobTitle,
+        department: body.department,
+        seniority: body.seniority,
+        email: body.email,
+        workEmail: body.workEmail,
+        personalEmail: body.personalEmail,
+        phone: body.phone,
+        mobilePhone: body.mobilePhone,
+        workPhone: body.workPhone,
+        linkedinUrl: body.linkedinUrl,
+        address: body.address,
+        city: body.city,
+        state: body.state,
+        country: body.country,
+        postalCode: body.postalCode,
+        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+        gender: body.gender,
+        bio: body.bio,
+        profilePictureUrl: body.profilePictureUrl,
+        status: body.status || 'ACTIVE',
+        priority: body.priority || 'MEDIUM',
+        source: body.source,
+        tags: body.tags || [],
+        customFields: body.customFields,
+        notes: body.notes,
+        preferredLanguage: body.preferredLanguage,
+        timezone: body.timezone,
+        emailVerified: body.emailVerified || false,
+        phoneVerified: body.phoneVerified || false,
+        lastAction: body.lastAction,
+        lastActionDate: body.lastActionDate ? new Date(body.lastActionDate) : null,
+        nextAction: body.nextAction,
+        nextActionDate: body.nextActionDate ? new Date(body.nextActionDate) : null,
+        actionStatus: body.actionStatus,
+        engagementScore: body.engagementScore || 0,
+        globalRank: body.globalRank || 0,
+        companyRank: body.companyRank || 0,
+        workspaceId: authUser.workspaceId || 'default-workspace',
+        companyId: body.companyId,
+        assignedUserId: body.assignedUserId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       include: {
         company: {
           select: {
             id: true,
             name: true,
+            website: true,
             industry: true,
-            status: true,
           },
         },
         assignedUser: {
@@ -185,24 +213,31 @@ export async function POST(request: NextRequest) {
             email: true,
           },
         },
-        _count: {
-          select: {
-            actions: true,
-          },
-        },
       },
     });
 
-    return createSuccessResponse(person, 201);
+    return NextResponse.json({
+      success: true,
+      data: person,
+      meta: {
+        message: 'Person created successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error creating person:', error);
     
     // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Person with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Person with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to create person', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to create person' },
+      { status: 500 }
+    );
   }
 }
