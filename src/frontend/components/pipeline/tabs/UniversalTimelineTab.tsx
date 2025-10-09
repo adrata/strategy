@@ -324,52 +324,52 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           }
         }
 
-        // Load notes for this specific record using unified API
-        const notesUrl = `/api/data/unified?type=notes&action=get&workspaceId=${workspaceId}&userId=${userId}`;
-        console.log('🔍 [TIMELINE] Fetching notes from:', notesUrl);
+        // TODO: Load notes for this specific record using v1 API when available
+        // const notesUrl = `/api/v1/notes?workspaceId=${workspaceId}&userId=${userId}`;
+        // console.log('🔍 [TIMELINE] Fetching notes from:', notesUrl);
         
-        const notesResponse = await fetch(notesUrl);
-        console.log('📝 [TIMELINE] Notes response status:', notesResponse.status);
+        // const notesResponse = await fetch(notesUrl);
+        // console.log('📝 [TIMELINE] Notes response status:', notesResponse.status);
         
-        if (notesResponse.ok) {
-          const notesData = await notesResponse.json();
-          console.log('📝 [TIMELINE] Notes data:', notesData);
+        // if (notesResponse.ok) {
+        //   const notesData = await notesResponse.json();
+        //   console.log('📝 [TIMELINE] Notes data:', notesData);
           
-          if (notesData['success'] && notesData.data) {
-            // Filter notes for this specific record
-            const recordNotes = notesData.data.filter((note: any) => {
-              return (
-                note['leadId'] === record.id ||
-                note['opportunityId'] === record.id ||
-                note['contactId'] === record.id ||
-                note['accountId'] === record.id ||
-                note['personId'] === record.id ||
-                note['companyId'] === record.id
-              );
-            });
+        //   if (notesData['success'] && notesData.data) {
+        //     // Filter notes for this specific record
+        //     const recordNotes = notesData.data.filter((note: any) => {
+        //       return (
+        //         note['leadId'] === record.id ||
+        //         note['opportunityId'] === record.id ||
+        //         note['contactId'] === record.id ||
+        //         note['accountId'] === record.id ||
+        //         note['personId'] === record.id ||
+        //         note['companyId'] === record.id
+        //       );
+        //     });
 
-            // Convert notes to timeline events
-            noteEvents = recordNotes.map((note: any) => ({
-              id: note.id,
-              type: 'note',
-              date: new Date(note.createdAt),
-              title: note.title || 'Note added',
-              description: note.content ? note.content.substring(0, 100) + (note.content.length > 100 ? '...' : '') : '',
-              content: note.content || note.summary || '', // Full content for expansion
-              user: getUserName(note.authorId || 'System'),
-              metadata: {
-                type: note.type,
-                priority: note.priority,
-                isPrivate: note.isPrivate
-              }
-            }));
-            console.log('📝 [TIMELINE] Converted notes to events:', noteEvents);
-          } else {
-            console.log('📝 [TIMELINE] No notes found or API error:', notesData);
-          }
-        } else {
-          console.error('📝 [TIMELINE] Notes API error:', notesResponse.status, notesResponse.statusText);
-        }
+        //     // Convert notes to timeline events
+        //     noteEvents = recordNotes.map((note: any) => ({
+        //       id: note.id,
+        //       type: 'note',
+        //       date: new Date(note.createdAt),
+        //       title: note.title || 'Note added',
+        //       description: note.content ? note.content.substring(0, 100) + (note.content.length > 100 ? '...' : '') : '',
+        //       content: note.content || note.summary || '', // Full content for expansion
+        //       user: getUserName(note.authorId || 'System'),
+        //       metadata: {
+        //         type: note.type,
+        //         priority: note.priority,
+        //         isPrivate: note.isPrivate
+        //       }
+        //     }));
+        //     console.log('📝 [TIMELINE] Converted notes to events:', noteEvents);
+        //   } else {
+        //     console.log('📝 [TIMELINE] No notes found or API error:', notesData);
+        //   }
+        // } else {
+        //   console.error('📝 [TIMELINE] Notes API error:', notesResponse.status, notesResponse.statusText);
+        // }
         
         // Cache the data
         localStorage.setItem(cacheKey, JSON.stringify({
