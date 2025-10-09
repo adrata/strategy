@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-import { prisma } from '@/platform/utils/prisma';
+
+const prisma = new PrismaClient();
 
 /**
  * Actions CRUD API v1
