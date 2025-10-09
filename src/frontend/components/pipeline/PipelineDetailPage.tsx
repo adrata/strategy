@@ -414,8 +414,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       } else if (section === 'actions') {
         response = await fetch(`/api/v1/actions/${recordId}`);
       } else {
-        // Fallback to old API for other sections
-        response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+        // No v1 API available for this section yet
+        console.warn(`⚠️ [PIPELINE DETAIL] No v1 API available for section: ${section}`);
+        throw new Error(`No API available for section: ${section}`);
       }
       const endTime = performance.now();
       const loadTime = endTime - startTime;

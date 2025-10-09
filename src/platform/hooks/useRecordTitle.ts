@@ -151,14 +151,24 @@ export function useRecordTitle() {
           }
         }
 
-        // Fallback: fetch from API
-        console.log('🔍 [RECORD TITLE] Fetching from API...');
-        const response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+        // Fallback: fetch from v1 API
+        console.log('🔍 [RECORD TITLE] Fetching from v1 API...');
+        let response;
+        if (section === 'companies') {
+          response = await fetch(`/api/v1/companies/${recordId}`);
+        } else if (section === 'people') {
+          response = await fetch(`/api/v1/people/${recordId}`);
+        } else if (section === 'actions') {
+          response = await fetch(`/api/v1/actions/${recordId}`);
+        } else {
+          console.warn(`⚠️ [RECORD TITLE] No v1 API available for section: ${section}`);
+          return null;
+        }
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
-            const sectionData = result.data[section] || [];
-            const record = sectionData.find((r: any) => r.id === recordId);
+            // v1 API returns a single record, not an array
+            const record = result.data;
             if (record) {
               console.log('🔍 [RECORD TITLE] Found record from API:', { name: record.name, fullName: record.fullName });
               setRecordData({
