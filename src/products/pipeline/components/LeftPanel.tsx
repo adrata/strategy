@@ -134,11 +134,12 @@ function PipelineSections({
     authLoading
   });
   
-  const loading = fastCountsLoading || authLoading || false;
+  // Only show loading if we don't have any data AND we're actually loading
+  const loading = (fastCountsLoading || authLoading) && !acquisitionData?.acquireData;
   
   const leadsData = {
     data: acquisitionData?.acquireData?.leads || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.leads || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.leads || []).length === 0,
     count: finalCounts.leads || 0
@@ -146,7 +147,7 @@ function PipelineSections({
   
   const prospectsData = {
     data: acquisitionData?.acquireData?.prospects || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.prospects || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.prospects || []).length === 0,
     count: finalCounts.prospects || 0
@@ -154,7 +155,7 @@ function PipelineSections({
   
   const opportunitiesData = {
     data: acquisitionData?.acquireData?.opportunities || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.opportunities || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.opportunities || []).length === 0,
     count: finalCounts.opportunities || 0
@@ -162,7 +163,7 @@ function PipelineSections({
   
   const companiesData = {
     data: acquisitionData?.acquireData?.companies || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.companies || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.companies || []).length === 0,
     count: finalCounts.companies || 0
@@ -170,7 +171,7 @@ function PipelineSections({
   
   const peopleData = {
     data: acquisitionData?.acquireData?.people || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.people || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.people || []).length === 0,
     count: finalCounts.people || 0
@@ -178,7 +179,7 @@ function PipelineSections({
   
   const clientsData = {
     data: acquisitionData?.acquireData?.clients || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.clients || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.clients || []).length === 0,
     count: finalCounts.clients || 0
@@ -186,7 +187,7 @@ function PipelineSections({
   
   const partnersData = {
     data: acquisitionData?.acquireData?.partners || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.partners || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.partners || []).length === 0,
     count: finalCounts.partners || 0
@@ -194,7 +195,7 @@ function PipelineSections({
   
   const sellersData = {
     data: acquisitionData?.acquireData?.sellers || [],
-    loading: loading || fallbackLoading,
+    loading: loading && (acquisitionData?.acquireData?.sellers || []).length === 0,
     error: null,
     isEmpty: (acquisitionData?.acquireData?.sellers || []).length === 0,
     count: finalCounts.sellers || 0
@@ -823,7 +824,22 @@ export function LeftPanel({
       return;
     }
     
+    // ⚡ INSTANT NAVIGATION: Call onSectionChange immediately for instant feedback
     onSectionChange(section);
+    
+    // 🚀 PRE-CACHE: Pre-cache data for the target section if not already available
+    if (typeof window !== 'undefined') {
+      const targetData = acquisitionData?.acquireData?.[section] || [];
+      if (targetData.length > 0) {
+        // Cache the data for instant access
+        sessionStorage.setItem(`cached-section-${section}`, JSON.stringify({
+          data: targetData,
+          timestamp: Date.now(),
+          count: targetData.length
+        }));
+        console.log(`⚡ [LEFT PANEL] Pre-cached ${targetData.length} items for ${section}`);
+      }
+    }
   };
 
   const handleProfileClick = async (event: React.MouseEvent<HTMLButtonElement>) => {

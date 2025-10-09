@@ -38,16 +38,59 @@ export function PipelineMiddlePanelStandalone({
   // 🚀 PERFORMANCE: Only use fast section data - no fallback to heavy acquisition data
   const { user: authUser } = useUnifiedAuth();
   
-  // 🚀 PERFORMANCE: Use fast section data for instant loading
-  const pipelineData = {
-    data: fastSectionData.data || [],
-    loading: fastSectionData.loading,
-    error: fastSectionData.error,
-    isEmpty: (fastSectionData.data || []).length === 0,
-    metrics: {
-      totalCount: fastSectionData.count || 0,
-      activeCount: (fastSectionData.data || []).filter((item: any) => item.status !== 'inactive').length
+  // 🚀 PERFORMANCE: Use fast section data hook with instant cache fallback
+  const [cachedData, setCachedData] = React.useState<any[]>([]);
+  
+  // Check for cached data on section change for instant loading
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const cacheKey = `cached-section-${activeSection}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed.data && Array.isArray(parsed.data)) {
+            setCachedData(parsed.data);
+            console.log(`⚡ [MIDDLE PANEL] Loaded ${parsed.data.length} cached items for ${activeSection}`);
+          }
+        } catch (e) {
+          console.warn('Failed to parse cached data:', e);
+        }
+      }
     }
+  }, [activeSection]);
+  
+  // Use cached data if available, otherwise use fast section data
+  const pipelineData = {
+    data: cachedData.length > 0 ? cachedData : (fastSectionData.data || []),
+    loading: fastSectionData.loading && cachedData.length === 0,
+    error: fastSectionData.error,
+    isEmpty: (cachedData.length > 0 ? cachedData : (fastSectionData.data || [])).length === 0,
+    metrics: {
+      totalCount: fastSectionData.count || cachedData.length || 0,
+      activeCount: (cachedData.length > 0 ? cachedData : (fastSectionData.data || [])).filter((item: any) => item.status !== 'inactive').length,
+      totalPipelineValue: 0,
+      openDeals: 0,
+      winRate: 0,
+      avgDealSize: 0,
+      conversionRate: 0,
+      avgResponseTime: 0,
+      totalLeads: 0,
+      qualifiedLeads: 0,
+      meetingsScheduled: 0,
+      proposalsSent: 0,
+      dealsClosed: 0,
+      revenueGenerated: 0,
+      pipelineVelocity: 0,
+      stageConversionRates: {},
+      monthlyGrowth: 0,
+      quarterlyGrowth: 0,
+      yearlyGrowth: 0,
+      topPerformingSources: [],
+      averageDealCycle: 0,
+      customerAcquisitionCost: 0,
+      lifetimeValue: 0
+    } as any
   };
 
 
@@ -151,7 +194,7 @@ export function PipelineMiddlePanelStandalone({
           section={activeSection}
           data={pipelineData.data}
           onRecordClick={handleRecordClick}
-          loading={pipelineData.loading}
+          isLoading={pipelineData.loading}
           visibleColumns={['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions']}
         />
       </div>
