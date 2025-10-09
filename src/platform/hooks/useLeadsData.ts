@@ -16,6 +16,7 @@ interface Lead {
   email?: string;
   workEmail?: string;
   jobTitle?: string;
+  title?: string;
   company?: {
     id: string;
     name: string;
@@ -86,6 +87,7 @@ export function useLeadsData(): UseLeadsDataReturn {
         email: person.email || person.workEmail,
         workEmail: person.workEmail,
         jobTitle: person.jobTitle,
+        title: person.title,
         company: person.company ? {
           id: person.company.id,
           name: person.company.name,

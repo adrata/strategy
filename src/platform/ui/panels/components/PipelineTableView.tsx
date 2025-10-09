@@ -111,7 +111,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.jobTitle || ''}</div>
+              <div className="text-sm text-gray-900 truncate max-w-32">{item.title || item.jobTitle || ''}</div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-40">{item.email || item.workEmail || ''}</div>
