@@ -77,7 +77,7 @@ export function useLeadsData(): UseLeadsDataReturn {
 
       const peopleData = result.data || [];
       
-      // 🎯 TRANSFORM: Convert people data to leads format
+      // 🎯 TRANSFORM: Convert people data to leads format (no fallback data)
       const leadsData: Lead[] = peopleData.map((person: any, index: number) => ({
         id: person.id,
         firstName: person.firstName,
@@ -95,7 +95,7 @@ export function useLeadsData(): UseLeadsDataReturn {
         lastActionDate: person.lastActionDate,
         nextAction: person.nextAction,
         nextActionDate: person.nextActionDate,
-        rank: index + 1, // Simple rank based on order
+        rank: index + 1,
         createdAt: person.createdAt,
         updatedAt: person.updatedAt
       }));

@@ -15,50 +15,16 @@ export interface WorkspaceTableConfig {
   };
 }
 
-// Notary Everyday workspace configuration
-const NOTARY_EVERYDAY_CONFIG: WorkspaceTableConfig = {
-  workspaceId: '01K1VBYXHD0J895XAN0HGFBKJP', // Updated to match Dan's workspace ID
-  workspaceName: 'Notary Everyday',
-  sections: {
-    people: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['role', 'state'] // Hide role and state columns
-    },
-    companies: {
-      columns: ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
-    },
-    prospects: {
-      columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details'] // Remove company from hidden columns
-    },
-    leads: {
-      columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action'],
-      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction'],
-      hiddenColumns: ['stage', 'status', 'details', 'actions'] // Hide actions column
-    },
-    speedrun: {
-      columns: ['Rank', 'Company', 'Name', 'Status', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'name', 'status', 'lastAction', 'nextAction', 'actions']
-    },
-    sellers: {
-      columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions']
-    }
-  }
-};
+// All workspaces use the same default configuration
 
-// Default configuration for all other workspaces
+// Default configuration for all workspaces
 const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceId: 'default',
   workspaceName: 'Default',
   sections: {
     people: {
       columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['role', 'state'] // Hide role and state columns
+      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
     },
     companies: {
       columns: ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'],
@@ -70,13 +36,11 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
     },
     prospects: {
       columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions'],
-      hiddenColumns: ['stage', 'status', 'details'] // Remove company from hidden columns
+      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions']
     },
     leads: {
-      columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action'],
-      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction'],
-      hiddenColumns: ['stage', 'status', 'details', 'actions'] // Hide actions column
+      columns: ['Company', 'Name', 'Title', 'Email', 'Last Action', 'Next Action'],
+      columnOrder: ['company', 'name', 'title', 'email', 'lastAction', 'nextAction']
     },
     sellers: {
       columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
@@ -89,12 +53,7 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
  * Get workspace-specific table configuration
  */
 export function getWorkspaceTableConfig(workspaceId: string, workspaceName?: string): WorkspaceTableConfig {
-  // Check if this is the Notary Everyday workspace
-  if (workspaceId === NOTARY_EVERYDAY_CONFIG.workspaceId || 
-      workspaceName?.toLowerCase().includes('notary')) {
-    return NOTARY_EVERYDAY_CONFIG;
-  }
-  
+  // All workspaces use the same default configuration
   return DEFAULT_CONFIG;
 }
 

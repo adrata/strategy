@@ -102,28 +102,28 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
           <tr key={item.id || index} className="hover:bg-gray-50 cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
               <div className="text-sm text-gray-900 truncate max-w-32">
-                {item.company?.name || 'Unknown Company'}
+                {item.company?.name || ''}
               </div>
             </td>
             <td className="px-6 py-4">
               <div className="text-sm font-medium text-gray-900 truncate max-w-32">
-                {item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown Contact'}
+                {item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim()}
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.jobTitle || 'No Title'}</div>
+              <div className="text-sm text-gray-900 truncate max-w-32">{item.jobTitle || ''}</div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-40">{item.email || item.workEmail || 'No Email'}</div>
+              <div className="text-sm text-gray-900 truncate max-w-40">{item.email || item.workEmail || ''}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm">
               <span className="text-gray-600">
-                {item.lastActionDate ? new Date(item.lastActionDate).toLocaleDateString() : 'No contact'}
+                {item.lastActionDate ? new Date(item.lastActionDate).toLocaleDateString() : ''}
               </span>
-              <div className="text-xs text-gray-400">{item.lastAction || 'No action'}</div>
+              <div className="text-xs text-gray-400">{item.lastAction || ''}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {item.nextAction || 'No next action'}
+              {item.nextAction || ''}
             </td>
           </tr>
         );
@@ -221,28 +221,26 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col mx-6 mb-8">
+    <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col">
       {currentData.length > 0 ? (
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 sticky top-0 z-10">
-                <tr>
-                  {getTableHeaders().map((header) => (
-                    <th 
-                      key={header}
-                      className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentData.map(renderTableRow)}
-              </tbody>
-            </table>
-          </div>
+        <div className="flex-1 overflow-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                {getTableHeaders().map((header) => (
+                  <th 
+                    key={header}
+                    className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {currentData.map(renderTableRow)}
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center">
@@ -254,7 +252,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
               No {activeSection} yet
             </h4>
             <p className="text-sm text-gray-600 max-w-sm">
-              Start building your {activeSection} pipeline by adding new entries. Click the button above to get started.
+              Start building your {activeSection} pipeline by adding new entries.
             </p>
           </div>
         </div>
