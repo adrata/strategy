@@ -853,7 +853,7 @@ export function PipelineHeader({
         const totalCount = recordCount || (metrics.totalLeads ?? 0);
         
         metricItems.push({
-          label: 'Total',
+          label: section === 'companies' ? 'Actions Companies' : section === 'people' ? 'Actions People' : 'Total',
           value: totalCount > 0 ? totalCount.toString() : '—',
           color: 'text-gray-900'
         });

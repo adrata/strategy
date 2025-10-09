@@ -40,6 +40,7 @@ export function MiddlePanel({
   
   // 🚀 PERFORMANCE: Use fast section data hook with instant cache fallback
   const [cachedData, setCachedData] = React.useState<any[]>([]);
+  const [showSkeleton, setShowSkeleton] = React.useState(false);
   
   // Check for cached data on section change for instant loading
   React.useEffect(() => {
@@ -51,19 +52,36 @@ export function MiddlePanel({
           const parsed = JSON.parse(cached);
           if (parsed.data && Array.isArray(parsed.data)) {
             setCachedData(parsed.data);
+            setShowSkeleton(false); // Don't show skeleton if we have cached data
             console.log(`⚡ [MIDDLE PANEL] Loaded ${parsed.data.length} cached items for ${activeSection}`);
           }
         } catch (e) {
           console.warn('Failed to parse cached data:', e);
         }
+      } else {
+        // Clear cached data when switching to a section without cache
+        setCachedData([]);
       }
     }
   }, [activeSection]);
   
+  // Show skeleton only after a short delay to prevent flickering
+  React.useEffect(() => {
+    if (fastSectionData.loading && cachedData.length === 0 && (fastSectionData.data || []).length === 0) {
+      const timer = setTimeout(() => {
+        setShowSkeleton(true);
+      }, 100); // 100ms delay to prevent flickering
+      
+      return () => clearTimeout(timer);
+    } else {
+      setShowSkeleton(false);
+    }
+  }, [fastSectionData.loading, cachedData.length, fastSectionData.data]);
+  
   // Use cached data if available, otherwise use fast section data
   const pipelineData = {
     data: cachedData.length > 0 ? cachedData : (fastSectionData.data || []),
-    loading: fastSectionData.loading && cachedData.length === 0,
+    loading: fastSectionData.loading && cachedData.length === 0 && (fastSectionData.data || []).length === 0,
     error: fastSectionData.error,
     isEmpty: (cachedData.length > 0 ? cachedData : (fastSectionData.data || [])).length === 0,
     metrics: {
@@ -95,7 +113,7 @@ export function MiddlePanel({
 
 
   // Show skeleton loading state only when actually loading (not when there's simply no data)
-  if (pipelineData['loading']) {
+  if (showSkeleton) {
     return (
       <div className="h-full flex flex-col bg-white">
         {/* Header skeleton */}
