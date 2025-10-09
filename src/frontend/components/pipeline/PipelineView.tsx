@@ -22,6 +22,7 @@ import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
+import { useLeadsData } from '@/platform/hooks/useLeadsData';
 import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
@@ -272,6 +273,9 @@ export const PipelineView = React.memo(function PipelineView({
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
+  // 🎯 NEW: Use dedicated leads hook for leads section
+  const leadsData = useLeadsData();
+  
   // 🚀 PERFORMANCE: Use fast section data hook for instant loading
   // Load all data at once for client-side pagination
   // Use higher limit for people section to ensure all records are loaded
@@ -308,6 +312,8 @@ export const PipelineView = React.memo(function PipelineView({
     
     switch (section) {
       case 'leads': 
+        // 🎯 NEW: Use dedicated leads data from v1 API
+        return leadsData.leads || [];
       case 'prospects': 
       case 'opportunities': 
       case 'clients': 
@@ -1489,6 +1495,11 @@ export const PipelineView = React.memo(function PipelineView({
         title={title}
         subtitle={subtitle}
         recordCount={(() => {
+          // 🎯 NEW: Use leads data count for leads section
+          if (section === 'leads') {
+            return leadsData.count || 0;
+          }
+          
           const fastCount = fastSectionData.count;
           const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;
           const finalCount = fastCount || arrayCount;
@@ -1532,9 +1543,7 @@ export const PipelineView = React.memo(function PipelineView({
       </div>
 
       {/* Main content */}
-      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'} overflow-auto middle-panel-scroll`} style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#cbd5e1 #f1f5f9',
+      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
         minHeight: 'calc(100vh - 150px)', // Extend table height further down
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
@@ -1625,8 +1634,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  isLoading={leadsData.loading} // 🎯 NEW: Use leads data loading state
+                  totalCount={leadsData.count} // 🎯 NEW: Use leads data count
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
