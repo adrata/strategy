@@ -105,37 +105,45 @@ export function PipelineMiddlePanel() {
       try {
         let sectionData: any[] = [];
         
-        // 🎯 NEW: Use v1 API for leads section
-        if (activeSection === 'leads') {
-          const response = await fetch('/api/v1/people?status=LEAD');
-          const data = await response.json();
-          if (data.success) {
-            sectionData = data.data || [];
-          }
-        } else {
-          // CRITICAL FIX: Load the specific section data needed for navigation
-          const response = await fetch(`/api/data/unified?includeSpeedrun=false&includeDashboard=false`);
-          const data = await response.json();
-          
-          if (data['success'] && data.data) {
-            // Get the specific section data
-            switch (activeSection) {
-              case 'prospects':
-                sectionData = data.data.prospects || [];
-                break;
-              case 'opportunities':
-                sectionData = data.data.opportunities || [];
-                break;
-              case 'companies':
-                sectionData = data.data.companies || [];
-                break;
-              case 'people':
-                sectionData = data.data.people || [];
-                break;
-              default:
-                sectionData = [];
+        // 🎯 NEW: Use v1 APIs for all sections
+        switch (activeSection) {
+          case 'leads':
+            const leadsResponse = await fetch('/api/v1/people?status=LEAD');
+            const leadsData = await leadsResponse.json();
+            if (leadsData.success) {
+              sectionData = leadsData.data || [];
             }
-          }
+            break;
+          case 'prospects':
+            const prospectsResponse = await fetch('/api/v1/people?status=PROSPECT');
+            const prospectsData = await prospectsResponse.json();
+            if (prospectsData.success) {
+              sectionData = prospectsData.data || [];
+            }
+            break;
+          case 'opportunities':
+            const opportunitiesResponse = await fetch('/api/v1/companies?status=OPPORTUNITY');
+            const opportunitiesData = await opportunitiesResponse.json();
+            if (opportunitiesData.success) {
+              sectionData = opportunitiesData.data || [];
+            }
+            break;
+          case 'companies':
+            const companiesResponse = await fetch('/api/v1/companies');
+            const companiesData = await companiesResponse.json();
+            if (companiesData.success) {
+              sectionData = companiesData.data || [];
+            }
+            break;
+          case 'people':
+            const peopleResponse = await fetch('/api/v1/people');
+            const peopleData = await peopleResponse.json();
+            if (peopleData.success) {
+              sectionData = peopleData.data || [];
+            }
+            break;
+          default:
+            sectionData = [];
         }
           
           console.log(`✅ [NAVIGATION] Loaded ${sectionData.length} records for ${activeSection}:`, {

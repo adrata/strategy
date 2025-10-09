@@ -197,7 +197,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             email: true,
             username: true,
             name: true,
-            displayName: true,
             password: true,
             isActive: true,
             activeWorkspaceId: true,

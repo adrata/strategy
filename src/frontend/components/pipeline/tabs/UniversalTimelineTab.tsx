@@ -221,37 +221,43 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       if (activityEvents.length === 0 && noteEvents.length === 0) {
         console.log('🔍 [TIMELINE] Fetching fresh timeline data');
         
-        // Load activities for this specific record using unified API
-        const activitiesResponse = await authFetch(`/api/data/unified`);
+        // Load activities for this specific record using v1 APIs
+        const [actionsResponse, peopleResponse, companiesResponse] = await Promise.all([
+          authFetch(`/api/v1/actions?companyId=${record.id}&personId=${record.id}`),
+          authFetch(`/api/v1/people?companyId=${record.id}`),
+          authFetch(`/api/v1/companies?id=${record.id}`)
+        ]);
         
-        if (activitiesResponse.ok) {
-          const activitiesData = await activitiesResponse.json();
-          console.log('📅 [TIMELINE] Activities data:', activitiesData);
-          
-          // 🚫 SAFETY CHECK: Ensure data exists and is an object
-          if (activitiesData['success'] && activitiesData.data && typeof activitiesData.data === 'object') {
-            // 🚫 FIX: Handle data structure properly - data is an object, not array
-            console.log('📅 [TIMELINE] Data structure:', {
-              hasData: !!activitiesData.data,
-              dataKeys: activitiesData.data ? Object.keys(activitiesData.data) : 'no data',
-              dataType: Array.isArray(activitiesData.data) ? 'array' : typeof activitiesData.data
-            });
-            
-            // Get all activities from all sections and flatten them
-            const allActivities: any[] = [];
-            
-            // Check each section for activities
-            const sections = ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers'];
-            sections.forEach(section => {
-              if (activitiesData.data[section] && Array.isArray(activitiesData.data[section])) {
-                allActivities.push(...activitiesData.data[section]);
-              }
-            });
-            
-            console.log('📅 [TIMELINE] Total activities found:', allActivities.length);
-            
-            // Filter activities for this specific record
-            const recordActivities = allActivities.filter((activity: any) => {
+        const allActivities: any[] = [];
+        
+        // Process actions
+        if (actionsResponse.ok) {
+          const actionsData = await actionsResponse.json();
+          if (actionsData.success && Array.isArray(actionsData.data)) {
+            allActivities.push(...actionsData.data.map((action: any) => ({
+              ...action,
+              type: 'action',
+              timestamp: action.createdAt || action.scheduledAt
+            })));
+          }
+        }
+        
+        // Process people (if this is a company record)
+        if (peopleResponse.ok && recordType === 'companies') {
+          const peopleData = await peopleResponse.json();
+          if (peopleData.success && Array.isArray(peopleData.data)) {
+            allActivities.push(...peopleData.data.map((person: any) => ({
+              ...person,
+              type: 'person',
+              timestamp: person.createdAt
+            })));
+          }
+        }
+        
+        console.log('📅 [TIMELINE] Total activities found:', allActivities.length);
+        
+        // Filter activities for this specific record
+        const recordActivities = allActivities.filter((activity: any) => {
               // Check if this activity is related to our record
               return (
                 activity['leadId'] === record.id ||

@@ -266,12 +266,10 @@ export function useAcquisitionOSData(
     // REMOVED: Duplicate fast counts API call - useFastCounts hook already handles this
     // This was causing multiple simultaneous API calls to /api/data/counts
     
-    // Now load full data in background
-    const url = new URL('/api/data/unified', window.location.origin);
-    url.searchParams.set('type', 'dashboard');
-    url.searchParams.set('action', 'get');
-    // Force refresh to get updated people ranking data
-    url.searchParams.set('forceRefresh', 'true');
+    // Now load full data in background using v1 APIs
+    const url = new URL('/api/v1/companies', window.location.origin);
+    url.searchParams.set('counts', 'true');
+    // Force refresh to get updated data
     url.searchParams.set('timestamp', Date.now().toString()); // Cache busting
     url.searchParams.set('workspaceId', activeWorkspace.id);
     url.searchParams.set('userId', userId);

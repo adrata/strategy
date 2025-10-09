@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { withSecurity, SecureApiContext } from '../middleware';
 import { getV1AuthUser } from '../auth';
 
 const prisma = new PrismaClient();
@@ -11,128 +12,135 @@ const prisma = new PrismaClient();
  */
 
 // GET /api/v1/users - List users with search and pagination
-export async function GET(request: NextRequest) {
-  try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+export const GET = withSecurity(
+  async (context: SecureApiContext) => {
+    try {
+      const { authUser, request } = context;
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const search = searchParams.get('search') || '';
-    const role = searchParams.get('role') || '';
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
-    const countsOnly = searchParams.get('counts') === 'true';
-    
-    const offset = (page - 1) * limit;
+      const { searchParams } = new URL(request.url);
+      const page = parseInt(searchParams.get('page') || '1');
+      const limit = parseInt(searchParams.get('limit') || '20');
+      const search = searchParams.get('search') || '';
+      const role = searchParams.get('role') || '';
+      const sortBy = searchParams.get('sortBy') || 'createdAt';
+      const sortOrder = searchParams.get('sortOrder') || 'desc';
+      const countsOnly = searchParams.get('counts') === 'true';
+      
+      const offset = (page - 1) * limit;
 
-    // Enhanced where clause for user management
-    const where: any = {};
-    
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-      ];
-    }
+      // Enhanced where clause
+      const where: any = {
+        isActive: true, // Only show active users
+      };
+      
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { username: { contains: search, mode: 'insensitive' } },
+        ];
+      }
 
-    // Role filtering (for sellers count)
-    if (role) {
-      where.role = role;
-    }
+      // Role filtering through workspace_users
+      if (role) {
+        where.workspace_users = {
+          some: {
+            role: role,
+            workspaceId: authUser.workspaceId,
+            isActive: true
+          }
+        };
+      }
 
-    // 🚀 PERFORMANCE: If counts only, just return counts by role
-    if (countsOnly) {
-      const roleCounts = await prisma.user_roles.groupBy({
-        by: ['roleId'],
-        where: {
-          workspaceId: authUser.workspaceId || 'local-workspace',
-          isActive: true
-        },
-        _count: { id: true }
-      });
+      // 🚀 PERFORMANCE: If counts only, just return counts by role
+      if (countsOnly) {
+        const roleCounts = await prisma.workspace_users.groupBy({
+          by: ['role'],
+          where: {
+            workspaceId: authUser.workspaceId,
+            isActive: true
+          },
+          _count: { id: true }
+        });
 
-      // Get role names for the counts
-      const roleIds = roleCounts.map(rc => rc.roleId);
-      const roles = await prisma.roles.findMany({
-        where: { id: { in: roleIds } },
-        select: { id: true, name: true }
-      });
+        const counts = roleCounts.reduce((acc, role) => {
+          acc[role.role] = role._count.id;
+          return acc;
+        }, {} as Record<string, number>);
 
-      const counts = roleCounts.reduce((acc, stat) => {
-        const role = roles.find(r => r.id === stat.roleId);
-        if (role) {
-          acc[role.name] = stat._count.id;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+        return NextResponse.json({
+          success: true,
+          data: counts,
+          meta: {
+            type: 'counts',
+            filters: { search, role }
+          }
+        });
+      }
+
+      // Get users
+      const [users, totalCount] = await Promise.all([
+        prisma.users.findMany({
+          where,
+          orderBy: { [sortBy]: sortOrder },
+          skip: offset,
+          take: limit,
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            name: true,
+            firstName: true,
+            lastName: true,
+            timezone: true,
+            isActive: true,
+            activeWorkspaceId: true,
+            lastLoginAt: true,
+            createdAt: true,
+            updatedAt: true,
+            workspace_users: {
+              where: {
+                workspaceId: authUser.workspaceId,
+                isActive: true
+              },
+              select: {
+                role: true,
+                joinedAt: true
+              }
+            }
+          },
+        }),
+        prisma.users.count({ where }),
+      ]);
 
       return NextResponse.json({
         success: true,
-        data: counts,
+        data: users,
         meta: {
-          type: 'counts',
-          filters: { search, role }
-        }
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          filters: { search, role, sortBy, sortOrder },
+        },
       });
+
+    } catch (error) {
+      console.error('❌ [V1 USERS API] Error:', error);
+      return NextResponse.json(
+        { success: false, error: 'Internal server error' },
+        { status: 500 }
+      );
     }
-
-    // Get users
-    const [users, totalCount] = await Promise.all([
-      prisma.users.findMany({
-        where,
-        orderBy: { [sortBy]: sortOrder },
-        skip: offset,
-        take: limit,
-        include: {
-          user_roles: {
-            where: { isActive: true },
-            include: {
-              role: {
-                select: {
-                  id: true,
-                  name: true,
-                  description: true
-                }
-              }
-            }
-          }
-        },
-      }),
-      prisma.users.count({ where }),
-    ]);
-
-    return NextResponse.json({
-      success: true,
-      data: users,
-      meta: {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        filters: { search, role, sortBy, sortOrder },
-      },
-    });
-
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch users' },
-      { status: 500 }
-    );
+  },
+  {
+    requireAuth: true,
+    rateLimit: true,
+    allowedMethods: ['GET']
   }
-}
+);
 
 // POST /api/v1/users - Create a new user
 export async function POST(request: NextRequest) {
@@ -160,29 +168,42 @@ export async function POST(request: NextRequest) {
     const user = await prisma.users.create({
       data: {
         email: body.email,
+        username: body.username,
         name: body.name,
         firstName: body.firstName,
         lastName: body.lastName,
-        password: body.password, // Should be hashed in production
         timezone: body.timezone,
-        activeWorkspaceId: authUser.workspaceId || 'local-workspace',
+        isActive: true,
+        activeWorkspaceId: authUser.workspaceId,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      include: {
-        user_roles: {
-          where: { isActive: true },
-          include: {
-            role: {
-              select: {
-                id: true,
-                name: true,
-                description: true
-              }
-            }
-          }
-        }
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        firstName: true,
+        lastName: true,
+        timezone: true,
+        isActive: true,
+        activeWorkspaceId: true,
+        createdAt: true,
+        updatedAt: true,
       },
+    });
+
+    // Add user to workspace with default role
+    await prisma.workspace_users.create({
+      data: {
+        workspaceId: authUser.workspaceId,
+        userId: user.id,
+        role: body.role || 'VIEWER',
+        isActive: true,
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
     });
 
     return NextResponse.json({

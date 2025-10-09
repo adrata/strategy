@@ -404,9 +404,19 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // ⚡ PERFORMANCE MONITORING: Track API call timing
       const startTime = performance.now();
       
-      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first
+      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first using v1 API
       const timestamp = Date.now();
-      const response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+      let response;
+      if (section === 'companies') {
+        response = await fetch(`/api/v1/companies/${recordId}`);
+      } else if (section === 'people') {
+        response = await fetch(`/api/v1/people/${recordId}`);
+      } else if (section === 'actions') {
+        response = await fetch(`/api/v1/actions/${recordId}`);
+      } else {
+        // Fallback to old API for other sections
+        response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+      }
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       

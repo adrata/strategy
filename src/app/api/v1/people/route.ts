@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { withSecurity, SecureApiContext } from '../middleware';
+import { getV1AuthUser } from '../auth';
 
 const prisma = new PrismaClient();
 
@@ -88,7 +89,9 @@ export const GET = withSecurity(
     const [people, totalCount] = await Promise.all([
       prisma.people.findMany({
         where,
-        orderBy: { [sortBy]: sortOrder },
+        orderBy: { 
+          [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+        },
         skip: offset,
         take: limit,
         include: {

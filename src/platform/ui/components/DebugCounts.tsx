@@ -40,22 +40,34 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
           acquisitionDataExists: !!acquisitionData
         });
 
-        // Test direct API call
+        // Test direct v1 API calls
         let apiData = null;
         try {
-          const response = await fetch(
-            `/api/data/unified?type=dashboard&action=get&workspaceId=${currentWorkspaceId}&userId=${currentUserId}`
-          );
+          const [companiesResponse, peopleResponse, actionsResponse] = await Promise.all([
+            fetch(`/api/v1/companies?counts=true`),
+            fetch(`/api/v1/people?counts=true`),
+            fetch(`/api/v1/actions?counts=true`)
+          ]);
           
-          if (response.ok) {
-            apiData = await response.json();
-            setApiResponse(apiData);
-            console.log('✅ [DEBUG COUNTS] API response:', apiData);
-          } else {
-            console.error('❌ [DEBUG COUNTS] API call failed:', response.status, response.statusText);
-          }
+          const [companiesData, peopleData, actionsData] = await Promise.all([
+            companiesResponse.json(),
+            peopleResponse.json(),
+            actionsResponse.json()
+          ]);
+          
+          apiData = {
+            success: true,
+            data: {
+              companies: companiesData.success ? companiesData.data : {},
+              people: peopleData.success ? peopleData.data : {},
+              actions: actionsData.success ? actionsData.data : {}
+            }
+          };
+          
+          setApiResponse(apiData);
+          console.log('✅ [DEBUG COUNTS] V1 API response:', apiData);
         } catch (error) {
-          console.error('❌ [DEBUG COUNTS] API call error:', error);
+          console.error('❌ [DEBUG COUNTS] V1 API call error:', error);
         }
 
         // Compile debugging information

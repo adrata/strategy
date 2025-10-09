@@ -102,7 +102,9 @@ export async function GET(request: NextRequest) {
     const [actions, totalCount] = await Promise.all([
       prisma.actions.findMany({
         where,
-        orderBy: { [sortBy]: sortOrder },
+        orderBy: { 
+          [sortBy === 'rank' ? 'createdAt' : sortBy]: sortOrder 
+        },
         skip: offset,
         take: limit,
         include: {

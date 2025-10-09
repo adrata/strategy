@@ -259,18 +259,19 @@ export default function SignInPage() {
           console.log("🔄 [SIGN-IN PAGE] Redirecting to:", redirectUrl);
           router.push(redirectUrl);
         }, 100);
+        // Don't reset loading state on success - let the redirect happen while showing "Starting..."
       } else {
         console.error("❌ [SIGN-IN PAGE] Authentication failed:", result.error);
         setError(
           result.error ||
             "Authentication failed. Please check your credentials.",
         );
+        setIsLoading(false); // Only reset loading state on error
       }
     } catch (error) {
       console.error("❌ [SIGN-IN PAGE] Unexpected error:", error);
       setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Only reset loading state on error
     }
   };
 
