@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     // Enhanced where clause for action management
     const where: any = {
-      workspaceId: authUser.workspaceId, // Filter by user's workspace
+      workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
     };
     
@@ -97,8 +97,8 @@ export async function GET(request: NextRequest) {
       return createSuccessResponse(counts, {
         type: 'counts',
         filters: { search, status, priority, type, companyId, personId },
-        userId: authUser.id,
-        workspaceId: authUser.workspaceId,
+        userId: context.userId,
+        workspaceId: context.workspaceId,
       });
     }
 
@@ -150,8 +150,8 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(totalCount / limit),
       },
       filters: { search, status, priority, type, companyId, personId, sortBy, sortOrder },
-      userId: authUser.id,
-      workspaceId: authUser.workspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
@@ -163,10 +163,17 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/actions - Create a new action
 export async function POST(request: NextRequest) {
   try {
-    // Authenticate user using v1 auth system
-    const authUser = await getV1AuthUser(request);
-    
-    if (!authUser) {
+    // Authenticate and authorize user using unified auth system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
@@ -191,8 +198,8 @@ export async function POST(request: NextRequest) {
         completedAt: body.completedAt ? new Date(body.completedAt) : null,
         status: body.status || 'PLANNED',
         priority: body.priority || 'NORMAL',
-        workspaceId: authUser.workspaceId,
-        userId: authUser.id,
+        workspaceId: context.workspaceId,
+        userId: context.userId,
         companyId: body.companyId,
         personId: body.personId,
         createdAt: new Date(),
@@ -229,8 +236,8 @@ export async function POST(request: NextRequest) {
 
     return createSuccessResponse(action, {
       message: 'Action created successfully',
-      userId: authUser.id,
-      workspaceId: authUser.workspaceId,
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
