@@ -2,25 +2,21 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false,
-    "outDir": "dist-scripts",
-    "rootDir": ".",
+    "outDir": "./dist/scripts",
+    "target": "es2022",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "ES2020",
-    "esModuleInterop": true,
-    "resolveJsonModule": false,
-    "declaration": false,
-    "sourceMap": false
+    "moduleResolution": "node"
   },
   "include": [
-    "scripts/run-buyer-group.ts",
-    "src/platform/services/buyer-group/**/*.ts"
+    "scripts/**/*.ts",
+    "scripts/**/*.js"
   ],
   "exclude": [
     "node_modules",
+    "src-tauri/target",
+    "tests/**/*",
+    "out",
     "dist",
-    "dist-scripts"
+    ".next"
   ]
 }
-
-
