@@ -998,12 +998,12 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                          className={`${section === 'leads' ? 'bg-purple-100 text-purple-800 border border-purple-200 hover:bg-purple-200' : 'bg-white text-black border border-gray-300 hover:bg-gray-50'} px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2`}
                         >
-                          {sectionInfo.actionButton}
+                          {section === 'leads' ? `Add Lead (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton}
                         </button>
                       )}
-                      {(sectionInfo as any).secondaryActionButton && (
+                      {(sectionInfo as any).secondaryActionButton && !(section === 'leads' && (recordCount ?? 0) === 0) && (
                         <button 
                           onClick={() => {
                             // Handle secondary action - Start Speedrun for speedrun section, Add Action for others
@@ -1016,7 +1016,7 @@ export function PipelineHeader({
                             }
                           }}
                           disabled={loading}
-                          className="bg-blue-100 text-blue-800 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className={`${section === 'speedrun' ? 'bg-green-100 text-green-800 border border-green-200 hover:bg-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200'} px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           {section === 'speedrun' ? `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>

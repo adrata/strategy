@@ -1529,8 +1529,8 @@ export const PipelineView = React.memo(function PipelineView({
         })()}
       />
 
-      {/* Filters - Hide when no leads */}
-      {!(section === 'leads' && finalData.length === 0) && (
+      {/* Filters - Hide search/filter/sort/columns when there is no data */}
+      {finalData.length > 0 && (
         <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
           <PipelineFilters 
             section={section}

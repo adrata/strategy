@@ -15,8 +15,6 @@ export interface WorkspaceTableConfig {
   };
 }
 
-// All workspaces use the same default configuration
-
 // Default configuration for all workspaces
 const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceId: 'default',
