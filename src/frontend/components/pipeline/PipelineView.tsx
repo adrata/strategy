@@ -449,10 +449,19 @@ export const PipelineView = React.memo(function PipelineView({
   });
   
   // 🚀 PERFORMANCE: Use fast section data for instant loading
-  const finalData = fastSectionData.data || pipelineData.data || [];
-  const finalLoading = fastSectionData.loading || pipelineData.loading;
-  const finalError = fastSectionData.error || pipelineData.error;
-  const finalIsEmpty = (fastSectionData.data || []).length === 0;
+  // 🎯 NEW: Use leads data for leads section
+  const finalData = section === 'leads' 
+    ? (leadsData.leads || [])
+    : (fastSectionData.data || pipelineData.data || []);
+  const finalLoading = section === 'leads' 
+    ? leadsData.loading 
+    : (fastSectionData.loading || pipelineData.loading);
+  const finalError = section === 'leads' 
+    ? leadsData.error 
+    : (fastSectionData.error || pipelineData.error);
+  const finalIsEmpty = section === 'leads' 
+    ? (leadsData.leads || []).length === 0
+    : (fastSectionData.data || []).length === 0;
   
   // 🔍 DEBUG: Log data sources for People section
   if (section === 'people') {
