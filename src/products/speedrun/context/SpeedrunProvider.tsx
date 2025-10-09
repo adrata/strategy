@@ -11,7 +11,7 @@ import {
   getDailyProgress,
   getWeeklyProgress,
 } from "../state";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 

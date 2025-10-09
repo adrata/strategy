@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { generateOpenAIResponse } from "../utils/openaiService";
 import type { ChatMessage, ChatSessions } from "../types/hooks";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface UseChatReturn {
   // Chat State

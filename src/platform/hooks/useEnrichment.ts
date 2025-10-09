@@ -15,7 +15,7 @@ import {
   EnrichmentResult,
   ExecutionStatus,
 } from "@/platform/services/enrichment-client";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 // Hook for main enrichment operations
 export function useEnrichment() {

@@ -5,7 +5,7 @@
  * across all platforms (desktop, web, mobile).
  */
 
-import { authFetch } from "@/platform/auth-fetch";
+import { authFetch } from "@/platform/api-fetch";
 
 export interface LeadUpdateData {
   name?: string;

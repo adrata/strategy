@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 // Removed authFetch import - using standard fetch
 
 interface RecordTitleData {

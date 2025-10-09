@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useMe
 // CRITICAL FIX: Remove demo scenario service to eliminate demo data loading
 // import { demoScenarioService } from "@/platform/services/DemoScenarioService";
 import { getSpeedrunDataService } from "@/platform/services/speedrun-data-service";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface PipelineContextType {
   // UI State

@@ -60,7 +60,7 @@ export function useSpeedrunSignals(
         console.log('🔍 [Speedrun Signals] Checking for new signals...');
         
         // Call API to check for new signals since lastCheck
-        const { authFetch } = await import('@/platform/auth-fetch');
+        const { authFetch } = await import('@/platform/api-fetch');
         const response = await authFetch(`/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`);
         
         if (response.ok && isActive) {
@@ -114,7 +114,7 @@ export function useSpeedrunSignals(
       console.log('🚨 [Speedrun Signals] Accepting signal for:', activeSignal?.contact?.name || 'Unknown');
       
       // Call the API to add contact to Speedrun
-      const { authFetch } = await import('@/platform/auth-fetch');
+      const { authFetch } = await import('@/platform/api-fetch');
       const response = await authFetch('/api/speedrun/add-from-signal', {
         method: 'POST',
         headers: {

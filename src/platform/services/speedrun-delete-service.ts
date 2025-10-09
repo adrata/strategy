@@ -9,7 +9,7 @@
  * 2025 Best Practice: Soft delete with clear user feedback
  */
 
-import { safeApiFetch } from '@/platform/safe-api-fetch';
+import { safeApiFetch } from '@/platform/api-fetch';
 
 export interface DeleteOptions {
   /** Reason for deletion (for audit trail) */

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from '../InlineEditField';
 import { useRouter } from 'next/navigation';

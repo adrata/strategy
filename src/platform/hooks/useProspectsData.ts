@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 export interface Prospect {
   id: string;
@@ -42,10 +42,13 @@ export function useProspectsData(): UseProspectsDataReturn {
   const fetchProspects = useCallback(async () => {
     if (authLoading) return;
     try {
-      setLoading(true);
+      // Only set loading to true if we don't have data yet
+      if (prospects.length === 0) {
+        setLoading(true);
+      }
       setError(null);
 
-      const response = await fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' });
+      const response = await fetch('/api/v1/people?status=PROSPECT&limit=1000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch prospects: ${response.statusText}`);
@@ -95,7 +98,9 @@ export function useProspectsData(): UseProspectsDataReturn {
 
   useEffect(() => {
     if (authLoading) return;
+    
     // Instant hydration from cache
+    let hasCachedData = false;
     try {
       const storageKey = `adrata-prospects-${workspaceId}`;
       const cached = localStorage.getItem(storageKey);
@@ -105,9 +110,16 @@ export function useProspectsData(): UseProspectsDataReturn {
           setProspects(parsed.prospects as Prospect[]);
           setCount((parsed.prospects as Prospect[]).length);
           setLoading(false);
+          hasCachedData = true;
         }
       }
     } catch {}
+    
+    // Only set loading to true if we don't have cached data
+    if (!hasCachedData) {
+      setLoading(true);
+    }
+    
     // Revalidate in background
     fetchProspects();
   }, [authLoading, workspaceId, fetchProspects]);

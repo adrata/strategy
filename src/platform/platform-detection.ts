@@ -1,7 +1,6 @@
 // LIGHTNING-FAST MULTI-PLATFORM DETECTION - 2025 OPTIMIZED
 // Production-ready for: Vercel Web + Tauri Desktop + Capacitor Mobile
-
-import { detectSafari, initializeSafariCompatibility, handleSafariError } from './safari-compatibility';
+// Includes Safari compatibility handling
 
 export type Platform = "web" | "desktop" | "mobile";
 export type DataMode = "api" | "static" | "hybrid";
@@ -465,6 +464,159 @@ export const getPlatformOptimizations = () => {
     targetTTI: config.isWeb ? 3500 : 1500, // Time to Interactive (ms)
   };
 };
+
+// ==================== SAFARI COMPATIBILITY ====================
+
+export interface SafariCompatibilityInfo {
+  isSafari: boolean;
+  isSafariMobile: boolean;
+  isSafariDesktop: boolean;
+  version: string;
+  hasWebKitIssues: boolean;
+  supportsModernFeatures: boolean;
+}
+
+/**
+ * Detect Safari browser and version
+ */
+export function detectSafari(): SafariCompatibilityInfo {
+  const userAgent = navigator.userAgent;
+  
+  const isSafariMobile = /iPhone|iPad|iPod/.test(userAgent) && 
+                        /Safari/.test(userAgent) && 
+                        !/Chrome|CriOS|FxiOS/.test(userAgent);
+  
+  const isSafariDesktop = /Macintosh/.test(userAgent) && 
+                         /Safari/.test(userAgent) && 
+                         !/Chrome/.test(userAgent);
+
+  const isSafari = isSafariMobile || isSafariDesktop;
+  
+  // Extract Safari version
+  const versionMatch = userAgent.match(/Version\/(\d+\.\d+)/);
+  const version = versionMatch ? versionMatch[1] : 'unknown';
+  
+  // Check for known WebKit issues
+  const hasWebKitIssues = isSafari && (
+    version.startsWith('14.') || // iOS 14 Safari issues
+    version.startsWith('15.') || // iOS 15 Safari issues
+    version.startsWith('16.')    // iOS 16 Safari issues
+  );
+  
+  // Check for modern feature support
+  const supportsModernFeatures = isSafari && (
+    version.startsWith('17.') || // iOS 17+ Safari
+    version.startsWith('18.')    // iOS 18+ Safari
+  );
+
+  return {
+    isSafari,
+    isSafariMobile,
+    isSafariDesktop,
+    version,
+    hasWebKitIssues,
+    supportsModernFeatures
+  };
+}
+
+/**
+ * Safari-specific error handler
+ */
+export function handleSafariError(error: Error, context: string): void {
+  const safariInfo = detectSafari();
+  
+  if (!safariInfo.isSafari) {
+    return; // Not Safari, use normal error handling
+  }
+
+  console.warn(`🚨 [SAFARI COMPAT] Error in ${context}:`, error);
+  
+  // Safari-specific error messages
+  if (error.message.includes('insecure') || error.message.includes('Desktop Application Error')) {
+    console.warn('🚨 [SAFARI COMPAT] Desktop application error detected - forcing web mode');
+    
+    // Clear any cached platform detection
+    if (typeof window !== 'undefined') {
+      // Clear platform cache
+      (window as any).__ADRATA_PLATFORM_CACHE__ = null;
+      
+      // Force web platform
+      (window as any).__ADRATA_FORCE_WEB__ = true;
+      
+      // CRITICAL: Override any Tauri detection
+      (window as any).__TAURI__ = undefined;
+      (window as any).__TAURI_METADATA__ = undefined;
+      (window as any).__TAURI_INTERNALS__ = undefined;
+      
+      // Force web protocol detection
+      if (window.location.protocol === 'tauri:') {
+        console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - forcing web mode');
+        // This is a Safari-specific workaround
+        Object.defineProperty(window.location, 'protocol', {
+          value: 'https:',
+          writable: false,
+          configurable: false
+        });
+      }
+    }
+  }
+}
+
+/**
+ * Initialize Safari compatibility
+ */
+export function initializeSafariCompatibility(): void {
+  const safariInfo = detectSafari();
+  
+  if (!safariInfo.isSafari) {
+    return;
+  }
+
+  console.log('🍎 [SAFARI COMPAT] Initializing Safari compatibility mode');
+  console.log('🍎 [SAFARI COMPAT] Version:', safariInfo.version);
+  console.log('🍎 [SAFARI COMPAT] Mobile:', safariInfo.isSafariMobile);
+  console.log('🍎 [SAFARI COMPAT] Has WebKit issues:', safariInfo.hasWebKitIssues);
+
+  // CRITICAL: Force web mode for Safari immediately
+  if (typeof window !== 'undefined') {
+    // Override any Tauri detection
+    (window as any).__TAURI__ = undefined;
+    (window as any).__TAURI_METADATA__ = undefined;
+    (window as any).__TAURI_INTERNALS__ = undefined;
+    
+    // Force web platform
+    (window as any).__ADRATA_FORCE_WEB__ = true;
+    (window as any).__ADRATA_SAFARI_MODE__ = true;
+    
+    // Override protocol if it's tauri:
+    if (window.location.protocol === 'tauri:') {
+      console.warn('🚨 [SAFARI COMPAT] Overriding tauri: protocol for Safari');
+      try {
+        Object.defineProperty(window.location, 'protocol', {
+          value: 'https:',
+          writable: false,
+          configurable: false
+        });
+      } catch (e) {
+        console.warn('🚨 [SAFARI COMPAT] Could not override protocol:', e);
+      }
+    }
+  }
+
+  // Add Safari-specific CSS classes
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.add('safari');
+    if (safariInfo.isSafariMobile) {
+      document.documentElement.classList.add('safari-mobile');
+    }
+    if (safariInfo.isSafariDesktop) {
+      document.documentElement.classList.add('safari-desktop');
+    }
+    if (safariInfo.hasWebKitIssues) {
+      document.documentElement.classList.add('safari-webkit-issues');
+    }
+  }
+}
 
 // Backward compatibility exports
 export const getAppConfig = getPlatformConfig;

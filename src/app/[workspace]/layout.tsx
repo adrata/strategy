@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useWorkspaceSwitch } from "@/platform/hooks/useWorkspaceSwitch";

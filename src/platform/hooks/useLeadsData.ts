@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 /**
  * 🎯 LEADS DATA HOOK
@@ -55,13 +55,16 @@ export function useLeadsData(): UseLeadsDataReturn {
       return;
     }
 
-    setLoading(true);
+    // Only set loading to true if we don't have data yet
+    if (leads.length === 0) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
       console.log('🚀 [LEADS DATA] Loading leads for workspace:', workspaceId);
       
-      // 🎯 USE V1 API: Fetch people with LEAD status
+      // Use optimized V1 API: Fetch people with LEAD status
       const response = await fetch(`/api/v1/people?status=LEAD&limit=1000`, {
         credentials: 'include'
       });
@@ -77,7 +80,6 @@ export function useLeadsData(): UseLeadsDataReturn {
       }
 
       const peopleData = result.data || [];
-      
       
       // 🎯 TRANSFORM: Convert people data to leads format (no fallback data)
       const leadsData: Lead[] = peopleData.map((person: any, index: number) => ({
@@ -134,6 +136,7 @@ export function useLeadsData(): UseLeadsDataReturn {
     if (!workspaceId || !userId || authLoading) return;
 
     // Instant hydration from cache
+    let hasCachedData = false;
     try {
       const storageKey = `adrata-leads-${workspaceId}`;
       const cached = localStorage.getItem(storageKey);
@@ -143,10 +146,16 @@ export function useLeadsData(): UseLeadsDataReturn {
           setLeads(parsed.leads as Lead[]);
           setCount((parsed.leads as Lead[]).length);
           setLoading(false);
+          hasCachedData = true;
         }
       }
     } catch (e) {
       // ignore
+    }
+
+    // Only set loading to true if we don't have cached data
+    if (!hasCachedData) {
+      setLoading(true);
     }
 
     // Revalidate in background

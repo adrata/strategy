@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 // Removed authFetch import - using standard fetch
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';

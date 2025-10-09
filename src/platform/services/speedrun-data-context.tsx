@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { SpeedrunDataService, SpeedrunProspect } from './speedrun-data-service';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface SpeedrunDataContextType {
   prospects: SpeedrunProspect[];

@@ -11,7 +11,7 @@ import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvid
 import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
 import { AcquisitionOSProvider } from '@/platform/ui/context/AcquisitionOSProvider';
 import { MiddlePanelSkeleton } from '@/platform/ui/components/skeletons/MiddlePanelSkeleton';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { generateSlug } from '@/platform/utils/url-utils';
 // Removed authFetch import - using standard fetch
 import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';

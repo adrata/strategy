@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 export interface Person {
   id: string;

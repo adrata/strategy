@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 import { DashboardSkeleton } from './DashboardSkeleton';

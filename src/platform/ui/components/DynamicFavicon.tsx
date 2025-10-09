@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface DynamicFaviconProps {
   defaultColor?: string;

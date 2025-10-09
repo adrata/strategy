@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 
 export interface SpeedrunMetrics {
   completedToday: number;

@@ -1,5 +1,5 @@
 import type { SpeedrunUserSettings } from "@/products/speedrun/types";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 export class SpeedrunSettingsClientService {
   /**

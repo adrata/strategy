@@ -8,9 +8,13 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 // Removed authFetch import - using standard fetch
+
+// 🚀 GLOBAL STATE: Track loaded sections across all hook instances
+const globalLoadedSections = new Set<string>();
+const globalSectionData = new Map<string, { data: any[], count: number, timestamp: number }>();
 
 // 🛠️ DEVELOPMENT: Mock data generator for when API is unavailable
 function generateMockData(section: string, limit: number): any[] {
@@ -55,11 +59,22 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { workspaceId, userId, isLoading: workspaceLoading, error: workspaceError } = useWorkspaceContext();
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any[]>(() => {
+    // Initialize with global cached data if available
+    const cached = globalSectionData.get(section);
+    return cached ? cached.data : [];
+  });
+  const [loading, setLoading] = useState(() => {
+    // Don't show loading if we have cached data
+    const cached = globalSectionData.get(section);
+    return !cached || cached.data.length === 0;
+  });
   const [error, setError] = useState<string | null>(null);
-  const [count, setCount] = useState(0);
-  const [loadedSections, setLoadedSections] = useState<Set<string>>(new Set());
+  const [count, setCount] = useState(() => {
+    // Initialize with global cached count if available
+    const cached = globalSectionData.get(section);
+    return cached ? cached.count : 0;
+  });
 
   const fetchSectionData = useCallback(async () => {
     console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
@@ -68,8 +83,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       authLoading,
       hasWorkspaceId: !!workspaceId,
       hasUserId: !!userId,
-      alreadyLoaded: loadedSections.has(section),
-      loadedSections: Array.from(loadedSections),
+      alreadyLoaded: globalLoadedSections.has(section),
+      loadedSections: Array.from(globalLoadedSections),
       actualWorkspaceId: workspaceId,
       actualUserId: userId
     });
@@ -88,13 +103,16 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section
-    if (loadedSections.has(section)) {
+    if (globalLoadedSections.has(section)) {
       console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
+    // Only set loading to true if we don't have data yet
+    if (data.length === 0) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -154,7 +172,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         
         setData(dataArray);
         setCount(totalCount);
-        setLoadedSections(prev => new Set(prev).add(section));
+        globalLoadedSections.add(section);
+        globalSectionData.set(section, { data: dataArray, count: totalCount, timestamp: Date.now() });
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: dataArray.length,
           totalCount: totalCount,
@@ -181,7 +200,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         const fallbackData = generateMockData(section, limit);
         setData(fallbackData);
         setCount(fallbackData.length);
-        setLoadedSections(prev => new Set(prev).add(section));
+        globalLoadedSections.add(section);
+        globalSectionData.set(section, { data: fallbackData, count: fallbackData.length, timestamp: Date.now() });
         setError(null); // Clear any previous errors
         
         console.log(`🛠️ [FAST SECTION DATA] Provided fallback data for ${section}:`, {
@@ -194,20 +214,21 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         const fallbackData = generateMockData(section, limit);
         setData(fallbackData);
         setCount(fallbackData.length);
-        setLoadedSections(prev => new Set(prev).add(section));
+        globalLoadedSections.add(section);
+        globalSectionData.set(section, { data: fallbackData, count: fallbackData.length, timestamp: Date.now() });
         setError(null); // Clear any previous errors
       }
     } finally {
       setLoading(false);
     }
-  }, [section, limit, workspaceId, userId, authLoading, workspaceLoading, loadedSections]);
+  }, [section, limit, workspaceId, userId, authLoading, workspaceLoading]);
 
   // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && !workspaceLoading && !loadedSections.has(section)) {
+    if (workspaceId && userId && !authLoading && !workspaceLoading && !globalLoadedSections.has(section)) {
       fetchSectionData();
     }
-  }, [section, workspaceId, userId, authLoading, workspaceLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
+  }, [section, workspaceId, userId, authLoading, workspaceLoading]); // Removed fetchSectionData to prevent infinite loops
 
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {
@@ -229,8 +250,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   useEffect(() => {
     // Only reset if workspace or user actually changed (not on initial load)
     if (workspaceId && userId && (workspaceId !== lastWorkspaceId || userId !== lastUserId) && lastWorkspaceId !== null) {
-      console.log(`🔄 [FAST SECTION DATA] Workspace/user changed, resetting loaded sections for ${section}`);
-      setLoadedSections(new Set());
+      console.log(`🔄 [FAST SECTION DATA] Workspace/user changed, resetting global loaded sections`);
+      globalLoadedSections.clear();
+      globalSectionData.clear();
       setData([]); // Clear data to prevent showing stale data
       setCount(0);
       setLastWorkspaceId(workspaceId);
@@ -247,8 +269,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     const handleWorkspaceSwitch = (event: CustomEvent) => {
       const { workspaceId: newWorkspaceId } = event.detail;
       if (newWorkspaceId && newWorkspaceId !== workspaceId) {
-        console.log(`🔄 [FAST SECTION DATA] Received workspace switch event for: ${newWorkspaceId}, clearing ${section} data`);
-        setLoadedSections(new Set());
+        console.log(`🔄 [FAST SECTION DATA] Received workspace switch event for: ${newWorkspaceId}, clearing global data`);
+        globalLoadedSections.clear();
+        globalSectionData.clear();
         setData([]); // Clear data to prevent showing stale data
         setCount(0);
         setError(null);

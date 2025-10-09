@@ -8,7 +8,7 @@ import {
   CogIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { SpeedrunSettingsClientService } from "@/platform/services/speedrun-settings-client";
 
 interface UserProfileSettingsProps {

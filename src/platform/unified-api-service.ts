@@ -10,7 +10,7 @@
  */
 
 import { invoke } from "@tauri-apps/api/core";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { apiFetch } from "@/platform/api-fetch";
 import { isDesktop } from "@/platform/platform-detection";
 import { AUTH_API_ROUTES } from "@/platform/auth/routes";
 
@@ -53,7 +53,7 @@ class UnifiedApiService {
 
     // Web/Mobile fallback
     try {
-      const result = await safeApiFetch(webEndpoint, webOptions, {
+      const result = await apiFetch(webEndpoint, webOptions, {
         success: false,
         data: fallbackData,
       });

@@ -13,7 +13,7 @@ import {
   MinusIcon,
 } from "@heroicons/react/24/outline";
 import { useActionPlatform } from "@/platform/ui/context/ActionPlatformProvider";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 interface PersonSuggestion {
   name: string;

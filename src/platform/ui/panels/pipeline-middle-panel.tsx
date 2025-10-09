@@ -12,7 +12,7 @@ import { PipelineKanbanView } from "./components/PipelineKanbanView";
 import { PipelineTableView } from "./components/PipelineTableView";
 import { PipelineFilters } from "./components/PipelineFilters";
 // Removed deleted PipelineDataStore - using unified data system
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';
 import { useLeadsData } from '@/platform/hooks/useLeadsData';
 import { useProspectsData } from '@/platform/hooks/useProspectsData';

@@ -3,7 +3,7 @@
 import React from "react";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 // Removed deleted PipelineDataStore - using unified data system
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { useLeadsData } from "@/platform/hooks/useLeadsData";
 
 interface PipelineTableViewProps {

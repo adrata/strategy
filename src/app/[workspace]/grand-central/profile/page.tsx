@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import CostOptimizationDashboard from "@/platform/ui/components/cost-optimization/CostOptimizationDashboard";
 import {
   Card,

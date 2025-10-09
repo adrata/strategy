@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import {
   XMarkIcon,
   DocumentIcon,

@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface FastCounts {
   leads: number | string;
@@ -59,7 +59,10 @@ export function useFastCounts(): UseFastCountsReturn {
       return;
     }
 
-    setLoading(true);
+    // Only set loading to true if we don't have data yet or forcing refresh
+    if (Object.keys(counts).length === 0 || forceRefresh) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -144,6 +147,7 @@ export function useFastCounts(): UseFastCountsReturn {
     if (!workspaceId || !userId || authLoading) return;
 
     // Instant hydration from cache if present
+    let hasCachedData = false;
     try {
       const storageKey = `adrata-fast-counts-${workspaceId}`;
       const cached = localStorage.getItem(storageKey);
@@ -152,10 +156,16 @@ export function useFastCounts(): UseFastCountsReturn {
         if (parsed?.counts) {
           setCounts(parsed.counts as FastCounts);
           setLoading(false);
+          hasCachedData = true;
         }
       }
     } catch (e) {
       // ignore storage failures
+    }
+
+    // Only set loading to true if we don't have cached data
+    if (!hasCachedData) {
+      setLoading(true);
     }
 
     // Always revalidate in background

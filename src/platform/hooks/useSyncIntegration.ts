@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 interface SyncIntegrationResponse {
   success: boolean;

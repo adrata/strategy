@@ -25,7 +25,7 @@ import { MonacoRecordDetail } from "./";
 import { useMonacoPipeline } from "@/platform/hooks/useMonacoPipeline";
 import { PipelineStatus } from "./PipelineStatus";
 import { PersonDetailView } from "./PersonDetailView";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 import { isDesktop } from "@/platform/platform-detection";
 
 interface MonacoContentProps {

@@ -32,10 +32,12 @@ function decodeJWT(token: string): any | null {
   }
 }
 
+import { logger } from "./logger";
+
 export async function getUnifiedAuthUser(
   req: NextRequest,
 ): Promise<AuthUser | null> {
-  console.log("🔍 API Auth: Checking authentication...");
+  logger.api.auth("Checking authentication...");
 
   try {
     // 1. Try JWT token from cookie (web auth)
@@ -54,7 +56,7 @@ export async function getUnifiedAuthUser(
       if (token) {
         const decoded = decodeJWT(token);
         if (decoded) {
-          console.log("✅ API Auth: Valid token for:", decoded.email);
+          logger.auth.success(`Valid token for: ${decoded.email}`);
           return {
             id: decoded.userId || decoded.id,
             email: decoded.email,
@@ -62,7 +64,7 @@ export async function getUnifiedAuthUser(
             workspaceId: decoded.workspaceId || "local-workspace",
           };
         } else {
-          console.warn("⚠️ API Auth: JWT verification failed");
+          logger.auth.error("JWT verification failed");
         }
       }
     }
@@ -78,7 +80,7 @@ export async function getUnifiedAuthUser(
       
       const decoded = decodeJWT(token);
       if (decoded) {
-        console.log("✅ API Auth: Valid bearer token for:", decoded.email);
+        logger.auth.success(`Valid bearer token for: ${decoded.email}`);
         return {
           id: decoded.userId || decoded.id,
           email: decoded.email,
@@ -86,14 +88,14 @@ export async function getUnifiedAuthUser(
           workspaceId: decoded.workspaceId || "local-workspace",
         };
       } else {
-        console.warn("⚠️ API Auth: Bearer token verification failed");
+        logger.auth.error("Bearer token verification failed");
       }
     }
 
-    console.log("❌ API Auth: No valid authentication found");
+    logger.api.auth("No valid authentication found");
     return null;
   } catch (error) {
-    console.error("❌ API Auth: Error during authentication check:", error);
+    logger.auth.error("Error during authentication check:", error);
     return null;
   }
 }

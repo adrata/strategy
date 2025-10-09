@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';

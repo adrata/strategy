@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { getPlatformConfig } from "@/platform/platform-detection";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 

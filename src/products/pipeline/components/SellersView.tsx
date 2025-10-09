@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from "next/navigation";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { PipelineTable } from '@/frontend/components/pipeline/PipelineTable';
 

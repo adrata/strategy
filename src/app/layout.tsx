@@ -22,14 +22,17 @@ import { SafariImmediateFix } from "@/platform/components/SafariImmediateFix";
 import { usePathname } from "next/navigation";
 
 // Import desktop auto-updater (only works in desktop environment)
-import "@/platform/desktop-updater";
+// Desktop updater removed - handled by Tauri directly
+
+// Import console helpers for logging control
+import "@/platform/console-helpers";
 
 // ✅ Initialize notification service for dock badges
 import { notificationService } from "@/platform/services/notification-service";
 import { isDesktop } from "@/platform/platform-detection";
 
 // ✅ Initialize Safari compatibility (consolidated from multiple files)
-import { initializeSafariCompatibility } from "@/platform/safari-compatibility";
+import { initializeSafariCompatibility } from "@/platform/platform-detection";
 
 // Service worker temporarily disabled to fix production errors
 // TODO: Re-enable when sw.js file is properly implemented

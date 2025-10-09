@@ -13,7 +13,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { MiddlePanelSkeleton } from "@/platform/ui/components/skeletons/MiddlePanelSkeleton";
 import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
 // Removed authFetch import - using standard fetch
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { getSellerCompanies } from './get-companies-action';
 
 interface Seller {

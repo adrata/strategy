@@ -16,7 +16,7 @@ import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActio
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { PanelLoader } from '@/platform/ui/components/Loader';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { getCategoryColors } from '@/platform/config/color-palette';
@@ -408,6 +408,10 @@ export function PipelineHeader({
           // Start Speedrun for speedrun section
           console.log(`⌨️ Command+Enter pressed for Start Speedrun`);
           navigateToPipeline('speedrun/sprint');
+        } else if (section === 'leads' || section === 'people') {
+          // Add Lead/Add Person for leads and people sections
+          console.log(`⌨️ Command+Enter pressed for Add ${section === 'leads' ? 'Lead' : 'Person'} in ${section} section`);
+          onAddRecord();
         } else {
           // Add Action for other sections
           console.log(`⌨️ Command+Enter pressed for Add Action in ${section} section`);
@@ -469,15 +473,15 @@ export function PipelineHeader({
         };
       case 'companies':
         return {
-          title: 'Actions Companies',
-          subtitle: 'Business entities',
+          title: 'Companies',
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
           actionButton: 'Add Company',
           secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
-          title: 'Actions People',
-          subtitle: 'Individual entities',
+          title: 'People',
+          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Individual entities',
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'
         };
@@ -852,11 +856,25 @@ export function PipelineHeader({
         // Use recordCount for all other sections
         const totalCount = recordCount || (metrics.totalLeads ?? 0);
         
-        metricItems.push({
-          label: section === 'companies' ? 'Actions Companies' : section === 'people' ? 'Actions People' : 'Total',
-          value: totalCount > 0 ? totalCount.toString() : '—',
-          color: 'text-gray-900'
-        });
+        // For companies and people sections, show Actions and Total like other sections
+        if (section === 'companies' || section === 'people') {
+          metricItems.push({
+            label: 'Actions',
+            value: '—',
+            color: 'text-gray-900'
+          });
+          metricItems.push({
+            label: 'Total',
+            value: totalCount > 0 ? totalCount.toString() : '—',
+            color: 'text-gray-900'
+          });
+        } else {
+          metricItems.push({
+            label: 'Total',
+            value: totalCount > 0 ? totalCount.toString() : '—',
+            color: 'text-gray-900'
+          });
+        }
         
         if (metrics.winRate) {
           metricItems.push({

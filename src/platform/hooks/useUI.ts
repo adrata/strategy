@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
-import type { Workspace } from "@/platform/auth-unified";
+import type { Workspace } from "@/platform/auth";
 
 interface UseUIReturn {
   // App & Section State

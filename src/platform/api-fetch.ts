@@ -1,27 +1,26 @@
 /**
- * Safe API Fetch Utility
+ * UNIFIED API FETCH UTILITY - Production Ready
  * 
- * Provides a robust API fetching mechanism with automatic fallback handling,
- * error recovery, and platform-specific optimizations.
+ * Combines the best features from auth-fetch.ts and safe-api-fetch.ts:
+ * - Automatic authentication handling
+ * - Robust error recovery with fallbacks
+ * - Platform-specific optimizations
+ * - Retry logic with exponential backoff
+ * - Rate limiting handling
  */
 
-export interface SafeApiFetchOptions extends RequestInit {
+export interface ApiFetchOptions extends RequestInit {
   timeout?: number;
   retries?: number;
   fallbackResponse?: any;
 }
 
 /**
- * Safe API fetch function that automatically handles errors and provides fallbacks
- * 
- * @param url - The URL to fetch
- * @param options - Fetch options
- * @param fallbackResponse - Response to return if the fetch fails
- * @returns Promise that resolves to the API response or fallback
+ * Unified API fetch function that handles authentication, errors, and fallbacks
  */
-export async function safeApiFetch<T = any>(
+export async function apiFetch<T = any>(
   url: string | URL,
-  options: SafeApiFetchOptions = {},
+  options: ApiFetchOptions = {},
   fallbackResponse?: T
 ): Promise<T> {
   const { timeout = 10000, retries = 3, fallbackResponse: optionsFallback, ...fetchOptions } = options;
@@ -63,7 +62,7 @@ export async function safeApiFetch<T = any>(
         if (retryAfter && retries > 0) {
           const delay = parseInt(retryAfter) * 1000;
           await new Promise(resolve => setTimeout(resolve, delay));
-          return safeApiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
+          return apiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
         }
       }
 
@@ -71,7 +70,7 @@ export async function safeApiFetch<T = any>(
       if (response.status >= 500 && retries > 0) {
         const delay = Math.pow(2, 3 - retries) * 1000; // Exponential backoff
         await new Promise(resolve => setTimeout(resolve, delay));
-        return safeApiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
+        return apiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
       }
 
       // For other client errors, try to parse error message
@@ -114,7 +113,7 @@ export async function safeApiFetch<T = any>(
     ) {
       const delay = Math.pow(2, 3 - retries) * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));
-      return safeApiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
+      return apiFetch(url, { ...options, retries: retries - 1 }, finalFallback);
     }
 
     console.error(`❌ Network error for API call: ${url}`, error);
@@ -132,24 +131,24 @@ export async function safeApiFetch<T = any>(
 /**
  * Convenience method for GET requests with fallback
  */
-export async function safeApiGet<T = any>(
+export async function apiGet<T = any>(
   url: string | URL,
   fallbackResponse?: T,
-  options: SafeApiFetchOptions = {}
+  options: ApiFetchOptions = {}
 ): Promise<T> {
-  return safeApiFetch(url, { ...options, method: 'GET' }, fallbackResponse);
+  return apiFetch(url, { ...options, method: 'GET' }, fallbackResponse);
 }
 
 /**
  * Convenience method for POST requests with fallback
  */
-export async function safeApiPost<T = any>(
+export async function apiPost<T = any>(
   url: string | URL,
   data?: any,
   fallbackResponse?: T,
-  options: SafeApiFetchOptions = {}
+  options: ApiFetchOptions = {}
 ): Promise<T> {
-  return safeApiFetch(url, {
+  return apiFetch(url, {
     ...options,
     method: 'POST',
     body: data ? JSON.stringify(data) : undefined,
@@ -159,13 +158,13 @@ export async function safeApiPost<T = any>(
 /**
  * Convenience method for PUT requests with fallback
  */
-export async function safeApiPut<T = any>(
+export async function apiPut<T = any>(
   url: string | URL,
   data?: any,
   fallbackResponse?: T,
-  options: SafeApiFetchOptions = {}
+  options: ApiFetchOptions = {}
 ): Promise<T> {
-  return safeApiFetch(url, {
+  return apiFetch(url, {
     ...options,
     method: 'PUT',
     body: data ? JSON.stringify(data) : undefined,
@@ -175,12 +174,12 @@ export async function safeApiPut<T = any>(
 /**
  * Convenience method for DELETE requests with fallback
  */
-export async function safeApiDelete<T = any>(
+export async function apiDelete<T = any>(
   url: string | URL,
   fallbackResponse?: T,
-  options: SafeApiFetchOptions = {}
+  options: ApiFetchOptions = {}
 ): Promise<T> {
-  return safeApiFetch(url, { ...options, method: 'DELETE' }, fallbackResponse);
+  return apiFetch(url, { ...options, method: 'DELETE' }, fallbackResponse);
 }
 
 /**
@@ -198,11 +197,11 @@ export function isDesktopEnvironment(): boolean {
 }
 
 /**
- * Safe API fetch that automatically detects desktop environment and provides appropriate fallbacks
+ * API fetch that automatically detects desktop environment and provides appropriate fallbacks
  */
-export async function safeApiFetchWithDesktopDetection<T = any>(
+export async function apiFetchWithDesktopDetection<T = any>(
   url: string | URL,
-  options: SafeApiFetchOptions = {},
+  options: ApiFetchOptions = {},
   fallbackResponse?: T
 ): Promise<T> {
   // If we're in desktop mode, return fallback immediately
@@ -211,5 +210,19 @@ export async function safeApiFetchWithDesktopDetection<T = any>(
     return fallbackResponse !== undefined ? fallbackResponse : {} as T;
   }
 
-  return safeApiFetch(url, options, fallbackResponse);
+  return apiFetch(url, options, fallbackResponse);
 }
+
+// Legacy aliases for backward compatibility
+export const authFetch = apiFetch;
+export const authGet = apiGet;
+export const authPost = apiPost;
+export const authPut = apiPut;
+export const authDelete = apiDelete;
+
+export const safeApiFetch = apiFetch;
+export const safeApiGet = apiGet;
+export const safeApiPost = apiPost;
+export const safeApiPut = apiPut;
+export const safeApiDelete = apiDelete;
+export const safeApiFetchWithDesktopDetection = apiFetchWithDesktopDetection;

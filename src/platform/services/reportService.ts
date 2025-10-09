@@ -4,7 +4,7 @@
  */
 
 import { canUseAPI } from "../platform-detection";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 export interface AIReport {
   id: string;

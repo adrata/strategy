@@ -1,5 +1,5 @@
-import { authFetch } from "@/platform/auth-fetch";
-import { UnifiedAuthService } from "@/platform/auth-unified";
+import { authFetch } from "@/platform/api-fetch";
+import { UnifiedAuthService } from "@/platform/auth";
 import { invoke } from "@tauri-apps/api/core";
 
 export interface RossDanMessage {

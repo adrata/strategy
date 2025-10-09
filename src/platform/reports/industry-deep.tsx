@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AIReportGenerator } from "@/platform/services/ai-report-generator";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 export interface IndustryDeepReportProps {
   company: string;

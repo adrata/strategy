@@ -14,7 +14,7 @@ import { SnoozeRemoveModal } from "./SnoozeRemoveModal";
 import { AIEmailComposer } from "./AIEmailComposer";
 import { PowerDialer } from "./components/PowerDialer";
 import { sendEmail, type EmailData } from "./EmailService";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { CompleteActionModal, ActionLogData } from "./components/CompleteActionModal";
 import { TodayActivityTracker } from "./TodayActivityTracker";
 import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';

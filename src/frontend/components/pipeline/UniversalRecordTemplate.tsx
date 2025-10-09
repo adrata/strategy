@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal } from '@/products/speedrun/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';

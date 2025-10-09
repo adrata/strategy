@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 
 interface UniversalSellerCompaniesTabProps {

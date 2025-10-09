@@ -8,7 +8,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { getDesktopEnvInfo } from "@/platform/desktop-env-check";
 import { invoke } from "@tauri-apps/api/core";
-import { authFetch } from "@/platform/auth-fetch";
+import { authFetch } from "@/platform/api-fetch";
 import { useSpeedrunContext, type SpeedrunPerson } from "@/products/speedrun/context/SpeedrunProvider";
 import { UniversalRankingEngine, type RankedSpeedrunPerson } from "@/products/speedrun/UniversalRankingEngine";
 import { RankingSystem } from "@/platform/services/ranking-system";

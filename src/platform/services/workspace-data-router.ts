@@ -6,7 +6,7 @@
  * - URL-based workspace selection for complete data separation
  */
 
-import { UnifiedAuthService } from "@/platform/auth-unified";
+import { UnifiedAuthService } from "@/platform/auth";
 import { storeSession } from "@/platform/auth/session";
 import { NextRequest } from "next/server";
 import { parseWorkspaceFromUrl, getWorkspaceBySlug, generateWorkspaceSlug } from "@/platform/auth/workspace-slugs";

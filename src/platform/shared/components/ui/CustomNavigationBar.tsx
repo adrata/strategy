@@ -30,7 +30,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { SparklesIcon } from "@heroicons/react/24/solid";
 import { useActionPlatform } from "@/platform/ui/context/ActionPlatformProvider";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface CustomNavigationBarProps {
   showLogo?: boolean;

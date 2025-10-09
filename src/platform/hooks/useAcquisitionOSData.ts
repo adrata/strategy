@@ -4,8 +4,8 @@
  */
 
 import { useCallback, useState, useEffect } from "react";
-import { UnifiedUser, Workspace } from "@/platform/auth-unified";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { UnifiedUser, Workspace } from "@/platform/auth";
+import { safeApiFetch } from "@/platform/api-fetch";
 import { useAdrataData } from "@/platform/hooks/useAdrataData";
 import { cache } from "@/platform/services/unified-cache";
 

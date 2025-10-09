@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePipeline } from "@/platform/hooks/usePipeline";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 import { isDesktop } from "@/platform/platform-detection";
 import { Company } from "@/products/monaco/types";
 // import { intelligenceOrchestrator } from "@/platform/services/intelligenceOrchestrator";

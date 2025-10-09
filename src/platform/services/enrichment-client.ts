@@ -7,7 +7,7 @@
  * 3. Monaco Company Search -> enrichMonacoSearch()
  */
 
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 export interface EnrichmentOptions {
   runFullPipeline?: boolean;

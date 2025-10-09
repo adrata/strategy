@@ -7,7 +7,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { getWorkspaceUrl, getWorkspaceBySlug, parseWorkspaceFromUrl } from "@/platform/auth/workspace-slugs";
 import {
   UserIcon,

@@ -6,7 +6,7 @@ import { PipelineHeader } from "@/frontend/components/pipeline/PipelineHeader";
 import { PipelineFilters } from "@/frontend/components/pipeline/PipelineFilters";
 import { SellersView } from "./SellersView";
 // Removed deleted PipelineDataStore - using unified data system
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useFastSectionData } from "@/platform/hooks/useFastSectionData";

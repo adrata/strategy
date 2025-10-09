@@ -12,7 +12,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';

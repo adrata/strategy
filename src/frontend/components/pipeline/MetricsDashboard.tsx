@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 // Removed authFetch import - using standard fetch
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 

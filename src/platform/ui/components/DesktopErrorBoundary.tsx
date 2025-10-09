@@ -1,11 +1,7 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import {
-  logError,
-  logInfo,
-  desktopErrorLogger,
-} from "@/platform/desktop-error-logger";
+// Standard error handling - no need for custom desktop error logger
 
 interface Props {
   children: ReactNode;
@@ -72,7 +68,7 @@ function logDesktopError(error: Error, errorInfo?: ErrorInfo) {
   };
 
   // Use our new error logger
-  logError("DesktopErrorBoundary", "Critical React error caught", {
+  console.error("DesktopErrorBoundary", "Critical React error caught", {
     error,
     errorInfo,
     errorDetails,
@@ -86,14 +82,17 @@ export class DesktopErrorBoundary extends Component<Props, State> {
     super(props);
     this['state'] = { hasError: false };
 
-    logInfo("DesktopErrorBoundary", "Error boundary component constructed", {
+    // Only log in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.log("DesktopErrorBoundary", "Error boundary component constructed", {
       NODE_ENV: process['env']['NODE_ENV'],
       TAURI_BUILD: process['env']['TAURI_BUILD'],
       NEXT_PUBLIC_IS_DESKTOP: process['env']['NEXT_PUBLIC_IS_DESKTOP'],
       isClient: typeof window !== "undefined",
       hasTauri:
         typeof window !== "undefined" ? !!(window as any).__TAURI__ : false,
-    });
+      });
+    }
   }
 
   static getDerivedStateFromError(error: Error): State {

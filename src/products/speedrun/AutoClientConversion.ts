@@ -10,7 +10,7 @@
  */
 
 import { TodayActivityTracker } from "./TodayActivityTracker";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import type { SpeedrunPerson } from "./context/SpeedrunProvider";
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 

@@ -9,7 +9,7 @@ import {
   PlayIcon,
 } from "@heroicons/react/24/outline";
 import { CallbackForwardingService } from "@/platform/services/callback-forwarding-service";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface CallbackForwardingSetupProps {
   onClose?: () => void;

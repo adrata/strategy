@@ -19,7 +19,7 @@ import {
   BuildingOfficeIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { IntelligentSignalConfig, SIGNAL_TEMPLATES } from '@/platform/services/intelligent-signal-system';
 
 interface SignalSettingsProps {

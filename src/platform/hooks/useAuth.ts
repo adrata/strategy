@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 // Removed desktop-env-check import - using simple fallback
 const getDesktopEnvInfo = () => ({ isDesktop: false });
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 
 interface UseInlineEditOptions {
   onSuccess?: (message: string) => void;

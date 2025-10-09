@@ -198,7 +198,7 @@ export class VoiceNavigationIntelligence {
       }
       
       // This would integrate with your existing data service
-      const { authFetch } = await import('@/platform/auth-fetch');
+      const { authFetch } = await import('@/platform/api-fetch');
       const response = await authFetch(`/api/data/unified?includeSpeedrun=false`);
       const data = await response.json();
       

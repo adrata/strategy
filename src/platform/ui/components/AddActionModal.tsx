@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface AddActionModalProps {

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { QUICK_ACTIONS } from "@/platform/config";
 import { ChatQueueManager } from "./ChatQueueManager";
 import { AI_MODELS, type AIModel } from './AIModelSelector';

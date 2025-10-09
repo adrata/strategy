@@ -9,7 +9,7 @@ import {
   ClockIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface GrandCentralModalProps {
   isOpen: boolean;

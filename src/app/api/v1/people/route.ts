@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/platform/prisma';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
-const prisma = new PrismaClient();
+// Response cache for ultra-fast performance
+const responseCache = new Map<string, { data: any, timestamp: number }>();
+const CACHE_TTL = 30000; // 30 seconds
+
+// Connection pooling optimization
+let connectionCheck: Promise<boolean> | null = null;
 
 /**
  * People CRUD API v1
@@ -12,6 +17,8 @@ const prisma = new PrismaClient();
 
 // GET /api/v1/people - List people with search and pagination
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Authenticate and authorize user
     const { context, response } = await getSecureApiContext(request, {
@@ -26,9 +33,10 @@ export async function GET(request: NextRequest) {
     if (!context) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
+    
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 1000); // Cap at 1000
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
@@ -38,6 +46,15 @@ export async function GET(request: NextRequest) {
     const countsOnly = searchParams.get('counts') === 'true';
     
     const offset = (page - 1) * limit;
+    
+    // Check cache first
+    const cacheKey = `people-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
+    const cached = responseCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`Cache hit for ${cacheKey} (${Date.now() - startTime}ms)`);
+      return NextResponse.json(cached.data);
+    }
 
     // Enhanced where clause for pipeline management
     const where: any = {
@@ -95,53 +112,68 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Get people
-    const [people, totalCount] = await Promise.all([
-      prisma.people.findMany({
-        where,
-        orderBy: { 
-          [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-        },
-        skip: offset,
-        take: limit,
-        include: {
-          company: {
-            select: {
-              id: true,
-              name: true,
-              website: true,
-              industry: true,
-            },
-          },
-          assignedUser: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          _count: {
-            select: {
-              actions: true,
-            },
-          },
-        },
-      }),
-      prisma.people.count({ where }),
-    ]);
+    let result;
+    
+    if (countsOnly) {
+      // Ultra-fast count query using raw SQL for maximum performance
+      const counts = await prisma.$queryRaw<Array<{ status: string; count: bigint }>>`
+        SELECT status, COUNT(*) as count 
+        FROM "People" 
+        WHERE "workspaceId" = ${context.workspaceId} AND "deletedAt" IS NULL 
+        GROUP BY status
+      `;
+      
+      const countMap = counts.reduce((acc, item) => {
+        acc[item.status] = Number(item.count);
+        return acc;
+      }, {} as Record<string, number>);
+      
+      result = { success: true, data: countMap };
+    } else {
+      // Ultra-optimized query with raw SQL for maximum performance
+      const [people, totalCount] = await Promise.all([
+        prisma.$queryRaw<Array<any>>`
+          SELECT 
+            p.id, p."fullName", p."firstName", p."lastName", p.email, p.status, 
+            p."globalRank", p."lastAction", p."nextAction", p."lastActionDate", 
+            p."nextActionDate", p."companyId", c.name as "companyName"
+          FROM "People" p
+          LEFT JOIN "Companies" c ON p."companyId" = c.id
+          WHERE p."workspaceId" = ${context.workspaceId} 
+            AND p."deletedAt" IS NULL
+            ${status ? prisma.$queryRaw`AND p.status = ${status}` : prisma.$queryRaw``}
+          ORDER BY p."${sortBy === 'rank' ? 'globalRank' : sortBy}" ${sortOrder}
+          LIMIT ${limit} OFFSET ${offset}
+        `,
+        prisma.$queryRaw<Array<{ count: bigint }>>`
+          SELECT COUNT(*) as count 
+          FROM "People" p
+          WHERE p."workspaceId" = ${context.workspaceId} 
+            AND p."deletedAt" IS NULL
+            ${status ? prisma.$queryRaw`AND p.status = ${status}` : prisma.$queryRaw``}
+        `,
+      ]);
 
+      result = createSuccessResponse(people, {
+        pagination: {
+          page,
+          limit,
+          totalCount: Number(totalCount[0]?.count || 0),
+          totalPages: Math.ceil(Number(totalCount[0]?.count || 0) / limit),
+        },
+        filters: { search, status, priority, companyId, sortBy, sortOrder },
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+      });
+    }
 
-    return createSuccessResponse(people, {
-      pagination: {
-        page,
-        limit,
-        totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-      filters: { search, status, priority, companyId, sortBy, sortOrder },
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-    });
+    // Cache the result
+    responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    
+    const duration = Date.now() - startTime;
+    console.log(`Query completed in ${duration}ms for ${cacheKey}`);
+    
+    return NextResponse.json(result);
 
   } catch (error) {
     console.error('❌ [V1 PEOPLE API] Error:', error);

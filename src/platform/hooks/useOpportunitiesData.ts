@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 
 export interface Opportunity {
   id: string;
@@ -41,10 +41,13 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
   const fetchOpportunities = useCallback(async () => {
     if (authLoading) return;
     try {
-      setLoading(true);
+      // Only set loading to true if we don't have data yet
+      if (opportunities.length === 0) {
+        setLoading(true);
+      }
       setError(null);
 
-      const response = await fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' });
+      const response = await fetch('/api/v1/companies?status=OPPORTUNITY&limit=1000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch opportunities: ${response.statusText}`);
@@ -92,7 +95,9 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
 
   useEffect(() => {
     if (authLoading) return;
+    
     // Instant hydration from cache
+    let hasCachedData = false;
     try {
       const storageKey = `adrata-opportunities-${workspaceId}`;
       const cached = localStorage.getItem(storageKey);
@@ -102,9 +107,16 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
           setOpportunities(parsed.opportunities as Opportunity[]);
           setCount((parsed.opportunities as Opportunity[]).length);
           setLoading(false);
+          hasCachedData = true;
         }
       }
     } catch {}
+    
+    // Only set loading to true if we don't have cached data
+    if (!hasCachedData) {
+      setLoading(true);
+    }
+    
     // Revalidate in background
     fetchOpportunities();
   }, [authLoading, workspaceId, fetchOpportunities]);

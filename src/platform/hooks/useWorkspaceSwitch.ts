@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { parseWorkspaceFromUrl, getWorkspaceBySlug } from '@/platform/auth/workspace-slugs';
 
 /**

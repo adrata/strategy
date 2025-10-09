@@ -17,7 +17,7 @@ import {
   CheckCircle,
   RefreshCw,
 } from "lucide-react";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 
 interface ImportLog {
   id: string;

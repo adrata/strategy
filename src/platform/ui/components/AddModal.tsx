@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
@@ -490,7 +490,18 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   ? "Enter person name"
                   : `Enter ${getSectionTitle().toLowerCase()} name`
               }
-              className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
+              style={{
+                '--tw-ring-color': `${categoryColors.primary}20`
+              } as React.CSSProperties}
+              onFocus={(e) => {
+                e.target.style.borderColor = categoryColors.primary;
+                e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#d1d5db';
+                e.target.style.boxShadow = 'none';
+              }}
               required
             />
           </div>
@@ -508,7 +519,19 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={companySearchQuery}
                     onChange={(e) => setCompanySearchQuery(e.target.value)}
                     placeholder="Search for company..."
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
+                    style={{
+                      '--focus-border-color': categoryColors.primary,
+                      '--focus-ring-color': `${categoryColors.primary}20`
+                    } as React.CSSProperties}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = categoryColors.primary;
+                      e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#d1d5db';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
 
@@ -1001,7 +1024,19 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               }
               placeholder={`Additional notes about this ${getSectionTitle().toLowerCase()}`}
               rows={3}
-              className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
+              style={{
+                '--focus-border-color': categoryColors.primary,
+                '--focus-ring-color': `${categoryColors.primary}20`
+              } as React.CSSProperties}
+              onFocus={(e) => {
+                e.target.style.borderColor = categoryColors.primary;
+                e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#d1d5db';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
 
@@ -1211,7 +1246,19 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.name}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
+                    style={{
+                      '--focus-border-color': getCategoryColors('companies').primary,
+                      '--focus-ring-color': `${getCategoryColors('companies').primary}20`
+                    } as React.CSSProperties}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = getCategoryColors('companies').primary;
+                      e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#d1d5db';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
 
@@ -1225,7 +1272,19 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.website}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                     placeholder="example.com or https://example.com"
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:ring-1 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
+                    style={{
+                      '--focus-border-color': getCategoryColors('companies').primary,
+                      '--focus-ring-color': `${getCategoryColors('companies').primary}20`
+                    } as React.CSSProperties}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = getCategoryColors('companies').primary;
+                      e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#d1d5db';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
 

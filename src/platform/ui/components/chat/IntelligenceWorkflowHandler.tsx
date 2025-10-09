@@ -8,7 +8,7 @@
 "use client";
 
 import React from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { IntelligentSignalSystem } from '@/platform/services/intelligent-signal-system';
 import { SalesIntelligenceWorkflows } from '@/platform/services/sales-intelligence-workflows';
 import { RecruitingIntelligenceWorkflows } from '@/platform/services/recruiting-intelligence-workflows';

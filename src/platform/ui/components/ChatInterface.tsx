@@ -3,10 +3,10 @@ import {
   PaperAirplaneIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { AITierService } from "@/platform/ai/services/aiTierService";
 import { SmartModelRouter } from "@/platform/services/smartModelRouter";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 import { AdrataIntelligence } from "./AdrataIntelligence";
 import { MagicalChanges, useMagicalChanges } from "./MagicalChanges";
 

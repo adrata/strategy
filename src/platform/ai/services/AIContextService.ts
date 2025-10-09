@@ -7,7 +7,7 @@
 
 // import { WorkspaceDataRouter } from '../../services/workspace-data-router';
 
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 export interface AIContextConfig {
   userId: string;
   workspaceId: string;

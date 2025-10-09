@@ -12,7 +12,7 @@ import { TABS } from "./lead-details/LeadDetailsTypes";
 
 // Import Action Platform context
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { CompanyDetailView } from "@/platform/ui/components/CompanyDetailView";
 
 interface SpeedrunLeadDetailsProps {

@@ -5,7 +5,7 @@
 
 import React from "react";
 import { demoScenarioService } from "@/platform/services/DemoScenarioService";
-import { authFetch } from "@/platform/auth-fetch";
+import { authFetch } from "@/platform/api-fetch";
 import { getSpeedrunPrioritization, SpeedrunPrioritizationScore } from './speedrun-prioritization-service';
 import { correctPeopleNamesFromEmails } from "@/platform/utils/nameCorrection";
 import { WorkspaceDataRouter } from "./workspace-data-router";
@@ -958,7 +958,7 @@ export function useSpeedrunData() {
   // Import auth hook properly
   const { useUnifiedAuth } = React.useMemo(() => {
     try {
-      return require("@/platform/auth-unified");
+      return require("@/platform/auth");
     } catch {
       return { useUnifiedAuth: () => ({ user: null }) };
     }

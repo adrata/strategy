@@ -11,7 +11,7 @@ import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';

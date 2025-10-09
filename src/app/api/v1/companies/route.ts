@@ -4,6 +4,10 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 const prisma = new PrismaClient();
 
+// Response cache for ultra-fast performance
+const responseCache = new Map<string, { data: any, timestamp: number }>();
+const CACHE_TTL = 30000; // 30 seconds
+
 /**
  * Companies CRUD API v1
  * GET /api/v1/companies - List companies with search and pagination
@@ -12,6 +16,8 @@ const prisma = new PrismaClient();
 
 // GET /api/v1/companies - List companies with search and pagination
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Authenticate and authorize user
     const { context, response } = await getSecureApiContext(request, {
@@ -29,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 1000); // Cap at 1000
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
@@ -39,6 +45,15 @@ export async function GET(request: NextRequest) {
     const countsOnly = searchParams.get('counts') === 'true';
     
     const offset = (page - 1) * limit;
+    
+    // Check cache first
+    const cacheKey = `companies-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
+    const cached = responseCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`Cache hit for ${cacheKey} (${Date.now() - startTime}ms)`);
+      return NextResponse.json(cached.data);
+    }
 
     // Enhanced where clause for pipeline management
     const where: any = {
@@ -72,8 +87,10 @@ export async function GET(request: NextRequest) {
       where.industry = { contains: industry, mode: 'insensitive' };
     }
 
-    // 🚀 PERFORMANCE: If counts only, just return counts by status
+    let result;
+    
     if (countsOnly) {
+      // Fast count query
       const statusCounts = await prisma.companies.groupBy({
         by: ['status'],
         where,
@@ -85,53 +102,54 @@ export async function GET(request: NextRequest) {
         return acc;
       }, {} as Record<string, number>);
 
-      return createSuccessResponse(counts, {
-        type: 'counts',
-        filters: { search, status, priority, industry },
+      result = { success: true, data: counts };
+    } else {
+      // Optimized query with minimal includes
+      const [companies, totalCount] = await Promise.all([
+        prisma.companies.findMany({
+          where,
+          orderBy: { 
+            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+          },
+          skip: offset,
+          take: limit,
+          select: {
+            id: true,
+            name: true,
+            website: true,
+            status: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            industry: true,
+            size: true
+          }
+        }),
+        prisma.companies.count({ where }),
+      ]);
+
+      result = createSuccessResponse(companies, {
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        filters: { search, status, priority, industry, sortBy, sortOrder },
         userId: context.userId,
         workspaceId: context.workspaceId,
       });
     }
 
-    // Get companies
-    const [companies, totalCount] = await Promise.all([
-      prisma.companies.findMany({
-        where,
-        orderBy: { 
-          [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-        },
-        skip: offset,
-        take: limit,
-        include: {
-          assignedUser: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          _count: {
-            select: {
-              people: true,
-              actions: true,
-            },
-          },
-        },
-      }),
-      prisma.companies.count({ where }),
-    ]);
-
-    return createSuccessResponse(companies, {
-      pagination: {
-        page,
-        limit,
-        totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-      filters: { search, status, priority, industry, sortBy, sortOrder },
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-    });
+    // Cache the result
+    responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    
+    const duration = Date.now() - startTime;
+    console.log(`Query completed in ${duration}ms for ${cacheKey}`);
+    
+    return NextResponse.json(result);
 
   } catch (error) {
     console.error('❌ [V1 COMPANIES API] Error:', error);

@@ -11,7 +11,7 @@ import {
 } from "@/platform/shared/components/ui/card";
 import { Alert, AlertDescription } from "@/platform/shared/components/ui/alert";
 import { Upload, FileText, Check, AlertCircle, Loader2, Settings } from "lucide-react";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
+import { safeApiFetch } from "@/platform/api-fetch";
 import { NaturalLanguageParser } from "@/platform/services/natural-language-parser";
 import { AIIntentParser, type AIProcessingIntent } from "@/platform/services/ai-intent-parser";
 

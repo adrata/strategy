@@ -3,7 +3,7 @@ import { DEFAULT_FORM_DATA } from "@/platform/config";
 // Removed safe-api-fetch and desktop-env-check imports - using standard fetch
 const getDesktopEnvInfo = () => ({ isDesktop: false });
 import { invoke } from "@tauri-apps/api/core";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import type { FormData } from "../types/hooks";
 
 interface UseFormsReturn {

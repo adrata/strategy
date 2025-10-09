@@ -21,7 +21,7 @@ import { Person } from "../types";
 import { PipelineProgress } from "@/platform/shared/components/ui/PipelineProgress";
 import { PainIntelligence, PainIntelligenceData, ExamplePainData } from "./PainIntelligence";
 import { useCompanyIntelligence } from "@/platform/hooks/useCompanyIntelligence";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
 
