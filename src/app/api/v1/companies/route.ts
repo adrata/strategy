@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
-import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getV1AuthUser } from '@/app/api/v1/auth';
+import { createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
-// Response cache for ultra-fast performance
+// Response cache for fast performance
 const responseCache = new Map<string, { data: any, timestamp: number }>();
 const CACHE_TTL = 30000; // 30 seconds
 
@@ -17,17 +18,10 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    // Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
+    // Authenticate user using v1 auth system
+    const authUser = await getV1AuthUser(request);
+    
+    if (!authUser) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
@@ -45,7 +39,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     
     // Check cache first
-    const cacheKey = `companies-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
+    const cacheKey = `companies-${authUser.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -54,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     // Enhanced where clause for pipeline management
     const where: any = {
-      workspaceId: context.workspaceId, // Filter by user's workspace
+      workspaceId: authUser.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
     };
     
@@ -135,8 +129,8 @@ export async function GET(request: NextRequest) {
           totalPages: Math.ceil(totalCount / limit),
         },
         filters: { search, status, priority, industry, sortBy, sortOrder },
-        userId: context.userId,
-        workspaceId: context.workspaceId,
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId,
       });
     }
 
@@ -155,17 +149,10 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/companies - Create a new company
 export async function POST(request: NextRequest) {
   try {
-    // Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
+    // Authenticate user using v1 auth system
+    const authUser = await getV1AuthUser(request);
+    
+    if (!authUser) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
@@ -194,7 +181,7 @@ export async function POST(request: NextRequest) {
         industry: body.industry,
         status: body.status || 'ACTIVE',
         priority: body.priority || 'MEDIUM',
-        workspaceId: context.workspaceId,
+        workspaceId: authUser.workspaceId,
         assignedUserId: body.assignedUserId,
         createdAt: new Date(),
         updatedAt: new Date(),

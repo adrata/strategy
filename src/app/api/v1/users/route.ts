@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getV1AuthUser } from '@/app/api/v1/auth';
+import { createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 const prisma = new PrismaClient();
 
@@ -13,17 +14,10 @@ const prisma = new PrismaClient();
 // GET /api/v1/users - List users with search and pagination
 export async function GET(request: NextRequest) {
   try {
-    // Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
+    // Authenticate user using v1 auth system
+    const authUser = await getV1AuthUser(request);
+    
+    if (!authUser) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
@@ -56,7 +50,7 @@ export async function GET(request: NextRequest) {
       where.workspace_users = {
         some: {
           role: role,
-          workspaceId: context.workspaceId,
+          workspaceId: authUser.workspaceId,
           isActive: true
         }
       };
@@ -67,7 +61,7 @@ export async function GET(request: NextRequest) {
       const roleCounts = await prisma.workspace_users.groupBy({
         by: ['role'],
         where: {
-          workspaceId: context.workspaceId,
+          workspaceId: authUser.workspaceId,
           isActive: true
         },
         _count: { id: true }
@@ -81,8 +75,8 @@ export async function GET(request: NextRequest) {
       return createSuccessResponse(counts, {
         type: 'counts',
         filters: { search, role },
-        userId: context.userId,
-        workspaceId: context.workspaceId,
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId,
       });
     }
 
@@ -108,7 +102,7 @@ export async function GET(request: NextRequest) {
           updatedAt: true,
           workspace_users: {
             where: {
-              workspaceId: context.workspaceId,
+              workspaceId: authUser.workspaceId,
               isActive: true
             },
             select: {
@@ -129,8 +123,8 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(totalCount / limit),
       },
       filters: { search, role, sortBy, sortOrder },
-      userId: context.userId,
-      workspaceId: context.workspaceId,
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId,
     });
 
   } catch (error) {
@@ -142,17 +136,10 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/users - Create a new user
 export async function POST(request: NextRequest) {
   try {
-    // Authenticate and authorize user
-    const { context, response } = await getSecureApiContext(request, {
-      requireAuth: true,
-      requireWorkspaceAccess: true
-    });
-
-    if (response) {
-      return response; // Return error response if authentication failed
-    }
-
-    if (!context) {
+    // Authenticate user using v1 auth system
+    const authUser = await getV1AuthUser(request);
+    
+    if (!authUser) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
@@ -176,7 +163,7 @@ export async function POST(request: NextRequest) {
         lastName: body.lastName,
         timezone: body.timezone,
         isActive: true,
-        activeWorkspaceId: context.workspaceId,
+        activeWorkspaceId: authUser.workspaceId,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -198,7 +185,7 @@ export async function POST(request: NextRequest) {
     // Add user to workspace with default role
     await prisma.workspace_users.create({
       data: {
-        workspaceId: context.workspaceId,
+        workspaceId: authUser.workspaceId,
         userId: user.id,
         role: body.role || 'VIEWER',
         isActive: true,
@@ -210,8 +197,8 @@ export async function POST(request: NextRequest) {
 
     return createSuccessResponse(user, {
       message: 'User created successfully',
-      userId: context.userId,
-      workspaceId: context.workspaceId,
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId,
     });
 
   } catch (error) {

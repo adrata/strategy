@@ -84,69 +84,10 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
         localStorage.setItem(storageKey, JSON.stringify({ opportunities: transformedOpportunities, ts: Date.now() }));
       } catch {}
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch opportunities';
       console.error('[useOpportunitiesData] Error fetching opportunities:', err);
-      
-      // 🚀 FALLBACK: Provide mock data when API fails (e.g., not authenticated)
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('fetch') || errorMessage.includes('401')) {
-        console.warn('⚠️ [OPPORTUNITIES DATA] API error - providing fallback data');
-        
-        const fallbackOpportunities: Opportunity[] = [
-          {
-            id: 'fallback-opportunity-1',
-            name: 'Enterprise Software Deal',
-            company: {
-              id: 'company-5',
-              name: 'EnterpriseCorp',
-              industry: 'Software'
-            },
-            value: 50000,
-            stage: 'Proposal',
-            probability: 75,
-            expectedCloseDate: '2024-02-15',
-            lastActivity: 'Proposal sent',
-            lastActivityDate: '2024-01-18',
-            nextAction: 'Follow up meeting',
-            nextActionDate: '2024-01-28',
-            rank: 1,
-            createdAt: '2024-01-05T10:00:00Z',
-            updatedAt: '2024-01-18T14:30:00Z'
-          },
-          {
-            id: 'fallback-opportunity-2',
-            name: 'Marketing Platform Upgrade',
-            company: {
-              id: 'company-6',
-              name: 'MarketingPro',
-              industry: 'Marketing'
-            },
-            value: 25000,
-            stage: 'Negotiation',
-            probability: 60,
-            expectedCloseDate: '2024-02-28',
-            lastActivity: 'Contract review',
-            lastActivityDate: '2024-01-20',
-            nextAction: 'Final proposal',
-            nextActionDate: '2024-01-30',
-            rank: 2,
-            createdAt: '2024-01-08T09:00:00Z',
-            updatedAt: '2024-01-20T11:45:00Z'
-          }
-        ];
-        
-        setOpportunities(fallbackOpportunities);
-        setCount(fallbackOpportunities.length);
-        setError(null); // Clear error to prevent error page
-        console.log('✅ [OPPORTUNITIES DATA] Provided fallback data:', {
-          count: fallbackOpportunities.length,
-          firstOpportunity: fallbackOpportunities[0]?.name || 'none'
-        });
-        console.log('💡 [OPPORTUNITIES DATA] To see real data, sign in with demo credentials: demo@adrata.com / demo123');
-      } else {
-        setError(errorMessage);
-        setOpportunities([]);
-        setCount(0);
-      }
+      setError(err instanceof Error ? err.message : 'Failed to fetch opportunities');
+      setOpportunities([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }

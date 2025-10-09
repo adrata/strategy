@@ -89,10 +89,12 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
         // Get workspace from URL or use default
         const workspaceFromUrl = pathname.split('/')[1];
         if (workspaceFromUrl && workspaceFromUrl !== 'aos') {
-          router.replace(`/${workspaceFromUrl}`);
+          // Redirect to the first available section in the workspace
+          // Priority: people -> companies -> speedrun (as fallback)
+          router.replace(`/${workspaceFromUrl}/people`);
         } else {
-          // Default to first available workspace or speedrun as fallback
-          router.replace("/speedrun");
+          // Default to people section (most common starting point)
+          router.replace("/people");
         }
         return;
       }

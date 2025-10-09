@@ -31,7 +31,34 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
       };
     }
 
-    // 2. Fallback to custom JWT token (for API clients)
+    // 2. Try auth-token cookie (from sign-in system)
+    const cookieHeader = req.headers.get("cookie");
+    if (cookieHeader) {
+      const cookies = cookieHeader.split(";").reduce(
+        (acc, cookie) => {
+          const [key, value] = cookie.trim().split("=");
+          if (key && value) acc[key] = decodeURIComponent(value);
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+
+      const token = cookies["auth-token"];
+      if (token) {
+        const decoded = decodeJWT(token);
+        if (decoded) {
+          console.log("✅ V1 Auth: auth-token cookie found for:", decoded.email);
+          return {
+            id: decoded.userId || decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            workspaceId: decoded.workspaceId || "local-workspace",
+          };
+        }
+      }
+    }
+
+    // 3. Fallback to custom JWT token (for API clients)
     const authHeader = req.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.split(" ")[1] || "";

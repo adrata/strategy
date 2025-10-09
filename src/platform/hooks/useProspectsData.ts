@@ -87,73 +87,10 @@ export function useProspectsData(): UseProspectsDataReturn {
         localStorage.setItem(storageKey, JSON.stringify({ prospects: transformedProspects, ts: Date.now() }));
       } catch {}
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch prospects';
       console.error('[useProspectsData] Error fetching prospects:', err);
-      
-      // 🚀 FALLBACK: Provide mock data when API fails (e.g., not authenticated)
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('fetch') || errorMessage.includes('401')) {
-        console.warn('⚠️ [PROSPECTS DATA] API error - providing fallback data');
-        
-        const fallbackProspects: Prospect[] = [
-          {
-            id: 'fallback-prospect-1',
-            firstName: 'Emily',
-            lastName: 'Rodriguez',
-            fullName: 'Emily Rodriguez',
-            email: 'emily.rodriguez@example.com',
-            workEmail: 'emily.rodriguez@example.com',
-            jobTitle: 'Marketing Director',
-            title: 'Marketing Director',
-            company: {
-              id: 'company-3',
-              name: 'GrowthCorp',
-              industry: 'Marketing'
-            },
-            lastAction: 'Initial contact',
-            lastActionDate: '2024-01-14',
-            nextAction: 'Send proposal',
-            nextActionDate: '2024-01-22',
-            rank: 1,
-            createdAt: '2024-01-12T11:00:00Z',
-            updatedAt: '2024-01-14T09:30:00Z'
-          },
-          {
-            id: 'fallback-prospect-2',
-            firstName: 'David',
-            lastName: 'Kim',
-            fullName: 'David Kim',
-            email: 'david.kim@example.com',
-            workEmail: 'david.kim@example.com',
-            jobTitle: 'Sales Manager',
-            title: 'Sales Manager',
-            company: {
-              id: 'company-4',
-              name: 'SalesForce Inc',
-              industry: 'Sales'
-            },
-            lastAction: 'Demo scheduled',
-            lastActionDate: '2024-01-16',
-            nextAction: 'Follow up call',
-            nextActionDate: '2024-01-25',
-            rank: 2,
-            createdAt: '2024-01-10T14:00:00Z',
-            updatedAt: '2024-01-16T16:20:00Z'
-          }
-        ];
-        
-        setProspects(fallbackProspects);
-        setCount(fallbackProspects.length);
-        setError(null); // Clear error to prevent error page
-        console.log('✅ [PROSPECTS DATA] Provided fallback data:', {
-          count: fallbackProspects.length,
-          firstProspect: fallbackProspects[0]?.fullName || 'none'
-        });
-        console.log('💡 [PROSPECTS DATA] To see real data, sign in with demo credentials: demo@adrata.com / demo123');
-      } else {
-        setError(errorMessage);
-        setProspects([]);
-        setCount(0);
-      }
+      setError(err instanceof Error ? err.message : 'Failed to fetch prospects');
+      setProspects([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
