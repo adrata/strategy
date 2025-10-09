@@ -238,10 +238,10 @@ export function getTimeTrackingData(timezone: string = 'America/New_York'): Time
 }
 
 /**
- * Format hours for display (e.g., "8.5" -> "8.5", "8" -> "8", "0" -> "0")
+ * Format hours for display (e.g., "8.5" -> "8.5", "8" -> "8", "0" -> "-")
  */
 export function formatHours(hours: number): string {
-  if (hours === 0) return '0';
+  if (hours === 0) return '-';
   if (hours % 1 === 0) return hours.toString();
   return hours.toFixed(1);
 }

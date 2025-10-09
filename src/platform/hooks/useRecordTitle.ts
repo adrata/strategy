@@ -160,6 +160,9 @@ export function useRecordTitle() {
           response = await fetch(`/api/v1/people/${recordId}`);
         } else if (section === 'actions') {
           response = await fetch(`/api/v1/actions/${recordId}`);
+        } else if (section === 'speedrun') {
+          // Speedrun records are people records, so use people API
+          response = await fetch(`/api/v1/people/${recordId}`);
         } else {
           console.warn(`⚠️ [RECORD TITLE] No v1 API available for section: ${section}`);
           return null;

@@ -47,19 +47,6 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     iconBg: '#FED7AA', // Orange-100
   },
   prospects: {
-    primary: '#0891B2', // Cyan-600 - Professional, trustworthy, corporate
-    secondary: '#06B6D4', // Cyan-500
-    light: '#A7F3D0', // Cyan-100 (using emerald-200 for better contrast)
-    dark: '#0E7490', // Cyan-700
-    bg: '#ECFEFF', // Cyan-50
-    bgHover: '#A7F3D0', // Cyan-100
-    border: '#67E8F9', // Cyan-300
-    text: '#155E75', // Cyan-800
-    textLight: '#06B6D4', // Cyan-500
-    icon: '#0891B2', // Cyan-600
-    iconBg: '#A7F3D0', // Cyan-100
-  },
-  opportunities: {
     primary: '#2563EB', // Blue-600 - Trust, professionalism, reliability
     secondary: '#3B82F6', // Blue-500
     light: '#DBEAFE', // Blue-100
@@ -71,6 +58,19 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     textLight: '#3B82F6', // Blue-500
     icon: '#2563EB', // Blue-600
     iconBg: '#DBEAFE', // Blue-100
+  },
+  opportunities: {
+    primary: '#4F46E5', // Indigo-600 - Professional, authoritative, corporate
+    secondary: '#6366F1', // Indigo-500
+    light: '#E0E7FF', // Indigo-100
+    dark: '#4338CA', // Indigo-700
+    bg: '#EEF2FF', // Indigo-50
+    bgHover: '#E0E7FF', // Indigo-100
+    border: '#A5B4FC', // Indigo-300
+    text: '#3730A3', // Indigo-800
+    textLight: '#6366F1', // Indigo-500
+    icon: '#4F46E5', // Indigo-600
+    iconBg: '#E0E7FF', // Indigo-100
   },
   people: {
     primary: '#7C3AED', // Violet-600 - Individuality, creativity, uniqueness
@@ -86,17 +86,17 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
     iconBg: '#EDE9FE', // Violet-100
   },
   companies: {
-    primary: '#EAB308', // Yellow-600 - Optimism, energy, potential
-    secondary: '#FACC15', // Yellow-500
-    light: '#FEF3C7', // Yellow-100
-    dark: '#CA8A04', // Yellow-700
-    bg: '#FEFCE8', // Yellow-50
-    bgHover: '#FEF3C7', // Yellow-100
-    border: '#FDE047', // Yellow-300
-    text: '#713F12', // Yellow-800
-    textLight: '#FACC15', // Yellow-500
-    icon: '#EAB308', // Yellow-600
-    iconBg: '#FEF3C7', // Yellow-100
+    primary: '#475569', // Slate-600 - Professional, neutral, corporate
+    secondary: '#64748B', // Slate-500
+    light: '#F1F5F9', // Slate-100
+    dark: '#334155', // Slate-700
+    bg: '#F8FAFC', // Slate-50
+    bgHover: '#F1F5F9', // Slate-100
+    border: '#CBD5E1', // Slate-300
+    text: '#0F172A', // Slate-900
+    textLight: '#64748B', // Slate-500
+    icon: '#475569', // Slate-600
+    iconBg: '#F1F5F9', // Slate-100
   },
 };
 

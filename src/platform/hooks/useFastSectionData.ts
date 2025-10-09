@@ -125,7 +125,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/companies?status=OPPORTUNITY&limit=${limit}&t=${timestamp}`;
           break;
         case 'speedrun':
-          url = `/api/v1/people?limit=${limit}&t=${timestamp}`;
+          url = `/api/v1/people?limit=${limit}&sortBy=rank&sortOrder=asc&t=${timestamp}`;
           break;
         default:
           // No v1 API available for this section yet

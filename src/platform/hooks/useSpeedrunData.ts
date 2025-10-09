@@ -48,8 +48,8 @@ export function useSpeedrunData(limit: number = DEFAULT_SPEEDRUN_LIMIT): UseSpee
       setLoading(true);
       setError(null);
 
-      // Fetch all people and apply ranking logic
-      const response = await fetch('/api/v1/people');
+      // Fetch top ranked people for speedrun (limit 50, sorted by rank)
+      const response = await fetch(`/api/v1/people?limit=${limit}&sortBy=rank&sortOrder=asc`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch speedrun data: ${response.statusText}`);

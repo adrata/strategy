@@ -413,6 +413,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         response = await fetch(`/api/v1/people/${recordId}`);
       } else if (section === 'actions') {
         response = await fetch(`/api/v1/actions/${recordId}`);
+      } else if (section === 'speedrun') {
+        // Speedrun records are people records, so use people API
+        response = await fetch(`/api/v1/people/${recordId}`);
       } else {
         // No v1 API available for this section yet
         console.warn(`⚠️ [PIPELINE DETAIL] No v1 API available for section: ${section}`);

@@ -276,6 +276,8 @@ export function usePipelineData(
       response = await fetch('/api/v1/people?status=PROSPECT');
     } else if (section === 'opportunities') {
       response = await fetch('/api/v1/companies?status=OPPORTUNITY');
+    } else if (section === 'speedrun') {
+      response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc');
     } else {
       console.warn(`⚠️ [usePipelineData] No v1 API available for section: ${section}`);
       throw new Error(`No v1 API available for section: ${section}`);
@@ -382,8 +384,8 @@ export function useSpeedrunData(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    // 🚀 NEW: Use v1 APIs for speedrun data (same as people data)
-    const response = await fetch('/api/v1/people');
+    // 🚀 NEW: Use v1 APIs for speedrun data with ranking (top 50 people)
+    const response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc');
     
     if (!response.ok) {
       throw new Error('Failed to fetch speedrun data');
