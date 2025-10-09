@@ -12,10 +12,16 @@ const prisma = new PrismaClient();
  */
 
 // GET /api/v1/companies - List companies with search and pagination
-export const GET = withSecurity(
-  async (context: SecureApiContext) => {
-    try {
-      const { authUser, request } = context;
+export async function GET(request: NextRequest) {
+  try {
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -133,13 +139,7 @@ export const GET = withSecurity(
       { status: 500 }
     );
   }
-  },
-  {
-    requireAuth: true,
-    rateLimit: true,
-    allowedMethods: ['GET']
-  }
-);
+}
 
 // POST /api/v1/companies - Create a new company
 export async function POST(request: NextRequest) {

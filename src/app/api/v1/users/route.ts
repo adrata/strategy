@@ -12,10 +12,16 @@ const prisma = new PrismaClient();
  */
 
 // GET /api/v1/users - List users with search and pagination
-export const GET = withSecurity(
-  async (context: SecureApiContext) => {
-    try {
-      const { authUser, request } = context;
+export async function GET(request: NextRequest) {
+  try {
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
       const { searchParams } = new URL(request.url);
       const page = parseInt(searchParams.get('page') || '1');
@@ -127,20 +133,14 @@ export const GET = withSecurity(
         },
       });
 
-    } catch (error) {
-      console.error('❌ [V1 USERS API] Error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Internal server error' },
-        { status: 500 }
-      );
-    }
-  },
-  {
-    requireAuth: true,
-    rateLimit: true,
-    allowedMethods: ['GET']
+  } catch (error) {
+    console.error('❌ [V1 USERS API] Error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
   }
-);
+}
 
 // POST /api/v1/users - Create a new user
 export async function POST(request: NextRequest) {
