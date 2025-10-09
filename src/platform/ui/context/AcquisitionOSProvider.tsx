@@ -4,12 +4,12 @@ import React, { createContext, useContext, useEffect, useRef, useMemo } from "re
 import type { AcquisitionOSContextType } from "../../types";
 
 // Import all the modular hooks
-import { useAcquisitionOSAuth } from "@/platform/hooks/useAcquisitionOSAuth";
-import { useAcquisitionOSUI } from "@/platform/hooks/useAcquisitionOSUI";
+import { useAuth } from "@/platform/hooks/useAuth";
+import { useUI } from "@/platform/hooks/useUI";
 import { useWorkspaceData } from "@/platform/hooks/useWorkspaceData";
-import { useAcquisitionOSChat } from "@/platform/hooks/useAcquisitionOSChat";
-import { useAcquisitionOSForms } from "@/platform/hooks/useAcquisitionOSForms";
-import { useAcquisitionOSProgress } from "@/platform/hooks/useAcquisitionOSProgress";
+import { useChat } from "@/platform/hooks/useChat";
+import { useForms } from "@/platform/hooks/useForms";
+import { useProgress } from "@/platform/hooks/useProgress";
 
 // Import workspace mapping
 import { getWorkspaceIdBySlug, getAllWorkspaceSlugs } from "@/platform/config/workspace-mapping";
@@ -61,8 +61,8 @@ export function AcquisitionOSProvider({
   const initialSectionSetRef = React.useRef(false);
 
   // CRITICAL FIX: Move hooks OUTSIDE try-catch to follow React's rules
-  const auth = useAcquisitionOSAuth();
-  const ui = useAcquisitionOSUI();
+  const auth = useAuth();
+  const ui = useUI();
   
   // INSTANT LOADING FIX: Set initial app/section IMMEDIATELY after hook creation
   // This overrides the hardcoded "Speedrun" default in useAcquisitionOSUI
@@ -91,9 +91,9 @@ export function AcquisitionOSProvider({
   
   // 🚀 PERFORMANCE: Removed redundant workspace change handling
   // The useWorkspaceData hook already handles workspace changes internally
-  const chat = useAcquisitionOSChat();
-  const forms = useAcquisitionOSForms();
-  const progress = useAcquisitionOSProgress();
+  const chat = useChat();
+  const forms = useForms();
+  const progress = useProgress();
 
   // 🚨 CRITICAL FIX: ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   // Memoize context value to prevent unnecessary re-renders

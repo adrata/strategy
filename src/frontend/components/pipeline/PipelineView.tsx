@@ -94,7 +94,7 @@ export const PipelineView = React.memo(function PipelineView({
   const [isLeadsVisible, setIsLeadsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
   const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
-  // Panel visibility is now managed by useAcquisitionOSUI context
+  // Panel visibility is now managed by useUI context
   const [searchQuery, setSearchQuery] = useState('');
   const [verticalFilter, setVerticalFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');

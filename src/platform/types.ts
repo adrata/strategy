@@ -155,12 +155,12 @@ export interface AcquisitionOSState {
 }
 
 export type AcquisitionOSContextType = {
-  auth: ReturnType<typeof useAcquisitionOSAuth>;
-  ui: ReturnType<typeof useAcquisitionOSUI>;
+  auth: ReturnType<typeof useAuth>;
+  ui: ReturnType<typeof useUI>;
   data: ReturnType<typeof useWorkspaceData>;
-  chat: ReturnType<typeof useAcquisitionOSChat>;
-  forms: ReturnType<typeof useAcquisitionOSForms>;
-  progress: ReturnType<typeof useAcquisitionOSProgress>;
+  chat: ReturnType<typeof useChat>;
+  forms: ReturnType<typeof useForms>;
+  progress: ReturnType<typeof useProgress>;
 };
 
 // Legacy aliases for backwards compatibility

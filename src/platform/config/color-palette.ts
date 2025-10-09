@@ -104,7 +104,7 @@ export const CATEGORY_COLORS: Record<string, CategoryColorScheme> = {
  * Get the color scheme for a specific category
  */
 export function getCategoryColors(category: string): CategoryColorScheme {
-  return CATEGORY_COLORS[category] || CATEGORY_COLORS.speedrun;
+  return CATEGORY_COLORS[category] || CATEGORY_COLORS['speedrun'];
 }
 
 /**
