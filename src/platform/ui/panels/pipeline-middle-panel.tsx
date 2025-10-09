@@ -15,6 +15,10 @@ import { PipelineFilters } from "./components/PipelineFilters";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';
 import { useLeadsData } from '@/platform/hooks/useLeadsData';
+import { useProspectsData } from '@/platform/hooks/useProspectsData';
+import { useOpportunitiesData } from '@/platform/hooks/useOpportunitiesData';
+import { usePeopleData } from '@/platform/hooks/usePeopleData';
+import { useCompaniesData } from '@/platform/hooks/useCompaniesData';
 
 export function PipelineMiddlePanel() {
   const { ui, data } = useAcquisitionOS();

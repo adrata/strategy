@@ -23,6 +23,11 @@ import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { useLeadsData } from '@/platform/hooks/useLeadsData';
+import { useProspectsData } from '@/platform/hooks/useProspectsData';
+import { useOpportunitiesData } from '@/platform/hooks/useOpportunitiesData';
+import { usePeopleData } from '@/platform/hooks/usePeopleData';
+import { useCompaniesData } from '@/platform/hooks/useCompaniesData';
+import { useSpeedrunData } from '@/platform/hooks/useSpeedrunData';
 import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
@@ -273,8 +278,13 @@ export const PipelineView = React.memo(function PipelineView({
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🎯 NEW: Use dedicated leads hook for leads section
+  // 🎯 NEW: Use dedicated hooks for each section
   const leadsData = useLeadsData();
+  const prospectsData = useProspectsData();
+  const opportunitiesData = useOpportunitiesData();
+  const peopleData = usePeopleData();
+  const companiesData = useCompaniesData();
+  const speedrunData = useSpeedrunData(50); // Default to 50, can be made configurable
   
   // 🚀 PERFORMANCE: Use fast section data hook for instant loading
   // Load all data at once for client-side pagination
@@ -448,20 +458,66 @@ export const PipelineView = React.memo(function PipelineView({
     peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
-  // 🚀 PERFORMANCE: Use fast section data for instant loading
-  // 🎯 NEW: Use leads data for leads section
-  const finalData = section === 'leads' 
-    ? (leadsData.leads || [])
-    : (fastSectionData.data || pipelineData.data || []);
-  const finalLoading = section === 'leads' 
-    ? leadsData.loading 
-    : (fastSectionData.loading || pipelineData.loading);
-  const finalError = section === 'leads' 
-    ? leadsData.error 
-    : (fastSectionData.error || pipelineData.error);
-  const finalIsEmpty = section === 'leads' 
-    ? (leadsData.leads || []).length === 0
-    : (fastSectionData.data || []).length === 0;
+  // 🚀 PERFORMANCE: Use dedicated hooks for each section
+  const getSectionData = () => {
+    switch (section) {
+      case 'leads':
+        return {
+          data: leadsData.leads || [],
+          loading: leadsData.loading,
+          error: leadsData.error,
+          count: leadsData.count
+        };
+      case 'prospects':
+        return {
+          data: prospectsData.prospects || [],
+          loading: prospectsData.loading,
+          error: prospectsData.error,
+          count: prospectsData.count
+        };
+      case 'opportunities':
+        return {
+          data: opportunitiesData.opportunities || [],
+          loading: opportunitiesData.loading,
+          error: opportunitiesData.error,
+          count: opportunitiesData.count
+        };
+      case 'people':
+        return {
+          data: peopleData.people || [],
+          loading: peopleData.loading,
+          error: peopleData.error,
+          count: peopleData.count
+        };
+      case 'companies':
+        return {
+          data: companiesData.companies || [],
+          loading: companiesData.loading,
+          error: companiesData.error,
+          count: companiesData.count
+        };
+      case 'speedrun':
+        return {
+          data: speedrunData.speedrunPeople || [],
+          loading: speedrunData.loading,
+          error: speedrunData.error,
+          count: speedrunData.count
+        };
+      default:
+        return {
+          data: fastSectionData.data || pipelineData.data || [],
+          loading: fastSectionData.loading || pipelineData.loading,
+          error: fastSectionData.error || pipelineData.error,
+          count: fastSectionData.count || 0
+        };
+    }
+  };
+
+  const sectionData = getSectionData();
+  const finalData = sectionData.data;
+  const finalLoading = sectionData.loading;
+  const finalError = sectionData.error;
+  const finalIsEmpty = finalData.length === 0;
   
   // 🔍 DEBUG: Log data sources for People section
   if (section === 'people') {
@@ -1503,30 +1559,7 @@ export const PipelineView = React.memo(function PipelineView({
         onAddRecord={handleAddRecord}
         title={title}
         subtitle={subtitle}
-        recordCount={(() => {
-          // 🎯 NEW: Use leads data count for leads section
-          if (section === 'leads') {
-            return leadsData.count || 0;
-          }
-          
-          const fastCount = fastSectionData.count;
-          const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;
-          const finalCount = fastCount || arrayCount;
-          
-          // Debug logging for sellers section
-          if (section === 'sellers') {
-            console.log('🔍 [SELLERS DEBUG] Record count calculation:', {
-              section,
-              fastSectionDataCount: fastCount,
-              sectionDataArrayLength: arrayCount,
-              finalCount,
-              fastSectionDataExists: !!fastSectionData,
-              sectionDataArrayExists: !!sectionDataArray
-            });
-          }
-          
-          return finalCount;
-        })()}
+        recordCount={sectionData.count}
       />
 
       {/* Filters - Hide search/filter/sort/columns when there is no data */}
@@ -1534,7 +1567,7 @@ export const PipelineView = React.memo(function PipelineView({
         <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
           <PipelineFilters 
             section={section}
-            totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
+            totalCount={sectionData.count}
             onSearchChange={setSearchQuery}
             onVerticalChange={setVerticalFilter}
             onStatusChange={setStatusFilter}
@@ -1624,8 +1657,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  isLoading={sectionData.loading}
+                  totalCount={sectionData.count}
                 />
               ) : section === 'leads' ? (
                 // Leads table with same design as prospects
@@ -1639,8 +1672,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={leadsData.loading} // 🎯 NEW: Use leads data loading state
-                  totalCount={leadsData.count} // 🎯 NEW: Use leads data count
+                  isLoading={sectionData.loading}
+                  totalCount={sectionData.count}
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
@@ -1654,8 +1687,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  isLoading={sectionData.loading}
+                  totalCount={sectionData.count}
                 />
               ) : section === 'companies' ? (
                 // Companies table with same design as prospects

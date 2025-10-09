@@ -1000,7 +1000,14 @@ export function PipelineHeader({
                           onClick={handleAction}
                           className={`${(section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'companies' || section === 'people') ? 'bg-purple-100 text-purple-800 border border-purple-200 hover:bg-purple-200' : 'bg-white text-black border border-gray-300 hover:bg-gray-50'} px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2`}
                         >
-                          {(section === 'leads') ? `Add Lead (${getCommonShortcut('SUBMIT')})` : (section === 'prospects') ? `Add Prospect (${getCommonShortcut('SUBMIT')})` : (section === 'opportunities') ? `Add Opportunity (${getCommonShortcut('SUBMIT')})` : (section === 'companies') ? `Add Company (${getCommonShortcut('SUBMIT')})` : (section === 'people') ? `Add Person (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton}
+                          {
+                            (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                            (section === 'prospects') ? `Add Prospect${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                            (section === 'opportunities') ? `Add Opportunity${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                            (section === 'companies') ? `Add Company${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                            (section === 'people') ? `Add Person${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                            sectionInfo.actionButton
+                          }
                         </button>
                       )}
                       {(sectionInfo as any).secondaryActionButton && !(((section === 'leads') || (section === 'prospects') || (section === 'opportunities') || (section === 'companies') || (section === 'people')) && (recordCount ?? 0) === 0) && (
