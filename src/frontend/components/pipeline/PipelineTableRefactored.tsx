@@ -544,10 +544,10 @@ export function PipelineTable({
       
       {addingAction && (
         <AddActionModal
-          record={addingAction}
+          contextRecord={addingAction}
           section={section}
           onClose={closeAddActionModal}
-          onSave={handleAddAction}
+          onSubmit={handleAddAction}
         />
       )}
       
