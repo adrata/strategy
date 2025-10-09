@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUnifiedAuth } from "@/platform/auth-unified";
-import { getDesktopEnvInfo } from "@/platform/desktop-env-check";
+// Removed desktop-env-check import - using simple fallback
+const getDesktopEnvInfo = () => ({ isDesktop: false });
 
 interface UseAcquisitionOSAuthReturn {
   authUser: any;

@@ -10,7 +10,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
-import { authFetch } from '@/platform/auth-fetch';
+// Removed authFetch import - using standard fetch
 
 // 🛠️ DEVELOPMENT: Mock data generator for when API is unavailable
 function generateMockData(section: string, limit: number): any[] {
@@ -106,7 +106,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       const url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}&t=${timestamp}`;
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
-      const response = await authFetch(url);
+      const response = await fetch(url);
       
       console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
       

@@ -12,7 +12,7 @@ import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { MiddlePanelSkeleton } from "@/platform/ui/components/skeletons/MiddlePanelSkeleton";
 import { generateSlug, extractIdFromSlug } from "@/platform/utils/url-utils";
-import { authFetch } from "@/platform/auth-fetch";
+// Removed authFetch import - using standard fetch
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { getSellerCompanies } from './get-companies-action';
 
@@ -117,7 +117,7 @@ export default function SellerCompaniesPage() {
         
         // Load seller data using the unified API
         console.log('🔍 Making seller API call...');
-        const sellerResponse = await authFetch(`/api/data/unified?type=sellers&action=get`);
+        const sellerResponse = await fetch(`/api/data/unified?type=sellers&action=get`);
         console.log('🔍 Seller API response status:', sellerResponse.status);
         const sellerResult = await sellerResponse.json();
         

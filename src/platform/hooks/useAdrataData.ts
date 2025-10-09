@@ -18,7 +18,7 @@
 import useSWR, { SWRConfiguration, mutate } from 'swr';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { cache } from '@/platform/services/unified-cache';
-import { authFetch } from '@/platform/auth-fetch';
+// Removed authFetch import - using standard fetch
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -263,7 +263,7 @@ export function usePipelineData(
     console.log(`🔍 [usePipelineData] Fetching ${section} data for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await authFetch(
+    const response = await fetch(
       `/api/data/unified?type=${section}`
     );
     
@@ -311,7 +311,7 @@ export function useAcquisitionData(
     }
 
     // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await authFetch('/api/data/unified', {
+    const response = await fetch('/api/data/unified', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -361,7 +361,7 @@ export function useSpeedrunData(
     }
 
     // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await authFetch(`/api/data/unified?type=speedrun&action=get`);
+    const response = await fetch(`/api/data/unified?type=speedrun&action=get`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch speedrun data');
@@ -396,7 +396,7 @@ export function usePipelineCounts(
     }
 
     // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await authFetch(`/api/data/unified?dashboardOnly=true`);
+    const response = await fetch(`/api/data/unified?dashboardOnly=true`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch pipeline counts');

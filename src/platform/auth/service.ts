@@ -18,7 +18,7 @@ import {
   getSession as getStoredSession,
 } from "./session";
 import { AUTH_API_ROUTES } from "./routes";
-import { safeApiFetch } from "../safe-api-fetch";
+// Removed safeApiFetch import - using standard fetch
 import { invoke } from "@tauri-apps/api/core";
 import { MobileAuthService } from "@/platform/services/mobile-auth-service";
 
@@ -303,7 +303,7 @@ export class UnifiedAuthService {
     deviceId: string,
   ): Promise<AuthResult> {
     try {
-      const response = await safeApiFetch(
+      const response = await fetch(
         AUTH_API_ROUTES.SIGN_IN,
         {
           method: "POST",
@@ -389,7 +389,7 @@ export class UnifiedAuthService {
     console.log("🔐 [FORGOT PASSWORD] Requesting password reset for:", email);
 
     try {
-      const response = await safeApiFetch(
+      const response = await fetch(
         AUTH_API_ROUTES.FORGOT_PASSWORD,
         {
           method: "POST",
@@ -429,7 +429,7 @@ export class UnifiedAuthService {
     console.log("🔐 [RESET PASSWORD] Resetting password with token");
 
     try {
-      const response = await safeApiFetch(
+      const response = await fetch(
         AUTH_API_ROUTES.RESET_PASSWORD,
         {
           method: "POST",
@@ -478,7 +478,7 @@ export class UnifiedAuthService {
         };
       }
 
-      const response = await safeApiFetch(
+      const response = await fetch(
         AUTH_API_ROUTES.REFRESH_TOKEN,
         {
           method: "POST",
@@ -546,7 +546,7 @@ export class UnifiedAuthService {
     console.log("🔐 [VALIDATE TOKEN] Validating reset token");
 
     try {
-      const response = await safeApiFetch(
+      const response = await fetch(
         `${AUTH_API_ROUTES.RESET_PASSWORD}?token=${encodeURIComponent(token)}`,
         {
           method: "GET",

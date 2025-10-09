@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
+// Removed authFetch import - using standard fetch
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
@@ -406,7 +406,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       
       // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first
       const timestamp = Date.now();
-      const response = await authFetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+      const response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       

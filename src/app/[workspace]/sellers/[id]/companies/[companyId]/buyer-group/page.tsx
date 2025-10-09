@@ -13,7 +13,7 @@ import { AcquisitionOSProvider } from '@/platform/ui/context/AcquisitionOSProvid
 import { MiddlePanelSkeleton } from '@/platform/ui/components/skeletons/MiddlePanelSkeleton';
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { generateSlug } from '@/platform/utils/url-utils';
-import { authFetch } from "@/platform/auth-fetch";
+// Removed authFetch import - using standard fetch
 import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';
 
 interface CompanyData {
@@ -170,7 +170,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
         console.log('👥 [BUYER GROUP] Loading company with ID:', actualCompanyId);
 
         // Load company data using unified API
-        const companyResponse = await authFetch(`/api/data/unified?type=companies&action=get`);
+        const companyResponse = await fetch(`/api/data/unified?type=companies&action=get`);
         const companyResult = await companyResponse.json();
 
         if (companyResult['success'] && companyResult.data) {
@@ -218,7 +218,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
         }
 
         // Load buyer group members (people assigned to this company)
-        const peopleResponse = await authFetch(`/api/data/unified?type=people&action=get`);
+        const peopleResponse = await fetch(`/api/data/unified?type=people&action=get`);
         const peopleResult = await peopleResponse.json();
 
         if (peopleResult['success'] && peopleResult.data) {
@@ -422,7 +422,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
         console.log('🔍 [PERSON RECORD] Loading person record for:', selectedPerson.name);
         
         // Load the actual person record from the database
-        const personResponse = await authFetch(`/api/data/unified?type=people&action=get&id=${selectedPerson.id}`);
+        const personResponse = await fetch(`/api/data/unified?type=people&action=get&id=${selectedPerson.id}`);
         const personResult = await personResponse.json();
         
         if (personResult.success && personResult.data) {

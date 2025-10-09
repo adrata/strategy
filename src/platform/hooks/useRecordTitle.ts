@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth-unified';
-import { authFetch } from '@/platform/auth-fetch';
+// Removed authFetch import - using standard fetch
 
 interface RecordTitleData {
   name?: string;
@@ -153,7 +153,7 @@ export function useRecordTitle() {
 
         // Fallback: fetch from API
         console.log('🔍 [RECORD TITLE] Fetching from API...');
-        const response = await authFetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+        const response = await fetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
-import { safeApiFetch } from "@/platform/safe-api-fetch";
-import { getDesktopEnvInfo } from "@/platform/desktop-env-check";
+// Removed safe-api-fetch and desktop-env-check imports - using standard fetch
+const getDesktopEnvInfo = () => ({ isDesktop: false });
 import { invoke } from "@tauri-apps/api/core";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import type { FormData } from "../types/hooks";
@@ -115,7 +115,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             console.log('🔍 [FORMS HOOK] activeWorkspace:', activeWorkspace);
             console.log('🔍 [FORMS HOOK] authUser:', authUser);
 
-            const createResponse = await safeApiFetch(
+            const createResponse = await fetch(
               "/api/data/unified",
               {
                 method: "POST",
@@ -157,7 +157,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             // Create opportunity via API
             debug("CREATE_OPPORTUNITY_API", { formData });
 
-            const createResponse = await safeApiFetch(
+            const createResponse = await fetch(
               "/api/data/unified",
               {
                 method: "POST",
@@ -265,7 +265,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
 
           if (!envInfo.isDesktop) {
             // Create speedrun record via unified API (as a lead with high priority)
-            const createResponse = await safeApiFetch(
+            const createResponse = await fetch(
               "/api/data/unified",
               {
                 method: "POST",
@@ -343,7 +343,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             }
 
             // Create record via unified API
-            const createResponse = await safeApiFetch(
+            const createResponse = await fetch(
               "/api/data/unified",
               {
                 method: "POST",
@@ -516,7 +516,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
       try {
         if (!envInfo.isDesktop) {
           // Web mode - use API
-          const createResponse = await safeApiFetch(
+          const createResponse = await fetch(
             "/api/data/unified",
             {
               method: "POST",
