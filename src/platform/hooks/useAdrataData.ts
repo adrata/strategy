@@ -310,23 +310,31 @@ export function useAcquisitionData(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await fetch('/api/data/unified', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // 🚀 NEW: Use v1 APIs for better performance and consistency
+    const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+      fetch('/api/v1/people?status=LEAD'),
+      fetch('/api/v1/people?status=PROSPECT'),
+      fetch('/api/v1/companies?status=OPPORTUNITY'),
+      fetch('/api/v1/companies'),
+      fetch('/api/v1/people')
+    ]);
 
-    const result = await response.json();
-    return result.data || {
-      leads: [],
-      prospects: [],
-      opportunities: [],
-      accounts: [],
-      contacts: [],
-      partnerships: [],
-      clients: [],
+    const [leadsData, prospectsData, opportunitiesData, companiesData, peopleData] = await Promise.all([
+      leadsResponse.json(),
+      prospectsResponse.json(),
+      opportunitiesResponse.json(),
+      companiesResponse.json(),
+      peopleResponse.json()
+    ]);
+
+    return {
+      leads: leadsData.success ? leadsData.data : [],
+      prospects: prospectsData.success ? prospectsData.data : [],
+      opportunities: opportunitiesData.success ? opportunitiesData.data : [],
+      accounts: companiesData.success ? companiesData.data : [],
+      contacts: peopleData.success ? peopleData.data : [],
+      partnerships: [], // Not implemented in v1 yet
+      clients: companiesData.success ? companiesData.data.filter((c: any) => c.status === 'CLIENT') : [],
       buyerGroups: [],
       catalyst: [],
       calendar: [],
@@ -360,15 +368,15 @@ export function useSpeedrunData(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await fetch(`/api/data/unified?type=speedrun&action=get`);
+    // 🚀 NEW: Use v1 APIs for speedrun data (same as people data)
+    const response = await fetch('/api/v1/people');
     
     if (!response.ok) {
       throw new Error('Failed to fetch speedrun data');
     }
-    
+
     const result = await response.json();
-    return result.data || [];
+    return result.success ? result.data : [];
   }, [workspaceId, userId]);
 
   const cacheKey = 'speedrun';
@@ -395,21 +403,30 @@ export function usePipelineCounts(
       throw new Error('Workspace ID and User ID are required');
     }
 
-    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await fetch(`/api/data/unified?dashboardOnly=true`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch pipeline counts');
-    }
-    
-    const result = await response.json();
-    return result.data || {
-      leads: 0,
-      prospects: 0,
-      opportunities: 0,
-      accounts: 0,
-      contacts: 0,
-      clients: 0
+    // 🚀 NEW: Use v1 APIs for pipeline counts
+    const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+      fetch('/api/v1/people?counts=true&status=LEAD'),
+      fetch('/api/v1/people?counts=true&status=PROSPECT'),
+      fetch('/api/v1/companies?counts=true&status=OPPORTUNITY'),
+      fetch('/api/v1/companies?counts=true'),
+      fetch('/api/v1/people?counts=true')
+    ]);
+
+    const [leadsData, prospectsData, opportunitiesData, companiesData, peopleData] = await Promise.all([
+      leadsResponse.json(),
+      prospectsResponse.json(),
+      opportunitiesResponse.json(),
+      companiesResponse.json(),
+      peopleResponse.json()
+    ]);
+
+    return {
+      leads: leadsData.success ? (leadsData.data.LEAD || 0) : 0,
+      prospects: prospectsData.success ? (prospectsData.data.PROSPECT || 0) : 0,
+      opportunities: opportunitiesData.success ? (opportunitiesData.data.OPPORTUNITY || 0) : 0,
+      accounts: companiesData.success ? (companiesData.data.total || 0) : 0,
+      contacts: peopleData.success ? (peopleData.data.total || 0) : 0,
+      clients: companiesData.success ? (companiesData.data.CLIENT || 0) : 0
     };
   }, [workspaceId, userId]);
 

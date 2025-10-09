@@ -20,39 +20,11 @@ import { ulid } from 'ulid';
 import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 
-// Temporarily comment out problematic imports to fix 404 errors
-// import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+// Import proper secure API helper
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // import { getOptimizedPagination, applyPagination, calculatePaginationMetadata } from '@/platform/services/database/pagination';
 // import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';
 // import { UnifiedCache } from '@/platform/services/unified-cache';
-
-// Temporary inline implementations to fix 404 errors
-function createErrorResponse(message: string, code: string, status: number) {
-  return NextResponse.json({ error: message, code }, { status });
-}
-
-function createSuccessResponse(data: any, meta?: any) {
-  return NextResponse.json({ success: true, data, meta });
-}
-
-async function getSecureApiContext(request: NextRequest, options: any) {
-  // Simplified implementation to fix 404 errors - allow demo access
-  const url = new URL(request.url);
-  const workspaceId = url.searchParams.get('workspaceId') || '01K1VBYXHD0J895XAN0HGFBKJP'; // Dan's workspace
-  const userId = url.searchParams.get('userId') || '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan user
-  
-  // Temporarily allow all requests to fix login issues
-  // TODO: Implement proper JWT validation later
-  return {
-    context: {
-      userId,
-      userEmail: 'dan@adrata.com',
-      workspaceId,
-      userName: 'Dan Mirolli'
-    },
-    response: null
-  };
-}
 
 function getOptimizedPagination(params: any) {
   return { limit: 100, offset: 0 };
