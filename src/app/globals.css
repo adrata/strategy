@@ -579,54 +579,13 @@ body {
   }
 }
 
-/* Remove blue focus borders globally and make them transparent */
+/* Form focus styles following 2025 accessibility standards */
 input:focus,
 textarea:focus,
 select:focus,
 button:focus {
-  outline: none !important;
-  ring: none !important;
-  border-color: var(--border) !important;
-}
-
-/* Override any specific focus ring styles */
-.focus\:ring-blue-500:focus,
-.focus\:ring-2:focus,
-.focus\:ring-blue-500\/20:focus,
-.focus\:ring-blue-500\/60:focus,
-.focus\:ring-\[\#2563EB\]:focus,
-.focus\:ring-red-500:focus,
-.focus\:ring-green-500:focus,
-.focus\:ring-\[\#10B981\]:focus,
-.focus\:ring-\[\#DC2626\]:focus,
-.focus\:ring-\[\#9B59B6\]:focus {
-  --tw-ring-color: transparent !important;
-  --tw-ring-opacity: 0 !important;
-}
-
-/* Add Modal specific focus styles - override global focus removal */
-.add-modal-input:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
-}
-
-/* Override browser default validation styles for required inputs */
-.add-modal-input:required:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
-}
-
-.add-modal-input:required:invalid {
-  border-color: var(--border) !important;
-  box-shadow: none !important;
-}
-
-.add-modal-input:required:invalid:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* Override default link colors globally */
