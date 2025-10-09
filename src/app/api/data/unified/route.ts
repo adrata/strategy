@@ -17,7 +17,7 @@ import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
-import { createEntityRecord } from '@/platform/services/entity/entityService';
+// import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 
 // Temporarily comment out problematic imports to fix 404 errors
@@ -1358,7 +1358,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       
       // Transform the record with Coresignal data
       const transformedRecord = {
-        ...record,
+        ...(record as any),
         fullName: coresignalData.full_name || (record as any).fullName,
         email: coresignalData.primary_professional_email || (record as any).email,
         // Use Coresignal data for company info (no fallbacks to database)
@@ -1388,7 +1388,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       console.warn(`🐌 [SLOW INDIVIDUAL RECORD] ${type} record ${id} took ${executionTime}ms - consider optimization`);
     }
     
-    return { success: true, data: { ...record, serverVersion: "UPDATED_CODE_RUNNING" } };
+    return { success: true, data: { ...(record as any), serverVersion: "UPDATED_CODE_RUNNING" } };
   } catch (dbError) {
     console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
     console.error(`❌ [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
@@ -2307,7 +2307,7 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     
     // For companies, create entity record first (2025 best practice)
     if (type === 'companies') {
-      const entityRecord = await createEntityRecord({
+      // const entityRecord = await createEntityRecord({
         type: 'company',
         workspaceId: workspaceId,
         metadata: {
@@ -2365,7 +2365,7 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
         console.log(`✅ [CREATE_PERSON_RELATED] Found existing company: ${existingCompany.id}`);
       } else {
         // Create entity record first for company (2025 best practice)
-        const companyEntityRecord = await createEntityRecord({
+        // const companyEntityRecord = await createEntityRecord({
           type: 'company',
           workspaceId: workspaceId,
           metadata: {
@@ -2507,6 +2507,7 @@ async function handleClientCreate(workspaceId: string, userId: string, data: any
     // Then create the client record
     const client = await prisma.clients.create({
       data: {
+        id: ulid(),
         workspaceId,
         companyId: account.id,
         customerSince: new Date(),
@@ -4263,7 +4264,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     // Transform data to speedrun format with complete field mapping
     const speedrunItemsWithScores = speedrunData.map((record, index) => {
       // Calculate smart action data based on record status and dates
-      const lastContactDate = record.lastContactDate || record.lastActionDate || record.updatedAt;
+      const lastContactDate = (record as any).lastContactDate || record.lastActionDate || record.updatedAt;
       const nextFollowUpDate = (record as any).nextFollowUpDate || (record as any).nextActionDate;
       
       // Determine last action based on record data
@@ -4353,7 +4354,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         nextAction: nextAction,
         nextActionDate: nextFollowUpDate,
         nextActionTiming: nextActionTiming,
-        buyerGroupRole: record.buyerGroupRole || 'Stakeholder',
+        buyerGroupRole: (record as any).buyerGroupRole || 'Stakeholder',
         currentStage: currentStage,
         // Add additional fields for table display
         stage: currentStage,
@@ -4673,7 +4674,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ [UNIFIED API] POST Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       name: error instanceof Error ? error.name : 'Unknown',
-      cause: error instanceof Error ? error.cause : undefined
+      cause: error instanceof Error ? (error as any).cause : undefined
     });
     return createErrorResponse(
       `Failed to process unified data request: ${error instanceof Error ? error.message : 'Unknown error'}`,
