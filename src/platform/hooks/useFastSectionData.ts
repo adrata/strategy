@@ -124,9 +124,13 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         case 'opportunities':
           url = `/api/v1/companies?status=OPPORTUNITY&limit=${limit}&t=${timestamp}`;
           break;
+        case 'speedrun':
+          url = `/api/v1/people?limit=${limit}&t=${timestamp}`;
+          break;
         default:
-          // Fallback to old API for unsupported sections
-          url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}&t=${timestamp}`;
+          // No v1 API available for this section yet
+          console.warn(`⚠️ [FAST SECTION DATA] No v1 API available for section: ${section}`);
+          throw new Error(`No v1 API available for section: ${section}`);
       }
       
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
