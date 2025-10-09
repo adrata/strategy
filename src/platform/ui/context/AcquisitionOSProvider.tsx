@@ -6,7 +6,7 @@ import type { AcquisitionOSContextType } from "../../types";
 // Import all the modular hooks
 import { useAcquisitionOSAuth } from "@/platform/hooks/useAcquisitionOSAuth";
 import { useAcquisitionOSUI } from "@/platform/hooks/useAcquisitionOSUI";
-import { useAcquisitionOSData } from "@/platform/hooks/useAcquisitionOSData";
+import { useWorkspaceData } from "@/platform/hooks/useWorkspaceData";
 import { useAcquisitionOSChat } from "@/platform/hooks/useAcquisitionOSChat";
 import { useAcquisitionOSForms } from "@/platform/hooks/useAcquisitionOSForms";
 import { useAcquisitionOSProgress } from "@/platform/hooks/useAcquisitionOSProgress";
@@ -82,7 +82,7 @@ export function AcquisitionOSProvider({
   }
   
   // 🆕 CRITICAL FIX: Force data hook to re-initialize when workspace changes
-  const data = useAcquisitionOSData({
+  const data = useWorkspaceData({
     authUser: auth.authUser,
     isAuthenticated: auth.isAuthenticated,
     isAuthLoading: auth.isAuthLoading,
@@ -90,7 +90,7 @@ export function AcquisitionOSProvider({
   });
   
   // 🚀 PERFORMANCE: Removed redundant workspace change handling
-  // The useAcquisitionOSData hook already handles workspace changes internally
+  // The useWorkspaceData hook already handles workspace changes internally
   const chat = useAcquisitionOSChat();
   const forms = useAcquisitionOSForms();
   const progress = useAcquisitionOSProgress();

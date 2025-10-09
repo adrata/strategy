@@ -3,7 +3,7 @@ import { generateOpenAIResponse } from "../utils/openaiService";
 import type { ChatMessage, ChatSessions } from "../types/hooks";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 
-interface UseAcquisitionOSChatReturn {
+interface UseWorkspaceChatReturn {
   // Chat State
   rightChatInput: string;
   chatSessions: ChatSessions;
@@ -31,16 +31,16 @@ interface UseAcquisitionOSChatReturn {
 }
 
 /**
- * 💬 ACQUISITION OS CHAT HOOK
- * Handles all chat functionality for AcquisitionOS
+ * WORKSPACE CHAT HOOK
+ * Handles all chat functionality for Workspace
  */
-export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
+export function useWorkspaceChat(): UseWorkspaceChatReturn {
   // Get authenticated user
   const { user: authUser } = useUnifiedAuth();
   
   // Debug helper
   const debug = (phase: string, details: any) => {
-    console.log(`💬 [CHAT HOOK] ${phase}:`, details);
+    console.log(`[CHAT HOOK] ${phase}:`, details);
   };
 
   // Chat State
@@ -93,11 +93,11 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
   // Refs for auto-scroll
   const rightChatEndRef = useRef<HTMLDivElement>(null);
 
-  // 🚀 PERFORMANCE OPTIMIZATION: Skip chat sessions loading since chat is not being used
+  // PERFORMANCE OPTIMIZATION: Skip chat sessions loading since chat is not being used
   // This saves 2.6s on every dashboard load
   useEffect(() => {
     if (!isLoaded && authUser) {
-      console.log("⚡ [CHAT HOOK] Skipping chat sessions loading for performance - chat not in use");
+      console.log("[CHAT HOOK] Skipping chat sessions loading for performance - chat not in use");
       
       // Initialize with empty sessions
       const emptySessions: ChatSessions = {
@@ -145,7 +145,7 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
     const userId = authUser.id;
     
     if (!workspaceId || !userId) {
-      console.error("🚨 [SAVE CHAT] User not authenticated or no workspace access");
+      console.error("[SAVE CHAT] User not authenticated or no workspace access");
       return;
     }
     
@@ -251,7 +251,7 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
 
   // CSV Data Management - Define BEFORE processWithAI
   const storeCsvData = useCallback((fileName: string, csvContent: string, subApp: string) => {
-    console.log(`💾 [CHAT HOOK] Storing CSV data for ${subApp}:`, { fileName, contentLength: csvContent.length });
+    console.log(`[CHAT HOOK] Storing CSV data for ${subApp}:`, { fileName, contentLength: csvContent.length });
     const newData = { fileName, content: csvContent };
     
     setCsvData(prev => {
@@ -280,7 +280,7 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
 
   // Document Data Management - Define BEFORE processWithAI
   const storeDocumentData = useCallback((fileName: string, parsedDoc: any, subApp: string) => {
-    console.log(`📄 [CHAT HOOK] Storing document data for ${subApp}:`, { fileName, fileType: parsedDoc.fileType });
+    console.log(`[CHAT HOOK] Storing document data for ${subApp}:`, { fileName, fileType: parsedDoc.fileType });
     const newData = { fileName, parsedDoc };
     
     setDocumentData(prev => {
@@ -340,7 +340,7 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
       
                       // Handle CSV enrichment with progress tracking
                 if (isEnrichmentQuery && storedCsv) {
-                  console.log(`🎯 [CHAT HOOK] CSV enrichment request detected:`, { query, fileName: storedCsv.fileName });
+                  console.log(`[CHAT HOOK] CSV enrichment request detected:`, { query, fileName: storedCsv.fileName });
                   
                   // Add progress tracker message
                   addAssistantMessage(
@@ -381,7 +381,7 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
                     
                     if (result.success) {
                       const { total, enriched, creditsUsed } = result.results;
-                      return `✅ **Enrichment Complete!**
+                      return `**Enrichment Complete!**
 
 **Results from ${storedCsv.fileName}:**
 • **Found ${enriched} CFOs** out of ${total} companies processed
@@ -397,17 +397,17 @@ export function useAcquisitionOSChat(): UseAcquisitionOSChatReturn {
 
 The enriched CFO contacts are now in your leads pipeline, ready for your sales outreach. Each contact includes verified contact information and current role details.`;
                     } else {
-                      return `❌ I encountered an error while processing your CSV: ${result.error}. Please try again or contact support if the issue persists.`;
+                      return `I encountered an error while processing your CSV: ${result.error}. Please try again or contact support if the issue persists.`;
                     }
                   } catch (error) {
                     console.error('CSV enrichment error:', error);
-                    return `❌ I encountered a technical error while processing your CSV enrichment request. Please try again in a moment.`;
+                    return `I encountered a technical error while processing your CSV enrichment request. Please try again in a moment.`;
                   }
                 }
       
       // Handle document enrichment (new universal support)
       if (isEnrichmentQuery && storedDoc && !storedCsv) {
-        console.log(`🎯 [CHAT HOOK] Document enrichment request detected:`, { query, fileName: storedDoc.fileName });
+        console.log(`[CHAT HOOK] Document enrichment request detected:`, { query, fileName: storedDoc.fileName });
         
         const { parsedDoc } = storedDoc;
         
@@ -446,7 +446,7 @@ The enriched CFO contacts are now in your leads pipeline, ready for your sales o
             
             if (result.success) {
               const { total, enriched, creditsUsed } = result.results;
-              return `✅ **Document Enrichment Complete!**
+              return `**Document Enrichment Complete!**
 
 **Results from ${parsedDoc.fileName}:**
 • Processed: ${enriched}/${total} companies
@@ -455,11 +455,11 @@ The enriched CFO contacts are now in your leads pipeline, ready for your sales o
 
 I've successfully found and enriched the contacts you requested from your ${parsedDoc.fileType.toUpperCase()} document. The enriched data has been added to your leads pipeline where you can view and manage them.`;
             } else {
-              return `❌ I encountered an error while processing your document: ${result.error}. Please try again or contact support if the issue persists.`;
+              return `I encountered an error while processing your document: ${result.error}. Please try again or contact support if the issue persists.`;
             }
           } catch (error) {
             console.error('Document enrichment error:', error);
-            return `❌ I encountered a technical error while processing your document enrichment request. Please try again in a moment.`;
+            return `I encountered a technical error while processing your document enrichment request. Please try again in a moment.`;
           }
         } else if (parsedDoc['extractedData']['companies'] && parsedDoc.extractedData.companies.length > 0) {
           // Handle documents with extracted company data but no tables
@@ -674,7 +674,7 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
                 // Get document context for the current subApp
                 const storedDoc = getDocumentData(activeSubApp);
                 
-                console.log('🤖 [HOOK] Making API call to /api/ai-chat with POST method');
+                console.log('[HOOK] Making API call to /api/ai-chat with POST method');
                 const chatResponse = await fetch('/api/ai-chat', {
                   method: 'POST',
                   headers: {
@@ -694,7 +694,7 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
                   })
                 });
                 
-                console.log('🤖 [HOOK] Response received:', {
+                console.log('[HOOK] Response received:', {
                   status: chatResponse.status,
                   statusText: chatResponse.statusText,
                   ok: chatResponse.ok
@@ -763,4 +763,4 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
 }
 
 // Legacy alias for backwards compatibility
-export const useActionPlatformChat = useAcquisitionOSChat;
+export const useActionPlatformChat = useWorkspaceChat;

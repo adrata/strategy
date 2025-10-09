@@ -20,7 +20,7 @@ const MIGRATION_CONFIG = {
     'src/platform/hooks/useFastSectionData.ts',
     'src/platform/hooks/useFastCounts.ts',
     'src/platform/hooks/usePipelineData.ts',
-    'src/platform/hooks/useAcquisitionOSData.ts',
+    'src/platform/hooks/useWorkspaceData.ts',
     'src/platform/hooks/useAdrataData.ts',
     'src/app/api/data/section/route.ts.complete-backup'
   ],
@@ -39,7 +39,7 @@ const MIGRATION_CONFIG = {
     'useFastSectionData': 'useInstantNavigationContext',
     'useFastCounts': 'useInstantNavigationContext',
     'usePipelineData': 'useInstantNavigationContext',
-    'useAcquisitionOSData': 'useInstantNavigationContext',
+    'useWorkspaceData': 'useInstantNavigationContext',
     'useAdrataData': 'useInstantNavigationContext'
   },
   
@@ -53,7 +53,7 @@ const MIGRATION_CONFIG = {
       old: '{ data, loading, error, refresh }',
       new: '{ currentData, currentLoading, currentError, navigateToSection, refreshSection }'
     },
-    'useAcquisitionOSData': {
+    'useWorkspaceData': {
       old: '{ data, loading, error, refresh }',
       new: '{ currentData, currentLoading, currentError, navigateToSection, refreshSection }'
     }
