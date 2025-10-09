@@ -4,8 +4,6 @@ import React from "react";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 // Removed deleted PipelineDataStore - using unified data system
 import { useUnifiedAuth } from "@/platform/auth";
-import { useLeadsData } from "@/platform/hooks/useLeadsData";
-
 interface PipelineTableViewProps {
   activeSection: string;
 }
@@ -18,8 +16,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   const workspaceId = user?.workspaceId;
   const userId = user?.id;
   
-  // 🎯 NEW: Use dedicated leads hook for leads section
-  const leadsData = useLeadsData();
+  // 🎯 FIXED: Use leads data passed as prop to avoid duplicate API calls
   
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
@@ -29,9 +26,11 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // 🎯 NEW: Use dedicated leads data for leads section
+    // 🎯 FIXED: Use data from AcquisitionOSProvider context for all sections
     if (section === 'leads') {
-      return leadsData.leads || [];
+      // Get leads data from the context (people with LEAD status)
+      const peopleData = acquisitionData?.acquireData?.people || [];
+      return peopleData.filter((person: any) => person.status === 'LEAD');
     }
     
     // The useData hook returns acquireData, not data

@@ -30,8 +30,8 @@ export function PipelineMiddlePanel() {
   const workspaceId = authUser?.workspaces?.[0]?.id || ui.activeWorkspace?.id;
   const userId = authUser?.id;
   
-  // 🎯 NEW: Use dedicated leads hook for leads section
-  const leadsData = useLeadsData();
+  // 🎯 FIXED: Use data from AcquisitionOSProvider context instead of duplicate API calls
+  // const leadsData = useLeadsData(); // REMOVED: This was causing duplicate API calls
   
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
@@ -41,9 +41,11 @@ export function PipelineMiddlePanel() {
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // 🎯 NEW: Use dedicated leads data for leads section
+    // 🎯 FIXED: Use data from AcquisitionOSProvider context for all sections
     if (section === 'leads') {
-      return leadsData.leads || [];
+      // Get leads data from the context (people with LEAD status)
+      const peopleData = acquisitionData?.acquireData?.people || [];
+      return peopleData.filter((person: any) => person.status === 'LEAD');
     }
     
     // The useData hook returns acquireData, not data

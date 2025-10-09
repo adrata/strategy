@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getV1AuthUser } from '@/app/api/v1/auth';
-import { createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 const prisma = new PrismaClient();
 
@@ -14,10 +13,17 @@ const prisma = new PrismaClient();
 // GET /api/v1/actions - List actions with search and pagination
 export async function GET(request: NextRequest) {
   try {
-    // Authenticate user using v1 auth system
-    const authUser = await getV1AuthUser(request);
-    
-    if (!authUser) {
+    // Authenticate and authorize user using unified auth system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 

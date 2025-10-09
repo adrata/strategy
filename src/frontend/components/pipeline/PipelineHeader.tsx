@@ -856,10 +856,10 @@ export function PipelineHeader({
         // Use recordCount for all other sections
         const totalCount = recordCount || (metrics.totalLeads ?? 0);
         
-        // For companies and people sections, show Actions and Total like other sections
+        // For companies and people sections, show Actions Companies/People and Total
         if (section === 'companies' || section === 'people') {
           metricItems.push({
-            label: 'Actions',
+            label: `Actions ${section === 'companies' ? 'Companies' : 'People'}`,
             value: '—',
             color: 'text-gray-900'
           });
