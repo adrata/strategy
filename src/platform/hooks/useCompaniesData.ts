@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 
 export interface Company {
   id: string;
@@ -27,26 +28,31 @@ interface UseCompaniesDataReturn {
 }
 
 export function useCompaniesData(): UseCompaniesDataReturn {
+  const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
 
-  const fetchCompanies = async () => {
+  const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id || 'default';
+
+  const fetchCompanies = useCallback(async () => {
+    if (authLoading) return;
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/companies');
+      const response = await fetch('/api/v1/companies', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch companies: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const json = await response.json();
+      const data = Array.isArray(json) ? json : (json?.data || []);
       
       // Transform companies data to Company format
-      const transformedCompanies: Company[] = data.map((company: any) => ({
+      const transformedCompanies: Company[] = (data || []).map((company: any) => ({
         id: company.id,
         name: company.name || 'Unknown Company',
         industry: company.industry || '-',
@@ -66,6 +72,10 @@ export function useCompaniesData(): UseCompaniesDataReturn {
 
       setCompanies(transformedCompanies);
       setCount(transformedCompanies.length);
+      try {
+        const storageKey = `adrata-companies-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify({ companies: transformedCompanies, ts: Date.now() }));
+      } catch {}
     } catch (err) {
       console.error('❌ [useCompaniesData] Error fetching companies:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch companies');
@@ -74,11 +84,26 @@ export function useCompaniesData(): UseCompaniesDataReturn {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authLoading, workspaceId]);
 
   useEffect(() => {
+    if (authLoading) return;
+    // Instant hydration from cache
+    try {
+      const storageKey = `adrata-companies-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed?.companies)) {
+          setCompanies(parsed.companies as Company[]);
+          setCount((parsed.companies as Company[]).length);
+          setLoading(false);
+        }
+      }
+    } catch {}
+    // Revalidate in background
     fetchCompanies();
-  }, []);
+  }, [authLoading, workspaceId, fetchCompanies]);
 
   return {
     companies,

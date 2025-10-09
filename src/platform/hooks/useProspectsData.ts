@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 
 export interface Prospect {
   id: string;
@@ -30,26 +31,31 @@ interface UseProspectsDataReturn {
 }
 
 export function useProspectsData(): UseProspectsDataReturn {
+  const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState(0);
 
-  const fetchProspects = async () => {
+  const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id || 'default';
+
+  const fetchProspects = useCallback(async () => {
+    if (authLoading) return;
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/people?status=PROSPECT');
+      const response = await fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch prospects: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const json = await response.json();
+      const data = Array.isArray(json) ? json : (json?.data || []);
       
       // Transform people data to Prospect format
-      const transformedProspects: Prospect[] = data.map((person: any) => ({
+      const transformedProspects: Prospect[] = (data || []).map((person: any) => ({
         id: person.id,
         company: person.company?.name || person.companyName || '-',
         name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
@@ -72,6 +78,11 @@ export function useProspectsData(): UseProspectsDataReturn {
 
       setProspects(transformedProspects);
       setCount(transformedProspects.length);
+      // Persist to cache for instant hydration
+      try {
+        const storageKey = `adrata-prospects-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify({ prospects: transformedProspects, ts: Date.now() }));
+      } catch {}
     } catch (err) {
       console.error('❌ [useProspectsData] Error fetching prospects:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch prospects');
@@ -80,11 +91,26 @@ export function useProspectsData(): UseProspectsDataReturn {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authLoading, workspaceId]);
 
   useEffect(() => {
+    if (authLoading) return;
+    // Instant hydration from cache
+    try {
+      const storageKey = `adrata-prospects-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed?.prospects)) {
+          setProspects(parsed.prospects as Prospect[]);
+          setCount((parsed.prospects as Prospect[]).length);
+          setLoading(false);
+        }
+      }
+    } catch {}
+    // Revalidate in background
     fetchProspects();
-  }, []);
+  }, [authLoading, workspaceId, fetchProspects]);
 
   return {
     prospects,
