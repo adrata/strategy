@@ -8,7 +8,7 @@ import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
@@ -33,7 +33,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
   
-  // Get user data from PipelineContext to match PipelineLeftPanelStandalone
+  // Get user data from PipelineContext to match LeftPanel
   const { user: pipelineUser, company, workspace } = usePipeline();
   
   // 🚀 HYDRATION FIX: Initialize all state with consistent values
@@ -707,7 +707,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}
@@ -814,7 +814,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}
@@ -921,7 +921,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}
@@ -964,7 +964,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         <PanelLayout
           thinLeftPanel={null}
           leftPanel={
-            <PipelineLeftPanelStandalone 
+            <LeftPanel 
               activeSection={section}
               onSectionChange={handleSectionChange}
               isSpeedrunVisible={isSpeedrunVisible}
@@ -1110,7 +1110,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           <PanelLayout
             thinLeftPanel={null}
             leftPanel={
-              <PipelineLeftPanelStandalone 
+              <LeftPanel 
                 activeSection={section}
                 onSectionChange={handleSectionChange}
                 isSpeedrunVisible={isSpeedrunVisible}
@@ -1215,7 +1215,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}

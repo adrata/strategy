@@ -7,7 +7,7 @@ import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/PipelineLeftPanelStandalone";
+import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { MiddlePanelSkeleton } from "@/platform/ui/components/skeletons/MiddlePanelSkeleton";
@@ -270,7 +270,7 @@ export default function SellerCompaniesPage() {
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -297,7 +297,7 @@ export default function SellerCompaniesPage() {
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -341,7 +341,7 @@ export default function SellerCompaniesPage() {
             <ProfilePopupProvider>
               <PanelLayout
                 leftPanel={
-                  <PipelineLeftPanelStandalone
+                  <LeftPanel
                     activeSection="sellers"
                     onSectionChange={() => {}}
                     isOpportunitiesVisible={isOpportunitiesVisible}

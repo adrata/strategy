@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
-import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/PipelineLeftPanelStandalone";
+import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { PipelineMiddlePanelStandalone } from "@/products/pipeline/components/PipelineMiddlePanelStandalone";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { useZoom, ZoomProvider } from "@/platform/ui/components/ZoomProvider";
@@ -78,6 +78,16 @@ function PipelinePanelLayout({ section }: { section: string }) {
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
   
+  // Get data to check if pipeline sections should be available
+  const { data: acquisitionData } = useAcquisitionOS();
+  const companiesCount = acquisitionData?.acquireData?.companies?.length || 0;
+  const peopleCount = acquisitionData?.acquireData?.people?.length || 0;
+  const hasCompaniesOrPeople = companiesCount > 0 || peopleCount > 0;
+  
+  // Pipeline sections that require companies or people data
+  const pipelineSections = ['speedrun', 'leads', 'prospects', 'opportunities'];
+  const isPipelineSection = pipelineSections.includes(section);
+  
   // Monaco Signal popup state for Speedrun section
   const [isSlideUpVisible, setIsSlideUpVisible] = useState(false);
   const [isAcceptDropdownOpen, setIsAcceptDropdownOpen] = useState(false);
@@ -94,6 +104,15 @@ function PipelinePanelLayout({ section }: { section: string }) {
     setIsProfileOpen,
     profileAnchor
   } = usePipeline();
+
+  // Redirect to companies/people if trying to access pipeline sections without data
+  useEffect(() => {
+    if (isPipelineSection && !hasCompaniesOrPeople) {
+      console.log(`🔄 [PIPELINE REDIRECT] Redirecting from ${section} to companies (no data available)`);
+      router.push('/aos/companies');
+      return;
+    }
+  }, [section, hasCompaniesOrPeople, isPipelineSection, router]);
 
   // OPTIMIZED: Only update section when it actually changes and avoid unnecessary data reloads
   useEffect(() => {
@@ -201,7 +220,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}
@@ -219,7 +238,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
         onToggleRightPanel={ui.toggleRightPanel}
       />
       
-      {/* Profile Popup is now handled by PipelineLeftPanelStandalone */}
+      {/* Profile Popup is now handled by LeftPanel */}
 
       {/* Speedrun Engine Modal */}
       <SpeedrunEngineModal

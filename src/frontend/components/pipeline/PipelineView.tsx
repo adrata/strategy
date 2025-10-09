@@ -15,7 +15,7 @@ import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 // import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
@@ -1585,7 +1585,7 @@ export const PipelineView = React.memo(function PipelineView({
         <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <PipelineLeftPanelStandalone 
+          <LeftPanel 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}

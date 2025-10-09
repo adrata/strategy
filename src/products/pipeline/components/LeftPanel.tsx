@@ -43,7 +43,7 @@ function getColorFilter(hexColor: string): string {
 }
 
 
-interface PipelineLeftPanelStandaloneProps {
+interface LeftPanelProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
   isSpeedrunVisible?: boolean;
@@ -539,6 +539,18 @@ function PipelineSections({
     };
   }, []);
 
+  // Check if user has any companies or people data
+  const hasCompaniesOrPeople = (companiesData.count > 0 || peopleData.count > 0);
+  
+  console.log('🔍 [PIPELINE VISIBILITY] Checking data availability:', {
+    companiesCount: companiesData.count,
+    peopleCount: peopleData.count,
+    hasCompaniesOrPeople,
+    isDemoMode,
+    companiesData: companiesData.data?.length || 0,
+    peopleData: peopleData.data?.length || 0
+  });
+  
   const sections = [
     {
       id: "dashboard",
@@ -571,7 +583,7 @@ function PipelineSections({
         }
         return productionCounts.speedrun || 0;
       })(),
-      visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
+      visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (hasCompaniesOrPeople && (isSpeedrunVisible ?? true))
     },
     {
       id: "leads",
@@ -580,7 +592,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : productionCounts.leads,
-      visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true)
+      visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (hasCompaniesOrPeople && (isLeadsVisible ?? true))
     },
     {
       id: "prospects",
@@ -589,7 +601,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),
-      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true)
+      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (hasCompaniesOrPeople && (isProspectsVisible ?? true))
     },
     {
       id: "opportunities",
@@ -602,7 +614,7 @@ function PipelineSections({
         const totalPeople = opportunities.reduce((sum: number, opp: any) => sum + (opp.peopleCount || 0), 0);
         return `${productionCounts.opportunities}${totalPeople > 0 ? ` (${totalPeople})` : ''}`;
       })(),
-      visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
+      visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (hasCompaniesOrPeople && (isOpportunitiesVisible ?? true))
     },
     {
       id: "clients",
@@ -700,9 +712,13 @@ function PipelineSections({
     );
   }
 
+  const visibleSections = sections.filter(section => section.visible);
+  const pipelineSections = ['speedrun', 'leads', 'prospects', 'opportunities'];
+  const hasVisiblePipelineSections = visibleSections.some(section => pipelineSections.includes(section.id));
+
   return (
     <div className="flex-1 space-y-1">
-      {sections.filter(section => section.visible).map((section) => (
+      {visibleSections.map((section) => (
         <button
           key={section.id}
           onClick={() => handleSectionClick(section.id)}
@@ -721,11 +737,23 @@ function PipelineSections({
           </div>
         </button>
       ))}
+      
+      {/* Show helpful message when no pipeline sections are visible */}
+      {!isDemoMode && !hasVisiblePipelineSections && !loading && (
+        <div className="px-3 py-4 text-center">
+          <div className="text-xs text-gray-500 mb-2">
+            Add companies or people to unlock pipeline features
+          </div>
+          <div className="text-xs text-gray-400">
+            Leads, Prospects, Opportunities, and Speedrun will appear here
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export function PipelineLeftPanelStandalone({
+export function LeftPanel({
   activeSection,
   onSectionChange,
   isSpeedrunVisible = true,
@@ -740,7 +768,7 @@ export function PipelineLeftPanelStandalone({
   setIsCustomersVisible,
   isPartnersVisible = true,
   setIsPartnersVisible
-}: PipelineLeftPanelStandaloneProps) {
+}: LeftPanelProps) {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const currentWorkspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const currentUserId = authUser?.id;
@@ -778,6 +806,23 @@ export function PipelineLeftPanelStandalone({
 
   const handleSectionClick = (section: string) => {
     console.log('🔄 Pipeline section clicked:', section);
+    
+    // Get current data counts to check what's available
+    const companiesCount = acquisitionData?.acquireData?.companies?.length || 0;
+    const peopleCount = acquisitionData?.acquireData?.people?.length || 0;
+    const hasCompaniesOrPeople = companiesCount > 0 || peopleCount > 0;
+    
+    // Pipeline sections that require companies or people data
+    const pipelineSections = ['speedrun', 'leads', 'prospects', 'opportunities'];
+    const isPipelineSection = pipelineSections.includes(section);
+    
+    // If user tries to access pipeline sections without companies/people data, redirect to companies
+    if (isPipelineSection && !hasCompaniesOrPeople) {
+      console.log(`🔄 [LEFT PANEL] Redirecting from ${section} to companies (no data available)`);
+      onSectionChange('companies');
+      return;
+    }
+    
     onSectionChange(section);
   };
 

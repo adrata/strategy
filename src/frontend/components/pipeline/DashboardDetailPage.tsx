@@ -21,7 +21,7 @@ import {
 import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
@@ -532,7 +532,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
     <PanelLayout
       thinLeftPanel={null}
       leftPanel={
-        <PipelineLeftPanelStandalone 
+        <LeftPanel 
           activeSection="dashboard"
           onSectionChange={() => {}}
           isSpeedrunVisible={true}

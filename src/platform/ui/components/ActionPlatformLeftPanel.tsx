@@ -8,7 +8,7 @@ import { MonacoLeftPanel } from "@/products/monaco/components/MonacoLeftPanel";
 import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
 import { SpeedrunProvider } from "@/products/speedrun/context/SpeedrunProvider";
 import { SpeedrunLeftPanel } from "@/platform/ui/panels/speedrun-left-panel";
-import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/PipelineLeftPanelStandalone";
+import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { flushSync } from "react-dom";
 
 export function AcquisitionOSLeftPanel() {
@@ -68,7 +68,7 @@ export function AcquisitionOSLeftPanel() {
   if (activeSubApp === "pipeline") {
     console.log("🔥 AcquisitionOSLeftPanel: Rendering Pipeline left panel");
     return (
-      <PipelineLeftPanelStandalone 
+      <LeftPanel 
         activeSection={activeSection} 
         onSectionChange={setActiveSection}
         isSpeedrunVisible={true}

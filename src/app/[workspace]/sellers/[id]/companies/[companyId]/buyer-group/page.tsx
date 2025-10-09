@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { PipelineProvider } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
@@ -669,7 +669,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -696,7 +696,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -730,7 +730,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
             <ProfilePopupProvider>
               <PanelLayout
                 leftPanel={
-                  <PipelineLeftPanelStandalone
+                  <LeftPanel
                     activeSection="people"
                     onSectionChange={(section) => {
                       console.log('🔄 Left panel section clicked:', section);

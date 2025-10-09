@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 import { PipelineProvider } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
@@ -278,7 +278,7 @@ export default function CompanyBuyerGroupCardsPage() {
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -305,7 +305,7 @@ export default function CompanyBuyerGroupCardsPage() {
               <ProfilePopupProvider>
                 <PanelLayout
                   leftPanel={
-                    <PipelineLeftPanelStandalone
+                    <LeftPanel
                       activeSection="sellers"
                       onSectionChange={() => {}}
                     />
@@ -339,7 +339,7 @@ export default function CompanyBuyerGroupCardsPage() {
             <ProfilePopupProvider>
               <PanelLayout
                 leftPanel={
-                  <PipelineLeftPanelStandalone
+                  <LeftPanel
                     activeSection="sellers"
                     onSectionChange={() => {}}
                   />

@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
-import { PipelineLeftPanelStandalone } from "@/products/pipeline/components/PipelineLeftPanelStandalone";
+import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueReportViewer";
@@ -73,7 +73,7 @@ export default function DeepValueReportPage() {
         <ZoomProvider>
           <PipelineProvider>
             <PanelLayout
-              leftPanel={<PipelineLeftPanelStandalone activeSection="people" onSectionChange={() => {}} />}
+              leftPanel={<LeftPanel activeSection="people" onSectionChange={() => {}} />}
               middlePanel={
                 <div className="flex items-center justify-center h-64">
                   <div className="text-gray-500">Loading record...</div>
@@ -92,7 +92,7 @@ export default function DeepValueReportPage() {
       <ZoomProvider>
         <PipelineProvider>
           <PanelLayout
-            leftPanel={<PipelineLeftPanelStandalone activeSection="people" onSectionChange={() => {}} />}
+            leftPanel={<LeftPanel activeSection="people" onSectionChange={() => {}} />}
             middlePanel={
               <DeepValueReportViewer
                 reportId={reportId}
