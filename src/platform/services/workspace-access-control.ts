@@ -53,11 +53,9 @@ export async function validateWorkspaceAccess(
     const cached = workspaceAccessCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      console.log(`⚡ [WORKSPACE ACCESS] Cache hit for ${cacheKey}`);
       return cached.result;
     }
 
-    console.log(`🔍 [WORKSPACE ACCESS] Validating access for user ${userId} to workspace ${workspaceId}`);
 
     // Query workspace membership
     const membership = await prisma.workspace_users.findFirst({
@@ -82,7 +80,6 @@ export async function validateWorkspaceAccess(
         timestamp: Date.now()
       });
       
-      console.log(`❌ [WORKSPACE ACCESS] Access denied: User ${userId} not member of workspace ${workspaceId}`);
       return result;
     }
 
@@ -103,7 +100,6 @@ export async function validateWorkspaceAccess(
           timestamp: Date.now()
         });
         
-        console.log(`❌ [WORKSPACE ACCESS] Insufficient permissions: User ${userId} has ${membership.role}, needs ${requiredRole}`);
         return result;
       }
     }
@@ -120,7 +116,6 @@ export async function validateWorkspaceAccess(
       timestamp: Date.now()
     });
 
-    console.log(`✅ [WORKSPACE ACCESS] Access granted: User ${userId} has ${membership.role} access to workspace ${workspaceId}`);
     return result;
 
   } catch (error) {
@@ -216,14 +211,12 @@ export function clearWorkspaceAccessCache(userId: string, workspaceId?: string):
       .filter(key => key.startsWith(`${userId}:${workspaceId}:`));
     
     keysToDelete.forEach(key => workspaceAccessCache.delete(key));
-    console.log(`🧹 [WORKSPACE ACCESS] Cleared cache for user ${userId} in workspace ${workspaceId}`);
   } else {
     // Clear all cache for user
     const keysToDelete = Array.from(workspaceAccessCache.keys())
       .filter(key => key.startsWith(`${userId}:`));
     
     keysToDelete.forEach(key => workspaceAccessCache.delete(key));
-    console.log(`🧹 [WORKSPACE ACCESS] Cleared all cache for user ${userId}`);
   }
 }
 

@@ -56,7 +56,6 @@ export async function getSecureApiContext(
     
     if (!authUser) {
       if (requireAuth) {
-        console.log(`❌ [SECURE API] Authentication required but not provided`);
         return {
           context: null,
           response: NextResponse.json(
@@ -90,7 +89,6 @@ export async function getSecureApiContext(
       );
 
       if (!workspaceAccess.hasAccess) {
-        console.log(`❌ [SECURE API] Workspace access denied for user ${authUser.id}`);
         return {
           context: null,
           response: NextResponse.json(
@@ -112,7 +110,6 @@ export async function getSecureApiContext(
     // 5. Check specific permission if required
     if (requiredPermission && context.permissions) {
       if (!context.permissions.includes(requiredPermission)) {
-        console.log(`❌ [SECURE API] Permission denied: ${requiredPermission}`);
         return {
           context: null,
           response: NextResponse.json(
@@ -127,7 +124,6 @@ export async function getSecureApiContext(
       }
     }
 
-    console.log(`✅ [SECURE API] Context created for user ${authUser.email}`);
     return { context };
 
   } catch (error) {

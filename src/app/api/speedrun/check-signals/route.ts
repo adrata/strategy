@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
     const cached = signalsCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      console.log('⚡ [SPEEDRUN SIGNALS] Cache hit for workspace:', workspaceId);
       return createSuccessResponse(cached.data, {
         userId: context.userId,
         workspaceId: context.workspaceId,
@@ -66,7 +65,6 @@ export async function GET(request: NextRequest) {
     });
 
     const duration = Date.now() - startTime;
-    console.log(`⚡ [SPEEDRUN SIGNALS] Response generated in ${duration}ms for workspace: ${workspaceId}`);
 
     return createSuccessResponse(responseData, {
       userId: context.userId,

@@ -6,7 +6,7 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   // 2025 Optimizations for Neon.tech + Vercel
-  log: process['env']['NODE_ENV'] === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  log: ['error'],
   errorFormat: 'minimal',
 });
 

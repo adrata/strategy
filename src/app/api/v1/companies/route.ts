@@ -49,7 +49,6 @@ export async function GET(request: NextRequest) {
     const cached = responseCache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-      console.log(`Cache hit for ${cacheKey} (${Date.now() - startTime}ms)`);
       return NextResponse.json(cached.data);
     }
 
@@ -144,8 +143,6 @@ export async function GET(request: NextRequest) {
     // Cache the result
     responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
     
-    const duration = Date.now() - startTime;
-    console.log(`Query completed in ${duration}ms for ${cacheKey}`);
     
     return NextResponse.json(result);
 

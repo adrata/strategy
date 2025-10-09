@@ -62,7 +62,6 @@ export function useLeadsData(): UseLeadsDataReturn {
     setError(null);
 
     try {
-      console.log('[LEADS DATA] Loading leads for workspace:', workspaceId);
       
       // Use optimized V1 API: Fetch people with LEAD status
       const response = await fetch(`/api/v1/people?status=LEAD&limit=1000`, {
