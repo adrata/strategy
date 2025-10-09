@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { withSecurity, SecureApiContext } from '../middleware';
-import { getV1AuthUser } from '../auth';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 const prisma = new PrismaClient();
 
@@ -14,13 +13,18 @@ const prisma = new PrismaClient();
 // GET /api/v1/people - List people with search and pagination
 export async function GET(request: NextRequest) {
   try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -37,6 +41,7 @@ export async function GET(request: NextRequest) {
 
     // Enhanced where clause for pipeline management
     const where: any = {
+      workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
     };
     
@@ -126,39 +131,39 @@ export async function GET(request: NextRequest) {
     ]);
 
 
-    return NextResponse.json({
-      success: true,
-      data: people,
-      meta: {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        filters: { search, status, priority, companyId, sortBy, sortOrder },
+    return createSuccessResponse(people, {
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
       },
+      filters: { search, status, priority, companyId, sortBy, sortOrder },
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
     console.error('❌ [V1 PEOPLE API] Error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500);
   }
 }
 
 // POST /api/v1/people - Create a new person
 export async function POST(request: NextRequest) {
   try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
@@ -220,7 +225,7 @@ export async function POST(request: NextRequest) {
         engagementScore: body.engagementScore || 0,
         globalRank: body.globalRank || 0,
         companyRank: body.companyRank || 0,
-        workspaceId: authUser.workspaceId || 'local-workspace',
+        workspaceId: context.workspaceId,
         companyId: body.companyId,
         assignedUserId: body.assignedUserId,
         createdAt: new Date(),
@@ -245,12 +250,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: person,
-      meta: {
-        message: 'Person created successfully',
-      },
+    return createSuccessResponse(person, {
+      message: 'Person created successfully',
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
@@ -264,9 +267,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500);
   }
 }
