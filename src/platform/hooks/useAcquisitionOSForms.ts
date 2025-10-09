@@ -308,10 +308,40 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             onSuccess(`✅ Successfully created speedrun: ${formData.name} (Desktop mode)`);
           }
         } else {
-          // Use unified API for all other record types (prospects, contacts, accounts, partners)
+          // Use unified API for all other record types (prospects, contacts, accounts, partners, companies)
           debug("CREATE_RECORD_UNIFIED_API", { activeSection, formData });
           
           if (!envInfo.isDesktop) {
+            // Prepare data based on record type
+            let recordData: any = {
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              company: formData.company,
+              title: formData.title,
+              notes: formData.notes,
+              website: formData.website,
+              workspaceId: activeWorkspace?.id || "",
+              userId: authUser?.id || ""
+            };
+
+            // Handle different field mappings for different record types
+            if (activeSection === "companies") {
+              // Companies use 'sources' (plural array) instead of 'source' (singular string)
+              recordData.sources = formData.source ? [formData.source] : ["Manual Entry"];
+              // Remove fields that don't apply to companies
+              delete recordData.email;
+              delete recordData.phone;
+              delete recordData.title;
+            } else {
+              // Other record types use 'source' (singular string)
+              recordData.source = formData.source || "Manual Entry";
+              // Client-specific fields
+              recordData.contractValue = formData.contractValue;
+              recordData.renewalDate = formData.renewalDate;
+              recordData.contactIds = formData.contactIds || [];
+            }
+
             // Create record via unified API
             const createResponse = await safeApiFetch(
               "/api/data/unified",
@@ -321,22 +351,7 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
                 body: JSON.stringify({
                   type: activeSection, // Use plural form directly (leads, prospects, etc.)
                   action: "create",
-                  data: {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    company: formData.company,
-                    title: formData.title,
-                    source: formData.source || "Manual Entry",
-                    notes: formData.notes,
-                    // Client-specific fields
-                    contractValue: formData.contractValue,
-                    renewalDate: formData.renewalDate,
-                    website: formData.website,
-                    contactIds: formData.contactIds || [],
-                    workspaceId: activeWorkspace?.id || "",
-                    userId: authUser?.id || ""
-                  }
+                  data: recordData
                 })
               },
               {
