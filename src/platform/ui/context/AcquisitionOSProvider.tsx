@@ -186,14 +186,17 @@ export function AcquisitionOSProvider({
   // CRITICAL FIX: Don't render children until workspace is properly set
   // This prevents the "default" workspace data loading that causes wrong numbers
   if (!ui.activeWorkspace || !auth.authUser || !auth.isAuthenticated) {
-    console.log("⏳ [PROVIDER] Waiting for workspace and authentication before rendering children", {
-      hasActiveWorkspace: !!ui.activeWorkspace,
-      hasAuthUser: !!auth.authUser,
-      isAuthenticated: auth.isAuthenticated,
-      isAuthLoading: auth.isAuthLoading,
-      activeWorkspaceId: ui.activeWorkspace?.id,
-      authUserWorkspaces: auth.authUser?.workspaces?.length || 0
-    });
+    // Reduced logging for performance
+    if (process.env.NODE_ENV === 'development' && process.env.ADRATA_DEBUG_PROVIDER === 'true') {
+      console.log("⏳ [PROVIDER] Waiting for workspace and authentication before rendering children", {
+        hasActiveWorkspace: !!ui.activeWorkspace,
+        hasAuthUser: !!auth.authUser,
+        isAuthenticated: auth.isAuthenticated,
+        isAuthLoading: auth.isAuthLoading,
+        activeWorkspaceId: ui.activeWorkspace?.id,
+        authUserWorkspaces: auth.authUser?.workspaces?.length || 0
+      });
+    }
 
     // Show nothing while loading
     return null;
@@ -202,10 +205,13 @@ export function AcquisitionOSProvider({
   // CRITICAL FIX: Don't render children if we have no workspace at all
   // This prevents the "default" workspace from being used, but allow demo workspaces
   if (!ui.activeWorkspace.id || (ui.activeWorkspace.id.includes('default') && !ui.activeWorkspace.id.includes('demo'))) {
-    console.log("⏳ [PROVIDER] Invalid workspace - waiting for proper setup", {
-      workspaceId: ui.activeWorkspace.id,
-      isDemo: ui.activeWorkspace.id?.includes('demo')
-    });
+    // Reduced logging for performance
+    if (process.env.NODE_ENV === 'development' && process.env.ADRATA_DEBUG_PROVIDER === 'true') {
+      console.log("⏳ [PROVIDER] Invalid workspace - waiting for proper setup", {
+        workspaceId: ui.activeWorkspace.id,
+        isDemo: ui.activeWorkspace.id?.includes('demo')
+      });
+    }
     return null;
   }
 

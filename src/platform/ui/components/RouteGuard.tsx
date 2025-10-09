@@ -84,9 +84,16 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
     if (!hasNavigated && !isLoading) {
       setHasNavigated(true);
 
-      // Authenticated user on root or bare /aos -> redirect to main app
+      // Authenticated user on root or bare /aos -> redirect to workspace
       if (isAuthenticated && (isRoot || pathname === "/aos")) {
-        router.replace("/speedrun");
+        // Get workspace from URL or use default
+        const workspaceFromUrl = pathname.split('/')[1];
+        if (workspaceFromUrl && workspaceFromUrl !== 'aos') {
+          router.replace(`/${workspaceFromUrl}`);
+        } else {
+          // Default to first available workspace or speedrun as fallback
+          router.replace("/speedrun");
+        }
         return;
       }
 

@@ -741,7 +741,7 @@ function PipelineSections({
       
       {/* Show helpful message when no pipeline sections are visible */}
       {!isDemoMode && !hasVisiblePipelineSections && !loading && (
-        <div className="px-3 py-4 text-center">
+        <div className="px-3 py-4 text-left">
           <div className="text-xs text-gray-500 mb-2">
             Add companies or people to unlock pipeline features
           </div>

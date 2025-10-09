@@ -116,10 +116,13 @@ export function useLeadsData(): UseLeadsDataReturn {
       } catch (e) {
         // ignore storage failures
       }
-      console.log('✅ [LEADS DATA] Loaded leads:', {
-        count: leadsData.length,
-        firstLead: leadsData[0]?.fullName || 'none'
-      });
+      // Reduced logging for performance
+      if (process.env.NODE_ENV === 'development' && process.env['ADRATA_DEBUG_DATA'] === 'true') {
+        console.log('✅ [LEADS DATA] Loaded leads:', {
+          count: leadsData.length,
+          firstLead: leadsData[0]?.fullName || 'none'
+        });
+      }
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch leads';

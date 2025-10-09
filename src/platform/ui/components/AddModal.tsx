@@ -490,17 +490,13 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   ? "Enter person name"
                   : `Enter ${getSectionTitle().toLowerCase()} name`
               }
-              className="w-full rounded px-4 py-2 outline-none transition-colors"
-              style={{ 
-                border: '1px solid #d1d5db',
-                boxSizing: 'border-box'
-              }}
+              className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
               onFocus={(e) => {
-                e.target.style.border = `1px solid ${categoryColors.primary}`;
+                e.target.style.borderColor = categoryColors.primary;
                 e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
               }}
               onBlur={(e) => {
-                e.target.style.border = '1px solid #d1d5db';
+                e.target.style.borderColor = '#d1d5db';
                 e.target.style.boxShadow = 'none';
               }}
               required
@@ -1022,15 +1018,12 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               placeholder={`Additional notes about this ${getSectionTitle().toLowerCase()}`}
               rows={3}
               className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
-              style={{ borderWidth: '1px' }}
               onFocus={(e) => {
                 e.target.style.borderColor = categoryColors.primary;
-                e.target.style.borderWidth = '1px';
                 e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = '#d1d5db';
-                e.target.style.borderWidth = '1px';
                 e.target.style.boxShadow = 'none';
               }}
             />
