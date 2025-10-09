@@ -195,7 +195,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           nextActionDate: true,
           actionStatus: true,
           assignedUserId: true,
-          rank: true
+          globalRank: true
         }
       }),
       prisma.people.findMany({
@@ -1082,7 +1082,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           state: true,
           country: true,
           updatedAt: true,
-          rank: true,
+          globalRank: true,
           lastAction: true,
           lastActionDate: true,
           nextAction: true,
@@ -1117,7 +1117,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           nextActionDate: true,
           actionStatus: true,
           assignedUserId: true,
-          rank: true,
+          globalRank: true,
           // Essential enrichment fields only
           employeeCount: true,
           foundedYear: true,
@@ -1459,7 +1459,7 @@ async function getMultipleRecords(
             tags: true,
             updatedAt: true,
             createdAt: true,
-            rank: true,
+            globalRank: true,
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
@@ -1551,7 +1551,7 @@ async function getMultipleRecords(
         where: whereClause,
         // 🚀 PERFORMANCE: Simplified ordering for faster queries
         orderBy: [
-          { rank: 'asc' },                                // Primary sort by rank
+          { globalRank: 'asc' },                          // Primary sort by globalRank
           { updatedAt: 'desc' }                           // Secondary sort by update time
         ],
         take: pagination?.limit || 5000, // 🚀 PERFORMANCE: Increased limit to show all companies
@@ -1566,7 +1566,7 @@ async function getMultipleRecords(
           city: true,
           state: true,
           country: true,
-          rank: true,
+          globalRank: true,
           updatedAt: true,
           lastAction: true,
           lastActionDate: true,
@@ -3469,7 +3469,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             ]
           } : {})
         },
-        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }], // Sort by rank first, then updatedAt
+        orderBy: [{ globalRank: 'asc' }, { updatedAt: 'desc' }], // Sort by globalRank first, then updatedAt
         take: 100, // 🚀 PERFORMANCE: Reduced from 500 to 100 for faster loading
         select: { 
           // 🚀 PERFORMANCE: Only select essential fields for dashboard
@@ -3488,7 +3488,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           nextActionDate: true,
           actionStatus: true,
           assignedUserId: true,
-          rank: true
+          globalRank: true
           // 🚫 REMOVED: description, address, customFields (large data) for better performance
         }
       }).then(companies => {
@@ -3557,7 +3557,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           workspaceId, 
           deletedAt: null
         },
-        orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+        orderBy: [{ globalRank: 'asc' }, { updatedAt: 'desc' }],
         take: 100, // 🚀 PERFORMANCE: Reduced from 10000 to 100 for faster loading
         select: { 
           // 🚀 PERFORMANCE: Only select essential fields for dashboard
@@ -3573,7 +3573,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           tags: true,
           updatedAt: true,
           createdAt: true,
-          rank: true,
+          globalRank: true,
           lastAction: true,
           lastActionDate: true,
           nextAction: true,
@@ -3625,7 +3625,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             company: true
           },
           orderBy: [
-            { rank: 'asc' },
+            { globalRank: 'asc' },
             { updatedAt: 'desc' }
           ],
           take: 30 // Limit to 30 for Speedrun
@@ -4112,7 +4112,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           } : {})
         },
         orderBy: [
-          { rank: 'asc' }, // Use company ranking first
+          { globalRank: 'asc' }, // Use company globalRank first
           { updatedAt: 'desc' }
         ],
         take: 15, // Limit to top 15 companies for speedrun
@@ -4122,7 +4122,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           industry: true,
           vertical: true,
           size: true,
-          rank: true,
+          globalRank: true,
           updatedAt: true
         }
       });
@@ -4137,11 +4137,11 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           companyId: {
             in: rankedCompanies.map(c => c.id)
           },
-          rank: { gte: 1, lte: 4000 } // Only people ranked 1-4000 within company
+          companyRank: { gte: 1, lte: 4000 } // Only people ranked 1-4000 within company
         },
         orderBy: [
-          { company: { rank: 'asc' } }, // First by company rank (1-400)
-          { rank: 'asc' }, // Then by person rank within company (1-4000)
+          { company: { globalRank: 'asc' } }, // First by company globalRank (1-400)
+          { companyRank: 'asc' }, // Then by person companyRank within company (1-4000)
           { updatedAt: 'desc' }
         ],
         take: 50, // Limit to top 50 people total for speedrun
@@ -4160,14 +4160,14 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           nextActionDate: true,
           customFields: true,
           companyId: true,
-          rank: true, // Include rank field for proper ordering
+          globalRank: true, // Include rank field for proper ordering
           company: {
             select: {
               id: true,
               name: true,
               industry: true,
               size: true,
-              rank: true
+              globalRank: true
             }
           }
         }

@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
       prisma.actions.findMany({
         where,
         orderBy: { 
-          [sortBy === 'rank' ? 'createdAt' : sortBy]: sortOrder 
+          [sortBy === 'rank' ? 'rank' : sortBy]: sortOrder 
         },
         skip: offset,
         take: limit,
