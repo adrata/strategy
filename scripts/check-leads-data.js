@@ -11,24 +11,43 @@ async function checkLeadsData() {
   try {
     console.log('🔍 Checking leads data in database...\n');
 
-    // Check all people with LEAD status
-    const leads = await prisma.people.findMany({
-      where: {
-        status: 'LEAD'
-      },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            industry: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
+    // First check what statuses actually exist in the database
+    const statusCounts = await prisma.people.groupBy({
+      by: ['status'],
+      _count: { id: true }
     });
+
+    console.log('📊 Current status distribution in database:');
+    console.log('=' .repeat(50));
+    statusCounts.forEach(stat => {
+      console.log(`${stat.status || 'NULL'}: ${stat._count.id}`);
+    });
+    console.log('');
+
+    // Check all people with LEAD status (if it exists)
+    let leads = [];
+    try {
+      leads = await prisma.people.findMany({
+        where: {
+          status: 'LEAD'
+        },
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+    } catch (error) {
+      console.log('⚠️  LEAD status not found in database - may need migration');
+      console.log('   Error:', error.message);
+    }
 
     console.log(`📊 Found ${leads.length} people with LEAD status:`);
     console.log('=' .repeat(80));
@@ -69,17 +88,33 @@ async function checkLeadsData() {
       console.log(`${index + 1}. ${person.fullName} - Status: ${person.status} - Workspace: ${person.workspaceId}`);
     });
 
-    // Check status distribution
-    const statusCounts = await prisma.people.groupBy({
-      by: ['status'],
-      _count: { id: true }
+    // Check if there are any people with sample/demo data
+    const samplePeople = await prisma.people.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: 'Sample' } },
+          { fullName: { contains: 'Test' } },
+          { fullName: { contains: 'Demo' } },
+          { fullName: { contains: 'John Wick' } },
+          { fullName: { contains: 'Sarah Connor' } },
+          { fullName: { contains: 'Jane Foster' } }
+        ]
+      },
+      select: {
+        id: true,
+        fullName: true,
+        status: true,
+        workspaceId: true
+      }
     });
 
-    console.log('\n📊 Status distribution:');
-    console.log('=' .repeat(40));
-    statusCounts.forEach(stat => {
-      console.log(`${stat.status || 'NULL'}: ${stat._count.id}`);
-    });
+    if (samplePeople.length > 0) {
+      console.log('\n🎭 Found sample/demo people:');
+      console.log('=' .repeat(50));
+      samplePeople.forEach(person => {
+        console.log(`${person.fullName} - Status: ${person.status} - Workspace: ${person.workspaceId}`);
+      });
+    }
 
   } catch (error) {
     console.error('❌ Error checking leads data:', error);

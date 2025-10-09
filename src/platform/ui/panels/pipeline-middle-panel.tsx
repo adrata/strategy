@@ -14,6 +14,7 @@ import { PipelineFilters } from "./components/PipelineFilters";
 // Removed deleted PipelineDataStore - using unified data system
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { UniversalRecordTemplate } from '@/frontend/components/pipeline/UniversalRecordTemplate';
+import { useLeadsData } from '@/platform/hooks/useLeadsData';
 
 export function PipelineMiddlePanel() {
   const { ui, data } = useAcquisitionOS();
@@ -25,6 +26,9 @@ export function PipelineMiddlePanel() {
   const workspaceId = authUser?.workspaces?.[0]?.id || ui.activeWorkspace?.id;
   const userId = authUser?.id;
   
+  // 🎯 NEW: Use dedicated leads hook for leads section
+  const leadsData = useLeadsData();
+  
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
   
@@ -33,11 +37,15 @@ export function PipelineMiddlePanel() {
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
+    // 🎯 NEW: Use dedicated leads data for leads section
+    if (section === 'leads') {
+      return leadsData.leads || [];
+    }
+    
     // The useAcquisitionOSData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
     
     switch (section) {
-      case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || []; // Companies data
@@ -93,33 +101,40 @@ export function PipelineMiddlePanel() {
       setIsLoadingNavigation(true);
       
       try {
-        // CRITICAL FIX: Load the specific section data needed for navigation
-        const response = await fetch(`/api/data/unified?includeSpeedrun=false&includeDashboard=false`);
-        const data = await response.json();
+        let sectionData: any[] = [];
         
-        if (data['success'] && data.data) {
-          let sectionData: any[] = [];
-          
-          // Get the specific section data
-          switch (activeSection) {
-            case 'leads':
-              sectionData = data.data.leads || [];
-              break;
-            case 'prospects':
-              sectionData = data.data.prospects || [];
-              break;
-            case 'opportunities':
-              sectionData = data.data.opportunities || [];
-              break;
-            case 'companies':
-              sectionData = data.data.companies || [];
-              break;
-            case 'people':
-              sectionData = data.data.people || [];
-              break;
-            default:
-              sectionData = [];
+        // 🎯 NEW: Use v1 API for leads section
+        if (activeSection === 'leads') {
+          const response = await fetch('/api/v1/people?status=LEAD');
+          const data = await response.json();
+          if (data.success) {
+            sectionData = data.data || [];
           }
+        } else {
+          // CRITICAL FIX: Load the specific section data needed for navigation
+          const response = await fetch(`/api/data/unified?includeSpeedrun=false&includeDashboard=false`);
+          const data = await response.json();
+          
+          if (data['success'] && data.data) {
+            // Get the specific section data
+            switch (activeSection) {
+              case 'prospects':
+                sectionData = data.data.prospects || [];
+                break;
+              case 'opportunities':
+                sectionData = data.data.opportunities || [];
+                break;
+              case 'companies':
+                sectionData = data.data.companies || [];
+                break;
+              case 'people':
+                sectionData = data.data.people || [];
+                break;
+              default:
+                sectionData = [];
+            }
+          }
+        }
           
           console.log(`✅ [NAVIGATION] Loaded ${sectionData.length} records for ${activeSection}:`, {
             section: activeSection,
@@ -131,7 +146,6 @@ export function PipelineMiddlePanel() {
           });
           
           setNavigationData(sectionData);
-        }
       } catch (error) {
         console.error(`❌ [NAVIGATION] Failed to load data:`, error);
       } finally {
