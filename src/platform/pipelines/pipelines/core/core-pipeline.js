@@ -18,18 +18,22 @@ const csv = require('csv-parser');
 const { createObjectCsvWriter } = require('csv-writer');
 
 // Load environment variables from parent directory
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+require('dotenv').config({ path: path.join(__dirname, '../../../.env copy') });
 
-const { VersionManager } = require('../../version-manager');
-const { CompanyResolver } = require('../../modules/CompanyResolver');
-const { ExecutiveResearch } = require('../../modules/ExecutiveResearch');
-const { ExecutiveContactIntelligence } = require('../../modules/ExecutiveContactIntelligence');
-const { ContactValidator } = require('../../modules/ContactValidator');
-const { ValidationEngine } = require('../../modules/ValidationEngine');
-const { PEOwnershipAnalysis } = require('../../modules/PEOwnershipAnalysis');
-const { ApiCostOptimizer } = require('../../modules/ApiCostOptimizer');
-const { ExecutiveTransitionDetector } = require('../../modules/ExecutiveTransitionDetector');
-const DataCache = require('../../modules/DataCache');
+const { VersionManager } = require('../../scripts/version-manager');
+const { CompanyResolver } = require('../../modules/core/CompanyResolver');
+const { ExecutiveResearch } = require('../../modules/core/ExecutiveResearch');
+const { ExecutiveContactIntelligence } = require('../../modules/core/ExecutiveContactIntelligence');
+const { ContactValidator } = require('../../modules/core/ContactValidator');
+const { ValidationEngine } = require('../../modules/core/ValidationEngine');
+const { PEOwnershipAnalysis } = require('../../modules/core/PEOwnershipAnalysis');
+const { ApiCostOptimizer } = require('../../modules/core/ApiCostOptimizer');
+const { ExecutiveTransitionDetector } = require('../../modules/core/ExecutiveTransitionDetector');
+const DataCache = require('../../modules/core/DataCache');
+
+// NEW: Multi-source verification modules
+const { CoreSignalMultiSource } = require('../../modules/core/CoreSignalMultiSource');
+const { MultiSourceVerifier } = require('../../modules/core/MultiSourceVerifier');
 
 /**
  * CORE PIPELINE 
@@ -51,9 +55,10 @@ class CorePipeline {
             LUSHA_API_KEY: process.env.LUSHA_API_KEY,
             ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
             MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
+            PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
             // Performance optimizations
             PARALLEL_PROCESSING: true,
-            MAX_PARALLEL_COMPANIES: 10,
+            MAX_PARALLEL_COMPANIES: 5, // Reduced for rate limiting
             REDUCED_DELAYS: true,
             CACHE_ENABLED: true
         };
@@ -66,6 +71,11 @@ class CorePipeline {
         this.peIntelligence = new PEOwnershipAnalysis(config);
         this.apiCostOptimizer = new ApiCostOptimizer(config);
         this.executiveTransitionDetector = new ExecutiveTransitionDetector(config);
+        
+        // NEW: Multi-source verification modules
+        this.coresignalMultiSource = new CoreSignalMultiSource(config);
+        this.multiSourceVerifier = new MultiSourceVerifier(config);
+        
         this.versionManager = new VersionManager();
         this.dataCache = new DataCache({
             CACHE_TTL_DAYS: 30,
@@ -94,7 +104,10 @@ class CorePipeline {
     /**
      * MAIN PIPELINE EXECUTION - STREAMLINED FOR CFO/CRO CONTACTS
      */
-    async runPipeline() {
+    async runPipeline(inputFile = null) {
+        // Store input file for use in loadCompanies
+        this.inputFile = inputFile;
+        
         console.log('CORE PIPELINE');
         console.log('=' .repeat(80));
         console.log('Core executive contact discovery');
@@ -233,8 +246,8 @@ class CorePipeline {
         return new Promise((resolve, reject) => {
             const companies = [];
             
-            // Use command line argument or default file
-            const inputFile = process.argv[2] || path.join(__dirname, '../../inputs/all-1000-companies.csv');
+            // Use passed parameter, command line argument, or default file
+            const inputFile = this.inputFile || process.argv[2] || path.join(__dirname, '../../inputs/all-1000-companies.csv');
             console.log(`    Reading from: ${inputFile}`);
             
             fs.createReadStream(inputFile)
@@ -402,7 +415,46 @@ class CorePipeline {
                 this.stats.croFound++;
             }
 
-            // STEP 3: Contact Intelligence (Email/Phone Discovery)
+            // STEP 3: Multi-Source Executive Discovery (NEW - Credit Efficient)
+            console.log('🔍 STEP 3: Multi-Source Executive Discovery...');
+            const multiSourceResult = await this.coresignalMultiSource.discoverExecutives(result.companyName, ['CFO', 'CRO']);
+            
+            // Use multi-source results if available, fallback to existing research
+            if (multiSourceResult.cfo) {
+                console.log(`   ✅ Multi-source CFO found: ${multiSourceResult.cfo.name}`);
+                result.cfo = {
+                    name: multiSourceResult.cfo.name,
+                    title: multiSourceResult.cfo.title,
+                    email: multiSourceResult.cfo.email || '',
+                    phone: multiSourceResult.cfo.phone || '',
+                    linkedIn: multiSourceResult.cfo.linkedinUrl || '',
+                    confidence: multiSourceResult.cfo.confidence || 0,
+                    source: 'coresignal-multisource',
+                    validated: false,
+                    role: this.categorizeRevenueFinanceRole(multiSourceResult.cfo.title || ''),
+                    tier: this.categorizeRoleTier(multiSourceResult.cfo.title, 'CFO')
+                };
+                this.stats.cfoFound++;
+            }
+            
+            if (multiSourceResult.cro) {
+                console.log(`   ✅ Multi-source CRO found: ${multiSourceResult.cro.name}`);
+                result.cro = {
+                    name: multiSourceResult.cro.name,
+                    title: multiSourceResult.cro.title,
+                    email: multiSourceResult.cro.email || '',
+                    phone: multiSourceResult.cro.phone || '',
+                    linkedIn: multiSourceResult.cro.linkedinUrl || '',
+                    confidence: multiSourceResult.cro.confidence || 0,
+                    source: 'coresignal-multisource',
+                    validated: false,
+                    role: this.categorizeRevenueFinanceRole(multiSourceResult.cro.title || ''),
+                    tier: this.categorizeRoleTier(multiSourceResult.cro.title, 'CRO')
+                };
+                this.stats.croFound++;
+            }
+
+            // STEP 4: Contact Intelligence (Email/Phone Discovery) - Enhanced
             console.log('Discovering contact information...');
             console.log('🔍 DEBUG: Starting contact intelligence with detailed API logging...');
             const contactIntelligence = await this.executiveContactIntelligence.enhanceExecutiveIntelligence(result);
@@ -425,7 +477,7 @@ class CorePipeline {
                 result.companyInfo.headquarters = result.companyInfo.headquarters || research.companyDetails.headquarters || '';
             }
 
-            // STEP 4: Essential Contact Validation
+            // STEP 5: Essential Contact Validation
             console.log('Validating executive contacts...');
             console.log(`🔍 DEBUG: Passing executives to validator - CFO: ${result.cfo?.name}, CRO: ${result.cro?.name}`);
             const contactValidation = await this.contactValidator.enrichContacts(
@@ -443,6 +495,87 @@ class CorePipeline {
             console.log(`🔍 DEBUG: Data before final validation:`);
             console.log(`   CFO: ${result.cfo?.name} - Email: ${result.cfo?.email} - Phone: ${result.cfo?.phone}`);
             console.log(`   CRO: ${result.cro?.name} - Email: ${result.cro?.email} - Phone: ${result.cro?.phone}`);
+
+            // STEP 6: Multi-Source Verification (NEW - 2-3x Person, 2-3x Email, 2x Phone)
+            console.log('🔍 STEP 6: Multi-Source Verification...');
+            
+            // Verify CFO if found
+            if (result.cfo && result.cfo.name) {
+                console.log(`   🎯 Verifying CFO: ${result.cfo.name}`);
+                
+                // Person Identity Verification (2-3x sources)
+                const cfoPersonVerification = await this.multiSourceVerifier.verifyPersonIdentity(
+                    result.cfo, 
+                    result.companyName, 
+                    company.website
+                );
+                
+                // Email Multi-Layer Verification (2-3x layers)
+                const cfoEmailVerification = await this.multiSourceVerifier.verifyEmailMultiLayer(
+                    result.cfo.email,
+                    result.cfo.name,
+                    company.website
+                );
+                
+                // Phone Verification (2x sources)
+                const cfoPhoneVerification = await this.multiSourceVerifier.verifyPhone(
+                    result.cfo.phone,
+                    result.cfo.name,
+                    result.companyName
+                );
+                
+                // Store verification results
+                result.cfo.personVerification = cfoPersonVerification;
+                result.cfo.emailVerification = cfoEmailVerification;
+                result.cfo.phoneVerification = cfoPhoneVerification;
+                
+                // Update confidence scores
+                result.cfo.personConfidence = cfoPersonVerification.confidence;
+                result.cfo.emailConfidence = cfoEmailVerification.confidence;
+                result.cfo.phoneConfidence = cfoPhoneVerification.confidence;
+                result.cfo.overallConfidence = Math.round((cfoPersonVerification.confidence + cfoEmailVerification.confidence + cfoPhoneVerification.confidence) / 3);
+                
+                console.log(`   ✅ CFO verification complete: Person ${cfoPersonVerification.confidence}%, Email ${cfoEmailVerification.confidence}%, Phone ${cfoPhoneVerification.confidence}%`);
+            }
+            
+            // Verify CRO if found
+            if (result.cro && result.cro.name) {
+                console.log(`   🎯 Verifying CRO: ${result.cro.name}`);
+                
+                // Person Identity Verification (2-3x sources)
+                const croPersonVerification = await this.multiSourceVerifier.verifyPersonIdentity(
+                    result.cro, 
+                    result.companyName, 
+                    company.website
+                );
+                
+                // Email Multi-Layer Verification (2-3x layers)
+                const croEmailVerification = await this.multiSourceVerifier.verifyEmailMultiLayer(
+                    result.cro.email,
+                    result.cro.name,
+                    company.website
+                );
+                
+                // Phone Verification (2x sources)
+                const croPhoneVerification = await this.multiSourceVerifier.verifyPhone(
+                    result.cro.phone,
+                    result.cro.name,
+                    result.companyName
+                );
+                
+                // Store verification results
+                result.cro.personVerification = croPersonVerification;
+                result.cro.emailVerification = croEmailVerification;
+                result.cro.phoneVerification = croPhoneVerification;
+                
+                // Update confidence scores
+                result.cro.personConfidence = croPersonVerification.confidence;
+                result.cro.emailConfidence = croEmailVerification.confidence;
+                result.cro.phoneConfidence = croPhoneVerification.confidence;
+                result.cro.overallConfidence = Math.round((croPersonVerification.confidence + croEmailVerification.confidence + croPhoneVerification.confidence) / 3);
+                
+                console.log(`   ✅ CRO verification complete: Person ${croPersonVerification.confidence}%, Email ${croEmailVerification.confidence}%, Phone ${croPhoneVerification.confidence}%`);
+            }
 
             // STEP 5: Basic Data Validation (Essential quality check)
             console.log('Running essential data validation...');
@@ -817,6 +950,19 @@ class CorePipeline {
                 { id: 'croConfidence', title: 'CRO Confidence' },
                 { id: 'croTier', title: 'CRO Tier' },
                 
+                // CRO MULTI-SOURCE VERIFICATION (NEW)
+                { id: 'croPersonConfidence', title: 'CRO Person Confidence' },
+                { id: 'croPersonSources', title: 'CRO Person Sources' },
+                { id: 'croPersonReasoning', title: 'CRO Person Reasoning' },
+                { id: 'croEmailConfidence', title: 'CRO Email Confidence' },
+                { id: 'croEmailValidationSteps', title: 'CRO Email Validation Steps' },
+                { id: 'croEmailReasoning', title: 'CRO Email Reasoning' },
+                { id: 'croPhoneConfidence', title: 'CRO Phone Confidence' },
+                { id: 'croPhoneSources', title: 'CRO Phone Sources' },
+                { id: 'croPhoneReasoning', title: 'CRO Phone Reasoning' },
+                { id: 'croOverallConfidence', title: 'CRO Overall Confidence' },
+                { id: 'croDataQualityGrade', title: 'CRO Data Quality Grade' },
+                
                 // CFO ESSENTIALS (Contact Only)
                 { id: 'cfoName', title: 'CFO Name' },
                 { id: 'cfoTitle', title: 'CFO Title' },
@@ -831,6 +977,19 @@ class CorePipeline {
                 { id: 'cfoConfidence', title: 'CFO Confidence' },
                 { id: 'cfoTier', title: 'CFO Tier' },
                 { id: 'cfoCostTracking', title: 'CFO Discovery Cost' },
+                
+                // CFO MULTI-SOURCE VERIFICATION (NEW)
+                { id: 'cfoPersonConfidence', title: 'CFO Person Confidence' },
+                { id: 'cfoPersonSources', title: 'CFO Person Sources' },
+                { id: 'cfoPersonReasoning', title: 'CFO Person Reasoning' },
+                { id: 'cfoEmailConfidence', title: 'CFO Email Confidence' },
+                { id: 'cfoEmailValidationSteps', title: 'CFO Email Validation Steps' },
+                { id: 'cfoEmailReasoning', title: 'CFO Email Reasoning' },
+                { id: 'cfoPhoneConfidence', title: 'CFO Phone Confidence' },
+                { id: 'cfoPhoneSources', title: 'CFO Phone Sources' },
+                { id: 'cfoPhoneReasoning', title: 'CFO Phone Reasoning' },
+                { id: 'cfoOverallConfidence', title: 'CFO Overall Confidence' },
+                { id: 'cfoDataQualityGrade', title: 'CFO Data Quality Grade' },
                 
                 // ACQUISITION METADATA
                 { id: 'isAcquired', title: 'Is Acquired' },
@@ -859,8 +1018,16 @@ class CorePipeline {
                     companyName: 'Unknown', website: 'Unknown', industry: '', employeeCount: '', headquarters: '',
                     isPublic: 'Unknown', parentCompany: '', relationType: 'original',
                     croName: '', croTitle: '', croEmail: '', croPhone: '', croLinkedIn: '', croConfidence: 0, croTier: '',
+                    croPersonConfidence: 0, croPersonSources: '', croPersonReasoning: '',
+                    croEmailConfidence: 0, croEmailValidationSteps: '', croEmailReasoning: '',
+                    croPhoneConfidence: 0, croPhoneSources: '', croPhoneReasoning: '',
+                    croOverallConfidence: 0, croDataQualityGrade: 'F',
                     cfoName: '', cfoTitle: '', cfoEmail: '', cfoPhone: '', cfoPhoneCarrier: '', cfoLinkedIn: '', 
                     cfoConfidence: 0, cfoTier: '', cfoCostTracking: '',
+                    cfoPersonConfidence: 0, cfoPersonSources: '', cfoPersonReasoning: '',
+                    cfoEmailConfidence: 0, cfoEmailValidationSteps: '', cfoEmailReasoning: '',
+                    cfoPhoneConfidence: 0, cfoPhoneSources: '', cfoPhoneReasoning: '',
+                    cfoOverallConfidence: 0, cfoDataQualityGrade: 'F',
                     isAcquired: 'No', acquisitionDate: '', originalDomain: '', currentDomain: '', validationNotes: '',
                     executiveTrackingStatus: '', trackedExecutives: '', executiveStatusUpdates: '',
                     accountOwner: '', researchDate: '', totalCost: 0
@@ -900,6 +1067,19 @@ class CorePipeline {
                 croTier: result.cro?.tier || '',
                 croCostTracking: result.cro?.costTracking || result.cro?.totalCost || '',
                 
+                // CRO MULTI-SOURCE VERIFICATION (NEW)
+                croPersonConfidence: result.cro?.personConfidence || 0,
+                croPersonSources: result.cro?.personVerification?.sources?.join(', ') || '',
+                croPersonReasoning: result.cro?.personVerification?.reasoning || '',
+                croEmailConfidence: result.cro?.emailConfidence || 0,
+                croEmailValidationSteps: result.cro?.emailVerification?.validationSteps || '',
+                croEmailReasoning: result.cro?.emailVerification?.reasoning || '',
+                croPhoneConfidence: result.cro?.phoneConfidence || 0,
+                croPhoneSources: result.cro?.phoneVerification?.sources?.join(', ') || '',
+                croPhoneReasoning: result.cro?.phoneVerification?.reasoning || '',
+                croOverallConfidence: result.cro?.overallConfidence || 0,
+                croDataQualityGrade: this.calculateDataQualityGrade(result.cro?.overallConfidence || 0),
+                
                 // CFO DATA - Complete validation metadata extraction
                 cfoName: result.cfo?.name || '',
                 cfoTitle: result.cfo?.title || '',
@@ -921,6 +1101,19 @@ class CorePipeline {
                 cfoConfidence: result.cfo?.confidence || 0,
                 cfoTier: result.cfo?.tier || '',
                 cfoCostTracking: result.cfo?.costTracking || result.cfo?.totalCost || '',
+                
+                // CFO MULTI-SOURCE VERIFICATION (NEW)
+                cfoPersonConfidence: result.cfo?.personConfidence || 0,
+                cfoPersonSources: result.cfo?.personVerification?.sources?.join(', ') || '',
+                cfoPersonReasoning: result.cfo?.personVerification?.reasoning || '',
+                cfoEmailConfidence: result.cfo?.emailConfidence || 0,
+                cfoEmailValidationSteps: result.cfo?.emailVerification?.validationSteps || '',
+                cfoEmailReasoning: result.cfo?.emailVerification?.reasoning || '',
+                cfoPhoneConfidence: result.cfo?.phoneConfidence || 0,
+                cfoPhoneSources: result.cfo?.phoneVerification?.sources?.join(', ') || '',
+                cfoPhoneReasoning: result.cfo?.phoneVerification?.reasoning || '',
+                cfoOverallConfidence: result.cfo?.overallConfidence || 0,
+                cfoDataQualityGrade: this.calculateDataQualityGrade(result.cfo?.overallConfidence || 0),
                 
                 // ACQUISITION METADATA
                 isAcquired: result.corporateStructure?.isAcquired ? 'Yes' : 'No',
@@ -1063,6 +1256,42 @@ class CorePipeline {
         }
         
         return 'Other Executive';
+    }
+
+    /**
+     * Categorize role tier (1-5) for confidence scoring
+     */
+    categorizeRoleTier(title, roleType) {
+        const titleLower = title ? title.toLowerCase() : '';
+        
+        if (roleType.toUpperCase() === 'CFO') {
+            if (titleLower.includes('cfo') || titleLower.includes('chief financial')) return 1;
+            if (titleLower.includes('controller') || titleLower.includes('chief accounting')) return 2;
+            if (titleLower.includes('vp finance') || titleLower.includes('finance director')) return 3;
+            if (titleLower.includes('treasurer') || titleLower.includes('finance manager')) return 4;
+            return 5;
+        }
+        
+        if (roleType.toUpperCase() === 'CRO') {
+            if (titleLower.includes('cro') || titleLower.includes('chief revenue')) return 1;
+            if (titleLower.includes('cso') || titleLower.includes('chief sales')) return 2;
+            if (titleLower.includes('vp sales') || titleLower.includes('vp revenue')) return 3;
+            if (titleLower.includes('sales director') || titleLower.includes('revenue director')) return 4;
+            return 5;
+        }
+        
+        return 5; // Default tier
+    }
+
+    /**
+     * Calculate data quality grade based on overall confidence
+     */
+    calculateDataQualityGrade(confidence) {
+        if (confidence >= 90) return 'A';
+        if (confidence >= 80) return 'B';
+        if (confidence >= 70) return 'C';
+        if (confidence >= 60) return 'D';
+        return 'F';
     }
 
     generateValidationNotes(result) {
