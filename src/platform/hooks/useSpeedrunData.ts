@@ -55,7 +55,16 @@ export function useSpeedrunData(limit: number = DEFAULT_SPEEDRUN_LIMIT): UseSpee
         throw new Error(`Failed to fetch speedrun data: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const responseData = await response.json();
+      
+      // Handle v1 API response structure
+      const data = responseData.success ? responseData.data : [];
+      
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        console.warn('⚠️ [SPEEDRUN DATA] Expected array but got:', typeof data, data);
+        return [];
+      }
       
       // Transform people data to SpeedrunPerson format
       const transformedPeople: SpeedrunPerson[] = data.map((person: any, index: number) => ({

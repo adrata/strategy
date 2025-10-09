@@ -100,10 +100,35 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
-      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-      // 🚨 CRITICAL FIX: Add cache-busting timestamp to prevent stale data
+      // 🚀 NEW: Use v1 APIs for better performance and consistency
       const timestamp = Date.now();
-      const url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}&t=${timestamp}`;
+      let url: string;
+      
+      // Map section names to v1 API endpoints
+      switch (section) {
+        case 'companies':
+          url = `/api/v1/companies?limit=${limit}&t=${timestamp}`;
+          break;
+        case 'people':
+          url = `/api/v1/people?limit=${limit}&t=${timestamp}`;
+          break;
+        case 'actions':
+          url = `/api/v1/actions?limit=${limit}&t=${timestamp}`;
+          break;
+        case 'leads':
+          url = `/api/v1/people?status=LEAD&limit=${limit}&t=${timestamp}`;
+          break;
+        case 'prospects':
+          url = `/api/v1/people?status=PROSPECT&limit=${limit}&t=${timestamp}`;
+          break;
+        case 'opportunities':
+          url = `/api/v1/companies?status=OPPORTUNITY&limit=${limit}&t=${timestamp}`;
+          break;
+        default:
+          // Fallback to old API for unsupported sections
+          url = `/api/data/section?section=${section}&limit=${limit}&workspaceId=${workspaceId}&userId=${userId}&t=${timestamp}`;
+      }
+      
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
       const response = await fetch(url);
@@ -119,18 +144,22 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       const result = await response.json();
       
       if (result.success && result.data) {
-        setData(result.data.data || []);
-        setCount(result.data.totalCount || result.data.count || 0); // Use totalCount for pagination
+        // Handle v1 API response format
+        const dataArray = Array.isArray(result.data) ? result.data : result.data.data || [];
+        const totalCount = result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount || dataArray.length;
+        
+        setData(dataArray);
+        setCount(totalCount);
         setLoadedSections(prev => new Set(prev).add(section));
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
-          count: result.data.count,
-          totalCount: result.data.totalCount,
-          items: result.data.data?.length,
+          count: dataArray.length,
+          totalCount: totalCount,
+          items: dataArray.length,
           responseTime: result.meta?.responseTime,
-          firstItem: result.data.data?.[0] ? {
-            rank: result.data.data[0].rank,
-            name: result.data.data[0].name,
-            company: result.data.data[0].company?.name || result.data.data[0].company
+          firstItem: dataArray[0] ? {
+            rank: dataArray[0].rank || dataArray[0].globalRank,
+            name: dataArray[0].name,
+            company: dataArray[0].company?.name || dataArray[0].company
           } : null
         });
       } else {

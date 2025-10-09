@@ -103,7 +103,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
       error,
     );
     console.error("🚨 Error type:", typeof error);
-    console.error("🚨 Error constructor:", error.constructor.name);
+    console.error("🚨 Error constructor:", error?.constructor?.name || 'Unknown');
 
     const errorDetails = logDesktopError(error);
 

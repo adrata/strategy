@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/platform/utils/prisma';
 
 /**
  * People CRUD API v1

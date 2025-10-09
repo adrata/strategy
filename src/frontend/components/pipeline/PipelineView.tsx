@@ -1263,9 +1263,9 @@ export const PipelineView = React.memo(function PipelineView({
       workspaceId,
       userId,
       error,
-      dataExists: Array.isArray(sectionDataArray),
-      dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
-      rawData: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 2) : [], // Show first 2 records for debugging
+      dataExists: Array.isArray(finalData),
+      dataLength: Array.isArray(finalData) ? finalData.length : 0,
+      rawData: Array.isArray(finalData) ? finalData.slice(0, 2) : [], // Show first 2 records for debugging
       filteredDataLength: filteredData?.length || 0,
       isEmpty
     });
@@ -1414,7 +1414,7 @@ export const PipelineView = React.memo(function PipelineView({
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>
-        {Array.isArray(sectionDataArray) && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
+        {Array.isArray(finalData) && finalData.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-500 p-6">

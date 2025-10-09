@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getV1AuthUser } from '../auth';
-
-const prisma = new PrismaClient();
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { prisma } from '@/platform/utils/prisma';
 
 /**
  * Actions CRUD API v1
@@ -13,13 +11,18 @@ const prisma = new PrismaClient();
 // GET /api/v1/actions - List actions with search and pagination
 export async function GET(request: NextRequest) {
   try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const { searchParams } = new URL(request.url);
@@ -39,6 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Enhanced where clause for action management
     const where: any = {
+      workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
     };
     
@@ -88,13 +92,11 @@ export async function GET(request: NextRequest) {
         return acc;
       }, {} as Record<string, number>);
 
-      return NextResponse.json({
-        success: true,
-        data: counts,
-        meta: {
-          type: 'counts',
-          filters: { search, status, priority, type, companyId, personId }
-        }
+      return createSuccessResponse(counts, {
+        type: 'counts',
+        filters: { search, status, priority, type, companyId, personId },
+        userId: context.userId,
+        workspaceId: context.workspaceId,
       });
     }
 
@@ -138,39 +140,39 @@ export async function GET(request: NextRequest) {
       prisma.actions.count({ where }),
     ]);
 
-    return NextResponse.json({
-      success: true,
-      data: actions,
-      meta: {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        filters: { search, status, priority, type, companyId, personId, sortBy, sortOrder },
+    return createSuccessResponse(actions, {
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
       },
+      filters: { search, status, priority, type, companyId, personId, sortBy, sortOrder },
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
     console.error('Error fetching actions:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch actions' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to fetch actions', 'INTERNAL_ERROR', 500);
   }
 }
 
 // POST /api/v1/actions - Create a new action
 export async function POST(request: NextRequest) {
   try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
@@ -194,8 +196,8 @@ export async function POST(request: NextRequest) {
         completedAt: body.completedAt ? new Date(body.completedAt) : null,
         status: body.status || 'PLANNED',
         priority: body.priority || 'NORMAL',
-        workspaceId: authUser.workspaceId || 'local-workspace',
-        userId: authUser.id,
+        workspaceId: context.workspaceId,
+        userId: context.userId,
         companyId: body.companyId,
         personId: body.personId,
         createdAt: new Date(),
@@ -230,20 +232,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: action,
-      meta: {
-        message: 'Action created successfully',
-      },
+    return createSuccessResponse(action, {
+      message: 'Action created successfully',
+      userId: context.userId,
+      workspaceId: context.workspaceId,
     });
 
   } catch (error) {
     console.error('Error creating action:', error);
     
-    return NextResponse.json(
-      { success: false, error: 'Failed to create action' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to create action', 'INTERNAL_ERROR', 500);
   }
 }
