@@ -1,0 +1,72 @@
+---
+description: API development standards and best practices
+globs:
+  - src/app/api/**/*.ts
+  - src/platform/api/**/*.ts
+alwaysApply: false
+---
+
+# API Development Standards
+
+## API Design
+- Use RESTful conventions for API endpoints
+- Implement proper HTTP status codes and error responses
+- Use consistent response formats across all endpoints
+- Implement proper API versioning strategies
+- Use proper HTTP methods (GET, POST, PUT, DELETE, PATCH)
+
+## Request/Response Handling
+- Validate all request data using Zod schemas
+- Implement proper error handling with meaningful error messages
+- Use proper response serialization and deserialization
+- Implement proper request logging and monitoring
+- Use proper content negotiation and response formats
+
+## Authentication & Authorization
+- Implement proper API authentication using NextAuth.js
+- Use proper API key management for external integrations
+- Implement proper rate limiting and throttling
+- Use proper CORS configuration for cross-origin requests
+- Implement proper session management for API calls
+
+## Data Validation
+- Use Zod for runtime validation of request data
+- Implement proper input sanitization and validation
+- Use proper type checking for API responses
+- Implement proper error handling for validation failures
+- Use proper data transformation and mapping
+
+## Performance & Caching
+- Implement proper response caching with appropriate TTL
+- Use proper database query optimization
+- Implement proper pagination for large datasets
+- Use proper compression for API responses
+- Implement proper connection pooling and resource management
+
+## Error Handling
+- Use consistent error response formats
+- Implement proper error logging and monitoring
+- Use proper HTTP status codes for different error types
+- Implement proper error recovery and fallback mechanisms
+- Use proper error reporting and alerting
+
+## Security
+- Implement proper input validation and sanitization
+- Use proper authentication and authorization checks
+- Implement proper rate limiting and abuse prevention
+- Use proper security headers and CORS policies
+- Implement proper audit logging for sensitive operations
+
+## Testing
+- Write comprehensive unit tests for API endpoints
+- Implement proper integration tests for API workflows
+- Use proper mocking for external dependencies
+- Test error conditions and edge cases
+- Implement proper API contract testing
+
+## Documentation
+- Use proper OpenAPI/Swagger documentation
+- Include proper examples and usage instructions
+- Document proper error responses and status codes
+- Include proper authentication and authorization requirements
+- Maintain up-to-date API documentation

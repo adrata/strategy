@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
 
 type AuthUser = {
   id: string;
@@ -14,11 +15,10 @@ type AuthUser = {
  */
 function decodeJWT(token: string): any | null {
   try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
+    const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "dev-secret-key-change-in-production";
     
-    const payload = parts[1];
-    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    // Verify the JWT signature and decode the payload
+    const decoded = jwt.verify(token, secret);
     
     // Check if token is expired
     if (decoded.exp && decoded.exp < Date.now() / 1000) {
@@ -27,6 +27,7 @@ function decodeJWT(token: string): any | null {
     
     return decoded;
   } catch (error) {
+    console.warn("⚠️ JWT verification failed:", error.message);
     return null;
   }
 }

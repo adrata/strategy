@@ -1,0 +1,75 @@
+---
+description: Mobile and desktop application development standards
+globs:
+  - src-tauri/**/*.rs
+  - src-tauri/**/*.ts
+  - capacitor.config.ts
+  - src/**/*mobile*.ts
+  - src/**/*desktop*.ts
+alwaysApply: false
+---
+
+# Mobile & Desktop Development Standards
+
+## Tauri Desktop Development
+- Use proper Rust patterns for Tauri backend development
+- Implement proper error handling in Rust code
+- Use proper TypeScript integration for frontend communication
+- Implement proper file system operations with proper permissions
+- Use proper native API integrations and permissions
+
+## Capacitor Mobile Development
+- Use proper Capacitor plugins for native functionality
+- Implement proper mobile-specific UI patterns and navigation
+- Use proper mobile performance optimization techniques
+- Implement proper offline functionality and data synchronization
+- Use proper mobile-specific security considerations
+
+## Cross-Platform Considerations
+- Use proper responsive design for different screen sizes
+- Implement proper platform-specific features and optimizations
+- Use proper device-specific APIs and capabilities
+- Implement proper cross-platform data synchronization
+- Use proper platform-specific build and deployment processes
+
+## Native Integration
+- Use proper native API calls with proper error handling
+- Implement proper permission management for native features
+- Use proper native UI components where appropriate
+- Implement proper native performance optimizations
+- Use proper native security and privacy considerations
+
+## Performance Optimization
+- Use proper lazy loading for mobile applications
+- Implement proper memory management for resource-constrained devices
+- Use proper battery optimization techniques
+- Implement proper network optimization for mobile connections
+- Use proper caching strategies for offline functionality
+
+## User Experience
+- Implement proper mobile-first design patterns
+- Use proper touch interactions and gestures
+- Implement proper accessibility for mobile and desktop
+- Use proper platform-specific navigation patterns
+- Implement proper responsive layouts for different screen sizes
+
+## Security & Privacy
+- Implement proper data encryption for sensitive information
+- Use proper secure storage for credentials and tokens
+- Implement proper privacy controls and user consent
+- Use proper secure communication protocols
+- Implement proper data protection and compliance
+
+## Testing
+- Test on multiple devices and screen sizes
+- Implement proper automated testing for mobile and desktop
+- Use proper device-specific testing strategies
+- Test proper offline functionality and data synchronization
+- Implement proper performance testing for different platforms
+
+## Deployment & Distribution
+- Use proper app store submission processes
+- Implement proper code signing and notarization
+- Use proper update mechanisms for desktop applications
+- Implement proper version management and rollback strategies
+- Use proper analytics and crash reporting for mobile and desktop

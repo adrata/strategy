@@ -1,0 +1,80 @@
+---
+description: Database and Prisma ORM standards for the Adrata project
+globs:
+  - prisma/**/*.prisma
+  - src/**/*prisma*.ts
+  - src/**/*db*.ts
+  - src/**/*database*.ts
+alwaysApply: true
+---
+
+# Database & Prisma Standards
+
+## Schema Design
+- Use descriptive table and column names following snake_case convention
+- Implement proper foreign key relationships with cascade rules
+- Use appropriate data types and constraints
+- Add proper indexes for frequently queried columns
+- Use enums for fixed value sets instead of strings
+
+## Naming Conventions
+- **Model**: PascalCase, singular (e.g., `User`, `Product`, `Order`)
+- **Field**: camelCase (e.g., `firstName`, `lastName`, `createdAt`)
+- **Table**: snake_case, plural (e.g., `users`, `products`, `orders`)
+- **Column**: snake_case (e.g., `first_name`, `last_name`, `created_at`)
+
+## Prisma Client Usage
+- Always use transactions for multi-table operations
+- Implement proper error handling for database operations
+- Use Prisma's type-safe query methods
+- Leverage Prisma's built-in validation and type generation
+- Use proper connection pooling and connection management
+
+## Query Optimization
+- Use `select` to limit returned fields
+- Implement proper pagination with `skip` and `take`
+- Use `include` and `select` strategically to avoid N+1 queries
+- Leverage database indexes for frequently queried columns
+- Use raw queries only when necessary and with proper sanitization
+
+## Data Validation
+- Use Zod schemas for input validation before database operations
+- Implement proper data sanitization and validation
+- Use Prisma's built-in validation where possible
+- Validate foreign key relationships before operations
+- Implement proper error handling for constraint violations
+
+## Migration Management
+- Use descriptive migration names
+- Test migrations on development data before production
+- Implement proper rollback strategies
+- Use `prisma migrate dev` for development
+- Use `prisma migrate deploy` for production deployments
+
+## Security
+- Never expose raw database queries to the client
+- Use parameterized queries to prevent SQL injection
+- Implement proper access control for database operations
+- Use environment variables for database credentials
+- Implement proper audit logging for sensitive operations
+
+## Performance
+- Use connection pooling for better performance
+- Implement proper caching strategies for frequently accessed data
+- Use database views for complex queries
+- Monitor query performance and optimize slow queries
+- Use proper indexing strategies
+
+## Data Integrity
+- Implement proper constraints and validations
+- Use database-level constraints where appropriate
+- Implement proper cascade rules for related data
+- Use soft deletes where data retention is important
+- Implement proper backup and recovery procedures
+
+## Testing
+- Use test databases for integration tests
+- Implement proper test data seeding
+- Test database migrations thoroughly
+- Use transactions for test isolation
+- Mock external database dependencies in unit tests

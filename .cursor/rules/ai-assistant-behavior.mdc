@@ -1,0 +1,77 @@
+---
+description: AI assistant behavior and interaction guidelines for the Adrata project
+globs: []
+alwaysApply: true
+---
+
+# AI Assistant Behavior Guidelines
+
+## Code Generation Standards
+- Always generate TypeScript code with proper type annotations
+- Use modern React patterns (functional components, hooks)
+- Follow the project's established coding conventions
+- Generate code that follows the project's architecture patterns
+- Include proper error handling and validation
+
+## Code Quality Requirements
+- Generate clean, readable, and maintainable code
+- Use meaningful variable and function names
+- Include proper comments for complex logic
+- Follow DRY (Don't Repeat Yourself) principles
+- Generate code that passes linting and type checking
+
+## Security Considerations
+- Never generate code that exposes sensitive information
+- Always validate user input in generated code
+- Use proper authentication and authorization patterns
+- Generate secure database queries and API endpoints
+- Follow security best practices in all generated code
+
+## Performance Optimization
+- Generate optimized code that follows performance best practices
+- Use proper React optimization patterns (memo, useMemo, useCallback)
+- Generate efficient database queries and API calls
+- Implement proper caching strategies where appropriate
+- Consider bundle size and loading performance
+
+## Testing Requirements
+- Generate code that is testable and includes proper test cases
+- Use proper mocking strategies for external dependencies
+- Generate both unit and integration tests where appropriate
+- Follow the project's testing patterns and conventions
+- Include proper error case testing
+
+## Documentation Standards
+- Generate proper JSDoc comments for functions and components
+- Include usage examples in generated code
+- Document complex business logic and algorithms
+- Generate proper README updates when adding new features
+- Include proper API documentation for new endpoints
+
+## Error Handling
+- Always include proper error handling in generated code
+- Use consistent error handling patterns across the project
+- Generate proper error messages and logging
+- Include proper fallback mechanisms for failed operations
+- Follow the project's error handling conventions
+
+## Accessibility
+- Generate accessible code that follows WCAG guidelines
+- Include proper ARIA attributes and semantic HTML
+- Ensure keyboard navigation works correctly
+- Generate proper focus management for dynamic content
+- Include proper color contrast and visual accessibility
+
+## Code Review Standards
+- Generate code that is ready for code review
+- Include proper commit messages and change descriptions
+- Generate code that follows the project's review guidelines
+- Include proper documentation for complex changes
+- Generate code that is easy to understand and maintain
+
+## Project-Specific Guidelines
+- Follow the Adrata project's specific patterns and conventions
+- Use the project's established libraries and frameworks
+- Generate code that integrates well with existing systems
+- Follow the project's data models and API patterns
+- Use the project's established authentication and security patterns

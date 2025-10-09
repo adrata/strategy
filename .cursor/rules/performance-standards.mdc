@@ -1,0 +1,88 @@
+---
+description: Performance optimization standards for the Adrata project
+globs:
+  - src/**/*.ts
+  - src/**/*.tsx
+  - next.config.mjs
+  - tailwind.config.ts
+alwaysApply: true
+---
+
+# Performance Standards
+
+## Frontend Performance
+- Use React.memo() for expensive components that re-render frequently
+- Implement proper code splitting with dynamic imports
+- Use Next.js Image component for optimized image loading
+- Implement proper lazy loading for below-the-fold content
+- Use proper caching strategies for static assets
+
+## Bundle Optimization
+- Use proper tree shaking to eliminate dead code
+- Implement proper code splitting at route and component levels
+- Use dynamic imports for heavy libraries
+- Optimize bundle size with proper webpack configuration
+- Use proper compression (gzip/brotli) for assets
+
+## Database Performance
+- Use proper database indexing for frequently queried columns
+- Implement proper query optimization and monitoring
+- Use database connection pooling
+- Implement proper caching strategies for database queries
+- Use proper pagination for large datasets
+
+## API Performance
+- Implement proper response caching with appropriate TTL
+- Use proper pagination for large API responses
+- Implement proper rate limiting to prevent abuse
+- Use proper compression for API responses
+- Implement proper error handling without performance impact
+
+## Image Optimization
+- Use Next.js Image component with proper sizing
+- Implement proper image formats (WebP, AVIF) with fallbacks
+- Use proper lazy loading for images
+- Implement proper responsive images
+- Use proper image compression and optimization
+
+## Caching Strategies
+- Implement proper browser caching with appropriate headers
+- Use proper CDN caching for static assets
+- Implement proper application-level caching
+- Use proper database query caching
+- Implement proper API response caching
+
+## Memory Management
+- Implement proper cleanup in useEffect hooks
+- Use proper event listener cleanup
+- Implement proper memory leak prevention
+- Use proper garbage collection optimization
+- Monitor memory usage in production
+
+## Network Optimization
+- Use proper HTTP/2 and HTTP/3 when available
+- Implement proper resource hints (preload, prefetch)
+- Use proper service workers for offline functionality
+- Implement proper compression for network requests
+- Use proper connection pooling and keep-alive
+
+## Core Web Vitals
+- Optimize Largest Contentful Paint (LCP) < 2.5s
+- Optimize First Input Delay (FID) < 100ms
+- Optimize Cumulative Layout Shift (CLS) < 0.1
+- Use proper performance monitoring and alerting
+- Implement proper performance budgets
+
+## Monitoring & Analytics
+- Use proper performance monitoring tools
+- Implement proper real user monitoring (RUM)
+- Use proper synthetic monitoring for critical paths
+- Implement proper performance alerting
+- Use proper performance analytics and reporting
+
+## Development Performance
+- Use proper development server optimization
+- Implement proper hot module replacement (HMR)
+- Use proper TypeScript compilation optimization
+- Implement proper build time optimization
+- Use proper development tooling optimization

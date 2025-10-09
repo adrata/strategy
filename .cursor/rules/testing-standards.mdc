@@ -1,0 +1,90 @@
+---
+description: Testing standards and best practices for the Adrata project
+globs:
+  - tests/**/*.ts
+  - tests/**/*.tsx
+  - src/**/*.test.ts
+  - src/**/*.test.tsx
+  - src/**/*.spec.ts
+  - src/**/*.spec.tsx
+alwaysApply: true
+---
+
+# Testing Standards
+
+## Testing Strategy
+- Follow the testing pyramid: Unit tests > Integration tests > E2E tests
+- Aim for 80%+ code coverage on critical business logic
+- Write tests that test behavior, not implementation details
+- Use descriptive test names that explain the expected behavior
+- Group related tests using `describe` blocks
+
+## Unit Testing
+- Test individual functions and components in isolation
+- Use Jest for unit testing with proper mocking
+- Mock external dependencies and APIs
+- Test edge cases and error conditions
+- Use proper assertions with meaningful error messages
+
+## Integration Testing
+- Test component interactions and data flow
+- Test API endpoints with real database connections
+- Use test databases for integration tests
+- Test authentication and authorization flows
+- Verify proper error handling and edge cases
+
+## End-to-End Testing
+- Use Playwright for E2E testing
+- Test critical user journeys and workflows
+- Test across different browsers and devices
+- Implement proper test data setup and cleanup
+- Use page object model for maintainable tests
+
+## Test Organization
+- Place tests close to the code they test
+- Use consistent naming conventions: `*.test.ts` or `*.spec.ts`
+- Organize tests in the `tests/` directory by type
+- Use proper test setup and teardown
+- Implement proper test isolation
+
+## Mocking and Stubbing
+- Mock external services and APIs
+- Use proper mock implementations that match real behavior
+- Avoid over-mocking - test real interactions when possible
+- Use Jest's built-in mocking capabilities
+- Mock time-dependent operations for consistent tests
+
+## Test Data Management
+- Use factories for creating test data
+- Implement proper test data cleanup
+- Use realistic test data that matches production patterns
+- Avoid hardcoded test data in test files
+- Use database seeding for integration tests
+
+## Performance Testing
+- Test component rendering performance
+- Test API response times and database query performance
+- Use proper performance benchmarks
+- Test memory usage and resource cleanup
+- Monitor test execution time and optimize slow tests
+
+## Accessibility Testing
+- Test keyboard navigation and screen reader compatibility
+- Verify proper ARIA attributes and semantic HTML
+- Test color contrast and visual accessibility
+- Use automated accessibility testing tools
+- Include manual accessibility testing in critical flows
+
+## Test Maintenance
+- Keep tests up to date with code changes
+- Refactor tests when refactoring production code
+- Remove obsolete tests and update test descriptions
+- Use proper test documentation and comments
+- Implement proper CI/CD integration for tests
+
+## Quality Gates
+- Require all tests to pass before merging
+- Set minimum coverage thresholds
+- Use proper test reporting and metrics
+- Implement proper test failure notifications
+- Use test results for code quality metrics

@@ -1,0 +1,74 @@
+---
+description: AI integration and LLM usage standards for the Adrata project
+globs:
+  - src/**/*ai*.ts
+  - src/**/*llm*.ts
+  - src/**/*openai*.ts
+  - src/**/*anthropic*.ts
+alwaysApply: false
+---
+
+# AI Integration Standards
+
+## LLM Integration
+- Use proper error handling for AI API calls
+- Implement proper rate limiting and retry logic
+- Use proper token management and cost optimization
+- Implement proper response validation and sanitization
+- Use proper fallback mechanisms for AI service failures
+
+## Prompt Engineering
+- Use clear, specific, and well-structured prompts
+- Implement proper prompt versioning and management
+- Use proper context management for conversation history
+- Implement proper prompt optimization for cost and performance
+- Use proper prompt security to prevent injection attacks
+
+## Data Handling
+- Implement proper data sanitization before sending to AI services
+- Use proper data anonymization for sensitive information
+- Implement proper data retention and deletion policies
+- Use proper data validation for AI responses
+- Implement proper audit logging for AI interactions
+
+## Performance Optimization
+- Use proper streaming for real-time AI responses
+- Implement proper caching for repeated AI requests
+- Use proper batch processing for multiple AI operations
+- Implement proper timeout handling for AI API calls
+- Use proper connection pooling for AI service connections
+
+## Security & Privacy
+- Implement proper API key management and rotation
+- Use proper data encryption for AI communications
+- Implement proper access controls for AI features
+- Use proper audit logging for AI usage and access
+- Implement proper compliance with AI service terms of service
+
+## Error Handling
+- Implement proper error handling for AI service failures
+- Use proper fallback mechanisms when AI services are unavailable
+- Implement proper retry logic with exponential backoff
+- Use proper error reporting and monitoring for AI operations
+- Implement proper user feedback for AI-generated content
+
+## Cost Management
+- Monitor and optimize AI service usage and costs
+- Implement proper usage limits and quotas
+- Use proper cost-effective AI models for different use cases
+- Implement proper usage analytics and reporting
+- Use proper cost alerts and budget management
+
+## Quality Assurance
+- Implement proper validation for AI-generated content
+- Use proper human review processes for critical AI outputs
+- Implement proper quality metrics and monitoring
+- Use proper A/B testing for AI model performance
+- Implement proper feedback loops for AI improvement
+
+## Integration Patterns
+- Use proper abstraction layers for AI service integration
+- Implement proper service discovery and load balancing
+- Use proper circuit breaker patterns for AI service reliability
+- Implement proper health checks for AI services
+- Use proper monitoring and alerting for AI service status

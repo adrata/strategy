@@ -1,0 +1,88 @@
+---
+description: Security standards and best practices for the Adrata project
+globs:
+  - src/**/*auth*.ts
+  - src/**/*security*.ts
+  - src/**/*middleware*.ts
+  - src/**/*api*.ts
+alwaysApply: true
+---
+
+# Security Standards
+
+## Authentication & Authorization
+- Use NextAuth.js for authentication with proper session management
+- Implement proper JWT token handling with secure storage
+- Use bcrypt for password hashing with appropriate salt rounds
+- Implement proper session timeout and refresh mechanisms
+- Use role-based access control (RBAC) for authorization
+
+## API Security
+- Validate all input data using Zod schemas
+- Implement proper rate limiting for API endpoints
+- Use HTTPS for all communications
+- Implement proper CORS policies
+- Sanitize user input to prevent injection attacks
+
+## Data Protection
+- Encrypt sensitive data at rest and in transit
+- Use environment variables for sensitive configuration
+- Implement proper data anonymization for analytics
+- Use secure headers (HSTS, CSP, X-Frame-Options)
+- Implement proper logging without exposing sensitive data
+
+## Database Security
+- Use parameterized queries to prevent SQL injection
+- Implement proper database access controls
+- Use connection encryption for database connections
+- Implement proper backup encryption
+- Use database-level security features and constraints
+
+## Client-Side Security
+- Implement proper Content Security Policy (CSP)
+- Use secure cookie settings (HttpOnly, Secure, SameSite)
+- Implement proper XSS protection
+- Use proper input validation on the client side
+- Implement proper error handling without information disclosure
+
+## Environment Security
+- Use different configurations for different environments
+- Implement proper secrets management
+- Use secure environment variable handling
+- Implement proper access controls for production environments
+- Use proper monitoring and alerting for security events
+
+## Third-Party Integrations
+- Validate all third-party API responses
+- Use proper API key management and rotation
+- Implement proper error handling for external services
+- Use secure communication protocols
+- Implement proper fallback mechanisms
+
+## Security Headers
+- Implement proper security headers in Next.js
+- Use Helmet.js for additional security headers
+- Implement proper CORS configuration
+- Use proper referrer policy settings
+- Implement proper content type validation
+
+## Monitoring & Logging
+- Implement proper security event logging
+- Use structured logging for security events
+- Implement proper monitoring and alerting
+- Use proper log retention and access controls
+- Implement proper audit trails for sensitive operations
+
+## Compliance
+- Follow SOC 2 compliance requirements
+- Implement proper data retention policies
+- Use proper data deletion mechanisms
+- Implement proper user consent management
+- Follow GDPR and privacy regulations
+
+## Vulnerability Management
+- Regularly update dependencies and security patches
+- Use automated security scanning tools
+- Implement proper vulnerability assessment processes
+- Use proper security testing in CI/CD pipelines
+- Implement proper incident response procedures

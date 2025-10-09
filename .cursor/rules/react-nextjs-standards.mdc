@@ -1,0 +1,74 @@
+---
+description: React and Next.js development standards for the Adrata project
+globs:
+  - src/app/**/*.tsx
+  - src/frontend/**/*.tsx
+  - src/products/**/*.tsx
+  - src/platform/**/*.tsx
+alwaysApply: true
+---
+
+# React & Next.js Standards
+
+## Component Architecture
+- Use functional components with hooks over class components
+- Implement proper component composition and avoid prop drilling
+- Use React Server Components (RSC) where appropriate for better performance
+- Separate client and server components clearly with 'use client' directive
+- Keep components focused on single responsibility principle
+
+## State Management
+- Use Zustand for global state management
+- Prefer local state with useState/useReducer for component-specific state
+- Use React Query/TanStack Query for server state management
+- Implement proper state normalization for complex data structures
+- Use optimistic updates for better UX
+
+## Next.js App Router
+- Use App Router patterns with proper file-based routing
+- Implement proper loading.tsx, error.tsx, and not-found.tsx files
+- Use Server Actions for form submissions and mutations
+- Leverage parallel and intercepting routes for complex UIs
+- Implement proper metadata API for SEO
+
+## Performance Optimization
+- Use dynamic imports for code splitting: `const Component = dynamic(() => import('./Component'))`
+- Implement proper image optimization with next/image
+- Use Suspense boundaries for loading states
+- Optimize bundle size with proper tree shaking
+- Implement proper caching strategies
+
+## Form Handling
+- Use react-hook-form for form state management
+- Implement proper validation with Zod schemas
+- Use controlled components for complex form interactions
+- Handle form submission with proper error states
+- Implement proper accessibility for form elements
+
+## Styling & UI
+- Use Tailwind CSS for utility-first styling
+- Implement consistent design system with CSS variables
+- Use Radix UI components for accessible primitives
+- Implement proper dark mode support with next-themes
+- Use Framer Motion for animations and transitions
+
+## Data Fetching
+- Use Server Components for initial data loading
+- Implement proper error boundaries and loading states
+- Use SWR or React Query for client-side data fetching
+- Implement proper cache invalidation strategies
+- Handle offline states gracefully
+
+## Accessibility
+- Use semantic HTML elements
+- Implement proper ARIA attributes
+- Ensure keyboard navigation works correctly
+- Use proper color contrast ratios
+- Test with screen readers
+
+## Testing
+- Write unit tests for utility functions and hooks
+- Use React Testing Library for component testing
+- Implement integration tests for critical user flows
+- Use Playwright for end-to-end testing
+- Mock external dependencies properly

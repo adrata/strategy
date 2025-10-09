@@ -1,0 +1,464 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// RBAC system for Vanta compliance
+enum UserRole {
+  SUPER_ADMIN
+  WORKSPACE_ADMIN
+  MANAGER
+  SALES_REP
+  VIEWER
+}
+
+enum Permission {
+  WORKSPACE_CREATE
+  WORKSPACE_UPDATE
+  WORKSPACE_DELETE
+  WORKSPACE_VIEW
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+  USER_VIEW
+  COMPANY_CREATE
+  COMPANY_UPDATE
+  COMPANY_DELETE
+  COMPANY_VIEW
+  PERSON_CREATE
+  PERSON_UPDATE
+  PERSON_DELETE
+  PERSON_VIEW
+  ACTION_CREATE
+  ACTION_UPDATE
+  ACTION_DELETE
+  ACTION_VIEW
+  AUDIT_VIEW
+  AUDIT_EXPORT
+}
+
+enum ActionStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ActionPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+  PROSPECT
+  CLIENT
+}
+
+enum CompanyPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PersonStatus {
+  ACTIVE
+  INACTIVE
+  PROSPECT
+}
+
+enum PersonPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// RBAC models for granular permission control
+model roles {
+  id          String   @id @default(ulid())
+  name        String   @unique @db.VarChar(50)
+  description String?  @db.VarChar(255)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+
+  role_permissions role_permissions[]
+  user_roles       user_roles[]
+
+  @@index([isActive])
+}
+
+model permissions {
+  id          String   @id @default(ulid())
+  name        Permission @unique
+  description String?  @db.VarChar(255)
+  resource    String   @db.VarChar(50)
+  action      String   @db.VarChar(50)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+
+  role_permissions role_permissions[]
+
+  @@index([resource, action])
+  @@index([isActive])
+}
+
+model role_permissions {
+  id           String @id @default(ulid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model user_roles {
+  id        String   @id @default(ulid())
+  userId    String   @db.VarChar(30)
+  roleId    String
+  workspaceId String? @db.VarChar(30)
+  isActive  Boolean  @default(true)
+  assignedAt DateTime @default(now())
+  assignedBy String?  @db.VarChar(30)
+  expiresAt  DateTime?
+
+  // Relations
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      roles      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  workspace workspaces? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId, workspaceId])
+  @@index([userId])
+  @@index([roleId])
+  @@index([workspaceId])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+/// Multi-tenant workspace management
+model workspaces {
+  id          String   @id @default(ulid())
+  name        String
+  slug        String   @unique
+  timezone    String   @default("UTC") @db.VarChar(50)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  isActive    Boolean  @default(true)
+  deletedAt   DateTime?
+
+  // Relations
+  users                users[]
+  auth_sessions        auth_sessions[]
+  workspace_users      workspace_users[]
+  user_roles           user_roles[]
+  companies            companies[]
+  people               people[]
+  actions              actions[]
+  audit_logs           audit_logs[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([deletedAt])
+}
+
+/// User accounts and authentication
+model users {
+  id                String   @id @default(ulid())
+  email             String   @unique
+  password          String?
+  name              String
+  firstName         String?
+  lastName          String?
+  timezone          String?  @db.VarChar(50)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime
+  lastLoginAt       DateTime?
+  isActive          Boolean  @default(true)
+  activeWorkspaceId String?  @db.VarChar(30)
+
+  // Relations
+  workspaces              workspaces?           @relation(fields: [activeWorkspaceId], references: [id], onDelete: SetNull)
+  auth_sessions           auth_sessions[]
+  reset_tokens            reset_tokens[]
+  workspace_users         workspace_users[]
+  user_roles              user_roles[]
+  assigned_companies      companies[]           @relation("AssignedCompanies")
+  assigned_people         people[]              @relation("AssignedPeople")
+  assigned_actions        actions[]             @relation("AssignedActions")
+  audit_logs              audit_logs[]
+
+  @@index([activeWorkspaceId])
+}
+
+/// Workspace membership and basic roles
+model workspace_users {
+  id          String   @id @default(ulid())
+  workspaceId String   @db.VarChar(30)
+  userId      String   @db.VarChar(30)
+  role        UserRole @default(VIEWER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  isActive    Boolean  @default(true)
+  joinedAt    DateTime @default(now())
+
+  // Relations
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, role])
+  @@index([isActive])
+}
+
+/// JWT session management
+model auth_sessions {
+  id             String   @id @default(ulid())
+  userId         String   @db.VarChar(30)
+  workspaceId    String   @db.VarChar(30)
+  token          String   @unique @db.VarChar(500)
+  refreshToken   String   @unique @db.VarChar(500)
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  lastAccessedAt DateTime @default(now())
+  isActive       Boolean  @default(true)
+
+  // Relations
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([isActive])
+  @@index([refreshToken])
+  @@index([token])
+  @@index([userId])
+  @@index([workspaceId])
+}
+
+/// Password reset functionality
+model reset_tokens {
+  id        String   @id @default(ulid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([token])
+  @@index([used])
+  @@index([userId])
+}
+
+/// Company/organization data
+model companies {
+  id                 String    @id @default(ulid()) @db.VarChar(30)
+  workspaceId        String    @db.VarChar(30)
+  assignedUserId     String?   @db.VarChar(30)
+  name               String    @db.VarChar(255)
+  legalName          String?   @db.VarChar(255)
+  tradingName        String?   @db.VarChar(255)
+  localName          String?   @db.VarChar(255)
+  description        String?
+  website            String?   @db.VarChar(500)
+  email              String?   @db.VarChar(300)
+  phone              String?   @db.VarChar(50)
+  fax                String?   @db.VarChar(50)
+  address            String?
+  city               String?   @db.VarChar(100)
+  state              String?   @db.VarChar(100)
+  country            String?   @db.VarChar(100)
+  postalCode         String?   @db.VarChar(20)
+  industry           String?   @db.VarChar(100)
+  sector             String?   @db.VarChar(100)
+  size               String?   @db.VarChar(100)
+  revenue            Decimal?  @db.Decimal(15, 2)
+  currency           String?   @default("USD") @db.VarChar(3)
+  employeeCount      Int?
+  foundedYear        Int?
+  registrationNumber String?   @db.VarChar(100)
+  taxId              String?   @db.VarChar(100)
+  vatNumber          String?   @db.VarChar(100)
+  domain             String?   @db.VarChar(255)
+  logoUrl            String?   @db.VarChar(500)
+  status             CompanyStatus? @default(ACTIVE)
+  priority           CompanyPriority? @default(MEDIUM)
+  tags               String[]  @default([])
+  customFields       Json?
+  notes              Json?
+  lastAction         String?
+  lastActionDate     DateTime? @db.Timestamp(6)
+  nextAction         String?
+  nextActionDate     DateTime? @db.Timestamp(6)
+  actionStatus       String?
+  globalRank         Int?      @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime
+  entityId           String?   @db.VarChar(30)
+
+  // Relations
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  assignedUser  users?     @relation("AssignedCompanies", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  people        people[]
+  actions       actions[]
+
+  @@index([workspaceId])
+  @@index([assignedUserId])
+  @@index([entityId])
+  @@index([workspaceId, status])
+  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, createdAt])
+  @@index([customFields], type: Gin)
+}
+
+/// Contact/person records
+model people {
+  id                String    @id @default(ulid()) @db.VarChar(30)
+  workspaceId       String    @db.VarChar(30)
+  companyId         String?   @db.VarChar(30)
+  assignedUserId    String?   @db.VarChar(30)
+  firstName         String    @db.VarChar(100)
+  lastName          String    @db.VarChar(100)
+  fullName          String    @db.VarChar(200)
+  displayName       String?   @db.VarChar(200)
+  salutation        String?   @db.VarChar(50)
+  suffix            String?   @db.VarChar(50)
+  jobTitle          String?   @db.VarChar(300)
+  department        String?   @db.VarChar(200)
+  seniority         String?   @db.VarChar(50)
+  email             String?   @db.VarChar(300)
+  workEmail         String?   @db.VarChar(300)
+  personalEmail     String?   @db.VarChar(300)
+  phone             String?   @db.VarChar(50)
+  mobilePhone       String?   @db.VarChar(50)
+  workPhone         String?   @db.VarChar(50)
+  linkedinUrl       String?   @db.VarChar(500)
+  address           String?   @db.VarChar(500)
+  city              String?   @db.VarChar(100)
+  state             String?   @db.VarChar(100)
+  country           String?   @db.VarChar(100)
+  postalCode        String?   @db.VarChar(50)
+  dateOfBirth       DateTime? @db.Timestamp(6)
+  gender            String?   @db.VarChar(20)
+  bio               String?
+  profilePictureUrl String?   @db.VarChar(500)
+  status            PersonStatus? @default(ACTIVE)
+  priority          PersonPriority? @default(MEDIUM)
+  source            String?
+  tags              String[]  @default([])
+  customFields      Json?
+  notes             Json?
+  preferredLanguage String?   @db.VarChar(10)
+  timezone          String?   @db.VarChar(50)
+  emailVerified     Boolean?  @default(false)
+  phoneVerified     Boolean?  @default(false)
+  lastAction        String?
+  lastActionDate    DateTime? @db.Timestamp(6)
+  nextAction        String?
+  nextActionDate    DateTime? @db.Timestamp(6)
+  actionStatus      String?
+  engagementScore   Float?    @default(0)
+  globalRank        Int?      @default(0)
+  companyRank       Int?      @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  entityId          String?   @db.VarChar(30)
+
+  // Relations
+  workspace    workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company      companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  assignedUser users?     @relation("AssignedPeople", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  actions      actions[]
+
+  @@index([workspaceId])
+  @@index([companyId])
+  @@index([assignedUserId])
+  @@index([entityId])
+  @@index([workspaceId, status])
+  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, companyId, status])
+  @@index([workspaceId, createdAt])
+  @@index([customFields], type: Gin)
+}
+
+/// Activity and task tracking
+model actions {
+  id          String    @id @default(ulid())
+  workspaceId String    @db.VarChar(30)
+  userId      String    @db.VarChar(30)
+  companyId   String?   @db.VarChar(30)
+  personId    String?   @db.VarChar(30)
+  type        String    @db.VarChar(30)
+  subject     String
+  description String?
+  outcome     String?
+  scheduledAt DateTime? @db.Timestamp(3)
+  completedAt DateTime? @db.Timestamp(3)
+  status      ActionStatus @default(PLANNED)
+  priority    ActionPriority @default(NORMAL)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+
+  // Relations
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users      @relation("AssignedActions", fields: [userId], references: [id], onDelete: Cascade)
+  company   companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  person    people?    @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([companyId])
+  @@index([personId])
+  @@index([type])
+  @@index([status])
+  @@index([workspaceId, status])
+  @@index([workspaceId, userId, status])
+  @@index([workspaceId, scheduledAt])
+  @@index([workspaceId, createdAt])
+}
+
+/// System audit trail for compliance
+model audit_logs {
+  id          String   @id @default(ulid())
+  workspaceId String   @db.VarChar(30)
+  userId      String   @db.VarChar(30)
+  entityType  String   @db.VarChar(50)
+  entityId    String   @db.VarChar(30)
+  action      String   @db.VarChar(20)
+  oldValues   Json?
+  newValues   Json?
+  timestamp   DateTime @default(now())
+  success     Boolean  @default(true)
+
+  // Relations
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([action])
+  @@index([timestamp])
+  @@index([workspaceId, entityType, timestamp])
+  @@index([workspaceId, action, timestamp])
+  @@index([success])
+}
