@@ -21,6 +21,9 @@ src-tauri/Cargo.lock
 .swc/
 tsconfig.tsbuildinfo
 
+# Auto-generated files
+next-env.d.ts
+
 # Data files (should be in data/ directory)
 *.csv
 !data/**/*.csv
@@ -93,3 +96,9 @@ src-tauri/gen/
 *~
 .vercel/
 tsconfig.tsbuildinfo
+
+# Playwright test artifacts
+tests/artifacts/
+tests/results/
+playwright-report/
+test-results/
