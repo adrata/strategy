@@ -170,38 +170,36 @@ export async function GET(request: NextRequest) {
       }).catch(() => 0),
       
       // Partners count (with fallback)
-      prisma.partners.count({
+      prisma.companies.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          status: 'OPPORTUNITY'
         }
       }).catch(() => 0),
       
       // Sellers count - count from both sellers table AND people table with role 'seller'
       Promise.all([
-        prisma.sellers.count({
-          where: {
-            workspaceId,
-            deletedAt: null
-          }
-        }).catch(() => 0),
-        prisma.people.count({
+        prisma.users.count({
           where: {
             workspaceId,
             deletedAt: null,
-            role: 'seller'
+            // Add role filter if needed for sellers
           }
-        }).catch(() => 0)
+        }).catch(() => 0),
+        // People don't have roles in the streamlined schema
+        Promise.resolve(0)
       ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
       // Speedrun count - count actual speedrun items (limited to 30 for performance)
       (async () => {
         try {
           // First try to count speedrun-tagged leads
-          const speedrunLeadsCount = await prisma.leads.count({
+          const speedrunLeadsCount = await prisma.people.count({
             where: {
               workspaceId,
               deletedAt: null,
+              status: 'LEAD',
               tags: { has: 'speedrun' }
             }
           });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getV1AuthUser } from '../auth';
+import { withSecurity, SecureApiContext } from '../middleware';
 
 const prisma = new PrismaClient();
 
@@ -11,16 +11,10 @@ const prisma = new PrismaClient();
  */
 
 // GET /api/v1/people - List people with search and pagination
-export async function GET(request: NextRequest) {
-  try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+export const GET = withSecurity(
+  async (context: SecureApiContext) => {
+    try {
+      const { authUser, request } = context;
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -139,25 +133,25 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching people:', error);
+    console.error('❌ [V1 PEOPLE API] Error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch people' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
-}
+  },
+  {
+    requireAuth: true,
+    rateLimit: true,
+    allowedMethods: ['GET']
+  }
+);
 
 // POST /api/v1/people - Create a new person
-export async function POST(request: NextRequest) {
-  try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+export const POST = withSecurity(
+  async (context: SecureApiContext) => {
+    try {
+      const { authUser, request } = context;
 
     const body = await request.json();
 
@@ -263,8 +257,14 @@ export async function POST(request: NextRequest) {
     }
     
     return NextResponse.json(
-      { success: false, error: 'Failed to create person' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
-}
+  },
+  {
+    requireAuth: true,
+    rateLimit: true,
+    allowedMethods: ['POST']
+  }
+);

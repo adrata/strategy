@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getV1AuthUser } from '../auth';
+import { withSecurity, SecureApiContext } from '../middleware';
 
 const prisma = new PrismaClient();
 
@@ -11,16 +11,10 @@ const prisma = new PrismaClient();
  */
 
 // GET /api/v1/companies - List companies with search and pagination
-export async function GET(request: NextRequest) {
-  try {
-    // Simple authentication check
-    const authUser = await getV1AuthUser(request);
-    if (!authUser) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+export const GET = withSecurity(
+  async (context: SecureApiContext) => {
+    try {
+      const { authUser, request } = context;
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -130,13 +124,19 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching companies:', error);
+    console.error('❌ [V1 COMPANIES API] Error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch companies' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
-}
+  },
+  {
+    requireAuth: true,
+    rateLimit: true,
+    allowedMethods: ['GET']
+  }
+);
 
 // POST /api/v1/companies - Create a new company
 export async function POST(request: NextRequest) {

@@ -178,8 +178,11 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         };
 
     const [leads, prospects, opportunities, companies, people, clients, buyerGroups, workspaceUsers, partnerships] = await Promise.all([
-      prisma.leads.findMany({
-        where: demoScenarioFilter,
+      prisma.people.findMany({
+        where: {
+          ...demoScenarioFilter,
+          status: 'LEAD'
+        },
         select: {
           id: true,
           firstName: true,
@@ -247,14 +250,21 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           status: 'CLIENT'
         }
       }),
-      prisma.buyer_groups.findMany({
-        where: { workspaceId: workspaceId }
+      // Buyer groups are now represented as companies with specific relationships
+      prisma.companies.findMany({
+        where: { 
+          workspaceId: workspaceId,
+          // Add any specific criteria for buyer groups if needed
+        }
       }),
       prisma.workspace_users.findMany({
         where: { workspaceId: workspaceId }
       }),
-      prisma.partners.findMany({
-        where: { workspaceId: workspaceId }
+      prisma.companies.findMany({
+        where: { 
+          workspaceId: workspaceId,
+          status: 'OPPORTUNITY'
+        }
       })
     ]);
 
@@ -512,7 +522,8 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
     );
     
     // 🆕 FIX: Load sellers from sellers table only (redundant people table sellers removed)
-    const sellersTableData = await prisma.sellers.findMany({
+    // Sellers are now represented as users with specific roles
+    const sellersTableData = await prisma.users.findMany({
       where: {
         workspaceId,
         deletedAt: null

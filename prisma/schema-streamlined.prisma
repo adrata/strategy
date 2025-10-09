@@ -179,6 +179,7 @@ model workspaces {
 model users {
   id                String   @id @default(ulid())
   email             String   @unique
+  username          String?  @unique @db.VarChar(50)
   password          String?
   name              String
   firstName         String?
@@ -201,6 +202,7 @@ model users {
   audit_logs              audit_logs[]
 
   @@index([activeWorkspaceId])
+  @@index([username])
 }
 
 /// Workspace membership and basic roles
