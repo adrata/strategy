@@ -65,12 +65,10 @@ export function PipelineMiddlePanel() {
     if (selectedRecord && sectionData['length'] === 0) {
       console.log(`🔍 [NAVIGATION] No data for ${section}, attempting to load...`);
       
-      // For leads and prospects, ensure we have data for navigation
-      if (section === 'leads' || section === 'prospects') {
+      // For prospects, ensure we have data for navigation (leads uses v1 API)
+      if (section === 'prospects') {
         // Try to get data from the acquisition context
-        const fallbackData = section === 'leads' 
-          ? acquisitionData?.acquireData?.leads || []
-          : acquisitionData?.acquireData?.prospects || [];
+        const fallbackData = acquisitionData?.acquireData?.prospects || [];
         
         if (fallbackData && fallbackData.length > 0) {
           console.log(`✅ [NAVIGATION] Using fallback data: ${fallbackData.length} records`);
@@ -181,8 +179,8 @@ export function PipelineMiddlePanel() {
   
   const pipelineData = {
     data: finalNavigationData,
-    loading: acquisitionData.isLoading || isLoadingNavigation,
-    error: acquisitionData.error,
+    loading: activeSection === 'leads' ? leadsData.loading : (acquisitionData.isLoading || isLoadingNavigation),
+    error: activeSection === 'leads' ? leadsData.error : acquisitionData.error,
     isEmpty: finalNavigationData['length'] === 0
   };
   
