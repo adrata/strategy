@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
-import { PipelineMiddlePanelStandalone } from "@/products/pipeline/components/PipelineMiddlePanelStandalone";
+import { MiddlePanel } from "@/products/pipeline/components/MiddlePanel";
 import { AIRightPanel } from "@/platform/ui/components/chat/AIRightPanel";
 import { useZoom, ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
@@ -229,7 +229,7 @@ function PipelinePanelLayout({ section }: { section: string }) {
             setIsOpportunitiesVisible={setIsOpportunitiesVisible}
           />
         }
-        middlePanel={<PipelineMiddlePanelStandalone activeSection={section} />}
+        middlePanel={<MiddlePanel activeSection={section} />}
         rightPanel={<AIRightPanel />}
         zoom={zoom}
         isLeftPanelVisible={ui.isLeftPanelVisible}

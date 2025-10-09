@@ -11,13 +11,13 @@ import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 
-interface PipelineMiddlePanelStandaloneProps {
+interface MiddlePanelProps {
   activeSection: string;
 }
 
-export function PipelineMiddlePanelStandalone({
+export function MiddlePanel({
   activeSection
-}: PipelineMiddlePanelStandaloneProps) {
+}: MiddlePanelProps) {
   // EXTREME DEBUG: Log component execution
   console.log(`🚨🚨🚨 [MIDDLE PANEL EXTREME DEBUG] Component is executing! Section: ${activeSection}`);
   console.log(`🚨🚨🚨 [MIDDLE PANEL EXTREME DEBUG] Component timestamp: ${new Date().toISOString()}`);
