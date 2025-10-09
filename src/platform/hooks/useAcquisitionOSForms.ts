@@ -364,7 +364,10 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             if (createResponse['success'] && createResponse.data) {
               newRecordId = createResponse.data.id;
               const recordType = activeSection === 'speedrun' ? 'speedrun' : activeSection.slice(0, -1);
-              onSuccess(`✅ Successfully created ${recordType}: ${formData.name}`);
+              const successMessage = activeSection === 'companies' 
+                ? `✅ Successfully created company: ${formData.name}`
+                : `✅ Successfully created ${recordType}: ${formData.name}`;
+              onSuccess(successMessage);
             } else {
               throw new Error(createResponse.error || "Failed to create record via unified API");
             }
@@ -372,7 +375,10 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
             // Desktop mode - simulate creation
             newRecordId = `${activeSection.slice(0, -1)}-${Date.now()}`;
             const recordType = activeSection === 'speedrun' ? 'speedrun' : activeSection.slice(0, -1);
-            onSuccess(`✅ Successfully created ${recordType}: ${formData.name} (Desktop mode)`);
+            const desktopSuccessMessage = activeSection === 'companies'
+              ? `✅ Successfully created company: ${formData.name} (Desktop mode)`
+              : `✅ Successfully created ${recordType}: ${formData.name} (Desktop mode)`;
+            onSuccess(desktopSuccessMessage);
           }
         }
 
