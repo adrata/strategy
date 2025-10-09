@@ -1097,10 +1097,21 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setShowAddCompanyModal(false);
                     setCompanySearchQuery(''); // Clear the search query
                     setCompanySearchResults([]); // Clear search results
+                    
+                    // Show success message
+                    setSuccessMessage(`✅ Successfully created company: ${newCompany.name}`);
+                    setShowSuccessMessage(true);
+                    // Auto-hide success message after 3 seconds
+                    setTimeout(() => setShowSuccessMessage(false), 3000);
+                    
                     console.log('Company created successfully:', newCompany);
                   } else {
                     console.error('Company creation failed:', result.error);
-                    alert(`Failed to create company: ${result.error || 'Unknown error'}`);
+                    // Show error message using the success message system
+                    setSuccessMessage(`❌ Failed to create company: ${result.error || 'Unknown error'}`);
+                    setShowSuccessMessage(true);
+                    // Auto-hide error message after 5 seconds
+                    setTimeout(() => setShowSuccessMessage(false), 5000);
                   }
                 } else {
                   const errorText = await response.text();
@@ -1119,12 +1130,20 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     // Keep the original error message if parsing fails
                   }
                   
-                  alert(`❌ Failed to create company: ${errorMessage}`);
+                  // Show error message using the success message system
+                  setSuccessMessage(`❌ Failed to create company: ${errorMessage}`);
+                  setShowSuccessMessage(true);
+                  // Auto-hide error message after 5 seconds
+                  setTimeout(() => setShowSuccessMessage(false), 5000);
                 }
               } catch (error) {
                 console.error('Error creating company:', error);
                 const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                alert(`❌ Error creating company: ${errorMessage}`);
+                // Show error message using the success message system
+                setSuccessMessage(`❌ Error creating company: ${errorMessage}`);
+                setShowSuccessMessage(true);
+                // Auto-hide error message after 5 seconds
+                setTimeout(() => setShowSuccessMessage(false), 5000);
               }
             }}>
               <div className="space-y-4">
