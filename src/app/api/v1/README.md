@@ -1,279 +1,299 @@
-# API v1 Documentation
+# API v1 - Minimal Enterprise API
 
-This directory contains the version 1 API endpoints for the Adrata platform, built on the streamlined database schema with comprehensive CRUD operations following 2025 best practices.
+## 🎯 Overview
 
-## Versioning Strategy
+A **simple, clean, and secure** REST API for the next great enterprise operating system. Built with NextAuth.js integration and centralized pipeline management.
 
-- **v1**: Current stable API version
-- All endpoints in this directory are prefixed with `/api/v1/`
-- Breaking changes will result in a new version (v2, v3, etc.)
-- Non-breaking changes can be made to existing v1 endpoints
-
-## Endpoint Structure
+## 🏗️ Complete Structure
 
 ```
 /api/v1/
-├── auth/           # Authentication endpoints
-├── companies/      # Company CRUD operations
-│   ├── [id]/      # Individual company operations
-│   └── bulk/      # Bulk operations
-├── people/         # People/contacts CRUD operations
-│   └── [id]/      # Individual person operations
-├── actions/        # Actions/tasks CRUD operations
-│   └── [id]/      # Individual action operations
-├── health/         # Health check endpoints
-├── types.ts        # Shared TypeScript types
-├── utils.ts        # Utility functions
-├── schemas.ts      # Zod validation schemas
-└── README.md       # This documentation
+├── auth.ts              # Simple authentication (NextAuth.js + JWT)
+├── companies/           # Company management
+│   ├── route.ts         # GET (list), POST (create)
+│   └── [id]/route.ts    # GET, PUT, PATCH, DELETE
+├── people/              # People management
+│   ├── route.ts         # GET (list), POST (create)
+│   └── [id]/route.ts    # GET, PUT, PATCH, DELETE
+├── actions/             # Action/task management
+│   ├── route.ts         # GET (list), POST (create)
+│   └── [id]/route.ts    # GET, PUT, PATCH, DELETE
+├── health/route.ts      # Health check
+└── README.md           # This documentation
 ```
 
-## CRUD Operations
+## 🎯 Centralized Pipeline Management
 
-### Companies (`/api/v1/companies`)
+**No separate tables for leads/prospects/opportunities!** Everything is centralized:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/companies` | List companies with search, filtering, and pagination |
-| POST | `/companies` | Create a new company |
-| GET | `/companies/[id]` | Get a specific company with related data |
-| PUT | `/companies/[id]` | Update a company (full replacement) |
-| PATCH | `/companies/[id]` | Partially update a company |
-| DELETE | `/companies/[id]` | Delete a company |
-| PATCH | `/companies/bulk` | Bulk update multiple companies |
-| DELETE | `/companies/bulk` | Bulk delete multiple companies |
+- **Companies**: Use `status` field (PROSPECT → CLIENT → ACTIVE → INACTIVE)
+- **People**: Use `status` field (PROSPECT → ACTIVE → INACTIVE)  
+- **Actions**: Track all activities and progression between people and companies
+- **Clean & Simple**: No data duplication, single source of truth
 
-### People (`/api/v1/people`)
+## 🔐 Authentication
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/people` | List people with search, filtering, and pagination |
-| POST | `/people` | Create a new person |
-| GET | `/people/[id]` | Get a specific person with related data |
-| PUT | `/people/[id]` | Update a person (full replacement) |
-| PATCH | `/people/[id]` | Partially update a person |
-| DELETE | `/people/[id]` | Delete a person |
+**Dual Authentication System:**
 
-### Actions (`/api/v1/actions`)
+1. **NextAuth.js** (Primary) - For web applications
+2. **JWT Bearer Tokens** (Fallback) - For API clients
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/actions` | List actions with search, filtering, and pagination |
-| POST | `/actions` | Create a new action |
-| GET | `/actions/[id]` | Get a specific action with related data |
-| PUT | `/actions/[id]` | Update an action (full replacement) |
-| PATCH | `/actions/[id]` | Partially update an action |
-| DELETE | `/actions/[id]` | Delete an action |
+```http
+# Automatic via NextAuth.js cookies
+Cookie: auth-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-## Response Format
-
-All v1 API responses follow this standardized format:
-
-```json
-{
-  "success": boolean,
-  "data": any,
-  "error": string | null,
-  "meta": {
-    "version": "v1",
-    "timestamp": "ISO 8601 string",
-    "requestId": "uuid"
-  }
-}
+# Or JWT Bearer token for API clients
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-### Success Response Example
+## 📋 Response Format
+
+**Consistent JSON responses:**
 
 ```json
+// Success
 {
   "success": true,
-  "data": {
-    "id": "01HZ...",
-    "name": "Acme Corp",
-    "industry": "Technology",
-    "status": "ACTIVE",
-    "createdAt": "2025-01-09T10:00:00Z"
-  },
-  "error": null,
+  "data": { /* your data */ },
   "meta": {
-    "version": "v1",
-    "timestamp": "2025-01-09T10:00:00Z",
-    "requestId": "req_123456"
+    "pagination": { "page": 1, "limit": 20, "totalCount": 100 },
+    "filters": { "search": "acme", "status": "ACTIVE" }
   }
 }
-```
 
-### Error Response Example
-
-```json
+// Error
 {
   "success": false,
-  "data": null,
-  "error": "Company not found",
-  "meta": {
-    "version": "v1",
-    "timestamp": "2025-01-09T10:00:00Z",
-    "requestId": "req_123456"
-  }
+  error": "Authentication required"
 }
 ```
 
-## HTTP Methods & Best Practices
+## 🚀 Quick Start Examples
 
-### GET - Retrieve Data
-- **Purpose**: Fetch resources without side effects
-- **Idempotent**: Yes
-- **Caching**: Recommended for list endpoints
-- **Example**: `GET /api/v1/companies?page=1&limit=20&status=ACTIVE`
+### Companies
 
-### POST - Create Resources
-- **Purpose**: Create new resources
-- **Idempotent**: No
-- **Body**: Required (resource data)
-- **Example**: `POST /api/v1/companies` with company data
+```bash
+# List companies
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/companies?page=1&limit=20&search=acme&status=PROSPECT"
 
-### PUT - Full Update
-- **Purpose**: Replace entire resource
-- **Idempotent**: Yes
-- **Body**: Required (complete resource data)
-- **Example**: `PUT /api/v1/companies/123` with complete company data
+# Create company
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Acme Corp", "email": "contact@acme.com", "status": "PROSPECT"}' \
+  "http://localhost:3000/api/v1/companies"
 
-### PATCH - Partial Update
-- **Purpose**: Update specific fields
-- **Idempotent**: Yes
-- **Body**: Required (only changed fields)
-- **Example**: `PATCH /api/v1/companies/123` with `{"status": "INACTIVE"}`
+# Get company
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/companies/COMPANY_ID"
 
-### DELETE - Remove Resources
-- **Purpose**: Delete resources
-- **Idempotent**: Yes
-- **Body**: Not required
-- **Example**: `DELETE /api/v1/companies/123`
+# Update company status (pipeline progression)
+curl -X PATCH \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "CLIENT"}' \
+  "http://localhost:3000/api/v1/companies/COMPANY_ID"
+```
 
-## Query Parameters
+### People
+
+```bash
+# List people
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/people?page=1&limit=20&search=john&companyId=COMPANY_ID"
+
+# Create person
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName": "John", "lastName": "Doe", "email": "john@acme.com", "companyId": "COMPANY_ID"}' \
+  "http://localhost:3000/api/v1/people"
+
+# Get person
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/people/PERSON_ID"
+```
+
+### Actions
+
+```bash
+# List actions
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/actions?page=1&limit=20&companyId=COMPANY_ID&status=COMPLETED"
+
+# Create action (tracking what someone did at a company)
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"type": "CALL", "subject": "Called CEO", "companyId": "COMPANY_ID", "personId": "PERSON_ID", "status": "COMPLETED"}' \
+  "http://localhost:3000/api/v1/actions"
+
+# Get last action for a company
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/actions?companyId=COMPANY_ID&sortBy=createdAt&sortOrder=desc&limit=1"
+
+# Get counts by status (for left panel navigation)
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/companies?counts=true"
+# Returns: { "PROSPECT": 5, "OPPORTUNITY": 3, "CLIENT": 12, "ACTIVE": 8, "INACTIVE": 2 }
+
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/people?counts=true"
+# Returns: { "LEAD": 7, "PROSPECT": 3, "ACTIVE": 25, "INACTIVE": 1 }
+
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/actions?counts=true"
+# Returns: { "PLANNED": 7, "IN_PROGRESS": 3, "COMPLETED": 15, "CANCELLED": 1 }
+
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:3000/api/v1/users?counts=true"
+# Returns: { "SELLER": 5, "MANAGER": 2, "ADMIN": 1 }
+```
+
+## 📊 Available Endpoints
+
+### Companies
+- `GET /api/v1/companies` - List companies
+- `POST /api/v1/companies` - Create company
+- `GET /api/v1/companies/{id}` - Get company
+- `PUT /api/v1/companies/{id}` - Update company (full)
+- `PATCH /api/v1/companies/{id}` - Update company (partial)
+- `DELETE /api/v1/companies/{id}` - Delete company
+
+### People
+- `GET /api/v1/people` - List people
+- `POST /api/v1/people` - Create person
+- `GET /api/v1/people/{id}` - Get person
+- `PUT /api/v1/people/{id}` - Update person (full)
+- `PATCH /api/v1/people/{id}` - Update person (partial)
+- `DELETE /api/v1/people/{id}` - Delete person
+
+### Actions
+- `GET /api/v1/actions` - List actions
+- `POST /api/v1/actions` - Create action
+- `GET /api/v1/actions/{id}` - Get action
+- `PUT /api/v1/actions/{id}` - Update action (full)
+- `PATCH /api/v1/actions/{id}` - Update action (partial)
+- `DELETE /api/v1/actions/{id}` - Delete action
+
+### Users
+- `GET /api/v1/users` - List users
+- `POST /api/v1/users` - Create user
+- `GET /api/v1/users/{id}` - Get user
+- `PUT /api/v1/users/{id}` - Update user (full)
+- `PATCH /api/v1/users/{id}` - Update user (partial)
+- `DELETE /api/v1/users/{id}` - Delete user
+
+### Health
+- `GET /api/v1/health` - Health check
+
+## 🔍 Query Parameters
 
 ### Pagination
-- `page`: Page number (default: 1)
-- `limit`: Items per page (default: 20, max: 100)
-- `sortBy`: Field to sort by (default: createdAt)
-- `sortOrder`: Sort direction - `asc` or `desc` (default: desc)
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
 
-### Search & Filtering
-- `q`: Search query (searches across relevant fields)
-- `status`: Filter by status (e.g., ACTIVE, INACTIVE)
-- `priority`: Filter by priority (e.g., HIGH, MEDIUM, LOW)
-- `createdAfter`: Filter by creation date (ISO 8601)
-- `createdBefore`: Filter by creation date (ISO 8601)
+### Filtering
+- `search` - Search across relevant fields
+- `status` - Filter by status (PROSPECT, ACTIVE, CLIENT, INACTIVE, etc.)
+- `priority` - Filter by priority (LOW, MEDIUM, HIGH, URGENT, etc.)
+- `companyId` - Filter by company (for people and actions)
+- `personId` - Filter by person (for actions)
+- `type` - Filter by action type (for actions)
+- `counts=true` - Return counts by status instead of full data
 
-### Example Query
-```
-GET /api/v1/companies?page=1&limit=10&status=ACTIVE&q=tech&sortBy=name&sortOrder=asc
-```
+### Sorting
+- `sortBy` - Field to sort by (default: createdAt)
+- `sortOrder` - asc or desc (default: desc)
 
-## Error Handling
+## 🎯 Pipeline Status Values
 
-| Status Code | Description | When Used |
-|-------------|-------------|-----------|
-| 200 | OK | Successful GET, PUT, PATCH, DELETE |
-| 201 | Created | Successful POST |
-| 400 | Bad Request | Invalid request format |
-| 401 | Unauthorized | Authentication required |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource not found |
-| 409 | Conflict | Resource conflict (e.g., unique constraint) |
-| 422 | Unprocessable Entity | Validation errors |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server-side error |
+### Company Status
+- `PROSPECT` - Initial prospect
+- `OPPORTUNITY` - Opportunity stage
+- `CLIENT` - Active client
+- `ACTIVE` - Active company
+- `INACTIVE` - Inactive company
 
-## Validation
+### Person Status
+- `LEAD` - Lead status
+- `PROSPECT` - Initial prospect
+- `ACTIVE` - Active person
+- `INACTIVE` - Inactive person
 
-All endpoints use Zod schemas for input validation:
+### Action Status
+- `PLANNED` - Planned action
+- `IN_PROGRESS` - Action in progress
+- `COMPLETED` - Completed action
+- `CANCELLED` - Cancelled action
 
-- **Request Body**: Validated against create/update schemas
-- **Query Parameters**: Validated against search schemas
-- **Path Parameters**: Validated against ID schemas
-- **Error Responses**: Include detailed validation error messages
+### Action Priority
+- `LOW` - Low priority
+- `NORMAL` - Normal priority
+- `HIGH` - High priority
+- `URGENT` - Urgent priority
 
-## Database Schema Integration
+## 🛡️ Security Features
 
-The API is built on the streamlined Prisma schema with:
+- **Authentication Required**: All endpoints require valid authentication
+- **NextAuth.js Integration**: Uses your existing auth system
+- **Workspace Isolation**: Data is isolated by workspace
+- **Input Validation**: Basic validation on all inputs
+- **Error Handling**: Consistent error responses
+- **SQL Injection Protection**: Via Prisma ORM
 
-- **Multi-tenant**: Workspace-based data isolation
-- **RBAC**: Role-based access control
-- **Audit Trail**: Comprehensive logging
-- **Relationships**: Proper foreign key relationships
-- **Indexes**: Optimized for common query patterns
+## 🚀 Performance
 
-## Security Features
+- **Optimized Queries**: Efficient Prisma database queries
+- **Pagination**: Built-in pagination for large datasets
+- **Parallel Queries**: Multiple queries run in parallel
+- **Selective Fields**: Only return requested data
+- **Connection Pooling**: Efficient database connections
 
-- **Authentication**: JWT-based authentication (TODO: implement)
-- **Authorization**: Role-based permissions (TODO: implement)
-- **Input Validation**: Comprehensive Zod schema validation
-- **SQL Injection Protection**: Prisma ORM with parameterized queries
-- **Rate Limiting**: Built-in rate limiting utilities
-- **Audit Logging**: All operations logged for compliance
+## 🔧 Development
 
-## Performance Optimizations
-
-- **Pagination**: Efficient pagination with skip/take
-- **Selective Fields**: Include only necessary related data
-- **Database Indexes**: Optimized for common query patterns
-- **Parallel Queries**: Count and data queries run in parallel
-- **Connection Pooling**: Prisma connection pooling
-
-## Development Guidelines
-
-- **TypeScript**: Strict typing throughout
-- **Error Handling**: Comprehensive error handling with proper HTTP status codes
-- **Logging**: Structured logging for debugging and monitoring
-- **Testing**: Unit and integration tests required
-- **Documentation**: Keep this README updated with changes
-- **Code Style**: Follow project's ESLint and Prettier configuration
-
-## Migration from Legacy API
-
-When migrating endpoints from the legacy API structure:
-
-1. Move the route file to the appropriate v1 subdirectory
-2. Update the response format to match v1 standards
-3. Add proper error handling and validation
-4. Update API documentation
-5. Add version-specific tests
-6. Implement proper authentication and authorization
-7. Add audit logging
-
-## Example Usage
-
-### Create a Company
+### Test the API
 ```bash
-curl -X POST /api/v1/companies \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Acme Corp",
-    "industry": "Technology",
-    "website": "https://acme.com",
-    "status": "ACTIVE"
-  }'
+# Health check
+curl http://localhost:3000/api/v1/health
+
+# List companies (with auth)
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  http://localhost:3000/api/v1/companies
 ```
 
-### Update a Company (Partial)
-```bash
-curl -X PATCH /api/v1/companies/123 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "INACTIVE"}'
+### Environment Variables
+```env
+# Your existing variables work as-is
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret"
+JWT_SECRET="your-jwt-secret"
 ```
 
-### Search Companies
-```bash
-curl "/api/v1/companies?q=tech&status=ACTIVE&page=1&limit=10"
-```
+## 🎯 Key Features
 
-### Bulk Update Companies
-```bash
-curl -X PATCH /api/v1/companies/bulk \
-  -H "Content-Type: application/json" \
-  -d '{
-    "ids": ["123", "456", "789"],
-    "updates": {"status": "INACTIVE"}
-  }'
-```
+- **🔐 Secure**: Integrates with your existing NextAuth.js system
+- **🚀 Simple**: Clean, straightforward implementation
+- **📊 Enterprise Ready**: Built for scale and compliance
+- **🔧 CRUD Operations**: Full Create, Read, Update, Delete support
+- **📝 PATCH Support**: Partial updates for efficiency
+- **🔍 Search & Filter**: Built-in search and filtering
+- **📄 Pagination**: Efficient pagination for large datasets
+- **⚡ Fast**: Optimized database queries and caching
+- **🎯 Centralized**: No data duplication, single source of truth
+
+## 🚀 Ready to Build!
+
+This is a **complete, minimal foundation** for your enterprise operating system. You can:
+
+1. **Start using it immediately** for companies, people, and actions management
+2. **Track pipeline progression** through status changes
+3. **Monitor activities** between people and companies
+4. **Scale up gradually** by adding more features as needed
+
+The API is **secure**, **fast**, and **enterprise-ready** while being **simple and maintainable**.
+
+---
+
+**🎉 Ready to build the next great enterprise operating system!**

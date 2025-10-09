@@ -60,6 +60,7 @@ enum CompanyStatus {
   INACTIVE
   PROSPECT
   CLIENT
+  OPPORTUNITY
 }
 
 enum CompanyPriority {
@@ -72,6 +73,7 @@ enum PersonStatus {
   ACTIVE
   INACTIVE
   PROSPECT
+  LEAD
 }
 
 enum PersonPriority {

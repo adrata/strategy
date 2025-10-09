@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
     const industry = searchParams.get('industry') || '';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const countsOnly = searchParams.get('counts') === 'true';
     
     const offset = (page - 1) * limit;
 
@@ -61,6 +62,29 @@ export async function GET(request: NextRequest) {
     // Industry filtering
     if (industry) {
       where.industry = { contains: industry, mode: 'insensitive' };
+    }
+
+    // 🚀 PERFORMANCE: If counts only, just return counts by status
+    if (countsOnly) {
+      const statusCounts = await prisma.companies.groupBy({
+        by: ['status'],
+        where,
+        _count: { id: true }
+      });
+
+      const counts = statusCounts.reduce((acc, stat) => {
+        acc[stat.status || 'ACTIVE'] = stat._count.id;
+        return acc;
+      }, {} as Record<string, number>);
+
+      return NextResponse.json({
+        success: true,
+        data: counts,
+        meta: {
+          type: 'counts',
+          filters: { search, status, priority, industry }
+        }
+      });
     }
 
     // Get companies
@@ -149,7 +173,7 @@ export async function POST(request: NextRequest) {
         industry: body.industry,
         status: body.status || 'ACTIVE',
         priority: body.priority || 'MEDIUM',
-        workspaceId: authUser.workspaceId || 'default-workspace',
+        workspaceId: authUser.workspaceId || 'local-workspace',
         assignedUserId: body.assignedUserId,
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
     const personId = searchParams.get('personId') || '';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const countsOnly = searchParams.get('counts') === 'true';
     
     const offset = (page - 1) * limit;
 
@@ -70,6 +71,29 @@ export async function GET(request: NextRequest) {
     // Person filtering
     if (personId) {
       where.personId = personId;
+    }
+
+    // 🚀 PERFORMANCE: If counts only, just return counts by status
+    if (countsOnly) {
+      const statusCounts = await prisma.actions.groupBy({
+        by: ['status'],
+        where,
+        _count: { id: true }
+      });
+
+      const counts = statusCounts.reduce((acc, stat) => {
+        acc[stat.status] = stat._count.id;
+        return acc;
+      }, {} as Record<string, number>);
+
+      return NextResponse.json({
+        success: true,
+        data: counts,
+        meta: {
+          type: 'counts',
+          filters: { search, status, priority, type, companyId, personId }
+        }
+      });
     }
 
     // Get actions
@@ -166,7 +190,7 @@ export async function POST(request: NextRequest) {
         completedAt: body.completedAt ? new Date(body.completedAt) : null,
         status: body.status || 'PLANNED',
         priority: body.priority || 'NORMAL',
-        workspaceId: authUser.workspaceId || 'default-workspace',
+        workspaceId: authUser.workspaceId || 'local-workspace',
         userId: authUser.id,
         companyId: body.companyId,
         personId: body.personId,
