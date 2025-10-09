@@ -373,35 +373,15 @@ export const PipelineView = React.memo(function PipelineView({
   if (section === 'people') {
     console.log('🔍 [PEOPLE DEBUG] Data sources:', {
       section,
-      fastSectionData: {
-        hasData: !!fastSectionData.data,
-        dataLength: fastSectionData.data?.length || 0,
-        loading: fastSectionData.loading,
-        error: fastSectionData.error,
-        firstPerson: fastSectionData.data?.[0] ? {
-          rank: fastSectionData.data[0].rank,
-          name: fastSectionData.data[0].name,
-          company: fastSectionData.data[0].company?.name || fastSectionData.data[0].company
-        } : null
-      },
-      pipelineData: {
-        hasData: !!pipelineData.data,
-        dataLength: pipelineData.data?.length || 0,
-        loading: pipelineData.loading,
-        error: pipelineData.error,
-        firstPerson: pipelineData.data?.[0] ? {
-          rank: pipelineData.data[0].rank,
-          name: pipelineData.data[0].name,
-          company: pipelineData.data[0].company?.name || pipelineData.data[0].company
-        } : null
-      },
-      finalData: {
+      v1ApiData: {
         hasData: !!finalData,
         dataLength: finalData?.length || 0,
+        loading: finalLoading,
+        error: finalError,
         firstPerson: finalData?.[0] ? {
-          rank: finalData[0].rank,
+          id: finalData[0].id,
           name: finalData[0].name,
-          company: finalData[0].company?.name || finalData[0].company
+          company: finalData[0].company
         } : null
       }
     });
@@ -726,10 +706,8 @@ export const PipelineView = React.memo(function PipelineView({
     }
   }, []);
 
-  // CRITICAL FIX: Define sectionDataArray before using it in filteredData
-  // 🚀 PERFORMANCE: Use fast section data for instant loading
-  const sectionDataArray = finalData;
-  const hasData = Array.isArray(sectionDataArray) && sectionDataArray.length > 0;
+  // 🚀 PERFORMANCE: Use dedicated hooks data for instant loading
+  const hasData = Array.isArray(finalData) && finalData.length > 0;
   
   // Calculate isEmpty based on actual data
   const isEmpty = !hasData;
@@ -737,24 +715,19 @@ export const PipelineView = React.memo(function PipelineView({
   // CRITICAL DEBUG: Log the final data state with source information
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
     hasData,
-    dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
-    data: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 3) : [],
-    error,
+    dataLength: Array.isArray(finalData) ? finalData.length : 0,
+    data: Array.isArray(finalData) ? finalData.slice(0, 3) : [],
+    error: finalError,
     isEmpty,
     workspaceId,
     userId,
-    dataSource: {
-      fastSectionDataLength: fastSectionData.data?.length || 0,
-      pipelineDataLength: pipelineData.data?.length || 0,
-      usingFastSectionData: (fastSectionData.data && fastSectionData.data.length > 0),
-      usingPipelineData: !(fastSectionData.data && fastSectionData.data.length > 0)
-    }
+    dataSource: 'v1-api-hooks'
   });
 
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
-    // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of pipelineData.data
-    const dataToFilter = Array.isArray(sectionDataArray) ? sectionDataArray : [];
+    // Use finalData from v1 API hooks
+    const dataToFilter = Array.isArray(finalData) ? finalData : [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
     // Apply timeframe filtering for speedrun section
@@ -950,7 +923,7 @@ export const PipelineView = React.memo(function PipelineView({
     // Note: Removed rank limiting logic - user wants to see all records
 
     return filtered;
-  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
+  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
