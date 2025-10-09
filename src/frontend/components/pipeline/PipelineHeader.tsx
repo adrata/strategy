@@ -469,14 +469,14 @@ export function PipelineHeader({
         };
       case 'companies':
         return {
-          title: 'Companies',
+          title: 'Actions Companies',
           subtitle: 'Business entities',
           actionButton: 'Add Company',
           secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
-          title: 'People',
+          title: 'Actions People',
           subtitle: 'Individual entities',
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'

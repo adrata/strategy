@@ -94,8 +94,8 @@ export function MiddlePanel({
   };
 
 
-  // Show skeleton loading state instead of empty message
-  if (pipelineData['loading'] && pipelineData['data']['length'] === 0) {
+  // Show skeleton loading state only when actually loading (not when there's simply no data)
+  if (pipelineData['loading']) {
     return (
       <div className="h-full flex flex-col bg-white">
         {/* Header skeleton */}
