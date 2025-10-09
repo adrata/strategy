@@ -28,26 +28,8 @@ import "@/platform/desktop-updater";
 import { notificationService } from "@/platform/services/notification-service";
 import { isDesktop } from "@/platform/platform-detection";
 
-// ✅ Initialize Safari error handling for Safari compatibility
-import { initializeSafariErrorHandling } from "@/platform/safari-error-handler";
-
-// ✅ NUCLEAR: Safari nuclear fix - most aggressive error suppression
-import "@/platform/safari-nuclear-fix";
-
-// ✅ CRITICAL: Safari platform override - must run FIRST to prevent desktop detection
-import "@/platform/safari-platform-override";
-
-// ✅ CRITICAL: Safari 2025 fix - latest compatibility fixes
-import "@/platform/safari-2025-fix";
-
-// ✅ CRITICAL: Immediate Safari fix - must run before any other code
-// import "@/platform/safari-immediate-fix"; // Moved to client-side component
-
-// ✅ CRITICAL: Safari error suppression - must run before any other code
-import "@/platform/safari-error-suppression";
-
-// ✅ ULTIMATE: Safari ultimate fix - most aggressive error suppression
-import "@/platform/safari-ultimate-fix";
+// ✅ Initialize Safari compatibility (consolidated from multiple files)
+import { initializeSafariCompatibility } from "@/platform/safari-compatibility";
 
 // Service worker temporarily disabled to fix production errors
 // TODO: Re-enable when sw.js file is properly implemented
@@ -138,7 +120,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
 
   // 🍎 Initialize Safari error handling for Safari compatibility
   useEffect(() => {
-    initializeSafariErrorHandling();
+    initializeSafariCompatibility();
   }, []);
 
   return (

@@ -1466,7 +1466,7 @@ export const PipelineView = React.memo(function PipelineView({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
-                totalCount={fastSectionData.count} // Pass total count for correct pagination
+                totalCount={sectionData.count} // Pass total count for correct pagination
               />
               ) : section === 'prospects' ? (
                 // Prospects table with same design as other sections
@@ -1527,7 +1527,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={sectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
                 // Sellers table with same design as people and companies
@@ -1543,7 +1543,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={sectionData.count} // Pass total count for correct pagination
                 />
           ) : (
             <PipelineTable
