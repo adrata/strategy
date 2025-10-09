@@ -25,9 +25,9 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
         
         console.log('Loading companies for seller:', { record, workspaceId, userId, assignedUserId });
         
-        // Fetch companies directly from the unified API with sellerId parameter
+        // Fetch companies directly from the v1 API with sellerId parameter
         const sellerId = record?.id || record?.userId;
-        const response = await authFetch(`/api/data/unified?type=companies&action=get&sellerId=${sellerId}`);
+        const response = await authFetch(`/api/v1/companies?assignedUserId=${sellerId}`);
         const result = await response.json();
         
         if (result['success'] && result.data) {

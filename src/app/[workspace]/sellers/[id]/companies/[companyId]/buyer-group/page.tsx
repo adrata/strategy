@@ -169,34 +169,16 @@ Create opportunities for ongoing engagement and relationship development. Provid
         const actualCompanyId = getCompanyIdFromSlug(companyId);
         console.log('👥 [BUYER GROUP] Loading company with ID:', actualCompanyId);
 
-        // Load company data using unified API
-        const companyResponse = await fetch(`/api/data/unified?type=companies&action=get`);
+        // Load company data using v1 API
+        const companyResponse = await fetch(`/api/v1/companies/${actualCompanyId}`);
         const companyResult = await companyResponse.json();
 
         if (companyResult['success'] && companyResult.data) {
-          // First try to find by exact ID match
-          let foundCompany = companyResult.data.find((c: CompanyData) => c.id === actualCompanyId);
-          
-          // If not found by ID, try to find by name (for URL slugs like "auth0-cybersecurity-company-1805")
-          if (!foundCompany) {
-            console.log('🔍 [BUYER GROUP] Company not found by ID, searching by name...');
-            
-            // Extract company name from slug (e.g., "auth0" from "auth0-cybersecurity-company-1805")
-            const companyNameFromSlug = actualCompanyId.split('-')[0];
-            console.log('🔍 [BUYER GROUP] Looking for company with name containing:', companyNameFromSlug);
-            
-            foundCompany = companyResult.data.find((c: CompanyData) => 
-              c.name.toLowerCase().includes(companyNameFromSlug.toLowerCase()) ||
-              companyNameFromSlug.toLowerCase().includes(c.name.toLowerCase())
-            );
-            
-            if (foundCompany) {
-              console.log('🔍 [BUYER GROUP] Found company by name:', foundCompany.name);
-            }
-          }
+          // v1 API returns a single company object, not an array
+          const foundCompany = companyResult.data;
           
           if (foundCompany) {
-            console.log('🔍 [BUYER GROUP] Using found company:', foundCompany.name);
+            console.log('✅ [BUYER GROUP] Company found:', foundCompany.name);
             setCompany(foundCompany);
           } else {
             console.log('🔍 [BUYER GROUP] Company not found, using fallback data');
