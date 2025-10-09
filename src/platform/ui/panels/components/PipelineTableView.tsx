@@ -4,6 +4,7 @@ import React from "react";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 // Removed deleted PipelineDataStore - using unified data system
 import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useLeadsData } from "@/platform/hooks/useLeadsData";
 
 interface PipelineTableViewProps {
   activeSection: string;
@@ -17,6 +18,9 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   const workspaceId = user?.workspaceId;
   const userId = user?.id;
   
+  // 🎯 NEW: Use dedicated leads hook for leads section
+  const leadsData = useLeadsData();
+  
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
   
@@ -25,6 +29,11 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
+    // 🎯 NEW: Use dedicated leads data for leads section
+    if (section === 'leads') {
+      return leadsData.leads || [];
+    }
+    
     // The useAcquisitionOSData hook returns acquireData, not data
     const acquireData = acquisitionData?.acquireData || {};
     console.log(`🔍 [PIPELINE TABLE VIEW] Getting data for section ${section}:`, {
@@ -35,7 +44,6 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
     });
     
     switch (section) {
-      case 'leads': return acquireData.leads || [];
       case 'prospects': return acquireData.prospects || [];
       case 'opportunities': return acquireData.opportunities || [];
       case 'companies': return acquireData.companies || [];
@@ -49,8 +57,8 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   
   const pipelineData = {
     data: getSectionData(activeSection),
-    loading: acquisitionData.isLoading,
-    error: acquisitionData.error,
+    loading: activeSection === 'leads' ? leadsData.loading : acquisitionData.isLoading,
+    error: activeSection === 'leads' ? leadsData.error : acquisitionData.error,
     isEmpty: getSectionData(activeSection).length === 0
   };
   
@@ -71,7 +79,7 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   const getTableHeaders = () => {
     switch (activeSection) {
       case 'leads':
-        return ['Company', 'Name', 'Title', 'Email', 'Last Contact', 'Next Action'];
+        return ['Company', 'Name', 'Title', 'Email', 'Last Action', 'Next Action'];
       case 'prospects':
         return ['Company', 'Name', 'Title', 'Email', 'Last Contact', 'Opportunity', 'Next Action'];
       case 'companies':
@@ -93,25 +101,29 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
         return (
           <tr key={item.id || index} className="hover:bg-gray-50 cursor-pointer" onClick={handleRowClick}>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.company || 'Unknown Company'}</div>
-            </td>
-            <td className="px-6 py-4">
-              <div className="text-sm font-medium text-gray-900 truncate max-w-32">
-                {item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown Contact'}
+              <div className="text-sm text-gray-900 truncate max-w-32">
+                {item.company?.name || 'Unknown Company'}
               </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-32">{item.title || 'No Title'}</div>
+              <div className="text-sm font-medium text-gray-900 truncate max-w-32">
+                {item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown Contact'}
+              </div>
             </td>
             <td className="px-6 py-4">
-              <div className="text-sm text-gray-900 truncate max-w-40">{item.email || 'No Email'}</div>
+              <div className="text-sm text-gray-900 truncate max-w-32">{item.jobTitle || 'No Title'}</div>
+            </td>
+            <td className="px-6 py-4">
+              <div className="text-sm text-gray-900 truncate max-w-40">{item.email || item.workEmail || 'No Email'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm">
-              <span className="text-gray-600">2 days ago</span>
-              <div className="text-xs text-gray-400">Email</div>
+              <span className="text-gray-600">
+                {item.lastActionDate ? new Date(item.lastActionDate).toLocaleDateString() : 'No contact'}
+              </span>
+              <div className="text-xs text-gray-400">{item.lastAction || 'No action'}</div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Follow up via email
+              {item.nextAction || 'No next action'}
             </td>
           </tr>
         );
