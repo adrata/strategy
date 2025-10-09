@@ -103,8 +103,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        console.log('⌨️ [AddModal] Add Company keyboard shortcut detected');
+        
         // Check if we're inside the Add Company modal
         const modal = document.querySelector('[data-modal="add-company"]')?.closest('.fixed.inset-0');
+        console.log('⌨️ [AddModal] Add Company modal found:', !!modal);
         if (!modal) return; // Not in the Add Company modal
         
         event.preventDefault();
@@ -115,9 +118,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         
         // Directly trigger the form submission instead of dispatching an event
         const addCompanyForm = document.querySelector('form[data-modal="add-company"]') as HTMLFormElement;
+        console.log('⌨️ [AddModal] Add Company form found:', !!addCompanyForm);
         if (addCompanyForm) {
           // Check if form is valid before submitting
           const nameInput = addCompanyForm.querySelector('input[name="name"]') as HTMLInputElement;
+          console.log('⌨️ [AddModal] Name input found:', !!nameInput, 'Value:', nameInput?.value);
           if (nameInput && nameInput.value.trim()) {
             console.log('⌨️ [AddModal] Submitting Add Company form via keyboard shortcut');
             addCompanyForm.requestSubmit();
@@ -131,12 +136,10 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       }
     };
 
-    // Use both capture and bubble phases to ensure we get the event
+    // Use capture phase to ensure we get the event before other handlers
     document.addEventListener('keydown', handleKeyDown, true); // Capture phase
-    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
-      document.removeEventListener('keydown', handleKeyDown, false);
     };
   }, [showAddCompanyModal]);
 
