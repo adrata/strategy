@@ -74,6 +74,19 @@ export function AddActionModal({
     }
   }, [isOpen, contextRecord]);
 
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!formData.action.trim()) {
+      alert('Please enter action details');
+      return;
+    }
+    if (!formData.person.trim()) {
+      alert('Please select a person');
+      return;
+    }
+    onSubmit(formData);
+  };
+
   // Keyboard shortcuts for modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -100,7 +113,7 @@ export function AddActionModal({
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('keydown', handleKeyDown, false);
     };
-  }, [isOpen, handleSubmit, onClose]);
+  }, [isOpen, formData, onClose]);
 
   // Search people as user types
   useEffect(() => {
@@ -170,48 +183,6 @@ export function AddActionModal({
     setCompanySearchResults([]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.action.trim()) {
-      alert('Please enter action details');
-      return;
-    }
-    if (!formData.person.trim()) {
-      alert('Please select a person');
-      return;
-    }
-    onSubmit(formData);
-  };
-
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isOpen) return;
-      
-      // Command+Enter to submit (works in all fields)
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        handleSubmit(event as any);
-      }
-      
-      // Escape to close
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        event.stopPropagation();
-        onClose();
-      }
-    };
-
-    // Use both capture and bubble phases to ensure we get the event
-    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
-    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
-      document.removeEventListener('keydown', handleKeyDown, false);
-    };
-  }, [isOpen, formData, onClose]);
 
   if (!isOpen) return null;
 
