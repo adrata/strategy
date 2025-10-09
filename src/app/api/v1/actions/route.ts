@@ -38,7 +38,9 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Enhanced where clause for action management
-    const where: any = {};
+    const where: any = {
+      deletedAt: null, // Only show non-deleted records
+    };
     
     if (search) {
       where.OR = [

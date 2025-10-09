@@ -261,12 +261,33 @@ export function PipelineTable({
     return <TableDataSkeleton rowCount={8} visibleColumns={visibleColumns} />;
   }
   
-  // Empty state
+  // Empty state - show table with "No data. Add a lead." in first row
   if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-        <div className="text-lg font-medium mb-2">No {section} found</div>
-        <div className="text-sm">Try adjusting your filters or add new records</div>
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto pipeline-table-scroll" style={{ height: tableHeight }}>
+          <table className="w-full">
+            <TableHeader
+              visibleColumns={visibleColumns}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onColumnSort={onColumnSort}
+              section={section}
+            />
+            <tbody>
+              <tr className="border-b border-gray-200 hover:bg-gray-50">
+                <td colSpan={visibleColumns?.length || 6} className="px-6 py-12 text-center">
+                  <div className="text-gray-500">
+                    <div className="text-lg font-medium mb-2">No data.</div>
+                    <div className="text-sm">
+                      {section === 'leads' ? 'Add a lead.' : `Add a ${section.slice(0, -1)}.`}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
