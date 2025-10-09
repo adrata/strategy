@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
         gender: body.gender,
         bio: body.bio,
         profilePictureUrl: body.profilePictureUrl,
-        status: body.status || 'ACTIVE',
+        status: body.status || 'LEAD',
         priority: body.priority || 'MEDIUM',
         source: body.source,
         tags: body.tags || [],

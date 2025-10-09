@@ -20,7 +20,7 @@ import {
   CogIcon,
   SwatchIcon,
 } from "@heroicons/react/24/outline";
-import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher";
+// import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher"; // Removed - no longer using demo scenarios popup
 import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
 
@@ -102,7 +102,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const router = useRouter();
   const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
   const [activeTab, setActiveTab] = useState<"main" | "docs">("main");
-  const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false);
+  // const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false); // Removed - no longer using demo scenarios popup
   const [isGrandCentralOpen, setIsGrandCentralOpen] = useState(false);
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
@@ -409,6 +409,23 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
     }
   };
 
+  const handleDemoWorkspaceClick = async () => {
+    try {
+      console.log('🎯 ProfileBox: Demo workspace clicked - navigating directly to demo workspace');
+      setIsProfileOpen(false); // Close profile popup
+      
+      // Navigate directly to the demo workspace
+      if (typeof window !== 'undefined') {
+        window.location.href = '/demo/people';
+      }
+      
+    } catch (error) {
+      console.error('❌ ProfileBox: Error navigating to demo workspace:', error);
+      // Show error message to user
+      alert('Failed to switch to demo workspace. Please try again.');
+    }
+  };
+
   return (
     <div
       className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden z-50"
@@ -448,10 +465,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {isAdrataUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
-            onClick={() => setIsDemoSwitcherOpen(true)}
+            onClick={handleDemoWorkspaceClick}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e['key'] === "Enter" && setIsDemoSwitcherOpen(true)}
+            onKeyDown={(e) => e['key'] === "Enter" && handleDemoWorkspaceClick()}
           >
             Demo
           </div>
@@ -678,13 +695,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         </div>
       </div>
 
-      {/* Demo Scenario Switcher Modal */}
-      <DemoScenarioSwitcher
-        isOpen={isDemoSwitcherOpen}
-        onClose={() => setIsDemoSwitcherOpen(false)}
-        onScenarioSelect={onDemoScenarioChange || handleDemoScenarioSelection}
-        currentScenario={currentDemoScenario}
-      />
+      {/* Demo Scenario Switcher Modal - Removed, now goes directly to demo workspace */}
 
       {/* Grand Central Modal */}
       <GrandCentralModal

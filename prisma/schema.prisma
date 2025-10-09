@@ -70,10 +70,11 @@ enum CompanyPriority {
 }
 
 enum PersonStatus {
-  ACTIVE
-  INACTIVE
-  PROSPECT
   LEAD
+  PROSPECT
+  OPPORTUNITY
+  CLIENT
+  SUPERFAN
 }
 
 enum PersonPriority {
@@ -359,7 +360,7 @@ model people {
   gender            String?   @db.VarChar(20)
   bio               String?
   profilePictureUrl String?   @db.VarChar(500)
-  status            PersonStatus? @default(ACTIVE)
+  status            PersonStatus? @default(LEAD)
   priority          PersonPriority? @default(MEDIUM)
   source            String?
   tags              String[]  @default([])

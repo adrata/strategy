@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { authFetch } from '@/platform/api-fetch';
 import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { Select } from "./Select";
+import { AddCompanyModal } from "./AddCompanyModal";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
 import { SuccessMessage } from "./SuccessMessage";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
@@ -503,19 +505,55 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             />
           </div>
 
-          {/* Company/Account Field - Second for leads */}
-          {activeSection === "leads" && (
+          {/* Status Field - Second for leads and people */}
+          {(activeSection === "leads" || activeSection === "people") && (
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Company/Account
+                Status *
               </label>
+              <Select
+                value={formData.status || "LEAD"}
+                onChange={(value) =>
+                  setFormData((prev: any) => ({ ...prev, status: value }))
+                }
+                options={[
+                  { value: "LEAD", label: "Lead" },
+                  { value: "PROSPECT", label: "Prospect" },
+                  { value: "OPPORTUNITY", label: "Opportunity" },
+                  { value: "CLIENT", label: "Client" },
+                  { value: "SUPERFAN", label: "Superfan" }
+                ]}
+                placeholder="Select status"
+                className="w-full"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Press 1-5 to select, press same number to cycle through options
+              </p>
+            </div>
+          )}
+
+          {/* Company Field - Third for leads and people */}
+          {(activeSection === "leads" || activeSection === "people") && (
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <label className="block text-sm font-medium text-[var(--foreground)]">
+                  Company
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowAddCompanyModal(true)}
+                  className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                >
+                  Add Company
+                </button>
+              </div>
               <div className="relative">
                 <div className="relative">
                   <input
                     type="text"
                     value={companySearchQuery}
                     onChange={(e) => setCompanySearchQuery(e.target.value)}
-                    placeholder="Search for company..."
+                    placeholder="Search for company"
                     className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = categoryColors.primary;
@@ -555,11 +593,24 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 {/* No results message */}
                 {companySearchQuery.length >= 2 && companySearchResults.length === 0 && !isSearchingCompanies && (
                   <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
-                    <div
-                      onClick={handleAddCompany}
-                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-blue-600 font-medium"
-                    >
-                      + Add New Company: "{companySearchQuery}"
+                    <div className="px-4 py-3 text-center">
+                      <div className="text-sm text-gray-500 mb-2">No companies found</div>
+                      <button
+                        type="button"
+                        onClick={handleAddCompany}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        Add "{companySearchQuery}" as new company
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Loading state */}
+                {isSearchingCompanies && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                    <div className="px-4 py-3 text-center">
+                      <div className="text-sm text-gray-500">Searching companies...</div>
                     </div>
                   </div>
                 )}
@@ -587,6 +638,8 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               )}
             </div>
           )}
+
+          {/* Company/Account Field - Legacy field removed, using new Company field above */}
 
 
           {/* Opportunity-specific fields */}
@@ -1005,29 +1058,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             </div>
           )}
 
-          {/* Notes Field */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes || ""}
-              onChange={(e) =>
-                setFormData((prev: any) => ({ ...prev, notes: e.target.value }))
-              }
-              placeholder={`Additional notes about this ${getSectionTitle().toLowerCase()}`}
-              rows={3}
-              className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
-              onFocus={(e) => {
-                e.target.style.borderColor = categoryColors.primary;
-                e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
-          </div>
+          {/* Notes Field - Removed for now */}
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 pt-4">
@@ -1308,6 +1339,19 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         isVisible={showSuccessMessage}
         onClose={() => setShowSuccessMessage(false)}
         type={successMessage.includes('Error') || successMessage.includes('Failed') ? 'error' : 'success'}
+      />
+
+      {/* Add Company Modal */}
+      <AddCompanyModal
+        isOpen={showAddCompanyModal}
+        onClose={() => setShowAddCompanyModal(false)}
+        onCompanyAdded={(company) => {
+          // Set the selected company in the form
+          setSelectedCompany(company);
+          setCompanySearchQuery(company.name);
+          setCompanySearchResults([]);
+          setShowAddCompanyModal(false);
+        }}
       />
     </div>
   );
