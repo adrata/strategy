@@ -262,10 +262,24 @@ export function usePipelineData(
 
     console.log(`🔍 [usePipelineData] Fetching ${section} data for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-    const response = await fetch(
-      `/api/data/unified?type=${section}`
-    );
+    // 🚀 NEW: Use v1 APIs for better performance and consistency
+    let response;
+    if (section === 'companies') {
+      response = await fetch('/api/v1/companies');
+    } else if (section === 'people') {
+      response = await fetch('/api/v1/people');
+    } else if (section === 'actions') {
+      response = await fetch('/api/v1/actions');
+    } else if (section === 'leads') {
+      response = await fetch('/api/v1/people?status=LEAD');
+    } else if (section === 'prospects') {
+      response = await fetch('/api/v1/people?status=PROSPECT');
+    } else if (section === 'opportunities') {
+      response = await fetch('/api/v1/companies?status=OPPORTUNITY');
+    } else {
+      console.warn(`⚠️ [usePipelineData] No v1 API available for section: ${section}`);
+      throw new Error(`No v1 API available for section: ${section}`);
+    }
     
     if (!response.ok) {
       throw new Error(`Failed to fetch ${section} data`);
@@ -277,12 +291,12 @@ export function usePipelineData(
     console.log(`🔍 [usePipelineData] API response for ${section}:`, {
       success: result.success,
       dataKeys: result.data ? Object.keys(result.data) : [],
-      sectionData: result.data?.[section]?.slice(0, 2) || [],
+      sectionData: result.data?.slice(0, 2) || [],
       fullResponse: result
     });
     
-    // The API returns data directly in result.data, not nested under section
-    return result.data || [];
+    // v1 API returns data directly in result.data as an array
+    return result.success ? result.data || [] : [];
   }, [section, workspaceId, userId]);
 
   const cacheKey = `pipeline:${section}`;
