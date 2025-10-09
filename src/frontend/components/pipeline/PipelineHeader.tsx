@@ -784,19 +784,19 @@ export function PipelineHeader({
       
       metricItems.push({
         label: 'Actions',
-        value: overdueActions.toString(),
+        value: overdueActions > 0 ? overdueActions.toString() : '—',
         color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
       });
       
       metricItems.push({
         label: uniqueCompanies['size'] === 1 ? 'Company' : 'Companies',
-        value: uniqueCompanies.size.toString(),
+        value: uniqueCompanies.size > 0 ? uniqueCompanies.size.toString() : '—',
         color: 'text-gray-900'
       });
       
       metricItems.push({
         label: leadsCount === 1 ? 'Lead' : 'Leads',
-        value: leadsCount.toString(),
+        value: leadsCount > 0 ? leadsCount.toString() : '—',
         color: 'text-gray-900'
       });
     } else if (section !== 'dashboard') {
@@ -832,19 +832,19 @@ export function PipelineHeader({
         
         metricItems.push({
           label: 'Actions',
-          value: overdueActions.toString(),
+          value: overdueActions > 0 ? overdueActions.toString() : '—',
           color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
         });
         
         metricItems.push({
           label: uniqueCompanies.size === 1 ? 'Company' : 'Companies',
-          value: uniqueCompanies.size.toString(),
+          value: uniqueCompanies.size > 0 ? uniqueCompanies.size.toString() : '—',
           color: 'text-gray-900'
         });
         
         metricItems.push({
           label: 'Prospects',
-          value: totalCount.toString(),
+          value: totalCount > 0 ? totalCount.toString() : '—',
           color: 'text-gray-900'
         });
       } else {
@@ -853,7 +853,7 @@ export function PipelineHeader({
         
         metricItems.push({
           label: 'Total',
-          value: totalCount.toString(),
+          value: totalCount > 0 ? totalCount.toString() : '—',
           color: 'text-gray-900'
         });
         

@@ -195,23 +195,23 @@ export function PipelineTable({
   // Get table headers
   const headers = getTableHeaders(visibleColumns, section);
   
-  // Dynamic height calculation - align with AI chat panel bottom
+  // Dynamic height calculation - slightly extend table to reduce white space
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 187.5 : 600; // Reserve space below table to align with chat panel
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 600; // Moderate space reservation
   
-  // Dynamic height calculation - align with chat panel
+  // Dynamic height calculation - slightly extend table to reduce white space
   let tableHeight;
   if (data.length === 0) {
     // Empty state - use moderate height
     tableHeight = 200;
   } else if (data.length <= 10) {
-    // Small to medium datasets - use content height with small buffer to match AI panel
-    tableHeight = contentHeight + 24; // Extended by 4px to align with AI chat input box
+    // Small to medium datasets - extend content height slightly
+    tableHeight = contentHeight + 40; // Slightly extended to reduce white space
   } else {
-    // Larger datasets - use viewport height to fill available space and align with chat panel
-    tableHeight = maxViewportHeight + 7; // Extended by 4px to align with AI chat input box
+    // Larger datasets - use viewport height with small extension
+    tableHeight = maxViewportHeight + 20; // Small extension to reduce white space
   }
   
   // Use custom hooks for data and actions

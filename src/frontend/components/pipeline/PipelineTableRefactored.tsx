@@ -164,23 +164,23 @@ export function PipelineTable({
   // Get table headers
   const headers = getTableHeaders(visibleColumns, section);
   
-  // Dynamic height calculation - fit within viewport without overflow
+  // Dynamic height calculation - slightly extend table to reduce white space
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 250 : 500; // More conservative space reservation
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 500; // Moderate space reservation
   
-  // Dynamic height calculation - prevent overflow
+  // Dynamic height calculation - slightly extend table to reduce white space
   let tableHeight;
   if (data.length === 0) {
     // Empty state - use moderate height
     tableHeight = 200;
   } else if (data.length <= 10) {
-    // Small to medium datasets - use content height with minimal buffer
-    tableHeight = Math.min(contentHeight + 24, maxViewportHeight);
+    // Small to medium datasets - extend content height slightly
+    tableHeight = contentHeight + 40; // Slightly extended to reduce white space
   } else {
-    // Larger datasets - use viewport height to fill available space without overflow
-    tableHeight = maxViewportHeight + 4;
+    // Larger datasets - use viewport height with small extension
+    tableHeight = maxViewportHeight + 20; // Small extension to reduce white space
   }
   
   // Use custom hooks for data and actions
