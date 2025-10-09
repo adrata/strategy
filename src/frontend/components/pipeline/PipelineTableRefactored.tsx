@@ -276,11 +276,11 @@ export function PipelineTable({
             />
             <tbody>
               <tr className="border-b border-gray-200 hover:bg-gray-50">
-                <td colSpan={visibleColumns?.length || 6} className="px-6 py-12 text-center">
+                <td colSpan={visibleColumns?.length || 6} className="px-6 py-16 text-center">
                   <div className="text-gray-500">
-                    <div className="text-lg font-medium mb-2">No data.</div>
+                    <div className="text-lg font-medium mb-2">No leads yet</div>
                     <div className="text-sm">
-                      {section === 'leads' ? 'Add a lead.' : `Add a ${section.slice(0, -1)}.`}
+                      Get started by adding your first lead to the pipeline.
                     </div>
                   </div>
                 </td>

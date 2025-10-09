@@ -1529,27 +1529,29 @@ export const PipelineView = React.memo(function PipelineView({
         })()}
       />
 
-      {/* Filters */}
-      <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
-        <PipelineFilters 
-          section={section}
-          totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
-          onSearchChange={setSearchQuery}
-          onVerticalChange={setVerticalFilter}
-          onStatusChange={setStatusFilter}
-          onPriorityChange={setPriorityFilter}
-          onRevenueChange={setRevenueFilter}
-          onLastContactedChange={setLastContactedFilter}
-          onTimezoneChange={setTimezoneFilter}
-          onSortChange={handleDropdownSortChange}
-          onAddRecord={handleAddRecord}
-          onColumnVisibilityChange={handleColumnVisibilityChange}
-          visibleColumns={visibleColumns}
-          // 🎯 NEW SELLER FILTERS
-          onCompanySizeChange={setCompanySizeFilter}
+      {/* Filters - Hide when no leads */}
+      {!(section === 'leads' && finalData.length === 0) && (
+        <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
+          <PipelineFilters 
+            section={section}
+            totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
+            onSearchChange={setSearchQuery}
+            onVerticalChange={setVerticalFilter}
+            onStatusChange={setStatusFilter}
+            onPriorityChange={setPriorityFilter}
+            onRevenueChange={setRevenueFilter}
+            onLastContactedChange={setLastContactedFilter}
+            onTimezoneChange={setTimezoneFilter}
+            onSortChange={handleDropdownSortChange}
+            onAddRecord={handleAddRecord}
+            onColumnVisibilityChange={handleColumnVisibilityChange}
+            visibleColumns={visibleColumns}
+            // 🎯 NEW SELLER FILTERS
+            onCompanySizeChange={setCompanySizeFilter}
           onLocationChange={setLocationFilter}
         />
-      </div>
+        </div>
+      )}
 
       {/* Main content */}
       <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
