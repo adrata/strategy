@@ -308,6 +308,7 @@ model companies {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime
   entityId           String?   @db.VarChar(30)
+  deletedAt          DateTime?
 
   workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   assignedUser  users?     @relation("AssignedCompanies", fields: [assignedUserId], references: [id], onDelete: SetNull)
@@ -317,6 +318,7 @@ model companies {
   @@index([workspaceId])
   @@index([assignedUserId])
   @@index([entityId])
+  @@index([deletedAt])
   @@index([workspaceId, status])
   @@index([workspaceId, assignedUserId, status])
   @@index([workspaceId, createdAt])
@@ -376,6 +378,7 @@ model people {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime
   entityId          String?   @db.VarChar(30)
+  deletedAt         DateTime?
 
   workspace    workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   company      companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
@@ -386,6 +389,7 @@ model people {
   @@index([companyId])
   @@index([assignedUserId])
   @@index([entityId])
+  @@index([deletedAt])
   @@index([workspaceId, status])
   @@index([workspaceId, assignedUserId, status])
   @@index([workspaceId, companyId, status])
@@ -410,6 +414,7 @@ model actions {
   priority    ActionPriority @default(NORMAL)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime
+  deletedAt   DateTime?
 
   workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      users      @relation("AssignedActions", fields: [userId], references: [id], onDelete: Cascade)
@@ -422,6 +427,7 @@ model actions {
   @@index([personId])
   @@index([type])
   @@index([status])
+  @@index([deletedAt])
   @@index([workspaceId, status])
   @@index([workspaceId, userId, status])
   @@index([workspaceId, scheduledAt])
