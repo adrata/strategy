@@ -116,10 +116,10 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
         return (
           <div
             key={file.id}
-            className={`relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm ${
+            className={`relative flex items-center gap-2 rounded-xl px-2 py-0.5 text-sm ${
               isData 
                 ? 'bg-gray-900 text-white border border-gray-700' 
-                : 'bg-black text-white'
+                : 'bg-white text-black border border-gray-300'
             }`}
             style={{
               borderRadius: '12px', // Squircle-like rounded corners
@@ -129,7 +129,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             <div className={`flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
               isData 
                 ? 'bg-red-600 text-white' 
-                : 'bg-white text-black'
+                : 'bg-gray-300 text-gray-600'
             }`}>
               {isData ? '@' : (index + 1)}
             </div>
@@ -151,7 +151,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
               className={`ml-1 p-0.5 rounded-full transition-colors ${
                 isData 
                   ? 'hover:bg-gray-800' 
-                  : 'hover:bg-gray-800'
+                  : 'hover:bg-gray-100'
               }`}
               aria-label={`Remove ${file.name}`}
             >
