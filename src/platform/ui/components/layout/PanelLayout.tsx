@@ -173,7 +173,7 @@ export function PanelLayout({
         console.log(
           "🏢 PanelLayout: Grand Central keyboard shortcut triggered",
         );
-        router.push("/grand-central/dashboard");
+        router.push("./grand-central/dashboard");
       }
       
       // Command/Ctrl + I: Signal popup (global demo trigger)

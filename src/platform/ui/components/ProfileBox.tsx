@@ -122,7 +122,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   console.log(`🏢 ProfileBox: Current workspace ID: ${currentWorkspaceId}, User email: ${currentUserEmail}, Workspace name: ${workspace}, isDanoUser: ${isDanoUser}, isAdrataUser: ${isAdrataUser}, isDemoMode: ${isDemoMode}`);
 
   // Use inline styles for positioning instead of fixed positioning
-  const profileBoxStyle: React['CSSProperties'] = {
+  const profileBoxStyle: React.CSSProperties = {
     width: "320px",
     // Remove positioning - let parent container handle it
     zIndex: 1000,
@@ -260,10 +260,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
       // Allow navigation to Grand Central routes, pipeline, and settings pages
       const allowedDesktopRoutes = [
         "/pipeline",
-        "/grand-central/dashboard",
-        "/grand-central/profile",
-        "/grand-central/integrations",
-        "/grand-central/settings",
+        "./grand-central/dashboard",
+        "./grand-central/profile",
+        "./grand-central/integrations",
+        "./grand-central/settings",
         "/highway",
         "/optimization",
         "/docs/", // Allow all docs routes
@@ -390,7 +390,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
       onGrandCentralClick();
     } else {
       console.log("🏢 ProfileBox: Navigating to Grand Central dashboard");
-      handleNavigation("/grand-central/dashboard");
+      handleNavigation("./grand-central/dashboard");
     }
   };
 
@@ -600,7 +600,20 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </>
         )}
         
-        {/* Workspaces Section - Show for users with multiple workspaces */}
+        {/* 1. Settings */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          onClick={() => handleNavigation("./grand-central/profile")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) =>
+            e['key'] === "Enter" && handleNavigation("./grand-central/profile")
+          }
+        >
+          Settings
+        </div>
+        
+        {/* 2. Workspaces Section - Show for users with multiple workspaces */}
         {authUser?.workspaces && authUser.workspaces.length > 1 && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
@@ -613,38 +626,27 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
-          onClick={() => handleNavigation("/grand-central/profile")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) =>
-            e['key'] === "Enter" && handleNavigation("/grand-central/profile")
-          }
-        >
-          Settings
-        </div>
-        {/* Grand Central */}
+        {/* 3. Grand Central */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
           onClick={() => {
             console.log("🏢 ProfileBox: Grand Central clicked - navigating to integrations hub");
             setIsProfileOpen(false); // Close profile popup
-            handleNavigation("/grand-central/integrations");
+            handleNavigation("./grand-central/integrations");
           }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e['key'] === "Enter") {
               setIsProfileOpen(false);
-              handleNavigation("/grand-central/integrations");
+              handleNavigation("./grand-central/integrations");
             }
           }}
         >
           Grand Central
         </div>
         
-        {/* Speedrun Engine Configuration - Available for all users */}
+        {/* 4. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-2"
@@ -664,10 +666,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-
-        
-        
-        
+        {/* 5. Sign Out */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
           onClick={handleSignOut}

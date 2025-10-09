@@ -202,7 +202,7 @@ export default function UniversalCommandPalette({
         description: "Open application preferences",
         category: "action",
         icon: <Settings className="w-4 h-4" />,
-        action: () => router.push("/grand-central/profile"),
+        action: () => router.push("./grand-central/profile"),
         keywords: ["preferences", "settings", "config"],
         shortcut: "⌘,",
         priority: 5,

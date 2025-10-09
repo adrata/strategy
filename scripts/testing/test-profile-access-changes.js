@@ -246,7 +246,7 @@ class ProfileAccessTester {
         const routes = [
           '/pipeline/leads',
           '/monaco',
-          '/grand-central'
+          './grand-central'
         ];
 
         for (const route of routes) {

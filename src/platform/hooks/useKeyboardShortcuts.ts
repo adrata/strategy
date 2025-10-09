@@ -105,7 +105,7 @@ export function useKeyboardShortcuts(
           router.push("/chessboard");
           break;
         case "navigate-to-grand-central":
-          router.push("/grand-central");
+          router.push("./grand-central");
           break;
         case "navigate-to-store":
           router.push("/store");
@@ -117,7 +117,7 @@ export function useKeyboardShortcuts(
           window.open("/docs", "_blank");
           break;
         case "open-preferences":
-          router.push("/grand-central/profile");
+          router.push("./grand-central/profile");
           break;
         default:
           console.log(`Shortcut action not implemented: ${shortcut.action}`);

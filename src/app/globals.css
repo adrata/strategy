@@ -139,8 +139,8 @@ body:not(.website) {
   --scrollbar-thumb: #e0e0e0;
 
   /* ENHANCED ACCESSIBILITY COLORS */
-  --focus-ring: #000000;
-  --focus-ring-width: 3px;
+  --focus-ring: #3b82f6;
+  --focus-ring-width: 2px;
   --high-contrast-bg: #ffffff;
   --high-contrast-fg: #000000;
   --high-contrast-border: #000000;
@@ -171,7 +171,7 @@ body:not(.website) {
   --scrollbar-thumb: #444444;
 
   /* ENHANCED DARK MODE ACCESSIBILITY */
-  --focus-ring: #ffffff;
+  --focus-ring: #60a5fa;
   --high-contrast-bg: #000000;
   --high-contrast-fg: #ffffff;
   --high-contrast-border: #ffffff;
@@ -208,8 +208,7 @@ body:not(.website) {
 
 /* Focus styles for accessibility - following 2025 best practices */
 *:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Remove custom placeholder CSS - using normal flow */
@@ -584,8 +583,7 @@ input:focus,
 textarea:focus,
 select:focus,
 button:focus {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Override default link colors globally */

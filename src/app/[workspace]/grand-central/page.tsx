@@ -13,10 +13,10 @@ export default function GrandCentralLanding() {
     if (!isLoading) {
       if (user) {
         // Automatically redirect authenticated users to dashboard
-        router.replace("/grand-central/dashboard");
+        router.replace("./dashboard");
       } else {
         // Redirect unauthenticated users to sign in
-        router.replace("/sign-in?returnTo=/grand-central/dashboard");
+        router.replace("/sign-in?returnTo=./dashboard");
       }
     }
   }, [user, isLoading, router]);

@@ -72,7 +72,7 @@ export default function ProfilePage() {
               </p>
             </div>
             <Button
-              onClick={() => router.push("/grand-central")}
+              onClick={() => router.push("../")}
               variant="outline"
             >
               Back to Grand Central
@@ -294,7 +294,7 @@ export default function ProfilePage() {
                   Cost Optimization Dashboard
                 </Button>
                 <Button
-                  onClick={() => router.push("/grand-central/integrations")}
+                  onClick={() => router.push("../integrations")}
                   variant="outline"
                 >
                   Manage Integrations
