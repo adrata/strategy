@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUnifiedAuth } from "@/platform/auth-unified";
+import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,21 @@ export default function SignInPage() {
   const { signIn: authSignIn } = useUnifiedAuth();
 
   // Optimized platform detection and logout cleanup (logging removed for performance)
+  useEffect(() => {
+    // Handle Command+Enter keyboard shortcut
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        if (!isLoading && email && password) {
+          handleSubmit(event as any);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [email, password, isLoading]);
+
   useEffect(() => {
 
     // CRITICAL: Ensure we're on the correct domain before anything else
@@ -282,10 +298,11 @@ export default function SignInPage() {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-gray-300"
+              className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
               placeholder="Enter your username or email"
               required
               disabled={isLoading}
+              autoFocus
             />
           </div>
 
@@ -299,7 +316,7 @@ export default function SignInPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-gray-300"
+              className="w-full border border-gray-300 rounded px-4 py-2 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 focus-visible:ring-offset-0 transition-colors invalid:border-gray-300"
               placeholder="Enter your password"
               required
               disabled={isLoading}
@@ -335,7 +352,7 @@ export default function SignInPage() {
             disabled={isLoading}
             className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-black disabled:opacity-100"
           >
-            {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? "Starting..." : `Start (${getCommonShortcut('SUBMIT')})`}
           </button>
         </form>
 

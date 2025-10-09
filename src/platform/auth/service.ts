@@ -315,25 +315,19 @@ export class UnifiedAuthService {
             deviceId,
           }),
           credentials: "include",
-        },
-        {
-          success: false,
-          error: "Authentication failed",
-          accessToken: "",
-          refreshToken: "",
-          expires: "",
-        },
+        }
       );
 
-      if (!response.success) {
+      const data = await response.json();
+
+      if (!data.success) {
         return {
           success: false,
-          error: response.error || "Invalid credentials",
+          error: data.error || "Invalid credentials",
         };
       }
 
       // Type-safe check for user property
-      const data = response as any;
       if (!data.user) {
         return { success: false, error: "Authentication failed" };
       }
