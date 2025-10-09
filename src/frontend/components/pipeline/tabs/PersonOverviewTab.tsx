@@ -110,40 +110,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     seniority: record.customFields?.seniority || 'Mid-level'
   };
 
-  // Debug: Log the extracted person data
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📊 [Person Data Debug] Extracted person data:', {
-      name: personData.name,
-      title: personData.title,
-      email: personData.email,
-      phone: personData.phone,
-      linkedin: personData.linkedin,
-      company: personData.company,
-      industry: personData.industry,
-      department: personData.department
-    });
-    
-    // Additional debug for Aaron Adkins specifically
-    if (record?.fullName?.includes('Aaron Adkins') || record?.name?.includes('Aaron Adkins')) {
-      console.log('🎯 [AARON FINAL DEBUG] Final extracted values:');
-      console.log('  Name:', personData.name, '(should be Aaron Adkins)');
-      console.log('  Title:', personData.title, '(should be Safety Advisor)');
-      console.log('  Email:', personData.email, '(should be aadkins@steubenfoods.com)');
-      console.log('  Company:', personData.company, '(should be Steuben Foods Inc.)');
-      console.log('  Department:', personData.department, '(should be Other)');
-      
-      // Check if any values are still dashes
-      const hasDashes = Object.values(personData).some(value => value === '-');
-      console.log('  Has dashes:', hasDashes);
-      
-      if (hasDashes) {
-        console.log('❌ [AARON ISSUE] Some values are still showing as dashes!');
-        console.log('  This means the data extraction is not working correctly.');
-      } else {
-        console.log('✅ [AARON SUCCESS] All values are populated!');
-      }
-    }
-  }
+  // Debug logging removed for cleaner console
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
     if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';

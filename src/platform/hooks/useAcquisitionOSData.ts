@@ -197,11 +197,11 @@ export function useData(
       
       // NEW: Use v1 APIs instead of old unified API
       const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
-        fetch('/api/v1/people?status=LEAD'),
-        fetch('/api/v1/people?status=PROSPECT'),
-        fetch('/api/v1/companies?status=OPPORTUNITY'),
-        fetch('/api/v1/companies'),
-        fetch('/api/v1/people')
+        fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
+        fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
+        fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
+        fetch('/api/v1/companies', { credentials: 'include' }),
+        fetch('/api/v1/people', { credentials: 'include' })
       ]);
       
       // Process v1 API responses
@@ -259,11 +259,11 @@ export function useData(
     
     // Fetch all data using v1 APIs
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
-      fetch('/api/v1/people?status=LEAD'),
-      fetch('/api/v1/people?status=PROSPECT'),
-      fetch('/api/v1/companies?status=OPPORTUNITY'),
-      fetch('/api/v1/companies'),
-      fetch('/api/v1/people')
+      fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
+      fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
+      fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
+      fetch('/api/v1/companies', { credentials: 'include' }),
+      fetch('/api/v1/people', { credentials: 'include' })
     ]);
     
     // Process v1 API responses

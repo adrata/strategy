@@ -92,19 +92,19 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   useEffect(() => {
     const fetchBuyerGroups = async () => {
-      console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
-      console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
-      console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
+      // console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
+      // console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
+      // console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
       
       if (!record?.id) {
-        console.log('🔍 [BUYER GROUPS DEBUG] No record ID, setting loading to false');
+        // console.log('🔍 [BUYER GROUPS DEBUG] No record ID, setting loading to false');
         setLoading(false);
         return;
       }
       
       // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched
       if (isFetching || (lastFetchTime && Date.now() - lastFetchTime < 5000)) {
-        console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
+        // console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
         return;
       }
       
@@ -133,15 +133,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           companyId = record.id; // For company records, the record ID is the company ID
         }
         
-        console.log('🔍 [BUYER GROUPS DEBUG] Record type:', recordType);
-        console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
-        console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
-        console.log('🔍 [BUYER GROUPS DEBUG] Record name:', record.name);
-        console.log('🔍 [BUYER GROUPS DEBUG] Record company:', record.company);
-        console.log('🔍 [BUYER GROUPS DEBUG] Record companyName:', record.companyName);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Record type:', recordType);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Record name:', record.name);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Record company:', record.company);
+        // console.log('🔍 [BUYER GROUPS DEBUG] Record companyName:', record.companyName);
         
         if (!companyName) {
-          console.log('No company found for record, showing empty buyer group');
+          // console.log('No company found for record, showing empty buyer group');
           setBuyerGroups([]);
           setLoading(false);
           return;
@@ -231,15 +231,15 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                 }));
                 
                 safeSetItem(cacheKey, essentialData);
-                console.log('📦 [BUYER GROUPS] Cached fast API data');
+                // console.log('📦 [BUYER GROUPS] Cached fast API data');
               } else {
-                console.log('⚠️ [BUYER GROUPS] Fast API returned no members');
+                // console.log('⚠️ [BUYER GROUPS] Fast API returned no members');
               }
             } else {
-              console.log('⚠️ [BUYER GROUPS] Fast API failed with status:', fastResponse.status);
+              // console.log('⚠️ [BUYER GROUPS] Fast API failed with status:', fastResponse.status);
             }
           } catch (fastError) {
-            console.log('⚠️ [BUYER GROUPS] Fast API failed, using empty state for better UX');
+            // console.log('⚠️ [BUYER GROUPS] Fast API failed, using empty state for better UX');
           }
           
         }
@@ -247,31 +247,31 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // 🚀 ULTRA-FAST: Fast API already returns filtered people, so use them directly
         const companyPeople = peopleData;
         
-        console.log(`⚡ [BUYER GROUPS] Using ${companyPeople.length} people from fast API for company ${companyName}`);
+        // console.log(`⚡ [BUYER GROUPS] Using ${companyPeople.length} people from fast API for company ${companyName}`);
 
         // Remove duplicates based on person ID
         const uniqueCompanyPeople = companyPeople.filter((person: any, index: number, self: any[]) => 
           index === self.findIndex((p: any) => p.id === person.id)
         );
         
-        console.log(`🔍 [BUYER GROUPS] After deduplication: ${uniqueCompanyPeople.length} unique people (was ${companyPeople.length})`);
+        // console.log(`🔍 [BUYER GROUPS] After deduplication: ${uniqueCompanyPeople.length} unique people (was ${companyPeople.length})`);
         
-        console.log(`🔍 [BUYER GROUPS] Filtered ${uniqueCompanyPeople.length} people for company ${companyName} (ID: ${companyId})`);
-        console.log(`🔍 [BUYER GROUPS] All people data:`, peopleData.slice(0, 3)); // Show first 3 people for debugging
-        console.log(`🔍 [BUYER GROUPS] Company name being searched: "${companyName}"`);
-        console.log(`🔍 [BUYER GROUPS] Record ID: "${record.id}"`);
-        console.log(`🔍 [BUYER GROUPS] Workspace ID: "${workspaceId}"`);
-        console.log(`🔍 [BUYER GROUPS] User ID: "${userId}"`);
-        console.log(`🔍 [BUYER GROUPS] Total people fetched: ${peopleData.length}`);
+        // console.log(`🔍 [BUYER GROUPS] Filtered ${uniqueCompanyPeople.length} people for company ${companyName} (ID: ${companyId})`);
+        // console.log(`🔍 [BUYER GROUPS] All people data:`, peopleData.slice(0, 3)); // Show first 3 people for debugging
+        // console.log(`🔍 [BUYER GROUPS] Company name being searched: "${companyName}"`);
+        // console.log(`🔍 [BUYER GROUPS] Record ID: "${record.id}"`);
+        // console.log(`🔍 [BUYER GROUPS] Workspace ID: "${workspaceId}"`);
+        // console.log(`🔍 [BUYER GROUPS] User ID: "${userId}"`);
+        // console.log(`🔍 [BUYER GROUPS] Total people fetched: ${peopleData.length}`);
         
         // Debug: Show all people with their company IDs
-        peopleData.forEach((person, index) => {
-          console.log(`🔍 [BUYER GROUPS] Person ${index + 1}: ${person.fullName}, Company ID: ${person.companyId}, Company Name: ${person.company?.name || person.company}`);
-        });
+        // peopleData.forEach((person, index) => {
+        //   console.log(`🔍 [BUYER GROUPS] Person ${index + 1}: ${person.fullName}, Company ID: ${person.companyId}, Company Name: ${person.company?.name || person.company}`);
+        // });
 
         // If no people found, show empty state (no hardcoded fallbacks)
         if (uniqueCompanyPeople.length === 0) {
-          console.log('🔍 [BUYER GROUPS] No people found in database for this company');
+          // console.log('🔍 [BUYER GROUPS] No people found in database for this company');
           setBuyerGroups([]);
           setLoading(false);
           return;

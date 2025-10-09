@@ -58,7 +58,7 @@ export const PipelineView = React.memo(function PipelineView({
   title, 
   subtitle 
 }: PipelineViewProps) {
-  console.log('🔍 [PipelineView] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
+  // console.log('🔍 [PipelineView] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
   
   
   const router = useRouter();
@@ -206,7 +206,7 @@ export const PipelineView = React.memo(function PipelineView({
           const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
           const decoded = jwt.default.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
-            console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
+            // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return decoded.workspaceId;
           }
         } catch (error) {
@@ -216,19 +216,19 @@ export const PipelineView = React.memo(function PipelineView({
       
       // 2. Fallback to acquisitionData
       if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
-        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
+        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
         return acquisitionData.auth.authUser.activeWorkspaceId;
       }
       
       // 3. Fallback to user activeWorkspaceId
       if (user?.activeWorkspaceId) {
-        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
+        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
         return user.activeWorkspaceId;
       }
       
       // 4. Last resort: first workspace
       if (user?.workspaces?.[0]?.id) {
-        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
+        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
         return user.workspaces[0].id;
       }
       
@@ -244,7 +244,7 @@ export const PipelineView = React.memo(function PipelineView({
     const updateWorkspaceId = async () => {
       const newWorkspaceId = await getCurrentWorkspaceId();
       if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
-        console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
+        // console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
         setCurrentWorkspaceId(newWorkspaceId);
         setCurrentUserId(user?.id || null);
       }
@@ -255,12 +255,12 @@ export const PipelineView = React.memo(function PipelineView({
 
   const workspaceId = currentWorkspaceId;
   
-  console.log('🔍 [WORKSPACE DEBUG] Using real-time workspace:', {
-    acquisitionDataExists: !!acquisitionData,
-    providerWorkspaceId: workspaceId,
-    userActiveWorkspaceId: user?.activeWorkspaceId,
-    currentWorkspaceId
-  });
+  // console.log('🔍 [WORKSPACE DEBUG] Using real-time workspace:', {
+  //   acquisitionDataExists: !!acquisitionData,
+  //   providerWorkspaceId: workspaceId,
+  //   userActiveWorkspaceId: user?.activeWorkspaceId,
+  //   currentWorkspaceId
+  // });
   // Map workspace to correct user ID
   const getUserIdForWorkspace = (workspaceId: string) => {
     switch (workspaceId) {
@@ -295,16 +295,16 @@ export const PipelineView = React.memo(function PipelineView({
   // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
   
-  console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
+  // console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
   
   // AGGRESSIVE DEBUG: Log every render
-  console.log('🔍 [PIPELINE VIEW] Component render:', {
-    section,
-    userWorkspaces: user?.workspaces?.map(w => ({ id: w.id, name: w.name })),
-    finalWorkspaceId: workspaceId,
-    finalUserId: userId,
-    acquisitionDataExists: !!acquisitionData
-  });
+  // console.log('🔍 [PIPELINE VIEW] Component render:', {
+  //   section,
+  //   userWorkspaces: user?.workspaces?.map(w => ({ id: w.id, name: w.name })),
+  //   finalWorkspaceId: workspaceId,
+  //   finalUserId: userId,
+  //   acquisitionDataExists: !!acquisitionData
+  // });
   
   // Removed legacy getSectionData(section) relying on acquisitionData; using dedicated hooks below
   

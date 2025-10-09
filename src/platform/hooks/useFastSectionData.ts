@@ -55,7 +55,7 @@ interface UseFastSectionDataReturn {
  * Provides instant section data for middle panel with smart caching
  */
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
-  console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
+  // console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { workspaceId, userId, isLoading: workspaceLoading, error: workspaceError } = useWorkspaceContext();
@@ -77,34 +77,34 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   });
 
   const fetchSectionData = useCallback(async () => {
-    console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
-      workspaceId: !!workspaceId,
-      userId: !!userId,
-      authLoading,
-      hasWorkspaceId: !!workspaceId,
-      hasUserId: !!userId,
-      alreadyLoaded: globalLoadedSections.has(section),
-      loadedSections: Array.from(globalLoadedSections),
-      actualWorkspaceId: workspaceId,
-      actualUserId: userId
-    });
+    // console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
+    //   workspaceId: !!workspaceId,
+    //   userId: !!userId,
+    //   authLoading,
+    //   hasWorkspaceId: !!workspaceId,
+    //   hasUserId: !!userId,
+    //   alreadyLoaded: globalLoadedSections.has(section),
+    //   loadedSections: Array.from(globalLoadedSections),
+    //   actualWorkspaceId: workspaceId,
+    //   actualUserId: userId
+    // });
     
     if (!workspaceId || !userId || authLoading || workspaceLoading) {
-      console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
-        workspaceId: !!workspaceId,
-        userId: !!userId,
-        authLoading,
-        workspaceLoading,
-        actualWorkspaceId: workspaceId,
-        actualUserId: userId
-      });
+      // console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
+      //   workspaceId: !!workspaceId,
+      //   userId: !!userId,
+      //   authLoading,
+      //   workspaceLoading,
+      //   actualWorkspaceId: workspaceId,
+      //   actualUserId: userId
+      // });
       setLoading(false);
       return;
     }
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section
     if (globalLoadedSections.has(section)) {
-      console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+      // console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
       setLoading(false);
       return;
     }
@@ -116,7 +116,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     setError(null);
 
     try {
-      console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
+      // console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
       // 🚀 NEW: Use v1 APIs for better performance and consistency
       const timestamp = Date.now();
@@ -151,11 +151,13 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           throw new Error(`No v1 API available for section: ${section}`);
       }
       
-      console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
+      // console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        credentials: 'include'
+      });
       
-      console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
+      // console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -174,17 +176,17 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         setCount(totalCount);
         globalLoadedSections.add(section);
         globalSectionData.set(section, { data: dataArray, count: totalCount, timestamp: Date.now() });
-        console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
-          count: dataArray.length,
-          totalCount: totalCount,
-          items: dataArray.length,
-          responseTime: result.meta?.responseTime,
-          firstItem: dataArray[0] ? {
-            rank: dataArray[0].rank || dataArray[0].globalRank,
-            name: dataArray[0].name,
-            company: dataArray[0].company?.name || dataArray[0].company
-          } : null
-        });
+        // console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
+        //   count: dataArray.length,
+        //   totalCount: totalCount,
+        //   items: dataArray.length,
+        //   responseTime: result.meta?.responseTime,
+        //   firstItem: dataArray[0] ? {
+        //     rank: dataArray[0].rank || dataArray[0].globalRank,
+        //     name: dataArray[0].name,
+        //     company: dataArray[0].company?.name || dataArray[0].company
+        //   } : null
+        // });
       } else {
         throw new Error(result.error || 'Failed to load section data');
       }

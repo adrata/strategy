@@ -48,15 +48,15 @@ export function HomeContent() {
         // Handle navigation based on platform
         const config = getPlatformConfig();
 
-        // Check if user has a stored location, otherwise default to Monaco sellers
-        let redirectUrl = "/monaco/sellers";
+        // Check if user has a stored location, otherwise default to People
+        let redirectUrl = "/people";
         if (typeof window !== "undefined") {
           const lastLocation = localStorage.getItem("adrata_last_location");
           if (lastLocation) {
             redirectUrl = lastLocation;
           } else {
-            // First time login - set to Monaco sellers
-            localStorage.setItem("adrata_last_location", "/monaco/sellers");
+            // First time login - set to People
+            localStorage.setItem("adrata_last_location", "/people");
           }
         }
 

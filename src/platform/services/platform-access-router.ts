@@ -75,12 +75,12 @@ export class PlatformAccessRouter {
   }
 
   /**
-   * Production user route - Speedrun (Default)
+   * Production user route - People (Default for users with no data)
    */
   static getAOSRoute(): PlatformRoute {
     return {
-      path: "/speedrun",
-      component: "SpeedrunDashboard",
+      path: "/people",
+      component: "PeopleDashboard",
       title: "Adrata Action Platform",
       description: "Complete business platform with Monaco, Pipeline, and more"
     };

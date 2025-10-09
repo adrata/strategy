@@ -265,19 +265,19 @@ export function usePipelineData(
     // 🚀 NEW: Use v1 APIs for better performance and consistency
     let response;
     if (section === 'companies') {
-      response = await fetch('/api/v1/companies');
+      response = await fetch('/api/v1/companies', { credentials: 'include' });
     } else if (section === 'people') {
-      response = await fetch('/api/v1/people');
+      response = await fetch('/api/v1/people', { credentials: 'include' });
     } else if (section === 'actions') {
-      response = await fetch('/api/v1/actions');
+      response = await fetch('/api/v1/actions', { credentials: 'include' });
     } else if (section === 'leads') {
-      response = await fetch('/api/v1/people?status=LEAD');
+      response = await fetch('/api/v1/people?status=LEAD', { credentials: 'include' });
     } else if (section === 'prospects') {
-      response = await fetch('/api/v1/people?status=PROSPECT');
+      response = await fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' });
     } else if (section === 'opportunities') {
-      response = await fetch('/api/v1/companies?status=OPPORTUNITY');
+      response = await fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' });
     } else if (section === 'speedrun') {
-      response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc');
+      response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc', { credentials: 'include' });
     } else {
       console.warn(`⚠️ [usePipelineData] No v1 API available for section: ${section}`);
       throw new Error(`No v1 API available for section: ${section}`);
@@ -328,11 +328,11 @@ export function useAcquisitionData(
 
     // 🚀 NEW: Use v1 APIs for better performance and consistency
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
-      fetch('/api/v1/people?status=LEAD'),
-      fetch('/api/v1/people?status=PROSPECT'),
-      fetch('/api/v1/companies?status=OPPORTUNITY'),
-      fetch('/api/v1/companies'),
-      fetch('/api/v1/people')
+      fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
+      fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
+      fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
+      fetch('/api/v1/companies', { credentials: 'include' }),
+      fetch('/api/v1/people', { credentials: 'include' })
     ]);
 
     const [leadsData, prospectsData, opportunitiesData, companiesData, peopleData] = await Promise.all([
@@ -385,7 +385,7 @@ export function useSpeedrunData(
     }
 
     // 🚀 NEW: Use v1 APIs for speedrun data with ranking (top 50 people)
-    const response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc');
+    const response = await fetch('/api/v1/people?limit=50&sortBy=rank&sortOrder=asc', { credentials: 'include' });
     
     if (!response.ok) {
       throw new Error('Failed to fetch speedrun data');
@@ -421,11 +421,11 @@ export function usePipelineCounts(
 
     // 🚀 NEW: Use v1 APIs for pipeline counts
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
-      fetch('/api/v1/people?counts=true&status=LEAD'),
-      fetch('/api/v1/people?counts=true&status=PROSPECT'),
-      fetch('/api/v1/companies?counts=true&status=OPPORTUNITY'),
-      fetch('/api/v1/companies?counts=true'),
-      fetch('/api/v1/people?counts=true')
+      fetch('/api/v1/people?counts=true&status=LEAD', { credentials: 'include' }),
+      fetch('/api/v1/people?counts=true&status=PROSPECT', { credentials: 'include' }),
+      fetch('/api/v1/companies?counts=true&status=OPPORTUNITY', { credentials: 'include' }),
+      fetch('/api/v1/companies?counts=true', { credentials: 'include' }),
+      fetch('/api/v1/people?counts=true', { credentials: 'include' })
     ]);
 
     const [leadsData, prospectsData, opportunitiesData, companiesData, peopleData] = await Promise.all([

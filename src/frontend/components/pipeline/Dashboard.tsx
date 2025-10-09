@@ -226,37 +226,37 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
 
   // 🚀 DEBUG: Track component renders
-  console.log('🔄 [DASHBOARD] Component rendered:', {
-    timestamp: Date.now(),
-    hasUser: !!user,
-    hasAcquisitionData: !!acquisitionData,
-    acquisitionDataStructure: acquisitionData ? Object.keys(acquisitionData) : 'null',
-    acquisitionDataCounts: acquisitionData?.counts || 'no counts',
-    acquisitionLoading: acquisitionLoading?.isLoading,
-    isLoading,
-    hasActivityData: !!activityData
-  });
+  // console.log('🔄 [DASHBOARD] Component rendered:', {
+  //   timestamp: Date.now(),
+  //   hasUser: !!user,
+  //   hasAcquisitionData: !!acquisitionData,
+  //   acquisitionDataStructure: acquisitionData ? Object.keys(acquisitionData) : 'null',
+  //   acquisitionDataCounts: acquisitionData?.counts || 'no counts',
+  //   acquisitionLoading: acquisitionLoading?.isLoading,
+  //   isLoading,
+  //   hasActivityData: !!activityData
+  // });
   
   // 🚨 CRITICAL DEBUG: Force visible log
-  console.log('🚨 [DASHBOARD CRITICAL] Component is rendering!', {
-    user: user?.email || 'no user',
-    hasAcquisitionData: !!acquisitionData,
-    acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'NO DATA',
-    hasCounts: !!(acquisitionData?.counts),
-    countsData: acquisitionData?.counts || 'NO COUNTS',
-    loading: acquisitionLoading?.isLoading,
-    hasActivityData: !!activityData
-  });
+  // console.log('🚨 [DASHBOARD CRITICAL] Component is rendering!', {
+  //   user: user?.email || 'no user',
+  //   hasAcquisitionData: !!acquisitionData,
+  //   acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'NO DATA',
+  //   hasCounts: !!(acquisitionData?.counts),
+  //   countsData: acquisitionData?.counts || 'NO COUNTS',
+  //   loading: acquisitionLoading?.isLoading,
+  //   hasActivityData: !!activityData
+  // });
 
   // 🆕 CRITICAL FIX: Use workspace from provider instead of URL detection
   const workspaceId = user?.activeWorkspaceId;
   const userId = user?.id;
   
-  console.log('🔍 [DASHBOARD DEBUG] Using provider workspace:', {
-    providerWorkspaceId: workspaceId,
-    userActiveWorkspaceId: user?.activeWorkspaceId,
-    userId: userId
-  });
+  // console.log('🔍 [DASHBOARD DEBUG] Using provider workspace:', {
+  //   providerWorkspaceId: workspaceId,
+  //   userActiveWorkspaceId: user?.activeWorkspaceId,
+  //   userId: userId
+  // });
 
   // 🚀 PERFORMANCE FIX: Use data from provider instead of making duplicate API calls
   const loadActivityData = useCallback(async () => {
@@ -269,7 +269,7 @@ export function Dashboard() {
 
       // 🚀 PERFORMANCE: Prevent multiple simultaneous calls
       if (isLoading) {
-        console.log('⏳ [DASHBOARD] Already loading, skipping duplicate call');
+        // console.log('⏳ [DASHBOARD] Already loading, skipping duplicate call');
         return;
       }
 
@@ -278,7 +278,7 @@ export function Dashboard() {
       const cached = dashboardCache.get(cacheKey);
       
       if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-        console.log('⚡ [DASHBOARD CACHE HIT] Using cached dashboard data');
+        // console.log('⚡ [DASHBOARD CACHE HIT] Using cached dashboard data');
         setActivityData(cached.data);
         setIsLoading(false);
         return;
@@ -286,7 +286,7 @@ export function Dashboard() {
 
       // 🚀 PERFORMANCE: Use cached data from provider instead of making new API call
       if (acquisitionData && acquisitionData.counts) {
-        console.log('⚡ [DASHBOARD] Using cached data from provider - NO API CALL NEEDED');
+        // console.log('⚡ [DASHBOARD] Using cached data from provider - NO API CALL NEEDED');
         
         // Transform acquisition data to dashboard format
         const dashboardData: WeeklyActivityData = {

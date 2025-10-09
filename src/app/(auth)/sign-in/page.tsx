@@ -97,7 +97,7 @@ export default function SignInPage() {
                 console.log("✅ [SIGN-IN PAGE] Auto-login successful!");
                 
                 // Determine redirect URL
-                let redirectUrl = "/speedrun"; // Default to Speedrun
+                let redirectUrl = "/people"; // Default to People
                 
                 if (result.redirectTo) {
                   redirectUrl = result.redirectTo;
@@ -107,8 +107,8 @@ export default function SignInPage() {
                   if (lastLocation) {
                     redirectUrl = lastLocation;
                   } else {
-                    // First time login - default all users to Speedrun
-                    redirectUrl = "/speedrun";  // All users go to Speedrun by default
+                    // First time login - default all users to People
+                    redirectUrl = "/people";  // All users go to People by default
                     
                     localStorage.setItem("adrata_last_location", redirectUrl);
                   }

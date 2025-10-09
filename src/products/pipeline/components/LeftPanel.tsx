@@ -382,52 +382,52 @@ function PipelineSections({
   }, [opportunitiesData.data?.length, dashboardStats.opportunities]);
 
   useEffect(() => {
-    console.log('🔍 [DASHBOARD] useEffect triggered:', {
-      loading,
-      acquisitionDataExists: !!acquisitionData?.data,
-      opportunitiesDataLength: opportunitiesData.data?.length || 0,
-      opportunitiesData: opportunitiesData.data,
-      acquisitionData: acquisitionData,
-      actualCounts: actualCounts
-    });
+    // console.log('🔍 [DASHBOARD] useEffect triggered:', {
+    //   loading,
+    //   acquisitionDataExists: !!acquisitionData?.data,
+    //   opportunitiesDataLength: opportunitiesData.data?.length || 0,
+    //   opportunitiesData: opportunitiesData.data,
+    //   acquisitionData: acquisitionData,
+    //   actualCounts: actualCounts
+    // });
     
     if ((opportunitiesData.data?.length || 0) > 0) {
-      console.log('🚨 [DASHBOARD] IMMEDIATE: Found opportunities data!', opportunitiesData.data);
+      // console.log('🚨 [DASHBOARD] IMMEDIATE: Found opportunities data!', opportunitiesData.data);
     } else {
-      console.log('🚨 [DASHBOARD] IMMEDIATE: No opportunities data found, using counts:', actualCounts);
+      // console.log('🚨 [DASHBOARD] IMMEDIATE: No opportunities data found, using counts:', actualCounts);
     }
     
     if ((opportunitiesData.data?.length || 0) > 0) {
-      console.log('🔍 [DASHBOARD] Found opportunities data, processing it');
+      // console.log('🔍 [DASHBOARD] Found opportunities data, processing it');
     } else if (loading || !acquisitionData?.data) {
-      console.log('🔍 [DASHBOARD] Still loading or no data, keeping loading state');
+      // console.log('🔍 [DASHBOARD] Still loading or no data, keeping loading state');
       return;
     } else if (actualCounts.opportunities > 0) {
-      console.log('🔍 [DASHBOARD] No opportunities data but have counts, using counts for stats');
+      // console.log('🔍 [DASHBOARD] No opportunities data but have counts, using counts for stats');
     } else {
-      console.log('🔍 [DASHBOARD] No opportunities data or counts available');
+      // console.log('🔍 [DASHBOARD] No opportunities data or counts available');
       return;
     }
     
-    console.log('🔍 [DASHBOARD] Processing opportunities data:', {
-      dataLength: opportunitiesData.data?.length || 0,
-      loading: loading,
-      acquisitionDataExists: !!acquisitionData?.data,
-      acquisitionDataKeys: acquisitionData?.data ? Object.keys(acquisitionData.data) : [],
-      acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
-      data: opportunitiesData.data
-    });
+    // console.log('🔍 [DASHBOARD] Processing opportunities data:', {
+    //   dataLength: opportunitiesData.data?.length || 0,
+    //   loading: loading,
+    //   acquisitionDataExists: !!acquisitionData?.data,
+    //   acquisitionDataKeys: acquisitionData?.data ? Object.keys(acquisitionData.data) : [],
+    //   acquireDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
+    //   data: opportunitiesData.data
+    // });
     
     const openOpportunities = (opportunitiesData.data || []).filter((opp: any) => {
       const stage = opp.stage?.toLowerCase() || '';
       const status = opp.status?.toLowerCase() || '';
       
-      console.log('🔍 [DASHBOARD] Filtering opportunity:', {
-        name: opp.name,
-        stage,
-        status,
-        amount: opp.amount
-      });
+      // console.log('🔍 [DASHBOARD] Filtering opportunity:', {
+      //   name: opp.name,
+      //   stage,
+      //   status,
+      //   amount: opp.amount
+      // });
       
       const isOpen = !stage.includes('closed') && 
              !status.includes('closed') && 
@@ -436,17 +436,17 @@ function PipelineSections({
              stage !== 'closed' &&
              status !== 'closed';
              
-      console.log('🔍 [DASHBOARD] Is open?', isOpen);
+      // console.log('🔍 [DASHBOARD] Is open?', isOpen);
       return isOpen;
     });
     
-    console.log('🔍 [DASHBOARD] Opportunity filtering:', {
-      totalOpportunities: opportunitiesData.data?.length || 0,
-      openOpportunities: openOpportunities.length,
-      stages: (opportunitiesData.data || []).map((opp: any) => opp.stage),
-      statuses: (opportunitiesData.data || []).map((opp: any) => opp.status),
-      sampleOpportunity: (opportunitiesData.data || [])[0]
-    });
+    // console.log('🔍 [DASHBOARD] Opportunity filtering:', {
+    //   totalOpportunities: opportunitiesData.data?.length || 0,
+    //   openOpportunities: openOpportunities.length,
+    //   stages: (opportunitiesData.data || []).map((opp: any) => opp.stage),
+    //   statuses: (opportunitiesData.data || []).map((opp: any) => opp.status),
+    //   sampleOpportunity: (opportunitiesData.data || [])[0]
+    // });
     
     const totalValue = openOpportunities.reduce((sum: number, opp: any) => {
       const valueField = opp.value || opp.amount || opp.estimatedValue || opp.dealValue || '0';

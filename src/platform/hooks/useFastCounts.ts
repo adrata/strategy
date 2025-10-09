@@ -66,7 +66,7 @@ export function useFastCounts(): UseFastCountsReturn {
     setError(null);
 
     try {
-      console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
+      // console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
       
       // 🚀 PERFORMANCE: Fetch all counts in parallel using v1 API
       const [companiesResponse, peopleResponse, actionsResponse, usersResponse] = await Promise.all([
