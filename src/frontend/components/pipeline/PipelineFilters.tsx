@@ -123,7 +123,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       case 'opportunities':
         // CRITICAL FIX: Use actual stage values from database for opportunities
         const opportunityStages = data?.filter((record: any) => record.stage)?.map((record: any) => record.stage) || [];
-        const uniqueStages = [...new Set(opportunityStages)].filter(stage => stage && stage.trim());
+        const uniqueStages = [...new Set(opportunityStages)].filter(stage => stage && typeof stage === 'string' && stage.trim());
         
         // DEBUG: Log the stage values found in the data
         console.log(`🔍 [OPPORTUNITIES FILTER DEBUG] Found stages in data:`, uniqueStages);

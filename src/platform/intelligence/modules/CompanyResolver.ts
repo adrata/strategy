@@ -1,7 +1,7 @@
 /**
- * 🏢 COMPANY RESOLVER MODULE
+ * COMPANY RESOLVER MODULE
  * 
- * Handles the complex process of resolving company identity:
+ * Handles the process of resolving company identity:
  * 1. URL resolution and redirect following
  * 2. Acquisition detection and parent company mapping  
  * 3. Domain canonicalization
@@ -204,11 +204,16 @@ export class CompanyResolver {
         }
 
         // Follow redirects manually to track the chain
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.config.TIMEOUT_MS || 10000);
+        
         const response = await fetch(currentUrl, {
           method: 'HEAD',
           redirect: 'manual',
-          timeout: this.config.TIMEOUT_MS || 10000
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         if (response.status >= 300 && response.status < 400) {
           const location = response.headers.get('location');
@@ -305,15 +310,40 @@ export class CompanyResolver {
       return peInfo;
     }
 
-    const prompt = `Research if ${companyName} is owned by a private equity firm or venture capital firm.
+    const prompt = `You are a corporate intelligence analyst researching private equity and venture capital ownership. Analyze the ownership structure of ${companyName}.
 
-Please provide:
-1. Is ${companyName} owned by PE/VC? (yes/no)
-2. If yes, which PE/VC firm owns them?
-3. When was the investment/acquisition?
-4. What type of ownership (majority/minority/full acquisition)?
+RESEARCH TASK:
+Determine if ${companyName} is owned by a private equity firm, venture capital firm, or other institutional investor.
 
-Be factual and concise. If uncertain, indicate low confidence.`;
+RESEARCH FOCUS:
+1. Current ownership structure of ${companyName}
+2. Private equity/VC investment history
+3. Investment rounds and funding
+4. Board composition and investor representation
+5. Operational control and management
+
+REQUIRED OUTPUT FORMAT:
+Please provide a structured analysis with the following information:
+
+PE/VC OWNERSHIP: [YES/NO/UNCERTAIN]
+INVESTOR FIRM: [Firm Name or "Independent"]
+INVESTMENT DATE: [YYYY or "Unknown"]
+OWNERSHIP TYPE: [majority/minority/full_acquisition/unknown]
+INVESTMENT AMOUNT: [Amount if known or "Undisclosed"]
+BOARD REPRESENTATION: [Number of board seats or "Unknown"]
+CONFIDENCE LEVEL: [High/Medium/Low]
+EVIDENCE SOURCES: [List key sources used]
+CURRENT STATUS: [Active/Integrated/Subsidiary/Defunct]
+
+RESEARCH GUIDELINES:
+- Focus on current ownership (not historical)
+- Distinguish between PE, VC, and other institutional investors
+- Include investment amounts when publicly disclosed
+- Note board representation and control
+- Prioritize recent investments (2015-present)
+- If uncertain, clearly state the confidence level
+
+Be thorough but concise. Use specific dates, firm names, and investment details when available.`;
 
     try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -367,22 +397,47 @@ Be factual and concise. If uncertain, indicate low confidence.`;
   }
 
   /**
-   * 🤖 AI ACQUISITION RESEARCH
+   * 🤖 AI ACQUISITION RESEARCH (ENHANCED)
    */
   private async aiAcquisitionResearch(originalDomain: string, finalDomain: string): Promise<AcquisitionInfo> {
     if (!this.config.PERPLEXITY_API_KEY) {
       throw new Error('Perplexity API key not configured');
     }
 
-    const prompt = `Research if ${originalDomain} was acquired by the company that owns ${finalDomain}. 
-    
-    Please provide:
-    1. Was ${originalDomain} acquired? (yes/no)
-    2. If yes, what is the parent company name?
-    3. When was the acquisition (approximate date)?
-    4. What type of transaction (merger/acquisition/subsidiary)?
-    
-    Be concise and factual. If uncertain, indicate low confidence.`;
+    const prompt = `You are a corporate intelligence analyst researching company acquisitions. Analyze the corporate structure and ownership of ${originalDomain}.
+
+RESEARCH TASK:
+Determine if ${originalDomain} has been acquired, merged, or is owned by another company.
+
+RESEARCH FOCUS:
+1. Corporate ownership structure of ${originalDomain}
+2. Parent company relationships
+3. Acquisition/merger history
+4. Current operational status
+5. Executive leadership changes
+
+REQUIRED OUTPUT FORMAT:
+Please provide a structured analysis with the following information:
+
+ACQUISITION STATUS: [YES/NO/UNCERTAIN]
+PARENT COMPANY: [Company Name or "Independent"]
+ACQUISITION DATE: [YYYY or "Unknown"]
+TRANSACTION TYPE: [acquisition/merger/subsidiary/joint_venture/unknown]
+TRANSACTION VALUE: [Amount if known or "Undisclosed"]
+CONFIDENCE LEVEL: [High/Medium/Low]
+EVIDENCE SOURCES: [List key sources used]
+EXECUTIVE CHANGES: [Any notable leadership changes]
+CURRENT STATUS: [Active/Integrated/Subsidiary/Defunct]
+
+RESEARCH GUIDELINES:
+- Focus on factual, verifiable information
+- Prioritize recent acquisitions (2015-present)
+- Include transaction values when publicly disclosed
+- Note any executive changes post-acquisition
+- Distinguish between full acquisitions, mergers, and minority investments
+- If uncertain, clearly state the confidence level
+
+Be thorough but concise. Use specific dates, company names, and transaction details when available.`;
 
     try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -394,7 +449,7 @@ Be factual and concise. If uncertain, indicate low confidence.`;
         body: JSON.stringify({
           model: 'sonar-pro',
           messages: [{ role: 'user', content: prompt }],
-          max_tokens: 500,
+          max_tokens: 800,
           temperature: 0.1
         })
       });
@@ -406,33 +461,9 @@ Be factual and concise. If uncertain, indicate low confidence.`;
       const data = await response.json();
       const content = data.choices?.[0]?.message?.content || '';
 
-      // Parse AI response (simplified - in production, use more robust parsing)
-      const isAcquired = content.toLowerCase().includes('yes') && 
-                        !content.toLowerCase().includes('no evidence') &&
-                        !content.toLowerCase().includes('not acquired');
-
-      if (isAcquired) {
-        // Extract parent company name (simplified extraction)
-        const parentMatch = content.match(/parent company[:\s]+([^.\n]+)/i);
-        const parentName = parentMatch?.[1]?.trim() || 'Unknown Parent';
-
-        // Extract date (simplified)
-        const dateMatch = content.match(/(\d{4})/);
-        const acquisitionDate = dateMatch?.[1] || undefined;
-
-        return {
-          isAcquired: true,
-          parentCompany: {
-            name: parentName,
-            domain: finalDomain,
-            confidence: 80
-          },
-          acquisitionDate,
-          acquisitionType: 'acquisition',
-          confidence: 80,
-          source: 'ai_research'
-        };
-      }
+      // Enhanced parsing with structured response handling
+      const parsedResponse = this.parseStructuredAIResponse(content);
+      return parsedResponse;
 
     } catch (error) {
       console.log(`   ⚠️ AI research error: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -443,6 +474,186 @@ Be factual and concise. If uncertain, indicate low confidence.`;
       confidence: 70,
       source: 'ai_research'
     };
+  }
+
+  /**
+   * 📊 PARSE STRUCTURED AI RESPONSE
+   */
+  private parseStructuredAIResponse(content: string): AcquisitionInfo {
+    const lines = content.split('\n').map(line => line.trim());
+    
+    // Extract structured data
+    const acquisitionStatus = this.extractFieldValue(lines, 'ACQUISITION STATUS:');
+    const parentCompany = this.extractFieldValue(lines, 'PARENT COMPANY:');
+    const acquisitionDate = this.extractFieldValue(lines, 'ACQUISITION DATE:');
+    const transactionType = this.extractFieldValue(lines, 'TRANSACTION TYPE:');
+    const confidenceLevel = this.extractFieldValue(lines, 'CONFIDENCE LEVEL:');
+    const evidenceSources = this.extractFieldValue(lines, 'EVIDENCE SOURCES:');
+    const executiveChanges = this.extractFieldValue(lines, 'EXECUTIVE CHANGES:');
+    const currentStatus = this.extractFieldValue(lines, 'CURRENT STATUS:');
+
+    // Determine if acquired
+    const isAcquired = acquisitionStatus?.toLowerCase().includes('yes') && 
+                      !acquisitionStatus?.toLowerCase().includes('no') &&
+                      !acquisitionStatus?.toLowerCase().includes('uncertain');
+
+    if (!isAcquired) {
+      return {
+        isAcquired: false,
+        confidence: this.calculateConfidenceFromLevel(confidenceLevel),
+        source: 'ai_research'
+      };
+    }
+
+    // Calculate confidence based on multiple factors
+    const confidence = this.calculateEnhancedConfidence({
+      acquisitionStatus,
+      parentCompany,
+      acquisitionDate,
+      confidenceLevel,
+      evidenceSources,
+      currentStatus
+    });
+
+    // Determine acquisition type
+    const acquisitionType = this.mapTransactionType(transactionType);
+
+    // Extract executive overrides if mentioned
+    const executiveOverrides = this.extractExecutiveOverrides(executiveChanges);
+
+    return {
+      isAcquired: true,
+      parentCompany: {
+        name: parentCompany || 'Unknown Parent',
+        domain: this.extractDomainFromCompanyName(parentCompany),
+        confidence: confidence
+      },
+      acquisitionDate: acquisitionDate !== 'Unknown' ? acquisitionDate : undefined,
+      acquisitionType,
+      confidence,
+      source: 'ai_research',
+      executiveOverrides
+    };
+  }
+
+  /**
+   * 🔍 EXTRACT FIELD VALUE FROM STRUCTURED RESPONSE
+   */
+  private extractFieldValue(lines: string[], fieldName: string): string | undefined {
+    const line = lines.find(l => l.startsWith(fieldName));
+    if (!line) return undefined;
+    
+    return line.replace(fieldName, '').trim();
+  }
+
+  /**
+   * 📈 CALCULATE ENHANCED CONFIDENCE
+   */
+  private calculateEnhancedConfidence(data: {
+    acquisitionStatus?: string;
+    parentCompany?: string;
+    acquisitionDate?: string;
+    confidenceLevel?: string;
+    evidenceSources?: string;
+    currentStatus?: string;
+  }): number {
+    let confidence = 50; // Base confidence
+
+    // Confidence level from AI
+    if (data.confidenceLevel?.toLowerCase().includes('high')) confidence += 25;
+    else if (data.confidenceLevel?.toLowerCase().includes('medium')) confidence += 15;
+    else if (data.confidenceLevel?.toLowerCase().includes('low')) confidence += 5;
+
+    // Parent company specificity
+    if (data.parentCompany && data.parentCompany !== 'Independent' && data.parentCompany !== 'Unknown') {
+      confidence += 10;
+    }
+
+    // Date specificity
+    if (data.acquisitionDate && data.acquisitionDate !== 'Unknown') {
+      confidence += 10;
+    }
+
+    // Evidence sources
+    if (data.evidenceSources && data.evidenceSources.length > 0) {
+      confidence += 5;
+    }
+
+    // Current status clarity
+    if (data.currentStatus && ['Active', 'Integrated', 'Subsidiary'].includes(data.currentStatus)) {
+      confidence += 5;
+    }
+
+    return Math.min(confidence, 95);
+  }
+
+  /**
+   * 🎯 CALCULATE CONFIDENCE FROM LEVEL
+   */
+  private calculateConfidenceFromLevel(level?: string): number {
+    if (!level) return 50;
+    
+    switch (level.toLowerCase()) {
+      case 'high': return 85;
+      case 'medium': return 70;
+      case 'low': return 55;
+      default: return 50;
+    }
+  }
+
+  /**
+   * 🏷️ MAP TRANSACTION TYPE
+   */
+  private mapTransactionType(transactionType?: string): 'merger' | 'acquisition' | 'subsidiary' {
+    if (!transactionType) return 'acquisition';
+    
+    const type = transactionType.toLowerCase();
+    if (type.includes('merger')) return 'merger';
+    if (type.includes('subsidiary')) return 'subsidiary';
+    return 'acquisition';
+  }
+
+  /**
+   * 👔 EXTRACT EXECUTIVE OVERRIDES
+   */
+  private extractExecutiveOverrides(executiveChanges?: string): Record<string, any> | undefined {
+    if (!executiveChanges || executiveChanges === 'None' || executiveChanges === 'Unknown') {
+      return undefined;
+    }
+
+    // Simple extraction - in production, use more sophisticated parsing
+    const overrides: Record<string, any> = {};
+    
+    // Look for CEO mentions
+    const ceoMatch = executiveChanges.match(/CEO[:\s]+([^,\n]+)/i);
+    if (ceoMatch) {
+      overrides['ceo'] = {
+        name: ceoMatch[1].trim(),
+        confidence: 80
+      };
+    }
+
+    return Object.keys(overrides).length > 0 ? overrides : undefined;
+  }
+
+  /**
+   * 🌐 EXTRACT DOMAIN FROM COMPANY NAME
+   */
+  private extractDomainFromCompanyName(companyName?: string): string | undefined {
+    if (!companyName) return undefined;
+    
+    // Simple mapping - in production, use a more comprehensive database
+    const domainMap: Record<string, string> = {
+      'Microsoft': 'microsoft.com',
+      'Google': 'google.com',
+      'Meta': 'meta.com',
+      'Salesforce': 'salesforce.com',
+      'Adobe': 'adobe.com',
+      'Oracle': 'oracle.com',
+      'IBM': 'ibm.com'
+    };
+
+    return domainMap[companyName] || undefined;
   }
 
   /**
@@ -573,11 +784,22 @@ Be factual and concise. If uncertain, indicate low confidence.`;
    * 🎯 CONVERT TO COMPANY INTELLIGENCE
    */
   toCompanyIntelligence(resolution: CompanyResolution): CompanyIntelligence {
+    // Map company status to operational status
+    const operationalStatusMap: Record<string, 'active' | 'acquired' | 'merged' | 'inactive'> = {
+      'active': 'active',
+      'acquired': 'acquired',
+      'merged': 'merged',
+      'defunct': 'inactive',
+      'subsidiary': 'acquired',
+      'pe_owned': 'active',
+      'unknown': 'active'
+    };
+
     return {
       name: resolution.companyName,
       domain: this.extractDomain(resolution.finalUrl),
       industry: undefined, // Will be filled by other modules
-      operationalStatus: resolution.companyStatus,
+      operationalStatus: operationalStatusMap[resolution.companyStatus] || 'active',
       parentCompany: resolution.parentCompany?.name,
       acquisitionDate: resolution.acquisitionInfo?.acquisitionDate ? 
         new Date(resolution.acquisitionInfo.acquisitionDate) : undefined,

@@ -14,64 +14,39 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
 
-  // Simple hash function for cookie security
-  const hashPassword = (pwd: string): string => {
-    let hash = 0;
-    for (let i = 0; i < pwd.length; i++) {
-      const char = pwd.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return hash.toString(36);
-  };
-
-  // Cookie management functions
-  const setAuthCookie = () => {
-    const hashedPassword = hashPassword(correctPassword);
-    const expireDate = new Date();
-    expireDate.setDate(expireDate.getDate() + 7); // 7 days expiration
-    document['cookie'] = `snyk_auth=${hashedPassword}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
-  };
-
-  const getAuthCookie = (): string | null => {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-      const [name, value] = cookie.trim().split('=');
-      if (name === 'snyk_auth') {
-        return value || null;
-      }
-    }
-    return null;
-  };
-
-  const clearAuthCookie = () => {
-    document['cookie'] = 'snyk_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  // Hard-coded password validation - no external dependencies
+  const validatePassword = (inputPassword: string): boolean => {
+    return inputPassword === correctPassword;
   };
 
   // Check for existing authentication on component mount
   useEffect(() => {
     setMounted(true);
     
-    // Only check cookies after mounting to prevent hydration mismatch
-    const authCookie = getAuthCookie();
-    const expectedHash = hashPassword(correctPassword);
-    
-    if (authCookie === expectedHash) {
+    // Check if already authenticated in this session
+    const sessionAuth = sessionStorage.getItem('hardcoded_auth');
+    if (sessionAuth === correctPassword) {
       setIsAuthenticated(true);
     }
   }, [correctPassword]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === correctPassword) {
+    if (validatePassword(password)) {
       setIsAuthenticated(true);
-      setAuthCookie(); // Set cookie on successful auth
+      // Store in session storage for this session only
+      sessionStorage.setItem('hardcoded_auth', correctPassword);
       setError('');
     } else {
       setError('Incorrect passcode');
       setPassword('');
-      clearAuthCookie(); // Clear any existing cookie on failed auth
     }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('hardcoded_auth');
+    setPassword('');
   };
 
   // Prevent hydration mismatch by showing consistent state until mounted
@@ -113,6 +88,15 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
   if (isAuthenticated) {
     return (
       <div className="relative min-h-screen">
+        {/* Logout button */}
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={handleLogout}
+            className="bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
         {children}
       </div>
     );

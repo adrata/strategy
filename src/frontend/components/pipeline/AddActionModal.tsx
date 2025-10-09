@@ -321,6 +321,34 @@ export function AddActionModal({
     }
   }, [isOpen, loading, authUser?.activeWorkspaceId, users, record]);
 
+  // Keyboard shortcuts for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSubmit();
+      }
+      
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keydown', handleKeyDown, false);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, handleSubmit, onClose]);
+
   const actionTypes = [
     { value: 'linkedin_inmail', label: 'LinkedIn InMail' },
     { value: 'linkedin_dm', label: 'LinkedIn Direct Message' },

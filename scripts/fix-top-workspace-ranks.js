@@ -1,14 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Fix TOP Workspace Ranks Script
+ * Fix TOP Workspace Company Ranks Script
  * 
- * This script assigns proper sequential ranks (1-N) to all records
- * in the TOP workspace only, with the correct counts:
- * - 475 companies
- * - 2,384 people
- * - 1,701 leads
- * - 587 prospects
+ * This script assigns proper ranks to companies within the TOP workspace.
+ * Sets Hillenmeyer Companies to rank 1, then other important companies.
  */
 
 const { PrismaClient } = require('@prisma/client');
@@ -16,18 +12,70 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function fixTopWorkspaceRanks() {
+  const workspaceId = '01K1VBYXHD0J895XAN0HGFBKJP'; // TOP workspace
+  
   try {
-    console.log('🔧 Starting TOP workspace ranks fix...');
+    console.log(`🔧 Starting TOP workspace company ranks fix for workspace: ${workspaceId}...`);
     
-    // Define TOP workspace ID
-    const topWorkspaceId = '01K1VBYXHD0J895XAN0HGFBKJP';
-    
-    // 1. Fix Companies ranks (1-475)
-    console.log('\n📊 Fixing Companies ranks...');
-    const companies = await prisma.companies.findMany({
+    // First, reset all ranks for this workspace to null
+    console.log('🔄 Resetting all company ranks for TOP workspace...');
+    await prisma.companies.updateMany({
       where: {
+        workspaceId: workspaceId,
+        deletedAt: null
+      },
+      data: {
+        rank: null
+      }
+    });
+    
+    // Set specific companies to specific ranks for TOP workspace
+    const targetCompanies = [
+      { name: 'Hillenmeyer Companies: Weed Man & Mosquito Authority', rank: 1 },
+      { name: 'Alabama Power Company', rank: 2 },
+      { name: 'Western Area Power Administration', rank: 3 },
+      { name: 'WKW Associates LLC.', rank: 4 },
+      { name: 'Vantage Point Solutions', rank: 5 },
+      { name: 'VELCO - Vermont Electric Power Company', rank: 6 },
+      { name: 'PowerSouth Energy Cooperative', rank: 7 },
+      { name: 'Yuba Water Agency', rank: 8 },
+      { name: 'Talquin Electric Cooperative, Inc.', rank: 9 },
+      { name: 'Blue Ridge Electric Membership Corporation', rank: 10 }
+    ];
+    
+    console.log(`📊 Setting specific ranks for ${targetCompanies.length} companies in TOP workspace...`);
+    
+    // Update each target company with unique rank for TOP workspace
+    for (const target of targetCompanies) {
+      try {
+        const result = await prisma.companies.updateMany({
+          where: {
+            name: target.name,
+            workspaceId: workspaceId,
+            deletedAt: null
+          },
+          data: {
+            rank: target.rank
+          }
+        });
+        
+        if (result.count > 0) {
+          console.log(`✅ Set ${target.name} to rank ${target.rank} in TOP workspace`);
+        } else {
+          console.log(`⚠️  Company not found in TOP workspace: ${target.name}`);
+        }
+      } catch (error) {
+        console.error(`❌ Error updating ${target.name}:`, error.message);
+      }
+    }
+    
+    // Get remaining companies in TOP workspace and assign sequential ranks
+    console.log('🔄 Setting remaining companies in TOP workspace to sequential ranks...');
+    const remainingCompanies = await prisma.companies.findMany({
+      where: {
+        workspaceId: workspaceId,
         deletedAt: null,
-        workspaceId: topWorkspaceId
+        rank: null
       },
       orderBy: [
         { updatedAt: 'desc' },
@@ -35,253 +83,61 @@ async function fixTopWorkspaceRanks() {
       ],
       select: {
         id: true,
-        name: true,
-        updatedAt: true,
-        rank: true
+        name: true
       }
     });
     
-    console.log(`📊 Found ${companies.length} companies to rank (target: 475)`);
+    console.log(`📊 Found ${remainingCompanies.length} remaining companies in TOP workspace to rank...`);
     
-    // Update companies in batches
-    const batchSize = 100;
-    for (let i = 0; i < companies.length; i += batchSize) {
-      const batch = companies.slice(i, i + batchSize);
-      const updatePromises = batch.map((company, batchIndex) => {
-        const newRank = i + batchIndex + 1;
-        return prisma.companies.update({
+    // Update remaining companies with sequential ranks starting from 11
+    let currentRank = 11;
+    for (const company of remainingCompanies) {
+      try {
+        await prisma.companies.update({
           where: { id: company.id },
-          data: { rank: newRank }
+          data: { rank: currentRank }
         });
-      });
-      
-      await Promise.all(updatePromises);
-      console.log(`✅ Updated companies ${i + 1}-${Math.min(i + batchSize, companies.length)}`);
-    }
-    
-    console.log(`✅ Successfully updated ranks for ${companies.length} companies`);
-    
-    // 2. Fix People ranks (1-2384)
-    console.log('\n📊 Fixing People ranks...');
-    const people = await prisma.people.findMany({
-      where: {
-        deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: [
-        { updatedAt: 'desc' },
-        { fullName: 'asc' }
-      ],
-      select: {
-        id: true,
-        fullName: true,
-        updatedAt: true,
-        rank: true
+        currentRank++;
+      } catch (error) {
+        console.error(`❌ Error updating ${company.name}:`, error.message);
       }
-    });
-    
-    console.log(`📊 Found ${people.length} people to rank (target: 2,384)`);
-    
-    // Update people in batches
-    for (let i = 0; i < people.length; i += batchSize) {
-      const batch = people.slice(i, i + batchSize);
-      const updatePromises = batch.map((person, batchIndex) => {
-        const newRank = i + batchIndex + 1;
-        return prisma.people.update({
-          where: { id: person.id },
-          data: { rank: newRank }
-        });
-      });
-      
-      await Promise.all(updatePromises);
-      console.log(`✅ Updated people ${i + 1}-${Math.min(i + batchSize, people.length)}`);
     }
     
-    console.log(`✅ Successfully updated ranks for ${people.length} people`);
+    console.log(`✅ Updated ${remainingCompanies.length} remaining companies with sequential ranks`);
     
-    // 3. Fix Leads ranks (1-1701)
-    console.log('\n📊 Fixing Leads ranks...');
-    const leads = await prisma.leads.findMany({
+    // Verify the results for TOP workspace
+    const topCompanies = await prisma.companies.findMany({
       where: {
+        workspaceId: workspaceId,
         deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: [
-        { updatedAt: 'desc' },
-        { fullName: 'asc' }
-      ],
-      select: {
-        id: true,
-        fullName: true,
-        updatedAt: true,
-        rank: true
-      }
-    });
-    
-    console.log(`📊 Found ${leads.length} leads to rank (target: 1,701)`);
-    
-    // Update leads in batches
-    for (let i = 0; i < leads.length; i += batchSize) {
-      const batch = leads.slice(i, i + batchSize);
-      const updatePromises = batch.map((lead, batchIndex) => {
-        const newRank = i + batchIndex + 1;
-        return prisma.leads.update({
-          where: { id: lead.id },
-          data: { rank: newRank }
-        });
-      });
-      
-      await Promise.all(updatePromises);
-      console.log(`✅ Updated leads ${i + 1}-${Math.min(i + batchSize, leads.length)}`);
-    }
-    
-    console.log(`✅ Successfully updated ranks for ${leads.length} leads`);
-    
-    // 4. Fix Prospects ranks (1-587)
-    console.log('\n📊 Fixing Prospects ranks...');
-    const prospects = await prisma.prospects.findMany({
-      where: {
-        deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: [
-        { updatedAt: 'desc' },
-        { fullName: 'asc' }
-      ],
-      select: {
-        id: true,
-        fullName: true,
-        updatedAt: true,
-        rank: true
-      }
-    });
-    
-    console.log(`📊 Found ${prospects.length} prospects to rank (target: 587)`);
-    
-    // Update prospects in batches
-    for (let i = 0; i < prospects.length; i += batchSize) {
-      const batch = prospects.slice(i, i + batchSize);
-      const updatePromises = batch.map((prospect, batchIndex) => {
-        const newRank = i + batchIndex + 1;
-        return prisma.prospects.update({
-          where: { id: prospect.id },
-          data: { rank: newRank }
-        });
-      });
-      
-      await Promise.all(updatePromises);
-      console.log(`✅ Updated prospects ${i + 1}-${Math.min(i + batchSize, prospects.length)}`);
-    }
-    
-    console.log(`✅ Successfully updated ranks for ${prospects.length} prospects`);
-    
-    // 5. Verify results
-    console.log('\n🔍 Verification - Sample records with ranks:');
-    
-    const sampleCompanies = await prisma.companies.findMany({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId
+        rank: { lte: 15 }
       },
       orderBy: { rank: 'asc' },
-      select: { name: true, rank: true },
-      take: 5
+      select: {
+        id: true,
+        name: true,
+        rank: true
+      }
     });
     
-    console.log('🏢 Sample Companies:');
-    sampleCompanies.forEach(company => {
+    console.log(`\n🔍 Verification - Top 15 companies in TOP workspace:`);
+    topCompanies.forEach(company => {
       console.log(`  Rank ${company.rank}: ${company.name}`);
     });
     
-    const samplePeople = await prisma.people.findMany({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: { rank: 'asc' },
-      select: { fullName: true, rank: true },
-      take: 5
-    });
-    
-    console.log('👥 Sample People:');
-    samplePeople.forEach(person => {
-      console.log(`  Rank ${person.rank}: ${person.fullName}`);
-    });
-    
-    const sampleLeads = await prisma.leads.findMany({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: { rank: 'asc' },
-      select: { fullName: true, rank: true },
-      take: 5
-    });
-    
-    console.log('🎯 Sample Leads:');
-    sampleLeads.forEach(lead => {
-      console.log(`  Rank ${lead.rank}: ${lead.fullName}`);
-    });
-    
-    const sampleProspects = await prisma.prospects.findMany({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId
-      },
-      orderBy: { rank: 'asc' },
-      select: { fullName: true, rank: true },
-      take: 5
-    });
-    
-    console.log('🔥 Sample Prospects:');
-    sampleProspects.forEach(prospect => {
-      console.log(`  Rank ${prospect.rank}: ${prospect.fullName}`);
-    });
-    
-    // 6. Final counts verification
-    console.log('\n📊 Final Counts Verification:');
-    const finalCompanyCount = await prisma.companies.count({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId,
-        rank: { gt: 0 }
+    // Count total companies in TOP workspace
+    const totalCompanies = await prisma.companies.count({
+      where: {
+        workspaceId: workspaceId,
+        deletedAt: null
       }
     });
     
-    const finalPeopleCount = await prisma.people.count({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId,
-        rank: { gt: 0 }
-      }
-    });
-    
-    const finalLeadsCount = await prisma.leads.count({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId,
-        rank: { gt: 0 }
-      }
-    });
-    
-    const finalProspectsCount = await prisma.prospects.count({
-      where: { 
-        deletedAt: null,
-        workspaceId: topWorkspaceId,
-        rank: { gt: 0 }
-      }
-    });
-    
-    console.log(`✅ Final Results:`);
-    console.log(`  Companies: ${finalCompanyCount} (target: 475)`);
-    console.log(`  People: ${finalPeopleCount} (target: 2,384)`);
-    console.log(`  Leads: ${finalLeadsCount} (target: 1,701)`);
-    console.log(`  Prospects: ${finalProspectsCount} (target: 587)`);
-    
-    console.log('\n🎉 TOP workspace ranks fix completed successfully!');
+    console.log(`\n📊 Total companies in TOP workspace: ${totalCompanies}`);
+    console.log(`✅ TOP workspace company ranks fix completed!`);
     
   } catch (error) {
-    console.error('❌ Error fixing TOP workspace ranks:', error);
+    console.error('❌ Error fixing TOP workspace company ranks:', error);
     throw error;
   } finally {
     await prisma.$disconnect();
@@ -289,16 +145,13 @@ async function fixTopWorkspaceRanks() {
 }
 
 // Run the script
-if (require.main === module) {
-  fixTopWorkspaceRanks()
-    .then(() => {
-      console.log('🎉 TOP workspace ranks fix completed successfully!');
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error('💥 TOP workspace ranks fix failed:', error);
-      process.exit(1);
-    });
-}
-
-module.exports = { fixTopWorkspaceRanks };
+fixTopWorkspaceRanks()
+  .then(() => {
+    console.log('🎉 TOP workspace script completed successfully');
+    console.log('💡 Next: Run similar scripts for other workspaces');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('💥 Script failed:', error);
+    process.exit(1);
+  });

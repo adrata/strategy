@@ -17,6 +17,7 @@ import { sendEmail, type EmailData } from "./EmailService";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 import { CompleteActionModal, ActionLogData } from "./components/CompleteActionModal";
 import { TodayActivityTracker } from "./TodayActivityTracker";
+import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
 
 // EmailData will be imported from EmailService, removing duplicate type definition
 
@@ -185,6 +186,17 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   // Track completed IDs for potential future use
   const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
 
+  // Undo system state
+  const [lastCompletedAction, setLastCompletedAction] = useState<{
+    actionData: ActionLogData;
+    person: SpeedrunPerson;
+    actionId: string; // Store the action ID for deletion
+    wasCompleted: boolean;
+  } | null>(null);
+
+  // Success message state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   let user;
   try {
     const authResult = useUnifiedAuth();
@@ -240,6 +252,130 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
       );
     }
   }, [selectedPerson]);
+
+  // Cross-platform keyboard shortcut detection
+  const isModifierKeyPressed = (event: KeyboardEvent) => {
+    // Mac: metaKey (⌘), Windows/Linux: ctrlKey (Ctrl)
+    // Also check for both to handle edge cases
+    return event.metaKey || event.ctrlKey;
+  };
+
+
+  // Generate random success messages
+  const getRandomSuccessMessage = () => {
+    const messages = [
+      "Nice work! 🎯",
+      "Great job! ⚡",
+      "Excellent! 🚀",
+      "Well done! 💪",
+      "Outstanding! 🌟",
+      "Fantastic! 🎉",
+      "Amazing! 🔥",
+      "Perfect! ✅",
+      "Brilliant! 💎",
+      "Incredible! 🎊",
+      "Superb! 🏆",
+      "Outstanding work! 🎯",
+      "You're on fire! 🔥",
+      "Keep it up! 💪",
+      "Crushing it! 🚀"
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
+  // Show success message with auto-hide
+  const showSuccessMessage = (message: string) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000); // Hide after 3 seconds
+  };
+
+  // Undo system - handle ⌘Z/Ctrl+Z to undo last action
+  useEffect(() => {
+    const handleUndoKeyDown = (event: KeyboardEvent) => {
+      // Debug logging
+      console.log('🔍 Key pressed:', {
+        key: event.key,
+        code: event.code,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        hasLastAction: !!lastCompletedAction,
+        modalsOpen: {
+          complete: showCompleteModal,
+          snooze: showSnoozeRemoveModal,
+          email: showEmailComposer,
+          dialer: showPowerDialer
+        }
+      });
+
+      // Check for ⌘Z (Mac) or Ctrl+Z (Windows/Linux) - ensure no Shift key
+      if (isModifierKeyPressed(event) && event.key === 'z' && !event.shiftKey && !event.altKey) {
+        console.log('🎯 Undo shortcut detected!');
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Only allow undo if we have a last completed action and no modal is open
+        if (lastCompletedAction && !showCompleteModal && !showSnoozeRemoveModal && !showEmailComposer && !showPowerDialer) {
+          console.log('🔄 Undoing last action for:', lastCompletedAction.person.name);
+          
+          // Delete the action from the database
+          handleUndoAction(lastCompletedAction);
+        } else {
+          console.log('❌ Undo blocked:', {
+            hasLastAction: !!lastCompletedAction,
+            modalsOpen: showCompleteModal || showSnoozeRemoveModal || showEmailComposer || showPowerDialer
+          });
+        }
+      }
+    };
+
+    // Add event listener with capture to ensure we get the event early
+    document.addEventListener('keydown', handleUndoKeyDown, true);
+    return () => document.removeEventListener('keydown', handleUndoKeyDown, true);
+  }, [lastCompletedAction, showCompleteModal, showSnoozeRemoveModal, showEmailComposer, showPowerDialer, handleUndoAction]);
+
+  // Handle undo action - delete from database and restore person
+  const handleUndoAction = useCallback(async (undoData: typeof lastCompletedAction) => {
+    if (!undoData) return;
+
+    try {
+      console.log('🗑️ Deleting action from database:', undoData.actionId);
+      
+      // Delete the action from the database
+      const response = await fetch('/api/speedrun/action-log', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          actionId: undoData.actionId,
+          personId: undoData.person.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete action log');
+      }
+
+      console.log('✅ Action deleted from database');
+
+      // Restore the person to the speedrun list
+      // Note: This would need to be implemented in the parent component
+      // For now, we'll just set the person as selected and reopen the modal
+      setSelectedPerson(undoData.person);
+      setShowCompleteModal(true);
+      
+      // Clear the undo data
+      setLastCompletedAction(null);
+      
+    } catch (error) {
+      console.error('❌ Error undoing action:', error);
+      alert('Failed to undo action. Please try again.');
+    }
+  }, []);
 
   // REMOVED: Auto-selection is now handled at the provider level to prevent conflicts
   // This ensures consistent state management and eliminates race conditions
@@ -330,6 +466,15 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   const handleActionLogSubmit = useCallback(async (actionData: ActionLogData) => {
     if (!selectedPerson || !user) return;
 
+    // Check if this is a resubmission after undo (has lastCompletedAction)
+    const isResubmission = !!lastCompletedAction;
+    
+    if (isResubmission) {
+      console.log('🔄 Processing resubmission after undo - will save to database');
+      // Clear undo data since we're resubmitting
+      setLastCompletedAction(null);
+    }
+
     setIsSubmittingAction(true);
     
     try {
@@ -359,7 +504,21 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
         throw new Error('Failed to save action log');
       }
 
-      console.log(`✅ Action log saved for ${selectedPerson.name}`);
+      const result = await response.json();
+      const actionId = result.data?.id;
+
+      console.log(`✅ Action log saved for ${selectedPerson.name} with ID: ${actionId}`);
+
+      // Show success message
+      showSuccessMessage(getRandomSuccessMessage());
+
+      // Store action data for potential undo AFTER successful save
+      setLastCompletedAction({
+        actionData: { ...actionData },
+        person: { ...selectedPerson },
+        actionId: actionId || '',
+        wasCompleted: true
+      });
 
       // Get next person BEFORE marking as completed (since onPersonComplete will modify the array)
       const currentIndex = SpeedrunPeople.findIndex(
@@ -385,10 +544,12 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     } catch (error) {
       console.error('❌ Error saving action log:', error);
       alert('Failed to save action log. Please try again.');
+      // Clear undo data on error
+      setLastCompletedAction(null);
     } finally {
       setIsSubmittingAction(false);
     }
-  }, [selectedPerson, user, onPersonComplete, SpeedrunPeople, setSelectedPerson]);
+  }, [selectedPerson, user, onPersonComplete, SpeedrunPeople, setSelectedPerson, lastCompletedAction]);
 
   const handleSkip = useCallback(() => {
     if (!selectedPerson || !onPersonSkip) return;
@@ -514,6 +675,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           onSubmit={handleActionLogSubmit}
           personName={selectedPerson.name}
           isLoading={isSubmittingAction}
+          initialData={lastCompletedAction?.actionData}
         />
       </>
     );
@@ -642,6 +804,34 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     <>
       {content}
       {renderModals()}
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-pulse">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-semibold">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Debug: Undo Available Indicator */}
+      {lastCompletedAction && !showCompleteModal && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              <span>Press {getCommonShortcut('UNDO')} to undo</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Power Dialer Modal */}
       {showPowerDialer && (

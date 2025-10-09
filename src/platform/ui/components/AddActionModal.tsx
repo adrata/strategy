@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/auth-fetch';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface AddActionModalProps {
   isOpen: boolean;
@@ -72,6 +73,34 @@ export function AddActionModal({
       setCompanySearchResults([]);
     }
   }, [isOpen, contextRecord]);
+
+  // Keyboard shortcuts for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSubmit();
+      }
+      
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keydown', handleKeyDown, false);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, handleSubmit, onClose]);
 
   // Search people as user types
   useEffect(() => {
@@ -159,21 +188,30 @@ export function AddActionModal({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) return;
       
-      // Command+Enter to submit
+      // Command+Enter to submit (works in all fields)
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
         handleSubmit(event as any);
       }
       
       // Escape to close
       if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, formData]);
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, formData, onClose]);
 
   if (!isOpen) return null;
 
@@ -398,7 +436,7 @@ export function AddActionModal({
                   : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
               }`}
             >
-              {isLoading ? 'Adding...' : 'Add Action'}
+              {isLoading ? 'Adding...' : `Add Action (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
 

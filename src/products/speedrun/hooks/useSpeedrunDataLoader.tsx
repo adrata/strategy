@@ -11,7 +11,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { authFetch } from "@/platform/auth-fetch";
 import { useSpeedrunContext, type SpeedrunPerson } from "@/products/speedrun/context/SpeedrunProvider";
 import { UniversalRankingEngine, type RankedSpeedrunPerson } from "@/products/speedrun/UniversalRankingEngine";
-import { UnifiedMasterRankingEngine } from "@/platform/services/unified-master-ranking";
+import { RankingSystem } from "@/platform/services/ranking-system";
 import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engine-settings-service';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
@@ -140,10 +140,10 @@ export function useSpeedrunDataLoader() {
 
       console.log(`🔄 [TRANSFORMED] ${transformedData.length} speedrun people`);
 
-      // 🏆 DATA IS ALREADY RANKED by the unified API using UnifiedMasterRankingEngine
+      // 🏆 DATA IS ALREADY RANKED by the unified API using new ranking system
       console.log(`🏆 [SPEEDRUN] Data is already ranked by unified API, no additional ranking needed`);
       
-      // The unified API has already applied the UnifiedMasterRankingEngine
+      // The unified API has already applied the new unified ranking system
       // Just convert to the expected format
       const rankedData: RankedSpeedrunPerson[] = transformedData.map((person, index) => ({
         ...person,

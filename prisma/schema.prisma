@@ -22,6 +22,29 @@ model Chat {
   @@index([workspaceId, type])
 }
 
+model RankingEvent {
+  id           String    @id @default(ulid())
+  workspaceId  String    @db.VarChar(30)
+  userId       String?   @db.VarChar(30)
+  eventType    String    @db.VarChar(50)
+  entityType   String    @db.VarChar(50)
+  entityId     String    @db.VarChar(30)
+  eventData    Json?
+  impactScore  Int       @default(0)
+  processed    Boolean   @default(false)
+  processedAt  DateTime?
+  retryCount   Int       @default(0)
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([processed])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([workspaceId, processed])
+  @@map("ranking_events")
+}
+
 model entities {
   id           String    @id @default(ulid())
   type         String    @db.VarChar(50)
@@ -587,6 +610,13 @@ model companies {
   hqRegion                String[]
   hqCountryIso2           String?             @db.VarChar(2)
   hqCountryIso3           String?             @db.VarChar(3)
+  status                  String?             @default("active") @db.VarChar(20)
+  parentCompanyName       String?             @map("parent_company_name") @db.VarChar(255)
+  parentCompanyDomain     String?             @map("parent_company_domain") @db.VarChar(255)
+  confidence              Decimal?            @db.Decimal(5, 2)
+  sources                 String[]            @default([])
+  acquisitionDate         DateTime?           @db.Timestamp(6)
+  lastVerified            DateTime?           @db.Timestamp(6)
   actions                 actions[]
   buyerGroups             buyer_groups[]
   industryData            industries?         @relation(fields: [industryId], references: [id])
@@ -1610,66 +1640,68 @@ model user_ai_preferences {
 }
 
 model users {
-  id                      String        @id @default(ulid())
-  email                   String
+  id                      String          @id @default(ulid())
+  email                   String          @unique
   password                String?
   name                    String
   firstName               String?
   lastName                String?
   displayName             String?
-  preferredLanguage       String        @default("en") @db.VarChar(10)
-  countryCode             String?       @db.VarChar(2)
-  timezone                String?       @db.VarChar(50)
-  locale                  String?       @db.VarChar(10)
-  textDirection           String        @default("ltr") @db.VarChar(3)
+  preferredLanguage       String          @default("en") @db.VarChar(10)
+  countryCode             String?         @db.VarChar(2)
+  timezone                String?         @db.VarChar(50)
+  locale                  String?         @db.VarChar(10)
+  textDirection           String          @default("ltr") @db.VarChar(3)
   address                 String?
   city                    String?
   state                   String?
   country                 String?
-  postalCode              String?       @db.VarChar(20)
+  postalCode              String?         @db.VarChar(20)
   bio                     String?
   notes                   String?
-  createdAt               DateTime      @default(now())
+  createdAt               DateTime        @default(now())
   updatedAt               DateTime
   lastLoginAt             DateTime?
   externalId              String?
-  isSSO                   Boolean       @default(false)
-  isActive                Boolean       @default(true)
+  isSSO                   Boolean         @default(false)
+  isActive                Boolean         @default(true)
   scimSource              String?
   lastSyncAt              DateTime?
   ssoProviderId           String?
   resetToken              String?
   resetTokenExpiry        DateTime?
-  communicationStyle      String?       @default("consultative") @db.VarChar(30)
-  coreSignalCreditsLimit  Int?          @default(500)
-  coreSignalCreditsUsed   Int?          @default(0)
-  coreSignalLastReset     DateTime?     @default(now())
-  dashboardConfig         Json?         @default("{\"kpis\": [], \"widgets\": [], \"defaultView\": \"speedrun\"}")
-  department              String?       @db.VarChar(50)
-  intelligenceFocus       Json?         @default("{\"buyingSignals\": true, \"competitorMentions\": false, \"stakeholderMapping\": true}")
-  linkedinUrl             String?       @db.VarChar(255)
-  manager                 String?       @db.VarChar(30)
-  notificationPreferences Json?         @default("{\"urgency\": \"medium\", \"channels\": [\"in_app\"], \"frequency\": \"hourly\"}")
-  phoneNumber             String?       @db.VarChar(20)
-  preferredDetailLevel    String?       @default("detailed") @db.VarChar(20)
-  profilePictureUrl       String?       @db.VarChar(255)
-  quota                   Decimal?      @db.Decimal(15, 2)
-  seniorityLevel          String?       @db.VarChar(20)
+  communicationStyle      String?         @default("consultative") @db.VarChar(30)
+  coreSignalCreditsLimit  Int?            @default(500)
+  coreSignalCreditsUsed   Int?            @default(0)
+  coreSignalLastReset     DateTime?       @default(now())
+  dashboardConfig         Json?           @default("{\"kpis\": [], \"widgets\": [], \"defaultView\": \"speedrun\"}")
+  department              String?         @db.VarChar(50)
+  intelligenceFocus       Json?           @default("{\"buyingSignals\": true, \"competitorMentions\": false, \"stakeholderMapping\": true}")
+  linkedinUrl             String?         @db.VarChar(255)
+  manager                 String?         @db.VarChar(30)
+  notificationPreferences Json?           @default("{\"urgency\": \"medium\", \"channels\": [\"in_app\"], \"frequency\": \"hourly\"}")
+  phoneNumber             String?         @db.VarChar(20)
+  preferredDetailLevel    String?         @default("detailed") @db.VarChar(20)
+  profilePictureUrl       String?         @db.VarChar(255)
+  quota                   Decimal?        @db.Decimal(15, 2)
+  seniorityLevel          String?         @db.VarChar(20)
   startDate               DateTime?
-  territory               String?       @db.VarChar(100)
-  title                   String?       @db.VarChar(100)
-  activeWorkspaceId       String?       @db.VarChar(30)
-  createdBy               String?       @db.VarChar(30)
-  updatedBy               String?       @db.VarChar(30)
-  version                 Int           @default(1)
-  username                String?       @unique @db.VarChar(50)
+  territory               String?         @db.VarChar(100)
+  title                   String?         @db.VarChar(100)
+  activeWorkspaceId       String?         @db.VarChar(30)
+  createdBy               String?         @db.VarChar(30)
+  updatedBy               String?         @db.VarChar(30)
+  version                 Int             @default(1)
+  username                String?         @unique @db.VarChar(50)
+  auth_sessions           auth_sessions[]
   resetTokens             resetTokens[]
-  workspaces              workspaces?   @relation(fields: [activeWorkspaceId], references: [id])
+  workspaces              workspaces?     @relation(fields: [activeWorkspaceId], references: [id])
 
   @@index([activeWorkspaceId], map: "idx_users_active_workspace")
   @@index([createdBy], map: "idx_users_created_by")
   @@index([updatedBy], map: "idx_users_updated_by")
   @@index([username], map: "idx_users_username")
+  @@index([name], map: "idx_users_name")
 }
 
 model resetTokens {
@@ -1706,46 +1738,54 @@ model workspace_users {
   role        String   @default("member") @db.VarChar(20)
   createdAt   DateTime @default(now())
   updatedAt   DateTime
+  isActive    Boolean  @default(true)
+  joinedAt    DateTime @default(now())
+
+  @@index([userId], map: "idx_workspace_users_userId")
+  @@index([workspaceId], map: "idx_workspace_users_workspaceId")
 }
 
 model workspaces {
-  id                   String   @id @default(ulid())
+  id                   String          @id @default(ulid())
   name                 String
   slug                 String
-  defaultLanguage      String   @default("en") @db.VarChar(10)
-  supportedLanguages   String[] @default(["en"])
-  timezone             String   @default("UTC") @db.VarChar(50)
+  defaultLanguage      String          @default("en") @db.VarChar(10)
+  supportedLanguages   String[]        @default(["en"])
+  timezone             String          @default("UTC") @db.VarChar(50)
   description          String?
-  currency             String   @default("USD") @db.VarChar(3)
-  dateFormat           String   @default("MM/dd/yyyy") @db.VarChar(20)
-  numberFormat         String   @default("1,234.56") @db.VarChar(20)
-  createdAt            DateTime @default(now())
+  currency             String          @default("USD") @db.VarChar(3)
+  dateFormat           String          @default("MM/dd/yyyy") @db.VarChar(20)
+  numberFormat         String          @default("1,234.56") @db.VarChar(20)
+  createdAt            DateTime        @default(now())
   updatedAt            DateTime
   companyId            String?
   bundleId             String?
-  auditRetentionDays   Int?     @default(90)
+  auditRetentionDays   Int?            @default(90)
   primaryRegion        String?
   complianceFrameworks Json?
   subscriptionTier     String?
   subscriptionStatus   String?
-  scimEnabled          Boolean  @default(false)
-  ssoEnabled           Boolean  @default(false)
-  allowedRegions       String[] @default([])
-  logoUrl              String?  @db.VarChar(255)
-  primaryColor         String?  @db.VarChar(7)
-  secondaryColor       String?  @db.VarChar(7)
-  createdBy            String?  @db.VarChar(30)
-  updatedBy            String?  @db.VarChar(30)
-  version              Int      @default(1)
-  businessModel        String?  @db.VarChar(100)
+  scimEnabled          Boolean         @default(false)
+  ssoEnabled           Boolean         @default(false)
+  allowedRegions       String[]        @default([])
+  logoUrl              String?         @db.VarChar(255)
+  primaryColor         String?         @db.VarChar(7)
+  secondaryColor       String?         @db.VarChar(7)
+  createdBy            String?         @db.VarChar(30)
+  updatedBy            String?         @db.VarChar(30)
+  version              Int             @default(1)
+  businessModel        String?         @db.VarChar(100)
   companyContext       Json?
-  projectDeliveryStyle String?  @default("Strategic Clarity") @db.VarChar(50)
-  serviceFocus         String[] @default([])
-  stakeholderApproach  String?  @default("Client-Centric") @db.VarChar(50)
+  projectDeliveryStyle String?         @default("Strategic Clarity") @db.VarChar(50)
+  serviceFocus         String[]        @default([])
+  stakeholderApproach  String?         @default("Client-Centric") @db.VarChar(50)
+  isActive             Boolean         @default(true)
+  auth_sessions        auth_sessions[]
   users                users[]
 
   @@index([createdBy], map: "idx_workspaces_created_by")
   @@index([updatedBy], map: "idx_workspaces_updated_by")
+  @@index([slug], map: "idx_workspaces_slug")
 }
 
 model audit_logs {
@@ -2184,4 +2224,25 @@ model sellers {
   @@index([assignedUserId])
   @@index([deletedAt])
   @@index([workspaceId, deletedAt])
+}
+
+model auth_sessions {
+  id             String     @id
+  userId         String     @db.VarChar(30)
+  workspaceId    String     @db.VarChar(30)
+  token          String     @unique @db.VarChar(500)
+  refreshToken   String     @unique @db.VarChar(500)
+  expiresAt      DateTime
+  createdAt      DateTime   @default(now())
+  lastAccessedAt DateTime   @default(now())
+  isActive       Boolean    @default(true)
+  users          users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaces     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([isActive])
+  @@index([refreshToken])
+  @@index([token])
+  @@index([userId])
+  @@index([workspaceId])
 }

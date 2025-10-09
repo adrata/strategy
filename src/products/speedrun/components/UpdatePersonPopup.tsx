@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { SpeedrunPerson } from "../types/SpeedrunTypes";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface UpdatePersonPopupProps {
   isOpen: boolean;
@@ -62,6 +63,36 @@ export function UpdatePersonPopup({
     onSave(updatedData);
     onClose();
   };
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      // Command+Enter to save
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSubmit(event as any);
+      }
+      
+      // Escape to close
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, handleSubmit, onClose]);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -233,7 +264,7 @@ export function UpdatePersonPopup({
               type="submit"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Save Changes
+              Complete ({getCommonShortcut('SUBMIT')})
             </button>
           </div>
         </form>

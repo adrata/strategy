@@ -1,14 +1,11 @@
-import { Metadata } from "next";
+"use client";
+
 import { PipelineView } from "@/frontend/components/pipeline/PipelineView";
 import { WorkspacePipelineWrapper } from "../WorkspacePipelineWrapper";
 
-export const metadata: Metadata = {
-  title: "Companies",
-  description: "Companies management",
-};
-
 export default function WorkspaceCompaniesPage() {
   // Use the original PipelineView component with proper providers
+  // Removed CompaniesErrorBoundary to prevent cache error page flashing
   return (
     <WorkspacePipelineWrapper>
       <PipelineView section="companies" />

@@ -832,11 +832,8 @@ export function PipelineLeftPanelStandalone({
   // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
   const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
 
-  // 🔄 REMOVED: Force refresh was causing infinite loop
-  // The useFastCounts hook handles loading automatically
-
-  // 🔄 REMOVED: Force refresh on 0 counts was causing infinite loop
-  // The useFastCounts hook will handle loading counts properly
+  // 🔄 REMOVED: Automatic refresh to prevent infinite loops
+  // The useFastCounts hook handles workspace switching automatically via events
 
   // Pipeline context for profile functionality (not Monaco)
   const {

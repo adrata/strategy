@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 export interface EditRecordModalProps {
   isOpen: boolean;
@@ -52,6 +53,36 @@ export function EditRecordModal({
     e.preventDefault();
     onSave({ ...record, ...formData });
   };
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      // Command+Enter to save
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSubmit(event as any);
+      }
+      
+      // Escape to close
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, handleSubmit, onClose]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev: Record<string, any>) => ({ ...prev, [field]: value }));
@@ -246,7 +277,7 @@ export function EditRecordModal({
               disabled={isLoading}
               className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>

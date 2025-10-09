@@ -25,41 +25,39 @@ export async function POST(request: NextRequest) {
     // 🚀 PERFORMANCE: Create promise for request deduplication
     const requestPromise = (async () => {
       // Query database for workspace configuration
-      // Import prisma directly from @/platform/prisma
-      
       const workspace = await prisma.workspaces.findUnique({
-      where: { id: workspaceId },
-      select: {
-        id: true,
-        name: true,
-        // Remove fields that don't exist in the schema
-        // timezone: true,
-        // currency: true, 
-        // dateFormat: true,
-        // logoUrl: true,
-        // primaryColor: true,
-        // secondaryColor: true
+        where: { id: workspaceId },
+        select: {
+          id: true,
+          name: true,
+          // Remove fields that don't exist in the schema
+          // timezone: true,
+          // currency: true, 
+          // dateFormat: true,
+          // logoUrl: true,
+          // primaryColor: true,
+          // secondaryColor: true
+        }
+      });
+
+      if (!workspace) {
+        return NextResponse.json({ 
+          error: 'Workspace not found',
+          defaultConfig: getDefaultWorkspaceConfig()
+        }, { status: 404 });
       }
-    });
 
-    if (!workspace) {
-      return NextResponse.json({ 
-        error: 'Workspace not found',
-        defaultConfig: getDefaultWorkspaceConfig()
-      }, { status: 404 });
-    }
-
-    // Determine branding colors based on workspace name
-    let primaryColor = '#3b82f6'; // Default blue
-    let secondaryColor = '#1f2937'; // Default dark gray
-    
-    if (workspace['name'] === 'Retail Product Solutions') {
-      primaryColor = '#AE3033'; // RPS red
-      secondaryColor = '#3b82f6'; // Blue as secondary
-    } else if (workspace['name'] === 'Notary Everyday') {
-      primaryColor = '#0A1F49'; // Notary dark blue
-      secondaryColor = '#3b82f6'; // Blue as secondary
-    }
+      // Determine branding colors based on workspace name
+      let primaryColor = '#3b82f6'; // Default blue
+      let secondaryColor = '#1f2937'; // Default dark gray
+      
+      if (workspace['name'] === 'Retail Product Solutions') {
+        primaryColor = '#AE3033'; // RPS red
+        secondaryColor = '#3b82f6'; // Blue as secondary
+      } else if (workspace['name'] === 'Notary Everyday') {
+        primaryColor = '#0A1F49'; // Notary dark blue
+        secondaryColor = '#3b82f6'; // Blue as secondary
+      }
 
       return NextResponse.json({
         id: workspace.id,

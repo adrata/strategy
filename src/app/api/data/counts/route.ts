@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -88,12 +89,16 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                      userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
-    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
+    // 🎯 DEMO MODE: Detect if we're in demo mode - ONLY for Dan and Ross
+    const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
+      userId, 
+      context.userEmail, 
+      workspaceId
+    );
+    
+    const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                       userId === 'demo-user-2025') && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
+    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode} (Dan/Ross: ${demoAccessResult.isDanOrRoss})`);
     
     // 🚀 PERFORMANCE: Run all count queries in parallel
     const [
@@ -107,11 +112,15 @@ export async function GET(request: NextRequest) {
       sellersCount,
       speedrunCount
     ] = await Promise.all([
-      // Leads count
-      prisma.leads.count({
+      // Leads count - count from people table (same as unified API)
+      prisma.people.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
         }
       }),
       
@@ -131,11 +140,15 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Companies count
+      // Companies count - match section API filtering logic
       prisma.companies.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          OR: [
+            { assignedUserId: userId },
+            { assignedUserId: null }
+          ]
         }
       }),
       
@@ -180,14 +193,39 @@ export async function GET(request: NextRequest) {
         }).catch(() => 0)
       ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
-      // Speedrun count - count actual speedrun leads
-      prisma.leads.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          tags: { has: 'speedrun' }
+      // Speedrun count - count actual speedrun items (limited to 30 for performance)
+      (async () => {
+        try {
+          // First try to count speedrun-tagged leads
+          const speedrunLeadsCount = await prisma.leads.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              tags: { has: 'speedrun' }
+            }
+          });
+          
+          // If no speedrun leads found, count people with company relationships but limit to 30
+          if (speedrunLeadsCount === 0) {
+            console.log(`🔄 [COUNTS API] No speedrun leads found, counting people for speedrun (limited to 30) for workspace: ${workspaceId}`);
+            const peopleCount = await prisma.people.count({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                companyId: { not: null }
+              }
+            });
+            // Return the actual count used in speedrun (limited to 30)
+            return Math.min(peopleCount, 30);
+          }
+          
+          // Return the actual count used in speedrun (limited to 30)
+          return Math.min(speedrunLeadsCount, 30);
+        } catch (error) {
+          console.error('❌ [COUNTS API] Error counting speedrun data:', error);
+          return 0;
         }
-      }).catch(() => 0)
+      })()
     ]);
     
     const counts = {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { authFetch } from '@/platform/auth-fetch';
 
 interface UseInlineEditOptions {
   onSuccess?: (message: string) => void;
@@ -31,8 +32,8 @@ export const useInlineEdit = (options: UseInlineEditOptions = {}) => {
       console.log(`🔧 [INLINE EDIT] Updating ${recordType} ${recordId} field ${field} to:`, value);
       
       // Use unified API for updates
-      const response = await fetch('/api/data/unified', {
-        method: 'PUT',
+      const response = await authFetch('/api/data/unified', {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },

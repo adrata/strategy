@@ -15,8 +15,8 @@ import { calculateOptimalContactTime as getTimingInfo } from "./timing";
 import { COMPANY_RANKING_WEIGHTS, COMPANY_SIZE_MULTIPLIERS } from "./constants";
 
 /**
- * 🏢 COMPANY-FIRST RANKING SYSTEM
- * Ranks companies first, then finds optimal people within those companies
+ * 🏢 HIERARCHICAL COMPANY RANKING SYSTEM
+ * Ranks companies 1-400, then people 1-4000 within each company
  */
 function rankCompaniesByValue(contacts: CRMRecord[]): Record<string, number> {
   const companyStats: Record<
@@ -80,8 +80,10 @@ function rankCompaniesByValue(contacts: CRMRecord[]): Record<string, number> {
     }
   });
 
-  // Calculate company ranking scores
+  // Calculate company ranking scores and limit to top 400 companies
   const companyRankings: Record<string, number> = {};
+  const scoredCompanies: Array<{ company: string; score: number; stats: any }> = [];
+  
   Object.entries(companyStats).forEach(([company, stats]) => {
     stats['avgDealSize'] =
       stats.opportunityCount > 0
@@ -111,21 +113,35 @@ function rankCompaniesByValue(contacts: CRMRecord[]): Record<string, number> {
           : 1;
     companyScore += sizeMultiplier;
 
-    companyRankings[company] = companyScore;
+    scoredCompanies.push({ company, score: companyScore, stats });
   });
 
+  // Sort by score and limit to top 400 companies
+  const topCompanies = scoredCompanies
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 400); // Limit to top 400 companies
+
+  // Assign ranks 1-400
+  topCompanies.forEach((item, index) => {
+    companyRankings[item.company] = item.score;
+  });
+
+  console.log(`🏢 [HIERARCHICAL] Ranked ${topCompanies.length} companies (top 400)`);
   return companyRankings;
 }
 
 /**
- * 🎯 SMART INDIVIDUAL RANKING WITHIN COMPANIES
- * Finds the best people to contact at each company
+ * 🎯 HIERARCHICAL INDIVIDUAL RANKING WITHIN COMPANIES
+ * Ranks people 1-4000 within each company, then creates sub-rankings
  */
 function rankIndividualsWithinCompany(
   companyContacts: CRMRecord[],
   settings: SpeedrunUserSettings,
 ): RankedContact[] {
-  return companyContacts.map((contact) => {
+  // Limit to top 4000 people per company
+  const limitedContacts = companyContacts.slice(0, 4000);
+  
+  return limitedContacts.map((contact) => {
     const daysSinceContact = calculateDaysSinceContact(contact.lastActionDate);
     const estimatedDealValue = extractDealValue(contact);
     const companySize = determineCompanySize(contact);
@@ -175,14 +191,14 @@ function rankIndividualsWithinCompany(
 }
 
 /**
- * 🚀 ULTIMATE MARK_I RANKING SYSTEM
- * Company-first ranking with time zone optimization and smart individual selection
+ * 🚀 HIERARCHICAL RANKING SYSTEM
+ * Companies 1-400, People 1-4000 within company, Sub-rankings for leads/prospects/opportunities
  */
 export function rankContacts(
   contacts: CRMRecord[],
   settings: SpeedrunUserSettings,
 ): RankedContact[] {
-  // Step 1: Rank companies by value and potential
+  // Step 1: Rank companies by value and potential (1-400)
   const companyRankings = rankCompaniesByValue(contacts);
 
   // Step 2: Group contacts by company
@@ -195,25 +211,35 @@ export function rankContacts(
     contactsByCompany[company].push(contact);
   });
 
-  // Step 3: Rank individuals within each company and combine with company score
+  // Step 3: Rank individuals within each company (1-4000 per company)
   const allRankedContacts: RankedContact[] = [];
+  let globalPersonRank = 1;
 
   Object.entries(contactsByCompany).forEach(([company, companyContacts]) => {
     const companyScore = companyRankings[company] || 0;
-    const rankedIndividuals = rankIndividualsWithinCompany(
-      companyContacts,
-      settings,
-    );
+    
+    // Only process companies that made it to top 400
+    if (companyScore > 0) {
+      const rankedIndividuals = rankIndividualsWithinCompany(
+        companyContacts,
+        settings,
+      );
 
-    // Add company ranking score to each individual
-    rankedIndividuals.forEach((individual) => {
-      individual['companyRankingScore'] = companyScore;
-      // Combine company score (60%) + individual score (40%) for final ranking
-      const combinedScore = companyScore * 0.6 + individual.rankingScore * 0.4;
-      individual['rankingScore'] = combinedScore;
-    });
+      // Add company ranking score and assign hierarchical ranks
+      rankedIndividuals.forEach((individual, index) => {
+        individual['companyRankingScore'] = companyScore;
+        individual['companyRank'] = Object.keys(companyRankings).indexOf(company) + 1; // 1-400
+        individual['personRank'] = index + 1; // 1-4000 within company
+        individual['globalPersonRank'] = globalPersonRank + index; // Global rank across all people
+        
+        // Combine company score (60%) + individual score (40%) for final ranking
+        const combinedScore = companyScore * 0.6 + individual.rankingScore * 0.4;
+        individual['rankingScore'] = combinedScore;
+      });
 
-    allRankedContacts.push(...rankedIndividuals);
+      allRankedContacts.push(...rankedIndividuals);
+      globalPersonRank += rankedIndividuals.length;
+    }
   });
 
   // Step 4: Final sort by combined score and time zone priority
@@ -229,8 +255,13 @@ export function rankContacts(
   });
 
   console.log(
-    `🏢 Company-first ranking complete: ${Object.keys(contactsByCompany).length} companies, ${finalRanking.length} total contacts`,
+    `🏢 [HIERARCHICAL] Ranking complete: ${Object.keys(companyRankings).length} companies (top 400), ${finalRanking.length} people ranked`,
   );
+  console.log(`📊 [HIERARCHICAL] Company distribution:`, {
+    "Top 100 Companies": finalRanking.filter(c => (c.companyRank || 0) <= 100).length,
+    "Top 200 Companies": finalRanking.filter(c => (c.companyRank || 0) <= 200).length,
+    "Top 400 Companies": finalRanking.filter(c => (c.companyRank || 0) <= 400).length,
+  });
   console.log(`🌍 Time zone distribution:`, {
     "High Priority (Same/Similar TZ)": finalRanking.filter(
       (c) => (c.callingPriority || 0) >= 4,
@@ -244,6 +275,105 @@ export function rankContacts(
   });
 
   return finalRanking;
+}
+
+/**
+ * 🚀 GENERATE SPEEDRUN LIST (Top 30-50 People)
+ * Returns the top people across all companies for daily calling
+ */
+export function generateSpeedrunList(
+  rankedContacts: RankedContact[],
+  limit: number = 50
+): RankedContact[] {
+  console.log(`🚀 [SPEEDRUN] Generating speedrun list with top ${limit} people`);
+  
+  // Sort by global person rank and take top N
+  const speedrunList = rankedContacts
+    .sort((a, b) => (a.globalPersonRank || 0) - (b.globalPersonRank || 0))
+    .slice(0, limit);
+  
+  console.log(`✅ [SPEEDRUN] Generated speedrun list with ${speedrunList.length} people`);
+  console.log(`📊 [SPEEDRUN] Top companies in speedrun:`, 
+    speedrunList.slice(0, 10).map(c => 
+      `${c.companyRank || 'N/A'}. ${c.company} - ${c.name} (Rank: ${c.globalPersonRank})`
+    )
+  );
+  
+  return speedrunList;
+}
+
+/**
+ * 📋 CREATE SUB-RANKINGS FOR LEADS/PROSPECTS/OPPORTUNITIES
+ * Creates sub-rankings within each person's records
+ */
+export function createSubRankings(
+  rankedContacts: RankedContact[],
+  leads: any[] = [],
+  prospects: any[] = [],
+  opportunities: any[] = []
+): {
+  leads: Array<any & { subRank: number; personRank: number }>;
+  prospects: Array<any & { subRank: number; personRank: number }>;
+  opportunities: Array<any & { subRank: number; personRank: number }>;
+} {
+  console.log(`📋 [SUB-RANKINGS] Creating sub-rankings for leads/prospects/opportunities`);
+  
+  const subRankedLeads: any[] = [];
+  const subRankedProspects: any[] = [];
+  const subRankedOpportunities: any[] = [];
+  
+  // Create person lookup map
+  const personMap = new Map<string, RankedContact>();
+  rankedContacts.forEach(contact => {
+    if (contact.id) personMap.set(contact.id, contact);
+  });
+  
+  // Process leads
+  leads.forEach(lead => {
+    const person = personMap.get(lead.personId);
+    if (person) {
+      subRankedLeads.push({
+        ...lead,
+        subRank: 1, // TODO: Calculate actual sub-rank within person
+        personRank: person.personRank || 0,
+        companyRank: person.companyRank || 0
+      });
+    }
+  });
+  
+  // Process prospects
+  prospects.forEach(prospect => {
+    const person = personMap.get(prospect.personId);
+    if (person) {
+      subRankedProspects.push({
+        ...prospect,
+        subRank: 1, // TODO: Calculate actual sub-rank within person
+        personRank: person.personRank || 0,
+        companyRank: person.companyRank || 0
+      });
+    }
+  });
+  
+  // Process opportunities
+  opportunities.forEach(opportunity => {
+    const person = personMap.get(opportunity.personId);
+    if (person) {
+      subRankedOpportunities.push({
+        ...opportunity,
+        subRank: 1, // TODO: Calculate actual sub-rank within person
+        personRank: person.personRank || 0,
+        companyRank: person.companyRank || 0
+      });
+    }
+  });
+  
+  console.log(`✅ [SUB-RANKINGS] Created sub-rankings: ${subRankedLeads.length} leads, ${subRankedProspects.length} prospects, ${subRankedOpportunities.length} opportunities`);
+  
+  return {
+    leads: subRankedLeads,
+    prospects: subRankedProspects,
+    opportunities: subRankedOpportunities
+  };
 }
 
 /**

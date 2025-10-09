@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { User, UserProfile, Role } from '@prisma/client';
 import { SALES_ROLES } from '../../../services/user-role-system';
 
@@ -79,6 +80,36 @@ export function EnhancedUserProfile({
     }
   };
 
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!user) return;
+      
+      // Command+Enter to save
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSave();
+      }
+      
+      // Escape to close
+      if (event.key === 'Escape' && onClose) {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [user, handleSave, onClose]);
+
   const updateProfile = (field: keyof UserProfile, value: any) => {
     setProfile(prev => ({ ...prev, [field]: value }));
   };
@@ -118,7 +149,7 @@ export function EnhancedUserProfile({
               disabled={saving}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
             {onClose && (
               <button

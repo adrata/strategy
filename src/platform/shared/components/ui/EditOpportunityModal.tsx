@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface Opportunity {
   id: string;
@@ -79,6 +80,36 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
     onSave(updatedOpportunity);
     onClose();
   };
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      // Command+Enter to save
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        handleSave();
+      }
+      
+      // Escape to close
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, handleSave, onClose]);
 
   if (!isOpen) return null;
 
@@ -342,7 +373,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
               onClick={handleSave}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Save Changes
+              Complete ({getCommonShortcut('SUBMIT')})
             </button>
           </div>
         </div>

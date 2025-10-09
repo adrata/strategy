@@ -7,6 +7,7 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
 const prisma = new PrismaClient();
 
@@ -135,7 +136,11 @@ export class PlatformAccessManager {
       
       // Fallback to hardcoded logic for known users
       if (!config) {
-        if (userEmail === "demo@adrata.com" || userId === "demo-user-2025") {
+        // Demo access is ONLY allowed for Dan and Ross users
+        const demoAccessResult = DemoAccessValidator.validateDemoAccess(userId, userEmail);
+        
+        // STRICT: Only grant demo access if user is Dan or Ross AND has demo credentials
+        if ((userEmail === "demo@adrata.com" || userId === "demo-user-2025") && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss) {
           return {
             id: `hardcoded-demo-${Date.now()}`,
             userId,

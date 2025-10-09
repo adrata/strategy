@@ -6,6 +6,7 @@ import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
 import { SuccessMessage } from "./SuccessMessage";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface AddModalProps {
   refreshData?: () => Promise<void>;
@@ -54,14 +55,14 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       setCompanySearchQuery('');
       setCompanySearchResults([]);
       setSelectedCompany(null);
-      // Auto-focus the first input field (Person Name field) without selecting text
+      // Auto-focus the first input field without selecting text
       setTimeout(() => {
-        const firstInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        const firstInput = document.querySelector('input[type="text"]:not([readonly]):not([disabled])') as HTMLInputElement;
         if (firstInput) {
           firstInput.focus();
           // Remove the select() call to prevent text selection that might cause black border
         }
-      }, 150); // Slightly longer delay for better reliability
+      }, 200); // Slightly longer delay for better reliability
     }
   }, [isAddModalOpen, setFormData]);
 
@@ -83,6 +84,106 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     }
   }, [companySearchQuery, activeSection]);
 
+  // Auto-focus when add company modal opens
+  useEffect(() => {
+    if (showAddCompanyModal) {
+      setTimeout(() => {
+        const companyNameInput = document.querySelector('input[name="name"]') as HTMLInputElement;
+        if (companyNameInput) {
+          companyNameInput.focus();
+        }
+      }, 100);
+    }
+  }, [showAddCompanyModal]);
+
+  // Keyboard shortcut for Add Company (⌘⏎) when Add Company modal is open
+  useEffect(() => {
+    if (!showAddCompanyModal) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        console.log('⌨️ [AddModal] Add Company keyboard shortcut detected');
+        
+        // Check if we're inside the Add Company modal
+        const modal = document.querySelector('[data-modal="add-company"]')?.closest('.fixed.inset-0');
+        console.log('⌨️ [AddModal] Add Company modal found:', !!modal);
+        if (!modal) return; // Not in the Add Company modal
+        
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [AddModal] Add Company keyboard shortcut triggered');
+        
+        // Directly trigger the form submission instead of dispatching an event
+        const addCompanyForm = document.querySelector('form[data-modal="add-company"]') as HTMLFormElement;
+        console.log('⌨️ [AddModal] Add Company form found:', !!addCompanyForm);
+        if (addCompanyForm) {
+          // Check if form is valid before submitting
+          const nameInput = addCompanyForm.querySelector('input[name="name"]') as HTMLInputElement;
+          console.log('⌨️ [AddModal] Name input found:', !!nameInput, 'Value:', nameInput?.value);
+          if (nameInput && nameInput.value.trim()) {
+            console.log('⌨️ [AddModal] Submitting Add Company form via keyboard shortcut');
+            addCompanyForm.requestSubmit();
+          } else {
+            console.log('⌨️ [AddModal] Add Company form not valid - name field is empty');
+            nameInput?.focus();
+          }
+        } else {
+          console.error('❌ [AddModal] Add Company form not found');
+        }
+      }
+    };
+
+    // Use capture phase to ensure we get the event before other handlers
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [showAddCompanyModal]);
+
+  // Keyboard shortcut for main AddModal submit (⌘⏎) when modal is open
+  useEffect(() => {
+    if (!isAddModalOpen || showAddCompanyModal) return; // Don't interfere with Add Company modal
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        // Check if we're in an input field or textarea
+        const target = event.target as HTMLElement;
+        const isInputField =
+          target['tagName'] === "INPUT" ||
+          target['tagName'] === "TEXTAREA" ||
+          target['contentEditable'] === "true";
+
+        // If we're in an input field, allow the default behavior (form submission)
+        if (isInputField) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [AddModal] Main submit keyboard shortcut triggered');
+        
+        // Only submit if form is valid
+        if (formData.name?.trim()) {
+          handleCreateRecord();
+        } else {
+          console.log('⌨️ [AddModal] Main form not valid - name field is empty');
+          // Focus the name input
+          const nameInput = document.querySelector('input[type="text"]:not([readonly]):not([disabled])') as HTMLInputElement;
+          nameInput?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true); // Use capture phase
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [isAddModalOpen, showAddCompanyModal, formData.name, handleCreateRecord]);
+
   const searchContacts = async (query: string) => {
     setIsSearchingContacts(true);
     try {
@@ -101,7 +202,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
   const handleContactSelect = (contact: any) => {
     // Check if contact is already selected
-    if (!selectedContacts.find(c => c['id'] === contact.id)) {
+    if (!selectedContacts.find(c => c.id === contact.id)) {
       const newSelectedContacts = [...selectedContacts, contact];
       setSelectedContacts(newSelectedContacts);
       setFormData((prev: any) => ({
@@ -176,6 +277,14 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     });
     // Clear the company search query after pre-populating
     setCompanySearchQuery('');
+    
+    // Auto-focus the company name input in the add company modal
+    setTimeout(() => {
+      const companyNameInput = document.querySelector('input[name="name"]') as HTMLInputElement;
+      if (companyNameInput) {
+        companyNameInput.focus();
+      }
+    }, 100);
   };
 
   // Normalize website URL to standard format
@@ -370,7 +479,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                         className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                       >
                         <div className="font-medium text-gray-900">{company.name}</div>
-                        {company['website'] && (
+                        {company.website && (
                           <div className="text-sm text-gray-500">{company.website}</div>
                         )}
                       </div>
@@ -385,7 +494,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 )}
 
                 {/* No results message */}
-                {companySearchQuery.length >= 2 && companySearchResults['length'] === 0 && !isSearchingCompanies && (
+                {companySearchQuery.length >= 2 && companySearchResults.length === 0 && !isSearchingCompanies && (
                   <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
                     <div
                       onClick={handleAddCompany}
@@ -403,7 +512,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
                     <div>
                       <div className="font-medium text-gray-900">{selectedCompany.name}</div>
-                      {selectedCompany['website'] && (
+                      {selectedCompany.website && (
                         <div className="text-sm text-gray-500">{selectedCompany.website}</div>
                       )}
                     </div>
@@ -637,83 +746,45 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             </>
           )}
 
-          {/* Standard fields for all record types */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Email Field - Hide for accounts */}
-            {activeSection !== "accounts" && (
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={formData.email || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, email: e.target.value }))
-                  }
-                  placeholder="Enter email address"
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-                />
-              </div>
-            )}
+          {/* Account-specific fields */}
+          {activeSection === "accounts" && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Website
+              </label>
+              <input
+                type="url"
+                value={formData.website || ""}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({ ...prev, website: e.target.value }))
+                }
+                placeholder="Enter company website"
+                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              />
+            </div>
+          )}
 
-            {/* Phone Field - Hide for accounts */}
-            {activeSection !== "accounts" && (
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, phone: e.target.value }))
-                  }
-                  placeholder="Enter phone number"
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-                />
-              </div>
-            )}
+          {/* Account-specific fields */}
+          {activeSection === "accounts" && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Industry
+              </label>
+              <input
+                type="text"
+                value={formData.industry || ""}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({ ...prev, industry: e.target.value }))
+                }
+                placeholder="Enter industry"
+                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              />
+            </div>
+          )}
 
-            {/* Account-specific fields */}
-            {activeSection === "accounts" && (
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Website
-                </label>
-                <input
-                  type="url"
-                  value={formData.website || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, website: e.target.value }))
-                  }
-                  placeholder="Enter company website"
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-                />
-              </div>
-            )}
-
-            {/* Account-specific fields */}
-            {activeSection === "accounts" && (
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Industry
-                </label>
-                <input
-                  type="text"
-                  value={formData.industry || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({ ...prev, industry: e.target.value }))
-                  }
-                  placeholder="Enter industry"
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-                />
-              </div>
-            )}
-
-            {/* Customer-specific fields */}
-            {activeSection === "clients" && (
-              <div className="space-y-4">
+          {/* Customer-specific fields */}
+          {activeSection === "clients" && (
+            <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
@@ -773,7 +844,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                           >
                             <div className="font-medium text-gray-900">{contact.name || contact.fullName}</div>
                             <div className="text-sm text-gray-500">{contact.email}</div>
-                            {contact['jobTitle'] && (
+                            {contact.jobTitle && (
                               <div className="text-sm text-gray-500">{contact.jobTitle}</div>
                             )}
                           </div>
@@ -809,25 +880,6 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Company Field - Regular input for non-leads sections */}
-          {activeSection !== "leads" && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Company
-              </label>
-              <input
-                type="text"
-                value={formData.company || ""}
-                onChange={(e) =>
-                  setFormData((prev: any) => ({ ...prev, company: e.target.value }))
-                }
-                placeholder="Enter company name"
-                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-              />
-            </div>
-          )}
 
           {/* Title Field - Only show for specific sections that need it */}
           {(activeSection === "opportunities" || activeSection === "partnerships") && (
@@ -928,7 +980,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200' // Default state
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              Add {getSectionTitle()}
+              Add {getSectionTitle()} ({getCommonShortcut('SUBMIT')})
             </button>
           </div>
         </form>
@@ -952,13 +1004,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               </button>
             </div>
 
-            <form onSubmit={async (e) => {
+            <form data-modal="add-company" onSubmit={async (e) => {
               e.preventDefault();
               const companyData = {
                 name: addCompanyFormData.name,
-                website: normalizeWebsite(addCompanyFormData.website),
-                workspaceId: activeWorkspace?.id || "",
-                userId: authUser?.id || ""
+                website: normalizeWebsite(addCompanyFormData.website)
               };
 
               try {
@@ -969,14 +1019,65 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 console.log('🔍 [FRONTEND] workspaceId from activeWorkspace:', activeWorkspace?.id);
                 console.log('🔍 [FRONTEND] userId from authUser:', authUser?.id);
                 
-                const response = await fetch('/api/data/unified', {
+                // Enhanced validation with better error messages
+                if (!companyData.name?.trim()) {
+                  throw new Error('Company name is required.');
+                }
+                
+                // Try to get workspace ID from multiple sources
+                let workspaceId = activeWorkspace?.id;
+                let userId = authUser?.id;
+                
+                if (!workspaceId) {
+                  // Fallback 1: Try to get from authUser's workspaces
+                  workspaceId = authUser?.workspaces?.[0]?.id;
+                  console.log('🔍 [FRONTEND] Fallback workspace ID from authUser:', workspaceId);
+                }
+                
+                if (!workspaceId) {
+                  // Fallback 2: Try to get from acquireData
+                  workspaceId = acquireData?.auth?.authUser?.activeWorkspaceId;
+                  console.log('🔍 [FRONTEND] Fallback workspace ID from acquireData:', workspaceId);
+                }
+                
+                if (!userId) {
+                  // Fallback: Try to get from acquireData
+                  userId = acquireData?.auth?.authUser?.id;
+                  console.log('🔍 [FRONTEND] Fallback user ID from acquireData:', userId);
+                }
+                
+                if (!workspaceId) {
+                  console.error('❌ [FRONTEND] No workspace ID found from any source:', {
+                    activeWorkspace,
+                    authUser,
+                    acquireData
+                  });
+                  throw new Error('No active workspace found. Please refresh the page and try again.');
+                }
+                
+                if (!userId) {
+                  console.error('❌ [FRONTEND] No user ID found from any source:', {
+                    activeWorkspace,
+                    authUser,
+                    acquireData
+                  });
+                  throw new Error('No authenticated user found. Please refresh the page and try again.');
+                }
+                
+                const requestBody = {
+                  type: 'companies',
+                  action: 'create',
+                  data: companyData,
+                  workspaceId: workspaceId,
+                  userId: userId
+                };
+                
+                console.log('🔍 [FRONTEND] Request body:', requestBody);
+                
+                const response = await authFetch('/api/data/unified', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    type: 'accounts',
-                    action: 'create',
-                    data: companyData
-                  })
+                  body: JSON.stringify(requestBody)
                 });
 
                 console.log('Company creation response status:', response.status);
@@ -985,7 +1086,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   const result = await response.json();
                   console.log('Company creation result:', result);
                   
-                  if (result['success'] && result.data) {
+                  if (result.success && result.data) {
                     // Add the new company to the search results and select it
                     const newCompany = result.data;
                     setSelectedCompany(newCompany);
@@ -996,19 +1097,53 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setShowAddCompanyModal(false);
                     setCompanySearchQuery(''); // Clear the search query
                     setCompanySearchResults([]); // Clear search results
+                    
+                    // Show success message
+                    setSuccessMessage(`✅ Successfully created company: ${newCompany.name}`);
+                    setShowSuccessMessage(true);
+                    // Auto-hide success message after 3 seconds
+                    setTimeout(() => setShowSuccessMessage(false), 3000);
+                    
                     console.log('Company created successfully:', newCompany);
                   } else {
                     console.error('Company creation failed:', result.error);
-                    alert(`Failed to create company: ${result.error || 'Unknown error'}`);
+                    // Show error message using the success message system
+                    setSuccessMessage(`❌ Failed to create company: ${result.error || 'Unknown error'}`);
+                    setShowSuccessMessage(true);
+                    // Auto-hide error message after 5 seconds
+                    setTimeout(() => setShowSuccessMessage(false), 5000);
                   }
                 } else {
                   const errorText = await response.text();
                   console.error('Company creation HTTP error:', response.status, errorText);
-                  alert(`Failed to create company: ${response.status} ${errorText}`);
+                  
+                  // Try to parse error response for better error message
+                  let errorMessage = `HTTP ${response.status}: ${errorText}`;
+                  try {
+                    const errorData = JSON.parse(errorText);
+                    if (errorData.error) {
+                      errorMessage = errorData.error;
+                    } else if (errorData.message) {
+                      errorMessage = errorData.message;
+                    }
+                  } catch (parseError) {
+                    // Keep the original error message if parsing fails
+                  }
+                  
+                  // Show error message using the success message system
+                  setSuccessMessage(`❌ Failed to create company: ${errorMessage}`);
+                  setShowSuccessMessage(true);
+                  // Auto-hide error message after 5 seconds
+                  setTimeout(() => setShowSuccessMessage(false), 5000);
                 }
               } catch (error) {
                 console.error('Error creating company:', error);
-                alert(`Error creating company: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                // Show error message using the success message system
+                setSuccessMessage(`❌ Error creating company: ${errorMessage}`);
+                setShowSuccessMessage(true);
+                // Auto-hide error message after 5 seconds
+                setTimeout(() => setShowSuccessMessage(false), 5000);
               }
             }}>
               <div className="space-y-4">
@@ -1054,7 +1189,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   type="submit"
                   className="flex-1 px-4 py-3 bg-blue-200 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-300 transition-colors font-semibold text-sm"
                 >
-                  Add Company
+                  Add Company ({getCommonShortcut('SUBMIT')})
                 </button>
               </div>
             </form>

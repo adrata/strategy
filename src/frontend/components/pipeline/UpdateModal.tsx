@@ -7,7 +7,8 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { XMarkIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { 
   UserIcon, 
   BriefcaseIcon, 
@@ -47,6 +48,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   const [includeAction, setIncludeAction] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState('');
+  const [previousTab, setPreviousTab] = useState<string>('');
   // Set default tab based on record type if initialTab is not provided
   const getDefaultTab = () => {
     if (initialTab) return initialTab;
@@ -67,18 +70,52 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const [activeTab, setActiveTab] = useState(getDefaultTab());
 
-  // Handle delete
+  // Handle tab change to track previous tab
+  const handleTabChange = (tabId: string) => {
+    if (activeTab !== 'delete') {
+      setPreviousTab(activeTab);
+    }
+    setActiveTab(tabId);
+  };
+
+  // Handle delete with Vercel-style confirmation
   const handleDelete = async () => {
-    if (onDelete && record?.id) {
-      try {
-        setLoading(true);
-        await onDelete(record.id);
-        onClose();
-      } catch (error) {
-        console.error('Error deleting record:', error);
-      } finally {
-        setLoading(false);
+    if (!record?.id) return;
+    
+    const recordName = record.fullName || record.name || record.companyName || 'this record';
+    
+    if (deleteConfirmName !== recordName) {
+      alert(`Please type "${recordName}" to confirm deletion.`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Perform soft delete via API
+      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
       }
+
+      // Close the modal first
+      onClose();
+      
+      // Call the onDelete callback if provided (this should handle navigation and success message)
+      if (onDelete) {
+        await onDelete(record.id);
+      }
+    } catch (error) {
+      console.error('Error deleting record:', error);
+      alert('Failed to delete record. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,7 +128,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
+            { id: 'timeline', label: 'Timeline' },
+            { id: 'delete', label: 'Delete' }
           ];
         case 'companies':
           return [
@@ -100,7 +138,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
+            { id: 'timeline', label: 'Timeline' },
+            { id: 'delete', label: 'Delete' }
           ];
         case 'leads':
           return [
@@ -108,7 +147,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
+            { id: 'timeline', label: 'Timeline' },
+            { id: 'delete', label: 'Delete' }
           ];
       case 'prospects':
         return [
@@ -116,7 +156,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'intelligence', label: 'Intelligence' },
           { id: 'career', label: 'Career' },
           { id: 'notes', label: 'Notes' },
-          { id: 'timeline', label: 'Timeline' }
+          { id: 'timeline', label: 'Timeline' },
+          { id: 'delete', label: 'Delete' }
         ];
       case 'opportunities':
         return [
@@ -126,7 +167,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'competitive', label: 'Competitive' },
           { id: 'close-plan', label: 'Close Plan' },
           { id: 'timeline', label: 'Timeline' },
-          { id: 'notes', label: 'Notes' }
+          { id: 'notes', label: 'Notes' },
+          { id: 'delete', label: 'Delete' }
         ];
       default:
         return [
@@ -134,12 +176,85 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'opportunity', label: 'Opportunity' },
           { id: 'company', label: 'Company' },
           { id: 'activity', label: 'Activity' },
-          { id: 'notes', label: 'Notes' }
+          { id: 'notes', label: 'Notes' },
+          { id: 'delete', label: 'Delete' }
         ];
     }
   };
 
   const MODAL_TABS = getModalTabs();
+
+  const renderDeleteTab = () => {
+    const recordName = record?.fullName || record?.name || record?.companyName || 'this record';
+    
+    return (
+      <div className="p-6 space-y-6">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Delete {recordType === 'people' ? 'Person' : recordType === 'companies' ? 'Company' : 'Record'}
+          </h3>
+          <p className="text-sm text-gray-500 mb-6">
+            This action cannot be undone. This will soft delete the record and remove it from your active lists.
+          </p>
+        </div>
+
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Are you sure you want to delete this record?
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>
+                  To confirm, type <strong>"{recordName}"</strong> in the box below:
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700 mb-2">
+            Type the name to confirm deletion
+          </label>
+          <input
+            id="delete-confirm"
+            type="text"
+            value={deleteConfirmName}
+            onChange={(e) => setDeleteConfirmName(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            placeholder={`Type "${recordName}" to confirm`}
+          />
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={() => {
+              setDeleteConfirmName('');
+              setActiveTab(previousTab || 'overview');
+            }}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={loading || deleteConfirmName !== recordName}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Deleting...' : 'Delete Record'}
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Initialize form data with record data when modal opens
   useEffect(() => {
@@ -197,6 +312,37 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       setActiveTab(getDefaultTab());
     }
   }, [isOpen, record, initialTab]);
+
+  // Keyboard shortcut for Update Record (⌘⏎) when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [UpdateModal] Update Record keyboard shortcut triggered');
+        
+        // Trigger the form submission
+        const form = document.querySelector('form');
+        if (form) {
+          const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+          form.dispatchEvent(submitEvent);
+        }
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -490,6 +636,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderNotesTab();
         case 'timeline':
           return renderTimelineTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -507,6 +655,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderTimelineTab();
         case 'notes':
           return renderNotesTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -522,6 +672,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderTimelineTab();
         case 'notes':
           return renderNotesTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -545,6 +697,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderNotesTab();
         case 'timeline':
           return renderTimelineTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -564,6 +718,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderTimelineTab();
         case 'notes':
           return renderNotesTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -579,6 +735,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderActivityTab();
         case 'notes':
           return renderNotesTab();
+        case 'delete':
+          return renderDeleteTab();
         default:
           return renderHomeTab();
       }
@@ -1197,7 +1355,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             {MODAL_TABS.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   activeTab === tab.id
                     ? 'bg-gray-100 text-gray-900'
@@ -1244,7 +1402,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 disabled={loading}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loading ? 'Updating...' : 'Update Record'}
+                {loading ? 'Updating...' : `Update ${recordType === 'leads' ? 'Lead' : 
+                                                      recordType === 'prospects' ? 'Prospect' :
+                                                      recordType === 'opportunities' ? 'Opportunity' :
+                                                      recordType === 'companies' ? 'Company' :
+                                                      recordType === 'people' ? 'Person' :
+                                                      recordType === 'clients' ? 'Client' :
+                                                      recordType === 'partners' ? 'Partner' :
+                                                      'Record'} (${getCommonShortcut('SUBMIT')})`}
               </button>
             </div>
           </div>

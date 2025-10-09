@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusIcon, ChevronDownIcon, BoltIcon } from '@heroicons/react/24/outline';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface UnifiedAddActionButtonProps {
   onAddAction: () => void;
@@ -21,6 +22,43 @@ export function UnifiedAddActionButton({
   color = 'navy'
 }: UnifiedAddActionButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Keyboard shortcut for Add Action (⌘⏎)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if we're in an input field or textarea
+      const target = event.target as HTMLElement;
+      const isInputField =
+        target['tagName'] === "INPUT" ||
+        target['tagName'] === "TEXTAREA" ||
+        target['contentEditable'] === "true";
+
+      // Check if any modal or popup is open that should take precedence
+      const hasOpenModal = document.querySelector('[role="dialog"]') || 
+                          document.querySelector('.fixed.inset-0') ||
+                          document.querySelector('[data-slide-up]') ||
+                          document.querySelector('.slide-up-visible') ||
+                          document.querySelector('.z-50');
+
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && !isInputField && !hasOpenModal) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [UnifiedAddActionButton] Add Action keyboard shortcut triggered');
+        onAddAction();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keydown', handleKeyDown, false);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [onAddAction]);
 
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
@@ -44,7 +82,7 @@ export function UnifiedAddActionButton({
           className={baseClasses}
         >
           <PlusIcon className="w-4 h-4" />
-          Add Action
+          Add Action ({getCommonShortcut('SUBMIT')})
           <ChevronDownIcon className="w-4 h-4" />
         </button>
 
@@ -90,7 +128,7 @@ export function UnifiedAddActionButton({
       className={baseClasses}
     >
       <PlusIcon className="w-4 h-4" />
-      Add Action
+      Add Action ({getCommonShortcut('SUBMIT')})
     </button>
   );
 }

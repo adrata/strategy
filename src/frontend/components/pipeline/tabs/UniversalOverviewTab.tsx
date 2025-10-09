@@ -207,6 +207,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
 
         return (
           <div className="space-y-6">
+      {/* Overview Summary */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">Overview Summary</h3>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="text-sm text-gray-600">
+            {recordData.name} is a {recordData.title || 'professional'} at {recordData.company || 'their company'}. 
+            {recordData.isBuyerGroupMember ? ' They are an active member of the buyer group' : ' They are not currently part of the buyer group'} 
+            with {recordData.influenceLevel || 'moderate'} influence level and {recordData.decisionPower || 'some'} decision-making power. 
+            Current engagement status is {recordData.engagementLevel || 'active'} with last contact {recordData.lastContact || 'recently'}.
+          </div>
+        </div>
+      </div>
+
       {/* Who are they */}
       <div className="space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

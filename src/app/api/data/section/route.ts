@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
-
+import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
@@ -81,6 +81,10 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
   }
 }
 
+// 🚨 CRITICAL FIX: Force dynamic rendering to prevent caching issues
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
@@ -93,22 +97,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(url.searchParams.get('limit') || '30');
     const forceRefresh = url.searchParams.has('t'); // Check for cache-busting timestamp
     
-    // 🚀 PERFORMANCE: Check cache first (unless force refresh)
-    const cacheKey = `section-${section}-${workspaceId}-${userId}-${limit}`;
-    const cached = sectionCache.get(cacheKey);
-    
-    if (!forceRefresh && cached && Date.now() - cached.timestamp < SECTION_CACHE_TTL) {
-      // Only log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`⚡ [SECTION API] Cache hit for ${section} - returning cached data in ${Date.now() - startTime}ms`);
-      }
-      return createSuccessResponse(cached.data, {
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-        responseTime: Date.now() - startTime,
-        fromCache: true
-      });
-    }
+    // 🚨 CRITICAL FIX: Disable caching for workspace-specific data to prevent data leakage
+    // Always fetch fresh data to ensure workspace isolation
+    console.log(`🔄 [SECTION API] Fetching fresh data for workspace: ${workspaceId}, user: ${userId}, section: ${section}`);
     
     if (forceRefresh) {
       console.log(`🔄 [SECTION API] Force refresh requested for ${section} - bypassing cache`);
@@ -122,77 +113,123 @@ export async function GET(request: NextRequest) {
     let sectionData: any[] = [];
     
     // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                      userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+    // Only apply demo mode to the actual demo workspace, not production workspaces
+    // STRICT: Only allow demo mode for Dan and Ross
+    const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
+      userId, 
+      context.userEmail, 
+      workspaceId
+    );
+    const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
+                       userId === 'demo-user-2025') && // Demo user only
+                       demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
     console.log(`🎯 [SECTION API] Demo mode detected: ${isDemoMode} for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // 🆕 FIX: Load speedrun data from leads table with speedrun tag
-        // In demo mode, show speedrun leads assigned to sellers too
+        // 🏆 SPEEDRUN: Use EXACT same logic as people section
+        console.log(`🏆 [SPEEDRUN SECTION] Loading speedrun data (same as people) for workspace: ${workspaceId}, user: ${userId}`);
         
-        const speedrunLeads = await prisma.leads.findMany({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            tags: { has: 'speedrun' },
-            ...(isDemoMode ? {} : {
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
-                ]
-              })
-            })
-          },
-          orderBy: [
-            { updatedAt: 'desc' }
-          ],
-          take: 200
-        });
-        
-        // Transform speedrun leads to speedrun format
-        sectionData = speedrunLeads.slice(0, limit).map((lead, index) => {
-          // Safe string truncation utility
-          const safeString = (str: any, maxLength: number = 1000): string => {
-            if (!str || typeof str !== 'string') return '';
-            if (str.length <= maxLength) return str;
-            return str.substring(0, maxLength) + '...';
-          };
-
-          // 🎯 DETERMINE STAGE: Use lead status
-          let stage = lead.status || 'Prospect';
+        try {
+          const speedrunPeople = await prisma.people.findMany({
+            where: {
+              workspaceId,
+              deletedAt: null
+              // 🚀 SPEEDRUN: Use EXACT same query as people section
+            },
+            orderBy: [
+              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
+              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
+              { updatedAt: 'desc' }
+            ],
+            take: 50, // Limit to top 50 people for speedrun
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              fullName: true,
+              email: true,
+              jobTitle: true,
+              companyId: true,
+              phone: true,
+              linkedinUrl: true,
+              tags: true,
+              status: true,
+              rank: true,
+              lastAction: true,
+              lastActionDate: true,
+              nextAction: true,
+              nextActionDate: true,
+              assignedUserId: true,
+              workspaceId: true,
+              createdAt: true,
+              updatedAt: true,
+              // Include company relationship to get company name
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  rank: true
+                }
+              }
+            }
+          });
           
-          // 🎯 BUYER GROUP ROLE: Default for speedrun leads
-          let buyerGroupRole = 'Stakeholder';
+          console.log(`🏆 [SPEEDRUN SECTION] Found ${speedrunPeople.length} people`);
+          
+          // Apply same filtering and processing as people section
+          const filteredSpeedrunData = speedrunPeople.filter(person => 
+            !shouldExcludeCompany(person.company?.name)
+          );
+          
+          // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
+          const seenSpeedrunNames = new Set();
+          const deduplicatedSpeedrun = filteredSpeedrunData.filter(person => {
+            const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
+            if (seenSpeedrunNames.has(fullName)) {
+              return false; // Skip duplicate
+            }
+            seenSpeedrunNames.add(fullName);
+            return true;
+          });
+          
+          sectionData = deduplicatedSpeedrun.map((person, index) => {
+            // Safe string truncation utility
+            const safeString = (str: any, maxLength: number = 1000): string => {
+              if (!str || typeof str !== 'string') return '';
+              if (str.length <= maxLength) return str;
+              return str.substring(0, maxLength) + '...';
+            };
 
-          return {
-            id: lead.id,
-            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
-            name: safeString(lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown', 200),
-            company: safeString(lead.company || 'Unknown Company', 200),
-            title: safeString(lead.jobTitle || 'Unknown Title', 300),
-            role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
-            stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
-            email: safeString(lead.email || 'Unknown Email', 300),
-            phone: safeString(lead.phone || 'Unknown Phone', 50),
-            linkedin: safeString(lead.linkedinUrl || 'Unknown LinkedIn', 500),
-            status: safeString(lead.status || 'Unknown', 20),
-            lastAction: safeString(lead.lastAction || 'No action taken', 500),
-            lastActionDate: lead.lastActionDate || null,
-            nextAction: safeString(lead.nextAction || 'No next action', 500),
-            nextActionDate: lead.nextActionDate || null,
-            assignedUserId: lead.assignedUserId || null,
-            workspaceId: lead.workspaceId,
-            createdAt: lead.createdAt,
-            updatedAt: lead.updatedAt,
-            // Remove customFields to avoid large JSON data issues
-            tags: lead.tags || []
-          };
-        });
+            return {
+              id: person.id,
+              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
+              name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
+              company: safeString(person.company?.name || 'Unknown Company', 200),
+              companyRank: person.company?.rank || 0, // Include company rank for proper ordering
+              personRank: person.rank || (index + 1), // Include person rank within company
+              title: safeString(person.jobTitle || 'Unknown Title', 300),
+              email: safeString(person.email || 'Unknown Email', 300),
+              phone: safeString(person.phone || 'Unknown Phone', 50),
+              linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
+              status: safeString(person.status || 'Unknown', 20),
+              lastAction: safeString(person.lastAction || 'No action taken', 500),
+              lastActionDate: person.lastActionDate || null,
+              nextAction: safeString(person.nextAction || 'No next action', 500),
+              nextActionDate: person.nextActionDate || null,
+              assignedUserId: person.assignedUserId || null,
+              workspaceId: person.workspaceId,
+              createdAt: person.createdAt,
+              updatedAt: person.updatedAt,
+              tags: person.tags || []
+            };
+          });
+          
+        } catch (dbError) {
+          console.error('❌ [SPEEDRUN SECTION] Database error loading speedrun people:', dbError);                                                              
+          sectionData = [];
+        }
         break;
         
       case 'leads':
@@ -211,13 +248,15 @@ export async function GET(request: NextRequest) {
                 ]
               })
             }),
-            // Filter for people who are leads - use specific lead filters
+            // Filter for people who are leads - use actual data structure
             AND: [
               {
                 OR: [
                   { funnelStage: 'Lead' },
+                  { funnelStage: 'Prospect' }, // 🚀 FIX: Include 'Prospect' funnelStage
                   { status: 'new' },
-                  { status: 'lead' }
+                  { status: 'lead' },
+                  { status: 'active' } // 🚀 FIX: Include 'active' status (actual data)
                 ]
               }
             ]
@@ -546,18 +585,12 @@ export async function GET(request: NextRequest) {
           const peopleData = await prisma.people.findMany({
             where: {
               workspaceId,
-              deletedAt: null,
-              companyId: { not: null }, // Only people with company relationships like speedrun
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
-                ]
-              })
+              deletedAt: null
+              // 🚀 PEOPLE: Use EXACT same query as unified API (no additional filters)
             },
             orderBy: [
-              { company: { rank: 'asc' } }, // Use company rank first like speedrun
-              { rank: 'asc' }, // Then by person rank
+              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
+              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
               { updatedAt: 'desc' }
             ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
@@ -624,10 +657,11 @@ export async function GET(request: NextRequest) {
 
             return {
               id: person.id,
-              rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
+              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
               companyRank: person.company?.rank || 0, // Include company rank for proper ordering
+              personRank: person.rank || (index + 1), // Include person rank within company
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
@@ -831,14 +865,27 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // 🆕 FIX: Count speedrun leads instead of people
-          totalCount = await prisma.leads.count({
+          // 🆕 FIX: Count speedrun leads, fallback to people if no speedrun leads
+          const speedrunLeadsCount = await prisma.leads.count({
             where: {
               workspaceId,
               deletedAt: null,
               tags: { has: 'speedrun' }
             }
           });
+          
+          if (speedrunLeadsCount === 0) {
+            // Fallback to people count if no speedrun leads
+            totalCount = await prisma.people.count({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                companyId: { not: null }
+              }
+            });
+          } else {
+            totalCount = speedrunLeadsCount;
+          }
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)
@@ -865,20 +912,25 @@ export async function GET(request: NextRequest) {
       limit
     };
     
-    // 🚀 PERFORMANCE: Cache the results
-    sectionCache.set(cacheKey, {
-      data: result,
-      timestamp: Date.now()
-    });
+    // 🚨 CRITICAL FIX: Skip caching to prevent workspace data leakage
+    // Always return fresh data for workspace isolation
     
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SECTION API] Loaded ${section} data in ${responseTime}ms: ${sectionData.length} items`);
     
-    return createSuccessResponse(result, {
+    const response = createSuccessResponse(result, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       responseTime: Date.now() - startTime
     });
+    
+    // 🚨 CRITICAL FIX: Add cache-busting headers to prevent browser caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Surrogate-Control', 'no-store');
+    
+    return response;
     
   } catch (error) {
     console.error('❌ [SECTION API] Error:', error);
