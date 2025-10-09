@@ -18,6 +18,8 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "cleanup:deletion": "tsx src/platform/jobs/cleanup-job.ts",
+    "cleanup:deletion:dry-run": "tsx src/platform/jobs/cleanup-job.ts --dry-run",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration/",
     "test:e2e": "playwright test",

@@ -1732,7 +1732,6 @@ async function getMultipleRecords(
             id: true,
             name: true,
             industry: true,
-            vertical: true,
             size: true
           }
         }
@@ -1823,7 +1822,6 @@ async function getMultipleRecords(
             id: true,
             name: true,
             industry: true,
-            vertical: true,
             size: true
           }
         }
@@ -3323,11 +3321,12 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       partnersData,
       speedrunData
     ] = await Promise.all([
-      // Leads count - count from people table (same as individual leads endpoint)
+      // Leads count - count from people table with LEAD status
       prisma.people.count({
         where: {
           workspaceId,
           deletedAt: null,
+          status: 'LEAD',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
               { assignedUserId: userId },
@@ -3336,16 +3335,18 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           } : {})
         }
       }),
-      prisma.prospects.count({ 
+      prisma.people.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null
+          deletedAt: null,
+          status: 'PROSPECT'
         }
       }),
-      prisma.opportunities.count({ 
+      prisma.companies.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null
+          deletedAt: null,
+          status: 'OPPORTUNITY'
         }
       }),
       prisma.companies.count({ 
@@ -3419,7 +3420,6 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
               id: true,
               name: true,
               industry: true,
-              vertical: true,
               size: true
             }
           }
@@ -4176,7 +4176,6 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
               id: true,
               name: true,
               industry: true,
-              vertical: true,
               size: true,
               rank: true
             }

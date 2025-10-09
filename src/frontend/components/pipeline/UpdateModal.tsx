@@ -92,16 +92,24 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     try {
       setLoading(true);
       
-      // Perform soft delete via API
-      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
-        method: 'DELETE',
+      // Perform soft delete via new v1 deletion API
+      const response = await fetch('/api/v1/deletion', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          action: 'soft_delete',
+          entityType: recordType === 'companies' ? 'companies' : 
+                     recordType === 'people' ? 'people' : 
+                     recordType === 'actions' ? 'actions' : 'people',
+          entityId: record.id,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete record');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete record');
       }
 
       // Close the modal first

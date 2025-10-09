@@ -139,9 +139,7 @@ export async function GET(request: NextRequest) {
               // 🚀 SPEEDRUN: Use EXACT same query as people section
             },
             orderBy: [
-              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
-              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
-              { updatedAt: 'desc' }
+              { updatedAt: 'desc' } // Order by most recent updates
             ],
             take: 50, // Limit to top 50 people for speedrun
             select: {
@@ -156,7 +154,6 @@ export async function GET(request: NextRequest) {
               linkedinUrl: true,
               tags: true,
               status: true,
-              rank: true,
               lastAction: true,
               lastActionDate: true,
               nextAction: true,
@@ -170,7 +167,6 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   name: true,
-                  rank: true
                 }
               }
             }
@@ -248,23 +244,11 @@ export async function GET(request: NextRequest) {
                 ]
               })
             }),
-            // Filter for people who are leads - use actual data structure
-            AND: [
-              {
-                OR: [
-                  { funnelStage: 'Lead' },
-                  { funnelStage: 'Prospect' }, // 🚀 FIX: Include 'Prospect' funnelStage
-                  { status: 'new' },
-                  { status: 'lead' },
-                  { status: 'active' } // 🚀 FIX: Include 'active' status (actual data)
-                ]
-              }
-            ]
+            // Filter for people who are leads - use new schema structure
+            status: 'LEAD' // Use the new LEAD status from streamlined schema
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // Use company rank first like people
-            { rank: 'asc' }, // Then by person rank
-            { updatedAt: 'desc' }
+            { updatedAt: 'desc' } // Order by most recent updates
           ],
           take: 10000, // Increased limit to ensure we get all leads (same as unified API)
           select: {
@@ -607,7 +591,6 @@ export async function GET(request: NextRequest) {
               // Remove customFields to avoid large JSON data issues
               tags: true,
               status: true,
-              rank: true,
               lastAction: true,
               lastActionDate: true,
               nextAction: true,
@@ -621,7 +604,6 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   name: true,
-                  rank: true
                 }
               }
               // Remove notes and bio from select to avoid string length issues
@@ -865,27 +847,14 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // 🆕 FIX: Count speedrun leads, fallback to people if no speedrun leads
-          const speedrunLeadsCount = await prisma.leads.count({
+          // Count people for speedrun (top 50 people)
+          totalCount = await prisma.people.count({
             where: {
               workspaceId,
               deletedAt: null,
-              tags: { has: 'speedrun' }
+              companyId: { not: null }
             }
           });
-          
-          if (speedrunLeadsCount === 0) {
-            // Fallback to people count if no speedrun leads
-            totalCount = await prisma.people.count({
-              where: {
-                workspaceId,
-                deletedAt: null,
-                companyId: { not: null }
-              }
-            });
-          } else {
-            totalCount = speedrunLeadsCount;
-          }
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)

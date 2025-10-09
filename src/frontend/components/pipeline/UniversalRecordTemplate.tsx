@@ -977,18 +977,26 @@ export function UniversalRecordTemplate({
 
     try {
       setLoading(true);
-      console.log('🗑️ [UNIVERSAL] Deleting record:', record.id);
+      console.log('🗑️ [UNIVERSAL] Soft deleting record:', record.id);
       
-      // Perform soft delete via API
-      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
-        method: 'DELETE',
+      // Perform soft delete via new v1 deletion API
+      const response = await fetch('/api/v1/deletion', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          action: 'soft_delete',
+          entityType: recordType === 'companies' ? 'companies' : 
+                     recordType === 'people' ? 'people' : 
+                     recordType === 'actions' ? 'actions' : 'people',
+          entityId: record.id,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete record');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete record');
       }
       
       // Navigate back to the table view immediately
@@ -998,7 +1006,7 @@ export function UniversalRecordTemplate({
       
       // Show success message after navigation (with a small delay to ensure navigation completes)
       setTimeout(() => {
-        showMessage('Record deleted successfully!', 'success');
+        showMessage('Record moved to trash successfully!', 'success');
       }, 100);
       
     } catch (error) {
@@ -1405,16 +1413,24 @@ export function UniversalRecordTemplate({
     try {
       setLoading(true);
       
-      // Perform soft delete via API
-      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
-        method: 'DELETE',
+      // Perform soft delete via new v1 deletion API
+      const response = await fetch('/api/v1/deletion', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          action: 'soft_delete',
+          entityType: recordType === 'companies' ? 'companies' : 
+                     recordType === 'people' ? 'people' : 
+                     recordType === 'actions' ? 'actions' : 'people',
+          entityId: record.id,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete record');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete record');
       }
 
       // Close the modal first
@@ -1427,7 +1443,7 @@ export function UniversalRecordTemplate({
       
       // Show success message after navigation (with a small delay to ensure navigation completes)
       setTimeout(() => {
-        showMessage('Record deleted successfully!', 'success');
+        showMessage('Record moved to trash successfully!', 'success');
       }, 100);
     } catch (error) {
       console.error('Error deleting record:', error);
@@ -2088,7 +2104,7 @@ export function UniversalRecordTemplate({
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Deletion</h3>
             <p className="text-sm text-gray-600 mb-4">
-              Are you sure you want to delete this record? This action cannot be undone.
+              Are you sure you want to delete this record? This will move it to the trash where it can be restored later.
             </p>
             <p className="text-sm text-gray-600 mb-4">
               Please type <strong>{getDisplayName()}</strong> to confirm:
