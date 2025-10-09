@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load environment variables
-require('dotenv').config({ path: path.join(__dirname, '../../../.env copy') });
+require('dotenv').config({ path: 'C:/Users/ross/Development/adrata/.env' });
 
 const { CorePipeline } = require('./core-pipeline');
 
@@ -27,7 +27,10 @@ async function testMultiSourcePipeline() {
         'PERPLEXITY_API_KEY'
     ];
     
-    const missingVars = requiredEnvVars.filter(varName => !process.env[varName] || process.env[varName] === 'example' || process.env[varName] === 'your_zerobounce_key_here');
+    const missingVars = requiredEnvVars.filter(varName => {
+        const value = process.env[varName];
+        return !value || value === 'example' || value === 'your_zerobounce_key_here' || value === 'pplx-example';
+    });
     if (missingVars.length > 0) {
         console.log('⚠️ Some API keys are not configured (using mock data for testing):');
         missingVars.forEach(varName => console.log(`   - ${varName}`));

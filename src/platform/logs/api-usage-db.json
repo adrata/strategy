@@ -1,0 +1,632 @@
+{
+  "api_usage_records": [
+    {
+      "id": "mgk1rg5fvphsc83lcmq",
+      "timestamp": "2025-10-09T23:26:51.267Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.1,
+      "service_total": 0.1,
+      "metadata": {
+        "company": "company-0"
+      }
+    },
+    {
+      "id": "mgk1rg5gi9pafuzhoho",
+      "timestamp": "2025-10-09T23:26:51.268Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.2,
+      "service_total": 0.2,
+      "metadata": {
+        "company": "company-1"
+      }
+    },
+    {
+      "id": "mgk1rg5h39expzxeyjj",
+      "timestamp": "2025-10-09T23:26:51.269Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.30000000000000004,
+      "service_total": 0.30000000000000004,
+      "metadata": {
+        "company": "company-2"
+      }
+    },
+    {
+      "id": "mgk1rg5hdom8gsqpw2k",
+      "timestamp": "2025-10-09T23:26:51.269Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.4,
+      "service_total": 0.4,
+      "metadata": {
+        "company": "company-3"
+      }
+    },
+    {
+      "id": "mgk1rg5i84gorivp4r",
+      "timestamp": "2025-10-09T23:26:51.270Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.5,
+      "service_total": 0.5,
+      "metadata": {
+        "company": "company-4"
+      }
+    },
+    {
+      "id": "mgk1rg5iudfbeigooc",
+      "timestamp": "2025-10-09T23:26:51.270Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.6000000000000001,
+      "service_total": 0.6000000000000001,
+      "metadata": {
+        "company": "company-5"
+      }
+    },
+    {
+      "id": "mgk1rg5jck85kq1p57o",
+      "timestamp": "2025-10-09T23:26:51.271Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.7000000000000001,
+      "service_total": 0.7000000000000001,
+      "metadata": {
+        "company": "company-6"
+      }
+    },
+    {
+      "id": "mgk1rg5kz2n7qjo78w",
+      "timestamp": "2025-10-09T23:26:51.272Z",
+      "service": "CORESIGNAL",
+      "operation": "preview",
+      "count": 1,
+      "cost": 0.1,
+      "daily_total": 0.8,
+      "service_total": 0.8,
+      "metadata": {
+        "company": "company-7"
+      }
+    },
+    {
+      "id": "mgk1rg5ki0xa6cor2lf",
+      "timestamp": "2025-10-09T23:26:51.272Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.15,
+      "service_total": 0.15,
+      "metadata": {
+        "person": "person-0"
+      }
+    },
+    {
+      "id": "mgk1rg5lzdfe3v6vwr",
+      "timestamp": "2025-10-09T23:26:51.273Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.3,
+      "service_total": 0.3,
+      "metadata": {
+        "person": "person-1"
+      }
+    },
+    {
+      "id": "mgk1rg5llbtj4nf0x0o",
+      "timestamp": "2025-10-09T23:26:51.273Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.44999999999999996,
+      "service_total": 0.44999999999999996,
+      "metadata": {
+        "person": "person-2"
+      }
+    },
+    {
+      "id": "mgk1rg5mvde2swnxha",
+      "timestamp": "2025-10-09T23:26:51.274Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.6,
+      "service_total": 0.6,
+      "metadata": {
+        "person": "person-3"
+      }
+    },
+    {
+      "id": "mgk1rg5n91mks9x301n",
+      "timestamp": "2025-10-09T23:26:51.275Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.75,
+      "service_total": 0.75,
+      "metadata": {
+        "person": "person-4"
+      }
+    },
+    {
+      "id": "mgk1rg5ndvo4kwdcp5a",
+      "timestamp": "2025-10-09T23:26:51.275Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 0.8999999999999999,
+      "service_total": 0.8999999999999999,
+      "metadata": {
+        "person": "person-5"
+      }
+    },
+    {
+      "id": "mgk1rg5oibuxuzon4a",
+      "timestamp": "2025-10-09T23:26:51.276Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.05,
+      "service_total": 1.05,
+      "metadata": {
+        "person": "person-6"
+      }
+    },
+    {
+      "id": "mgk1rg5ope05ox0g5r",
+      "timestamp": "2025-10-09T23:26:51.276Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.2,
+      "service_total": 1.2,
+      "metadata": {
+        "person": "person-7"
+      }
+    },
+    {
+      "id": "mgk1rg5pgesz8xt61ma",
+      "timestamp": "2025-10-09T23:26:51.277Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.3499999999999999,
+      "service_total": 1.3499999999999999,
+      "metadata": {
+        "person": "person-8"
+      }
+    },
+    {
+      "id": "mgk1rg5p0en55mcfq0gs",
+      "timestamp": "2025-10-09T23:26:51.278Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.5,
+      "service_total": 1.5,
+      "metadata": {
+        "person": "person-9"
+      }
+    },
+    {
+      "id": "mgk1rg5qqaq57tb3kj",
+      "timestamp": "2025-10-09T23:26:51.278Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.65,
+      "service_total": 1.65,
+      "metadata": {
+        "person": "person-10"
+      }
+    },
+    {
+      "id": "mgk1rg5rwz7711h7zpa",
+      "timestamp": "2025-10-09T23:26:51.279Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.7999999999999998,
+      "service_total": 1.7999999999999998,
+      "metadata": {
+        "person": "person-11"
+      }
+    },
+    {
+      "id": "mgk1rg5rycgmp8jyz1m",
+      "timestamp": "2025-10-09T23:26:51.279Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 1.95,
+      "service_total": 1.95,
+      "metadata": {
+        "person": "person-12"
+      }
+    },
+    {
+      "id": "mgk1rg5scmgt5vcqxe9",
+      "timestamp": "2025-10-09T23:26:51.280Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.1,
+      "service_total": 2.1,
+      "metadata": {
+        "person": "person-13"
+      }
+    },
+    {
+      "id": "mgk1rg5sjy65sny53s",
+      "timestamp": "2025-10-09T23:26:51.280Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.25,
+      "service_total": 2.25,
+      "metadata": {
+        "person": "person-14"
+      }
+    },
+    {
+      "id": "mgk1rg5tq4qne4qelq",
+      "timestamp": "2025-10-09T23:26:51.281Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.4,
+      "service_total": 2.4,
+      "metadata": {
+        "person": "person-15"
+      }
+    },
+    {
+      "id": "mgk1rg5uo6sfkrqrv4g",
+      "timestamp": "2025-10-09T23:26:51.282Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.55,
+      "service_total": 2.55,
+      "metadata": {
+        "person": "person-16"
+      }
+    },
+    {
+      "id": "mgk1rg5vf5ic323py7s",
+      "timestamp": "2025-10-09T23:26:51.283Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.6999999999999997,
+      "service_total": 2.6999999999999997,
+      "metadata": {
+        "person": "person-17"
+      }
+    },
+    {
+      "id": "mgk1rg5v7aj6qqfbf9t",
+      "timestamp": "2025-10-09T23:26:51.283Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 2.85,
+      "service_total": 2.85,
+      "metadata": {
+        "person": "person-18"
+      }
+    },
+    {
+      "id": "mgk1rg5wpwa3ikszzgp",
+      "timestamp": "2025-10-09T23:26:51.284Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3,
+      "service_total": 3,
+      "metadata": {
+        "person": "person-19"
+      }
+    },
+    {
+      "id": "mgk1rg5wk02hr07rsfk",
+      "timestamp": "2025-10-09T23:26:51.284Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.15,
+      "service_total": 3.15,
+      "metadata": {
+        "person": "person-20"
+      }
+    },
+    {
+      "id": "mgk1rg5x5telintw7sk",
+      "timestamp": "2025-10-09T23:26:51.285Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.3,
+      "service_total": 3.3,
+      "metadata": {
+        "person": "person-21"
+      }
+    },
+    {
+      "id": "mgk1rg5y67bijids9t",
+      "timestamp": "2025-10-09T23:26:51.286Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.4499999999999997,
+      "service_total": 3.4499999999999997,
+      "metadata": {
+        "person": "person-22"
+      }
+    },
+    {
+      "id": "mgk1rg5yio4uza43v4",
+      "timestamp": "2025-10-09T23:26:51.286Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.5999999999999996,
+      "service_total": 3.5999999999999996,
+      "metadata": {
+        "person": "person-23"
+      }
+    },
+    {
+      "id": "mgk1rg5zt5nme5hral",
+      "timestamp": "2025-10-09T23:26:51.287Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.75,
+      "service_total": 3.75,
+      "metadata": {
+        "person": "person-24"
+      }
+    },
+    {
+      "id": "mgk1rg600me5zugy318",
+      "timestamp": "2025-10-09T23:26:51.288Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 3.9,
+      "service_total": 3.9,
+      "metadata": {
+        "person": "person-25"
+      }
+    },
+    {
+      "id": "mgk1rg60wxkd78frszf",
+      "timestamp": "2025-10-09T23:26:51.288Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 4.05,
+      "service_total": 4.05,
+      "metadata": {
+        "person": "person-26"
+      }
+    },
+    {
+      "id": "mgk1rg61esy0bqceq4l",
+      "timestamp": "2025-10-09T23:26:51.289Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 4.2,
+      "service_total": 4.2,
+      "metadata": {
+        "person": "person-27"
+      }
+    },
+    {
+      "id": "mgk1rg62f9x17twe7pl",
+      "timestamp": "2025-10-09T23:26:51.290Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 4.35,
+      "service_total": 4.35,
+      "metadata": {
+        "person": "person-28"
+      }
+    },
+    {
+      "id": "mgk1rg627f15d78lvsn",
+      "timestamp": "2025-10-09T23:26:51.290Z",
+      "service": "LUSHA",
+      "operation": "person_lookup",
+      "count": 1,
+      "cost": 0.15,
+      "daily_total": 4.5,
+      "service_total": 4.5,
+      "metadata": {
+        "person": "person-29"
+      }
+    },
+    {
+      "id": "mgk1rg634lzcbbq5dcf",
+      "timestamp": "2025-10-09T23:26:51.291Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.005,
+      "service_total": 0.005,
+      "metadata": {
+        "email": "email-0"
+      }
+    },
+    {
+      "id": "mgk1rg649dgmjmv7qiw",
+      "timestamp": "2025-10-09T23:26:51.292Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.01,
+      "service_total": 0.01,
+      "metadata": {
+        "email": "email-1"
+      }
+    },
+    {
+      "id": "mgk1rg648msdrg4vpp5",
+      "timestamp": "2025-10-09T23:26:51.292Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.015,
+      "service_total": 0.015,
+      "metadata": {
+        "email": "email-2"
+      }
+    },
+    {
+      "id": "mgk1rg65wb44oew9l6j",
+      "timestamp": "2025-10-09T23:26:51.293Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.02,
+      "service_total": 0.02,
+      "metadata": {
+        "email": "email-3"
+      }
+    },
+    {
+      "id": "mgk1rg66odenf7z2c4j",
+      "timestamp": "2025-10-09T23:26:51.294Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.025,
+      "service_total": 0.025,
+      "metadata": {
+        "email": "email-4"
+      }
+    },
+    {
+      "id": "mgk1rg66vwaompt9kx9",
+      "timestamp": "2025-10-09T23:26:51.294Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.03,
+      "service_total": 0.03,
+      "metadata": {
+        "email": "email-5"
+      }
+    },
+    {
+      "id": "mgk1rg672x87opg5ch6",
+      "timestamp": "2025-10-09T23:26:51.295Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.035,
+      "service_total": 0.035,
+      "metadata": {
+        "email": "email-6"
+      }
+    },
+    {
+      "id": "mgk1rg68h74balv634b",
+      "timestamp": "2025-10-09T23:26:51.296Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.04,
+      "service_total": 0.04,
+      "metadata": {
+        "email": "email-7"
+      }
+    },
+    {
+      "id": "mgk1rg68urip8em2dkf",
+      "timestamp": "2025-10-09T23:26:51.296Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.045,
+      "service_total": 0.045,
+      "metadata": {
+        "email": "email-8"
+      }
+    },
+    {
+      "id": "mgk1rg699b1ix1qkn3s",
+      "timestamp": "2025-10-09T23:26:51.297Z",
+      "service": "ZEROBOUNCE",
+      "operation": "email_verify",
+      "count": 1,
+      "cost": 0.005,
+      "daily_total": 0.05,
+      "service_total": 0.05,
+      "metadata": {
+        "email": "email-9"
+      }
+    }
+  ],
+  "credit_alerts": [],
+  "daily_summaries": [],
+  "pipeline_runs": [],
+  "last_updated": "2025-10-09T23:26:51.297Z"
+}

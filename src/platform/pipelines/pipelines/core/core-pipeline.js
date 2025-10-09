@@ -18,7 +18,7 @@ const csv = require('csv-parser');
 const { createObjectCsvWriter } = require('csv-writer');
 
 // Load environment variables from parent directory
-require('dotenv').config({ path: path.join(__dirname, '../../../.env copy') });
+require('dotenv').config({ path: 'C:/Users/ross/Development/adrata/.env' });
 
 const { VersionManager } = require('../../scripts/version-manager');
 const { CompanyResolver } = require('../../modules/core/CompanyResolver');
@@ -30,6 +30,8 @@ const { PEOwnershipAnalysis } = require('../../modules/core/PEOwnershipAnalysis'
 const { ApiCostOptimizer } = require('../../modules/core/ApiCostOptimizer');
 const { ExecutiveTransitionDetector } = require('../../modules/core/ExecutiveTransitionDetector');
 const DataCache = require('../../modules/core/DataCache');
+const ApiCreditMonitor = require('../../modules/core/ApiCreditMonitor');
+const ApiUsageLogger = require('../../modules/core/ApiUsageLogger');
 
 // NEW: Multi-source verification modules
 const { CoreSignalMultiSource } = require('../../modules/core/CoreSignalMultiSource');
@@ -76,6 +78,10 @@ class CorePipeline {
         this.coresignalMultiSource = new CoreSignalMultiSource(config);
         this.multiSourceVerifier = new MultiSourceVerifier(config);
         
+        // NEW: API credit monitoring
+        this.apiCreditMonitor = new ApiCreditMonitor(config);
+        this.apiUsageLogger = new ApiUsageLogger(config);
+        
         this.versionManager = new VersionManager();
         this.dataCache = new DataCache({
             CACHE_TTL_DAYS: 30,
@@ -115,6 +121,10 @@ class CorePipeline {
         console.log('No related company expansion - pure contact data');
 
         try {
+            // STEP 0: Check API credits and initialize monitoring
+            console.log('\nSTEP 0: API Credit Monitoring');
+            await this.initializeApiMonitoring();
+            
             // STEP 1: Load companies from CSV
             console.log('\nSTEP 1: Loading Companies');
             const companies = await this.loadCompanies();
@@ -214,6 +224,10 @@ class CorePipeline {
             console.log('\nSTEP 4: Generating Core Contact CSV');
             const version = this.versionManager.getNextVersion();
             await this.generateContactCSV(version);
+
+            // STEP 4.5: Split CSV by Role (CFO/CRO)
+            console.log('\nSTEP 4.5: Splitting CSV by Role');
+            await this.splitCsvByRole(version);
 
             // STEP 5: Generate summary report
             console.log('\nSTEP 5: Pipeline Summary');
@@ -1666,6 +1680,148 @@ class CorePipeline {
             .replace(/(inc|corp|llc|ltd|company|plc)$/g, '');
         
         return `${cleanName}.com`;
+    }
+
+    /**
+     * Initialize API credit monitoring
+     */
+    async initializeApiMonitoring() {
+        console.log('   🔍 Checking API credit status...');
+        
+        // Get current usage summary
+        const usageSummary = this.apiCreditMonitor.getUsageSummary();
+        
+        // Check for critical alerts
+        const recentAlerts = this.apiCreditMonitor.getRecentAlerts(1); // Last hour
+        const criticalAlerts = recentAlerts.filter(alert => alert.level === 'CRITICAL');
+        
+        if (criticalAlerts.length > 0) {
+            console.log('   🚨 CRITICAL API ALERTS DETECTED:');
+            criticalAlerts.forEach(alert => {
+                console.log(`      - ${alert.message}`);
+            });
+            
+            const shouldStop = await this.checkStopConditions();
+            if (shouldStop) {
+                throw new Error('Pipeline stopped due to critical API credit limits');
+            }
+        }
+        
+        // Display current usage
+        console.log('   📊 Current API Usage:');
+        Object.keys(usageSummary.services).forEach(service => {
+            const serviceInfo = usageSummary.services[service];
+            const status = serviceInfo.usage_percentage >= 95 ? '🚨' : 
+                          serviceInfo.usage_percentage >= 80 ? '⚠️' : '✅';
+            console.log(`      ${status} ${service}: $${serviceInfo.total_cost.toFixed(2)}/${
+                serviceInfo.credit_limit} (${serviceInfo.usage_percentage}%)`);
+        });
+        
+        console.log(`   💰 Daily Total: $${usageSummary.daily_total_cost.toFixed(2)}`);
+        console.log(`   💰 Total Cost: $${usageSummary.total_cost.toFixed(2)}`);
+    }
+
+    /**
+     * Check if pipeline should stop due to API limits
+     */
+    async checkStopConditions() {
+        const services = ['CORESIGNAL', 'LUSHA', 'ZEROBOUNCE', 'PERPLEXITY', 'PEOPLE_DATA_LABS'];
+        
+        for (const service of services) {
+            if (this.apiCreditMonitor.shouldStopPipeline(service)) {
+                console.log(`   🛑 STOPPING PIPELINE: ${service} API at critical limit`);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Log API usage during pipeline execution
+     */
+    async logApiUsage(service, operation, count = 1, metadata = {}) {
+        try {
+            // Log to credit monitor
+            const usageData = await this.apiCreditMonitor.logApiUsage(service, operation, count, metadata);
+            
+            // Log to database
+            await this.apiUsageLogger.logApiUsage({
+                service,
+                operation,
+                count,
+                cost: usageData.cost,
+                daily_total: usageData.daily_total,
+                service_total: usageData.service_total,
+                metadata
+            });
+            
+            return usageData;
+        } catch (error) {
+            console.warn(`   ⚠️ Failed to log API usage: ${error.message}`);
+            return { cost: 0, daily_total: 0, service_total: 0 };
+        }
+    }
+
+    /**
+     * Log pipeline completion with API usage summary
+     */
+    async logPipelineCompletion(pipelineResults) {
+        try {
+            const usageSummary = this.apiCreditMonitor.getUsageSummary();
+            const recentAlerts = this.apiCreditMonitor.getRecentAlerts(24);
+            
+            // Log daily summary
+            await this.apiUsageLogger.logDailySummary({
+                date: usageSummary.date,
+                daily_total_cost: usageSummary.daily_total_cost,
+                total_cost: usageSummary.total_cost,
+                services: usageSummary.services,
+                pipeline_runs: 1,
+                companies_processed: pipelineResults.companies_processed || 0
+            });
+            
+            // Log pipeline run
+            await this.apiUsageLogger.logPipelineRun({
+                companies_processed: pipelineResults.companies_processed || 0,
+                total_cost: usageSummary.daily_total_cost,
+                api_usage: usageSummary.services,
+                duration_minutes: pipelineResults.duration_minutes || 0,
+                success_rate: pipelineResults.success_rate || 0,
+                cfo_found: pipelineResults.cfos_found || 0,
+                cro_found: pipelineResults.cros_found || 0,
+                high_confidence_results: pipelineResults.high_confidence || 0
+            });
+            
+            // Log any new alerts
+            for (const alert of recentAlerts) {
+                await this.apiUsageLogger.logCreditAlert(alert);
+            }
+            
+            console.log('   📊 API usage logged to database');
+            
+        } catch (error) {
+            console.warn(`   ⚠️ Failed to log pipeline completion: ${error.message}`);
+        }
+    }
+
+    /**
+     * Split CSV by Role (CFO/CRO)
+     */
+    async splitCsvByRole(version) {
+        try {
+            const { splitCsvByRole } = require('../../scripts/split-csv-by-role');
+            const csvPath = path.join(__dirname, '../../scripts/outputs', version, 'core-cro-cfo-contacts.csv');
+            
+            if (fs.existsSync(csvPath)) {
+                await splitCsvByRole(csvPath);
+                console.log('   ✅ CSV files split by role successfully');
+            } else {
+                console.log('   ⚠️ Main CSV file not found, skipping split');
+            }
+        } catch (error) {
+            console.warn(`   ⚠️ Failed to split CSV by role: ${error.message}`);
+        }
     }
 }
 
