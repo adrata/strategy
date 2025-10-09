@@ -256,11 +256,6 @@ export function CompleteActionModal({
               </select>
               <p className="text-xs text-[var(--muted)] mt-1">
                 Press 1-5 to select, press same number to cycle through options
-                {!initialData && (
-                  <span className="block mt-1">
-                    After completing an action, press {getCommonShortcut('UNDO')} to undo
-                  </span>
-                )}
               </p>
             </div>
 

@@ -2549,15 +2549,33 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
     const model = getPrismaModel(type);
     if (!model) throw new Error(`Unsupported type: ${type}`);
     
-    // Get the current record to compare changes
+    // Validate that the record exists first
+    console.log(`🔍 [UPDATE] Checking if ${type} record exists: ${id}`);
     const currentRecord = await model.findUnique({
       where: { id }
     });
     
+    if (!currentRecord) {
+      console.error(`❌ [UPDATE] Record not found: ${type} ${id}`);
+      throw new Error(`Record not found: ${type} with id ${id}`);
+    }
+    
+    console.log(`✅ [UPDATE] Found existing record:`, currentRecord.fullName || currentRecord.name || 'Unknown');
+    
+    // Clean and validate the update data
     const updateData = {
       ...data,
       updatedAt: new Date()
     };
+    
+    // Remove any undefined or null values that might cause issues
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined || updateData[key] === null) {
+        delete updateData[key];
+      }
+    });
+    
+    console.log(`🧹 [UPDATE] Cleaned update data:`, JSON.stringify(updateData, null, 2));
     
     // Handle special field requirements for leads, prospects, partners, and clients
     if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
@@ -2572,7 +2590,6 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
       // Comprehensive field mapping for frontend to database consistency
       const fieldMappings = {
         'name': 'fullName',
-        'jobTitle': 'title',
         'companyName': 'company',
         'workEmail': 'workEmail',
         'personalEmail': 'personalEmail',
@@ -2615,10 +2632,14 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
       delete updateData.userId; // This is mapped to assignedUserId
     }
     
+    console.log(`🔄 [UPDATE] Executing update with data:`, JSON.stringify(updateData, null, 2));
+    
     const record = await model.update({
       where: { id },
       data: updateData
     });
+    
+    console.log(`✅ [UPDATE] Update operation completed successfully`);
     
     // Log activities for field changes
     await logFieldChanges(type, id, currentRecord, data, userId, workspaceId);
@@ -2645,7 +2666,26 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
   } catch (updateError) {
     console.error(`❌ [UPDATE] Failed to update ${type} ${id}:`, updateError);
     console.error(`❌ [UPDATE] Data that failed:`, JSON.stringify(data, null, 2));
-    throw new Error(`Failed to update ${type}: ${updateError instanceof Error ? updateError.message : 'Unknown error'}`);
+    console.error(`❌ [UPDATE] Error details:`, {
+      name: updateError instanceof Error ? updateError.name : 'Unknown',
+      message: updateError instanceof Error ? updateError.message : 'Unknown error',
+      stack: updateError instanceof Error ? updateError.stack : undefined
+    });
+    
+    // Provide more specific error messages based on the error type
+    if (updateError instanceof Error) {
+      if (updateError.message.includes('Record to update not found')) {
+        throw new Error(`Record not found: ${type} with id ${id}`);
+      } else if (updateError.message.includes('Unique constraint')) {
+        throw new Error(`Duplicate data: ${updateError.message}`);
+      } else if (updateError.message.includes('Foreign key constraint')) {
+        throw new Error(`Invalid reference: ${updateError.message}`);
+      } else {
+        throw new Error(`Database error: ${updateError.message}`);
+      }
+    } else {
+      throw new Error(`Failed to update ${type}: Unknown error occurred`);
+    }
   }
 }
 
@@ -4692,17 +4732,25 @@ export async function PATCH(request: NextRequest) {
   const startTime = Date.now();
   
   try {
+    console.log('🔧 [PATCH] Starting PATCH request processing');
     const body: UnifiedDataRequest = await request.json();
+    console.log('🔧 [PATCH] Request body parsed successfully:', { type: body.type, id: body.id, hasData: !!body.data });
+    
     const context = await getOptimizedWorkspaceContext(request, body);
+    console.log('🔧 [PATCH] Workspace context resolved:', { workspaceId: context.workspaceId, userId: context.userId });
+    
     const { workspaceId, userId } = context;
     const { type, action, data, id } = body;
     
     if (!type || !id || !data) {
+      console.error('❌ [PATCH] Missing required parameters:', { type, id, hasData: !!data });
       return createErrorResponse('Missing required parameters', 'MISSING_PARAMETERS', 400);
     }
     
+    console.log('🔧 [PATCH] About to execute handleDataOperation');
     // Execute update operation
     const result = await handleDataOperation(type, 'update', workspaceId, userId, data, id);
+    console.log('🔧 [PATCH] handleDataOperation completed successfully');
     
     // Add metadata
     const response = {
@@ -4725,8 +4773,13 @@ export async function PATCH(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ [UNIFIED API] PATCH Error:', error);
+    console.error('❌ [UNIFIED API] PATCH Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return createErrorResponse(
-      'Failed to process patch request',
+      `Failed to process patch request: ${error instanceof Error ? error.message : 'Unknown error'}`,
       'PATCH_ERROR',
       500
     );

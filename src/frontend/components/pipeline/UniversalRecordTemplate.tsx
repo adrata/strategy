@@ -323,28 +323,34 @@ export function UniversalRecordTemplate({
       // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && !isInputField && !hasOpenModal) {
         // Only trigger if we have a record
-        if (record && recordType === 'speedrun') {
+        if (record) {
           event.preventDefault();
           event.stopPropagation();
           event.stopImmediatePropagation();
           
-          // Check if we're on a speedrun sprint page (Add Action) or individual record page (Start Speedrun)
-          const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
-          
-          if (isOnSprintPage) {
-            console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
-            setIsAddActionModalOpen(true);
-          } else {
-            console.log('⌨️ [UniversalRecordTemplate] Start Speedrun keyboard shortcut triggered');
-            // Navigate to speedrun/sprint page
-            const currentPath = window.location.pathname;
-            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-            if (workspaceMatch) {
-              const workspaceSlug = workspaceMatch[1];
-              window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+          if (recordType === 'speedrun') {
+            // Check if we're on a speedrun sprint page (Add Action) or individual record page (Start Speedrun)
+            const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
+            
+            if (isOnSprintPage) {
+              console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered');
+              setIsAddActionModalOpen(true);
             } else {
-              window.location.href = '/speedrun/sprint';
+              console.log('⌨️ [UniversalRecordTemplate] Start Speedrun keyboard shortcut triggered');
+              // Navigate to speedrun/sprint page
+              const currentPath = window.location.pathname;
+              const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+              if (workspaceMatch) {
+                const workspaceSlug = workspaceMatch[1];
+                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+              } else {
+                window.location.href = '/speedrun/sprint';
+              }
             }
+          } else {
+            // For all other record types (leads, prospects, etc.), trigger Add Action
+            console.log('⌨️ [UniversalRecordTemplate] Add Action keyboard shortcut triggered for', recordType);
+            setIsAddActionModalOpen(true);
           }
         }
       }
@@ -1451,13 +1457,22 @@ export function UniversalRecordTemplate({
     });
 
     // Update Record button - for all record types
+    const updateButtonText = recordType === 'leads' ? 'Update Lead' : 
+                            recordType === 'prospects' ? 'Update Prospect' :
+                            recordType === 'opportunities' ? 'Update Opportunity' :
+                            recordType === 'companies' ? 'Update Company' :
+                            recordType === 'people' ? 'Update Person' :
+                            recordType === 'clients' ? 'Update Client' :
+                            recordType === 'partners' ? 'Update Partner' :
+                            'Update Record';
+    
     buttons.push(
       <button
         key="update-record"
         onClick={() => setIsEditRecordModalOpen(true)}
         className="px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
       >
-        Update Record
+        {updateButtonText}
       </button>
     );
 
@@ -2146,7 +2161,16 @@ export function UniversalRecordTemplate({
         <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" data-edit-modal>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Update Record</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {recordType === 'leads' ? 'Update Lead' : 
+                 recordType === 'prospects' ? 'Update Prospect' :
+                 recordType === 'opportunities' ? 'Update Opportunity' :
+                 recordType === 'companies' ? 'Update Company' :
+                 recordType === 'people' ? 'Update Person' :
+                 recordType === 'clients' ? 'Update Client' :
+                 recordType === 'partners' ? 'Update Partner' :
+                 'Update Record'}
+              </h3>
               <button
                 onClick={() => setIsEditRecordModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
