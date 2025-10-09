@@ -470,40 +470,89 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Field - First for leads */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              {activeSection === "opportunities" 
-                ? "Opportunity Name" 
-                : activeSection === "leads" 
-                ? "Person Name" 
-                : "Name"}{" "}
-              *
-            </label>
-            <input
-              type="text"
-              value={formData.name || ""}
-              onChange={(e) =>
-                setFormData((prev: any) => ({ ...prev, name: e.target.value }))
-              }
-              placeholder={
-                activeSection === "opportunities"
-                  ? "Enter opportunity name"
-                  : activeSection === "leads"
-                  ? "Enter person name"
-                  : `Enter ${getSectionTitle().toLowerCase()} name`
-              }
-              className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
-              onFocus={(e) => {
-                e.target.style.borderColor = categoryColors.primary;
-                e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
-              }}
-              required
-            />
-          </div>
+          {(activeSection === "leads" || activeSection === "people") ? (
+            // Split name fields for people/leads
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  First Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.firstName || ""}
+                  onChange={(e) =>
+                    setFormData((prev: any) => ({ ...prev, firstName: e.target.value }))
+                  }
+                  placeholder="Enter first name"
+                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = categoryColors.primary;
+                    e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  Last Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.lastName || ""}
+                  onChange={(e) =>
+                    setFormData((prev: any) => ({ ...prev, lastName: e.target.value }))
+                  }
+                  placeholder="Enter last name"
+                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = categoryColors.primary;
+                    e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                  required
+                />
+              </div>
+            </div>
+          ) : (
+            // Single name field for other sections
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                {activeSection === "opportunities" 
+                  ? "Opportunity Name" 
+                  : "Name"}{" "}
+                *
+              </label>
+              <input
+                type="text"
+                value={formData.name || ""}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({ ...prev, name: e.target.value }))
+                }
+                placeholder={
+                  activeSection === "opportunities"
+                    ? "Enter opportunity name"
+                    : `Enter ${getSectionTitle().toLowerCase()} name`
+                }
+                className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                onFocus={(e) => {
+                  e.target.style.borderColor = categoryColors.primary;
+                  e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#d1d5db';
+                  e.target.style.boxShadow = 'none';
+                }}
+                required
+              />
+            </div>
+          )}
 
           {/* Status Field - Second for leads and people */}
           {(activeSection === "leads" || activeSection === "people") && (
@@ -1058,6 +1107,56 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             </div>
           )}
 
+          {/* Company-specific fields */}
+          {activeSection === "companies" && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  Website
+                </label>
+                <input
+                  type="url"
+                  value={formData.website || ""}
+                  onChange={(e) =>
+                    setFormData((prev: any) => ({ ...prev, website: e.target.value }))
+                  }
+                  placeholder="https://example.com"
+                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = categoryColors.primary;
+                    e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  Notes
+                </label>
+                <textarea
+                  value={formData.notes || ""}
+                  onChange={(e) =>
+                    setFormData((prev: any) => ({ ...prev, notes: e.target.value }))
+                  }
+                  placeholder="Additional notes about this company"
+                  rows={3}
+                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = categoryColors.primary;
+                    e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Notes Field - Removed for now */}
 
           {/* Action Buttons */}
@@ -1071,21 +1170,37 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             </button>
             <button
               type="submit"
-              disabled={!formData.name?.trim()}
+              disabled={
+                (activeSection === "leads" || activeSection === "people") 
+                  ? !formData.firstName?.trim() || !formData.lastName?.trim()
+                  : !formData.name?.trim()
+              }
               className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                backgroundColor: formData.name?.trim() ? categoryColors.light : categoryColors.bg,
+                backgroundColor: (
+                  (activeSection === "leads" || activeSection === "people") 
+                    ? (formData.firstName?.trim() && formData.lastName?.trim())
+                    : formData.name?.trim()
+                ) ? categoryColors.light : categoryColors.bg,
                 borderColor: categoryColors.border,
                 color: categoryColors.text,
               }}
               onMouseEnter={(e) => {
-                if (formData.name?.trim()) {
-                  e.currentTarget.style.backgroundColor = categoryColors.bgHover;
+                const isEnabled = (activeSection === "leads" || activeSection === "people") 
+                  ? (formData.firstName?.trim() && formData.lastName?.trim())
+                  : formData.name?.trim();
+                if (isEnabled) {
+                  e.currentTarget.style.backgroundColor = categoryColors.primary;
+                  e.currentTarget.style.color = 'white';
                 }
               }}
               onMouseLeave={(e) => {
-                if (formData.name?.trim()) {
+                const isEnabled = (activeSection === "leads" || activeSection === "people") 
+                  ? (formData.firstName?.trim() && formData.lastName?.trim())
+                  : formData.name?.trim();
+                if (isEnabled) {
                   e.currentTarget.style.backgroundColor = categoryColors.light;
+                  e.currentTarget.style.color = categoryColors.text;
                 }
               }}
             >
@@ -1339,6 +1454,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         isVisible={showSuccessMessage}
         onClose={() => setShowSuccessMessage(false)}
         type={successMessage.includes('Error') || successMessage.includes('Failed') ? 'error' : 'success'}
+        section={activeSection}
       />
 
       {/* Add Company Modal */}

@@ -94,62 +94,71 @@ export function useForms(): UseFormsReturn {
       let newRecordId: string | null = null;
 
       try {
-        if (activeSection === "leads") {
+        if (activeSection === "leads" || activeSection === "people") {
           if (!envInfo.isDesktop) {
-            // Create lead via API
-            debug("CREATE_LEAD_API", { formData });
+            // Create person via v1 API
+            debug("CREATE_PERSON_API", { formData });
             
-            const leadData = {
-              name: formData.name,
+            // Use firstName and lastName directly from form
+            const firstName = formData.firstName?.trim() || '';
+            const lastName = formData.lastName?.trim() || '';
+            const fullName = `${firstName} ${lastName}`.trim();
+            
+            const personData = {
+              firstName: firstName,
+              lastName: lastName,
+              fullName: fullName,
               email: formData.email,
               phone: formData.phone,
-              company: formData.company,
-              title: formData.title,
-              source: formData.source || "Action Platform",
-              status: "new",
+              jobTitle: formData.title,
+              status: formData.status || "LEAD",
+              notes: formData.notes,
               workspaceId: activeWorkspace?.id || "",
               userId: authUser?.id || ""
             };
             
-            console.log('[FORMS HOOK] Creating lead with data:', leadData);
+            console.log('[FORMS HOOK] Creating person with data:', personData);
             console.log('[FORMS HOOK] activeWorkspace:', activeWorkspace);
             console.log('[FORMS HOOK] authUser:', authUser);
 
             const createResponse = await fetch(
-              "/api/data/unified",
+              "/api/v1/people",
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  type: "leads",
-                  action: "create",
-                  data: leadData
-                }),
-              },
-              {
-                success: false,
-                data: null,
-                error: null,
-              },
+                body: JSON.stringify(personData),
+              }
             );
 
-            if (createResponse['success'] && createResponse.data) {
-              newRecordId = createResponse.data.id;
-              debug("CREATE_LEAD_SUCCESS", { newRecordId });
+            if (createResponse.ok) {
+              const result = await createResponse.json();
+              newRecordId = result.id;
+              debug("CREATE_PERSON_SUCCESS", { newRecordId });
 
-              // Success message without enrichment for now
+              // Success message
               onSuccess(
-                `Successfully created lead: ${formData.name}`,
+                `Successfully created person: ${fullName}`,
               );
+              
+              // Navigate to people list after successful creation
+              if (typeof window !== 'undefined') {
+                const currentPath = window.location.pathname;
+                const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+                if (workspaceMatch) {
+                  const workspaceSlug = workspaceMatch[1];
+                  window.location.href = `/${workspaceSlug}/people`;
+                }
+              }
             } else {
-              throw new Error("Failed to create lead");
+              const errorData = await createResponse.json();
+              throw new Error(errorData.error || "Failed to create person");
             }
           } else {
             // Desktop mode
             debug("CREATE_LEAD_DESKTOP", { formData });
             newRecordId = `desktop-lead-${Date.now()}`;
             onSuccess(
-              `Successfully created lead: ${formData.name} (Desktop mode - not saved to database)`,
+              `Successfully created lead: ${fullName} (Desktop mode - not saved to database)`,
             );
           }
         } else if (activeSection === "opportunities") {
