@@ -1,3 +1,8 @@
+/**
+ * Script to check what leads data is actually in the database
+ * Run with: node scripts/check-leads-data.js
+ */
+
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
@@ -5,97 +10,79 @@ const prisma = new PrismaClient();
 async function checkLeadsData() {
   try {
     console.log('🔍 Checking leads data in database...\n');
-    
-    // Get a sample of leads
-    const leads = await prisma.leads.findMany({
-      take: 5,
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        company: true,
-        title: true,
-        jobTitle: true,
-        department: true,
-        state: true,
-        accountId: true,
-        personId: true,
-        workspaceId: true,
-        assignedUserId: true,
-      }
-    });
-    
-    console.log('📊 Sample leads data:');
-    console.log(JSON.stringify(leads, null, 2));
-    
-    // Check if there are any leads with accountId
-    const leadsWithAccounts = await prisma.leads.findMany({
+
+    // Check all people with LEAD status
+    const leads = await prisma.people.findMany({
       where: {
-        accountId: { not: null }
+        status: 'LEAD'
       },
-      take: 3,
-      select: {
-        id: true,
-        fullName: true,
-        accountId: true,
-        company: true,
-      }
-    });
-    
-    console.log('\n🏢 Leads with accountId:');
-    console.log(JSON.stringify(leadsWithAccounts, null, 2));
-    
-    // Check accounts table
-    const accounts = await prisma.accounts.findMany({
-      take: 5,
-      select: {
-        id: true,
-        name: true,
-        industry: true,
-        state: true,
-        workspaceId: true,
-      }
-    });
-    
-    console.log('\n🏢 Sample accounts data:');
-    console.log(JSON.stringify(accounts, null, 2));
-    
-    // Check person table
-    const persons = await prisma.person.findMany({
-      take: 5,
-      select: {
-        id: true,
-        fullName: true,
-        title: true,
-        department: true,
-      }
-    });
-    
-    console.log('\n👤 Sample person data:');
-    console.log(JSON.stringify(persons, null, 2));
-    
-    // Check workspace_users to see what workspace we should use
-    const workspaceUsers = await prisma.workspace_users.findMany({
-      take: 3,
-      select: {
-        id: true,
-        workspaceId: true,
-        userId: true,
-        workspaces: {
+      include: {
+        company: {
           select: {
             id: true,
             name: true,
-            slug: true,
+            industry: true
           }
         }
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
-    
-    console.log('\n🏢 Sample workspace_users data:');
-    console.log(JSON.stringify(workspaceUsers, null, 2));
-    
+
+    console.log(`📊 Found ${leads.length} people with LEAD status:`);
+    console.log('=' .repeat(80));
+
+    if (leads.length === 0) {
+      console.log('✅ No people with LEAD status found in database');
+    } else {
+      leads.forEach((lead, index) => {
+        console.log(`${index + 1}. ${lead.fullName}`);
+        console.log(`   ID: ${lead.id}`);
+        console.log(`   Status: ${lead.status}`);
+        console.log(`   Company: ${lead.company?.name || 'No company'}`);
+        console.log(`   Email: ${lead.email || lead.workEmail || 'No email'}`);
+        console.log(`   Created: ${lead.createdAt}`);
+        console.log(`   Workspace: ${lead.workspaceId}`);
+        console.log('');
+      });
+    }
+
+    // Also check all people to see what statuses exist
+    const allPeople = await prisma.people.findMany({
+      select: {
+        id: true,
+        fullName: true,
+        status: true,
+        workspaceId: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 10
+    });
+
+    console.log('📋 Recent people in database (last 10):');
+    console.log('=' .repeat(80));
+    allPeople.forEach((person, index) => {
+      console.log(`${index + 1}. ${person.fullName} - Status: ${person.status} - Workspace: ${person.workspaceId}`);
+    });
+
+    // Check status distribution
+    const statusCounts = await prisma.people.groupBy({
+      by: ['status'],
+      _count: { id: true }
+    });
+
+    console.log('\n📊 Status distribution:');
+    console.log('=' .repeat(40));
+    statusCounts.forEach(stat => {
+      console.log(`${stat.status || 'NULL'}: ${stat._count.id}`);
+    });
+
   } catch (error) {
-    console.error('❌ Error checking data:', error);
+    console.error('❌ Error checking leads data:', error);
   } finally {
     await prisma.$disconnect();
   }

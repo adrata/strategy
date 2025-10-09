@@ -121,6 +121,23 @@ export async function GET(request: NextRequest) {
       prisma.people.count({ where }),
     ]);
 
+    // 🔍 DEBUG: Log the actual data being returned
+    console.log('🔍 [V1 PEOPLE API] Query details:', {
+      status,
+      workspaceId,
+      where,
+      totalCount,
+      peopleCount: people.length,
+      samplePeople: people.slice(0, 3).map(p => ({
+        id: p.id,
+        fullName: p.fullName,
+        status: p.status,
+        company: p.company?.name,
+        firstName: p.firstName,
+        lastName: p.lastName
+      }))
+    });
+
     return NextResponse.json({
       success: true,
       data: people,

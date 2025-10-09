@@ -78,6 +78,20 @@ export function useLeadsData(): UseLeadsDataReturn {
 
       const peopleData = result.data || [];
       
+      // 🔍 DEBUG: Log the actual data received from API
+      console.log('🔍 [LEADS DATA] API response:', {
+        success: result.success,
+        peopleCount: peopleData.length,
+        samplePeople: peopleData.slice(0, 3).map(p => ({
+          id: p.id,
+          fullName: p.fullName,
+          status: p.status,
+          company: p.company?.name,
+          firstName: p.firstName,
+          lastName: p.lastName
+        }))
+      });
+      
       // 🎯 TRANSFORM: Convert people data to leads format (no fallback data)
       const leadsData: Lead[] = peopleData.map((person: any, index: number) => ({
         id: person.id,
