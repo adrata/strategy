@@ -139,7 +139,8 @@ export class PlatformAccessManager {
         // Demo access is ONLY allowed for Dan and Ross users
         const demoAccessResult = DemoAccessValidator.validateDemoAccess(userId, userEmail);
         
-        if ((userEmail === "demo@adrata.com" || userId === "demo-user-2025") && demoAccessResult.hasAccess) {
+        // STRICT: Only grant demo access if user is Dan or Ross AND has demo credentials
+        if ((userEmail === "demo@adrata.com" || userId === "demo-user-2025") && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss) {
           return {
             id: `hardcoded-demo-${Date.now()}`,
             userId,

@@ -121,12 +121,29 @@ export function usePipelineActions({
     // TODO: Implement mark complete functionality
   }, []);
   
-  const handleDelete = useCallback((record: PipelineRecord) => {
-    if (confirm(`Are you sure you want to delete ${record.fullName || record.name}?`)) {
-      console.log('Delete:', record);
+  const handleDelete = useCallback(async (record: PipelineRecord) => {
+    try {
+      // Perform soft delete via API
+      const response = await fetch(`/api/data/unified?type=${encodeURIComponent('leads')}&id=${encodeURIComponent(record.id)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
+      }
+
+      console.log('✅ Successfully deleted record:', record.id);
+      
+      // Call the onRecordDelete callback if provided
       if (onRecordDelete) {
         onRecordDelete(record.id);
       }
+    } catch (error) {
+      console.error('❌ Error deleting record:', error);
+      alert('Failed to delete record. Please try again.');
     }
   }, [onRecordDelete]);
   

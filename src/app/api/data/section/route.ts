@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
-
+import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
@@ -114,8 +114,15 @@ export async function GET(request: NextRequest) {
     
     // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
     // Only apply demo mode to the actual demo workspace, not production workspaces
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                      userId === 'demo-user-2025'; // Demo user only
+    // STRICT: Only allow demo mode for Dan and Ross
+    const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
+      userId, 
+      context.userEmail, 
+      workspaceId
+    );
+    const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
+                       userId === 'demo-user-2025') && // Demo user only
+                       demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
     console.log(`🎯 [SECTION API] Demo mode detected: ${isDemoMode} for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🚀 PERFORMANCE: Load only the specific section data needed

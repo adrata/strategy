@@ -73,7 +73,8 @@ export class WorkspaceDataRouter {
         user['activeWorkspaceId'] || ''
       );
       
-      const isDemo = (emailCheck || idCheck || workspaceCheck) && demoAccessResult.hasAccess;
+      // STRICT: Only grant demo access if user is Dan or Ross
+      const isDemo = (emailCheck || idCheck || workspaceCheck) && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
       
       // REMOVED: Hardcoded user mappings that cause data leakage between workspaces
       // All users should get their actual workspace data from database queries
@@ -386,9 +387,10 @@ export class WorkspaceDataRouter {
         decoded['workspaceId'] || ''
       );
       
+      // STRICT: Only grant demo access if user is Dan or Ross
       const isDemo = (decoded['email'] === "demo@adrata.com" ||
                      decoded['userId'] === "demo-user-2025" ||
-                     decoded['workspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194") && demoAccessResult.hasAccess;
+                     decoded['workspaceId'] === "01K1VBYX2YERMXBFJ60RC6J194") && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
       
       // SECURITY: Validate workspace access for the user
       let workspaceId: string;

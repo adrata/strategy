@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/auth-fetch';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface AddActionModalProps {
   isOpen: boolean;
@@ -407,7 +408,7 @@ export function AddActionModal({
                   : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
               }`}
             >
-              {isLoading ? 'Adding...' : 'Add Action'}
+              {isLoading ? 'Adding...' : `Add Action (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
 

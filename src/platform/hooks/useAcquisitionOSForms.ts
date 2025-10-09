@@ -462,18 +462,20 @@ export function useAcquisitionOSForms(): UseAcquisitionOSFormsReturn {
         activeSection,
       });
 
-      if (
-        !confirm(
-          `Are you sure you want to delete ${record.name}? This action cannot be undone.`,
-        )
-      ) {
-        debug("DELETE_RECORD_CANCELLED", { recordId: record.id });
-        return;
-      }
-
       try {
-        // Simulate record deletion for now
-        debug("DELETE_RECORD_SIMULATED", { recordId: record.id });
+        // Perform soft delete via API
+        const response = await fetch(`/api/data/unified?type=${encodeURIComponent(activeSection.slice(0, -1))}&id=${encodeURIComponent(record.id)}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete record');
+        }
+
+        debug("DELETE_RECORD_SUCCESS", { recordId: record.id });
 
         // Clear selection if this was the selected record
         if (onClearSelection) {

@@ -973,17 +973,31 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('🗑️ [UNIVERSAL] Deleting record:', record.id);
       
-      // TODO: Implement actual delete API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Perform soft delete via API
+      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
+      }
       
-      showMessage('Record deleted successfully!');
+      // Navigate back to the table view immediately
+      if (onBack) {
+        onBack();
+      }
+      
+      // Show success message after navigation (with a small delay to ensure navigation completes)
       setTimeout(() => {
-        onBack(); // Go back to list after successful deletion
-      }, 2000);
+        showMessage('Record deleted successfully!', 'success');
+      }, 100);
       
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error deleting record:', error);
-      alert('Failed to delete record. Please try again.');
+      showMessage('Failed to delete record. Please try again.', 'error');
     } finally {
       setLoading(false);
       setShowDeleteConfirm(false);
@@ -1386,29 +1400,29 @@ export function UniversalRecordTemplate({
       setLoading(true);
       
       // Perform soft delete via API
-      const response = await fetch('/api/data/unified', {
+      const response = await fetch(`/api/data/unified?type=${encodeURIComponent(recordType)}&id=${encodeURIComponent(record.id)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: recordType,
-          id: record.id,
-          action: 'soft_delete'
-        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to delete record');
       }
 
-      showMessage('Record deleted successfully!', 'success');
+      // Close the modal first
       setIsEditRecordModalOpen(false);
       
-      // Call onBack to return to the previous view
+      // Navigate back to the table view immediately
       if (onBack) {
         onBack();
       }
+      
+      // Show success message after navigation (with a small delay to ensure navigation completes)
+      setTimeout(() => {
+        showMessage('Record deleted successfully!', 'success');
+      }, 100);
     } catch (error) {
       console.error('Error deleting record:', error);
       showMessage('Failed to delete record. Please try again.', 'error');
@@ -1518,7 +1532,7 @@ export function UniversalRecordTemplate({
           onClick={() => setIsAddActionModalOpen(true)}
           className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
         >
-          Add Action
+          Add Action ({getCommonShortcut('SUBMIT')})
         </button>
       );
     }
@@ -2688,7 +2702,7 @@ export function UniversalRecordTemplate({
                     onClick={handleSaveRecord}
                     className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
                   >
-                    Save Changes
+                    Complete ({getCommonShortcut('SUBMIT')})
                   </button>
                 </>
               )}

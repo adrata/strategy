@@ -97,8 +97,7 @@ export async function GET(request: NextRequest) {
     );
     
     const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                       workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                       userId === 'demo-user-2025') && demoAccessResult.hasAccess;
+                       userId === 'demo-user-2025') && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode} (Dan/Ross: ${demoAccessResult.isDanOrRoss})`);
     
     // 🚀 PERFORMANCE: Run all count queries in parallel

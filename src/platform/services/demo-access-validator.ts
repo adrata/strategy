@@ -36,7 +36,7 @@ export class DemoAccessValidator {
   }
   
   /**
-   * Check if user is Dan or Ross
+   * Check if user is Dan or Ross - ONLY these two users are allowed
    */
   static isDanOrRoss(userId: string, userEmail?: string): boolean {
     const danEmail = 'dan@adrata.com';
@@ -44,23 +44,24 @@ export class DemoAccessValidator {
     const danUserId = '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
     const rossUserId = '01K1VBYZG41K9QA0D9CF06KNRG'; // Ross's user ID
     
-    return userEmail === danEmail || 
-           userEmail === rossEmail ||
-           userId === danUserId ||
-           userId === rossUserId;
+    // STRICT: Only allow Dan and Ross - no exceptions
+    const isDan = (userEmail === danEmail || userId === danUserId);
+    const isRoss = (userEmail === rossEmail || userId === rossUserId);
+    
+    return isDan || isRoss;
   }
   
   /**
    * Validate demo workspace access with additional context
+   * ONLY Dan and Ross can access demo workspaces
    */
   static validateDemoWorkspaceAccess(
     userId: string, 
     userEmail: string, 
     workspaceId: string
   ): DemoAccessResult {
-    // First check if this is a demo workspace
+    // First check if this is a demo workspace - ONLY the actual demo workspace
     const isDemoWorkspace = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' ||
-                           workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' ||
                            userId === 'demo-user-2025';
     
     if (!isDemoWorkspace) {
@@ -70,7 +71,7 @@ export class DemoAccessValidator {
       };
     }
     
-    // For demo workspaces, validate Dan/Ross access
+    // For demo workspaces, STRICT validation - ONLY Dan and Ross
     return this.validateDemoAccess(userId, userEmail);
   }
   
@@ -83,9 +84,9 @@ export class DemoAccessValidator {
   
   /**
    * Check if workspace ID is demo workspace
+   * ONLY the actual demo workspace is considered demo
    */
   static isDemoWorkspace(workspaceId: string): boolean {
-    return workspaceId === this.getDemoWorkspaceId() ||
-           workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP'; // Dan's workspace also considered demo
+    return workspaceId === this.getDemoWorkspaceId();
   }
 }

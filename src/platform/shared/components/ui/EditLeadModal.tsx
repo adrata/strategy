@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Lead } from "@/platform/data-service";
 import { AIStatusService } from "@/platform/ai/services/aiStatusService";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { 
   UserIcon, 
   BriefcaseIcon, 
@@ -32,6 +33,9 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
     confidence: number;
     reasoning: string[];
   } | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
     name: lead.name || "",
     email: lead.email || "",
@@ -70,9 +74,46 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (onDelete && lead.id) {
-      onDelete(lead.id);
+    setShowDeleteConfirm(true);
+    setDeleteConfirmName('');
+  };
+
+  const handleDeleteConfirm = async () => {
+    const recordName = lead.name || 'this lead';
+    
+    if (deleteConfirmName !== recordName) {
+      alert(`Please type "${recordName}" to confirm deletion.`);
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      
+      // Perform soft delete via API
+      const response = await fetch(`/api/data/unified?type=${encodeURIComponent('leads')}&id=${encodeURIComponent(lead.id)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete record');
+      }
+
+      // Close the modal first
       onClose();
+      
+      // Call the onDelete callback if provided (this should handle navigation and success message)
+      if (onDelete) {
+        await onDelete(lead.id);
+      }
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      alert('Failed to delete lead. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -351,21 +392,77 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Save Changes
-          </button>
+        <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+          <div>
+            {onDelete && (
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center gap-2"
+              >
+                <TrashIcon className="h-4 w-4" />
+                Delete Lead
+              </button>
+            )}
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Complete ({getCommonShortcut('SUBMIT')})
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Delete Lead</h3>
+            </div>
+            <div className="px-6 py-4">
+              <p className="text-sm text-gray-600 mb-4">
+                This action cannot be undone. This will soft delete the record and remove it from your active lists.
+              </p>
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
+                <p className="text-sm text-red-800">
+                  Are you sure you want to delete this lead? To confirm, type "{lead.name}" in the box below:
+                </p>
+              </div>
+              <input
+                type="text"
+                value={deleteConfirmName}
+                onChange={(e) => setDeleteConfirmName(e.target.value)}
+                placeholder={`Type "${lead.name}" to confirm`}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting || deleteConfirmName !== lead.name}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Lead'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
