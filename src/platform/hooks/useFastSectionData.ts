@@ -1,10 +1,5 @@
 /**
- * 🚀 FAST SECTION DATA HOOK - LIGHTNING SPEED SECTION LOADING
- * 
- * Ultra-fast hook for loading specific section data only
- * Replaces heavy acquisition data for middle panel sections
- * 
- * Performance Target: <500ms response time per section
+ * Fast section data hook for loading specific section data
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -12,11 +7,11 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 // Removed authFetch import - using standard fetch
 
-// 🚀 GLOBAL STATE: Track loaded sections across all hook instances
+// Global state for tracking loaded sections
 const globalLoadedSections = new Set<string>();
 const globalSectionData = new Map<string, { data: any[], count: number, timestamp: number }>();
 
-// 🛠️ DEVELOPMENT: Mock data generator for when API is unavailable
+// Mock data generator for development
 function generateMockData(section: string, limit: number): any[] {
   const mockData = [];
   const baseNames = {
@@ -51,8 +46,7 @@ interface UseFastSectionDataReturn {
 }
 
 /**
- * 🚀 FAST SECTION DATA HOOK
- * Provides instant section data for middle panel with smart caching
+ * Fast section data hook with smart caching
  */
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
   // console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
@@ -102,7 +96,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       return;
     }
 
-    // 🚀 PERFORMANCE: Skip if we already loaded this section
+    // Skip if we already loaded this section
     if (globalLoadedSections.has(section)) {
       // console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
       setLoading(false);
@@ -118,7 +112,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       // console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
-      // 🚀 NEW: Use v1 APIs for better performance and consistency
+      // Use v1 APIs for better performance
       const timestamp = Date.now();
       let url: string;
       
@@ -194,7 +188,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage);
       
-      // 🚀 CACHE ERROR FIX: Handle all errors gracefully to prevent cache error page
+      // Handle all errors gracefully to prevent cache error page
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('fetch')) {
         console.warn(`⚠️ [FAST SECTION DATA] Network error for ${section} - providing fallback data`);
         

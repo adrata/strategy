@@ -104,11 +104,11 @@ function PipelineSections({
   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
                     (workspaceId && workspaceId.includes('demo')) ||
                     (typeof window !== "undefined" && window.location.pathname.includes('/demo'));
-  console.log('🔍 [LEFT PANEL] Demo mode check:', { 
-    isDemoMode, 
-    workspaceId,
-    pathname: typeof window !== "undefined" ? window.location.pathname : 'server' 
-  });
+  // console.log('🔍 [LEFT PANEL] Demo mode check:', { 
+  //   isDemoMode, 
+  //   workspaceId,
+  //   pathname: typeof window !== "undefined" ? window.location.pathname : 'server' 
+  // });
   
   const demoModeVisibility = {
     isSpeedrunVisible: true,

@@ -248,7 +248,7 @@ export function Dashboard() {
   //   hasActivityData: !!activityData
   // });
 
-  // 🆕 CRITICAL FIX: Use workspace from provider instead of URL detection
+  // Use workspace from provider
   const workspaceId = user?.activeWorkspaceId;
   const userId = user?.id;
   
@@ -258,7 +258,7 @@ export function Dashboard() {
   //   userId: userId
   // });
 
-  // 🚀 PERFORMANCE FIX: Use data from provider instead of making duplicate API calls
+  // Use data from provider instead of making duplicate API calls
   const loadActivityData = useCallback(async () => {
     try {
       if (!workspaceId || !userId) {
@@ -267,13 +267,13 @@ export function Dashboard() {
         return;
       }
 
-      // 🚀 PERFORMANCE: Prevent multiple simultaneous calls
+      // Prevent multiple simultaneous calls
       if (isLoading) {
         // console.log('⏳ [DASHBOARD] Already loading, skipping duplicate call');
         return;
       }
 
-      // 🚀 PERFORMANCE: Check client-side cache first
+      // Check client-side cache first
       const cacheKey = `dashboard:${workspaceId}:${userId}`;
       const cached = dashboardCache.get(cacheKey);
       
@@ -284,7 +284,7 @@ export function Dashboard() {
         return;
       }
 
-      // 🚀 PERFORMANCE: Use cached data from provider instead of making new API call
+      // Use cached data from provider instead of making new API call
       if (acquisitionData && acquisitionData.counts) {
         // console.log('⚡ [DASHBOARD] Using cached data from provider - NO API CALL NEEDED');
         

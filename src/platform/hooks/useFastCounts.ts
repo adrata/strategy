@@ -131,7 +131,7 @@ export function useFastCounts(): UseFastCountsReturn {
       } catch (e) {
         // ignore storage failures
       }
-      console.log('✅ [FAST COUNTS] Loaded counts:', newCounts);
+      // console.log('✅ [FAST COUNTS] Loaded counts:', newCounts);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch counts';
