@@ -127,9 +127,10 @@ export async function GET(request: NextRequest) {
     
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
-      case 'speedrun':
-        // 🏆 SPEEDRUN: Use EXACT same logic as people section
-        console.log(`🏆 [SPEEDRUN SECTION] Loading speedrun data (same as people) for workspace: ${workspaceId}, user: ${userId}`);
+        case 'speedrun':
+          // 🏆 SPEEDRUN: Use EXACT same logic as people section
+          console.log(`🏆 [SPEEDRUN SECTION] Loading speedrun data (same as people) for workspace: ${workspaceId}, user: ${userId}`);
+          console.log(`🔍 [SPEEDRUN SECTION] Debug: About to query people table for speedrun data`);
         
         try {
           const speedrunPeople = await prisma.people.findMany({
@@ -224,6 +225,14 @@ export async function GET(request: NextRequest) {
               tags: person.tags || []
             };
           });
+          
+          console.log(`🔍 [SPEEDRUN SECTION] Processed ${speedrunPeople.length} people records`);
+          console.log(`🔍 [SPEEDRUN SECTION] First record sample:`, speedrunPeople[0] ? {
+            id: speedrunPeople[0].id,
+            name: speedrunPeople[0].name,
+            company: speedrunPeople[0].company,
+            rank: speedrunPeople[0].rank
+          } : 'No records');
           
         } catch (dbError) {
           console.error('❌ [SPEEDRUN SECTION] Database error loading speedrun people:', dbError);                                                              
