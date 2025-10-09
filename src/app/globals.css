@@ -206,47 +206,10 @@ body:not(.website) {
   }
 }
 
-/* REMOVE ALL FOCUS OUTLINES - No blue blur anywhere */
-*:focus,
-*:focus-visible,
-*:focus-within {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
-}
-
-/* Remove default focus styles completely */
-*:focus:not(:focus-visible) {
-  outline: none !important;
-}
-
-/* Remove focus from all interactive elements */
-button:focus,
-button:focus-visible,
-a:focus,
-a:focus-visible,
-input:focus,
-input:focus-visible,
-textarea:focus,
-textarea:focus-visible,
-select:focus,
-select:focus-visible,
-[role="button"]:focus,
-[role="button"]:focus-visible,
-[tabindex]:focus,
-[tabindex]:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
-}
-
-/* Custom class to completely remove focus styling */
-.no-focus-outline:focus,
-.no-focus-outline:focus-visible,
-.no-focus-outline:focus-within {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: var(--border) !important;
+/* Focus styles for accessibility - following 2025 best practices */
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* Remove custom placeholder CSS - using normal flow */

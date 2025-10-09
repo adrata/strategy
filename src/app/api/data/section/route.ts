@@ -139,9 +139,8 @@ export async function GET(request: NextRequest) {
               // 🚀 SPEEDRUN: Use EXACT same query as people section
             },
             orderBy: [
-              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
-              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
-              { updatedAt: 'desc' }
+              { rank: 'asc' }, // First by person rank
+              { updatedAt: 'desc' } // Then by most recent update
             ],
             take: 50, // Limit to top 50 people for speedrun
             select: {
@@ -866,13 +865,19 @@ export async function GET(request: NextRequest) {
           break;
         case 'speedrun':
           // 🆕 FIX: Count speedrun leads, fallback to people if no speedrun leads
-          const speedrunLeadsCount = await prisma.leads.count({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              tags: { has: 'speedrun' }
-            }
-          });
+          let speedrunLeadsCount = 0;
+          try {
+            speedrunLeadsCount = await prisma.leads.count({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                tags: { has: 'speedrun' }
+              }
+            });
+          } catch (error) {
+            console.log('⚠️ [SECTION API] Leads table not available, using people count instead');
+            speedrunLeadsCount = 0; // Will trigger fallback to people count
+          }
           
           if (speedrunLeadsCount === 0) {
             // Fallback to people count if no speedrun leads

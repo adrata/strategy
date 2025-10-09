@@ -3348,7 +3348,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           workspaceId, 
           deletedAt: null
         }
-      }),
+      }).catch(() => 0), // Fallback to 0 if opportunities table doesn't exist
       prisma.companies.count({ 
         where: { 
           workspaceId, 
@@ -3386,7 +3386,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
             }
           }
-        }),
+        }).catch(() => 0), // Fallback to 0 if leads table doesn't exist
         prisma.prospects.count({
           where: {
             workspaceId,

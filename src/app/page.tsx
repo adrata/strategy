@@ -19,9 +19,9 @@ function CookieNotification() {
     setIsClient(true);
     // Check if user already consented
     try {
-    const hasConsented = localStorage.getItem('adrata_cookie_consent');
-    if (!hasConsented) {
-      setShowNotification(true);
+      const hasConsented = localStorage.getItem('adrata_cookie_consent');
+      if (!hasConsented) {
+        setShowNotification(true);
       }
     } catch (error) {
       // Handle cases where localStorage is not available
