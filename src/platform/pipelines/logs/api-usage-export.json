@@ -1,0 +1,34 @@
+{
+  "export_timestamp": "2025-10-09T23:26:33.441Z",
+  "database_records": {
+    "api_usage_records": [],
+    "credit_alerts": [],
+    "daily_summaries": [],
+    "pipeline_runs": [],
+    "last_updated": "2025-10-09T23:26:14.254Z"
+  },
+  "analytics_30_days": {
+    "period_days": 30,
+    "total_api_calls": 0,
+    "total_cost": 0,
+    "service_breakdown": {},
+    "daily_averages": {
+      "api_calls": 0,
+      "cost": 0
+    },
+    "cost_trends": [],
+    "alert_summary": {
+      "total_alerts": 0,
+      "critical_alerts": 0,
+      "warning_alerts": 0,
+      "recent_alerts": []
+    }
+  },
+  "cost_projections": {
+    "daily_average_cost": 0,
+    "weekly_projection": 0,
+    "monthly_projection": 0,
+    "yearly_projection": 0,
+    "service_projections": {}
+  }
+}
