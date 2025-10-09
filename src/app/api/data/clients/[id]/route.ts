@@ -18,8 +18,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     await prisma.$connect();
 
-    const client = await prisma.clients.findUnique({
-      where: { id: clientId }
+    const client = await prisma.companies.findUnique({
+      where: { 
+        id: clientId,
+        status: 'CLIENT'
+      }
     });
 
     if (!client) {
@@ -87,7 +90,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (updateData.contractValue) updateFields['totalLifetimeValue'] = updateData.contractValue;
     if (updateData.contractEndDate) updateFields['contractEndDate'] = new Date(updateData.contractEndDate);
 
-    const updatedClient = await prisma.clients.update({
+    const updatedClient = await prisma.companies.update({
       where: { id: clientId },
       data: updateFields,
     });
@@ -126,7 +129,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     await prisma.$connect();
 
     // Soft delete by setting deletedAt timestamp
-    const deletedClient = await prisma.clients.update({
+    const deletedClient = await prisma.companies.update({
       where: { id: clientId },
       data: { deletedAt: new Date() },
     });

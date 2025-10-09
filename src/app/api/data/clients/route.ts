@@ -27,16 +27,14 @@ export async function GET(request: NextRequest) {
 
     console.log(`📊 [CLIENTS API] Getting clients for workspace: ${workspaceId}, user: ${userId}`);
 
-    // Get clients from database - using clients table
-    const clients = await prisma.clients.findMany({
+    // Get clients from database - using companies table with CLIENT status
+    const clients = await prisma.companies.findMany({
       where: {
-        workspaceId: workspaceId // Just filter by workspace to match metrics count
-      },
-      include: {
-        company: true, // Include related company information
+        workspaceId: workspaceId,
+        status: 'CLIENT' // Just filter by workspace to match metrics count
       },
       orderBy: {
-        clientSince: 'desc'
+        updatedAt: 'desc'
       }
     });
 
@@ -122,27 +120,19 @@ export async function POST(request: NextRequest) {
 
     await prisma.$connect();
 
-    // Create client using actual schema fields
-    const newClient = await prisma.clients.create({
+    // Create client using companies table with CLIENT status
+    const newClient = await prisma.companies.create({
       data: {
         id: `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        accountId: clientData.accountId,
-        clientStatus: clientData.status || "active",
-        tier: clientData.tier || "standard",
-        segment: clientData.segment || "enterprise",
-        healthScore: clientData.healthScore || 75,
-        loyaltyScore: clientData.loyaltyScore || 50,
-        retentionProbability: clientData.retentionProbability || 85,
-        totalLifetimeValue: clientData.contractValue || 0,
-        avgDealSize: clientData.avgDealSize || 0,
-        dealCount: clientData.dealCount || 0,
-        clientSince: clientData.contractStartDate ? new Date(clientData.contractStartDate) : new Date(),
-        firstPurchaseDate: clientData.contractStartDate ? new Date(clientData.contractStartDate) : new Date(),
-        contractEndDate: clientData.contractEndDate ? new Date(clientData.contractEndDate) : null,
-        priority: clientData.priority || "medium",
-        workspaceId: workspaceId,
-        updatedAt: new Date(),
-        // notes: clientData.notes || null, // Remove notes field as it doesn't exist in schema
+        workspaceId: context.workspaceId,
+        name: clientData.name || "New Client",
+        status: 'CLIENT',
+        priority: 'MEDIUM',
+        description: clientData.description || '',
+        website: clientData.website || '',
+        email: clientData.email || '',
+        phone: clientData.phone || '',
+        updatedAt: new Date()
       }
     });
 

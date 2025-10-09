@@ -161,10 +161,11 @@ export async function GET(request: NextRequest) {
       }),
       
       // Clients count (with fallback)
-      prisma.clients.count({
+      prisma.companies.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          status: 'CLIENT'
         }
       }).catch(() => 0),
       

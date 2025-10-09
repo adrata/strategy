@@ -241,9 +241,10 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           updatedAt: true
         }
       }),
-      prisma.clients.findMany({
+      prisma.companies.findMany({
         where: {
-          workspaceId: workspaceId
+          workspaceId: workspaceId,
+          status: 'CLIENT'
         }
       }),
       prisma.buyer_groups.findMany({
@@ -1458,7 +1459,7 @@ async function getMultipleRecords(
             workspaceId,
             deletedAt: null
           },
-          orderBy: [{ rank: 'asc' }, { updatedAt: 'desc' }],
+          orderBy: [{ globalRank: 'asc' }, { updatedAt: 'desc' }],
           ...applyPagination({}, optimizedPagination),
           select: {
             id: true,
@@ -3361,17 +3362,22 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null
         }
       }),
-      prisma.clients.count({ 
+      prisma.companies.count({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
+          deletedAt: null,
+          status: 'CLIENT',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             assignedUserId: userId
           } : {})
         }
       }).catch(() => 0), // Fallback to 0 if clients table has issues
-      prisma.partners.count({ 
-        where: { workspaceId, deletedAt: null }
+      prisma.companies.count({ 
+        where: { 
+          workspaceId, 
+          deletedAt: null,
+          status: 'OPPORTUNITY' // Use opportunities as partners
+        }
       }).catch(() => 0), // Fallback to 0 if partners table has issues
       // Speedrun count - count leads and prospects that are active for speedrun
       Promise.all([
@@ -3602,10 +3608,11 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           company: (person as any).company || 'Unknown Company'
         }));
       }),
-      prisma.clients.findMany({ 
+      prisma.companies.findMany({ 
         where: { 
           workspaceId, 
-          deletedAt: null, 
+          deletedAt: null,
+          status: 'CLIENT',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             assignedUserId: userId
           } : {})

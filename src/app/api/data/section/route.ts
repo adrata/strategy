@@ -357,8 +357,8 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // Use company rank first like people
-            { rank: 'asc' }, // Then by person rank
+            { company: { globalRank: 'asc' } }, // Use company rank first like people
+            { globalRank: 'asc' }, // Then by person rank
             { updatedAt: 'desc' }
           ],
           take: 10000, // Increased limit to ensure we get all prospects (same as unified API)
@@ -511,7 +511,7 @@ export async function GET(request: NextRequest) {
             })
           },
           orderBy: [
-            { rank: 'asc' }, // Use actual company ranks first
+            { globalRank: 'asc' }, // Use actual company ranks first
             { updatedAt: 'desc' } // Then by update time for companies without ranks
           ],
           take: limit,
@@ -573,8 +573,8 @@ export async function GET(request: NextRequest) {
               // 🚀 PEOPLE: Use EXACT same query as unified API (no additional filters)
             },
             orderBy: [
-              { company: { rank: 'asc' } }, // First by company rank (1-400) if available
-              { rank: 'asc' }, // Then by person rank within company (1-4000) if available
+              { company: { globalRank: 'asc' } }, // First by company rank (1-400) if available
+              { globalRank: 'asc' }, // Then by person rank within company (1-4000) if available
               { updatedAt: 'desc' }
             ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
