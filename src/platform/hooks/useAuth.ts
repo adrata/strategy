@@ -1,133 +1,100 @@
-"use client";
+import { useEffect, useState } from "react";
+import { useUnifiedAuth } from "@/platform/auth-unified";
+// Removed desktop-env-check import - using simple fallback
+const getDesktopEnvInfo = () => ({ isDesktop: false });
 
-import {
-  useUnifiedAuth,
-  type UnifiedUser,
-  type Workspace,
-} from "@/platform/auth-unified";
-
-// Legacy interface for backward compatibility
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  workspaceId: string;
-  workspaces?: Workspace[];
-  activeWorkspaceId?: string | null;
-}
-
-interface AuthState {
-  user: User | null;
-  isLoading: boolean;
+interface UseAuthReturn {
+  authUser: any;
   isAuthenticated: boolean;
-  error?: string | undefined;
-}
-
-interface SignInResult {
-  success: boolean;
-  error?: string;
-  user?: User | null;
+  isAuthLoading: boolean;
+  isReady: boolean;
+  error: string | null;
 }
 
 /**
- * 🔐 LEGACY AUTHENTICATION HOOK (Compatibility Layer)
- *
- * This hook provides backward compatibility by wrapping the new
- * useUnifiedAuth hook and converting the response to match the old interface.
- *
- * For new code, prefer useUnifiedAuth directly.
+ * AUTH HOOK
+ * Handles authentication for the platform
  */
-export function useAuth() {
-  const {
-    user: unifiedUser,
-    isAuthenticated,
-    isLoading,
-    signIn: unifiedSignIn,
-    signOut: unifiedSignOut,
-  } = useUnifiedAuth();
+export function useAuth(): UseAuthReturn {
+  const { user: authUser, isAuthenticated, isLoading } = useUnifiedAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
-  // Convert UnifiedUser to legacy User format
-  const convertUser = (unifiedUser: UnifiedUser | null): User | null => {
-    if (!unifiedUser || !unifiedUser.workspaces) return null;
-
-    const activeWorkspace =
-      unifiedUser.workspaces.find(
-        (w) => w['id'] === unifiedUser.activeWorkspaceId,
-      ) || unifiedUser['workspaces'][0];
-
-    return {
-      id: unifiedUser.id,
-      name: unifiedUser.name,
-      email: unifiedUser.email,
-      workspaceId: activeWorkspace?.id || "",
-      workspaces: unifiedUser.workspaces,
-      activeWorkspaceId: unifiedUser.activeWorkspaceId,
-    };
+  // Debug helper
+  const debug = (phase: string, details: any) => {
+    console.log(`[AUTH HOOK] ${phase}:`, details);
   };
 
-  const authState: AuthState = {
-    user: convertUser(unifiedUser),
-    isLoading,
-    isAuthenticated,
-    error: undefined,
-  };
+  // Monitor authentication state
+  useEffect(() => {
+    debug("AUTH_STATE_CHANGED", {
+      hasAuthUser: !!authUser,
+      authUserDetails: authUser
+        ? {
+            id: authUser.id,
+            email: authUser.email,
+            workspaceId: authUser.workspaces?.[0]?.id || "default",
+            name: authUser.name,
+          }
+        : null,
+      isAuthenticated,
+      isLoading,
+      timestamp: new Date().toISOString(),
+    });
 
-  // Legacy signIn function
-  const signIn = async (
-    emailOrUsername: string,
-    password: string,
-  ): Promise<SignInResult> => {
-    try {
-      const result = await unifiedSignIn(emailOrUsername, password);
+    // Clear any previous errors when auth state changes
+    setError(null);
 
-      if (result.success) {
-        const convertedUser = convertUser(unifiedUser);
-        return {
-          success: true,
-          user: convertedUser,
-        };
+    // Determine if auth is ready
+    if (!isLoading) {
+      if (authUser) {
+        debug("AUTH_SUCCESS", {
+          userId: authUser.id,
+          workspace: authUser.workspaces?.[0]?.id || "default",
+        });
+        setIsReady(true);
       } else {
-        return {
-          success: false,
-          error: result.error || "Authentication failed",
-        };
+        debug("AUTH_REQUIRED", {
+          message: "User needs to sign in",
+          redirectUrl: "/sign-in",
+        });
+        setError("Authentication required");
+
+        // Check if we're on desktop and allow emergency bypass
+        const envInfo = getDesktopEnvInfo();
+        if (envInfo.isDesktop) {
+          debug("DESKTOP_EMERGENCY_BYPASS", {
+            message: "Desktop mode detected, allowing emergency access",
+          });
+          setIsReady(true);
+        }
       }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Network error",
-      };
     }
-  };
+  }, [authUser, isAuthenticated, isLoading]);
 
-  // Legacy signOut function
-  const signOut = async () => {
-    await unifiedSignOut();
-  };
+  // Emergency timeout for stuck auth
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading && !authUser) {
+        debug("AUTH_TIMEOUT", {
+          message: "Authentication taking too long",
+          duration: 5000,
+        });
+        setError("Authentication timeout - please refresh");
+      }
+    }, 5000);
 
-  // clearError function for test compatibility
-  const clearError = () => {
-    // The unified auth system doesn't expose clearError directly
-    // This is a placeholder for test compatibility
-    console.log("clearError called - error handling is managed by UnifiedAuth");
-  };
-
-  const refreshAuth = () => {
-    // The unified auth system handles refresh automatically
-    console.log("refreshAuth called - handled automatically by UnifiedAuth");
-  };
-
-  // Platform detection for test compatibility
-  const isDesktop = typeof window !== "undefined" && (window as any).__TAURI__;
-  const isMobile = typeof window !== "undefined" && (window as any).Capacitor;
+    return () => clearTimeout(timeout);
+  }, [isLoading, authUser]);
 
   return {
-    ...authState,
-    signIn,
-    signOut,
-    refreshAuth,
-    clearError,
-    isDesktop,
-    isMobile,
+    authUser,
+    isAuthenticated,
+    isAuthLoading: isLoading,
+    isReady,
+    error,
   };
 }
+
+// Legacy alias for backwards compatibility
+export const useActionPlatformAuth = useAuth;

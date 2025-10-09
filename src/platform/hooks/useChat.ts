@@ -3,7 +3,7 @@ import { generateOpenAIResponse } from "../utils/openaiService";
 import type { ChatMessage, ChatSessions } from "../types/hooks";
 import { useUnifiedAuth } from "@/platform/auth-unified";
 
-interface UseWorkspaceChatReturn {
+interface UseChatReturn {
   // Chat State
   rightChatInput: string;
   chatSessions: ChatSessions;
@@ -31,10 +31,10 @@ interface UseWorkspaceChatReturn {
 }
 
 /**
- * WORKSPACE CHAT HOOK
- * Handles all chat functionality for Workspace
+ * CHAT HOOK
+ * Handles all chat functionality for the platform
  */
-export function useWorkspaceChat(): UseWorkspaceChatReturn {
+export function useChat(): UseChatReturn {
   // Get authenticated user
   const { user: authUser } = useUnifiedAuth();
   
@@ -763,4 +763,4 @@ Your rep may be pursuing the wrong contact for this specific deal. While Mary Gi
 }
 
 // Legacy alias for backwards compatibility
-export const useActionPlatformChat = useWorkspaceChat;
+export const useActionPlatformChat = useChat;

@@ -7,6 +7,7 @@ import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
 import { SuccessMessage } from "./SuccessMessage";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface AddModalProps {
   refreshData?: () => Promise<void>;
@@ -329,6 +330,9 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     }
   };
 
+  // Get category colors for the current section
+  const categoryColors = getCategoryColors(activeSection);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -379,29 +383,68 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <div 
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: categoryColors.iconBg }}
+            >
               {activeSection === "people" ? (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               ) : activeSection === "companies" ? (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               ) : activeSection === "leads" || activeSection === "prospects" ? (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               ) : activeSection === "opportunities" ? (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               ) : activeSection === "clients" ? (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  style={{ color: categoryColors.icon }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               )}
@@ -974,11 +1017,22 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             <button
               type="submit"
               disabled={!formData.name?.trim()}
-              className={`flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm ${
-                formData.name?.trim()
-                  ? 'bg-blue-200 border-blue-300 text-blue-700 hover:bg-blue-300' // Active state when typing
-                  : 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200' // Default state
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+              className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: formData.name?.trim() ? categoryColors.light : categoryColors.bg,
+                borderColor: categoryColors.border,
+                color: categoryColors.text,
+              }}
+              onMouseEnter={(e) => {
+                if (formData.name?.trim()) {
+                  e.currentTarget.style.backgroundColor = categoryColors.bgHover;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (formData.name?.trim()) {
+                  e.currentTarget.style.backgroundColor = categoryColors.light;
+                }
+              }}
             >
               Add {getSectionTitle()} ({getCommonShortcut('SUBMIT')})
             </button>
@@ -1187,7 +1241,18 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-blue-200 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-300 transition-colors font-semibold text-sm"
+                  className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm"
+                  style={{
+                    backgroundColor: getCategoryColors('companies').light,
+                    borderColor: getCategoryColors('companies').border,
+                    color: getCategoryColors('companies').text,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = getCategoryColors('companies').bgHover;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = getCategoryColors('companies').light;
+                  }}
                 >
                   Add Company ({getCommonShortcut('SUBMIT')})
                 </button>
