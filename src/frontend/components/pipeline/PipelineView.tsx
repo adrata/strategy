@@ -1571,7 +1571,7 @@ export const PipelineView = React.memo(function PipelineView({
               </p>
             </div>
           </div>
-        ) : !hasData && !error && section !== 'opportunities' && workspaceId && userId ? (
+        ) : !hasData && !error && workspaceId && userId ? (
           // Show simple centered empty state instead of table with placeholder
           <div className="h-full flex items-center justify-center">
             <div className="text-center p-6" style={{ marginTop: '-40px' }}>

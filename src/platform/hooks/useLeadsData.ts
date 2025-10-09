@@ -105,6 +105,16 @@ export function useLeadsData(): UseLeadsDataReturn {
 
       setLeads(leadsData);
       setCount(leadsData.length);
+      // Persist to storage for instant hydration
+      try {
+        const storageKey = `adrata-leads-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify({
+          leads: leadsData,
+          ts: Date.now()
+        }));
+      } catch (e) {
+        // ignore storage failures
+      }
       console.log('✅ [LEADS DATA] Loaded leads:', {
         count: leadsData.length,
         firstLead: leadsData[0]?.fullName || 'none'
@@ -121,9 +131,26 @@ export function useLeadsData(): UseLeadsDataReturn {
 
   // 🚀 PERFORMANCE: Load leads when workspace/user is available
   useEffect(() => {
-    if (workspaceId && userId && !authLoading) {
-      fetchLeads();
+    if (!workspaceId || !userId || authLoading) return;
+
+    // Instant hydration from cache
+    try {
+      const storageKey = `adrata-leads-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed?.leads)) {
+          setLeads(parsed.leads as Lead[]);
+          setCount((parsed.leads as Lead[]).length);
+          setLoading(false);
+        }
+      }
+    } catch (e) {
+      // ignore
     }
+
+    // Revalidate in background
+    fetchLeads();
   }, [workspaceId, userId, authLoading, fetchLeads]);
 
   return {

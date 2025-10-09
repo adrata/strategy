@@ -118,6 +118,16 @@ export function useFastCounts(): UseFastCountsReturn {
       };
 
       setCounts(newCounts);
+      // Persist to localStorage for instant hydration next load
+      try {
+        const storageKey = `adrata-fast-counts-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify({
+          counts: newCounts,
+          ts: Date.now()
+        }));
+      } catch (e) {
+        // ignore storage failures
+      }
       console.log('✅ [FAST COUNTS] Loaded counts:', newCounts);
 
     } catch (err) {
@@ -131,9 +141,25 @@ export function useFastCounts(): UseFastCountsReturn {
 
   // 🚀 PERFORMANCE: Load counts when workspace/user is available
   useEffect(() => {
-    if (workspaceId && userId && !authLoading) {
-      fetchCounts();
+    if (!workspaceId || !userId || authLoading) return;
+
+    // Instant hydration from cache if present
+    try {
+      const storageKey = `adrata-fast-counts-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.counts) {
+          setCounts(parsed.counts as FastCounts);
+          setLoading(false);
+        }
+      }
+    } catch (e) {
+      // ignore storage failures
     }
+
+    // Always revalidate in background
+    fetchCounts();
   }, [workspaceId, userId, authLoading, fetchCounts]);
 
   return {
