@@ -1578,7 +1578,7 @@ export const PipelineView = React.memo(function PipelineView({
               <h4 className="text-lg font-medium text-black mb-2">
                 No {section} yet
               </h4>
-              <p className="text-sm text-black max-w-sm mb-4">
+              <p className="text-sm text-black max-w-sm">
                 {section === 'leads' ? 'Start building your warm relationships by adding your first lead.' :
                  section === 'prospects' ? 'Begin your outreach by adding prospects to your pipeline.' :
                  section === 'clients' ? 'Track your successful relationships and client success.' :
@@ -1587,12 +1587,6 @@ export const PipelineView = React.memo(function PipelineView({
                  section === 'speedrun' ? 'Add your first speedrun to get started.' :
                  `Add your first ${section.slice(0, -1)} to get started.`}
               </p>
-              <button
-                onClick={handleAddRecord}
-                className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
-              >
-                Add {section === 'people' ? 'Person' : section === 'companies' ? 'Company' : section === 'speedrun' ? 'Speedrun' : section.slice(0, -1)}
-              </button>
             </div>
           </div>
         ) : (
