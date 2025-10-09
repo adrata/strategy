@@ -8,7 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// RBAC system for Vanta compliance
 enum UserRole {
   SUPER_ADMIN
   WORKSPACE_ADMIN
@@ -136,7 +135,6 @@ model user_roles {
   assignedBy String?  @db.VarChar(30)
   expiresAt  DateTime?
 
-  // Relations
   user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
   role      roles      @relation(fields: [roleId], references: [id], onDelete: Cascade)
   workspace workspaces? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -161,7 +159,6 @@ model workspaces {
   isActive    Boolean  @default(true)
   deletedAt   DateTime?
 
-  // Relations
   users                users[]
   auth_sessions        auth_sessions[]
   workspace_users      workspace_users[]
@@ -191,7 +188,6 @@ model users {
   isActive          Boolean  @default(true)
   activeWorkspaceId String?  @db.VarChar(30)
 
-  // Relations
   workspaces              workspaces?           @relation(fields: [activeWorkspaceId], references: [id], onDelete: SetNull)
   auth_sessions           auth_sessions[]
   reset_tokens            reset_tokens[]
@@ -216,7 +212,6 @@ model workspace_users {
   isActive    Boolean  @default(true)
   joinedAt    DateTime @default(now())
 
-  // Relations
   workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -238,7 +233,6 @@ model auth_sessions {
   lastAccessedAt DateTime @default(now())
   isActive       Boolean  @default(true)
 
-  // Relations
   user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
@@ -259,7 +253,6 @@ model reset_tokens {
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  // Relations
   user users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
@@ -314,7 +307,6 @@ model companies {
   updatedAt          DateTime
   entityId           String?   @db.VarChar(30)
 
-  // Relations
   workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   assignedUser  users?     @relation("AssignedCompanies", fields: [assignedUserId], references: [id], onDelete: SetNull)
   people        people[]
@@ -382,7 +374,6 @@ model people {
   updatedAt         DateTime
   entityId          String?   @db.VarChar(30)
 
-  // Relations
   workspace    workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   company      companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   assignedUser users?     @relation("AssignedPeople", fields: [assignedUserId], references: [id], onDelete: SetNull)
@@ -417,7 +408,6 @@ model actions {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime
 
-  // Relations
   workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      users      @relation("AssignedActions", fields: [userId], references: [id], onDelete: Cascade)
   company   companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
@@ -448,7 +438,6 @@ model audit_logs {
   timestamp   DateTime @default(now())
   success     Boolean  @default(true)
 
-  // Relations
   workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
 

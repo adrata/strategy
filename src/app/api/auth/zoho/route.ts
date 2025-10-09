@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
     console.log('✅ [ZOHO OAUTH] Credentials saved for workspace:', workspaceId);
 
     // Redirect back to Grand Central with success
-    const redirectUrl = `./grand-central/integrations?zoho=success&workspaceId=${workspaceId}`;
+    const redirectUrl = `/grand-central/integrations?zoho=success&workspaceId=${workspaceId}`;
     return NextResponse.redirect(new URL(redirectUrl, 'https://action.adrata.com'));
 
   } catch (error) {
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     
     // Redirect back to Grand Central with error
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    const redirectUrl = `./grand-central/integrations?zoho=error&message=${encodeURIComponent(errorMessage)}`;
+    const redirectUrl = `/grand-central/integrations?zoho=error&message=${encodeURIComponent(errorMessage)}`;
     return NextResponse.redirect(new URL(redirectUrl, 'https://action.adrata.com'));
   }
 }

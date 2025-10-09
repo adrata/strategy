@@ -16,14 +16,14 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error("❌ [OAUTH CALLBACK] OAuth error:", error);
       return NextResponse.redirect(
-        new URL(`./grand-central/integrations?error=${encodeURIComponent(error)}`, request.url)
+        new URL(`/grand-central/integrations?error=${encodeURIComponent(error)}`, request.url)
       );
     }
 
     if (!code || !state) {
       console.error("❌ [OAUTH CALLBACK] Missing code or state parameter");
       return NextResponse.redirect(
-        new URL("./grand-central/integrations?error=missing_parameters", request.url)
+        new URL("/grand-central/integrations?error=missing_parameters", request.url)
       );
     }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     if (!tokenResult.success) {
       console.error("❌ [OAUTH CALLBACK] Token exchange failed:", tokenResult.error);
       return NextResponse.redirect(
-        new URL(`./grand-central/integrations?error=${encodeURIComponent(tokenResult.error || 'token_exchange_failed')}`, request.url)
+        new URL(`/grand-central/integrations?error=${encodeURIComponent(tokenResult.error || 'token_exchange_failed')}`, request.url)
       );
     }
 
@@ -57,20 +57,20 @@ export async function GET(request: NextRequest) {
 
       // Redirect to success page
       return NextResponse.redirect(
-        new URL(`./grand-central/integrations?success=connected&provider=${tokenResult.provider}&email=${encodeURIComponent(emailAccount.email)}`, request.url)
+        new URL(`/grand-central/integrations?success=connected&provider=${tokenResult.provider}&email=${encodeURIComponent(emailAccount.email)}`, request.url)
       );
 
     } catch (connectionError) {
       console.error("❌ [OAUTH CALLBACK] Failed to connect email account:", connectionError);
       return NextResponse.redirect(
-        new URL(`./grand-central/integrations?error=connection_failed`, request.url)
+        new URL(`/grand-central/integrations?error=connection_failed`, request.url)
       );
     }
 
   } catch (error) {
     console.error("❌ [OAUTH CALLBACK] Unexpected error:", error);
     return NextResponse.redirect(
-      new URL("./grand-central/integrations?error=callback_failed", request.url)
+      new URL("/grand-central/integrations?error=callback_failed", request.url)
     );
   }
 }

@@ -17,7 +17,7 @@ import { PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
-// import { createEntityRecord } from '@/platform/services/entity/entityService';
+import { createEntityRecord } from '@/platform/services/entity/entityService';
 
 
 // Temporarily comment out problematic imports to fix 404 errors
@@ -1358,7 +1358,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       
       // Transform the record with Coresignal data
       const transformedRecord = {
-        ...(record as any),
+        ...record,
         fullName: coresignalData.full_name || (record as any).fullName,
         email: coresignalData.primary_professional_email || (record as any).email,
         // Use Coresignal data for company info (no fallbacks to database)
@@ -1388,7 +1388,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
       console.warn(`🐌 [SLOW INDIVIDUAL RECORD] ${type} record ${id} took ${executionTime}ms - consider optimization`);
     }
     
-    return { success: true, data: { ...(record as any), serverVersion: "UPDATED_CODE_RUNNING" } };
+    return { success: true, data: { ...record, serverVersion: "UPDATED_CODE_RUNNING" } };
   } catch (dbError) {
     console.error(`❌ [GET SINGLE] Database error for ${type}:`, dbError);
     console.error(`❌ [GET SINGLE] Where clause:`, JSON.stringify(whereClause, null, 2));
@@ -2307,20 +2307,20 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     
     // For companies, create entity record first (2025 best practice)
     if (type === 'companies') {
-      // const entityRecord = await createEntityRecord({
-      //   type: 'company',
-      //   workspaceId: workspaceId,
-      //   metadata: {
-      //     name: createData.name,
-      //     industry: createData.industry,
-      //     website: createData.website
-      //   }
-      // });
+      const entityRecord = await createEntityRecord({
+        type: 'company',
+        workspaceId: workspaceId,
+        metadata: {
+          name: createData.name,
+          industry: createData.industry,
+          website: createData.website
+        }
+      });
       
-      // // Add entity_id to the create data
-      // createData.entity_id = entityRecord.id;
+      // Add entity_id to the create data
+      createData.entity_id = entityRecord.id;
       
-      // console.log(`✅ [CREATE] Created entity record for company: ${entityRecord.id}`);
+      console.log(`✅ [CREATE] Created entity record for company: ${entityRecord.id}`);
     }
     
     const record = await model.create({
@@ -2365,20 +2365,20 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
         console.log(`✅ [CREATE_PERSON_RELATED] Found existing company: ${existingCompany.id}`);
       } else {
         // Create entity record first for company (2025 best practice)
-        // const companyEntityRecord = await createEntityRecord({
-        //   type: 'company',
-        //   workspaceId: workspaceId,
-        //   metadata: {
-        //     name: createData.company,
-        //     industry: createData.industry,
-        //     website: createData.companyDomain || createData.website
-        //   }
-        // });
+        const companyEntityRecord = await createEntityRecord({
+          type: 'company',
+          workspaceId: workspaceId,
+          metadata: {
+            name: createData.company,
+            industry: createData.industry,
+            website: createData.companyDomain || createData.website
+          }
+        });
 
         // Create new company record with entity_id
         const newCompany = await prisma.companies.create({
           data: {
-            entity_id: null, // TODO: Link to entity record when createEntityRecord is implemented
+            entity_id: companyEntityRecord.id, // Link to entity record
             workspaceId,
             name: createData.company,
             website: createData.companyDomain || createData.website || null,
@@ -2390,27 +2390,27 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
           }
         });
         companyId = newCompany.id;
-        console.log(`✅ [CREATE_PERSON_RELATED] Created new company: ${newCompany.id} (Entity ID: null)`);
+        console.log(`✅ [CREATE_PERSON_RELATED] Created new company: ${newCompany.id} (Entity ID: ${companyEntityRecord.id})`);
       }
     }
     
     // Step 2: Create entity record first (2025 best practice)
-    // const personEntityRecord = await createEntityRecord({
-    //   type: 'person',
-    //   workspaceId: workspaceId,
-    //   metadata: {
-    //     fullName: createData.fullName,
-    //     jobTitle: createData.jobTitle || createData.title,
-    //     email: createData.email || createData.workEmail
-    //   }
-    // });
+    const personEntityRecord = await createEntityRecord({
+      type: 'person',
+      workspaceId: workspaceId,
+      metadata: {
+        fullName: createData.fullName,
+        jobTitle: createData.jobTitle || createData.title,
+        email: createData.email || createData.workEmail
+      }
+    });
 
     // Step 3: Create person record with entity_id
     console.log(`👤 [CREATE_PERSON_RELATED] Creating person record for ${createData.fullName}`);
     
     const personData = {
       id: `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      entity_id: null, // TODO: Link to entity record when createEntityRecord is implemented
+      entity_id: personEntityRecord.id, // Link to entity record
       workspaceId,
       companyId,
       assignedUserId: userId,
@@ -2436,15 +2436,15 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
     console.log(`✅ [CREATE_PERSON_RELATED] Created person record: ${newPerson.id}`);
     
     // Step 4: Create entity record for the main record (lead, prospect, or partner)
-    // const mainEntityRecord = await createEntityRecord({
-    //   type: type === 'leads' ? 'lead' : type === 'prospects' ? 'prospect' : 'person',
-    //   workspaceId: workspaceId,
-    //   metadata: {
-    //     fullName: createData.fullName,
-    //     company: createData.company,
-    //     type: type
-    //   }
-    // });
+    const mainEntityRecord = await createEntityRecord({
+      type: type === 'leads' ? 'lead' : type === 'prospects' ? 'prospect' : 'person',
+      workspaceId: workspaceId,
+      metadata: {
+        fullName: createData.fullName,
+        company: createData.company,
+        type: type
+      }
+    });
 
     // Step 5: Create the main record (lead, prospect, or partner) with proper linking
     const model = getPrismaModel(type);
@@ -2455,10 +2455,10 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
       ...createData,
       personId,
       companyId,
-      entity_id: null // TODO: Link to entity record when createEntityRecord is implemented
+      entity_id: mainEntityRecord.id // Link to entity record
     };
     
-    console.log(`🔗 [CREATE_PERSON_RELATED] Creating ${type} with personId: ${personId}, companyId: ${companyId}, entityId: null`);
+    console.log(`🔗 [CREATE_PERSON_RELATED] Creating ${type} with personId: ${personId}, companyId: ${companyId}, entityId: ${mainEntityRecord.id}`);
     
     const record = await model.create({
       data: linkedCreateData
@@ -2481,20 +2481,20 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
 async function handleClientCreate(workspaceId: string, userId: string, data: any): Promise<any> {
   try {
     // Create entity record first for company (2025 best practice)
-    // const companyEntityRecord = await createEntityRecord({
-    //   type: 'company',
-    //   workspaceId: workspaceId,
-    //   metadata: {
-    //     name: data.name,
-    //     website: data.website,
-    //     type: 'client'
-    //   }
-    // });
+    const companyEntityRecord = await createEntityRecord({
+      type: 'company',
+      workspaceId: workspaceId,
+      metadata: {
+        name: data.name,
+        website: data.website,
+        type: 'client'
+      }
+    });
 
     // First create the account record with entity_id
     const account = await prisma.companies.create({
       data: {
-        entity_id: null, // TODO: Link to entity record when createEntityRecord is implemented
+        entity_id: companyEntityRecord.id, // Link to entity record
         name: data.name,
         website: data.website || null,
         notes: data.notes || null,
@@ -2507,7 +2507,6 @@ async function handleClientCreate(workspaceId: string, userId: string, data: any
     // Then create the client record
     const client = await prisma.clients.create({
       data: {
-        id: ulid(),
         workspaceId,
         companyId: account.id,
         customerSince: new Date(),
@@ -3348,7 +3347,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           workspaceId, 
           deletedAt: null
         }
-      }).catch(() => 0), // Fallback to 0 if opportunities table doesn't exist
+      }),
       prisma.companies.count({ 
         where: { 
           workspaceId, 
@@ -3386,7 +3385,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
             }
           }
-        }).catch(() => 0), // Fallback to 0 if leads table doesn't exist
+        }),
         prisma.prospects.count({
           where: {
             workspaceId,
@@ -4264,7 +4263,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     // Transform data to speedrun format with complete field mapping
     const speedrunItemsWithScores = speedrunData.map((record, index) => {
       // Calculate smart action data based on record status and dates
-      const lastContactDate = (record as any).lastContactDate || record.lastActionDate || record.updatedAt;
+      const lastContactDate = record.lastContactDate || record.lastActionDate || record.updatedAt;
       const nextFollowUpDate = (record as any).nextFollowUpDate || (record as any).nextActionDate;
       
       // Determine last action based on record data
@@ -4354,7 +4353,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         nextAction: nextAction,
         nextActionDate: nextFollowUpDate,
         nextActionTiming: nextActionTiming,
-        buyerGroupRole: (record as any).buyerGroupRole || 'Stakeholder',
+        buyerGroupRole: record.buyerGroupRole || 'Stakeholder',
         currentStage: currentStage,
         // Add additional fields for table display
         stage: currentStage,
@@ -4674,7 +4673,7 @@ export async function POST(request: NextRequest) {
     console.error('❌ [UNIFIED API] POST Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       name: error instanceof Error ? error.name : 'Unknown',
-      cause: error instanceof Error ? (error as any).cause : undefined
+      cause: error instanceof Error ? error.cause : undefined
     });
     return createErrorResponse(
       `Failed to process unified data request: ${error instanceof Error ? error.message : 'Unknown error'}`,
