@@ -23,6 +23,7 @@ interface SignInRequest {
   platform?: string;
   deviceId?: string;
   preferredWorkspaceId?: string;
+  rememberMe?: boolean;
 }
 
 interface AuthResponse {
@@ -375,6 +376,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       console.warn("⚠️ [AUTH API] Using default JWT secret - this should be changed in production");
     }
     
+    // Determine token expiration based on remember me setting
+    const rememberMe = credentials.rememberMe === true;
+    const tokenExpiry = rememberMe ? '30d' : '7d'; // 30 days for remember me, 7 days for normal
+    
     let token;
     try {
       token = jwt.sign(
@@ -386,12 +391,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           activeWorkspaceId: finalActiveWorkspaceId,
           platform,
           deviceId,
+          rememberMe: rememberMe,
           iat: Math.floor(Date.now() / 1000),
         },
         secret,
-        { expiresIn: '7d' }
+        { expiresIn: tokenExpiry }
       );
-      console.log("🔐 [AUTH API] JWT token generated successfully");
+      console.log("🔐 [AUTH API] JWT token generated successfully with expiry:", tokenExpiry);
     } catch (jwtError) {
       console.error("❌ [AUTH API] JWT generation failed:", jwtError);
       throw jwtError;
@@ -490,13 +496,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       platformRoute = PlatformAccessRouter.getDemoRoute(); // Fallback
     }
 
+    // Calculate expiration time based on remember me setting
+    const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000; // 30 days or 7 days
+    const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60; // 30 days or 7 days
+
     // Return token and user data with platform routing
     const response = NextResponse.json({
       success: true,
       user: userData,
       accessToken: token,
       refreshToken: token, // Using same token for simplicity
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      expires: new Date(Date.now() + tokenExpiryMs).toISOString(),
+      rememberMe: rememberMe,
       message: "Authentication successful",
       platformRoute: platformRoute,
       redirectTo: platformRoute.path,
@@ -507,7 +518,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       httpOnly: true,
       secure: process['env']['NODE_ENV'] === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
+      maxAge: cookieMaxAge,
     });
 
     // Add CORS headers for production

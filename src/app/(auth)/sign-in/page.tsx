@@ -71,7 +71,7 @@ export default function SignInPage() {
       localStorage.removeItem("adrata_logout_active");
       localStorage.removeItem("adrata_logout_session_id");
 
-      // Check for auto-login only if this is NOT a logout redirect
+      // Check for remembered email only if this is NOT a logout redirect
       if (!isLogoutRedirect) {
         // Load remember me preference from cookies
         const savedRememberMe = document.cookie
@@ -80,63 +80,12 @@ export default function SignInPage() {
           ?.split("=")[1] === "true";
         
         const savedEmail = localStorage.getItem("adrata_remembered_email");
-        const savedPassword = localStorage.getItem("adrata_remembered_password");
         
-        if (savedRememberMe && savedEmail && savedPassword) {
+        if (savedRememberMe && savedEmail) {
+          // Just populate the email field - no auto-login for security
           setEmail(savedEmail);
           setRememberMe(true);
-          
-          // Auto-login after a brief delay to allow state to update
-          setTimeout(async () => {
-            setIsLoading(true);
-            
-            try {
-              const result = await authSignIn(savedEmail, savedPassword);
-              
-              if (result.success) {
-                console.log("✅ [SIGN-IN PAGE] Auto-login successful!");
-                
-                // Determine redirect URL
-                let redirectUrl = "/people"; // Default to People
-                
-                if (result.redirectTo) {
-                  redirectUrl = result.redirectTo;
-                  console.log("🎯 [SIGN-IN PAGE] Using platform route:", redirectUrl);
-                } else {
-                  const lastLocation = localStorage.getItem("adrata_last_location");
-                  if (lastLocation) {
-                    redirectUrl = lastLocation;
-                  } else {
-                    // First time login - default all users to People
-                    redirectUrl = "/people";  // All users go to People by default
-                    
-                    localStorage.setItem("adrata_last_location", redirectUrl);
-                  }
-                }
-                
-                console.log("🎯 [SIGN-IN PAGE] Auto-login redirecting to:", redirectUrl);
-                router.push(redirectUrl);
-                return;
-              } else {
-                console.log("❌ [SIGN-IN PAGE] Auto-login failed:", result.error);
-                // Clear invalid credentials
-                localStorage.removeItem("adrata_remembered_password");
-                setError("Auto-login failed. Please sign in manually.");
-              }
-            } catch (error) {
-              console.error("❌ [SIGN-IN PAGE] Auto-login error:", error);
-              // Clear invalid credentials
-              localStorage.removeItem("adrata_remembered_password");
-              setError("Auto-login failed. Please sign in manually.");
-            } finally {
-              setIsLoading(false);
-            }
-          }, 500);
-        } else if (savedRememberMe && savedEmail) {
-          // Just populate the email field if we have it but no password
-          // Populating remembered email
-          setEmail(savedEmail);
-          setRememberMe(true);
+          console.log("📧 [SIGN-IN PAGE] Populated remembered email");
         }
       }
 
@@ -155,7 +104,7 @@ export default function SignInPage() {
     // Using UnifiedAuthService for cross-platform auth
 
     try {
-      const result = await authSignIn(email, password);
+      const result = await authSignIn(email, password, rememberMe);
 
       if (result.success) {
         // Authentication successful
@@ -168,20 +117,18 @@ export default function SignInPage() {
             expiryDate.setDate(expiryDate.getDate() + 30);
             document['cookie'] = `adrata_remember_me=true; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`;
             
-            // Save email and password for auto-login
+            // Save email only for convenience (no password storage for security)
             localStorage.setItem("adrata_remembered_email", email);
-            localStorage.setItem("adrata_remembered_password", password);
-            console.log("💾 [SIGN-IN PAGE] Saved credentials for auto-login");
+            console.log("💾 [SIGN-IN PAGE] Saved email for convenience");
           } else {
             // Clear remember me data
             document['cookie'] = "adrata_remember_me=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             localStorage.removeItem("adrata_remembered_email");
-            localStorage.removeItem("adrata_remembered_password");
-            console.log("🧹 [SIGN-IN PAGE] Cleared saved credentials");
+            console.log("🧹 [SIGN-IN PAGE] Cleared saved email");
           }
         }
 
-        // 🆕 AUTO-LOGIN TO LAST WORKSPACE
+        // 🆕 REDIRECT TO LAST WORKSPACE
         // Use the server-provided redirectTo path which includes workspace-aware routing
         let redirectUrl = "/speedrun"; // Default fallback
         
@@ -222,12 +169,12 @@ export default function SignInPage() {
           redirectUrl = "/workspaces";
         }
 
-        // Handle returnTo parameter for post-login redirects (override auto-login)
+        // Handle returnTo parameter for post-login redirects
         const urlParams = new URLSearchParams(window.location.search);
         const returnTo = urlParams.get("returnTo");
         if (returnTo) {
           redirectUrl = returnTo;
-          console.log("🎯 [SIGN-IN PAGE] Using returnTo parameter (overriding auto-login):", redirectUrl);
+          console.log("🎯 [SIGN-IN PAGE] Using returnTo parameter:", redirectUrl);
         }
 
         console.log("🎯 [SIGN-IN PAGE] Final redirect decision:", { 

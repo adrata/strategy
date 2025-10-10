@@ -19,9 +19,9 @@ export interface TestUser {
 // Test user credentials - configurable via environment variables
 export const TEST_USERS: Record<string, TestUser> = {
   valid: {
-    email: process.env.TEST_USER_EMAIL || 'test@adrata.com',
-    password: process.env.TEST_USER_PASSWORD || 'TestPassword123!',
-    name: 'Test User',
+    email: process.env.TEST_USER_EMAIL || 'ross@adrata.com',
+    password: process.env.TEST_USER_PASSWORD || 'rosspass',
+    name: 'Ross Sylvester',
   },
   invalid: {
     email: 'invalid@example.com',

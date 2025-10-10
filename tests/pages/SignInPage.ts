@@ -273,4 +273,33 @@ export class SignInPage {
       sessionStorage.clear();
     });
   }
+
+  /**
+   * Get session expiration date
+   */
+  async getSessionExpiration(): Promise<Date> {
+    const session = await this.page.evaluate(() => {
+      const sessionStr = localStorage.getItem('adrata_unified_session_v3');
+      return JSON.parse(sessionStr || '{}');
+    });
+    return new Date(session.expires);
+  }
+
+  /**
+   * Get remember me cookie value
+   */
+  async getRememberMeCookie(): Promise<string | null> {
+    const cookies = await this.page.context().cookies();
+    const rememberMeCookie = cookies.find(c => c.name === 'adrata_remember_me');
+    return rememberMeCookie?.value || null;
+  }
+
+  /**
+   * Get auth-token cookie value
+   */
+  async getAuthTokenCookie(): Promise<string | null> {
+    const cookies = await this.page.context().cookies();
+    const authTokenCookie = cookies.find(c => c.name === 'auth-token');
+    return authTokenCookie?.value || null;
+  }
 }

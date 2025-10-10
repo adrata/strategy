@@ -64,9 +64,10 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Error fetching opportunities:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch opportunities', details: error instanceof Error ? error.message : 'Unknown error' }, 
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to fetch opportunities',
+      'OPPORTUNITIES_FETCH_ERROR',
+      500
     );
   }
 }

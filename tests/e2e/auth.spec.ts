@@ -198,7 +198,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test.describe('Remember Me Functionality', () => {
-    test('should save credentials when remember me is checked', async ({ signInPage, testUser, clearSession }) => {
+    test('should save email only when remember me is checked', async ({ signInPage, testUser, clearSession }) => {
       await signInPage.goto();
       
       // Sign in with remember me checked
@@ -213,14 +213,16 @@ test.describe('Authentication Flow', () => {
       // Go back to sign-in page
       await signInPage.goto();
       
-      // Check if credentials are pre-filled
+      // Check if email is pre-filled (password should NOT be saved)
       const emailValue = await signInPage.getEmailValue();
       const passwordValue = await signInPage.getPasswordValue();
       const isRememberMeChecked = await signInPage.isRememberMeChecked();
+      const rememberMeCookie = await signInPage.getRememberMeCookie();
       
       expect(emailValue).toBe(testUser.email);
-      expect(passwordValue).toBe(testUser.password);
+      expect(passwordValue).toBe(''); // Password should NOT be saved for security
       expect(isRememberMeChecked).toBe(true);
+      expect(rememberMeCookie).toBe('true');
     });
 
     test('should not save credentials when remember me is unchecked', async ({ signInPage, testUser, clearSession }) => {
@@ -242,10 +244,117 @@ test.describe('Authentication Flow', () => {
       const emailValue = await signInPage.getEmailValue();
       const passwordValue = await signInPage.getPasswordValue();
       const isRememberMeChecked = await signInPage.isRememberMeChecked();
+      const rememberMeCookie = await signInPage.getRememberMeCookie();
       
       expect(emailValue).toBe('');
       expect(passwordValue).toBe('');
       expect(isRememberMeChecked).toBe(false);
+      expect(rememberMeCookie).toBe('false');
+    });
+
+    test('should create 30-day session with remember me enabled', async ({ signInPage, testUser }) => {
+      await signInPage.goto();
+      
+      // Sign in with remember me
+      await signInPage.signIn(testUser.email, testUser.password, true);
+      
+      // Wait for successful login
+      await signInPage.waitForNavigation();
+      
+      // Get session and verify expiration
+      const session = await signInPage.getSession();
+      const expiresDate = await signInPage.getSessionExpiration();
+      const now = new Date();
+      const daysDiff = (expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      
+      expect(session.rememberMe).toBe(true);
+      expect(daysDiff).toBeGreaterThan(29); // ~30 days for remember me
+      expect(daysDiff).toBeLessThan(31);
+    });
+
+    test('should create 7-day session without remember me', async ({ signInPage, testUser }) => {
+      await signInPage.goto();
+      
+      // Sign in without remember me
+      await signInPage.signIn(testUser.email, testUser.password, false);
+      
+      // Wait for successful login
+      await signInPage.waitForNavigation();
+      
+      // Get session and verify expiration
+      const session = await signInPage.getSession();
+      const expiresDate = await signInPage.getSessionExpiration();
+      const now = new Date();
+      const daysDiff = (expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      
+      expect(session.rememberMe).toBe(false);
+      expect(daysDiff).toBeGreaterThan(6); // ~7 days for normal session
+      expect(daysDiff).toBeLessThan(8);
+    });
+  });
+
+  test.describe('Token Expiration with Remember Me', () => {
+    test('should maintain session across browser restarts with remember me', async ({ context, signInPage, testUser }) => {
+      await signInPage.goto();
+      
+      // Sign in with remember me
+      await signInPage.signIn(testUser.email, testUser.password, true);
+      await signInPage.waitForNavigation();
+      
+      // Verify session exists
+      const hasSession = await signInPage.hasSession();
+      expect(hasSession).toBe(true);
+      
+      // Close all pages
+      await context.close();
+      
+      // Create new page and context
+      const newContext = await context.browser()?.newContext();
+      const newPage = await newContext?.newPage();
+      const newSignInPage = new SignInPage(newPage!);
+      
+      // Navigate to protected route
+      await newPage!.goto('/speedrun');
+      
+      // Should still be authenticated (session persisted)
+      const stillHasSession = await newSignInPage.hasSession();
+      expect(stillHasSession).toBe(true);
+      
+      await newContext?.close();
+    });
+
+    test('should set auth-token cookie with correct expiration for remember me', async ({ signInPage, testUser }) => {
+      await signInPage.goto();
+      
+      // Sign in with remember me
+      await signInPage.signIn(testUser.email, testUser.password, true);
+      await signInPage.waitForNavigation();
+      
+      // Check auth-token cookie exists
+      const authToken = await signInPage.getAuthTokenCookie();
+      expect(authToken).toBeTruthy();
+      expect(authToken!.length).toBeGreaterThan(0);
+    });
+
+    test('should handle session expiration correctly', async ({ signInPage, testUser }) => {
+      await signInPage.goto();
+      
+      // Sign in without remember me (shorter session)
+      await signInPage.signIn(testUser.email, testUser.password, false);
+      await signInPage.waitForNavigation();
+      
+      // Manually expire the session
+      await signInPage.page.evaluate(() => {
+        const session = JSON.parse(localStorage.getItem('adrata_unified_session_v3') || '{}');
+        session.expires = new Date(Date.now() - 1000).toISOString();
+        localStorage.setItem('adrata_unified_session_v3', JSON.stringify(session));
+      });
+      
+      // Try to access protected route
+      await signInPage.page.goto('/speedrun');
+      
+      // Should be redirected to sign-in
+      expect(signInPage.page.url()).toContain('/sign-in');
     });
   });
 

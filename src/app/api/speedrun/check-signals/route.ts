@@ -69,7 +69,8 @@ export async function GET(request: NextRequest) {
     return createSuccessResponse(responseData, {
       userId: context.userId,
       workspaceId: context.workspaceId,
-      role: context.role
+      role: context.role,
+      responseTime: Date.now() - startTime
     });
 
   } catch (error) {

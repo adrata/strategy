@@ -272,7 +272,6 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage, err);
       
       // Handle authentication errors specifically
       if (errorMessage.includes('Authentication required') || errorMessage.includes('AUTH_REQUIRED') || errorMessage.includes('401')) {
@@ -295,6 +294,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         setLoading(false);
         return;
       }
+      
+      // Log actual errors (not empty states)
+      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage, err);
       
       // Handle other errors
       console.error(`❌ [FAST SECTION DATA] Unhandled error for ${section}:`, errorMessage);

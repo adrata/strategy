@@ -134,14 +134,12 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Opportunities count - count from opportunities table
-      prisma.opportunities.count({
+      // Opportunities count - count from companies table with OPPORTUNITY status
+      prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
-          status: {
-            notIn: ['closed_won', 'closed_lost', 'cancelled']
-          }
+          status: 'OPPORTUNITY'
         }
       }),
       

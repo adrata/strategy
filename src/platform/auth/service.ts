@@ -35,7 +35,7 @@ export class UnifiedAuthService {
   }
 
   // Core Authentication
-  static async signIn(email: string, password: string): Promise<AuthResult> {
+  static async signIn(email: string, password: string, rememberMe: boolean = false): Promise<AuthResult> {
     const platform = getPlatform();
     const config = getPlatformConfig();
     const deviceId = getDeviceId();
@@ -72,7 +72,7 @@ export class UnifiedAuthService {
 
       if (platform === "web") {
         console.log("🌐 [AUTH] Using web authentication...");
-        return await this.databaseSignIn(email, password, deviceId);
+        return await this.databaseSignIn(email, password, deviceId, rememberMe);
       }
 
       // Platform detection failed
@@ -301,6 +301,7 @@ export class UnifiedAuthService {
     email: string,
     password: string,
     deviceId: string,
+    rememberMe: boolean = false,
   ): Promise<AuthResult> {
     try {
       const response = await fetch(
@@ -313,6 +314,7 @@ export class UnifiedAuthService {
             password,
             platform: getPlatform(),
             deviceId,
+            rememberMe,
           }),
           credentials: "include",
         }
@@ -338,6 +340,7 @@ export class UnifiedAuthService {
         deviceId,
         data.accessToken,
         data.refreshToken,
+        data.rememberMe,
       );
 
       // Override expires if provided by server

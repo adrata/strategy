@@ -18,8 +18,8 @@ import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActio
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
-import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { 
@@ -1017,18 +1017,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                          style={{
-                            backgroundColor: getCategoryColors(section).light,
-                            borderColor: getCategoryColors(section).border,
-                            color: getCategoryColors(section).text,
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = getCategoryColors(section).bgHover;
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = getCategoryColors(section).light;
-                          }}
+                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
                         >
                           {
                             (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
@@ -1040,7 +1029,7 @@ export function PipelineHeader({
                           }
                         </button>
                       )}
-                      {(sectionInfo as any).secondaryActionButton && !(((section === 'leads') || (section === 'prospects') || (section === 'opportunities') || (section === 'companies') || (section === 'people')) && (recordCount ?? 0) === 0) && (
+                      {(sectionInfo as any).secondaryActionButton && (
                         <button 
                           onClick={() => {
                             // Handle secondary action - Start Speedrun for speedrun section, Add Action for others
@@ -1053,7 +1042,21 @@ export function PipelineHeader({
                             }
                           }}
                           disabled={loading}
-                          className={`${section === 'speedrun' ? 'bg-green-100 text-green-800 border border-green-200 hover:bg-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200'} px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${
+                            section === 'speedrun' 
+                              ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200' 
+                              : section === 'leads'
+                              ? 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'
+                              : section === 'prospects' 
+                              ? 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'
+                              : section === 'opportunities'
+                              ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100'
+                              : section === 'people'
+                              ? 'bg-violet-50 text-violet-600 border-violet-200 hover:bg-violet-100'
+                              : section === 'companies'
+                              ? 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                          }`}
                         >
                           {section === 'speedrun' ? `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>
@@ -1070,7 +1073,7 @@ export function PipelineHeader({
                         onAddNote={section === 'speedrun' ? () => setShowAddNoteModal(true) : undefined}
                         variant={section === 'speedrun' ? 'dropdown' : 'simple'}
                         size="md"
-                        color={section === 'speedrun' ? 'blue' : 'red'}
+                        color={section === 'speedrun' ? 'blue' : 'navy'}
                       />
                       
                       {sectionInfo['actionButton'] && (
@@ -1089,7 +1092,23 @@ export function PipelineHeader({
                             setShowAddActionModal(true);
                           }}
                           disabled={loading}
-                          className="bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: getCategoryColors(section).bg,
+                            color: getCategoryColors(section).primary,
+                            borderColor: getCategoryColors(section).primary,
+                            border: '1px solid'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!loading) {
+                              e.currentTarget.style.backgroundColor = getCategoryColors(section).bgHover;
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!loading) {
+                              e.currentTarget.style.backgroundColor = getCategoryColors(section).bg;
+                            }
+                          }}
                         >
                           {`${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>
