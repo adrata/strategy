@@ -847,13 +847,16 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // Count all people for speedrun (same logic as speedrun data fetch)
-          totalCount = await prisma.people.count({
-            where: {
-              workspaceId,
-              deletedAt: null
-            }
-          });
+          // Speedrun is limited to top 50 ranked people
+          totalCount = Math.min(
+            await prisma.people.count({
+              where: {
+                workspaceId,
+                deletedAt: null
+              }
+            }),
+            50
+          );
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)

@@ -381,7 +381,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="flex-1 overflow-hidden p-6">
       {(currentView === 'now' || currentView === 'week' || currentView === 'month') && (
         <div className="space-y-4">
           {!loadingActions ? (

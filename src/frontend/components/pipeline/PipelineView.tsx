@@ -1330,7 +1330,7 @@ export const PipelineView = React.memo(function PipelineView({
       </div>
     </div>
   ) : (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
 
       {/* Header with metrics and actions */}
       <PipelineHeader

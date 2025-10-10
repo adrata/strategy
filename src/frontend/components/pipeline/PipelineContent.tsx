@@ -778,7 +778,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       </div>
     </div>
   ) : (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
 
       {/* Header with metrics and actions */}
       <PipelineHeader

@@ -175,7 +175,7 @@ export function MiddlePanel({
 
   // FULL-FEATURED: Use complete pipeline layout with header and filters
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
       {/* Header with metrics and actions */}
       <PipelineHeader
         section={activeSection}

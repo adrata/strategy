@@ -102,16 +102,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     //   actualUserId: userId
     // });
     
-    // Block fetching with demo workspace ID
-    const isDemoWorkspace = workspaceId === '01K1VBYV8ETM2RCQA4GNN9EG72';
-    
-    if (!workspaceId || !userId || authLoading || workspaceLoading || isDemoWorkspace) {
+    if (!workspaceId || !userId || authLoading || workspaceLoading) {
       console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
         workspaceId: !!workspaceId,
         userId: !!userId,
         authLoading,
         workspaceLoading,
-        isDemoWorkspace,
         actualWorkspaceId: workspaceId,
         actualUserId: userId
       });
@@ -348,6 +344,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       setLastUserId(userId);
     }
   }, [workspaceId, userId, lastWorkspaceId, lastUserId, section]);
+
+  // 🚀 FIX: Clear cache for any workspace that was previously blocked by demo workspace check
+  useEffect(() => {
+    // Clear cache for any section that was previously loaded with empty data
+    // This fixes the issue where sections were marked as "loaded" but had no data
+    // due to the incorrect demo workspace blocking logic
+    if (workspaceId && globalLoadedSections.has(section)) {
+      const cachedData = globalSectionData.get(section);
+      // If the cached data is empty, clear it to allow re-fetching
+      if (cachedData && (cachedData.data.length === 0 || cachedData.count === 0)) {
+        console.log(`🔄 [FAST SECTION DATA] Clearing empty cache for workspace ${workspaceId}, section: ${section}`);
+        globalLoadedSections.delete(section);
+        globalSectionData.delete(section);
+        setData([]);
+        setCount(0);
+        setError(null);
+      }
+    }
+  }, [workspaceId, section]);
 
   // 🧹 LISTEN FOR WORKSPACE SWITCH EVENTS: Clear cache when workspace switch event is fired
   useEffect(() => {
