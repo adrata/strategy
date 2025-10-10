@@ -245,10 +245,6 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
                   const sectionData = fullResult.data;
                   fullDataArray = Array.isArray(sectionData?.data) ? sectionData.data : [];
                   fullTotalCount = sectionData?.totalCount || fullDataArray.length;
-                } else if (section === 'opportunities') {
-                  // Opportunities API response format
-                  fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];
-                  fullTotalCount = fullResult.meta?.count || fullDataArray.length;
                 } else {
                   // v1 API response format
                   fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];

@@ -343,9 +343,9 @@ export function UniversalRecordTemplate({
               const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
               if (workspaceMatch) {
                 const workspaceSlug = workspaceMatch[1];
-                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+                router.push(`/${workspaceSlug}/speedrun/sprint`);
               } else {
-                window.location.href = '/speedrun/sprint';
+                router.push('/speedrun/sprint');
               }
             }
           } else {
@@ -1061,11 +1061,11 @@ export function UniversalRecordTemplate({
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/prospects/${newProspectId}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       } else {
         const newUrl = `/prospects/${newProspectId}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       }
       
     } catch (error) {
@@ -1123,11 +1123,11 @@ export function UniversalRecordTemplate({
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/opportunities/${opportunitySlug}`;
         console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       } else {
         const newUrl = `/opportunities/${opportunitySlug}`;
         console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       }
       
     } catch (error) {
@@ -1520,9 +1520,9 @@ export function UniversalRecordTemplate({
               const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
               if (workspaceMatch) {
                 const workspaceSlug = workspaceMatch[1];
-                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+                router.push(`/${workspaceSlug}/speedrun/sprint`);
               } else {
-                window.location.href = '/speedrun/sprint';
+                router.push('/speedrun/sprint');
               }
             }}
             className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"

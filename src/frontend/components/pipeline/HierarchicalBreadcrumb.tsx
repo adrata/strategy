@@ -86,7 +86,7 @@ export function HierarchicalBreadcrumb({
         const workspaceSlug = workspaceMatch[1];
         const correctUrl = `/${workspaceSlug}/${recordType}/${record.id}`;
         console.log(`🔧 [BREADCRUMB] Redirecting to correct URL: ${correctUrl}`);
-        window.location.href = correctUrl;
+        router.push(correctUrl);
         return;
       }
     }

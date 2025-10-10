@@ -348,14 +348,7 @@ export function AcquisitionOSLeftPanel() {
     setSelectedForecastFilter("All Opportunities");
     setSortBy("Elite Focus");
 
-    // Update URL for pipeline sections - use standalone structure 
-    if (activeSubApp === "pipeline") {
-      window.history.replaceState(
-        { ...window.history.state, shallow: true },
-        '',
-        `/${section}`
-      );
-    }
+    // Note: URL updates are now handled by Next.js router in the layout components
 
     console.log("✅ Section updated to:", section, "Tab:", activeTab);
   };

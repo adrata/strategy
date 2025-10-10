@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
@@ -25,6 +25,7 @@ interface PipelineLayoutProps {
  */
 export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const pathname = usePathname();
+  const router = useRouter();
   
   // Extract the current section from the pathname
   const getCurrentSection = () => {
@@ -55,9 +56,9 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     const segments = pathname.split('/').filter(Boolean);
     const workspaceSlug = segments[0]; // First segment is the workspace slug
     
-    // Navigate to the new section within the same workspace
+    // Navigate using Next.js router for client-side navigation
     if (workspaceSlug) {
-      window.location.href = `/${workspaceSlug}/${section}`;
+      router.push(`/${workspaceSlug}/${section}`);
     }
   };
 
