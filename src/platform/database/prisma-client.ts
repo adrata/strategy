@@ -22,9 +22,6 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
     },
   },
   log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error'],
-  // Add serverless optimization for Vercel/Neon
-  connectionTimeout: 10000, // 10 seconds max for connection
-  queryTimeout: 15000, // 15 seconds max for queries
 });
 
 // CRITICAL: Always store singleton to prevent connection exhaustion in production

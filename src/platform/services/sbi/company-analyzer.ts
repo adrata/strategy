@@ -12,7 +12,7 @@
 import { CompanyResolver } from '@/platform/intelligence/modules/CompanyResolver';
 import { ContactValidator } from '@/platform/pipelines/modules/core/ContactValidator';
 import { RoleDetectionEngine } from '@/platform/intelligence/modules/RoleDetectionEngine';
-import { LushaPhoneEnrichment } from '@/platform/intelligence/services/LushaPhoneEnrichment';
+import { enrichContactWithLushaPhones } from '@/platform/intelligence/services/LushaPhoneEnrichment';
 import { ComprehensiveCompanyIntelligence } from '@/platform/services/comprehensive-company-intelligence';
 import { RealTimeIntelligenceEngine } from '@/platform/ai/services/RealTimeIntelligenceEngine';
 import { 
@@ -32,7 +32,7 @@ export class CompanyAnalyzer {
   private companyResolver: CompanyResolver;
   private contactValidator: ContactValidator;
   private roleDetectionEngine: RoleDetectionEngine;
-  private phoneEnrichment: LushaPhoneEnrichment;
+  private lushaApiKey: string;
   private comprehensiveIntelligence: ComprehensiveCompanyIntelligence;
   private realTimeIntelligence: RealTimeIntelligenceEngine;
   
@@ -41,7 +41,7 @@ export class CompanyAnalyzer {
     this.companyResolver = new CompanyResolver();
     this.contactValidator = new ContactValidator();
     this.roleDetectionEngine = new RoleDetectionEngine();
-    this.phoneEnrichment = new LushaPhoneEnrichment();
+    this.lushaApiKey = process.env.LUSHA_API_KEY || '';
     this.comprehensiveIntelligence = new ComprehensiveCompanyIntelligence();
     this.realTimeIntelligence = new RealTimeIntelligenceEngine({
       coreSignalApiKey: process.env.CORESIGNAL_API_KEY || '',
@@ -357,19 +357,20 @@ export class CompanyAnalyzer {
   ): Promise<PhoneContact | null> {
     try {
       // Use your existing LushaPhoneEnrichment
-      const phoneResult = await this.phoneEnrichment.enrichContactWithLushaPhones(
+      const phoneResult = await enrichContactWithLushaPhones(
         company.domain,
-        executive.title
+        executive.title,
+        this.lushaApiKey
       );
       
-      if (phoneResult && phoneResult.phone) {
+      if (phoneResult && phoneResult.phone1) {
         return {
-          number: phoneResult.phone,
-          type: phoneResult.type || 'mobile',
+          number: phoneResult.phone1,
+          type: phoneResult.phone1Type || 'mobile',
           context: 'professional',
-          isValid: phoneResult.isValid || false,
-          isVerified: phoneResult.isVerified || false,
-          confidence: phoneResult.confidence || 0,
+          isValid: true, // Lusha provides valid phone numbers
+          isVerified: phoneResult.phone1Verified || false,
+          confidence: phoneResult.phoneDataQuality || 0,
           sources: ['lusha_phone_enrichment'],
           lastVerified: new Date()
         };
