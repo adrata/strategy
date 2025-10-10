@@ -83,11 +83,12 @@ export default function TestComponentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Component Comparison Test
-        </h1>
+    <AcquisitionOSProvider>
+      <div className="min-h-screen bg-gray-100">
+        <div className="p-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Component Comparison Test
+          </h1>
 
         {/* Controls */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -207,9 +208,7 @@ export default function TestComponentsPage() {
                   />
                 )}
                 {selectedComponent === 'panel' && (
-                  <AcquisitionOSProvider>
-                    <ActionPlatformMiddlePanel />
-                  </AcquisitionOSProvider>
+                  <ActionPlatformMiddlePanel />
                 )}
               </div>
             </div>
@@ -250,9 +249,7 @@ export default function TestComponentsPage() {
                   />
                 )}
                 {selectedComponent === 'panel' && (
-                  <AcquisitionOSProvider>
-                    <ActionPlatformMiddlePanelV2 />
-                  </AcquisitionOSProvider>
+                  <ActionPlatformMiddlePanelV2 />
                 )}
               </div>
             </div>
@@ -281,7 +278,8 @@ export default function TestComponentsPage() {
             onDelete={handleDelete}
           />
         )}
+        </div>
       </div>
-    </div>
+    </AcquisitionOSProvider>
   );
 }
