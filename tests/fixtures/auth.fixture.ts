@@ -91,12 +91,24 @@ export const test = base.extend<AuthTestContext>({
   // Clear session helper
   clearSession: async ({ page }, use) => {
     const clearSession = async () => {
-      await page.evaluate(() => {
-        localStorage.removeItem('adrata_unified_session_v3');
-        localStorage.removeItem('adrata_remembered_email');
-        localStorage.removeItem('adrata_remembered_password');
-        sessionStorage.clear();
-      });
+      try {
+        await page.evaluate(() => {
+          localStorage.removeItem('adrata_unified_session_v3');
+          localStorage.removeItem('adrata_remembered_email');
+          localStorage.removeItem('adrata_remembered_password');
+          sessionStorage.clear();
+        });
+      } catch (error) {
+        // If localStorage access fails, try navigating to a page where it's accessible
+        console.log('localStorage access failed, navigating to sign-in page first');
+        await page.goto('/sign-in');
+        await page.evaluate(() => {
+          localStorage.removeItem('adrata_unified_session_v3');
+          localStorage.removeItem('adrata_remembered_email');
+          localStorage.removeItem('adrata_remembered_password');
+          sessionStorage.clear();
+        });
+      }
     };
     await use(clearSession);
   },
@@ -167,8 +179,8 @@ export class AuthTestUtils {
       return false;
     }
 
-    // Check for required session properties
-    const requiredFields = ['user', 'token', 'expires'];
+    // Check for required session properties - updated for new session structure
+    const requiredFields = ['user', 'expires'];
     return requiredFields.every(field => session.hasOwnProperty(field));
   }
 

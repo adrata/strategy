@@ -1567,8 +1567,7 @@ export function UniversalRecordTemplate({
           style={{
             backgroundColor: categoryColors.bg,
             color: categoryColors.primary,
-            borderColor: categoryColors.border,
-            border: '1px solid'
+            border: `1px solid ${categoryColors.border}`
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = categoryColors.bgHover;

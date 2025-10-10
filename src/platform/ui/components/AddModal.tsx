@@ -1239,14 +1239,14 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   ? !formData.firstName?.trim() || !formData.lastName?.trim()
                   : !formData.name?.trim()
               }
-              className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: (
                   (activeSection === "leads" || activeSection === "people") 
                     ? (formData.firstName?.trim() && formData.lastName?.trim())
                     : formData.name?.trim()
                 ) ? categoryColors.light : categoryColors.bg,
-                borderColor: categoryColors.border,
+                border: `1px solid ${categoryColors.border}`,
                 color: categoryColors.text,
               }}
               onMouseEnter={(e) => {

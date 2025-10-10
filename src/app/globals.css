@@ -190,8 +190,12 @@ body:not(.website) {
     --button-text: var(--high-contrast-bg);
   }
 
-  /* Enhanced borders for high contrast */
-  * {
+  /* Enhanced borders for high contrast - target specific elements only */
+  button:not([style*="border"]),
+  input:not([style*="border"]),
+  select:not([style*="border"]),
+  textarea:not([style*="border"]),
+  .border:not([style*="border"]) {
     border-color: var(--high-contrast-border) !important;
   }
 }

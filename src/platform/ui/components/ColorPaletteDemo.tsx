@@ -68,10 +68,10 @@ export function ColorPaletteDemo() {
               
               <div className="mt-4">
                 <button 
-                  className="w-full px-3 py-2 border rounded-lg text-sm font-medium transition-colors"
+                  className="w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style={{
                     backgroundColor: colors.light,
-                    borderColor: colors.border,
+                    border: `1px solid ${colors.border}`,
                     color: colors.text,
                   }}
                   onMouseEnter={(e) => {
