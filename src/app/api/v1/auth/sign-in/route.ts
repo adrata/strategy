@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/platform/database/prisma-client';
 
 /**
  * V1 Sign-in API
@@ -107,8 +105,44 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ [V1 AUTH] Sign-in error:', error);
+    console.error('❌ [V1 AUTH] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
+    // Provide more detailed error information for debugging
+    let errorMessage = "Authentication failed";
+    let errorDetails = "Internal server error";
+    
+    if (error instanceof Error) {
+      errorDetails = error.message;
+      console.error("❌ [V1 AUTH] Error message:", error.message);
+      
+      if (error.message.includes("prisma") || error.message.includes("database")) {
+        errorMessage = "Database connection error";
+        console.error("❌ [V1 AUTH] Database error detected");
+      } else if (error.message.includes("jwt") || error.message.includes("token")) {
+        errorMessage = "Token generation error";
+        console.error("❌ [V1 AUTH] JWT error detected");
+      } else if (error.message.includes("ENOTFOUND") || error.message.includes("ECONNREFUSED")) {
+        errorMessage = "Database connection failed";
+        console.error("❌ [V1 AUTH] Network error detected");
+      } else if (error.message.includes("P1001") || error.message.includes("Can't reach database server")) {
+        errorMessage = "Database server unavailable";
+        console.error("❌ [V1 AUTH] Database server unreachable");
+      } else if (error.message.includes("P2021") || error.message.includes("The table")) {
+        errorMessage = "Database schema error";
+        console.error("❌ [V1 AUTH] Database schema mismatch detected");
+      } else if (error.message.includes("P1008") || error.message.includes("Operations timed out")) {
+        errorMessage = "Database operation timeout";
+        console.error("❌ [V1 AUTH] Database timeout detected");
+      }
+    }
+    
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      {
+        success: false,
+        error: errorMessage,
+        message: errorDetails,
+        timestamp: new Date().toISOString(),
+      },
       { status: 500 }
     );
   }
