@@ -201,6 +201,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           }
         });
         console.log("🔐 [AUTH API] Database query result:", !!user);
+        if (user) {
+          console.log("🔐 [AUTH API] User found:", {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            name: user.name,
+            hasPassword: !!user.password,
+            isActive: user.isActive
+          });
+        }
       } catch (dbError) {
         console.error("❌ [AUTH API] Database query failed:", dbError);
         throw dbError;
@@ -279,48 +289,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // User check was already done above, remove duplicate check
 
-    // 🚀 PERFORMANCE: Optimized password validation with early returns
+    // Password validation - use bcrypt for all users
     let isValidPassword = false;
-    const userEmail = user.email;
-
-    // 🚀 PERFORMANCE: Use Set for O(1) password lookup instead of array includes
-    const demoUsers = new Set([
-      "dan@adrata.com", 
-      "ross@adrata.com", 
-      "demo@adrata.com", 
-      "dano@retail-products.com", 
-      "demo@zeropoint.com"
-    ]);
-
-    if (demoUsers.has(userEmail)) {
-      // 🚀 PERFORMANCE: Pre-compute valid passwords for each user
-      const passwordMap = new Map([
-        ["ross@adrata.com", new Set(["password", "rosspass", "ross", user.name?.toLowerCase()].filter(Boolean))],
-        ["dan@adrata.com", new Set(["password", "danpass", "dan", user.name?.toLowerCase()].filter(Boolean))],
-        ["demo@adrata.com", new Set(["password", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))],
-        ["dano@retail-products.com", new Set(["password", "DanoGoat23!", "danopass", "dano", user.name?.toLowerCase()].filter(Boolean))],
-        ["demo@zeropoint.com", new Set(["password", "VPGoat90!", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))]
-      ]);
-
-      const validPasswords = passwordMap.get(userEmail) || new Set(["password"]);
-
-      // Password validation for demo users
-
-      // 🚀 PERFORMANCE: O(1) password lookup with Set
-      isValidPassword = validPasswords.has(password.toLowerCase());
-
-      // Also check bcrypt password if hardcoded passwords don't match
-      if (!isValidPassword && user.password) {
-        // Hardcoded passwords failed, checking bcrypt
-        isValidPassword = await bcrypt.compare(password, user.password);
-        // Bcrypt result
-      }
-    } else if (user.password) {
-      // Regular password check
+    
+    if (user.password) {
+      // Use bcrypt to compare the provided password with the stored hash
       isValidPassword = await bcrypt.compare(password, user.password);
+      console.log("🔐 [AUTH API] Password validation result:", isValidPassword);
     } else {
-      // No password set - for demo purposes, allow any password
-      isValidPassword = true;
+      // No password set - this shouldn't happen in production
+      console.warn("⚠️ [AUTH API] User has no password set:", user.email || user.username || user.name);
+      isValidPassword = false;
     }
 
     if (!isValidPassword) {

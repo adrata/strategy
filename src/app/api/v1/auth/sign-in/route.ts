@@ -19,12 +19,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email or username
+    // Find user by email, username, or name (streamlined database support)
     const user = await prisma.users.findFirst({
       where: {
         OR: [
           { email: email },
-          { username: email }
+          { username: email },
+          { name: email }
         ],
         isActive: true,
       },
@@ -46,8 +47,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify password
+    // Verify password using bcrypt
+    if (!user.password) {
+      console.warn("⚠️ [V1 AUTH] User has no password set:", user.email || user.username || user.name);
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      );
+    }
+    
     const isValidPassword = await bcrypt.compare(password, user.password);
+    console.log("🔐 [V1 AUTH] Password validation result:", isValidPassword);
+    
     if (!isValidPassword) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
