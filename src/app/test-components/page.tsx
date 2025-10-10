@@ -16,6 +16,7 @@ import { PipelineFilters } from '@/frontend/components/pipeline/PipelineFilters'
 import { PipelineFiltersV2 } from '@/frontend/components/pipeline/PipelineFiltersV2';
 import { ActionPlatformMiddlePanel } from '@/platform/ui/components/ActionPlatformMiddlePanel';
 import { ActionPlatformMiddlePanelV2 } from '@/platform/ui/components/ActionPlatformMiddlePanelV2';
+import { AcquisitionOSProvider } from '@/platform/ui/context/AcquisitionOSProvider';
 
 // Sample test data
 const sampleRecord = {
@@ -206,7 +207,9 @@ export default function TestComponentsPage() {
                   />
                 )}
                 {selectedComponent === 'panel' && (
-                  <ActionPlatformMiddlePanel />
+                  <AcquisitionOSProvider>
+                    <ActionPlatformMiddlePanel />
+                  </AcquisitionOSProvider>
                 )}
               </div>
             </div>
@@ -247,7 +250,9 @@ export default function TestComponentsPage() {
                   />
                 )}
                 {selectedComponent === 'panel' && (
-                  <ActionPlatformMiddlePanelV2 />
+                  <AcquisitionOSProvider>
+                    <ActionPlatformMiddlePanelV2 />
+                  </AcquisitionOSProvider>
                 )}
               </div>
             </div>

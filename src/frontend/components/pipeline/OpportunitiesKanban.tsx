@@ -297,7 +297,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
 
 
   return (
-    <div className="flex gap-6 px-0 py-6 h-full overflow-x-auto">
+    <div className="flex gap-6 px-0 py-1 h-full overflow-x-auto">
       {DEAL_STAGES.map((stage) => {
         const opportunities = groupedData[stage.key] || [];
         const totals = getStageTotals(opportunities);
