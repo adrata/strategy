@@ -220,76 +220,101 @@ export async function POST(request: NextRequest) {
     // Create full name
     const fullName = `${body.firstName} ${body.lastName}`;
 
-    // Create person
-    const person = await prisma.people.create({
-      data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        fullName: fullName,
-        displayName: body.displayName,
-        salutation: body.salutation,
-        suffix: body.suffix,
-        jobTitle: body.jobTitle,
-        department: body.department,
-        seniority: body.seniority,
-        email: body.email,
-        workEmail: body.workEmail,
-        personalEmail: body.personalEmail,
-        phone: body.phone,
-        mobilePhone: body.mobilePhone,
-        workPhone: body.workPhone,
-        linkedinUrl: body.linkedinUrl,
-        address: body.address,
-        city: body.city,
-        state: body.state,
-        country: body.country,
-        postalCode: body.postalCode,
-        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
-        gender: body.gender,
-        bio: body.bio,
-        profilePictureUrl: body.profilePictureUrl,
-        status: body.status || 'LEAD',
-        priority: body.priority || 'MEDIUM',
-        source: body.source,
-        tags: body.tags || [],
-        customFields: body.customFields,
-        notes: body.notes,
-        preferredLanguage: body.preferredLanguage,
-        timezone: body.timezone,
-        emailVerified: body.emailVerified || false,
-        phoneVerified: body.phoneVerified || false,
-        lastAction: body.lastAction,
-        lastActionDate: body.lastActionDate ? new Date(body.lastActionDate) : null,
-        nextAction: body.nextAction,
-        nextActionDate: body.nextActionDate ? new Date(body.nextActionDate) : null,
-        actionStatus: body.actionStatus,
-        engagementScore: body.engagementScore || 0,
-        globalRank: body.globalRank || 0,
-        companyRank: body.companyRank || 0,
-        workspaceId: context.workspaceId,
-        companyId: body.companyId,
-        assignedUserId: body.assignedUserId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            website: true,
-            industry: true,
+    // Create person and action in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create person
+      const person = await tx.people.create({
+        data: {
+          firstName: body.firstName,
+          lastName: body.lastName,
+          fullName: fullName,
+          displayName: body.displayName,
+          salutation: body.salutation,
+          suffix: body.suffix,
+          jobTitle: body.jobTitle,
+          department: body.department,
+          seniority: body.seniority,
+          email: body.email,
+          workEmail: body.workEmail,
+          personalEmail: body.personalEmail,
+          phone: body.phone,
+          mobilePhone: body.mobilePhone,
+          workPhone: body.workPhone,
+          linkedinUrl: body.linkedinUrl,
+          address: body.address,
+          city: body.city,
+          state: body.state,
+          country: body.country,
+          postalCode: body.postalCode,
+          dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+          gender: body.gender,
+          bio: body.bio,
+          profilePictureUrl: body.profilePictureUrl,
+          status: body.status || 'LEAD',
+          priority: body.priority || 'MEDIUM',
+          source: body.source,
+          tags: body.tags || [],
+          customFields: body.customFields,
+          notes: body.notes,
+          preferredLanguage: body.preferredLanguage,
+          timezone: body.timezone,
+          emailVerified: body.emailVerified || false,
+          phoneVerified: body.phoneVerified || false,
+          lastAction: body.lastAction,
+          lastActionDate: body.lastActionDate ? new Date(body.lastActionDate) : null,
+          nextAction: body.nextAction,
+          nextActionDate: body.nextActionDate ? new Date(body.nextActionDate) : null,
+          actionStatus: body.actionStatus,
+          engagementScore: body.engagementScore || 0,
+          globalRank: body.globalRank || 0,
+          companyRank: body.companyRank || 0,
+          workspaceId: context.workspaceId,
+          companyId: body.companyId,
+          assignedUserId: body.assignedUserId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+              website: true,
+              industry: true,
+            },
+          },
+          assignedUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
         },
-        assignedUser: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
+      });
+
+      // Create action for person creation
+      const action = await tx.actions.create({
+        data: {
+          type: 'person_created',
+          subject: `New person added: ${person.fullName}`,
+          description: `System created new person record for ${person.fullName}`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          personId: person.id,
+          companyId: person.companyId,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
-      },
+      });
+
+      return { person, action };
     });
+
+    const person = result.person;
 
     return createSuccessResponse(person, {
       message: 'Person created successfully',

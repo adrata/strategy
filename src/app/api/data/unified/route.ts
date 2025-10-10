@@ -49,6 +49,28 @@ class UnifiedCache {
   static initialize() { return Promise.resolve(true); }
   static invalidate(key: string) { return true; }
 }
+
+// Helper function to generate action subjects for different record types
+function getActionSubject(type: string, record: any): string {
+  switch (type) {
+    case 'people':
+      return `New person added: ${record.fullName || 'Unknown'}`;
+    case 'companies':
+      return `New company added: ${record.name || 'Unknown'}`;
+    case 'leads':
+      return `New lead added: ${record.fullName || 'Unknown'}`;
+    case 'prospects':
+      return `New prospect added: ${record.fullName || 'Unknown'}`;
+    case 'opportunities':
+      return `New opportunity created: ${record.name || 'Unknown'}`;
+    case 'partners':
+      return `New partner added: ${record.fullName || 'Unknown'}`;
+    case 'clients':
+      return `New client added: ${record.name || 'Unknown'}`;
+    default:
+      return `New ${type.slice(0, -1)} added: ${record.name || record.fullName || 'Unknown'}`;
+  }
+}
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
   if (!companyName) return false;
@@ -2325,6 +2347,34 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     });
     
     console.log(`✅ [CREATE] Successfully created ${type}:`, record.id);
+    
+    // Create action for record creation
+    try {
+      const actionType = `${type.slice(0, -1)}_created`; // Remove 's' and add '_created'
+      const subject = getActionSubject(type, record);
+      
+      await prisma.actions.create({
+        data: {
+          type: actionType,
+          subject: subject,
+          description: `System created new ${type.slice(0, -1)} record`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: workspaceId,
+          userId: userId,
+          personId: record.personId || null,
+          companyId: record.companyId || null,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+      
+      console.log(`✅ [CREATE] Created action for ${type} creation`);
+    } catch (actionError) {
+      console.error(`⚠️ [CREATE] Failed to create action for ${type}:`, actionError);
+      // Don't fail the entire operation if action creation fails
+    }
     
     // Clear cache after create
     clearWorkspaceCache(workspaceId, userId, true);

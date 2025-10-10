@@ -90,6 +90,7 @@ model workspaces {
   user_roles      user_roles[]
   users           users[]
   workspace_users workspace_users[]
+  opportunities   opportunities[]
 
   @@index([slug])
   @@index([isActive])
@@ -453,4 +454,31 @@ enum PersonPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+/// Sales opportunities
+model opportunities {
+  id             String   @id @default(ulid()) @db.VarChar(30)
+  workspaceId    String   @db.VarChar(30)
+  entity_id      String?  @db.VarChar(30)
+  name           String   @db.VarChar(255)
+  description    String?
+  currency       String?  @default("USD") @db.VarChar(3)
+  estimatedValue Decimal? @db.Decimal(15, 2)
+  stage          String?  @db.VarChar(50)
+  status         String?  @default("open") @db.VarChar(50)
+  createdBy      String?  @db.VarChar(30)
+  updatedBy      String?  @db.VarChar(30)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+  deletedAt      DateTime?
+
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([entity_id])
+  @@index([deletedAt])
+  @@index([workspaceId, status])
+  @@index([workspaceId, stage])
+  @@index([workspaceId, createdAt])
 }

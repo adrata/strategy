@@ -180,36 +180,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create company
-    const company = await prisma.companies.create({
-      data: {
-        name: body.name,
-        legalName: body.legalName,
-        email: body.email,
-        website: body.website,
-        phone: body.phone,
-        address: body.address,
-        city: body.city,
-        state: body.state,
-        country: body.country,
-        industry: body.industry,
-        status: body.status || 'ACTIVE',
-        priority: body.priority || 'MEDIUM',
-        workspaceId: context.workspaceId,
-        assignedUserId: body.assignedUserId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      include: {
-        assignedUser: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    // Create company and action in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create company
+      const company = await tx.companies.create({
+        data: {
+          name: body.name,
+          legalName: body.legalName,
+          email: body.email,
+          website: body.website,
+          phone: body.phone,
+          address: body.address,
+          city: body.city,
+          state: body.state,
+          country: body.country,
+          industry: body.industry,
+          status: body.status || 'ACTIVE',
+          priority: body.priority || 'MEDIUM',
+          workspaceId: context.workspaceId,
+          assignedUserId: body.assignedUserId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        include: {
+          assignedUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
         },
-      },
+      });
+
+      // Create action for company creation
+      const action = await tx.actions.create({
+        data: {
+          type: 'company_created',
+          subject: `New company added: ${company.name}`,
+          description: `System created new company record for ${company.name}`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          companyId: company.id,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return { company, action };
     });
+
+    const company = result.company;
 
     return createSuccessResponse(company, {
       message: 'Company created successfully',

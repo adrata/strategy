@@ -134,12 +134,14 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Opportunities count - count from companies table with OPPORTUNITY status
-      prisma.companies.count({
+      // Opportunities count - count from opportunities table
+      prisma.opportunities.count({
         where: {
           workspaceId,
           deletedAt: null,
-          status: 'OPPORTUNITY'
+          status: {
+            notIn: ['closed_won', 'closed_lost', 'cancelled']
+          }
         }
       }),
       
@@ -181,18 +183,14 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Sellers count - count from both sellers table AND people table with role 'seller'
-      Promise.all([
-        prisma.users.count({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            // Add role filter if needed for sellers
-          }
-        }).catch(() => 0),
-        // People don't have roles in the streamlined schema
-        Promise.resolve(0)
-      ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
+      // Sellers count - count workspace users with SELLER role
+      prisma.workspace_users.count({
+        where: {
+          workspaceId,
+          isActive: true,
+          role: 'SELLER'
+        }
+      }),
       
       // Speedrun count - count all people (same logic as speedrun section)
       (async () => {
