@@ -9,7 +9,14 @@
 import { PrismaClient } from "@prisma/client";
 import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
-const prisma = new PrismaClient();
+// Lazy import prisma to avoid client-side execution
+let prisma: PrismaClient | null = null;
+async function getPrisma() {
+  if (!prisma && typeof window === "undefined") {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
 
 export type PlatformAccessLevel = "monaco-standalone" | "aos-full";
 

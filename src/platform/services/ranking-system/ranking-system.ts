@@ -5,7 +5,15 @@
  * Uses Redis sorted sets for high-performance ranking storage.
  */
 
-import { prisma } from '../../database/prisma-client';
+// Lazy import prisma to avoid client-side execution
+let prisma: any = null;
+async function getPrisma() {
+  if (!prisma && typeof window === "undefined") {
+    const { prisma: prismaClient } = await import('../../database/prisma-client');
+    prisma = prismaClient;
+  }
+  return prisma;
+}
 import { RankingEventProcessor } from './event-processor';
 import { RankingStorage } from './ranking-storage';
 import { RankingCalculator } from './ranking-calculator';
@@ -186,8 +194,14 @@ export class RankingSystem {
   }
 
   private async logRankingChanges(workspaceId: string, userId: string, updates: RankingUpdate[]): Promise<void> {
+    const prismaClient = await getPrisma();
+    if (!prismaClient) {
+      console.warn('Database not available for logging ranking changes');
+      return;
+    }
+    
     for (const update of updates) {
-      await prisma.events.create({
+      await prismaClient.events.create({
         data: {
           workspaceId,
           userId,

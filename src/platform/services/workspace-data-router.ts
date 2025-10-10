@@ -14,8 +14,17 @@ import { DemoAccessValidator } from "@/platform/services/demo-access-validator";
 
 // Server-side only imports - Edge Runtime compatible
 import { PrismaClient } from "@prisma/client";
-import { prisma } from '@/platform/database/prisma-client';
 import jwt from "jsonwebtoken";
+
+// Lazy import prisma to avoid client-side execution
+let prisma: PrismaClient | null = null;
+async function getPrisma() {
+  if (!prisma && typeof window === "undefined") {
+    const { prisma: prismaClient } = await import('@/platform/database/prisma-client');
+    prisma = prismaClient;
+  }
+  return prisma;
+}
 
 export interface WorkspaceContext {
   workspaceId: string;
@@ -180,12 +189,14 @@ export class WorkspaceDataRouter {
                 // 🆕 CRITICAL: Also update the database to persist the workspace switch
                 try {
                   // Update the database directly to ensure persistence
-                  const { prisma } = await import('@/platform/database/prisma-client');
-                  await prisma.users.update({
-                    where: { id: user.id },
-                    data: { activeWorkspaceId: workspaceId }
-                  });
-                  console.log(`✅ [DATABASE] Updated user ${user.id} activeWorkspaceId to ${workspaceId}`);
+                  const prismaClient = await getPrisma();
+                  if (prismaClient) {
+                    await prismaClient.users.update({
+                      where: { id: user.id },
+                      data: { activeWorkspaceId: workspaceId }
+                    });
+                    console.log(`✅ [DATABASE] Updated user ${user.id} activeWorkspaceId to ${workspaceId}`);
+                  }
                 } catch (error) {
                   console.warn(`⚠️ [DATABASE] Failed to update user activeWorkspaceId:`, error);
                 }
@@ -409,15 +420,20 @@ export class WorkspaceDataRouter {
           
           // Query database to get user's workspaces and validate URL-based selection
           try {
+            const prismaClient = await getPrisma();
+            if (!prismaClient) {
+              throw new Error("Database not available");
+            }
+            
             // Query workspace_users table to get user's workspaces
-            const userWorkspaces = await prisma.workspace_users.findMany({
+            const userWorkspaces = await prismaClient.workspace_users.findMany({
               where: { userId: decoded.userId }
             });
             
             if (userWorkspaces && userWorkspaces.length > 0) {
               // Get workspace data for each membership to find the one matching the URL slug
               for (const membership of userWorkspaces) {
-                const workspaceData = await prisma.workspaces.findUnique({
+                const workspaceData = await prismaClient.workspaces.findUnique({
                   where: { id: membership.workspaceId }
                 });
                 
@@ -449,7 +465,12 @@ export class WorkspaceDataRouter {
           } else {
             // Query database to get user's actual active workspace
             try {
-              const userWithWorkspace = await prisma.users.findUnique({
+              const prismaClient = await getPrisma();
+              if (!prismaClient) {
+                throw new Error("Database not available");
+              }
+              
+              const userWithWorkspace = await prismaClient.users.findUnique({
                 where: { id: decoded.userId },
                 select: {
                   activeWorkspaceId: true
@@ -457,7 +478,7 @@ export class WorkspaceDataRouter {
               });
               
               // Query workspace_users table to get user's workspaces (same as sign-in route)
-              const userWorkspaces = await prisma.workspace_users.findMany({
+              const userWorkspaces = await prismaClient.workspace_users.findMany({
                 where: { 
                   userId: decoded.userId
                 }

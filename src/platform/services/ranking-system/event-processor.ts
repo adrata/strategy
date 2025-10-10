@@ -4,7 +4,15 @@
  * Handles event queue processing and database trigger integration
  */
 
-import { prisma } from '../../database/prisma-client';
+// Lazy import prisma to avoid client-side execution
+let prisma: any = null;
+async function getPrisma() {
+  if (!prisma && typeof window === "undefined") {
+    const { prisma: prismaClient } = await import('../../database/prisma-client');
+    prisma = prismaClient;
+  }
+  return prisma;
+}
 import type { RankingEvent, RankingMetrics } from './types';
 
 export class RankingEventProcessor {
@@ -14,7 +22,12 @@ export class RankingEventProcessor {
    */
   async addRankingEvent(event: Omit<RankingEvent, 'id' | 'timestamp' | 'processed'>): Promise<string> {
     try {
-      const rankingEvent = await prisma.rankingEvent.create({
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        throw new Error('Database not available');
+      }
+      
+      const rankingEvent = await prismaClient.rankingEvent.create({
         data: {
           workspaceId: event.workspaceId,
           userId: event.userId,
@@ -41,7 +54,12 @@ export class RankingEventProcessor {
    */
   async getPendingEvents(workspaceId: string, limit: number = 100): Promise<RankingEvent[]> {
     try {
-      const events = await prisma.rankingEvent.findMany({
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        throw new Error('Database not available');
+      }
+      
+      const events = await prismaClient.rankingEvent.findMany({
         where: {
           workspaceId,
           processed: false
@@ -76,7 +94,12 @@ export class RankingEventProcessor {
    */
   async markEventProcessed(eventId: string): Promise<void> {
     try {
-      await prisma.rankingEvent.update({
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        throw new Error('Database not available');
+      }
+      
+      await prismaClient.rankingEvent.update({
         where: { id: eventId },
         data: { 
           processed: true,
@@ -93,7 +116,12 @@ export class RankingEventProcessor {
    */
   async markEventFailed(eventId: string, errorMessage: string): Promise<void> {
     try {
-      await prisma.rankingEvent.update({
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        throw new Error('Database not available');
+      }
+      
+      await prismaClient.rankingEvent.update({
         where: { id: eventId },
         data: { 
           processed: false,
@@ -111,7 +139,12 @@ export class RankingEventProcessor {
    */
   async getQueueSize(workspaceId: string): Promise<number> {
     try {
-      return await prisma.rankingEvent.count({
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        return 0;
+      }
+      
+      return await prismaClient.rankingEvent.count({
         where: {
           workspaceId,
           processed: false
@@ -128,14 +161,19 @@ export class RankingEventProcessor {
    */
   async getMetrics(workspaceId: string): Promise<RankingMetrics> {
     try {
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        return { totalEvents: 0, processedEvents: 0, failedEvents: 0, successRate: 0 };
+      }
+      
       const [totalEvents, processedEvents, failedEvents] = await Promise.all([
-        prisma.rankingEvent.count({
+        prismaClient.rankingEvent.count({
           where: { workspaceId }
         }),
-        prisma.rankingEvent.count({
+        prismaClient.rankingEvent.count({
           where: { workspaceId, processed: true }
         }),
-        prisma.rankingEvent.count({
+        prismaClient.rankingEvent.count({
           where: { 
             workspaceId, 
             processed: false,
@@ -144,7 +182,7 @@ export class RankingEventProcessor {
         })
       ]);
 
-      const lastProcessed = await prisma.rankingEvent.findFirst({
+      const lastProcessed = await prismaClient.rankingEvent.findFirst({
         where: { workspaceId, processed: true },
         orderBy: { processedAt: 'desc' },
         select: { processedAt: true }
@@ -177,10 +215,15 @@ export class RankingEventProcessor {
    */
   async cleanupOldEvents(workspaceId: string, olderThanDays: number = 7): Promise<number> {
     try {
+      const prismaClient = await getPrisma();
+      if (!prismaClient) {
+        return 0;
+      }
+      
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
       
-      const result = await prisma.rankingEvent.deleteMany({
+      const result = await prismaClient.rankingEvent.deleteMany({
         where: {
           workspaceId,
           processed: true,
