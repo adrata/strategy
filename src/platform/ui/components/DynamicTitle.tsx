@@ -68,8 +68,29 @@ const getPageName = (pathname: string): string => {
 };
 
 export function DynamicTitle() {
-  const { user } = useUnifiedAuth();
   const pathname = usePathname();
+  
+  // Early return for auth/public pages to prevent hydration mismatches
+  const isAuthPage = pathname === "/sign-in" || 
+                     pathname === "/sign-up" || 
+                     pathname === "/reset-password" || 
+                     pathname === "/demo" || 
+                     pathname === "/" ||
+                     pathname.startsWith("/about") ||
+                     pathname.startsWith("/pricing") ||
+                     pathname.startsWith("/contact") ||
+                     pathname.startsWith("/terms") ||
+                     pathname.startsWith("/privacy") ||
+                     pathname.startsWith("/cookies") ||
+                     pathname.startsWith("/help") ||
+                     pathname.startsWith("/support");
+  
+  if (isAuthPage) {
+    // Don't run any hooks on auth/public pages to prevent hydration issues
+    return null;
+  }
+  
+  const { user } = useUnifiedAuth();
   const { recordData, isLoading } = useRecordTitle();
   
   useEffect(() => {
