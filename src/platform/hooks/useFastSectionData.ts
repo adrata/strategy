@@ -125,11 +125,18 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
       return;
     }
 
-    // Skip if we already loaded this section
+    // Skip if we already loaded this section AND have valid data
     if (globalLoadedSections.has(section)) {
-      // console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
-      setLoading(false);
-      return;
+      const cachedData = globalSectionData.get(section);
+      if (cachedData && cachedData.data.length > 0) {
+        // Valid cache exists, skip fetch
+        // console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded with valid data`);
+        setLoading(false);
+        return;
+      }
+      // Cache is empty or invalid, continue to fetch
+      console.log(`🔄 [FAST SECTION DATA] Clearing invalid cache for section ${section} - data length: ${cachedData?.data.length || 0}`);
+      globalLoadedSections.delete(section);
     }
 
     // Only set loading to true if we don't have data yet
