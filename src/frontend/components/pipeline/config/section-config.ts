@@ -1,272 +1,430 @@
 /**
- * Section Configuration
+ * SECTION CONFIGURATION - Configuration-driven section management
  * 
- * Replaces hardcoded switch statements with configuration-driven data mapping.
- * This makes the code more maintainable and easier to extend.
+ * This file replaces switch statements in PipelineFilters and other components
+ * with a data-driven approach. It maintains exact same functionality while
+ * improving code maintainability.
  */
 
+// Section configuration interface
 export interface SectionConfig {
   id: string;
-  name: string;
-  dataKey: string;
-  displayName: string;
-  description?: string;
-  icon?: string;
-  category?: string;
-  defaultColumns?: string[];
-  availableFilters?: string[];
-  sortOptions?: Array<{ value: string; label: string }>;
+  label: string;
+  dataSource: string;
+  defaultColumns: string[];
+  availableFilters: string[];
+  sortOptions: Array<{ value: string; label: string }>;
+  statusOptions: Array<{ value: string; label: string }>;
+  priorityOptions?: Array<{ value: string; label: string }>;
+  revenueOptions?: Array<{ value: string; label: string }>;
+  timezoneOptions?: Array<{ value: string; label: string }>;
+  companySizeOptions?: Array<{ value: string; label: string }>;
+  locationOptions?: Array<{ value: string; label: string }>;
+  technologyOptions?: Array<{ value: string; label: string }>;
 }
 
-export interface SectionRegistry {
-  [sectionId: string]: SectionConfig;
-}
-
-/**
- * Section Registry
- * 
- * Centralized configuration for all pipeline sections.
- * This replaces the hardcoded switch statements in PipelineFilters and other components.
- */
-export const SECTION_REGISTRY: SectionRegistry = {
-  'leads': {
+// Section configurations
+export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
+  leads: {
     id: 'leads',
-    name: 'Leads',
-    dataKey: 'leads',
-    displayName: 'Leads',
-    description: 'Potential customers in early stages',
-    icon: '🎯',
-    category: 'prospects',
-    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'source', 'createdAt'],
-    availableFilters: ['status', 'source', 'vertical', 'priority', 'lastContacted'],
+    label: 'Leads',
+    dataSource: 'leads',
+    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
+      { value: 'lastContacted', label: 'Last Contacted' },
       { value: 'createdAt', label: 'Created Date' },
-      { value: 'lastContacted', label: 'Last Contacted' }
+      { value: 'priority', label: 'Priority' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Leads' },
+      { value: 'new', label: 'New' },
+      { value: 'active', label: 'Active' },
+      { value: 'qualified', label: 'Qualified' },
+      { value: 'cold', label: 'Cold' },
+      { value: 'contacted', label: 'Contacted' },
+      { value: 'follow-up', label: 'Follow-up' },
+      { value: 'demo-scheduled', label: 'Demo Scheduled' }
+    ],
+    priorityOptions: [
+      { value: 'all', label: 'All Priorities' },
+      { value: 'high', label: 'High' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'low', label: 'Low' },
+      { value: 'none', label: 'No Priority' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    timezoneOptions: [
+      { value: 'all', label: 'All Timezones' },
+      { value: 'PST', label: 'Pacific (PST)' },
+      { value: 'MST', label: 'Mountain (MST)' },
+      { value: 'CST', label: 'Central (CST)' },
+      { value: 'EST', label: 'Eastern (EST)' },
+      { value: 'GMT', label: 'GMT' },
+      { value: 'CET', label: 'Central European (CET)' },
+      { value: 'JST', label: 'Japan Standard (JST)' }
     ]
   },
-  'prospects': {
+  
+  prospects: {
     id: 'prospects',
-    name: 'Prospects',
-    dataKey: 'prospects',
-    displayName: 'Prospects',
-    description: 'Qualified potential customers',
-    icon: '👥',
-    category: 'prospects',
-    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'stage', 'lastContacted'],
-    availableFilters: ['status', 'stage', 'vertical', 'priority', 'lastContacted'],
+    label: 'Prospects',
+    dataSource: 'prospects',
+    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
-      { value: 'stage', label: 'Stage' },
-      { value: 'lastContacted', label: 'Last Contacted' }
+      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'createdAt', label: 'Created Date' },
+      { value: 'priority', label: 'Priority' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Prospects' },
+      { value: 'new', label: 'New' },
+      { value: 'active', label: 'Active' },
+      { value: 'qualified', label: 'Qualified' },
+      { value: 'cold', label: 'Cold' }
+    ],
+    priorityOptions: [
+      { value: 'all', label: 'All Priorities' },
+      { value: 'high', label: 'High' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'low', label: 'Low' },
+      { value: 'none', label: 'No Priority' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    timezoneOptions: [
+      { value: 'all', label: 'All Timezones' },
+      { value: 'PST', label: 'Pacific (PST)' },
+      { value: 'MST', label: 'Mountain (MST)' },
+      { value: 'CST', label: 'Central (CST)' },
+      { value: 'EST', label: 'Eastern (EST)' },
+      { value: 'GMT', label: 'GMT' },
+      { value: 'CET', label: 'Central European (CET)' },
+      { value: 'JST', label: 'Japan Standard (JST)' }
     ]
   },
-  'opportunities': {
+  
+  opportunities: {
     id: 'opportunities',
-    name: 'Opportunities',
-    dataKey: 'opportunities',
-    displayName: 'Opportunities',
-    description: 'Active sales opportunities',
-    icon: '💰',
-    category: 'sales',
-    defaultColumns: ['name', 'company', 'amount', 'stage', 'probability', 'closeDate', 'owner'],
-    availableFilters: ['stage', 'amount', 'probability', 'closeDate', 'owner'],
+    label: 'Opportunities',
+    dataSource: 'opportunities',
+    defaultColumns: ['name', 'stage', 'amount', 'company', 'owner', 'closeDate', 'probability', 'status'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'amount', label: 'Amount' },
       { value: 'closeDate', label: 'Close Date' },
-      { value: 'probability', label: 'Probability' }
+      { value: 'probability', label: 'Probability' },
+      { value: 'createdAt', label: 'Created Date' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Opportunities' },
+      { value: 'prospecting', label: 'Prospecting' },
+      { value: 'qualification', label: 'Qualification' },
+      { value: 'proposal', label: 'Proposal' },
+      { value: 'negotiation', label: 'Negotiation' },
+      { value: 'closed-won', label: 'Closed Won' },
+      { value: 'closed-lost', label: 'Closed Lost' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
     ]
   },
-  'companies': {
+  
+  companies: {
     id: 'companies',
-    name: 'Companies',
-    dataKey: 'companies',
-    displayName: 'Companies',
-    description: 'Company records and accounts',
-    icon: '🏢',
-    category: 'accounts',
-    defaultColumns: ['name', 'industry', 'size', 'location', 'website', 'phone', 'status'],
-    availableFilters: ['industry', 'size', 'location', 'status', 'vertical'],
+    label: 'Companies',
+    dataSource: 'companies',
+    defaultColumns: ['name', 'industry', 'size', 'location', 'website', 'revenue', 'employees', 'status'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'companySize', 'location', 'technology'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'industry', label: 'Industry' },
-      { value: 'size', label: 'Company Size' },
-      { value: 'location', label: 'Location' }
+      { value: 'size', label: 'Size' },
+      { value: 'revenue', label: 'Revenue' },
+      { value: 'employees', label: 'Employees' },
+      { value: 'createdAt', label: 'Created Date' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Companies' },
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' },
+      { value: 'prospect', label: 'Prospect' },
+      { value: 'customer', label: 'Customer' },
+      { value: 'partner', label: 'Partner' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    companySizeOptions: [
+      { value: 'all', label: 'All Sizes' },
+      { value: 'startup', label: 'Startup (1-10)' },
+      { value: 'small', label: 'Small (11-50)' },
+      { value: 'medium', label: 'Medium (51-200)' },
+      { value: 'large', label: 'Large (201-1000)' },
+      { value: 'enterprise', label: 'Enterprise (1000+)' }
+    ],
+    locationOptions: [
+      { value: 'all', label: 'All Locations' },
+      { value: 'US', label: 'United States' },
+      { value: 'CA', label: 'Canada' },
+      { value: 'UK', label: 'United Kingdom' },
+      { value: 'DE', label: 'Germany' },
+      { value: 'FR', label: 'France' },
+      { value: 'JP', label: 'Japan' },
+      { value: 'AU', label: 'Australia' }
+    ],
+    technologyOptions: [
+      { value: 'all', label: 'All Technologies' },
+      { value: 'salesforce', label: 'Salesforce' },
+      { value: 'hubspot', label: 'HubSpot' },
+      { value: 'microsoft', label: 'Microsoft' },
+      { value: 'google', label: 'Google' },
+      { value: 'aws', label: 'AWS' },
+      { value: 'azure', label: 'Azure' }
     ]
   },
-  'people': {
+  
+  people: {
     id: 'people',
-    name: 'People',
-    dataKey: 'people',
-    displayName: 'People',
-    description: 'Individual contacts and stakeholders',
-    icon: '👤',
-    category: 'contacts',
-    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'department', 'seniority'],
-    availableFilters: ['department', 'seniority', 'company', 'location'],
+    label: 'People',
+    dataSource: 'people',
+    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'department', 'location', 'status'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'title', label: 'Title' },
       { value: 'company', label: 'Company' },
-      { value: 'department', label: 'Department' }
+      { value: 'department', label: 'Department' },
+      { value: 'createdAt', label: 'Created Date' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All People' },
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' },
+      { value: 'prospect', label: 'Prospect' },
+      { value: 'contact', label: 'Contact' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
     ]
   },
-  'clients': {
-    id: 'clients',
-    name: 'Clients',
-    dataKey: 'clients',
-    displayName: 'Clients',
-    description: 'Existing customers and clients',
-    icon: '🤝',
-    category: 'customers',
-    defaultColumns: ['name', 'company', 'status', 'revenue', 'startDate', 'renewalDate'],
-    availableFilters: ['status', 'revenue', 'startDate', 'renewalDate'],
-    sortOptions: [
-      { value: 'name', label: 'Name' },
-      { value: 'revenue', label: 'Revenue' },
-      { value: 'startDate', label: 'Start Date' },
-      { value: 'renewalDate', label: 'Renewal Date' }
-    ]
-  },
-  'partners': {
-    id: 'partners',
-    name: 'Partners',
-    dataKey: 'partnerships',
-    displayName: 'Partners',
-    description: 'Business partners and alliances',
-    icon: '🤝',
-    category: 'partnerships',
-    defaultColumns: ['name', 'type', 'status', 'startDate', 'contact', 'revenue'],
-    availableFilters: ['type', 'status', 'startDate'],
-    sortOptions: [
-      { value: 'name', label: 'Name' },
-      { value: 'type', label: 'Type' },
-      { value: 'startDate', label: 'Start Date' },
-      { value: 'revenue', label: 'Revenue' }
-    ]
-  },
-  'speedrun': {
+  
+  speedrun: {
     id: 'speedrun',
-    name: 'Speedrun',
-    dataKey: 'speedrunItems',
-    displayName: 'Speedrun',
-    description: 'Rapid sales execution items',
-    icon: '⚡',
-    category: 'sales',
-    defaultColumns: ['name', 'company', 'priority', 'status', 'dueDate', 'owner'],
-    availableFilters: ['priority', 'status', 'dueDate', 'owner'],
+    label: 'Speedrun',
+    dataSource: 'speedrunItems',
+    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
-      { value: 'priority', label: 'Priority' },
-      { value: 'dueDate', label: 'Due Date' },
-      { value: 'status', label: 'Status' }
+      { value: 'company', label: 'Company' },
+      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'createdAt', label: 'Created Date' },
+      { value: 'priority', label: 'Priority' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Speedrun Items' },
+      { value: 'new', label: 'New' },
+      { value: 'active', label: 'Active' },
+      { value: 'qualified', label: 'Qualified' },
+      { value: 'cold', label: 'Cold' },
+      { value: 'contacted', label: 'Contacted' },
+      { value: 'follow-up', label: 'Follow-up' },
+      { value: 'demo-scheduled', label: 'Demo Scheduled' }
+    ],
+    priorityOptions: [
+      { value: 'all', label: 'All Priorities' },
+      { value: 'high', label: 'High' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'low', label: 'Low' },
+      { value: 'none', label: 'No Priority' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
+    ],
+    timezoneOptions: [
+      { value: 'all', label: 'All Timezones' },
+      { value: 'PST', label: 'Pacific (PST)' },
+      { value: 'MST', label: 'Mountain (MST)' },
+      { value: 'CST', label: 'Central (CST)' },
+      { value: 'EST', label: 'Eastern (EST)' },
+      { value: 'GMT', label: 'GMT' },
+      { value: 'CET', label: 'Central European (CET)' },
+      { value: 'JST', label: 'Japan Standard (JST)' }
     ]
   },
-  'metrics': {
-    id: 'metrics',
-    name: 'Metrics',
-    dataKey: 'metrics',
-    displayName: 'Metrics',
-    description: 'Performance metrics and analytics',
-    icon: '📊',
-    category: 'analytics',
-    defaultColumns: ['metric', 'value', 'trend', 'period'],
-    availableFilters: ['period', 'metric'],
+  
+  clients: {
+    id: 'clients',
+    label: 'Clients',
+    dataSource: 'clients',
+    defaultColumns: ['name', 'company', 'email', 'phone', 'status', 'totalValue', 'lastContacted'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
     sortOptions: [
-      { value: 'metric', label: 'Metric' },
-      { value: 'value', label: 'Value' },
-      { value: 'trend', label: 'Trend' }
+      { value: 'name', label: 'Name' },
+      { value: 'company', label: 'Company' },
+      { value: 'totalValue', label: 'Total Value' },
+      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'createdAt', label: 'Created Date' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Clients' },
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' },
+      { value: 'at-risk', label: 'At Risk' },
+      { value: 'churned', label: 'Churned' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
     ]
   },
-  'dashboard': {
-    id: 'dashboard',
-    name: 'Dashboard',
-    dataKey: 'dashboard',
-    displayName: 'Dashboard',
-    description: 'Overview and summary dashboard',
-    icon: '📈',
-    category: 'analytics',
-    defaultColumns: [],
-    availableFilters: [],
-    sortOptions: []
+  
+  partners: {
+    id: 'partners',
+    label: 'Partners',
+    dataSource: 'partnerships',
+    defaultColumns: ['name', 'company', 'email', 'phone', 'type', 'status', 'lastContacted'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
+    sortOptions: [
+      { value: 'name', label: 'Name' },
+      { value: 'company', label: 'Company' },
+      { value: 'type', label: 'Type' },
+      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'createdAt', label: 'Created Date' }
+    ],
+    statusOptions: [
+      { value: 'all', label: 'All Partners' },
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' },
+      { value: 'prospect', label: 'Prospect' },
+      { value: 'strategic', label: 'Strategic' }
+    ],
+    revenueOptions: [
+      { value: 'all', label: 'All Revenue' },
+      { value: 'enterprise', label: 'Enterprise ($1B+)' },
+      { value: 'large', label: 'Large ($100M-$1B)' },
+      { value: 'medium', label: 'Medium ($10M-$100M)' },
+      { value: 'small', label: 'Small ($1M-$10M)' },
+      { value: 'startup', label: 'Startup (<$1M)' }
+    ]
   }
 };
 
-/**
- * Get section configuration by ID
- */
-export function getSectionConfig(sectionId: string): SectionConfig | null {
-  return SECTION_REGISTRY[sectionId] || null;
+// Helper functions
+export function getSectionConfig(section: string): SectionConfig {
+  return SECTION_CONFIGURATIONS[section] || SECTION_CONFIGURATIONS.leads;
 }
 
-/**
- * Get section data key for API calls
- */
-export function getSectionDataKey(sectionId: string): string {
-  const config = getSectionConfig(sectionId);
-  return config?.dataKey || sectionId;
+export function getSectionDefaultColumns(section: string): string[] {
+  return getSectionConfig(section).defaultColumns;
 }
 
-/**
- * Get section display name
- */
-export function getSectionDisplayName(sectionId: string): string {
-  const config = getSectionConfig(sectionId);
-  return config?.displayName || sectionId;
+export function getSectionAvailableFilters(section: string): string[] {
+  return getSectionConfig(section).availableFilters;
 }
 
-/**
- * Get default columns for a section
- */
-export function getSectionDefaultColumns(sectionId: string): string[] {
-  const config = getSectionConfig(sectionId);
-  return config?.defaultColumns || [];
+export function getSectionSortOptions(section: string): Array<{ value: string; label: string }> {
+  return getSectionConfig(section).sortOptions;
 }
 
-/**
- * Get available filters for a section
- */
-export function getSectionAvailableFilters(sectionId: string): string[] {
-  const config = getSectionConfig(sectionId);
-  return config?.availableFilters || [];
+export function getSectionStatusOptions(section: string): Array<{ value: string; label: string }> {
+  return getSectionConfig(section).statusOptions;
 }
 
-/**
- * Get sort options for a section
- */
-export function getSectionSortOptions(sectionId: string): Array<{ value: string; label: string }> {
-  const config = getSectionConfig(sectionId);
-  return config?.sortOptions || [];
+export function getSectionPriorityOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).priorityOptions;
 }
 
-/**
- * Get all sections by category
- */
-export function getSectionsByCategory(category: string): SectionConfig[] {
-  return Object.values(SECTION_REGISTRY).filter(section => section.category === category);
+export function getSectionRevenueOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).revenueOptions;
 }
 
-/**
- * Get all available sections
- */
-export function getAllSections(): SectionConfig[] {
-  return Object.values(SECTION_REGISTRY);
+export function getSectionTimezoneOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).timezoneOptions;
 }
 
-/**
- * Check if a section exists
- */
-export function hasSection(sectionId: string): boolean {
-  return sectionId in SECTION_REGISTRY;
+export function getSectionCompanySizeOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).companySizeOptions;
 }
 
-/**
- * Map acquisition data to section data using configuration
- */
-export function mapAcquisitionDataToSection(acquisitionData: any, sectionId: string): any[] {
-  const dataKey = getSectionDataKey(sectionId);
-  return acquisitionData?.[dataKey] || [];
+export function getSectionLocationOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).locationOptions;
+}
+
+export function getSectionTechnologyOptions(section: string): Array<{ value: string; label: string }> | undefined {
+  return getSectionConfig(section).technologyOptions;
+}
+
+// Data source mapping function
+export function mapAcquisitionDataToSection(section: string, acquisitionData: any): any[] {
+  const sectionConfig = getSectionConfig(section);
+  const dataSource = sectionConfig.dataSource;
+  
+  // Map acquisition data to section data
+  const acquireData = acquisitionData?.acquireData || {};
+  
+  switch (dataSource) {
+    case 'leads':
+      return acquireData.leads || [];
+    case 'prospects':
+      return acquireData.prospects || [];
+    case 'opportunities':
+      return acquireData.opportunities || [];
+    case 'companies':
+      return acquireData.companies || [];
+    case 'people':
+      return acquireData.people || [];
+    case 'clients':
+      return acquireData.clients || [];
+    case 'partnerships':
+      return acquireData.partnerships || [];
+    case 'speedrunItems':
+      return acquireData.speedrunItems || [];
+    default:
+      return [];
+  }
 }

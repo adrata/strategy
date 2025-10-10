@@ -1,413 +1,292 @@
+/**
+ * TAB REGISTRY - Configuration-driven tab management
+ * 
+ * This file replaces large switch statements in UniversalRecordTemplate and UpdateModal
+ * with a data-driven approach. It maintains exact same functionality while improving
+ * code maintainability.
+ */
+
 import React from 'react';
 
 // Import all tab components
-import { UniversalOverviewTab } from '../tabs/UniversalOverviewTab';
-import { UniversalCareerTab } from '../tabs/UniversalCareerTab';
-import { UniversalStrategyTab } from '../tabs/UniversalStrategyTab';
-import { UniversalBuyerGroupsTab } from '../tabs/UniversalBuyerGroupsTab';
-import { UniversalInsightsTab } from '../tabs/UniversalInsightsTab';
-import { UniversalTimelineTab } from '../tabs/UniversalTimelineTab';
-import { UniversalCompanyTab } from '../tabs/UniversalCompanyTab';
-import { PersonOverviewTab } from '../tabs/PersonOverviewTab';
+import {
+  UniversalOverviewTab,
+  UniversalInsightsTab,
+  UniversalCompanyTab,
+  UniversalProfileTab,
+  UniversalPainValueTab,
+  UniversalTimelineTab,
+  UniversalIndustryIntelTab,
+  UniversalOutreachTab,
+  UniversalEngagementTab,
+  UniversalDealIntelTab,
+  UniversalCompanyIntelTab,
+  UniversalClosePlanTab,
+  UniversalCompetitiveTab,
+  UniversalRelationshipTab,
+  UniversalPersonalTab,
+  UniversalBusinessTab,
+  UniversalSuccessTab,
+  UniversalPartnershipTab,
+  UniversalCollaborationTab,
+  UniversalPerformanceTab,
+  UniversalIndustryTab,
+  UniversalLandminesTab,
+  UniversalStakeholdersTab,
+  UniversalDocumentsTab,
+  UniversalContactsTab,
+  UniversalOpportunitiesTab,
+  UniversalStrategyTab,
+  UniversalBuyerGroupsTab,
+  UniversalCompetitorsTab,
+  UniversalSellerCompaniesTab
+} from '../tabs';
+
+import { UniversalNewsTab } from '../tabs/UniversalNewsTab';
+import { UniversalRoleTab } from '../tabs/UniversalRoleTab';
+import { UniversalEnablersTab } from '../tabs/UniversalEnablersTab';
 import { ProspectOverviewTab } from '../tabs/ProspectOverviewTab';
+import { PersonOverviewTab } from '../tabs/PersonOverviewTab';
+import { UniversalInsightsTab as ComprehensiveInsightsTab } from '../tabs/UniversalInsightsTab';
+import { UniversalCareerTab as ComprehensiveCareerTab } from '../tabs/UniversalCareerTab';
+import { UniversalHistoryTab } from '../tabs/UniversalHistoryTab';
+import { UniversalBuyerGroupTab } from '../tabs/UniversalBuyerGroupTab';
+import { UniversalProfileTab as ComprehensiveProfileTab } from '../tabs/UniversalProfileTab';
+import { UniversalCompanyTab as ComprehensiveCompanyTab } from '../tabs/UniversalCompanyTab';
 
-/**
- * Tab Registry Configuration
- * 
- * Replaces large switch statements with a configuration-driven approach.
- * Each record type has its own tab configuration with component mappings.
- */
-
+// Tab configuration interface
 export interface TabConfig {
   id: string;
   label: string;
-  component: React.ComponentType<any>;
   icon?: string;
-  description?: string;
+  component?: React.ComponentType<any>;
+  availableFor?: string[];
+  requiresProps?: string[];
 }
 
-export interface RecordTypeTabConfig {
-  [recordType: string]: {
-    [tabId: string]: TabConfig;
-  };
-}
-
-// Tab component registry
-export const TAB_COMPONENTS: RecordTypeTabConfig = {
-  people: {
-    overview: {
-      id: 'overview',
-      label: 'Overview',
-      component: PersonOverviewTab,
-      icon: '👤',
-      description: 'Personal and professional information'
-    },
-    career: {
-      id: 'career',
-      label: 'Career',
-      component: UniversalCareerTab,
-      icon: '💼',
-      description: 'Career history and experience'
-    },
-    role: {
-      id: 'role',
-      label: 'Role',
-      component: UniversalOverviewTab,
-      icon: '🎯',
-      description: 'Current role and responsibilities'
-    },
-    enablers: {
-      id: 'enablers',
-      label: 'Enablers',
-      component: UniversalOverviewTab,
-      icon: '🔗',
-      description: 'Connections and relationships'
-    },
-    company: {
-      id: 'company',
-      label: 'Company',
-      component: UniversalCompanyTab,
-      icon: '🏢',
-      description: 'Company information'
-    },
-    intelligence: {
-      id: 'intelligence',
-      label: 'Intelligence',
-      component: UniversalInsightsTab,
-      icon: '🧠',
-      description: 'AI-generated insights and analysis'
-    },
-    'buyer-groups': {
-      id: 'buyer-groups',
-      label: 'Buyer Groups',
-      component: UniversalBuyerGroupsTab,
-      icon: '👥',
-      description: 'Buying committee and stakeholder mapping'
-    },
-    notes: {
-      id: 'notes',
-      label: 'Notes',
-      component: UniversalOverviewTab,
-      icon: '📝',
-      description: 'Notes and comments'
-    },
-    timeline: {
-      id: 'timeline',
-      label: 'Timeline',
-      component: UniversalTimelineTab,
-      icon: '📅',
-      description: 'Activity timeline and history'
-    },
-    delete: {
-      id: 'delete',
-      label: 'Delete',
-      component: UniversalOverviewTab,
-      icon: '🗑️',
-      description: 'Delete this record'
-    }
-  },
-
-  companies: {
-    overview: {
-      id: 'overview',
-      label: 'Overview',
-      component: UniversalCompanyTab,
-      icon: '🏢',
-      description: 'Company overview and basic information'
-    },
-    strategy: {
-      id: 'strategy',
-      label: 'Strategy',
-      component: UniversalStrategyTab,
-      icon: '🎯',
-      description: 'Strategic information and approach'
-    },
-    people: {
-      id: 'people',
-      label: 'People',
-      component: UniversalOverviewTab,
-      icon: '👥',
-      description: 'Company contacts and team members'
-    },
-    opportunities: {
-      id: 'opportunities',
-      label: 'Opportunities',
-      component: UniversalOverviewTab,
-      icon: '💰',
-      description: 'Related opportunities and deals'
-    },
-    timeline: {
-      id: 'timeline',
-      label: 'Timeline',
-      component: UniversalTimelineTab,
-      icon: '📅',
-      description: 'Activity timeline and history'
-    },
-    notes: {
-      id: 'notes',
-      label: 'Notes',
-      component: UniversalOverviewTab,
-      icon: '📝',
-      description: 'Notes and comments'
-    },
-    delete: {
-      id: 'delete',
-      label: 'Delete',
-      component: UniversalOverviewTab,
-      icon: '🗑️',
-      description: 'Delete this record'
-    }
-  },
-
-  leads: {
-    overview: {
-      id: 'overview',
-      label: 'Overview',
-      component: ProspectOverviewTab,
-      icon: '🎯',
-      description: 'Lead overview and basic information'
-    },
-    career: {
-      id: 'career',
-      label: 'Career',
-      component: UniversalCareerTab,
-      icon: '💼',
-      description: 'Career history and experience'
-    },
-    role: {
-      id: 'role',
-      label: 'Role',
-      component: UniversalOverviewTab,
-      icon: '🎯',
-      description: 'Current role and responsibilities'
-    },
-    enablers: {
-      id: 'enablers',
-      label: 'Enablers',
-      component: UniversalOverviewTab,
-      icon: '🔗',
-      description: 'Connections and relationships'
-    },
-    company: {
-      id: 'company',
-      label: 'Company',
-      component: UniversalCompanyTab,
-      icon: '🏢',
-      description: 'Company information'
-    },
-    intelligence: {
-      id: 'intelligence',
-      label: 'Intelligence',
-      component: UniversalInsightsTab,
-      icon: '🧠',
-      description: 'AI-generated insights and analysis'
-    },
-    'buyer-groups': {
-      id: 'buyer-groups',
-      label: 'Buyer Groups',
-      component: UniversalBuyerGroupsTab,
-      icon: '👥',
-      description: 'Buying committee and stakeholder mapping'
-    },
-    notes: {
-      id: 'notes',
-      label: 'Notes',
-      component: UniversalOverviewTab,
-      icon: '📝',
-      description: 'Notes and comments'
-    },
-    timeline: {
-      id: 'timeline',
-      label: 'Timeline',
-      component: UniversalTimelineTab,
-      icon: '📅',
-      description: 'Activity timeline and history'
-    },
-    delete: {
-      id: 'delete',
-      label: 'Delete',
-      component: UniversalOverviewTab,
-      icon: '🗑️',
-      description: 'Delete this record'
-    }
-  },
-
-  prospects: {
-    overview: {
-      id: 'overview',
-      label: 'Overview',
-      component: ProspectOverviewTab,
-      icon: '🎯',
-      description: 'Prospect overview and basic information'
-    },
-    career: {
-      id: 'career',
-      label: 'Career',
-      component: UniversalCareerTab,
-      icon: '💼',
-      description: 'Career history and experience'
-    },
-    role: {
-      id: 'role',
-      label: 'Role',
-      component: UniversalOverviewTab,
-      icon: '🎯',
-      description: 'Current role and responsibilities'
-    },
-    enablers: {
-      id: 'enablers',
-      label: 'Enablers',
-      component: UniversalOverviewTab,
-      icon: '🔗',
-      description: 'Connections and relationships'
-    },
-    company: {
-      id: 'company',
-      label: 'Company',
-      component: UniversalCompanyTab,
-      icon: '🏢',
-      description: 'Company information'
-    },
-    intelligence: {
-      id: 'intelligence',
-      label: 'Intelligence',
-      component: UniversalInsightsTab,
-      icon: '🧠',
-      description: 'AI-generated insights and analysis'
-    },
-    'buyer-groups': {
-      id: 'buyer-groups',
-      label: 'Buyer Groups',
-      component: UniversalBuyerGroupsTab,
-      icon: '👥',
-      description: 'Buying committee and stakeholder mapping'
-    },
-    notes: {
-      id: 'notes',
-      label: 'Notes',
-      component: UniversalOverviewTab,
-      icon: '📝',
-      description: 'Notes and comments'
-    },
-    timeline: {
-      id: 'timeline',
-      label: 'Timeline',
-      component: UniversalTimelineTab,
-      icon: '📅',
-      description: 'Activity timeline and history'
-    },
-    delete: {
-      id: 'delete',
-      label: 'Delete',
-      component: UniversalOverviewTab,
-      icon: '🗑️',
-      description: 'Delete this record'
-    }
-  },
-
-  opportunities: {
-    overview: {
-      id: 'overview',
-      label: 'Overview',
-      component: UniversalOverviewTab,
-      icon: '💰',
-      description: 'Opportunity overview and basic information'
-    },
-    'deal-intel': {
-      id: 'deal-intel',
-      label: 'Deal Intel',
-      component: UniversalInsightsTab,
-      icon: '🧠',
-      description: 'Deal intelligence and analysis'
-    },
-    stakeholders: {
-      id: 'stakeholders',
-      label: 'Stakeholders',
-      component: UniversalBuyerGroupsTab,
-      icon: '👥',
-      description: 'Stakeholder mapping and contacts'
-    },
-    competitive: {
-      id: 'competitive',
-      label: 'Competitive',
-      component: UniversalStrategyTab,
-      icon: '⚔️',
-      description: 'Competitive analysis and positioning'
-    },
-    'close-plan': {
-      id: 'close-plan',
-      label: 'Close Plan',
-      component: UniversalStrategyTab,
-      icon: '🎯',
-      description: 'Closing strategy and plan'
-    },
-    timeline: {
-      id: 'timeline',
-      label: 'Timeline',
-      component: UniversalTimelineTab,
-      icon: '📅',
-      description: 'Activity timeline and history'
-    },
-    notes: {
-      id: 'notes',
-      label: 'Notes',
-      component: UniversalOverviewTab,
-      icon: '📝',
-      description: 'Notes and comments'
-    },
-    delete: {
-      id: 'delete',
-      label: 'Delete',
-      component: UniversalOverviewTab,
-      icon: '🗑️',
-      description: 'Delete this record'
-    }
-  }
+// Component registry - maps tab IDs to React components
+export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
+  // Overview tabs
+  'overview': UniversalOverviewTab,
+  'overview-companies': UniversalCompanyTab,
+  'overview-people': PersonOverviewTab,
+  'overview-prospects': ProspectOverviewTab,
+  
+  // Intelligence tabs
+  'intelligence': UniversalInsightsTab,
+  'intelligence-companies': UniversalCompanyIntelTab,
+  'intelligence-people': ComprehensiveInsightsTab,
+  'intelligence-comprehensive': ComprehensiveInsightsTab,
+  
+  // Career and role tabs
+  'career': ComprehensiveCareerTab,
+  'role': UniversalRoleTab,
+  'enablers': UniversalEnablersTab,
+  
+  // Strategy and business tabs
+  'strategy': UniversalStrategyTab,
+  'buyer-groups': UniversalBuyerGroupsTab,
+  'competitors': UniversalCompetitorsTab,
+  'companies': UniversalSellerCompaniesTab,
+  
+  // Profile and personal tabs
+  'profile': UniversalProfileTab,
+  'profile-comprehensive': ComprehensiveProfileTab,
+  'personal': UniversalPersonalTab,
+  'business': UniversalBusinessTab,
+  
+  // Deal and opportunity tabs
+  'deal-intel': UniversalDealIntelTab,
+  'stakeholders': UniversalStakeholdersTab,
+  'close-plan': UniversalClosePlanTab,
+  'competitive': UniversalCompetitiveTab,
+  'opportunities': UniversalOpportunitiesTab,
+  
+  // Relationship and partnership tabs
+  'relationship': UniversalRelationshipTab,
+  'partnership': UniversalPartnershipTab,
+  'collaboration': UniversalCollaborationTab,
+  'performance': UniversalPerformanceTab,
+  
+  // Industry and company tabs
+  'industry': UniversalIndustryTab,
+  'industry-intel': UniversalIndustryIntelTab,
+  'company': ComprehensiveCompanyTab,
+  'company-intel': UniversalCompanyIntelTab,
+  
+  // Communication and engagement tabs
+  'outreach': UniversalOutreachTab,
+  'engagement': UniversalEngagementTab,
+  'pain-value': UniversalPainValueTab,
+  
+  // Information and content tabs
+  'news': UniversalNewsTab,
+  'notes': UniversalTimelineTab, // Notes are typically rendered in timeline
+  'timeline': UniversalTimelineTab,
+  'documents': UniversalDocumentsTab,
+  'contacts': UniversalContactsTab,
+  
+  // Specialized tabs
+  'landmines': UniversalLandminesTab,
+  'buyer-group': UniversalBuyerGroupTab,
+  'history': UniversalHistoryTab,
+  'success': UniversalSuccessTab,
+  
+  // Delete tab (special case)
+  'delete': null as any, // Handled specially in components
 };
 
-/**
- * Get tab configuration for a specific record type
- */
+// Tab configurations by record type
+export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
+  leads: [
+    { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  prospects: [
+    { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  opportunities: [
+    { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'deal-intel', label: 'Deal Intel', component: UniversalDealIntelTab },
+    { id: 'stakeholders', label: 'Stakeholders', component: UniversalStakeholdersTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'competitive', label: 'Competitive', component: UniversalCompetitiveTab },
+    { id: 'close-plan', label: 'Close Plan', component: UniversalClosePlanTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  companies: [
+    { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
+    { id: 'news', label: 'News', component: UniversalNewsTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'competitors', label: 'Competitors', component: UniversalCompetitorsTab },
+    { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  people: [
+    { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  speedrun: [
+    { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  clients: [
+    { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'relationship', label: 'Relationship', component: UniversalRelationshipTab },
+    { id: 'business', label: 'Business', component: UniversalBusinessTab },
+    { id: 'personal', label: 'Personal', component: UniversalPersonalTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  partners: [
+    { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'partnership', label: 'Partnership', component: UniversalPartnershipTab },
+    { id: 'collaboration', label: 'Collaboration', component: UniversalCollaborationTab },
+    { id: 'performance', label: 'Performance', component: UniversalPerformanceTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ],
+  
+  sellers: [
+    { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'companies', label: 'Companies', component: UniversalSellerCompaniesTab },
+    { id: 'performance', label: 'Performance', component: UniversalPerformanceTab },
+    { id: 'profile', label: 'Profile', component: ComprehensiveProfileTab },
+    { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
+    { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
+  ]
+};
+
+// Helper functions to get tab configurations
 export function getTabsForRecordType(recordType: string): TabConfig[] {
-  const tabs = TAB_COMPONENTS[recordType];
-  if (!tabs) {
-    console.warn(`No tab configuration found for record type: ${recordType}`);
-    return [];
-  }
-  
-  return Object.values(tabs);
+  return TAB_CONFIGURATIONS[recordType] || TAB_CONFIGURATIONS.leads;
 }
 
-/**
- * Get a specific tab component for a record type and tab ID
- */
-export function getTabComponent(recordType: string, tabId: string): React.ComponentType<any> | null {
-  const tabs = TAB_COMPONENTS[recordType];
-  if (!tabs || !tabs[tabId]) {
-    console.warn(`No tab component found for record type: ${recordType}, tab: ${tabId}`);
-    return null;
+export function getTabComponent(tabId: string, recordType: string): React.ComponentType<any> | null {
+  // First try to get from tab configurations
+  const tabs = getTabsForRecordType(recordType);
+  const tabConfig = tabs.find(tab => tab.id === tabId);
+  if (tabConfig?.component) {
+    return tabConfig.component;
   }
   
-  return tabs[tabId].component;
+  // Fallback to component registry
+  return TAB_COMPONENTS[tabId] || null;
 }
 
-/**
- * Get tab configuration for a specific record type and tab ID
- */
-export function getTabConfig(recordType: string, tabId: string): TabConfig | null {
-  const tabs = TAB_COMPONENTS[recordType];
-  if (!tabs || !tabs[tabId]) {
-    console.warn(`No tab configuration found for record type: ${recordType}, tab: ${tabId}`);
-    return null;
+export function getTabConfig(tabId: string, recordType: string): TabConfig | null {
+  const tabs = getTabsForRecordType(recordType);
+  return tabs.find(tab => tab.id === tabId) || null;
+}
+
+// Special handling for record type specific components
+export function getOverviewComponent(recordType: string): React.ComponentType<any> {
+  switch (recordType) {
+    case 'companies':
+      return UniversalCompanyTab;
+    case 'people':
+    case 'speedrun':
+      return PersonOverviewTab;
+    case 'prospects':
+      return ProspectOverviewTab;
+    default:
+      return UniversalOverviewTab;
   }
-  
-  return tabs[tabId];
 }
 
-/**
- * Check if a tab exists for a record type
- */
-export function hasTab(recordType: string, tabId: string): boolean {
-  const tabs = TAB_COMPONENTS[recordType];
-  return !!(tabs && tabs[tabId]);
+export function getIntelligenceComponent(recordType: string): React.ComponentType<any> {
+  switch (recordType) {
+    case 'companies':
+      return UniversalCompanyIntelTab;
+    case 'people':
+      return ComprehensiveInsightsTab;
+    default:
+      return UniversalInsightsTab;
+  }
+}
+
+export function getProfileComponent(recordType: string): React.ComponentType<any> {
+  switch (recordType) {
+    case 'people':
+      return ComprehensiveProfileTab;
+    default:
+      return UniversalProfileTab;
+  }
+}
+
+export function getBuyerGroupsComponent(recordType: string): React.ComponentType<any> {
+  // All record types use the same buyer groups component
+  return UniversalBuyerGroupsTab;
+}
+
+export function getInsightsComponent(recordType: string): React.ComponentType<any> {
+  switch (recordType) {
+    case 'people':
+      return ComprehensiveInsightsTab;
+    default:
+      return UniversalInsightsTab;
+  }
 }

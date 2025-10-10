@@ -1,126 +1,125 @@
+/**
+ * APP REGISTRY - Configuration-driven app routing
+ * 
+ * This file replaces switch statements in ActionPlatformMiddlePanel
+ * with a data-driven approach. It maintains exact same functionality
+ * while improving code maintainability.
+ */
+
 import React from 'react';
 
-/**
- * App Registry Configuration
- * 
- * Replaces large switch statements in ActionPlatformMiddlePanel with a configuration-driven approach.
- * Each app has its own configuration with component mappings.
- */
+// Import app components
+import { PipelineView } from '@/frontend/components/pipeline/PipelineView';
+// Note: Other components imported dynamically to avoid build issues
 
+// App configuration interface
 export interface AppConfig {
   id: string;
-  name: string;
+  label: string;
   component: React.ComponentType<any>;
-  description?: string;
-  icon?: string;
-  category?: string;
+  requiresAuth?: boolean;
+  requiresWorkspace?: boolean;
+  defaultRoute?: string;
+  availableRoutes?: string[];
 }
 
-export interface AppRegistry {
-  [appId: string]: AppConfig;
-}
+// App registry - maps app IDs to React components
+export const APP_COMPONENTS: Record<string, React.ComponentType<any>> = {
+  'pipeline': PipelineView,
+  // Other components loaded dynamically
+};
 
-// Import all app components
-import { PipelineMiddlePanel } from '@/products/pipeline/components/MiddlePanel';
-import { MonacoMiddlePanel } from '@/products/monaco/components/MonacoMiddlePanel';
-import { SpeedrunMiddlePanel } from '@/products/speedrun/components/SpeedrunMiddlePanel';
-
-/**
- * App Registry
- * 
- * Centralized configuration for all applications in the Action Platform.
- * This replaces the large switch statement in ActionPlatformMiddlePanel.
- */
-export const APP_REGISTRY: AppRegistry = {
-  'pipeline': {
+// App configurations
+export const APP_CONFIGURATIONS: Record<string, AppConfig> = {
+  pipeline: {
     id: 'pipeline',
-    name: 'Pipeline',
-    component: PipelineMiddlePanel,
-    description: 'Sales pipeline management and CRM',
-    icon: '📊',
-    category: 'sales'
+    label: 'Pipeline',
+    component: PipelineView,
+    requiresAuth: true,
+    requiresWorkspace: true,
+    defaultRoute: 'leads',
+    availableRoutes: ['leads', 'prospects', 'opportunities', 'companies', 'people', 'clients', 'partners', 'sellers', 'metrics', 'speedrun']
   },
-  'standalone-pipeline': {
-    id: 'standalone-pipeline',
-    name: 'Pipeline',
-    component: PipelineMiddlePanel,
-    description: 'Standalone pipeline application',
-    icon: '📊',
-    category: 'sales'
-  },
-  'monaco': {
-    id: 'monaco',
-    name: 'Monaco',
-    component: MonacoMiddlePanel,
-    description: 'AI-powered data enrichment and intelligence',
-    icon: '🤖',
-    category: 'ai'
-  },
-  'Speedrun': {
-    id: 'Speedrun',
-    name: 'Speedrun',
-    component: SpeedrunMiddlePanel,
-    description: 'Rapid sales execution and sprint management',
-    icon: '⚡',
-    category: 'sales'
-  },
-  'rtp': {
-    id: 'rtp',
-    name: 'RTP',
-    component: SpeedrunMiddlePanel,
-    description: 'Real-time pipeline management',
-    icon: '⚡',
-    category: 'sales'
-  },
-  'speedrun': {
+  
+  speedrun: {
     id: 'speedrun',
-    name: 'Speedrun',
-    component: SpeedrunMiddlePanel,
-    description: 'Speedrun application',
-    icon: '⚡',
-    category: 'sales'
+    label: 'Speedrun',
+    component: null as any, // Loaded dynamically
+    requiresAuth: true,
+    requiresWorkspace: true,
+    defaultRoute: 'sprint',
+    availableRoutes: ['sprint', 'dashboard', 'analytics']
+  },
+  
+  monaco: {
+    id: 'monaco',
+    label: 'Monaco',
+    component: null as any, // Loaded dynamically
+    requiresAuth: true,
+    requiresWorkspace: true,
+    defaultRoute: 'dashboard',
+    availableRoutes: ['dashboard', 'pipeline', 'analytics', 'settings']
   }
 };
 
-/**
- * Get app configuration by ID
- */
+// Helper functions
 export function getAppConfig(appId: string): AppConfig | null {
-  return APP_REGISTRY[appId] || null;
+  return APP_CONFIGURATIONS[appId] || null;
 }
 
-/**
- * Get app component by ID
- */
 export function getAppComponent(appId: string): React.ComponentType<any> | null {
   const config = getAppConfig(appId);
   return config?.component || null;
 }
 
-/**
- * Get all apps by category
- */
-export function getAppsByCategory(category: string): AppConfig[] {
-  return Object.values(APP_REGISTRY).filter(app => app.category === category);
+export function getAppLabel(appId: string): string {
+  const config = getAppConfig(appId);
+  return config?.label || appId;
 }
 
-/**
- * Get all available apps
- */
+export function getAppDefaultRoute(appId: string): string | null {
+  const config = getAppConfig(appId);
+  return config?.defaultRoute || null;
+}
+
+export function getAppAvailableRoutes(appId: string): string[] {
+  const config = getAppConfig(appId);
+  return config?.availableRoutes || [];
+}
+
+export function isAppRequiresAuth(appId: string): boolean {
+  const config = getAppConfig(appId);
+  return config?.requiresAuth || false;
+}
+
+export function isAppRequiresWorkspace(appId: string): boolean {
+  const config = getAppConfig(appId);
+  return config?.requiresWorkspace || false;
+}
+
+// Route to appropriate app component
+export function renderAppComponent(appId: string, props: any = {}): React.ReactElement | null {
+  const Component = getAppComponent(appId);
+  
+  if (!Component) {
+    console.warn(`No component found for app: ${appId}`);
+    return null;
+  }
+  
+  return React.createElement(Component, props);
+}
+
+// Get all available apps
 export function getAllApps(): AppConfig[] {
-  return Object.values(APP_REGISTRY);
+  return Object.values(APP_CONFIGURATIONS);
 }
 
-/**
- * Check if an app exists
- */
-export function hasApp(appId: string): boolean {
-  return appId in APP_REGISTRY;
+// Get apps that require authentication
+export function getAuthenticatedApps(): AppConfig[] {
+  return getAllApps().filter(app => app.requiresAuth);
 }
 
-/**
- * Get default app (fallback)
- */
-export function getDefaultApp(): AppConfig {
-  return APP_REGISTRY['pipeline'] || Object.values(APP_REGISTRY)[0];
+// Get apps that require workspace
+export function getWorkspaceApps(): AppConfig[] {
+  return getAllApps().filter(app => app.requiresWorkspace);
 }

@@ -7,9 +7,7 @@ import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation'
 import { useUnifiedAuth } from '@/platform/auth';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
-import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
+// Removed PanelLayout, LeftPanel, RightPanel imports - handled by pipeline layout
 import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -41,8 +39,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const [previousRecord, setPreviousRecord] = useState<any>(null);
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
-  const [isLeftPanelVisible, setIsLeftPanelVisible] = useState(true);
-  const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
+  // Removed isLeftPanelVisible, isRightPanelVisible state - handled by pipeline layout
   const [directRecordLoading, setDirectRecordLoading] = useState(false);
   const [directRecordError, setDirectRecordError] = useState<string | null>(null);
   const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
@@ -704,253 +701,190 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   // 🚀 HYDRATION FIX: Show loading skeleton during hydration to prevent flashing
   if (!isHydrated) {
     return (
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={
-          <LeftPanel 
-            activeSection={section}
-            onSectionChange={handleSectionChange}
-            isSpeedrunVisible={isSpeedrunVisible}
-            setIsSpeedrunVisible={setIsSpeedrunVisible}
-            isOpportunitiesVisible={isOpportunitiesVisible}
-            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-          />
-        }
-        middlePanel={
-          <div className="h-full flex flex-col bg-white">
-            {/* Hydration Loading Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-                  <div>
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                  </div>
+      <div className="h-full flex flex-col bg-white">
+        {/* Hydration Loading Skeleton */}
+        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+              <div>
+                <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Tabs Skeleton */}
+        <div className="flex-shrink-0 px-6 pt-2 pb-1">
+          <div className="flex items-center gap-8">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="space-y-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex justify-between">
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                  ))}
                 </div>
               </div>
             </div>
             
-            {/* Tabs Skeleton */}
-            <div className="flex-shrink-0 px-6 pt-2 pb-1">
-              <div className="flex items-center gap-8">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Content Skeleton */}
-            <div className="flex-1 p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="flex justify-between">
-                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                        </div>
-                      ))}
+            {/* Right Column */}
+            <div className="space-y-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="grid grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="text-center">
+                      <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
                     </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="text-center">
-                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="flex flex-wrap gap-2">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        }
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
+        </div>
+      </div>
     );
   }
 
   // Loading state - Only show loading for direct record loading, not general data loading
   if (directRecordLoading) {
     return (
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={
-          <LeftPanel 
-            activeSection={section}
-            onSectionChange={handleSectionChange}
-            isSpeedrunVisible={isSpeedrunVisible}
-            setIsSpeedrunVisible={setIsSpeedrunVisible}
-            isOpportunitiesVisible={isOpportunitiesVisible}
-            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-          />
-        }
-        middlePanel={
-          <div className="h-full flex flex-col bg-white">
-            {/* Person Detail Loading Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-                  <div>
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                  </div>
+      <div className="h-full flex flex-col bg-white">
+        {/* Person Detail Loading Skeleton */}
+        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+              <div>
+                <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Tabs Skeleton */}
+        <div className="flex-shrink-0 px-6 pt-2 pb-1">
+          <div className="flex items-center gap-8">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="space-y-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex justify-between">
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                  ))}
                 </div>
               </div>
             </div>
             
-            {/* Tabs Skeleton */}
-            <div className="flex-shrink-0 px-6 pt-2 pb-1">
-              <div className="flex items-center gap-8">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Content Skeleton */}
-            <div className="flex-1 p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="flex justify-between">
-                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                        </div>
-                      ))}
+            {/* Right Column */}
+            <div className="space-y-6">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="grid grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="text-center">
+                      <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
                     </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="text-center">
-                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="flex flex-wrap gap-2">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        }
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
+        </div>
+      </div>
     );
   }
 
-  // Error state - Maintain layout
+  // Error state - Just show error content
   if (error || directRecordError) {
     return (
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={
-          <LeftPanel 
-            activeSection={section}
-            onSectionChange={handleSectionChange}
-            isSpeedrunVisible={isSpeedrunVisible}
-            setIsSpeedrunVisible={setIsSpeedrunVisible}
-            isOpportunitiesVisible={isOpportunitiesVisible}
-            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-          />
-        }
-        middlePanel={
-          <div className="h-full flex items-center justify-center bg-white">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading {section}</h3>
-              <p className="text-gray-600 mb-4">{directRecordError || error}</p>
-              <button
-                onClick={handleBack}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Back to {section.charAt(0).toUpperCase() + section.slice(1)}
-              </button>
-            </div>
-          </div>
-        }
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
+      <div className="h-full flex items-center justify-center bg-white">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading {section}</h3>
+          <p className="text-gray-600 mb-4">{directRecordError || error}</p>
+          <button
+            onClick={handleBack}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to {section.charAt(0).toUpperCase() + section.slice(1)}
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -961,79 +895,58 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     
     return (
       <>
-        <PanelLayout
-          thinLeftPanel={null}
-          leftPanel={
-            <LeftPanel 
-              activeSection={section}
-              onSectionChange={handleSectionChange}
-              isSpeedrunVisible={isSpeedrunVisible}
-              setIsSpeedrunVisible={setIsSpeedrunVisible}
-              isOpportunitiesVisible={isOpportunitiesVisible}
-              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-            />
-          }
-          middlePanel={
-            // Use UniversalRecordTemplate for ALL sections including leads for consistency
-            <UniversalRecordTemplate
-              record={recordToShow}
-              recordType={section as any}
-              recordIndex={(() => {
-                // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
-                // instead of database rank to ensure navigation works correctly
-                if (section === 'speedrun') {
-                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                  const recordIndex = index >= 0 ? index + 1 : 1;
-                  console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
-                    recordId: recordToShow?.id,
-                    recordName: recordToShow?.name,
-                    dataLength: data.length,
-                    foundIndex: index,
-                    calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name, rank: r.rank }))
-                  });
-                  return recordIndex;
-                } else {
-                  // For other sections, always use sequential position like speedrun for consistent navigation
-                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                  const recordIndex = index >= 0 ? index + 1 : 1;
-                  console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
-                    recordId: recordToShow?.id,
-                    recordName: recordToShow?.name,
-                    dataLength: data.length,
-                    foundIndex: index,
-                    calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name }))
-                  });
-                  return recordIndex;
-                }
-              })()}
-              totalRecords={data.length}
-              onBack={handleBack}
-              onNavigatePrevious={handleNavigatePrevious}
-              onNavigateNext={handleNavigateNext}
-              onComplete={() => {
-                console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
-                // TODO: Implement complete functionality
-              }}
-              onSnooze={(recordId: string, duration: string) => {
-                console.log('Snooze action for:', recordId, duration);
-                // TODO: Implement complete functionality
-              }}
-              onRecordUpdate={(updatedRecord) => {
-                console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
-                setSelectedRecord(updatedRecord);
-                
-                console.log('✅ [PIPELINE] Record updated in UI');
-              }}
-            />
-          }
-          rightPanel={<RightPanel />}
-          zoom={zoom}
-          isLeftPanelVisible={isLeftPanelVisible}
-          isRightPanelVisible={isRightPanelVisible}
-          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+        {/* Use UniversalRecordTemplate for ALL sections including leads for consistency */}
+        <UniversalRecordTemplate
+          record={recordToShow}
+          recordType={section as any}
+          recordIndex={(() => {
+            // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
+            // instead of database rank to ensure navigation works correctly
+            if (section === 'speedrun') {
+              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+              const recordIndex = index >= 0 ? index + 1 : 1;
+              console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
+                recordId: recordToShow?.id,
+                recordName: recordToShow?.name,
+                dataLength: data.length,
+                foundIndex: index,
+                calculatedRecordIndex: recordIndex,
+                dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name, rank: r.rank }))
+              });
+              return recordIndex;
+            } else {
+              // For other sections, always use sequential position like speedrun for consistent navigation
+              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+              const recordIndex = index >= 0 ? index + 1 : 1;
+              console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
+                recordId: recordToShow?.id,
+                recordName: recordToShow?.name,
+                dataLength: data.length,
+                foundIndex: index,
+                calculatedRecordIndex: recordIndex,
+                dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name }))
+              });
+              return recordIndex;
+            }
+          })()}
+          totalRecords={data.length}
+          onBack={handleBack}
+          onNavigatePrevious={handleNavigatePrevious}
+          onNavigateNext={handleNavigateNext}
+          onComplete={() => {
+            console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
+            // TODO: Implement complete functionality
+          }}
+          onSnooze={(recordId: string, duration: string) => {
+            console.log('Snooze action for:', recordId, duration);
+            // TODO: Implement complete functionality
+          }}
+          onRecordUpdate={(updatedRecord) => {
+            console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
+            setSelectedRecord(updatedRecord);
+            
+            console.log('✅ [PIPELINE] Record updated in UI');
+          }}
         />
 
         {/* Profile Popup - Pipeline Detail Implementation */}
@@ -1107,46 +1020,25 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     return (
       <>
         <RecordContextProvider>
-          <PanelLayout
-            thinLeftPanel={null}
-            leftPanel={
-              <LeftPanel 
-                activeSection={section}
-                onSectionChange={handleSectionChange}
-                isSpeedrunVisible={isSpeedrunVisible}
-                setIsSpeedrunVisible={setIsSpeedrunVisible}
-                isOpportunitiesVisible={isOpportunitiesVisible}
-                setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-              />
-            }
-            middlePanel={
-              <UniversalRecordTemplate
-                record={selectedRecord}
-                recordType={section}
-                recordIndex={(() => {
-                  // Use rank from database if available, otherwise calculate from index
-                  const dbRank = selectedRecord?.rank;
-                  if (dbRank && dbRank > 0) {
-                    return dbRank;
-                  } else {
-                    const index = data.findIndex((r: any) => r['id'] === selectedRecord.id);
-                    return index >= 0 ? index + 1 : 1;
-                  }
-                })()}
-                totalRecords={data.length}
-                onBack={() => navigateToPipeline(section)}
-                onNavigatePrevious={handleNavigatePrevious}
-                onNavigateNext={handleNavigateNext}
-                onComplete={() => setIsSpeedrunEngineModalOpen(true)}
-              />
-            }
-          rightPanel={<RightPanel />}
-          zoom={zoom}
-          isLeftPanelVisible={isLeftPanelVisible}
-          isRightPanelVisible={isRightPanelVisible}
-          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-        />
+          <UniversalRecordTemplate
+            record={selectedRecord}
+            recordType={section}
+            recordIndex={(() => {
+              // Use rank from database if available, otherwise calculate from index
+              const dbRank = selectedRecord?.rank;
+              if (dbRank && dbRank > 0) {
+                return dbRank;
+              } else {
+                const index = data.findIndex((r: any) => r['id'] === selectedRecord.id);
+                return index >= 0 ? index + 1 : 1;
+              }
+            })()}
+            totalRecords={data.length}
+            onBack={() => navigateToPipeline(section)}
+            onNavigatePrevious={handleNavigatePrevious}
+            onNavigateNext={handleNavigateNext}
+            onComplete={() => setIsSpeedrunEngineModalOpen(true)}
+          />
         </RecordContextProvider>
 
       {/* Profile Popup - Pipeline Detail Implementation */}
@@ -1211,108 +1103,85 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
 
   // Fallback loading state - only show when we don't have a record and are loading
   return (
-    <>
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={
-          <LeftPanel 
-            activeSection={section}
-            onSectionChange={handleSectionChange}
-            isSpeedrunVisible={isSpeedrunVisible}
-            setIsSpeedrunVisible={setIsSpeedrunVisible}
-            isOpportunitiesVisible={isOpportunitiesVisible}
-            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-          />
-        }
-        middlePanel={
-          <div className="h-full flex flex-col bg-white">
-            {/* Person Detail Loading Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-                  <div>
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+    <div className="h-full flex flex-col bg-white">
+      {/* Person Detail Loading Skeleton */}
+      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+            <div>
+              <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Tabs Skeleton */}
+      <div className="flex-shrink-0 px-6 pt-2 pb-1">
+        <div className="flex items-center gap-8">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Content Skeleton */}
+      <div className="flex-1 p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+              <div className="space-y-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex justify-between">
+                    <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
                     <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Tabs Skeleton */}
-            <div className="flex-shrink-0 px-6 pt-2 pb-1">
-              <div className="flex items-center gap-8">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
                 ))}
               </div>
             </div>
             
-            {/* Content Skeleton */}
-            <div className="flex-1 p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="flex justify-between">
-                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="text-center">
-                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-                    <div className="flex flex-wrap gap-2">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                ))}
               </div>
             </div>
           </div>
-        }
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
-    </>
+          
+          {/* Right Column */}
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+              <div className="grid grid-cols-2 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="text-center">
+                    <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                    <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+              <div className="flex flex-wrap gap-2">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

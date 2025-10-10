@@ -30,7 +30,7 @@ export function PanelLayout({
   const [hovering, setHovering] = useState(false);
   
   // Fix hydration issue: always start with the same value on server and client  
-  const [rightPanelFlex, setRightPanelFlex] = useState(0.4603); // Increased by 35% from 0.3336 (20% + 15%)
+  const [rightPanelFlex, setRightPanelFlex] = useState(0.35); // More balanced ratio for better layout
   const [isHydrated, setIsHydrated] = useState(false);
 
   const router = useRouter();
@@ -213,7 +213,7 @@ export function PanelLayout({
 
   return (
     <div
-      className="w-screen h-screen overflow-hidden bg-[var(--background)]"
+      className="w-full h-screen overflow-hidden bg-[var(--background)]"
       style={{ position: "relative" }}
     >
       <div ref={containerRef} className="flex h-full w-full relative">
@@ -227,10 +227,14 @@ export function PanelLayout({
           </div>
         )}
         {/* Left Panel */}
-        {isLeftPanelVisible && leftPanel}
+        {isLeftPanelVisible && (
+          <div key="left-panel-container" className="h-full">
+            {leftPanel}
+          </div>
+        )}
         {/* Middle Panel */}
         <div
-          className="relative min-w-0 bg-[var(--background)] h-full pb-6"
+          className="relative min-w-0 bg-[var(--background)] h-full pb-6 overflow-hidden"
           style={{
             flex: isRightPanelVisible ? 1 : "1 1 0%",
             background: "var(--background)",
@@ -255,7 +259,7 @@ export function PanelLayout({
                 pointerEvents: "auto",
               }}
               onMouseDown={startDrag}
-              onDoubleClick={() => setRightPanelFlex(0.4603)} // Reset to default ratio on double-click (35% wider)
+              onDoubleClick={() => setRightPanelFlex(0.35)} // Reset to default ratio on double-click
               onMouseEnter={() => {
                 setHovering(true);
                 // Immediate cursor feedback

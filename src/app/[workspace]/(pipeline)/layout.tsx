@@ -133,6 +133,7 @@ function PipelineLayoutContent({
       thinLeftPanel={null}
       leftPanel={
         <LeftPanel 
+          key={`left-panel-${currentSection}`}
           activeSection={currentSection}
           onSectionChange={onSectionChange}
           isSpeedrunVisible={isSpeedrunVisible}

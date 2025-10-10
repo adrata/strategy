@@ -766,6 +766,7 @@ export function LeftPanel({
   isPartnersVisible = true,
   setIsPartnersVisible
 }: LeftPanelProps) {
+  // Debug logging removed - duplication issue identified and fixed
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const currentWorkspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const currentUserId = authUser?.id;
