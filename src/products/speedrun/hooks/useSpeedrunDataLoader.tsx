@@ -15,6 +15,7 @@ import { RankingSystem } from "@/platform/services/ranking-system";
 import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engine-settings-service';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
+import { useUnifiedAuth } from '@/platform/auth';
 
 // Helper function to determine vertical from prospect/lead data
 function determineVerticalFromData(data: any): string {
@@ -80,10 +81,15 @@ export function useSpeedrunDataLoader() {
     readyPeople,
   } = useSpeedrunContext();
 
+  // Get workspace and user context for cache key
+  const { user } = useUnifiedAuth();
+  const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id || '';
+  const userId = user?.id || '';
+
   const dataLoadPromiseRef = useRef<Promise<void> | null>(null);
 
-  // Cache key for unified data fetching
-  const cacheKey = `speedrun:data:${Date.now()}`; // You might want to make this more specific
+  // Cache key for unified data fetching - stable and workspace-specific
+  const cacheKey = `speedrun:data:${workspaceId}:${userId}`;
 
   // Fetch function for speedrun data
   const fetchSpeedrunData = useCallback(async () => {

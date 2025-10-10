@@ -22,12 +22,7 @@ import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
-import { useLeadsData } from '@/platform/hooks/useLeadsData';
-import { useProspectsData } from '@/platform/hooks/useProspectsData';
-import { useOpportunitiesData } from '@/platform/hooks/useOpportunitiesData';
-import { usePeopleData } from '@/platform/hooks/usePeopleData';
-import { useCompaniesData } from '@/platform/hooks/useCompaniesData';
-import { useSpeedrunData } from '@/platform/hooks/useSpeedrunData';
+// Removed unused individual section data hooks to eliminate duplicate API calls
 import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
@@ -278,16 +273,9 @@ export const PipelineView = React.memo(function PipelineView({
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🎯 NEW: Use dedicated hooks for each section
-  const leadsData = useLeadsData();
-  const prospectsData = useProspectsData();
-  const opportunitiesData = useOpportunitiesData();
-  const peopleData = usePeopleData();
-  const companiesData = useCompaniesData();
-  const speedrunData = useSpeedrunData(50); // Default to 50, can be made configurable
+  // 🚀 PERFORMANCE: Use only the data hook needed for the current section
+  // This eliminates 6 unnecessary API calls that were firing simultaneously
   
-  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
-  // Load all data at once for client-side pagination
   // Use higher limit for people section to ensure all records are loaded
   const limit = section === 'people' ? 10000 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
@@ -308,59 +296,16 @@ export const PipelineView = React.memo(function PipelineView({
   
   // Removed legacy getSectionData(section) relying on acquisitionData; using dedicated hooks below
   
-  // 🚀 PERFORMANCE: Use dedicated hooks for each section
+  // 🚀 PERFORMANCE: Use fast section data for all sections
+  // This eliminates duplicate API calls and uses the optimized data loading
   const getSectionData = () => {
-    switch (section) {
-      case 'leads':
-        return {
-          data: leadsData.leads || [],
-          loading: leadsData.loading,
-          error: leadsData.error,
-          count: leadsData.count
-        };
-      case 'prospects':
-        return {
-          data: prospectsData.prospects || [],
-          loading: prospectsData.loading,
-          error: prospectsData.error,
-          count: prospectsData.count
-        };
-      case 'opportunities':
-        return {
-          data: opportunitiesData.opportunities || [],
-          loading: opportunitiesData.loading,
-          error: opportunitiesData.error,
-          count: opportunitiesData.count
-        };
-      case 'people':
-        return {
-          data: peopleData.people || [],
-          loading: peopleData.loading,
-          error: peopleData.error,
-          count: peopleData.count
-        };
-      case 'companies':
-        return {
-          data: companiesData.companies || [],
-          loading: companiesData.loading,
-          error: companiesData.error,
-          count: companiesData.count
-        };
-      case 'speedrun':
-        return {
-          data: speedrunData.speedrunPeople || [],
-          loading: speedrunData.loading,
-          error: speedrunData.error,
-          count: speedrunData.count
-        };
-      default:
-        return {
-          data: fastSectionData.data || pipelineData.data || [],
-          loading: fastSectionData.loading || pipelineData.loading,
-          error: fastSectionData.error || pipelineData.error,
-          count: fastSectionData.count || 0
-        };
-    }
+    // Use fastSectionData for all sections - it handles the API calls efficiently
+    return {
+      data: fastSectionData.data || pipelineData.data || [],
+      loading: fastSectionData.loading || pipelineData.loading,
+      error: fastSectionData.error || pipelineData.error,
+      count: fastSectionData.count || 0
+    };
   };
 
   const sectionData = getSectionData();

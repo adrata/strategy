@@ -2255,12 +2255,27 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
       });
     }
     
-    // Ensure required fields have defaults - these are required by the schema
-    // Only apply person-related defaults for person-related records
+    // Validate required fields instead of creating template records
+    // Only apply person-related validation for person-related records
     if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
-      if (!createData.firstName) createData['firstName'] = 'First';
-      if (!createData.lastName) createData['lastName'] = 'Last';
-      if (!createData.fullName) createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+      // Validate that we have meaningful data, not template values
+      const hasValidName = createData.firstName && createData.firstName !== 'First' && createData.firstName.trim().length > 0;
+      const hasValidLastName = createData.lastName && createData.lastName !== 'Last' && createData.lastName.trim().length > 0;
+      const hasValidFullName = createData.fullName && createData.fullName !== 'First Last' && createData.fullName.trim().length > 0;
+      
+      // If we don't have valid name data, throw an error instead of creating template records
+      if (!hasValidName && !hasValidLastName && !hasValidFullName) {
+        throw new Error(`Invalid record data: Missing required name fields. firstName: "${createData.firstName}", lastName: "${createData.lastName}", fullName: "${createData.fullName}"`);
+      }
+      
+      // Only set defaults if we have partial data that can be completed
+      if (!createData.firstName && createData.fullName && createData.fullName !== 'First Last') {
+        const nameParts = createData.fullName.trim().split(' ');
+        createData['firstName'] = nameParts[0] || 'Unknown';
+        createData['lastName'] = nameParts.slice(1).join(' ') || 'Unknown';
+      } else if (!createData.fullName && createData.firstName && createData.lastName) {
+        createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+      }
       
       // Remove frontend-specific fields that don't exist in database
       delete createData.name; // We've already split this into firstName/lastName/fullName

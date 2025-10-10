@@ -78,15 +78,8 @@ function PipelinePanelLayout({ section }: { section: string }) {
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
   
-  // Get data to check if pipeline sections should be available
+  // Get acquisition data for the pipeline
   const { data: acquisitionData } = useAcquisitionOS();
-  const companiesCount = acquisitionData?.acquireData?.companies?.length || 0;
-  const peopleCount = acquisitionData?.acquireData?.people?.length || 0;
-  const hasCompaniesOrPeople = companiesCount > 0 || peopleCount > 0;
-  
-  // Pipeline sections that require companies or people data
-  const pipelineSections = ['speedrun', 'leads', 'prospects', 'opportunities'];
-  const isPipelineSection = pipelineSections.includes(section);
   
   // Monaco Signal popup state for Speedrun section
   const [isSlideUpVisible, setIsSlideUpVisible] = useState(false);
@@ -105,31 +98,29 @@ function PipelinePanelLayout({ section }: { section: string }) {
     profileAnchor
   } = usePipeline();
 
-  // Redirect to companies/people if trying to access pipeline sections without data
-  useEffect(() => {
-    if (isPipelineSection && !hasCompaniesOrPeople) {
-      console.log(`🔄 [PIPELINE REDIRECT] Redirecting from ${section} to companies (no data available)`);
-      router.push('/aos/companies');
-      return;
-    }
-  }, [section, hasCompaniesOrPeople, isPipelineSection, router]);
+  // Note: Removed redirect logic to allow free navigation between tabs
+  // Users can now access all sections regardless of data availability
 
   // OPTIMIZED: Only update section when it actually changes and avoid unnecessary data reloads
   useEffect(() => {
     if (ui.activeSection !== section) {
       console.log(`🔄 [OPTIMIZED] Updating section from ${ui.activeSection} to ${section} (no data reload)`);
-      // For speedrun, set the section to 'inbox' which shows the prospect list
-      const targetSection = section === 'speedrun' ? 'inbox' : section;
-      ui.setActiveSection(targetSection);
       
-      // Also set the app to 'Speedrun' for speedrun section to show prospects
-      if (section === 'speedrun' && ui.activeSubApp !== 'Speedrun') {
-        console.log(`🔄 [PipelineSectionPage] Setting activeSubApp to 'Speedrun' for section: ${section}`);
-        ui.setActiveSubApp('Speedrun');
-      } else if (section !== 'speedrun' && ui.activeSubApp !== 'pipeline') {
-        console.log(`🔄 [PipelineSectionPage] Setting activeSubApp to 'pipeline' for section: ${section}, current path: ${window.location.pathname}`);
-        ui.setActiveSubApp('pipeline');
-      }
+      // ⚡ INSTANT UI UPDATE: Use setTimeout to make UI updates non-blocking
+      setTimeout(() => {
+        // For speedrun, set the section to 'inbox' which shows the prospect list
+        const targetSection = section === 'speedrun' ? 'inbox' : section;
+        ui.setActiveSection(targetSection);
+        
+        // Also set the app to 'Speedrun' for speedrun section to show prospects
+        if (section === 'speedrun' && ui.activeSubApp !== 'Speedrun') {
+          console.log(`🔄 [PipelineSectionPage] Setting activeSubApp to 'Speedrun' for section: ${section}`);
+          ui.setActiveSubApp('Speedrun');
+        } else if (section !== 'speedrun' && ui.activeSubApp !== 'pipeline') {
+          console.log(`🔄 [PipelineSectionPage] Setting activeSubApp to 'pipeline' for section: ${section}, current path: ${window.location.pathname}`);
+          ui.setActiveSubApp('pipeline');
+        }
+      }, 0); // Run in next tick to not block UI
     }
   }, [section, ui]);
 

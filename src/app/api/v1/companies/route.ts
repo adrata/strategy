@@ -122,6 +122,7 @@ export async function GET(request: NextRequest) {
             nextActionDate: true,
             industry: true,
             size: true
+            // Optimized for list views - removed unnecessary fields
           }
         }),
         prisma.companies.count({ where }),

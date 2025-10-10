@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from "next/navigation";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
@@ -540,13 +540,9 @@ function PipelineSections({
     };
   }, []);
 
-  // Check if user has any companies or people data
-  const hasCompaniesOrPeople = (companiesData.count > 0 || peopleData.count > 0);
-  
   console.log('🔍 [PIPELINE VISIBILITY] Checking data availability:', {
     companiesCount: companiesData.count,
     peopleCount: peopleData.count,
-    hasCompaniesOrPeople,
     isDemoMode,
     companiesData: companiesData.data?.length || 0,
     peopleData: peopleData.data?.length || 0
@@ -584,7 +580,7 @@ function PipelineSections({
         }
         return productionCounts.speedrun || 0;
       })(),
-      visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (hasCompaniesOrPeople && (isSpeedrunVisible ?? true))
+      visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
     {
       id: "leads",
@@ -593,7 +589,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : productionCounts.leads,
-      visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (hasCompaniesOrPeople && (isLeadsVisible ?? true))
+      visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true)
     },
     {
       id: "prospects",
@@ -602,7 +598,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),
-      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (hasCompaniesOrPeople && (isProspectsVisible ?? true))
+      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true)
     },
     {
       id: "opportunities",
@@ -615,7 +611,7 @@ function PipelineSections({
         const totalPeople = opportunities.reduce((sum: number, opp: any) => sum + (opp.peopleCount || 0), 0);
         return `${productionCounts.opportunities}${totalPeople > 0 ? ` (${totalPeople})` : ''}`;
       })(),
-      visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (hasCompaniesOrPeople && (isOpportunitiesVisible ?? true))
+      visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
     },
     {
       id: "clients",
@@ -774,6 +770,7 @@ export function LeftPanel({
   const currentWorkspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const currentUserId = authUser?.id;
   
+  // ⚡ PERFORMANCE: Only get acquisition data when needed, not on every render
   const { data: acquisitionData } = useAcquisitionOS();
   
   const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
@@ -805,42 +802,43 @@ export function LeftPanel({
     secondaryColor: '#3b82f6'
   });
 
-  const handleSectionClick = (section: string) => {
+  // ⚡ INSTANT CLICK HANDLER: Use ref to avoid dependency on data loading
+  const onSectionChangeRef = useRef(onSectionChange);
+  onSectionChangeRef.current = onSectionChange;
+  
+  const acquisitionDataRef = useRef(acquisitionData);
+  acquisitionDataRef.current = acquisitionData;
+  
+  const handleSectionClick = useCallback((section: string) => {
     console.log('🔄 Pipeline section clicked:', section);
     
-    // Get current data counts to check what's available
-    const companiesCount = acquisitionData?.acquireData?.companies?.length || 0;
-    const peopleCount = acquisitionData?.acquireData?.people?.length || 0;
-    const hasCompaniesOrPeople = companiesCount > 0 || peopleCount > 0;
-    
-    // Pipeline sections that require companies or people data
-    const pipelineSections = ['speedrun', 'leads', 'prospects', 'opportunities'];
-    const isPipelineSection = pipelineSections.includes(section);
-    
-    // If user tries to access pipeline sections without companies/people data, redirect to companies
-    if (isPipelineSection && !hasCompaniesOrPeople) {
-      console.log(`🔄 [LEFT PANEL] Redirecting from ${section} to companies (no data available)`);
-      onSectionChange('companies');
-      return;
-    }
-    
     // ⚡ INSTANT NAVIGATION: Call onSectionChange immediately for instant feedback
-    onSectionChange(section);
+    onSectionChangeRef.current(section);
     
-    // 🚀 PRE-CACHE: Pre-cache data for the target section if not already available
-    if (typeof window !== 'undefined') {
-      const targetData = acquisitionData?.acquireData?.[section] || [];
-      if (targetData.length > 0) {
-        // Cache the data for instant access
-        sessionStorage.setItem(`cached-section-${section}`, JSON.stringify({
-          data: targetData,
-          timestamp: Date.now(),
-          count: targetData.length
-        }));
-        console.log(`⚡ [LEFT PANEL] Pre-cached ${targetData.length} items for ${section}`);
+    // 🚀 ASYNC PRE-CACHE: Pre-cache data in the background without blocking UI
+    // Use requestIdleCallback for better performance when available
+    const schedulePreCache = () => {
+      if (typeof window !== 'undefined') {
+        const targetData = acquisitionDataRef.current?.acquireData?.[section] || [];
+        if (targetData.length > 0) {
+          // Cache the data for instant access
+          sessionStorage.setItem(`cached-section-${section}`, JSON.stringify({
+            data: targetData,
+            timestamp: Date.now(),
+            count: targetData.length
+          }));
+          console.log(`⚡ [LEFT PANEL] Pre-cached ${targetData.length} items for ${section}`);
+        }
       }
+    };
+    
+    // Use requestIdleCallback if available, otherwise setTimeout
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      requestIdleCallback(schedulePreCache);
+    } else {
+      setTimeout(schedulePreCache, 0);
     }
-  };
+  }, []); // Empty dependency array for maximum performance
 
   const handleProfileClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     console.log('🔘 Profile button clicked!', { 

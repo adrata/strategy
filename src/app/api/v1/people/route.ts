@@ -150,11 +150,12 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextActionDate: true,
             companyId: true,
-            company: {
-              select: {
-                name: true
-              }
-            }
+            // Remove company join for list views - can fetch on-demand for better performance
+            // company: {
+            //   select: {
+            //     name: true
+            //   }
+            // }
           }
         }),
         prisma.people.count({ where }),
