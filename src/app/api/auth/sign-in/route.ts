@@ -110,13 +110,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.log("🔐 [AUTH API] Environment:", process.env.NODE_ENV);
     console.log("🔐 [AUTH API] Database URL exists:", !!process.env['DATABASE_URL']);
     
-    // Test database connection early
-    try {
-      await prisma.$connect();
-      console.log("🔐 [AUTH API] Database connection successful");
-    } catch (dbConnectError) {
-      console.error("❌ [AUTH API] Database connection failed:", dbConnectError);
-      throw new Error(`Database connection failed: ${dbConnectError instanceof Error ? dbConnectError.message : 'Unknown error'}`);
+    // Validate DATABASE_URL is set
+    if (!process.env['DATABASE_URL'] && !process.env['POSTGRES_URL']) {
+      console.error("❌ [AUTH API] DATABASE_URL environment variable not set");
+      throw new Error("Database configuration error - please contact support");
     }
 
     // SECURITY: Check for URL-based credential attempts
@@ -550,6 +547,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } else if (error.message.includes("ENOTFOUND") || error.message.includes("ECONNREFUSED")) {
         errorMessage = "Database connection failed";
         console.error("❌ [AUTH API] Network error detected");
+      } else if (error.message.includes("P1001") || error.message.includes("Can't reach database server")) {
+        errorMessage = "Database server unavailable";
+        console.error("❌ [AUTH API] Database server unreachable");
+      } else if (error.message.includes("P2021") || error.message.includes("The table")) {
+        errorMessage = "Database schema error";
+        console.error("❌ [AUTH API] Database schema mismatch detected");
+      } else if (error.message.includes("P1008") || error.message.includes("Operations timed out")) {
+        errorMessage = "Database operation timeout";
+        console.error("❌ [AUTH API] Database timeout detected");
       }
     }
     

@@ -21,13 +21,14 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
            "postgresql://localhost:5432/adrata",
     },
   },
-  log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error']
+  log: process['env']['NODE_ENV'] === 'development' ? ['error', 'warn'] : ['error'],
+  // Add serverless optimization for Vercel/Neon
+  connectionTimeout: 10000, // 10 seconds max for connection
+  queryTimeout: 15000, // 15 seconds max for queries
 });
 
-// Store in global variable in development to prevent hot reload issues
-if (process['env']['NODE_ENV'] !== 'production') {
-  globalThis['__prisma'] = prisma;
-}
+// CRITICAL: Always store singleton to prevent connection exhaustion in production
+globalThis.__prisma = prisma;
 
 // Graceful shutdown
 process.on('beforeExit', async () => {
