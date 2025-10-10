@@ -85,9 +85,25 @@ export async function validateWorkspaceAccess(
 
     // Check role requirements if specified
     if (requiredRole) {
-      const roleHierarchy = { 'viewer': 1, 'member': 2, 'admin': 3 };
+      // Map database enum values to hierarchy levels
+      const roleHierarchy = { 
+        'VIEWER': 1, 
+        'SELLER': 2, 
+        'MANAGER': 3, 
+        'WORKSPACE_ADMIN': 4, 
+        'SUPER_ADMIN': 5 
+      };
+      
+      // Map required role parameter to database enum values
+      const requiredRoleMapping = {
+        'viewer': 'VIEWER',
+        'member': 'SELLER', // Using SELLER as member level
+        'admin': 'WORKSPACE_ADMIN'
+      };
+      
       const userRoleLevel = roleHierarchy[membership.role as keyof typeof roleHierarchy] || 0;
-      const requiredRoleLevel = roleHierarchy[requiredRole];
+      const mappedRequiredRole = requiredRoleMapping[requiredRole];
+      const requiredRoleLevel = mappedRequiredRole ? roleHierarchy[mappedRequiredRole as keyof typeof roleHierarchy] || 0 : 0;
       
       if (userRoleLevel < requiredRoleLevel) {
         const result: WorkspaceAccessResult = {
