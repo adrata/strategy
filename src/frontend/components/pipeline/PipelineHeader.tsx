@@ -1017,7 +1017,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                          className="px-4 py-2 bg-white text-black border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
                         >
                           {
                             (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
@@ -1074,6 +1074,7 @@ export function PipelineHeader({
                         variant={section === 'speedrun' ? 'dropdown' : 'simple'}
                         size="md"
                         color={section === 'speedrun' ? 'blue' : 'navy'}
+                        section={section}
                       />
                       
                       {sectionInfo['actionButton'] && (

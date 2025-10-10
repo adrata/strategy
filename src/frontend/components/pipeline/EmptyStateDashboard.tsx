@@ -94,7 +94,18 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
             {onAddAction && (
               <button
                 onClick={onAddAction}
-                className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: getCategoryColors(section).bg,
+                  color: getCategoryColors(section).primary,
+                  border: `1px solid ${getCategoryColors(section).border}`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = getCategoryColors(section).bgHover;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = getCategoryColors(section).bg;
+                }}
               >
                 Add Action
               </button>

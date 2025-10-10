@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { formatRelativeDate } from "@/platform/utils";
 import { PipelineClientService } from "@/platform/services/pipeline-client-service";
+import { getCategoryColors } from "@/platform/config/color-palette";
 // Define CompanyWithDetails interface locally
 interface CompanyWithDetails {
   id: string;
@@ -598,7 +599,18 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                   </h2>
                   <button
                     onClick={() => setShowAddActionModal(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                    style={{
+                      backgroundColor: getCategoryColors('companies').bg,
+                      color: getCategoryColors('companies').primary,
+                      border: `1px solid ${getCategoryColors('companies').border}`
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = getCategoryColors('companies').bgHover;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = getCategoryColors('companies').bg;
+                    }}
                   >
                     <PlusIcon className="w-4 h-4" />
                     Add Action

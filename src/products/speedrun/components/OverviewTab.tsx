@@ -8,6 +8,7 @@ import {
 import { IntelligentStageProgression } from "../IntelligentStageProgression";
 import { useAuth } from "@/platform/hooks/useAuth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
+import { getCategoryColors } from "@/platform/config/color-palette";
 
 interface OverviewTabProps {
   person: SpeedrunPerson;
@@ -110,7 +111,18 @@ export function OverviewTab({
             // TODO: Implement add action functionality
             console.log('Add Action clicked for:', person.name);
           }}
-          className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: getCategoryColors('people').bg,
+            color: getCategoryColors('people').primary,
+            border: `1px solid ${getCategoryColors('people').border}`
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = getCategoryColors('people').bgHover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = getCategoryColors('people').bg;
+          }}
         >
           Add Action
         </button>

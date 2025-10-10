@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, ChevronDownIcon, BoltIcon } from '@heroicons/react/24/outline';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface UnifiedAddActionButtonProps {
   onAddAction: () => void;
@@ -11,6 +12,7 @@ interface UnifiedAddActionButtonProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   color?: 'red' | 'blue' | 'navy';
+  section?: string; // New prop to determine category colors
 }
 
 export function UnifiedAddActionButton({ 
@@ -19,7 +21,8 @@ export function UnifiedAddActionButton({
   variant = 'simple',
   size = 'md',
   className = '',
-  color = 'navy'
+  color = 'navy',
+  section
 }: UnifiedAddActionButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -66,13 +69,28 @@ export function UnifiedAddActionButton({
     lg: 'px-6 py-3 text-base'
   };
 
-  const colorClasses = color === 'blue' 
-    ? 'bg-blue-600 text-white border border-blue-600 hover:bg-blue-700'
-    : color === 'navy'
-    ? 'bg-navy-50 text-navy-900 border border-navy-200 hover:bg-navy-100'
-    : 'bg-red-600 text-white border border-red-600 hover:bg-red-700';
-  
-  const baseClasses = `${colorClasses} rounded-lg font-medium transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
+  // Use category colors if section is provided, otherwise fall back to legacy color prop
+  const getButtonStyles = () => {
+    if (section) {
+      const categoryColors = getCategoryColors(section);
+      return {
+        backgroundColor: categoryColors.bg,
+        color: categoryColors.primary,
+        border: `1px solid ${categoryColors.border}`,
+        hoverBackgroundColor: categoryColors.bgHover
+      };
+    }
+    
+    // Legacy color support
+    return color === 'blue' 
+      ? { backgroundColor: '#2563EB', color: 'white', border: '1px solid #2563EB', hoverBackgroundColor: '#1D4ED8' }
+      : color === 'navy'
+      ? { backgroundColor: '#F8FAFC', color: '#0F172A', border: '1px solid #CBD5E1', hoverBackgroundColor: '#F1F5F9' }
+      : { backgroundColor: '#DC2626', color: 'white', border: '1px solid #DC2626', hoverBackgroundColor: '#B91C1C' };
+  };
+
+  const buttonStyles = getButtonStyles();
+  const baseClasses = `rounded-lg font-medium transition-colors flex items-center gap-2 ${sizeClasses[size]} ${className}`;
 
   if (variant === 'dropdown' && onAddNote) {
     return (
@@ -80,6 +98,13 @@ export function UnifiedAddActionButton({
         <button 
           onClick={() => setShowDropdown(!showDropdown)}
           className={baseClasses}
+          style={buttonStyles}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = buttonStyles.hoverBackgroundColor;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor;
+          }}
         >
           <PlusIcon className="w-4 h-4" />
           Add Action ({getCommonShortcut('SUBMIT')})
@@ -126,6 +151,13 @@ export function UnifiedAddActionButton({
     <button
       onClick={onAddAction}
       className={baseClasses}
+      style={buttonStyles}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = buttonStyles.hoverBackgroundColor;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor;
+      }}
     >
       <PlusIcon className="w-4 h-4" />
       Add Action ({getCommonShortcut('SUBMIT')})

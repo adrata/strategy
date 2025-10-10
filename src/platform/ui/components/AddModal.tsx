@@ -533,17 +533,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setShowAddProspectModal(true);
                   }
                 }}
-                className="px-6 py-3 rounded-lg font-semibold text-sm transition-colors"
-                style={{
-                  backgroundColor: categoryColors.primary,
-                  color: 'white',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = categoryColors.bgHover;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = categoryColors.primary;
-                }}
+                className="px-6 py-3 bg-white text-black border border-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
               >
                 Open {activeSection === "leads" ? "Lead" : "Prospect"} Form
               </button>
