@@ -314,10 +314,10 @@ export const PipelineView = React.memo(function PipelineView({
   useEffect(() => {
     if (section !== 'speedrun' && workspaceId && userId) {
       console.log('🚀 [SPEEDRUN PRELOAD] Pre-loading speedrun data in background for faster navigation');
-      // Pre-load speedrun data using v1 API
+      // Pre-load speedrun data using section API
       const preloadSpeedrunData = async () => {
         try {
-          await fetch(`/api/v1/people?limit=50&sortBy=rank&sortOrder=asc`);
+          await fetch(`/api/data/section?section=speedrun&limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }

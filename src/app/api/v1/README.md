@@ -56,7 +56,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "success": true,
   "data": { /* your data */ },
   "meta": {
-    "pagination": { "page": 1, "limit": 20, "totalCount": 100 },
+    "pagination": { "page": 1, "limit": 100, "totalCount": 100 },
     "filters": { "search": "acme", "status": "ACTIVE" }
   }
 }
@@ -75,7 +75,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```bash
 # List companies
 curl -H "Authorization: Bearer YOUR_TOKEN" \
-  "http://localhost:3000/api/v1/companies?page=1&limit=20&search=acme&status=PROSPECT"
+  "http://localhost:3000/api/v1/companies?page=1&limit=100&search=acme&status=PROSPECT"
 
 # Create company
 curl -X POST \
@@ -101,7 +101,7 @@ curl -X PATCH \
 ```bash
 # List people
 curl -H "Authorization: Bearer YOUR_TOKEN" \
-  "http://localhost:3000/api/v1/people?page=1&limit=20&search=john&companyId=COMPANY_ID"
+  "http://localhost:3000/api/v1/people?page=1&limit=100&search=john&companyId=COMPANY_ID"
 
 # Create person
 curl -X POST \
@@ -120,7 +120,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 ```bash
 # List actions
 curl -H "Authorization: Bearer YOUR_TOKEN" \
-  "http://localhost:3000/api/v1/actions?page=1&limit=20&companyId=COMPANY_ID&status=COMPLETED"
+  "http://localhost:3000/api/v1/actions?page=1&limit=100&companyId=COMPANY_ID&status=COMPLETED"
 
 # Create action (tracking what someone did at a company)
 curl -X POST \
@@ -192,7 +192,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 ### Pagination
 - `page` - Page number (default: 1)
-- `limit` - Items per page (default: 20, max: 100)
+- `limit` - Items per page (default: 100, max: 1000)
 
 ### Filtering
 - `search` - Search across relevant fields

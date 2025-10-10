@@ -67,7 +67,7 @@ interface UseFastSectionDataReturn {
 /**
  * Fast section data hook with smart caching
  */
-export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
+export function useFastSectionData(section: string, limit: number = 100): UseFastSectionDataReturn {
   // console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
   const { user: authUser, isLoading: authLoading, isAuthenticated } = useUnifiedAuth();
@@ -174,8 +174,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           fullUrl = `/api/v1/companies?status=OPPORTUNITY&limit=${limit}&t=${timestamp}`;
           break;
         case 'speedrun':
-          url = `/api/v1/people?limit=${initialLimit}&sortBy=rank&sortOrder=asc&t=${timestamp}`;
-          fullUrl = `/api/v1/people?limit=${limit}&sortBy=rank&sortOrder=asc&t=${timestamp}`;
+          url = `/api/data/section?section=speedrun&limit=${initialLimit}&t=${timestamp}`;
+          fullUrl = `/api/data/section?section=speedrun&limit=${limit}&t=${timestamp}`;
           break;
         default:
           // No v1 API available for this section yet
@@ -200,10 +200,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
       
       if (result.success) {
-        // Handle v1 API response format
-        // v1 API returns: { success: true, data: [...records...], meta: { pagination: { totalCount: X } } }
-        const dataArray = Array.isArray(result.data) ? result.data : [];
-        const totalCount = result.meta?.pagination?.totalCount || dataArray.length;
+        // Handle both v1 API and section API response formats
+        let dataArray, totalCount;
+        
+        if (section === 'speedrun') {
+          // Section API returns: { success: true, data: { data: [...records...], totalCount: X } }
+          const sectionData = result.data;
+          dataArray = Array.isArray(sectionData?.data) ? sectionData.data : [];
+          totalCount = sectionData?.totalCount || dataArray.length;
+        } else {
+          // v1 API returns: { success: true, data: [...records...], meta: { pagination: { totalCount: X } } }
+          dataArray = Array.isArray(result.data) ? result.data : [];
+          totalCount = result.meta?.pagination?.totalCount || dataArray.length;
+        }
         
         // 🚀 PROGRESSIVE LOADING: Set initial data immediately
         console.log(`✅ [FAST SECTION DATA] Setting data for ${section}:`, {
@@ -229,8 +238,22 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
               const fullResult = await authFetch(fullUrl);
               
               if (fullResult.success) {
-                const fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];
-                const fullTotalCount = fullResult.meta?.pagination?.totalCount || fullDataArray.length;
+                let fullDataArray, fullTotalCount;
+                
+                if (section === 'speedrun') {
+                  // Section API response format
+                  const sectionData = fullResult.data;
+                  fullDataArray = Array.isArray(sectionData?.data) ? sectionData.data : [];
+                  fullTotalCount = sectionData?.totalCount || fullDataArray.length;
+                } else if (section === 'opportunities') {
+                  // Opportunities API response format
+                  fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];
+                  fullTotalCount = fullResult.meta?.count || fullDataArray.length;
+                } else {
+                  // v1 API response format
+                  fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];
+                  fullTotalCount = fullResult.meta?.pagination?.totalCount || fullDataArray.length;
+                }
                 
                 // Update with full dataset
                 setData(fullDataArray);
@@ -322,6 +345,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
       return () => clearTimeout(retryTimeout);
     }
+    return undefined;
   }, [error, section]); // Removed fetchSectionData to prevent infinite loops
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded sections only when needed
@@ -345,7 +369,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [workspaceId, userId, lastWorkspaceId, lastUserId, section]);
 
-  // 🚀 FIX: Clear cache for any workspace that was previously blocked by demo workspace check
+  // Cache for any workspace that was previously blocked by demo workspace check
   useEffect(() => {
     // Clear cache for any section that was previously loaded with empty data
     // This fixes the issue where sections were marked as "loaded" but had no data
@@ -386,6 +410,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         window.removeEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
       };
     }
+    return undefined;
   }, [workspaceId, section, fetchSectionData]);
 
   // 🚀 CACHE OPTIMIZATION: Removed debug force refresh that was causing unnecessary reloads

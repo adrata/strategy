@@ -269,9 +269,9 @@ export function usePipelineData({
     return result;
   }, [sortedData, currentPage, pageSize, data.length, filteredData.length, totalCount]);
   
-  // Pagination info - use local data length for client-side pagination
-  const totalPages = Math.ceil(sortedData.length / pageSize);
-  const totalItems = sortedData.length;
+  // Pagination info - use totalCount prop if available, otherwise fall back to local data length
+  const totalItems = totalCount || sortedData.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
   
   // Actions
   const clearFilters = useCallback(() => {
