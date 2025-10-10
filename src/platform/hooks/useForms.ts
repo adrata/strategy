@@ -89,6 +89,10 @@ export function useForms(): UseFormsReturn {
         activeSubApp,
         recordName: formData.name,
       });
+      
+      // DEBUG: Log the activeSection value to understand routing issue
+      console.log(`[FORMS HOOK] DEBUG: activeSection = "${activeSection}"`);
+      console.log(`[FORMS HOOK] DEBUG: Will use ${activeSection === "leads" || activeSection === "people" ? "v1 API" : "unified API"}`);
 
       const envInfo = getDesktopEnvInfo();
       let newRecordId: string | null = null;

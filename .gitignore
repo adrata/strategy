@@ -36,7 +36,7 @@ temp-*
 *.tmp
 
 # Environment files
-.env
+# .env - Commented out to allow tracking of .env file
 .env.local
 .env.production
 .env.development
@@ -102,3 +102,7 @@ tests/artifacts/
 tests/results/
 playwright-report/
 test-results/
+playwright/.cache/
+test-results/
+playwright-report/
+downloads/

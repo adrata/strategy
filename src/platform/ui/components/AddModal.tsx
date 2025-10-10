@@ -171,21 +171,43 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         
         console.log('⌨️ [AddModal] Main submit keyboard shortcut triggered');
         
-        // Only submit if form is valid
-        if (formData.name?.trim()) {
+        // Validate form based on active section
+        let isValid = false;
+        let focusSelector = 'input[type="text"]:not([readonly]):not([disabled])';
+        
+        if (activeSection === 'leads' || activeSection === 'people') {
+          // For people/leads, check firstName AND lastName
+          isValid = !!(formData.firstName?.trim() && formData.lastName?.trim());
+          if (!isValid) {
+            console.log('⌨️ [AddModal] Form not valid - firstName or lastName is empty');
+            // Focus the first empty required field
+            if (!formData.firstName?.trim()) {
+              focusSelector = 'input[placeholder*="first name" i]';
+            } else if (!formData.lastName?.trim()) {
+              focusSelector = 'input[placeholder*="last name" i]';
+            }
+          }
+        } else {
+          // For other sections, check name field
+          isValid = !!formData.name?.trim();
+          if (!isValid) {
+            console.log('⌨️ [AddModal] Form not valid - name field is empty');
+          }
+        }
+        
+        if (isValid) {
           handleCreateRecord();
         } else {
-          console.log('⌨️ [AddModal] Main form not valid - name field is empty');
-          // Focus the name input
-          const nameInput = document.querySelector('input[type="text"]:not([readonly]):not([disabled])') as HTMLInputElement;
-          nameInput?.focus();
+          // Focus the appropriate input field
+          const inputToFocus = document.querySelector(focusSelector) as HTMLInputElement;
+          inputToFocus?.focus();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown, true); // Use capture phase
     return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [isAddModalOpen, showAddCompanyModal, formData.name, handleCreateRecord]);
+  }, [isAddModalOpen, showAddCompanyModal, formData.name, formData.firstName, formData.lastName, activeSection, handleCreateRecord]);
 
   const searchContacts = async (query: string) => {
     setIsSearchingContacts(true);
@@ -339,9 +361,23 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name?.trim()) {
-      alert("Please enter a name for the record");
-      return;
+    // DEBUG: Log the activeSection value to understand routing issue
+    console.log(`[ADD MODAL] DEBUG: activeSection = "${activeSection}"`);
+    console.log(`[ADD MODAL] DEBUG: formData =`, formData);
+
+    // Validate based on section type
+    if (activeSection === "leads" || activeSection === "people") {
+      // For people/leads, check firstName and lastName
+      if (!formData.firstName?.trim() || !formData.lastName?.trim()) {
+        alert("Please enter first name and last name");
+        return;
+      }
+    } else {
+      // For other sections (companies, opportunities, etc.), check name
+      if (!formData.name?.trim()) {
+        alert("Please enter a name for the record");
+        return;
+      }
     }
 
     try {

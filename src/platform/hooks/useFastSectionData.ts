@@ -189,10 +189,16 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       
       // console.log(`📡 [FAST SECTION DATA] API Response:`, result);
       
-      if (result.success && result.data) {
+      // Check if we got a successful response
+      if (!result) {
+        throw new Error('No response from API');
+      }
+      
+      if (result.success) {
         // Handle v1 API response format
-        const dataArray = Array.isArray(result.data) ? result.data : result.data.data || [];
-        const totalCount = result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount || dataArray.length;
+        // Note: result.data can be empty array for empty workspace, which is OK
+        const dataArray = result.data ? (Array.isArray(result.data) ? result.data : result.data.data || []) : [];
+        const totalCount = result.data ? (result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount || dataArray.length) : 0;
         
         // 🚀 PROGRESSIVE LOADING: Set initial data immediately
         setData(dataArray);
@@ -208,9 +214,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
             try {
               const fullResult = await authFetch(fullUrl);
               
-              if (fullResult.success && fullResult.data) {
-                const fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : fullResult.data.data || [];
-                const fullTotalCount = fullResult.data.totalCount || fullResult.data.count || fullResult.meta?.pagination?.totalCount || fullDataArray.length;
+              if (fullResult.success) {
+                const fullDataArray = fullResult.data ? (Array.isArray(fullResult.data) ? fullResult.data : fullResult.data.data || []) : [];
+                const fullTotalCount = fullResult.data ? (fullResult.data.totalCount || fullResult.data.count || fullResult.meta?.pagination?.totalCount || fullDataArray.length) : 0;
                 
                 // Update with full dataset
                 setData(fullDataArray);
@@ -241,23 +247,39 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         //   } : null
         // });
       } else {
-        throw new Error(result.error || 'Failed to load section data');
+        // API returned success: false or no data
+        const errorMsg = result.error || result.message || 'No data available';
+        console.warn(`⚠️ [FAST SECTION DATA] API returned error for ${section}:`, errorMsg);
+        throw new Error(errorMsg);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage);
+      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage, err);
       
       // Handle authentication errors specifically
-      if (errorMessage.includes('Authentication required') || errorMessage.includes('AUTH_REQUIRED')) {
+      if (errorMessage.includes('Authentication required') || errorMessage.includes('AUTH_REQUIRED') || errorMessage.includes('401')) {
         console.error(`🔐 [FAST SECTION DATA] Authentication failed for ${section}:`, errorMessage);
         setError('Authentication required. Please sign in again.');
         setData([]);
         setCount(0);
+        setLoading(false);
+        return;
+      }
+      
+      // Handle empty workspace (0 records is OK, not an error)
+      if (errorMessage.includes('No data available')) {
+        console.log(`📊 [FAST SECTION DATA] No data for ${section} (empty workspace)`);
+        setData([]);
+        setCount(0);
+        setError(null); // Clear error - empty state is not an error
+        globalLoadedSections.add(section);
+        globalSectionData.set(section, { data: [], count: 0, timestamp: Date.now() });
+        setLoading(false);
         return;
       }
       
       // Handle other errors
-      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage);
+      console.error(`❌ [FAST SECTION DATA] Unhandled error for ${section}:`, errorMessage);
       setError(errorMessage);
       setData([]);
       setCount(0);
