@@ -408,7 +408,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       id: user.id,
       email: user.email,
       name: user.name,
-      displayName: user.displayName || user.name,
+      displayName: user.name, // Use name as displayName since displayName column doesn't exist
       activeWorkspaceId: finalActiveWorkspaceId,
       workspaces: workspaces.map((uw) => ({
         id: uw.workspace?.id || "unknown",

@@ -217,7 +217,16 @@ async function handleLogin(credentials: any): Promise<any> {
   
   // Find user by email
   const user = await prisma.users.findFirst({
-    where: { email: credentials.email as string }
+    where: { email: credentials.email as string },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      name: true,
+      password: true,
+      isActive: true,
+      activeWorkspaceId: true,
+    }
   });
   
   if (!user) {
