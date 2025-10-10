@@ -186,67 +186,9 @@ export const PipelineView = React.memo(function PipelineView({
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
-  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
-  const getCurrentWorkspaceId = useCallback(async () => {
-    try {
-      // 1. First try to get from JWT token (most reliable)
-      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
-      if (session?.accessToken) {
-        try {
-          const jwt = await import('jsonwebtoken');
-          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.default.verify(session.accessToken, secret) as any;
-          if (decoded?.workspaceId) {
-            // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
-            return decoded.workspaceId;
-          }
-        } catch (error) {
-          console.warn('⚠️ [PIPELINE VIEW] Failed to decode JWT token:', error);
-        }
-      }
-      
-      // 2. Fallback to acquisitionData
-      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
-        return acquisitionData.auth.authUser.activeWorkspaceId;
-      }
-      
-      // 3. Fallback to user activeWorkspaceId
-      if (user?.activeWorkspaceId) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
-        return user.activeWorkspaceId;
-      }
-      
-      // 4. Last resort: first workspace
-      if (user?.workspaces?.[0]?.id) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
-        return user.workspaces[0].id;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('❌ [PIPELINE VIEW] Error getting workspace ID:', error);
-      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
-    }
-  }, [acquisitionData, user]);
-
-  // 🆕 CRITICAL FIX: Update workspace ID when it changes
-  useEffect(() => {
-    const updateWorkspaceId = async () => {
-      const newWorkspaceId = await getCurrentWorkspaceId();
-      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
-        // console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
-        setCurrentWorkspaceId(newWorkspaceId);
-        setCurrentUserId(user?.id || null);
-      }
-    };
-    
-    updateWorkspaceId();
-  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
+  // 🆕 CRITICAL FIX: Use workspace ID directly from user object (synchronous)
+  const currentWorkspaceId = user?.activeWorkspaceId || null;
+  const currentUserId = user?.id || null;
 
   const workspaceId = currentWorkspaceId;
   
@@ -271,7 +213,7 @@ export const PipelineView = React.memo(function PipelineView({
         return user?.id;
     }
   };
-  const userId = getUserIdForWorkspace(workspaceId || '');
+  const userId = currentUserId;
   
   // 🚀 PERFORMANCE: Use only the data hook needed for the current section
   // This eliminates 6 unnecessary API calls that were firing simultaneously
@@ -300,12 +242,41 @@ export const PipelineView = React.memo(function PipelineView({
   // This eliminates duplicate API calls and uses the optimized data loading
   const getSectionData = () => {
     // Use fastSectionData for all sections - it handles the API calls efficiently
-    return {
-      data: fastSectionData.data || pipelineData.data || [],
-      loading: fastSectionData.loading || pipelineData.loading,
-      error: fastSectionData.error || pipelineData.error,
-      count: fastSectionData.count || 0
-    };
+    // Prioritize fastSectionData if it has data, otherwise fall back to pipelineData
+    const hasFastData = fastSectionData.data && fastSectionData.data.length > 0;
+    const hasPipelineData = pipelineData.data && pipelineData.data.length > 0;
+    
+    const data = hasFastData ? fastSectionData.data : (hasPipelineData ? pipelineData.data : []);
+    const loading = fastSectionData.loading || pipelineData.loading;
+    const error = hasFastData ? null : (fastSectionData.error || pipelineData.error);
+    const count = hasFastData ? fastSectionData.count : (hasPipelineData ? pipelineData.count : 0);
+    
+    console.log(`🔍 [PIPELINE VIEW] getSectionData for ${section}:`, {
+      fastSectionData: {
+        dataLength: fastSectionData.data?.length || 0,
+        loading: fastSectionData.loading,
+        error: fastSectionData.error,
+        count: fastSectionData.count
+      },
+      pipelineData: {
+        dataLength: pipelineData.data?.length || 0,
+        loading: pipelineData.loading,
+        error: pipelineData.error
+      },
+      finalData: {
+        dataLength: data.length,
+        loading,
+        error,
+        count,
+        firstRecord: data[0] ? {
+          id: data[0].id,
+          name: data[0].fullName || data[0].name,
+          status: data[0].status
+        } : null
+      }
+    });
+    
+    return { data, loading, error, count };
   };
 
   const sectionData = getSectionData();
@@ -346,7 +317,7 @@ export const PipelineView = React.memo(function PipelineView({
       // Pre-load speedrun data using v1 API
       const preloadSpeedrunData = async () => {
         try {
-          await fetch(`/api/v1/people?limit=50`);
+          await fetch(`/api/v1/people?limit=50&sortBy=rank&sortOrder=asc`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }
@@ -655,6 +626,17 @@ export const PipelineView = React.memo(function PipelineView({
   
   // Calculate isEmpty based on actual data
   const isEmpty = !hasData;
+  
+  console.log(`🔍 [PIPELINE VIEW] Data state for ${section}:`, {
+    hasData,
+    dataLength: Array.isArray(finalData) ? finalData.length : 0,
+    isEmpty,
+    finalLoading,
+    finalError,
+    workspaceId,
+    userId,
+    willShowEmptyState: !hasData && !finalError && workspaceId && userId
+  });
 
   // CRITICAL DEBUG: Log the final data state with source information
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
@@ -672,7 +654,31 @@ export const PipelineView = React.memo(function PipelineView({
   const filteredData = React.useMemo(() => {
     // Use finalData from v1 API hooks
     const dataToFilter = Array.isArray(finalData) ? finalData : [];
-    if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
+    
+    console.log(`🔍 [FILTERING] Starting filter for ${section}:`, {
+      originalDataLength: dataToFilter.length,
+      firstRecord: dataToFilter[0] ? {
+        id: dataToFilter[0].id,
+        name: dataToFilter[0].fullName || dataToFilter[0].name,
+        status: dataToFilter[0].status
+      } : null,
+      filters: {
+        searchQuery,
+        verticalFilter,
+        statusFilter,
+        priorityFilter,
+        revenueFilter,
+        lastContactedFilter,
+        timezoneFilter,
+        companySizeFilter,
+        locationFilter
+      }
+    });
+    
+    if (!dataToFilter || dataToFilter.length === 0) {
+      console.log(`🔍 [FILTERING] No data to filter for ${section}`);
+      return dataToFilter;
+    }
     
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = dataToFilter;
@@ -865,6 +871,16 @@ export const PipelineView = React.memo(function PipelineView({
     }
 
     // Note: Removed rank limiting logic - user wants to see all records
+
+    console.log(`🔍 [FILTERING] Filter result for ${section}:`, {
+      originalLength: dataToFilter.length,
+      filteredLength: filtered.length,
+      firstFilteredRecord: filtered[0] ? {
+        id: filtered[0].id,
+        name: filtered[0].fullName || filtered[0].name,
+        status: filtered[0].status
+      } : null
+    });
 
     return filtered;
   }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);

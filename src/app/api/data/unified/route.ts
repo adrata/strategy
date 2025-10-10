@@ -4145,17 +4145,32 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       console.log(`🏢 [SPEEDRUN] Loaded ${rankedCompanies.length} ranked companies`);
       
       // Step 2: Get people for each company using hierarchical ranking (1-4000 per company)
+      // Also include people without company associations (companyId: null or companyRank: 0)
       const speedrunPeople = await prisma.people.findMany({
         where: {
           workspaceId,
           deletedAt: null,
-          companyId: {
-            in: rankedCompanies.map(c => c.id)
-          },
-          companyRank: { gte: 1, lte: 4000 } // Only people ranked 1-4000 within company
+          OR: [
+            // People with company associations and proper ranking
+            {
+              companyId: {
+                in: rankedCompanies.map(c => c.id)
+              },
+              companyRank: { gte: 1, lte: 4000 }
+            },
+            // People without company associations (fallback for standalone people)
+            {
+              OR: [
+                { companyId: null },
+                { companyRank: 0 },
+                { companyRank: null }
+              ]
+            }
+          ]
         },
         orderBy: [
-          { company: { globalRank: 'asc' } }, // First by company globalRank (1-400)
+          { globalRank: 'asc' }, // First by person globalRank (fallback for people without companies)
+          { company: { globalRank: 'asc' } }, // Then by company globalRank (1-400)
           { companyRank: 'asc' }, // Then by person companyRank within company (1-4000)
           { updatedAt: 'desc' }
         ],

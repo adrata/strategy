@@ -102,15 +102,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     //   actualUserId: userId
     // });
     
-    if (!workspaceId || !userId || authLoading || workspaceLoading) {
-      // console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
-      //   workspaceId: !!workspaceId,
-      //   userId: !!userId,
-      //   authLoading,
-      //   workspaceLoading,
-      //   actualWorkspaceId: workspaceId,
-      //   actualUserId: userId
-      // });
+    // Block fetching with demo workspace ID
+    const isDemoWorkspace = workspaceId === '01K1VBYV8ETM2RCQA4GNN9EG72';
+    
+    if (!workspaceId || !userId || authLoading || workspaceLoading || isDemoWorkspace) {
+      console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
+        workspaceId: !!workspaceId,
+        userId: !!userId,
+        authLoading,
+        workspaceLoading,
+        isDemoWorkspace,
+        actualWorkspaceId: workspaceId,
+        actualUserId: userId
+      });
       setLoading(false);
       return;
     }
@@ -187,7 +191,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       
       const result = await authFetch(url);
       
-      // console.log(`📡 [FAST SECTION DATA] API Response:`, result);
+      console.log(`📡 [FAST SECTION DATA] API Response for ${section}:`, {
+        success: result?.success,
+        dataLength: result?.data ? (Array.isArray(result.data) ? result.data.length : result.data.data?.length || 0) : 0,
+        data: result?.data ? (Array.isArray(result.data) ? result.data.slice(0, 2) : result.data.data?.slice(0, 2) || []) : [],
+        totalCount: result?.data ? (result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount) : 0
+      });
       
       // Check if we got a successful response
       if (!result) {
@@ -196,11 +205,20 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       
       if (result.success) {
         // Handle v1 API response format
-        // Note: result.data can be empty array for empty workspace, which is OK
-        const dataArray = result.data ? (Array.isArray(result.data) ? result.data : result.data.data || []) : [];
-        const totalCount = result.data ? (result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount || dataArray.length) : 0;
+        // v1 API returns: { success: true, data: [...records...], meta: { pagination: { totalCount: X } } }
+        const dataArray = Array.isArray(result.data) ? result.data : [];
+        const totalCount = result.meta?.pagination?.totalCount || dataArray.length;
         
         // 🚀 PROGRESSIVE LOADING: Set initial data immediately
+        console.log(`✅ [FAST SECTION DATA] Setting data for ${section}:`, {
+          dataArrayLength: dataArray.length,
+          totalCount,
+          firstRecord: dataArray[0] ? {
+            id: dataArray[0].id,
+            name: dataArray[0].fullName || dataArray[0].name,
+            status: dataArray[0].status
+          } : null
+        });
         setData(dataArray);
         setCount(totalCount);
         setLoading(false); // Show initial data immediately
@@ -215,8 +233,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
               const fullResult = await authFetch(fullUrl);
               
               if (fullResult.success) {
-                const fullDataArray = fullResult.data ? (Array.isArray(fullResult.data) ? fullResult.data : fullResult.data.data || []) : [];
-                const fullTotalCount = fullResult.data ? (fullResult.data.totalCount || fullResult.data.count || fullResult.meta?.pagination?.totalCount || fullDataArray.length) : 0;
+                const fullDataArray = Array.isArray(fullResult.data) ? fullResult.data : [];
+                const fullTotalCount = fullResult.meta?.pagination?.totalCount || fullDataArray.length;
                 
                 // Update with full dataset
                 setData(fullDataArray);
@@ -293,7 +311,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     if (workspaceId && userId && !authLoading && !workspaceLoading && isAuthenticated && !globalLoadedSections.has(section)) {
       fetchSectionData();
     }
-  }, [section, workspaceId, userId, authLoading, workspaceLoading, isAuthenticated]); // Removed fetchSectionData to prevent infinite loops
+  }, [section, workspaceId, userId, authLoading, workspaceLoading, isAuthenticated, fetchSectionData]);
 
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {

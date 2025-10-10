@@ -47,15 +47,17 @@ export async function GET(request: NextRequest) {
     
     const offset = (page - 1) * limit;
     
-    // Check cache first
+    // Check cache first (but skip cache for demo workspace to avoid bad data)
+    const isDemoWorkspace = context.workspaceId === '01K1VBYV8ETM2RCQA4GNN9EG72';
     const cacheKey = `people-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL && !isDemoWorkspace) {
       return NextResponse.json(cached.data);
     }
 
     // Enhanced where clause for pipeline management
+    console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId);
     const where: any = {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
@@ -174,11 +176,13 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Cache the result
-    responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    // Cache the result (but not for demo workspace)
+    if (!isDemoWorkspace) {
+      responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    }
     
     
-    return NextResponse.json(result);
+    return result;
 
   } catch (error) {
     console.error('❌ [V1 PEOPLE API] Error:', error);

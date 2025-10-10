@@ -21,13 +21,13 @@ function decodeJWT(token: string): any | null {
     const decoded = jwt.verify(token, secret);
     
     // Check if token is expired
-    if (decoded.exp && decoded.exp < Date.now() / 1000) {
+    if (decoded && typeof decoded === 'object' && 'exp' in decoded && decoded.exp && decoded.exp < Date.now() / 1000) {
       return null;
     }
     
     return decoded;
   } catch (error) {
-    console.warn("⚠️ JWT verification failed:", error.message);
+    console.warn("⚠️ JWT verification failed:", error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
 }
@@ -46,15 +46,33 @@ export async function getUnifiedAuthUser(
       const cookies = cookieHeader.split(";").reduce(
         (acc, cookie) => {
           const [key, value] = cookie.trim().split("=");
-          if (key && value) acc[key] = decodeURIComponent(value);
+          if (key && value) {
+            try {
+              acc[key] = decodeURIComponent(value);
+            } catch (e) {
+              acc[key] = value; // Use raw value if decoding fails
+            }
+          }
           return acc;
         },
         {} as Record<string, string>,
       );
 
-      const token = cookies["auth-token"];
+      // Try different cookie names
+      const token = cookies["auth-token"] || cookies["adrata_unified_session"];
       if (token) {
-        const decoded = decodeJWT(token);
+        // If it's the unified session cookie, it might be JSON encoded
+        let actualToken = token;
+        try {
+          const sessionData = JSON.parse(token);
+          if (sessionData.accessToken) {
+            actualToken = sessionData.accessToken;
+          }
+        } catch (e) {
+          // Not JSON, use as-is
+        }
+        
+        const decoded = decodeJWT(actualToken);
         if (decoded) {
           logger.auth.success(`Valid token for: ${decoded.email}`);
           return {

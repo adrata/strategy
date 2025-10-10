@@ -112,11 +112,12 @@ export async function GET(request: NextRequest) {
       sellersCount,
       speedrunCount
     ] = await Promise.all([
-      // Leads count - count from people table (same as unified API)
+      // Leads count - count from people table with LEAD status
       prisma.people.count({
         where: {
           workspaceId,
           deletedAt: null,
+          status: 'LEAD',
           OR: [
             { assignedUserId: userId },
             { assignedUserId: null }
@@ -124,19 +125,21 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Prospects count
-      prisma.prospects.count({
+      // Prospects count - count from people table with PROSPECT status
+      prisma.people.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          status: 'PROSPECT'
         }
       }),
       
-      // Opportunities count
-      prisma.opportunities.count({
+      // Opportunities count - count from companies table with OPPORTUNITY status
+      prisma.companies.count({
         where: {
           workspaceId,
-          deletedAt: null
+          deletedAt: null,
+          status: 'OPPORTUNITY'
         }
       }),
       
@@ -152,7 +155,7 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // People count
+      // People count - total people count
       prisma.people.count({
         where: {
           workspaceId,
@@ -160,23 +163,23 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Clients count (with fallback)
+      // Clients count - count from companies table with CLIENT status
       prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
           status: 'CLIENT'
         }
-      }).catch(() => 0),
+      }),
       
-      // Partners count (with fallback)
+      // Partners count - count from companies table with OPPORTUNITY status (same as opportunities)
       prisma.companies.count({
         where: {
           workspaceId,
           deletedAt: null,
           status: 'OPPORTUNITY'
         }
-      }).catch(() => 0),
+      }),
       
       // Sellers count - count from both sellers table AND people table with role 'seller'
       Promise.all([
@@ -191,35 +194,19 @@ export async function GET(request: NextRequest) {
         Promise.resolve(0)
       ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
-      // Speedrun count - count actual speedrun items (limited to 30 for performance)
+      // Speedrun count - count all people (same logic as speedrun section)
       (async () => {
         try {
-          // First try to count speedrun-tagged leads
-          const speedrunLeadsCount = await prisma.people.count({
+          // Count all people in workspace (same as speedrun section logic)
+          const allPeopleCount = await prisma.people.count({
             where: {
               workspaceId,
-              deletedAt: null,
-              status: 'LEAD',
-              tags: { has: 'speedrun' }
+              deletedAt: null
             }
           });
           
-          // If no speedrun leads found, count people with company relationships but limit to 30
-          if (speedrunLeadsCount === 0) {
-            console.log(`🔄 [COUNTS API] No speedrun leads found, counting people for speedrun (limited to 30) for workspace: ${workspaceId}`);
-            const peopleCount = await prisma.people.count({
-              where: {
-                workspaceId,
-                deletedAt: null,
-                companyId: { not: null }
-              }
-            });
-            // Return the actual count used in speedrun (limited to 30)
-            return Math.min(peopleCount, 30);
-          }
-          
-          // Return the actual count used in speedrun (limited to 30)
-          return Math.min(speedrunLeadsCount, 30);
+          // Return the actual count used in speedrun (limited to 50 to match section API)
+          return Math.min(allPeopleCount, 50);
         } catch (error) {
           console.error('❌ [COUNTS API] Error counting speedrun data:', error);
           return 0;

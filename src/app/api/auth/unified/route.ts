@@ -45,7 +45,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/database/prisma-client';
+import { prisma } from '@/platform/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 

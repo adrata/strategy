@@ -847,12 +847,11 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // Count people for speedrun (top 50 people)
+          // Count all people for speedrun (same logic as speedrun data fetch)
           totalCount = await prisma.people.count({
             where: {
               workspaceId,
-              deletedAt: null,
-              companyId: { not: null }
+              deletedAt: null
             }
           });
           break;
