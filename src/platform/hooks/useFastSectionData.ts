@@ -68,7 +68,7 @@ interface UseFastSectionDataReturn {
  * Fast section data hook with smart caching
  */
 export function useFastSectionData(section: string, limit: number = 100): UseFastSectionDataReturn {
-  // console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
+  console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
   const { user: authUser, isLoading: authLoading, isAuthenticated } = useUnifiedAuth();
   const { workspaceId, userId, isLoading: workspaceLoading, error: workspaceError } = useWorkspaceContext();
@@ -90,17 +90,17 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
   });
 
   const fetchSectionData = useCallback(async () => {
-    // console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
-    //   workspaceId: !!workspaceId,
-    //   userId: !!userId,
-    //   authLoading,
-    //   hasWorkspaceId: !!workspaceId,
-    //   hasUserId: !!userId,
-    //   alreadyLoaded: globalLoadedSections.has(section),
-    //   loadedSections: Array.from(globalLoadedSections),
-    //   actualWorkspaceId: workspaceId,
-    //   actualUserId: userId
-    // });
+    console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
+      workspaceId: !!workspaceId,
+      userId: !!userId,
+      authLoading,
+      hasWorkspaceId: !!workspaceId,
+      hasUserId: !!userId,
+      alreadyLoaded: globalLoadedSections.has(section),
+      loadedSections: Array.from(globalLoadedSections),
+      actualWorkspaceId: workspaceId,
+      actualUserId: userId
+    });
     
     if (!workspaceId || !userId || authLoading || workspaceLoading) {
       console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
@@ -125,18 +125,11 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
       return;
     }
 
-    // Skip if we already loaded this section AND have valid data
+    // Skip if we already loaded this section
     if (globalLoadedSections.has(section)) {
-      const cachedData = globalSectionData.get(section);
-      if (cachedData && cachedData.data.length > 0) {
-        // Valid cache exists, skip fetch
-        // console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded with valid data`);
-        setLoading(false);
-        return;
-      }
-      // Cache is empty or invalid, continue to fetch
-      console.log(`🔄 [FAST SECTION DATA] Clearing invalid cache for section ${section} - data length: ${cachedData?.data.length || 0}`);
-      globalLoadedSections.delete(section);
+      console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+      setLoading(false);
+      return;
     }
 
     // Only set loading to true if we don't have data yet
@@ -198,7 +191,8 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
         success: result?.success,
         dataLength: result?.data ? (Array.isArray(result.data) ? result.data.length : result.data.data?.length || 0) : 0,
         data: result?.data ? (Array.isArray(result.data) ? result.data.slice(0, 2) : result.data.data?.slice(0, 2) || []) : [],
-        totalCount: result?.data ? (result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount) : 0
+        totalCount: result?.data ? (result.data.totalCount || result.data.count || result.meta?.pagination?.totalCount) : 0,
+        fullResponse: result
       });
       
       // Check if we got a successful response
@@ -329,6 +323,15 @@ export function useFastSectionData(section: string, limit: number = 100): UseFas
       setLoading(false);
     }
   }, [section, limit, workspaceId, userId, authLoading, workspaceLoading, isAuthenticated]);
+
+  // 🚨 CRITICAL FIX: Clear cache for companies/opportunities BEFORE fetch check
+  useEffect(() => {
+    if (workspaceId && userId && (section === 'companies' || section === 'opportunities')) {
+      console.log(`🔄 [FAST SECTION DATA] Pre-clearing cache for ${section} to ensure fresh fetch`);
+      globalLoadedSections.delete(section);
+      globalSectionData.delete(section);
+    }
+  }, [section, workspaceId, userId]);
 
   // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
   useEffect(() => {

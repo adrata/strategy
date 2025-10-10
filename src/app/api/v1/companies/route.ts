@@ -53,20 +53,39 @@ export async function GET(request: NextRequest) {
     }
 
     // Enhanced where clause for pipeline management
+    console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${context.workspaceId}, user: ${context.userId}`);
     const where: any = {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
+      OR: [
+        { assignedUserId: context.userId },
+        { assignedUserId: null }
+      ]
     };
+    console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { legalName: { contains: search, mode: 'insensitive' } },
-        { tradingName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { website: { contains: search, mode: 'insensitive' } },
-        { domain: { contains: search, mode: 'insensitive' } },
+      // Combine search with assignment filter
+      where.AND = [
+        {
+          OR: [
+            { assignedUserId: context.userId },
+            { assignedUserId: null }
+          ]
+        },
+        {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { legalName: { contains: search, mode: 'insensitive' } },
+            { tradingName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { website: { contains: search, mode: 'insensitive' } },
+            { domain: { contains: search, mode: 'insensitive' } },
+          ]
+        }
       ];
+      // Remove the top-level OR since we're using AND now
+      delete where.OR;
     }
 
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE)
@@ -102,6 +121,7 @@ export async function GET(request: NextRequest) {
       result = { success: true, data: counts };
     } else {
       // Optimized query with Prisma ORM for reliability
+      console.log(`🔍 [V1 COMPANIES API] Executing database query with where:`, where);
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,
@@ -127,6 +147,7 @@ export async function GET(request: NextRequest) {
         }),
         prisma.companies.count({ where }),
       ]);
+      console.log(`🔍 [V1 COMPANIES API] Database query results:`, { companiesCount: companies.length, totalCount });
 
       result = createSuccessResponse(companies, {
         pagination: {
@@ -145,7 +166,7 @@ export async function GET(request: NextRequest) {
     responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
     
     
-    return NextResponse.json(result);
+    return result;
 
   } catch (error) {
     console.error('❌ [V1 COMPANIES API] Error:', error);
