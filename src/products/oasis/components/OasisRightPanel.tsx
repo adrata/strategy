@@ -131,7 +131,7 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
   };
 
   return (
-    <div className="w-80 h-full bg-white border-l border-gray-200 flex flex-col">
+    <div className="w-full h-full bg-white border-l border-gray-200 flex flex-col">
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">

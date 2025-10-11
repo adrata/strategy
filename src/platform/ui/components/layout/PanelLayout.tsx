@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 
@@ -26,11 +26,17 @@ export function PanelLayout({
   onToggleLeftPanel?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rightPanelRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [hovering, setHovering] = useState(false);
   
+  // Performance-optimized panel width management
+  const rightPanelWidthRef = useRef<number>(0.35); // Store width in ref (no re-renders)
+  const rafIdRef = useRef<number | null>(null);
+  const containerDimensionsRef = useRef<{ width: number; leftPanelWidth: number } | null>(null);
+  
   // Fix hydration issue: always start with the same value on server and client  
-  const [rightPanelFlex, setRightPanelFlex] = useState(0.35); // More balanced ratio for better layout
+  const [rightPanelFlex, setRightPanelFlex] = useState(0.35); // Only for initial render and localStorage
   const [isHydrated, setIsHydrated] = useState(false);
 
   const router = useRouter();
@@ -60,66 +66,145 @@ export function PanelLayout({
   const dividerLineColor =
     dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)"; // Blue when dragging, gray when hovering
 
-  // Mouse event handlers for resizing - improved for better cursor tracking
-  const startDrag = (e: React.MouseEvent) => {
+  // Cache container dimensions to avoid repeated getBoundingClientRect calls
+  const updateContainerDimensions = useCallback(() => {
+    if (!containerRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
+    containerDimensionsRef.current = {
+      width: containerRect.width,
+      leftPanelWidth
+    };
+  }, [isLeftPanelVisible]);
+
+  // High-performance drag handlers using requestAnimationFrame and CSS transforms
+  const startDrag = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Cache container dimensions once at start
+    updateContainerDimensions();
+    
+    // Store initial mouse position and panel width for cursor tracking
+    const startMouseX = e.clientX;
+    const startPanelWidth = rightPanelWidthRef.current;
+    
+    // Calculate the offset of the mouse from the divider position
+    const containerRect = containerRef.current!.getBoundingClientRect();
+    const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
+    const availableWidth = containerRect.width - leftPanelWidth;
+    const currentRightPanelWidth = availableWidth * (startPanelWidth / (1 + startPanelWidth));
+    const dividerX = containerRect.left + leftPanelWidth + (availableWidth - currentRightPanelWidth);
+    const mouseOffsetFromDivider = startMouseX - dividerX;
+    
     setDragging(true);
     document.body.classList.add("dragging-panel-divider");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
     
-    // Set cursor immediately for better feedback
-    document.body['style']['cursor'] = "col-resize";
-    document.body['style']['userSelect'] = "none";
-  };
+    // Disable pointer events on panel content during drag for better performance
+    if (rightPanelRef.current) {
+      rightPanelRef.current.style.pointerEvents = "none";
+    }
+    
+    // Store drag start data for cursor tracking
+    const dragStartData = { 
+      startMouseX, 
+      startPanelWidth, 
+      mouseOffsetFromDivider,
+      containerRect,
+      leftPanelWidth,
+      availableWidth
+    };
+    (window as any).__panelDragStart = dragStartData;
+  }, [updateContainerDimensions, isLeftPanelVisible]);
+
+  const endDrag = useCallback(() => {
+    setDragging(false);
+    document.body.classList.remove("dragging-panel-divider");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    
+    // Re-enable pointer events
+    if (rightPanelRef.current) {
+      rightPanelRef.current.style.pointerEvents = "";
+    }
+    
+    // Cancel any pending animation frame
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+    
+    // Clean up drag start data
+    delete (window as any).__panelDragStart;
+    
+    // Save final position to localStorage
+    if (isHydrated && typeof window !== "undefined") {
+      localStorage.setItem("adrata-panel-ratio", rightPanelWidthRef.current.toString());
+    }
+  }, [isHydrated]);
 
   useEffect(() => {
     if (!dragging) {
-      document.body.classList.remove("dragging-panel-divider");
-      document.body['style']['cursor'] = "";
-      document.body['style']['userSelect'] = "";
+      endDrag();
       return;
     }
 
     const onMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      
       e.preventDefault();
       
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
-      const availableWidth = containerRect.width - leftPanelWidth;
+      // Cancel previous frame if not processed yet
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
       
-      // Precise mouse tracking - account for exact cursor position
-      const mouseX = e.clientX - containerRect.left - leftPanelWidth;
-      const mouseRatio = Math.max(0, Math.min(1, mouseX / availableWidth));
-      
-      // Calculate right panel flex more smoothly
-      const rightPanelRatio = Math.max(0.1, Math.min(0.9, 1 - mouseRatio));
-      const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
-      
-      setRightPanelFlex(newRightFlex);
+      // Schedule update for next frame (60fps max)
+      rafIdRef.current = requestAnimationFrame(() => {
+        const dragStartData = (window as any).__panelDragStart;
+        if (!dragStartData) return;
+        
+        // Use cached container data from drag start
+        const { containerRect, leftPanelWidth, availableWidth, mouseOffsetFromDivider } = dragStartData;
+        
+        // Calculate new divider position based on mouse position minus the offset
+        const newDividerX = e.clientX - mouseOffsetFromDivider;
+        const newDividerXRelative = newDividerX - containerRect.left - leftPanelWidth;
+        
+        // Calculate mouse ratio based on new divider position
+        const mouseRatio = Math.max(0, Math.min(1, newDividerXRelative / availableWidth));
+        
+        // Calculate right panel flex more smoothly
+        const rightPanelRatio = Math.max(0.1, Math.min(0.9, 1 - mouseRatio));
+        const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
+        
+        // Update ref (no re-render)
+        rightPanelWidthRef.current = newRightFlex;
+        
+        // Apply via CSS transform for GPU acceleration
+        if (rightPanelRef.current) {
+          const currentFlex = rightPanelWidthRef.current;
+          rightPanelRef.current.style.flex = currentFlex.toString();
+        }
+      });
     };
 
     const onUp = (e: MouseEvent) => {
       e.preventDefault();
-      setDragging(false);
-      document.body.classList.remove("dragging-panel-divider");
-      document.body['style']['cursor'] = "";
-      document.body['style']['userSelect'] = "";
+      endDrag();
     };
 
-    // Use capture phase for better event handling
-    document.addEventListener("mousemove", onMove, { capture: true });
-    document.addEventListener("mouseup", onUp, { capture: true });
+    // Use passive listeners for better performance
+    document.addEventListener("mousemove", onMove, { capture: true, passive: false });
+    document.addEventListener("mouseup", onUp, { capture: true, passive: false });
     
     return () => {
       document.removeEventListener("mousemove", onMove, { capture: true });
       document.removeEventListener("mouseup", onUp, { capture: true });
-      document.body.classList.remove("dragging-panel-divider");
-      document.body['style']['cursor'] = "";
-      document.body['style']['userSelect'] = "";
+      endDrag();
     };
-  }, [dragging, isLeftPanelVisible]);
+  }, [dragging, endDrag]);
 
   // Global keyboard shortcuts (zoom handled by ZoomProvider)
   useEffect(() => {
@@ -259,7 +344,14 @@ export function PanelLayout({
                 pointerEvents: "auto",
               }}
               onMouseDown={startDrag}
-              onDoubleClick={() => setRightPanelFlex(0.35)} // Reset to default ratio on double-click
+              onDoubleClick={() => {
+                const defaultFlex = 0.35;
+                rightPanelWidthRef.current = defaultFlex;
+                setRightPanelFlex(defaultFlex);
+                if (rightPanelRef.current) {
+                  rightPanelRef.current.style.flex = defaultFlex.toString();
+                }
+              }} // Reset to default ratio on double-click
               onMouseEnter={() => {
                 setHovering(true);
                 // Immediate cursor feedback
@@ -287,12 +379,14 @@ export function PanelLayout({
         {/* Right Panel */}
         {isRightPanelVisible && (
           <div
+            ref={rightPanelRef}
             style={{
               flex: rightPanelFlex,
               minWidth: 0,
               height: "100%",
               overflow: "hidden",
               background: "var(--background)",
+              willChange: dragging ? "flex" : "auto", // GPU acceleration during drag
             }}
             className="flex flex-col h-full"
           >

@@ -115,15 +115,19 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
 
   return (
     <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-[var(--border)]">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <span className="text-blue-600 font-bold text-sm">T</span>
-          </div>
-          <div>
-            <h2 className="font-semibold text-[var(--foreground)] text-sm">Tower</h2>
-            <p className="text-xs text-[var(--muted-foreground)]">System Monitoring</p>
+      {/* Fixed Header Section */}
+      <div className="flex-shrink-0 pt-0 pr-2 pl-2">
+        {/* Header - matching Speedrun style */}
+        <div className="mx-2 mt-4 mb-2">
+          {/* Company Icon */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
+              <span className="text-lg font-bold text-black">T</span>
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-[var(--foreground)]">Tower</h2>
+              <p className="text-xs text-[var(--muted)]">System Monitoring</p>
+            </div>
           </div>
         </div>
       </div>
@@ -153,11 +157,26 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
         ))}
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-[var(--border)]">
-        <div className="text-xs text-[var(--muted-foreground)] text-center">
-          Last updated: {new Date().toLocaleTimeString()}
-        </div>
+      {/* Fixed Bottom Section - Profile Button */}
+      <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
+        <button
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          title="Profile"
+        >
+          <div className="w-8 h-8 bg-gray-200 rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-gray-700">
+              {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </span>
+          </div>
+          <div className="flex-1 text-left">
+            <div className="text-sm font-medium text-[var(--foreground)]">
+              {authUser?.name || 'User'}
+            </div>
+            <div className="text-xs text-gray-400">
+              {acquisitionData?.auth?.authUser?.activeWorkspaceName || 'Workspace'}
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );
