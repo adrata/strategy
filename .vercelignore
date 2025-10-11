@@ -1,6 +1,8 @@
-# Exclude pipeline backup files from Vercel build
+# Exclude pipeline backup files from Vercel build (466MB of backup files)
 src/platform/pipelines/outputs/recovery/
 src/platform/pipelines/outputs/backup/
+
+# Exclude large JSON backup files specifically
 src/platform/pipelines/outputs/*.json
 
 # Exclude test files and temporary data
