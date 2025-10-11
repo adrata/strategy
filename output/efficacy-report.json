@@ -1,0 +1,69 @@
+{
+  "summary": {
+    "totalCompanies": 1,
+    "totalCFOs": 1,
+    "totalCROs": 1,
+    "totalEmails": 0,
+    "totalPhones": 0,
+    "processingTime": 75878,
+    "creditsUsed": 0
+  },
+  "discoverySources": {
+    "cfoSources": {
+      "not_found": 1
+    },
+    "croSources": {
+      "not_found": 1
+    },
+    "emailSources": {},
+    "phoneSources": {}
+  },
+  "companyBreakdown": [
+    {
+      "companyName": "microsoft",
+      "cfo": {
+        "found": true,
+        "name": "Amy Hood",
+        "source": "not_found",
+        "tier": 0,
+        "email": {
+          "found": false,
+          "source": "not_found",
+          "confidence": 0
+        },
+        "phone": {
+          "found": false,
+          "source": "not_found",
+          "confidence": 0
+        },
+        "employmentStatus": {
+          "isCurrent": true,
+          "confidence": 50
+        }
+      },
+      "cro": {
+        "found": true,
+        "name": "Judson Althoff",
+        "source": "not_found",
+        "tier": 0,
+        "email": {
+          "found": false,
+          "source": "not_found",
+          "confidence": 0
+        },
+        "phone": {
+          "found": false,
+          "source": "not_found",
+          "confidence": 0
+        },
+        "employmentStatus": {
+          "isCurrent": true,
+          "confidence": 50
+        }
+      },
+      "executionTime": 75878,
+      "recordsWritten": 2,
+      "creditsUsed": 0
+    }
+  ]
+}

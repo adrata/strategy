@@ -334,6 +334,37 @@ export class GlobalWaterfallEngine {
       enabled: true,
       lastPerformanceUpdate: new Date(),
     });
+
+    // People Data Labs (PDL) - Professional data specialist (NEW)
+    this.registerProvider({
+      id: "pdl",
+      name: "People Data Labs",
+      type: "social",
+      regions: ["GLOBAL"],
+      dataTypes: [
+        "professional_profiles",
+        "work_history",
+        "education",
+        "skills",
+        "contact_info",
+        "social_profiles"
+      ],
+      pricing: { model: "per_success", cost: 0.05, currency: "USD" },
+      qualityMetrics: {
+        accuracy: 90,
+        coverage: 85,
+        freshness: 1,
+        deliverability: 85,
+      },
+      rateLimit: { requestsPerMinute: 60, requestsPerDay: 10000 },
+      apiConfig: {
+        baseUrl: "https://api.peopledatalabs.com/v5",
+        authType: "api_key",
+        apiKey: process['env']['PDL_API_KEY'] || "",
+      },
+      enabled: !!process['env']['PDL_API_KEY'],
+      lastPerformanceUpdate: new Date(),
+    });
   }
 
   private registerProvider(provider: DataProvider) {
