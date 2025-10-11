@@ -157,14 +157,34 @@ export class ThemeApplier2025 {
       '--high-contrast-accent': colors.highContrastAccent,
     };
 
-    // Apply variables to document root
+    // Apply variables to document root with Safari compatibility
     Object.entries(themeVars).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
+      try {
+        root.style.setProperty(key, value);
+      } catch (error) {
+        // Fallback for Safari readonly property issues
+        console.warn(`🎨 [SAFARI COMPAT] Could not set CSS property ${key}, using fallback`);
+        try {
+          root.setAttribute(`data-${key.replace('--', '')}`, value);
+        } catch (fallbackError) {
+          console.error(`🎨 [SAFARI COMPAT] Failed to set fallback for ${key}:`, fallbackError);
+        }
+      }
     });
 
-    // Also apply to body for immediate effect
+    // Also apply to body for immediate effect with Safari compatibility
     Object.entries(themeVars).forEach(([key, value]) => {
-      document.body.style.setProperty(key, value);
+      try {
+        document.body.style.setProperty(key, value);
+      } catch (error) {
+        // Fallback for Safari readonly property issues
+        console.warn(`🎨 [SAFARI COMPAT] Could not set body CSS property ${key}, using fallback`);
+        try {
+          document.body.setAttribute(`data-${key.replace('--', '')}`, value);
+        } catch (fallbackError) {
+          console.error(`🎨 [SAFARI COMPAT] Failed to set body fallback for ${key}:`, fallbackError);
+        }
+      }
     });
   }
 
@@ -206,8 +226,18 @@ export class ThemeApplier2025 {
     // Update meta theme-color for mobile browsers
     this.updateMetaThemeColor(theme.colors.accent);
 
-    // Update CSS color-scheme property
-    document.documentElement.style.colorScheme = theme.category;
+    // Update CSS color-scheme property with Safari compatibility
+    try {
+      document.documentElement.style.colorScheme = theme.category;
+    } catch (error) {
+      // Fallback for Safari readonly property issues
+      console.warn('🎨 [SAFARI COMPAT] Could not set color-scheme, using fallback');
+      try {
+        document.documentElement.setAttribute('data-color-scheme', theme.category);
+      } catch (fallbackError) {
+        console.error('🎨 [SAFARI COMPAT] Failed to set color-scheme fallback:', fallbackError);
+      }
+    }
 
     // Dispatch custom event for other components
     window.dispatchEvent(new CustomEvent('theme-changed', {
@@ -237,7 +267,17 @@ export class ThemeApplier2025 {
     if (typeof document === 'undefined') return;
 
     const root = document.documentElement;
-    root.style.setProperty('--theme-transition-duration', `${duration}ms`);
+    try {
+      root.style.setProperty('--theme-transition-duration', `${duration}ms`);
+    } catch (error) {
+      // Fallback for Safari readonly property issues
+      console.warn('🎨 [SAFARI COMPAT] Could not set transition duration, using fallback');
+      try {
+        root.setAttribute('data-theme-transition-duration', `${duration}ms`);
+      } catch (fallbackError) {
+        console.error('🎨 [SAFARI COMPAT] Failed to set transition fallback:', fallbackError);
+      }
+    }
     root.classList.add('theme-transitioning');
   }
 
@@ -248,7 +288,17 @@ export class ThemeApplier2025 {
     if (typeof document === 'undefined') return;
 
     const root = document.documentElement;
-    root.style.setProperty('--theme-transition-duration', '0ms');
+    try {
+      root.style.setProperty('--theme-transition-duration', '0ms');
+    } catch (error) {
+      // Fallback for Safari readonly property issues
+      console.warn('🎨 [SAFARI COMPAT] Could not disable transition duration, using fallback');
+      try {
+        root.setAttribute('data-theme-transition-duration', '0ms');
+      } catch (fallbackError) {
+        console.error('🎨 [SAFARI COMPAT] Failed to disable transition fallback:', fallbackError);
+      }
+    }
     root.classList.remove('theme-transitioning');
   }
 

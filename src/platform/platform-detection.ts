@@ -588,18 +588,10 @@ export function initializeSafariCompatibility(): void {
     (window as any).__ADRATA_FORCE_WEB__ = true;
     (window as any).__ADRATA_SAFARI_MODE__ = true;
     
-    // Override protocol if it's tauri:
+    // Note: Cannot override protocol in Safari due to readonly property restrictions
+    // The Tauri override above should be sufficient for Safari compatibility
     if (window.location.protocol === 'tauri:') {
-      console.warn('🚨 [SAFARI COMPAT] Overriding tauri: protocol for Safari');
-      try {
-        Object.defineProperty(window.location, 'protocol', {
-          value: 'https:',
-          writable: false,
-          configurable: false
-        });
-      } catch (e) {
-        console.warn('🚨 [SAFARI COMPAT] Could not override protocol:', e);
-      }
+      console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - using web mode fallback');
     }
   }
 

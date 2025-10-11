@@ -26,9 +26,13 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
       setTheme(savedTheme);
     }
     
-    // Apply Safari compatibility fixes
-    loadSafariPolyfills();
-    applySafariFixes();
+    // Apply Safari compatibility fixes with error handling
+    try {
+      loadSafariPolyfills();
+      applySafariFixes();
+    } catch (error) {
+      console.warn('🚨 [SAFARI COMPAT] Failed to apply Safari fixes:', error);
+    }
   }, []);
 
   useEffect(() => {
