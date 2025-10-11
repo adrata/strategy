@@ -63,7 +63,7 @@ const navigationItems: NavigationItem[] = [
 
 export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: StacksLeftPanelProps) {
   return (
-    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Speedrun style */}

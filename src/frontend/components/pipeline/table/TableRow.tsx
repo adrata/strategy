@@ -128,7 +128,7 @@ export function TableRow({
   // Handle placeholder records
   if ((record as any).isPlaceholder) {
     return (
-      <tr key={record.id || index} className="h-16">
+      <tr key={record.id || index} className="h-table-row">
         <td colSpan={headers.length} className="px-6 py-4 text-center">
           <span className="text-sm text-[var(--muted)]">
             {record.name} <span className="font-bold text-[var(--foreground)] cursor-pointer hover:text-blue-600 transition-colors" onClick={() => onRecordClick(record)}>{(record as any).actionText}</span>
@@ -148,11 +148,11 @@ export function TableRow({
   // Render based on section
   if (section === 'leads' || section === 'prospects') {
     return (
-         <tr 
-           key={record.id || index} 
-           className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
-           onClick={handleRowClick}
-         >
+           <tr 
+             key={record.id || index} 
+             className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+             onClick={handleRowClick}
+           >
         {(() => {
           // Use workspace-specific column order for leads/prospects
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
@@ -337,11 +337,11 @@ export function TableRow({
   }
 
   // Default rendering for other sections
-  return (
-       <tr
-         className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
-         onClick={handleRowClick}
-       >
+    return (
+         <tr
+           className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+           onClick={handleRowClick}
+         >
       {headers.map((header, index) => {
         const isActionColumn = header === 'Actions';
         

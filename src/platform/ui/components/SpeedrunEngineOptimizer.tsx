@@ -219,7 +219,7 @@ export function SpeedrunEngineOptimizer({ isOpen, onClose, onApplyChanges }: Spe
               title={isExpanded ? 'Collapse to core mode' : 'Expand to advanced mode'}
             >
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {isExpanded ? 'Core' : 'Advanced'}
+                {isExpanded ? 'Small' : 'Advanced'}
               </span>
               {isExpanded ? (
                 <ArrowsPointingInIcon className="w-5 h-5 text-[var(--muted)]" />
@@ -236,7 +236,7 @@ export function SpeedrunEngineOptimizer({ isOpen, onClose, onApplyChanges }: Spe
           </div>
         </div>
 
-        <div className="flex min-h-[600px]">
+        <div className="flex flex-1 min-h-0">
           {/* Left Panel - Controls */}
           <div className="flex-1 p-6 overflow-y-auto">
             {/* Sales Methodology Preset */}
