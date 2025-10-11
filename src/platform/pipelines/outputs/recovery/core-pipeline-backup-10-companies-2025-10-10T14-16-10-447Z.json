@@ -1,0 +1,932 @@
+{
+  "timestamp": "2025-10-10T14:16:10.447Z",
+  "processedCount": 10,
+  "totalCompanies": 20,
+  "stats": {
+    "processed": 10,
+    "successful": 10,
+    "errors": 0,
+    "cfoFound": 0,
+    "croFound": 0,
+    "bothFound": 0,
+    "contactsValidated": 0,
+    "highConfidence": 0,
+    "parentCompaniesAdded": 0,
+    "cacheHits": 0,
+    "cacheMisses": 0,
+    "apiCostsSaved": 0,
+    "startTime": 1760105755769
+  },
+  "results": [
+    {
+      "index": 3,
+      "website": "www.highradius.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "highradius",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4103,
+      "timestamp": "2025-10-10T14:15:57.175Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 5,
+      "website": "www.inap.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "horizoniq",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4117,
+      "timestamp": "2025-10-10T14:15:57.176Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 6,
+      "website": "www.westmonroe.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "westmonroe",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4254,
+      "timestamp": "2025-10-10T14:15:57.176Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 8,
+      "website": "www.investisdigital.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "idx.inc",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4325,
+      "timestamp": "2025-10-10T14:15:57.177Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 4,
+      "website": "www.softchoice.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "softchoice",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4351,
+      "timestamp": "2025-10-10T14:15:57.175Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 7,
+      "website": "www.exadel.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "exadel",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4367,
+      "timestamp": "2025-10-10T14:15:57.177Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 2,
+      "website": "www.optimizely.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "optimizely",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4422,
+      "timestamp": "2025-10-10T14:15:57.174Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 1,
+      "website": "www.cielotalent.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "cielotalent",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 4490,
+      "timestamp": "2025-10-10T14:15:57.173Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "website": "www.cielotalent.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4491,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.optimizely.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4424,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.highradius.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4107,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.softchoice.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4353,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.inap.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4120,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.westmonroe.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4257,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.exadel.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4371,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "www.investisdigital.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 4329,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "index": 10,
+      "website": "pos.toasttab.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "pos.toasttab",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 5663,
+      "timestamp": "2025-10-10T14:16:03.675Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 9,
+      "website": "www.gfk.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "nielseniq",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 6773,
+      "timestamp": "2025-10-10T14:16:03.674Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "website": "www.gfk.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 6773,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "pos.toasttab.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 5664,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    }
+  ]
+}

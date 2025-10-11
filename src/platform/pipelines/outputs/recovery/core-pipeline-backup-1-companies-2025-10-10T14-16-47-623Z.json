@@ -1,0 +1,113 @@
+{
+  "timestamp": "2025-10-10T14:16:47.623Z",
+  "processedCount": 1,
+  "totalCompanies": 2,
+  "stats": {
+    "processed": 1,
+    "successful": 1,
+    "errors": 0,
+    "cfoFound": 0,
+    "croFound": 0,
+    "bothFound": 0,
+    "contactsValidated": 0,
+    "highConfidence": 0,
+    "parentCompaniesAdded": 0,
+    "cacheHits": 0,
+    "cacheMisses": 0,
+    "apiCostsSaved": 0,
+    "startTime": 1760105800199
+  },
+  "results": [
+    {
+      "index": 1,
+      "website": "www.highradius.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "highradius",
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "source": "",
+        "validated": false,
+        "role": "Other Executive",
+        "tier": null
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 0,
+      "processingTime": 6486,
+      "timestamp": "2025-10-10T14:16:41.136Z",
+      "validationNotes": [],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "website": "www.highradius.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 6486,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,1562 @@
+[
+  {
+    "index": 1,
+    "website": "www.cielotalent.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "cielotalent",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 6395,
+    "timestamp": "2025-10-10T14:38:40.555Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 5,
+    "website": "www.inap.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "horizoniq",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 6554,
+    "timestamp": "2025-10-10T14:38:40.558Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 4,
+    "website": "www.softchoice.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "softchoice",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 6898,
+    "timestamp": "2025-10-10T14:38:40.558Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 2,
+    "website": "www.optimizely.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "optimizely",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 8105,
+    "timestamp": "2025-10-10T14:38:40.557Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 6,
+    "website": "www.westmonroe.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "westmonroe",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 8723,
+    "timestamp": "2025-10-10T14:38:40.559Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 3,
+    "website": "www.highradius.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "highradius",
+    "cfo": {
+      "name": "Dixit Jasani",
+      "title": "Head Of Business - CFOTech",
+      "email": "dixit.jasani@highradius.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 568,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at highradius"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:39:10.557Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:39:10.757Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at highradius"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 52,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 284,
+    "processingTime": 30460,
+    "timestamp": "2025-10-10T14:38:40.557Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 7,
+    "website": "www.exadel.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "exadel",
+    "cfo": {
+      "name": "Lynne Walter",
+      "title": "CFO",
+      "email": "lwalter@exadel.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 708,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at exadel"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:39:25.326Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:39:25.766Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at exadel"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 52,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "David Wolf",
+      "title": "Chief Revenue Officer (CRO)",
+      "email": "dwolf@exadel.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 308,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CRO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at exadel"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:39:26.041Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:39:26.680Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at exadel"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 52,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 508,
+    "processingTime": 46368,
+    "timestamp": "2025-10-10T14:38:40.559Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 8,
+    "website": "www.investisdigital.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "idx.inc",
+    "cfo": {
+      "name": "Richard Simons",
+      "title": "Chief Financial Officer",
+      "email": "richard.simons@idx.inc",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 308,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:39:37.290Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:39:37.718Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 49,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Markus Lundquist",
+      "title": "Sales Director",
+      "email": "markus.lundquist@idx.inc",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 128,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Sales",
+      "tier": 4,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:39:37.966Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:39:38.196Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 49,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 218,
+    "processingTime": 57876,
+    "timestamp": "2025-10-10T14:38:40.559Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 4)",
+      "Revenue leader is Head of Sales (Tier 4), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "www.cielotalent.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 6395,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.optimizely.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 8107,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.highradius.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 30462,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.softchoice.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 6901,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.inap.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 6557,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.westmonroe.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 8727,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.exadel.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 46372,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.investisdigital.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 57880,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "index": 10,
+    "website": "pos.toasttab.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "pos.toasttab",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 6817,
+    "timestamp": "2025-10-10T14:39:40.443Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 9,
+    "website": "www.gfk.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "nielseniq",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "Jacob Kouhana",
+      "title": "Sales Director",
+      "email": "jacob.kouhana@nielseniq.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 128,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Sales",
+      "tier": 4,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at nielseniq"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:40:00.973Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:40:01.034Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at nielseniq"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 49,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 64,
+    "processingTime": 20721,
+    "timestamp": "2025-10-10T14:39:40.442Z",
+    "validationNotes": [
+      "High-confidence CRO identification (Tier 4)",
+      "Revenue leader is Head of Sales (Tier 4), not traditional CRO"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "www.gfk.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 20721,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "pos.toasttab.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 6818,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  }
+]

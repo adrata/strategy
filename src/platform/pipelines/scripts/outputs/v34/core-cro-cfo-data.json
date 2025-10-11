@@ -1,0 +1,201 @@
+[
+  {
+    "index": 1,
+    "website": "www.highradius.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "highradius",
+    "cfo": {
+      "name": "Dixit Jasani",
+      "title": "Head Of Business - CFOTech",
+      "email": "dixit.jasani@highradius.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 568,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 60,
+        "sources": [
+          "Lusha"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at highradius"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T14:17:36.983Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T14:17:38.443Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at highradius"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 60,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 52,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 284,
+    "processingTime": 31620,
+    "timestamp": "2025-10-10T14:17:07.066Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "www.highradius.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 31620,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  }
+]

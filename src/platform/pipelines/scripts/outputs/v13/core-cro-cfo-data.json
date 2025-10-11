@@ -1,0 +1,275 @@
+[
+  {
+    "index": 2,
+    "website": "https://www.hubspot.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "hubspot",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 5595,
+    "timestamp": "2025-10-10T00:06:19.189Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 3,
+    "website": "https://www.shopify.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "shopify",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 5680,
+    "timestamp": "2025-10-10T00:06:19.190Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 1,
+    "website": "https://www.salesforce.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "salesforce",
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 0,
+    "processingTime": 6685,
+    "timestamp": "2025-10-10T00:06:19.178Z",
+    "validationNotes": [],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "https://www.salesforce.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 6685,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "https://www.hubspot.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 5606,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "https://www.shopify.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 5692,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  }
+]

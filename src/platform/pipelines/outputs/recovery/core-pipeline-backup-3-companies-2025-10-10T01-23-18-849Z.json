@@ -1,0 +1,1099 @@
+{
+  "timestamp": "2025-10-10T01:23:18.849Z",
+  "processedCount": 3,
+  "totalCompanies": 6,
+  "stats": {
+    "processed": 3,
+    "successful": 3,
+    "errors": 0,
+    "cfoFound": 3,
+    "croFound": 3,
+    "bothFound": 3,
+    "contactsValidated": 3,
+    "highConfidence": 3,
+    "parentCompaniesAdded": 0,
+    "cacheHits": 0,
+    "cacheMisses": 0,
+    "apiCostsSaved": 0,
+    "startTime": 1760059288160
+  },
+  "results": [
+    {
+      "index": 3,
+      "website": "https://www.shopify.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "Shopify Inc.",
+      "cfo": {
+        "name": "Jeff Hoffmeister",
+        "title": "Chief Financial Officer",
+        "email": "jeff.hoffmeister@shopify.com",
+        "phone": "+1 212-761-4312",
+        "linkedIn": "https://www.linkedin.com/in/jeff-hoffmeister-2b028310",
+        "confidence": 98,
+        "source": "https://www.clay.com/dossier/shopify-executives",
+        "validated": true,
+        "role": "CFO",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 90,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Shopify Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 100,
+              "verified": true,
+              "reasoning": "Perplexity real-time check: Currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 10,
+            "verifiedAt": "2025-10-10T01:22:10.553Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 88,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+          "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": true,
+              "confidence": 95,
+              "reasoning": "ZeroBounce: valid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 3,
+            "passedSteps": 3,
+            "verifiedAt": "2025-10-10T01:22:11.742Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [
+            "People Data Labs"
+          ],
+          "reasoning": "Phone verification failed.",
+          "verificationDetails": [
+            {
+              "source": "People Data Labs",
+              "confidence": 0,
+              "reasoning": "People Data Labs verification: 200"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 1,
+            "agreementBonus": 0,
+            "verifiedAt": "2025-10-10T01:22:12.261Z"
+          }
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(100%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "People Data Labs❌",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Shopify Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 100,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "phoneVerificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "personConfidence": 90,
+        "emailConfidence": 88,
+        "phoneConfidence": 0,
+        "overallConfidence": 59
+      },
+      "cro": {
+        "name": "Bobby Morrison",
+        "title": "Chief Revenue Officer",
+        "email": "bobby.morrison@shopify.com",
+        "phone": "+1 224-406-3333",
+        "linkedIn": "https://www.linkedin.com/in/bobby-morrison-60663327",
+        "confidence": 97,
+        "source": "https://www.clay.com/dossier/shopify-executives",
+        "validated": true,
+        "role": "CRO",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 78,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Shopify Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 95,
+              "verified": false,
+              "reasoning": "Perplexity real-time check: Not currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 0,
+            "verifiedAt": "2025-10-10T01:22:16.894Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 88,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+          "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": true,
+              "confidence": 95,
+              "reasoning": "ZeroBounce: valid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 3,
+            "passedSteps": 3,
+            "verifiedAt": "2025-10-10T01:22:20.084Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [
+            "People Data Labs"
+          ],
+          "reasoning": "Phone verification failed.",
+          "verificationDetails": [
+            {
+              "source": "People Data Labs",
+              "confidence": 0,
+              "reasoning": "People Data Labs verification: 200"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 1,
+            "agreementBonus": 0,
+            "verifiedAt": "2025-10-10T01:22:20.604Z"
+          }
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity❌(95%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "People Data Labs❌",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Shopify Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": false,
+            "reasoning": "Perplexity real-time check: Not currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "phoneVerificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "personConfidence": 78,
+        "emailConfidence": 88,
+        "phoneConfidence": 0,
+        "overallConfidence": 55
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 98,
+      "processingTime": 56443,
+      "timestamp": "2025-10-10T01:21:28.178Z",
+      "validationNotes": [
+        "High-confidence CFO identification (Tier 1)",
+        "High-confidence CRO identification (Tier 1)",
+        "Both CFO and CRO emails discovered"
+      ],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 1,
+      "website": "https://www.salesforce.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "Salesforce, Inc.",
+      "cfo": {
+        "name": "Robin Washington",
+        "title": "President & Chief Operating and Financial Officer (COFO)",
+        "email": "robin.washington@salesforce.com",
+        "phone": "+1 650-522-5688",
+        "linkedIn": "https://www.linkedin.com/in/robinlwashington",
+        "confidence": 98,
+        "source": "https://www.salesforce.com/company/leadership/",
+        "validated": true,
+        "role": "Other Executive",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 88,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Salesforce, Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 95,
+              "verified": true,
+              "reasoning": "Perplexity real-time check: Currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 10,
+            "verifiedAt": "2025-10-10T01:22:31.607Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 85,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+          "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": false,
+              "confidence": 10,
+              "reasoning": "ZeroBounce: invalid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 2,
+            "passedSteps": 2,
+            "verifiedAt": "2025-10-10T01:22:36.213Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [
+            "People Data Labs"
+          ],
+          "reasoning": "Phone verification failed.",
+          "verificationDetails": [
+            {
+              "source": "People Data Labs",
+              "confidence": 0,
+              "reasoning": "People Data Labs verification: 200"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 1,
+            "agreementBonus": 0,
+            "verifiedAt": "2025-10-10T01:22:36.806Z"
+          }
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "People Data Labs❌",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Salesforce, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "phoneVerificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "personConfidence": 88,
+        "emailConfidence": 85,
+        "phoneConfidence": 0,
+        "overallConfidence": 58
+      },
+      "cro": {
+        "name": "Miguel Milano",
+        "title": "President & Chief Revenue Officer",
+        "email": "mmilano@salesforce.com",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 97,
+        "source": "https://www.salesforce.com/company/leadership/",
+        "validated": true,
+        "role": "CRO",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 88,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Salesforce, Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 95,
+              "verified": true,
+              "reasoning": "Perplexity real-time check: Currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 10,
+            "verifiedAt": "2025-10-10T01:22:40.406Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 88,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+          "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": true,
+              "confidence": 95,
+              "reasoning": "ZeroBounce: valid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 3,
+            "passedSteps": 3,
+            "verifiedAt": "2025-10-10T01:22:42.694Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [],
+          "reasoning": "No phone number provided"
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "No verification attempted",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Salesforce, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "personConfidence": 88,
+        "emailConfidence": 88,
+        "phoneConfidence": 0,
+        "overallConfidence": 59
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 98,
+      "processingTime": 78868,
+      "timestamp": "2025-10-10T01:21:28.165Z",
+      "validationNotes": [
+        "High-confidence CFO identification (Tier 1)",
+        "High-confidence CRO identification (Tier 1)",
+        "Both CFO and CRO emails discovered"
+      ],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "index": 2,
+      "website": "https://www.hubspot.com",
+      "accountOwner": "Unknown",
+      "isTop1000": false,
+      "companyName": "HubSpot, Inc.",
+      "cfo": {
+        "name": "Kate Bueker",
+        "title": "Chief Financial Officer",
+        "email": "*******@hubspot.com",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 98,
+        "source": "https://www.hubspot.com/company/management",
+        "validated": true,
+        "role": "CFO",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 88,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HubSpot, Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 95,
+              "verified": true,
+              "reasoning": "Perplexity real-time check: Currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 10,
+            "verifiedAt": "2025-10-10T01:23:07.540Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 85,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+          "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": false,
+              "confidence": 10,
+              "reasoning": "ZeroBounce: invalid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 2,
+            "passedSteps": 2,
+            "verifiedAt": "2025-10-10T01:23:08.570Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [],
+          "reasoning": "No phone number provided"
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "No verification attempted",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HubSpot, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "personConfidence": 88,
+        "emailConfidence": 85,
+        "phoneConfidence": 0,
+        "overallConfidence": 58
+      },
+      "cro": {
+        "name": "Yamini Rangan",
+        "title": "Chief Executive Officer",
+        "email": "yrangan@hubspot.com",
+        "phone": "+1 415-682-8090",
+        "linkedIn": "https://www.linkedin.com/in/yaminirangan",
+        "confidence": 98,
+        "source": "https://www.hubspot.com/company/management",
+        "validated": true,
+        "role": "Other Executive",
+        "tier": 1,
+        "personVerification": {
+          "verified": true,
+          "confidence": 90,
+          "sources": [
+            "Lusha",
+            "Perplexity"
+          ],
+          "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+          "verificationDetails": [
+            {
+              "source": "Lusha",
+              "confidence": 60,
+              "verified": true,
+              "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HubSpot, Inc."
+            },
+            {
+              "source": "Perplexity",
+              "confidence": 99,
+              "verified": true,
+              "reasoning": "Perplexity real-time check: Currently employed"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 2,
+            "agreementBonus": 10,
+            "verifiedAt": "2025-10-10T01:23:12.652Z"
+          }
+        },
+        "emailVerification": {
+          "valid": true,
+          "confidence": 88,
+          "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+          "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+          "validationDetails": [
+            {
+              "step": "Syntax",
+              "passed": true,
+              "confidence": 100,
+              "reasoning": "Valid email format"
+            },
+            {
+              "step": "Domain",
+              "passed": true,
+              "confidence": 70,
+              "reasoning": "Business email domain detected"
+            },
+            {
+              "step": "SMTP",
+              "passed": true,
+              "confidence": 95,
+              "reasoning": "ZeroBounce: valid"
+            },
+            {
+              "step": "Prospeo",
+              "passed": false,
+              "confidence": 80,
+              "reasoning": "Prospeo verification: success"
+            }
+          ],
+          "metadata": {
+            "stepCount": 3,
+            "passedSteps": 3,
+            "verifiedAt": "2025-10-10T01:23:13.914Z"
+          }
+        },
+        "phoneVerification": {
+          "valid": false,
+          "confidence": 0,
+          "sources": [
+            "People Data Labs"
+          ],
+          "reasoning": "Phone verification failed.",
+          "verificationDetails": [
+            {
+              "source": "People Data Labs",
+              "confidence": 0,
+              "reasoning": "People Data Labs verification: 200"
+            }
+          ],
+          "metadata": {
+            "sourceCount": 1,
+            "agreementBonus": 0,
+            "verifiedAt": "2025-10-10T01:23:14.474Z"
+          }
+        },
+        "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(99%)",
+        "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+        "phoneVerificationTrail": "People Data Labs❌",
+        "personVerificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HubSpot, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 99,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "emailValidationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: success"
+          }
+        ],
+        "phoneVerificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "personConfidence": 90,
+        "emailConfidence": 88,
+        "phoneConfidence": 0,
+        "overallConfidence": 59
+      },
+      "companyInfo": {
+        "isPublic": false,
+        "ticker": "",
+        "parentCompany": "",
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": ""
+      },
+      "researchMethod": "cfo_cro_focused",
+      "overallConfidence": 98,
+      "processingTime": 110672,
+      "timestamp": "2025-10-10T01:21:28.177Z",
+      "validationNotes": [
+        "High-confidence CFO identification (Tier 1)",
+        "High-confidence CRO identification (Tier 1)",
+        "Both CFO and CRO emails discovered"
+      ],
+      "error": null,
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": "",
+        "acquisitionType": "",
+        "confidence": 0
+      }
+    },
+    {
+      "website": "https://www.salesforce.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 78868,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "https://www.hubspot.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 110684,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    },
+    {
+      "website": "https://www.shopify.com",
+      "companyName": "Unknown",
+      "processingStatus": "FAILED",
+      "error": "Unknown processing error",
+      "processingTime": 56456,
+      "cacheUtilized": false,
+      "cfo": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "cro": {
+        "name": "",
+        "title": "",
+        "email": "",
+        "phone": "",
+        "linkedIn": "",
+        "confidence": 0,
+        "tier": null,
+        "role": "N/A"
+      },
+      "companyInfo": {
+        "industry": "",
+        "employeeCount": "",
+        "headquarters": "",
+        "isPublic": false
+      },
+      "corporateStructure": {
+        "isAcquired": false,
+        "parentCompany": "",
+        "acquisitionDate": ""
+      }
+    }
+  ]
+}

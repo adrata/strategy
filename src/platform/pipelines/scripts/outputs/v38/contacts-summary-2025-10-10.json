@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-10-10T15:32:03.960Z",
+  "source_file": "C:\\Users\\ross\\Development\\adrata\\src\\platform\\pipelines\\scripts\\outputs\\v38\\core-cro-cfo-contacts.csv",
+  "total_companies": 24,
+  "cfo_contacts": 14,
+  "cro_contacts": 8,
+  "cfo_success_rate": "58.3%",
+  "cro_success_rate": "33.3%",
+  "output_files": {
+    "finance_csv": "finance-contacts-2025-10-10.csv",
+    "revenue_sales_csv": "revenue-sales-contacts-2025-10-10.csv"
+  }
+}

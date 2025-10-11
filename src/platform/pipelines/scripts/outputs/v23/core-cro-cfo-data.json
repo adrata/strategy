@@ -1,0 +1,930 @@
+[
+  {
+    "index": 3,
+    "website": "https://www.shopify.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "shopify",
+    "cfo": {
+      "name": "Valerie Raese",
+      "title": "Head Of Revenue, EMEA",
+      "email": "valerie.raese@shopify.com",
+      "phone": "+1 646-512-4952",
+      "linkedIn": "https://www.linkedin.com/in/valerieraese",
+      "confidence": 58,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Revenue",
+      "tier": 5,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:32.684Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T00:40:33.159Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [
+          "People Data Labs"
+        ],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:33.588Z"
+        }
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌",
+      "phoneVerificationTrail": "People Data Labs❌",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "phoneVerificationDetails": [
+        {
+          "source": "People Data Labs",
+          "confidence": 0,
+          "reasoning": "People Data Labs verification: 200"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 29
+    },
+    "cro": {
+      "name": "Valerie Raese",
+      "title": "Head Of Revenue, EMEA",
+      "email": "valerie.raese@shopify.com",
+      "phone": "+1 646-512-4952",
+      "linkedIn": "https://www.linkedin.com/in/valerieraese",
+      "confidence": 138,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Revenue",
+      "tier": 5,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:33.940Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T00:40:34.231Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [
+          "People Data Labs"
+        ],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:34.514Z"
+        }
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌",
+      "phoneVerificationTrail": "People Data Labs❌",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "phoneVerificationDetails": [
+        {
+          "source": "People Data Labs",
+          "confidence": 0,
+          "reasoning": "People Data Labs verification: 200"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 29
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 98,
+    "processingTime": 11010,
+    "timestamp": "2025-10-10T00:40:23.769Z",
+    "validationNotes": [
+      "High-confidence CRO identification (Tier 5)",
+      "Finance leader is Head of Revenue (Tier 5), not traditional CFO",
+      "Revenue leader is Head of Revenue (Tier 5), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 1,
+    "website": "https://www.salesforce.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "salesforce",
+    "cfo": {
+      "name": "Yogeshwer Mudgal",
+      "title": "Senior Director - Controllership SSC",
+      "email": "ymudgal@salesforce.com",
+      "phone": "+91 99993 99511",
+      "linkedIn": "https://www.linkedin.com/in/yogeshwer-mudgal-59a82913",
+      "confidence": 138,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Controller",
+      "tier": 2,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:33.236Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T00:40:33.511Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [
+          "People Data Labs"
+        ],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:33.791Z"
+        }
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌",
+      "phoneVerificationTrail": "People Data Labs❌",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "phoneVerificationDetails": [
+        {
+          "source": "People Data Labs",
+          "confidence": 0,
+          "reasoning": "People Data Labs verification: 200"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 29
+    },
+    "cro": {
+      "name": "Mohit Sadarangani",
+      "title": "Regional Sales Director - Enterprise Corporate Sales",
+      "email": "msadarangani@salesforce.com",
+      "phone": "+1 647-258-3895",
+      "linkedIn": "https://www.linkedin.com/in/mohitsadarangani",
+      "confidence": 138,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Sales",
+      "tier": 4,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:34.116Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T00:40:34.598Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [
+          "People Data Labs"
+        ],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:40:34.893Z"
+        }
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌",
+      "phoneVerificationTrail": "People Data Labs❌",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "phoneVerificationDetails": [
+        {
+          "source": "People Data Labs",
+          "confidence": 0,
+          "reasoning": "People Data Labs verification: 200"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 29
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 138,
+    "processingTime": 11373,
+    "timestamp": "2025-10-10T00:40:23.757Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 2)",
+      "High-confidence CRO identification (Tier 4)",
+      "Finance leader is Controller (Tier 2), not traditional CFO",
+      "Revenue leader is Head of Sales (Tier 4), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 2,
+    "website": "https://www.hubspot.com",
+    "accountOwner": "Test User",
+    "isTop1000": true,
+    "companyName": "hubspot",
+    "cfo": {
+      "name": "Melanie Hendrick",
+      "title": "Senior Director Talent Acquisition",
+      "email": "mhendrick@hubspot.com",
+      "phone": "+353 87 246 4319",
+      "linkedIn": "https://www.linkedin.com/in/melanie-hendrick-a46a503",
+      "confidence": 58,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Other Executive",
+      "tier": 5,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:41:00.727Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T00:41:01.347Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [
+          "People Data Labs"
+        ],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [
+          {
+            "source": "People Data Labs",
+            "confidence": 0,
+            "reasoning": "People Data Labs verification: 200"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 1,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:41:01.763Z"
+        }
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌",
+      "phoneVerificationTrail": "People Data Labs❌",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "phoneVerificationDetails": [
+        {
+          "source": "People Data Labs",
+          "confidence": 0,
+          "reasoning": "People Data Labs verification: 200"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 28
+    },
+    "cro": {
+      "name": "Seona Tully",
+      "title": "Senior Sales Director UKI MM",
+      "email": "seona.tully@hubspot.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 138,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Sales",
+      "tier": 4,
+      "personVerification": {
+        "verified": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No source confirmation available.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T00:41:02.031Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 0,
+            "reasoning": "Prospeo verification: undefined"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T00:41:02.531Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 0,
+          "reasoning": "Prospeo verification: undefined"
+        }
+      ],
+      "personConfidence": 0,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 28
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 98,
+    "processingTime": 39099,
+    "timestamp": "2025-10-10T00:40:23.768Z",
+    "validationNotes": [
+      "High-confidence CRO identification (Tier 4)",
+      "Finance leader is Other Executive (Tier 5), not traditional CFO",
+      "Revenue leader is Head of Sales (Tier 4), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "https://www.salesforce.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 11373,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "https://www.hubspot.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 39110,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "https://www.shopify.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 11022,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  }
+]

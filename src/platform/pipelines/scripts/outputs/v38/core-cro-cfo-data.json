@@ -1,0 +1,3725 @@
+[
+  {
+    "index": 8,
+    "website": "www.investisdigital.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "idx.inc",
+    "cfo": {
+      "name": "Richard Simons",
+      "title": "Chief Financial Officer",
+      "email": "richard.simons@idx.inc",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 1240,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 85,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:18:33.451Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:18:30.871Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(90%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 85,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Markus Lundquist",
+      "title": "Sales Director",
+      "email": "markus.lundquist@idx.inc",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 1040,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Head of Sales",
+      "tier": 4,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:18:36.816Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:18:33.946Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at idx.inc"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 59,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "BrandStar, Inc.",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 1140,
+    "processingTime": 81564,
+    "timestamp": "2025-10-10T15:17:22.501Z",
+    "validationNotes": [
+      "Company acquired by BrandStar, Inc. (2025-02-26)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 4)",
+      "Revenue leader is Head of Sales (Tier 4), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": "BrandStar, Inc.",
+      "acquisitionDate": "2025-02-26",
+      "acquisitionType": "full_acquisition",
+      "confidence": 0.85
+    }
+  },
+  {
+    "index": 5,
+    "website": "www.inap.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Internap Holding LLC",
+    "cfo": {
+      "name": "Michael T. Sicoli",
+      "title": "President and Chief Financial Officer",
+      "email": "michael.sicoli@horizoniq.com",
+      "phone": "+1-877-263-8638",
+      "linkedIn": "",
+      "confidence": 9500,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 78,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Internap Holding LLC"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": false,
+            "reasoning": "Perplexity real-time check: Not currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:15.335Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 88,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: VALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:19:12.191Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:11.989Z"
+        }
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity❌(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Internap Holding LLC"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": false,
+          "reasoning": "Perplexity real-time check: Not currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: VALID"
+        }
+      ],
+      "phoneVerificationDetails": [],
+      "personConfidence": 78,
+      "emailConfidence": 88,
+      "phoneConfidence": 0,
+      "overallConfidence": 55,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "+1-877-263-8638",
+      "linkedIn": "",
+      "confidence": 8000,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 8750,
+    "processingTime": 116144,
+    "timestamp": "2025-10-10T15:17:22.500Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 7,
+    "website": "www.exadel.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Exadel Inc.",
+    "cfo": {
+      "name": "Michael Boustridge",
+      "title": "Chief Executive Officer",
+      "email": "michael.boustridge@***.***",
+      "phone": "+44 ** **** *638",
+      "linkedIn": "",
+      "confidence": 95,
+      "source": "https://exadel.com/leadership/michael-boustridge/",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Exadel Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:14.669Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:19:10.819Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:10.754Z"
+        }
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Exadel Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: invalid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "phoneVerificationDetails": [],
+      "personConfidence": 88,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "David Wolf",
+      "title": "Chief Revenue Officer",
+      "email": "dwolf@exadel.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 95,
+      "source": "https://exadel.com/leadership/david-wolf/",
+      "validated": true,
+      "role": "CRO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Exadel Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:18.746Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:19:15.178Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Exadel Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "Sun Capital Partners",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 95,
+    "processingTime": 121496,
+    "timestamp": "2025-10-10T15:17:22.501Z",
+    "validationNotes": [
+      "Company acquired by Sun Capital Partners (2021)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": "Sun Capital Partners",
+      "acquisitionDate": "2021",
+      "acquisitionType": "subsidiary",
+      "confidence": 0.95
+    }
+  },
+  {
+    "index": 4,
+    "website": "www.softchoice.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Softchoice Corporation",
+    "cfo": {
+      "name": "Yota Skederidis",
+      "title": "Interim Chief Financial Officer",
+      "email": "yota.skederidis@softchoice.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 9500,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": false,
+        "confidence": 65,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Softchoice Corporation"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 70,
+            "verified": false,
+            "reasoning": "Perplexity real-time check: Not currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:18.984Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: VALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:19:15.462Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity❌(70%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Softchoice Corporation"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 70,
+          "verified": false,
+          "reasoning": "Perplexity real-time check: Not currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: VALID"
+        }
+      ],
+      "personConfidence": 65,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 54,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 8000,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "World Wide Technology (WWT)",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 8750,
+    "processingTime": 121900,
+    "timestamp": "2025-10-10T15:17:22.499Z",
+    "validationNotes": [
+      "Company acquired by World Wide Technology (WWT) (2025-03-13)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": "World Wide Technology (WWT)",
+      "acquisitionDate": "2025-03-13",
+      "acquisitionType": "full_acquisition",
+      "confidence": 0.95
+    }
+  },
+  {
+    "index": 3,
+    "website": "www.highradius.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "HighRadius Corp.",
+    "cfo": {
+      "name": "Tres Thompson",
+      "title": "Chief Financial Officer",
+      "email": "[email protected]",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 95,
+      "source": "https://www.highradius.com/about/leadership-team/",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HighRadius Corp."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:20.684Z"
+        }
+      },
+      "emailVerification": {
+        "valid": false,
+        "confidence": 0,
+        "validationSteps": [],
+        "reasoning": "No email provided or invalid format"
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "No validation attempted",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HighRadius Corp."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 0,
+      "phoneConfidence": 0,
+      "overallConfidence": 29,
+      "qualityFlag": "low_confidence_included"
+    },
+    "cro": {
+      "name": "Sashi Narahari",
+      "title": "President, Chief Executive Officer, Co-Founder, Chairman",
+      "email": "sashi.narahari@highradius.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 95,
+      "source": "https://www.highradius.com/about/leadership-team/",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HighRadius Corp."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:24.953Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:19:21.679Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at HighRadius Corp."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 95,
+    "processingTime": 124761,
+    "timestamp": "2025-10-10T15:17:22.499Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 1,
+    "website": "www.cielotalent.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Cielo Talent",
+    "cfo": {
+      "name": "Marissa Geist",
+      "title": "Chief Executive Officer",
+      "email": "m************@forbeshrcouncil.com",
+      "phone": "26*****050",
+      "linkedIn": "",
+      "confidence": 100,
+      "source": "https://www.cielotalent.com/resources/press-room/cielo-announces-executive-leadership-succession/",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 90,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Cielo Talent"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 100,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:22.634Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:19:23.418Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:21.305Z"
+        }
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(100%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Cielo Talent"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 100,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "phoneVerificationDetails": [],
+      "personConfidence": 90,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Tara Cassady",
+      "title": "Chief Revenue Officer",
+      "email": "tara.cassady@cielotalent.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 100,
+      "source": "https://www.cielotalent.com/about-us/our-people/",
+      "validated": true,
+      "role": "CRO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Cielo Talent"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:27.283Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:19:23.922Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Cielo Talent"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 100,
+    "processingTime": 127320,
+    "timestamp": "2025-10-10T15:17:22.497Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 6,
+    "website": "www.westmonroe.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "West Monroe Partners LLC",
+    "cfo": {
+      "name": "Gil Mermelstein",
+      "title": "Chief Executive Officer (CEO)",
+      "email": "g***@westmonroe.com",
+      "phone": "+1-646-***-****",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.consulting.us/news/12184/west-monroe-hires-accenture-exec-harin-shetty-as-president",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at West Monroe Partners LLC"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:32.410Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:19:31.116Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:19:27.275Z"
+        }
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at West Monroe Partners LLC"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: invalid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "phoneVerificationDetails": [],
+      "personConfidence": 88,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "g***@westmonroe.com",
+      "phone": "+1-312-602-4000",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 49,
+    "processingTime": 138763,
+    "timestamp": "2025-10-10T15:17:22.500Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": 2,
+    "website": "www.optimizely.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Optimizely North America Inc.",
+    "cfo": {
+      "name": "Myles Johnson",
+      "title": "Chief Financial Officer",
+      "email": "myles.johnson@optimizely.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.optimizely.com/company/executive-team/",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 85,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:36.565Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:19:32.113Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(90%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 85,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 61,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Sebastiaan de Jong",
+      "title": "Chief Revenue Officer",
+      "email": "sebastiaan.jong@optimizely.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.optimizely.com/company/executive-team/",
+      "validated": true,
+      "role": "CRO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 85,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:19:41.394Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:19:37.283Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(90%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 85,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 61,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "Episerver",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 98,
+    "processingTime": 143204,
+    "timestamp": "2025-10-10T15:17:22.498Z",
+    "validationNotes": [
+      "Company acquired by Episerver (2020-10-21)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": "Episerver",
+      "acquisitionDate": "2020-10-21",
+      "acquisitionType": "full_acquisition",
+      "confidence": 0.98
+    }
+  },
+  {
+    "website": "www.cielotalent.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 127321,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.optimizely.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 143206,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.highradius.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 124764,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.softchoice.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 121903,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.inap.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 116148,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.westmonroe.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 138767,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.exadel.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 121501,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "www.investisdigital.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 81569,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "index": 9,
+    "website": "www.gfk.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "NIQ",
+    "cfo": {
+      "name": "Bigatà Joseph",
+      "title": "Chief Financial Officer",
+      "email": "[email protected]",
+      "phone": "+49 (6196) 9677311",
+      "linkedIn": "",
+      "confidence": 9500,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 75,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at NIQ"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": false,
+            "reasoning": "Perplexity real-time check: Not currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:21:12.162Z"
+        }
+      },
+      "emailVerification": {
+        "valid": false,
+        "confidence": 0,
+        "validationSteps": [],
+        "reasoning": "No email provided or invalid format"
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "Phone verification failed.",
+        "verificationDetails": [],
+        "metadata": {
+          "sourceCount": 0,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:21:06.831Z"
+        }
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity❌(90%)",
+      "emailVerificationTrail": "No validation attempted",
+      "phoneVerificationTrail": "",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at NIQ"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": false,
+          "reasoning": "Perplexity real-time check: Not currently employed"
+        }
+      ],
+      "phoneVerificationDetails": [],
+      "personConfidence": 75,
+      "emailConfidence": 0,
+      "phoneConfidence": 0,
+      "overallConfidence": 25,
+      "qualityFlag": "low_confidence_included"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "[email protected]",
+      "phone": "+49 (6196) 9677311",
+      "linkedIn": "",
+      "confidence": 8000,
+      "source": "Perplexity AI Search",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "NIQ",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 8750,
+    "processingTime": 88446,
+    "timestamp": "2025-10-10T15:19:47.707Z",
+    "validationNotes": [
+      "Company acquired by NIQ (2023-07)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": "NIQ",
+      "acquisitionDate": "2023-07",
+      "acquisitionType": "full_acquisition",
+      "confidence": 0.95
+    }
+  },
+  {
+    "index": 10,
+    "website": "pos.toasttab.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Toast, Inc.",
+    "cfo": {
+      "name": "Elena Gomez",
+      "title": "Chief Financial Officer",
+      "email": "e*****@toastt***.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 95,
+      "source": "https://careers.toasttab.com/blogs/life-at-toast/meet-the-leader-elena-gomez-chief-financial-officer-bdfe076e-6984-421e-bf69-52b3185df48e",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Toast, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:21:15.718Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:21:12.295Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Toast, Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: invalid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "e*****@toastt***.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 48,
+    "processingTime": 93754,
+    "timestamp": "2025-10-10T15:19:47.708Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "website": "www.gfk.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 88446,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "website": "pos.toasttab.com",
+    "companyName": "Unknown",
+    "processingStatus": "FAILED",
+    "error": "Unknown processing error",
+    "processingTime": 93755,
+    "cacheUtilized": false,
+    "cfo": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "tier": null,
+      "role": "N/A"
+    },
+    "companyInfo": {
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": "",
+      "isPublic": false
+    },
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": ""
+    }
+  },
+  {
+    "index": -1,
+    "website": "brandstar.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "BrandStar, Inc.",
+    "cfo": {
+      "name": "Sarah Soni",
+      "title": "Chief Financial Officer",
+      "email": "ssoni@brandstar.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://brandstar.com/about",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at BrandStar, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:23:29.877Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: VALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:23:26.197Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at BrandStar, Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: VALID"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Nicole Oropesa",
+      "title": "President, BrandStar Entertainment",
+      "email": "noropesa@brandstar.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://brandstar.com/about",
+      "validated": true,
+      "role": "Other Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 85,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at BrandStar, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:23:33.651Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 97,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✓,Prospeo✗",
+        "reasoning": "Email validated through 3 layers: Syntax, Domain, SMTP. High confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "ZeroBounce: valid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: VALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 3,
+          "passedSteps": 3,
+          "verifiedAt": "2025-10-10T15:23:30.341Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(90%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP✓(95%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at BrandStar, Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "ZeroBounce: valid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: VALID"
+        }
+      ],
+      "personConfidence": 85,
+      "emailConfidence": 97,
+      "phoneConfidence": 0,
+      "overallConfidence": 61,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 98,
+    "processingTime": 138037,
+    "timestamp": "2025-10-10T15:21:21.512Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": -1,
+    "website": "suncapitalpartners.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Sun Capital Partners, Inc.",
+    "cfo": {
+      "name": "Nekha Ganesh",
+      "title": "Head of Finance",
+      "email": "nekha.ganesh@suncapitalpartners.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://suncapitalpartners.co.uk/our-team/",
+      "validated": true,
+      "role": "Finance Executive",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Sun Capital Partners, Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:25:35.507Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: do_not_mail"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:25:32.429Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Sun Capital Partners, Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: do_not_mail"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "",
+      "title": "",
+      "email": "",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 0,
+      "source": "",
+      "validated": false,
+      "role": "",
+      "tier": null
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 49,
+    "processingTime": 117824,
+    "timestamp": "2025-10-10T15:23:44.552Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": -1,
+    "website": "worldwidetechnologywwt.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "World Wide Technology",
+    "cfo": {
+      "name": "Thomas Strunk",
+      "title": "CFO",
+      "email": "tstrunk@wwt.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.wwt.com/corporate/who-we-are/leadership",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at World Wide Technology"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:28:29.730Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 85,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 70,
+            "reasoning": "Business email domain detected"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:28:28.734Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(70%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at World Wide Technology"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 70,
+          "reasoning": "Business email domain detected"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: invalid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 85,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Lucy New",
+      "title": "Sales Operations Director",
+      "email": "lucy.new@worldwidetechnologywwt.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 640,
+      "source": "coresignal-multisource",
+      "validated": false,
+      "role": "Sales Executive",
+      "tier": 5,
+      "personVerification": {
+        "verified": true,
+        "confidence": 75,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "Single source confirmation: Lusha. Low confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at World Wide Technology"
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 90,
+            "verified": false,
+            "reasoning": "Perplexity real-time check: Not currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 0,
+          "verifiedAt": "2025-10-10T15:28:33.770Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: invalid"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: INVALID"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:28:30.196Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity❌(90%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at World Wide Technology"
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 90,
+          "verified": false,
+          "reasoning": "Perplexity real-time check: Not currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: invalid"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: INVALID"
+        }
+      ],
+      "personConfidence": 75,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 58,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": "",
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 369,
+    "processingTime": 172901,
+    "timestamp": "2025-10-10T15:25:47.386Z",
+    "validationNotes": [
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 5)",
+      "Revenue leader is Sales Executive (Tier 5), not traditional CRO",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": false,
+      "parentCompany": "",
+      "acquisitionDate": "",
+      "acquisitionType": "",
+      "confidence": 0
+    }
+  },
+  {
+    "index": -1,
+    "website": "episerver.com",
+    "accountOwner": "Unknown",
+    "isTop1000": false,
+    "companyName": "Optimizely North America Inc.",
+    "cfo": {
+      "name": "Myles Johnson",
+      "title": "Chief Financial Officer",
+      "email": "myles.johnson@episerver.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.optimizely.com/company/executive-team/",
+      "validated": true,
+      "role": "CFO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:31:50.329Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:31:47.359Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "cro": {
+      "name": "Sebastiaan de Jong",
+      "title": "Chief Revenue Officer",
+      "email": "sebastiaan.jong@episerver.com",
+      "phone": "",
+      "linkedIn": "",
+      "confidence": 98,
+      "source": "https://www.optimizely.com/company/executive-team/",
+      "validated": true,
+      "role": "CRO",
+      "tier": 1,
+      "personVerification": {
+        "verified": true,
+        "confidence": 88,
+        "sources": [
+          "Lusha",
+          "Perplexity"
+        ],
+        "reasoning": "2 sources confirm identity: Lusha, Perplexity. Moderate confidence match.",
+        "verificationDetails": [
+          {
+            "source": "Lusha",
+            "confidence": 60,
+            "verified": true,
+            "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+          },
+          {
+            "source": "Perplexity",
+            "confidence": 95,
+            "verified": true,
+            "reasoning": "Perplexity real-time check: Currently employed"
+          }
+        ],
+        "metadata": {
+          "sourceCount": 2,
+          "agreementBonus": 10,
+          "verifiedAt": "2025-10-10T15:31:53.772Z"
+        }
+      },
+      "emailVerification": {
+        "valid": true,
+        "confidence": 98,
+        "validationSteps": "Syntax✓,Domain✓,SMTP✗,Prospeo✗",
+        "reasoning": "Email validated through 2 layers: Syntax, Domain. Moderate confidence.",
+        "validationDetails": [
+          {
+            "step": "Syntax",
+            "passed": true,
+            "confidence": 100,
+            "reasoning": "Valid email format"
+          },
+          {
+            "step": "Domain",
+            "passed": true,
+            "confidence": 95,
+            "reasoning": "Email domain matches company domain"
+          },
+          {
+            "step": "SMTP",
+            "passed": false,
+            "confidence": 10,
+            "reasoning": "ZeroBounce: catch-all"
+          },
+          {
+            "step": "Prospeo",
+            "passed": false,
+            "confidence": 80,
+            "reasoning": "Prospeo verification: CATCH_ALL"
+          }
+        ],
+        "metadata": {
+          "stepCount": 2,
+          "passedSteps": 2,
+          "verifiedAt": "2025-10-10T15:31:50.863Z"
+        }
+      },
+      "phoneVerification": {
+        "valid": false,
+        "confidence": 0,
+        "sources": [],
+        "reasoning": "No phone number provided"
+      },
+      "personVerificationTrail": "Lusha✓(60%) → Perplexity✓(95%)",
+      "emailVerificationTrail": "Syntax✓(100%) → Domain✓(95%) → SMTP❌(10%) → Prospeo❌(80%)",
+      "phoneVerificationTrail": "No verification attempted",
+      "personVerificationDetails": [
+        {
+          "source": "Lusha",
+          "confidence": 60,
+          "verified": true,
+          "reasoning": "Lusha person lookup: Lusha person profile found: Unknown title at Optimizely North America Inc."
+        },
+        {
+          "source": "Perplexity",
+          "confidence": 95,
+          "verified": true,
+          "reasoning": "Perplexity real-time check: Currently employed"
+        }
+      ],
+      "emailValidationDetails": [
+        {
+          "step": "Syntax",
+          "passed": true,
+          "confidence": 100,
+          "reasoning": "Valid email format"
+        },
+        {
+          "step": "Domain",
+          "passed": true,
+          "confidence": 95,
+          "reasoning": "Email domain matches company domain"
+        },
+        {
+          "step": "SMTP",
+          "passed": false,
+          "confidence": 10,
+          "reasoning": "ZeroBounce: catch-all"
+        },
+        {
+          "step": "Prospeo",
+          "passed": false,
+          "confidence": 80,
+          "reasoning": "Prospeo verification: CATCH_ALL"
+        }
+      ],
+      "personConfidence": 88,
+      "emailConfidence": 98,
+      "phoneConfidence": 0,
+      "overallConfidence": 62,
+      "qualityFlag": "meets_threshold"
+    },
+    "companyInfo": {
+      "isPublic": false,
+      "ticker": "",
+      "parentCompany": {
+        "name": "Episerver",
+        "domain": "episerver.com",
+        "ticker": null
+      },
+      "industry": "",
+      "employeeCount": "",
+      "headquarters": ""
+    },
+    "researchMethod": "cfo_cro_focused",
+    "overallConfidence": 98,
+    "processingTime": 193643,
+    "timestamp": "2025-10-10T15:28:45.287Z",
+    "validationNotes": [
+      "Company acquired by [object Object] (2020-10-21)",
+      "High-confidence CFO identification (Tier 1)",
+      "High-confidence CRO identification (Tier 1)",
+      "Both CFO and CRO emails discovered"
+    ],
+    "error": null,
+    "corporateStructure": {
+      "isAcquired": true,
+      "parentCompany": {
+        "name": "Episerver",
+        "domain": "episerver.com",
+        "ticker": null
+      },
+      "acquisitionDate": "2020-10-21",
+      "acquisitionType": "full_acquisition",
+      "confidence": 0.95
+    }
+  }
+]
