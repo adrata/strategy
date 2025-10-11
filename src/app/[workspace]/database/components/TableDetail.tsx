@@ -66,8 +66,7 @@ export function TableDetail({ tableName }: TableDetailProps) {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <div className="p-6">
-        <DatabaseHeader
+      <DatabaseHeader
           title={tableName}
           subtitle={tableSchema ? `${tableSchema.columns.length} columns` : 'Loading...'}
           stats={[
@@ -102,7 +101,6 @@ export function TableDetail({ tableName }: TableDetailProps) {
             ))}
           </div>
         </DatabaseHeader>
-      </div>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">

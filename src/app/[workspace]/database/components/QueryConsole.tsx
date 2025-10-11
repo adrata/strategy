@@ -116,8 +116,7 @@ export function QueryConsole() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <div className="p-6">
-        <DatabaseHeader
+      <DatabaseHeader
           title="Query Console"
           subtitle="Execute SQL queries against your database"
           stats={[
@@ -156,7 +155,6 @@ export function QueryConsole() {
             </div>
           </div>
         </DatabaseHeader>
-      </div>
 
       {/* Content */}
       <div className="flex-1 flex overflow-hidden">

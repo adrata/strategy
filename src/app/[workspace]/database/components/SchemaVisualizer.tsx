@@ -50,8 +50,7 @@ export function SchemaVisualizer() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <div className="p-6">
-        <DatabaseHeader
+      <DatabaseHeader
           title="Schema Visualizer"
           subtitle="Interactive database schema overview"
           stats={[
@@ -64,7 +63,6 @@ export function SchemaVisualizer() {
             </button>
           }
         />
-      </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">

@@ -164,7 +164,6 @@ export async function GET(request: NextRequest) {
                   id: true,
                   name: true,
                   industry: true,
-                  vertical: true,
                   size: true
                 }
               }
@@ -225,7 +224,6 @@ export async function GET(request: NextRequest) {
             AND: [
               {
                 OR: [
-                  { funnelStage: 'Lead' },
                   { status: 'new' },
                   { status: 'lead' }
                 ]
@@ -336,7 +334,6 @@ export async function GET(request: NextRequest) {
             AND: [
               {
                 OR: [
-                  { funnelStage: 'Prospect' },
                   { status: 'engaged' },
                   { status: 'prospect' }
                 ]

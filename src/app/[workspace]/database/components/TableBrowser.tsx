@@ -71,8 +71,7 @@ export function TableBrowser() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <div className="p-6">
-        <DatabaseHeader
+      <DatabaseHeader
           title="Database Tables"
           subtitle="Browse and explore all database tables"
           stats={[
@@ -107,7 +106,6 @@ export function TableBrowser() {
             </select>
           </div>
         </DatabaseHeader>
-      </div>
 
       {/* Tables Grid */}
       <div className="flex-1 p-6 overflow-y-auto">

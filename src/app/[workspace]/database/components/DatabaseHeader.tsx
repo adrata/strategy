@@ -21,7 +21,7 @@ export function DatabaseHeader({
   children
 }: DatabaseHeaderProps) {
   return (
-    <div className="mb-6">
+    <div className="bg-white border-b border-gray-200 px-6 py-4">
       {/* Main header row */}
       <div className="flex items-center justify-between">
         {/* Left side - Title and subtitle */}
