@@ -97,6 +97,11 @@ src-tauri/gen/
 .vercel/
 tsconfig.tsbuildinfo
 
+# Pipeline backup files (exclude from build)
+src/platform/pipelines/outputs/recovery/
+src/platform/pipelines/outputs/backup/
+src/platform/pipelines/outputs/*.json
+
 # Playwright test artifacts
 tests/artifacts/
 tests/results/
