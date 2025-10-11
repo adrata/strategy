@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlayIcon, ChatBubbleLeftRightIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 import { WorkflowCategory, WorkflowItem } from '../types';
 
 interface ToolbarProps {
