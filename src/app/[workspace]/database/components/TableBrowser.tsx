@@ -71,42 +71,43 @@ export function TableBrowser() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <DatabaseHeader
-        title="Database Tables"
-        subtitle="Browse and explore all database tables"
-        icon="📊"
-        stats={[
-          { label: "Showing", value: `${filteredTables.length} of ${tables.length}` },
-          { label: "Total", value: `${tables.length} tables` }
-        ]}
-      >
-        {/* Filters */}
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search tables..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div className="p-6">
+        <DatabaseHeader
+          title="Database Tables"
+          subtitle="Browse and explore all database tables"
+          stats={[
+            { label: "Showing", value: `${filteredTables.length} of ${tables.length}` },
+            { label: "Total", value: `${tables.length} tables` }
+          ]}
+        >
+          {/* Filters */}
+          <div className="flex items-center gap-4">
+            {/* Search */}
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Search tables..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          {/* Category Filter */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {categories.map(category => (
-              <option key={category} value={category}>
-                {categoryLabels[category as keyof typeof categoryLabels]}
-              </option>
-            ))}
-          </select>
-        </div>
-      </DatabaseHeader>
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {categoryLabels[category as keyof typeof categoryLabels]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DatabaseHeader>
+      </div>
 
       {/* Tables Grid */}
       <div className="flex-1 p-6 overflow-y-auto">

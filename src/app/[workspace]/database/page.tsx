@@ -50,23 +50,24 @@ export default function DatabasePage() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <DatabaseHeader
-        title="Database"
-        subtitle="Data Explorer & Management"
-        icon="🗄️"
-        stats={[
-          { label: "Tables", value: stats?.tableCount || 0 },
-          { label: "Records", value: stats?.totalRecords?.toLocaleString() || 0 }
-        ]}
-        actions={
-          <>
-            <DatabaseStats stats={stats} loading={loading} />
-            <button className="px-4 py-2 bg-blue-100 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors">
-              Export
-            </button>
-          </>
-        }
-      />
+      <div className="p-6">
+        <DatabaseHeader
+          title="Database"
+          subtitle="Data Explorer & Management"
+          stats={[
+            { label: "Tables", value: stats?.tableCount || 0 },
+            { label: "Records", value: stats?.totalRecords?.toLocaleString() || 0 }
+          ]}
+          actions={
+            <>
+              <DatabaseStats stats={stats} loading={loading} />
+              <button className="px-4 py-2 bg-blue-100 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors">
+                Export
+              </button>
+            </>
+          }
+        />
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">

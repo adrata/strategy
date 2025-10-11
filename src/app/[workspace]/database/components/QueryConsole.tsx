@@ -116,46 +116,47 @@ export function QueryConsole() {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <DatabaseHeader
-        title="Query Console"
-        subtitle="Execute SQL queries against your database"
-        icon="💻"
-        stats={[
-          { label: "History", value: history.length },
-          { label: "Last Result", value: result ? `${result.rowCount} rows` : 'None' }
-        ]}
-        actions={
-          <>
-            <button
-              onClick={clearQuery}
-              className="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Clear
-            </button>
-            <button
-              onClick={executeQuery}
-              disabled={loading || !query.trim()}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Executing...' : 'Execute Query'}
-            </button>
-          </>
-        }
-      >
-        {/* Query Editor */}
-        <div className="relative">
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter your SQL query here...&#10;&#10;Example:&#10;SELECT * FROM users WHERE workspaceId = 'your-workspace-id' LIMIT 10;"
-            className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-          />
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-            Cmd+Enter to execute
+      <div className="p-6">
+        <DatabaseHeader
+          title="Query Console"
+          subtitle="Execute SQL queries against your database"
+          stats={[
+            { label: "History", value: history.length },
+            { label: "Last Result", value: result ? `${result.rowCount} rows` : 'None' }
+          ]}
+          actions={
+            <>
+              <button
+                onClick={clearQuery}
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Clear
+              </button>
+              <button
+                onClick={executeQuery}
+                disabled={loading || !query.trim()}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? 'Executing...' : 'Execute Query'}
+              </button>
+            </>
+          }
+        >
+          {/* Query Editor */}
+          <div className="relative">
+            <textarea
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter your SQL query here...&#10;&#10;Example:&#10;SELECT * FROM users WHERE workspaceId = 'your-workspace-id' LIMIT 10;"
+              className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+              Cmd+Enter to execute
+            </div>
           </div>
-        </div>
-      </DatabaseHeader>
+        </DatabaseHeader>
+      </div>
 
       {/* Content */}
       <div className="flex-1 flex overflow-hidden">

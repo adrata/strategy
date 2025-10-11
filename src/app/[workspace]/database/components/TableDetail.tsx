@@ -66,43 +66,43 @@ export function TableDetail({ tableName }: TableDetailProps) {
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Standardized Header */}
-      <DatabaseHeader
-        title={tableName}
-        subtitle={tableSchema ? `${tableSchema.columns.length} columns` : 'Loading...'}
-        icon="📋"
-        stats={[
-          { label: "Columns", value: tableSchema?.columns.length || 0 },
-          { label: "Relationships", value: tableSchema?.relationships.length || 0 }
-        ]}
-        actions={
-          <>
-            <button className="px-4 py-2 text-sm bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors">
-              Export Data
-            </button>
-            <button className="px-4 py-2 text-sm bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors">
-              Add Record
-            </button>
-          </>
-        }
-      >
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <span className="mr-2">{tab.icon}</span>
-              {tab.name}
-            </button>
-          ))}
-        </div>
-      </DatabaseHeader>
+      <div className="p-6">
+        <DatabaseHeader
+          title={tableName}
+          subtitle={tableSchema ? `${tableSchema.columns.length} columns` : 'Loading...'}
+          stats={[
+            { label: "Columns", value: tableSchema?.columns.length || 0 },
+            { label: "Relationships", value: tableSchema?.relationships.length || 0 }
+          ]}
+          actions={
+            <>
+              <button className="px-4 py-2 text-sm bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors">
+                Export Data
+              </button>
+              <button className="px-4 py-2 text-sm bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors">
+                Add Record
+              </button>
+            </>
+          }
+        >
+          {/* Tabs */}
+          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {tab.name}
+              </button>
+            ))}
+          </div>
+        </DatabaseHeader>
+      </div>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">
