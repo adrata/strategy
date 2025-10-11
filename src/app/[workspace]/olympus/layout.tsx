@@ -28,6 +28,7 @@ interface WorkflowStep {
 interface OlympusContextType {
   selectedStep: WorkflowStep | null;
   setSelectedStep: (step: WorkflowStep | null) => void;
+  addWorkflowSteps: (steps: WorkflowStep[]) => void;
 }
 
 const OlympusContext = createContext<OlympusContextType | undefined>(undefined);
@@ -95,8 +96,13 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
     }
   }, [selectedStep, workspaceId]);
 
+  const addWorkflowSteps = (steps: WorkflowStep[]) => {
+    // This will be implemented to communicate with the page component
+    console.log('Adding workflow steps:', steps);
+  };
+
   return (
-    <OlympusContext.Provider value={{ selectedStep, setSelectedStep }}>
+    <OlympusContext.Provider value={{ selectedStep, setSelectedStep, addWorkflowSteps }}>
       <AcquisitionOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>

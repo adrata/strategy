@@ -3,6 +3,11 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { useOlympus } from "./layout";
 import { CFO_CRO_PIPELINE_STEPS } from "./types/workflow";
+import { 
+  CircleStackIcon, 
+  ArrowPathRoundedSquareIcon, 
+  BoltIcon 
+} from "@heroicons/react/24/outline";
 
 interface WorkflowStep {
   id: string;
@@ -25,7 +30,10 @@ export default function OlympusPage() {
   const [positionHistory, setPositionHistory] = useState<Array<typeof workflowSteps>>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [isCodeMode, setIsCodeMode] = useState(false);
+  const [draggingConnection, setDraggingConnection] = useState<{ from: string, fromSide: string } | null>(null);
+  const [connections, setConnections] = useState<Array<{ from: string, to: string, fromSide: string, toSide: string }>>([]);
   const { setSelectedStep } = useOlympus();
 
   // Load active tool from localStorage on mount
@@ -169,12 +177,12 @@ export default function OlympusPage() {
     setShowAddPopup(false);
   };
 
-  // Helper function to get type color for widgets
-  const getTypeColor = (stepId: string) => {
-    if (stepId.startsWith('data-')) return 'bg-blue-500';
-    if (stepId.startsWith('condition') || stepId.startsWith('switch') || stepId.startsWith('loop') || stepId.startsWith('parallel')) return 'bg-purple-500';
-    if (stepId.startsWith('http-request') || stepId.startsWith('webhook') || stepId.startsWith('delay') || stepId.startsWith('schedule')) return 'bg-green-500';
-    return 'bg-gray-500'; // Default for existing CFO/CRO pipeline steps
+  // Helper function to get type icon for widgets
+  const getTypeIcon = (stepId: string) => {
+    if (stepId.startsWith('data-')) return CircleStackIcon;
+    if (stepId.startsWith('condition') || stepId.startsWith('switch') || stepId.startsWith('loop') || stepId.startsWith('parallel')) return ArrowPathRoundedSquareIcon;
+    if (stepId.startsWith('http-request') || stepId.startsWith('webhook') || stepId.startsWith('delay') || stepId.startsWith('schedule')) return BoltIcon;
+    return CircleStackIcon; // Default for existing CFO/CRO pipeline steps
   };
 
   const handleStepClick = useCallback((stepId: string) => {
@@ -189,6 +197,77 @@ export default function OlympusPage() {
       }
     }
   }, [activeTool, workflowSteps, setSelectedStep]);
+
+  const handleConnectionPointClick = useCallback((stepId: string, side: string) => {
+    if (draggingConnection) {
+      // Complete the connection
+      if (draggingConnection.from !== stepId) {
+        setConnections(prev => [...prev, {
+          from: draggingConnection.from,
+          to: stepId,
+          fromSide: draggingConnection.fromSide,
+          toSide: side
+        }]);
+      }
+      setDraggingConnection(null);
+    } else {
+      // Start dragging a connection
+      setDraggingConnection({ from: stepId, fromSide: side });
+    }
+  }, [draggingConnection]);
+
+  const generateWorkflowFromAI = useCallback((description: string) => {
+    // Simple pattern matching for workflow generation
+    const steps: WorkflowStep[] = [];
+    const baseY = 100;
+    const stepHeight = 120;
+    
+    // Parse common workflow patterns
+    if (description.toLowerCase().includes('email') || description.toLowerCase().includes('send email')) {
+      steps.push({
+        id: `email-${Date.now()}`,
+        title: 'Send Email',
+        description: 'Send automated email',
+        position: { x: 300, y: baseY + (steps.length * stepHeight) },
+        isActive: false
+      });
+    }
+    
+    if (description.toLowerCase().includes('data') || description.toLowerCase().includes('fetch')) {
+      steps.push({
+        id: `data-${Date.now()}`,
+        title: 'Fetch Data',
+        description: 'Retrieve data from source',
+        position: { x: 300, y: baseY + (steps.length * stepHeight) },
+        isActive: false
+      });
+    }
+    
+    if (description.toLowerCase().includes('process') || description.toLowerCase().includes('transform')) {
+      steps.push({
+        id: `process-${Date.now()}`,
+        title: 'Process Data',
+        description: 'Transform and process information',
+        position: { x: 300, y: baseY + (steps.length * stepHeight) },
+        isActive: false
+      });
+    }
+    
+    if (description.toLowerCase().includes('save') || description.toLowerCase().includes('store')) {
+      steps.push({
+        id: `save-${Date.now()}`,
+        title: 'Save Results',
+        description: 'Store processed data',
+        position: { x: 300, y: baseY + (steps.length * stepHeight) },
+        isActive: false
+      });
+    }
+    
+    // Add the generated steps to the workflow
+    if (steps.length > 0) {
+      setWorkflowSteps(prev => [...prev, ...steps]);
+    }
+  }, []);
 
   // Memoize connection lines for better performance
   const connectionLines = useMemo(() => {
@@ -225,8 +304,8 @@ export default function OlympusPage() {
         <path
           key={`connection-${step.id}-${nextStep.id}`}
           d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
-          stroke="#9ca3af"
-          strokeWidth="2.5"
+          stroke="#d1d5db"
+          strokeWidth="1.5"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -431,11 +510,11 @@ export default function OlympusPage() {
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setIsCodeMode(!isCodeMode)}
-                className="px-4 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                className="px-4 py-1 bg-white text-gray-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
               >
                 {isCodeMode ? 'Build' : 'Code'}
               </button>
-              <button className="px-4 py-1 bg-white text-gray-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+              <button className="px-4 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">
                 Share
               </button>
               <button 
@@ -444,6 +523,12 @@ export default function OlympusPage() {
                 className="px-4 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isExecuting ? 'Executing...' : 'Execute'}
+              </button>
+              <button 
+                onClick={() => generateWorkflowFromAI('create workflow for sending emails and processing data')}
+                className="px-4 py-1 bg-green-100 text-green-600 text-sm font-medium rounded-lg hover:bg-green-200 transition-colors"
+              >
+                Test AI
               </button>
             </div>
           </div>
@@ -531,9 +616,13 @@ export default function OlympusPage() {
               }}
               onMouseDown={(e) => handleStepMouseDown(e, step.id)}
               onClick={() => handleStepClick(step.id)}
+              onMouseEnter={() => setHoveredCard(step.id)}
+              onMouseLeave={() => setHoveredCard(null)}
             >
-              {/* Connection Points */}
-              {/* Right side connection point */}
+              {/* Connection Points - Only show on hover */}
+              {hoveredCard === step.id && (
+                <>
+                  {/* Right side connection point */}
               <div
                 className={`absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 ${
                   hoveredConnectionPoint === `${step.id}-right` ? 'scale-125 border-blue-500 bg-blue-50' : 'hover:border-blue-400'
@@ -542,7 +631,7 @@ export default function OlympusPage() {
                 onMouseLeave={() => setHoveredConnectionPoint(null)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Connect from right side of:', step.title);
+                  handleConnectionPointClick(step.id, 'right');
                 }}
               >
                 <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -559,7 +648,7 @@ export default function OlympusPage() {
                 onMouseLeave={() => setHoveredConnectionPoint(null)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Connect from left side of:', step.title);
+                  handleConnectionPointClick(step.id, 'left');
                 }}
               >
                 <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -576,7 +665,7 @@ export default function OlympusPage() {
                 onMouseLeave={() => setHoveredConnectionPoint(null)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Connect from top side of:', step.title);
+                  handleConnectionPointClick(step.id, 'top');
                 }}
               >
                 <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -593,27 +682,34 @@ export default function OlympusPage() {
                 onMouseLeave={() => setHoveredConnectionPoint(null)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Connect from bottom side of:', step.title);
+                  handleConnectionPointClick(step.id, 'bottom');
                 }}
               >
                 <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
+                </>
+              )}
 
-              <div className="flex items-center gap-2">
-                {/* Type indicator */}
-                <div className={`w-2 h-2 rounded-full ${getTypeColor(step.id)}`} />
-                <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-medium border ${
-                  isExecuting && currentStepIndex === workflowSteps.findIndex(s => s.id === step.id)
-                    ? 'bg-green-500 text-white border-green-500'
-                    : step.isActive 
-                      ? 'bg-gray-200 text-gray-800 border-gray-800' 
-                      : 'bg-white text-gray-600 border-gray-300'
-                }`}>
-                  {workflowSteps.findIndex(s => s.id === step.id) + 1}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-medium border ${
+                    isExecuting && currentStepIndex === workflowSteps.findIndex(s => s.id === step.id)
+                      ? 'bg-green-500 text-white border-green-500'
+                      : step.isActive 
+                        ? 'bg-gray-200 text-gray-800 border-gray-800' 
+                        : 'bg-white text-gray-600 border-gray-300'
+                  }`}>
+                    {workflowSteps.findIndex(s => s.id === step.id) + 1}
+                  </div>
+                  <div className="text-xs font-medium text-gray-700">{step.title}</div>
                 </div>
-                <div className="text-xs font-medium text-gray-700">{step.title}</div>
+                {/* Type indicator icon */}
+                {(() => {
+                  const IconComponent = getTypeIcon(step.id);
+                  return <IconComponent className="w-4 h-4 text-gray-400" />;
+                })()}
               </div>
               <div className="text-xs text-gray-500 mt-1">{step.description}</div>
             </div>
@@ -653,6 +749,47 @@ export default function OlympusPage() {
             </svg>
           </button>
           
+          {/* Better Plus Button */}
+          <div className="relative add-popup-container">
+            <button 
+              onClick={() => setShowAddPopup(!showAddPopup)}
+              className="w-6 h-6 bg-white text-gray-600 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+            
+            {/* Add Items Popup */}
+            {showAddPopup && (
+              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
+                {workflowCategories.map((category) => (
+                  <div key={category.category}>
+                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                      <span className="text-sm font-semibold text-gray-800">{category.category}</span>
+                    </div>
+                    {category.items.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleAddItem(item)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      >
+                        {(() => {
+                          const IconComponent = getTypeIcon(item.id);
+                          return <IconComponent className="w-4 h-4 text-gray-400" />;
+                        })()}
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-800">{item.title}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
           {/* Undo Button */}
           <button 
             onClick={handleUndo}
@@ -683,43 +820,6 @@ export default function OlympusPage() {
             </svg>
           </button>
           
-          {/* Better Plus Button */}
-          <div className="relative add-popup-container">
-            <button 
-              onClick={() => setShowAddPopup(!showAddPopup)}
-              className="w-6 h-6 bg-white text-gray-600 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-            
-            {/* Add Items Popup */}
-            {showAddPopup && (
-              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
-                {workflowCategories.map((category) => (
-                  <div key={category.category}>
-                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-                      <span className="text-sm font-semibold text-gray-800">{category.category}</span>
-                    </div>
-                    {category.items.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => handleAddItem(item)}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                      >
-                        <div className={`w-3 h-3 rounded-full ${getTypeColor(item.id)}`} />
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-800">{item.title}</div>
-                          <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
