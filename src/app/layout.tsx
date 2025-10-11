@@ -141,7 +141,9 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
       suppressHydrationWarning
     >
               <DynamicFavicon isWebsite={isWebsite} defaultColor="#3b82f6" />
-      <DynamicTitle />
+      <Suspense fallback={null}>
+        <DynamicTitle />
+      </Suspense>
       <SafariImmediateFix />
       <DesktopErrorBoundary>
         <ThemeProvider>
