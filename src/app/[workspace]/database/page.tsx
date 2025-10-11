@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useDatabase } from "./layout";
 import { TableBrowser } from "./components/TableBrowser";
 import { TableDetail } from "./components/TableDetail";
@@ -8,6 +8,10 @@ import { QueryConsole } from "./components/QueryConsole";
 import { SchemaVisualizer } from "./components/SchemaVisualizer";
 
 export default function DatabasePage() {
+  // Set browser title
+  useEffect(() => {
+    document.title = 'Database • Records';
+  }, []);
   const { viewMode, selectedTable } = useDatabase();
 
   const renderContent = () => {

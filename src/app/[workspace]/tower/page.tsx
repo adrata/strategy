@@ -7,6 +7,10 @@ import { MetricsGrid } from "./components/MetricsGrid";
 import { MonitoringCard as MonitoringCardType, TowerMetrics } from "./types";
 
 export default function TowerPage() {
+  // Set browser title
+  useEffect(() => {
+    document.title = 'Tower • Intelligence';
+  }, []);
   const { setSelectedMetric } = useTower();
   const [metrics, setMetrics] = useState<TowerMetrics | null>(null);
   const [loading, setLoading] = useState(true);

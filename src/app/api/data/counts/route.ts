@@ -142,7 +142,9 @@ export async function GET(request: NextRequest) {
       clients: clientsCount,
       partners: partnersCount,
       sellers: sellersCount,
-      speedrun: speedrunCount
+      speedrun: speedrunCount,
+      metrics: 16, // Fixed count for tracked metrics
+      chronicle: 0 // Will be updated when Chronicle reports are created
     };
     
     // 🚀 PERFORMANCE: Cache the results

@@ -19,6 +19,8 @@ interface FastCounts {
   clients: number | string;
   sellers: number | string;
   speedrun: number | string;
+  metrics: number | string;
+  chronicle: number | string;
 }
 
 interface UseFastCountsReturn {
@@ -97,7 +99,11 @@ export function useFastCounts(): UseFastCountsReturn {
         speedrun: counts.speedrun || '—',
         
         // Sellers: Use the sellers count from counts API
-        sellers: counts.sellers || '—'
+        sellers: counts.sellers || '—',
+        
+        // New sections
+        metrics: counts.metrics || '—',
+        chronicle: counts.chronicle || '—'
       };
 
       setCounts(newCounts);

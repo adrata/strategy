@@ -6,84 +6,43 @@ import React, {
   useState,
   useCallback,
 } from "react";
+import { allThemes } from '@/platform/ui/themes/theme-definitions';
 
-const themes: Record<string, { [key: string]: string }> = {
-  // --- LIGHT THEMES ---
-  Ghost: {
-    "--background": "#ffffff",
-    "--foreground": "#1e1e1e",
-    "--accent": "#000000",
-    "--border": "#e3e4e8",
-  },
-  Dawn: {
-    "--background": "#f8f8f7",
-    "--foreground": "#232428",
-    "--accent": "#666666",
-    "--border": "#e3e4e8",
-  },
-  Parchment: {
-    "--background": "#f5f6fa",
-    "--foreground": "#222428",
-    "--accent": "#555555",
-    "--border": "#e3e4e8",
-  },
-  Lightening: {
-    "--background": "#f9f9f9",
-    "--foreground": "#2a2a2a",
-    "--accent": "#444444",
-    "--border": "#e3e4e8",
-  },
-  Horizon: {
-    "--background": "#f7f7f7",
-    "--foreground": "#1b1b1b",
-    "--accent": "#333333",
-    "--border": "#e3e4e8",
-  },
-  Snow: {
-    "--background": "#f9fbfd",
-    "--foreground": "#222",
-    "--accent": "#111111",
-    "--border": "#e3e4e8",
-  },
+// Convert theme definitions to CSS variables format for compatibility
+const themes: Record<string, { [key: string]: string }> = {};
 
-  // --- DARK THEMES ---
-  "Dark Matter": {
-    "--background": "#111112",
-    "--foreground": "#e0e0e3",
-    "--accent": "#ffffff",
-    "--border": "#2d2e36",
-  },
-  Night: {
-    "--background": "#1e1e1e",
-    "--foreground": "#d4d4d4",
-    "--accent": "#cccccc",
-    "--border": "#2d2e36",
-  },
-  "Midnight Drive": {
-    "--background": "#18181a",
-    "--foreground": "#e5e5ea",
-    "--accent": "#bbbbbb",
-    "--border": "#2d2e36",
-  },
-  "Graphite Core": {
-    "--background": "#2c2c2e",
-    "--foreground": "#f5f5f7",
-    "--accent": "#aaaaaa",
-    "--border": "#2d2e36",
-  },
-  Eclipse: {
-    "--background": "#1c1c1e",
-    "--foreground": "#e5e5ea",
-    "--accent": "#999999",
-    "--border": "#2d2e36",
-  },
-  "Neon Pulse": {
-    "--background": "#181c24",
-    "--foreground": "#e0e0e3",
-    "--accent": "#888888",
-    "--border": "#2d2e36",
-  },
-};
+allThemes.forEach(theme => {
+  themes[theme.id] = {
+    "--background": theme.colors.background,
+    "--foreground": theme.colors.foreground,
+    "--accent": theme.colors.accent,
+    "--border": theme.colors.border,
+    "--muted": theme.colors.muted,
+    "--muted-light": theme.colors.mutedLight,
+    "--hover": theme.colors.hover,
+    "--button-text": theme.colors.buttonText,
+    "--button-background": theme.colors.buttonBackground,
+    "--button-hover": theme.colors.buttonHover,
+    "--button-active": theme.colors.buttonActive,
+    "--success": theme.colors.success,
+    "--warning": theme.colors.warning,
+    "--error": theme.colors.error,
+    "--info": theme.colors.info,
+    "--badge-new-bg": theme.colors.badgeNewBg,
+    "--badge-new-text": theme.colors.badgeNewText,
+    "--badge-contacted-bg": theme.colors.badgeContactedBg,
+    "--badge-contacted-text": theme.colors.badgeContactedText,
+    "--badge-qualified-bg": theme.colors.badgeQualifiedBg,
+    "--badge-qualified-text": theme.colors.badgeQualifiedText,
+    "--badge-lost-bg": theme.colors.badgeLostBg,
+    "--badge-lost-text": theme.colors.badgeLostText,
+    "--active-app-border": theme.colors.activeAppBorder,
+    "--panel-background": theme.colors.panelBackground,
+    "--scrollbar-thumb": theme.colors.scrollbarThumb,
+    "--focus-ring": theme.colors.focusRing,
+    "--focus-ring-width": theme.colors.focusRingWidth,
+  };
+});
 
 // CRITICAL: Ensure CSS variables are always available
 const initializeCSSVariables = (themeVars?: Record<string, string>) => {

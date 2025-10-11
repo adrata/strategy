@@ -457,7 +457,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   };
 
   return (
-    <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] border-r border-[var(--border)] flex flex-col h-full">
       
 
       {/* Stats Header */}

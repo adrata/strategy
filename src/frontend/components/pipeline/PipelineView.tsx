@@ -1156,6 +1156,20 @@ export const PipelineView = React.memo(function PipelineView({
   const handleSectionChange = useCallback((newSection: string) => {
     console.log(`🔄 [UNIFIED NAV] Switching from ${section} to ${newSection}`);
     
+    // Update browser title
+    const sectionLabels: Record<string, string> = {
+      'opportunities': 'Opportunities',
+      'leads': 'Leads',
+      'prospects': 'Prospects',
+      'companies': 'Companies',
+      'people': 'People',
+      'clients': 'Customers',
+      'partners': 'Partners',
+      'sellers': 'Sellers'
+    };
+    const sectionLabel = sectionLabels[newSection] || newSection;
+    document.title = sectionLabel;
+    
     // Use workspace-aware navigation for consistency
     navigateToPipeline(newSection);
     

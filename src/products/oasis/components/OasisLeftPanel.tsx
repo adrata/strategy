@@ -10,11 +10,7 @@
 import React from 'react';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
-
-interface OasisLeftPanelProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
-}
+import { useOasis } from '@/app/[workspace]/(pipeline)/layout';
 
 interface NavigationItem {
   id: string;
@@ -61,18 +57,36 @@ const navigationItems: NavigationItem[] = [
   }
 ];
 
-export function OasisLeftPanel({ activeSection, onSectionChange }: OasisLeftPanelProps) {
+export function OasisLeftPanel() {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();
+  
+  // Add error boundary for context usage
+  let oasisContext;
+  try {
+    oasisContext = useOasis();
+  } catch (error) {
+    console.error('Failed to get Oasis context:', error);
+    return (
+      <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+        <div className="p-4 text-center">
+          <div className="text-sm text-red-500">Error loading Oasis context</div>
+        </div>
+      </div>
+    );
+  }
+  
+  const { activeSection, setActiveSection, setSelectedChannel } = oasisContext;
 
   const handleSectionClick = (sectionId: string) => {
-    onSectionChange(sectionId);
+    setActiveSection(sectionId as any);
+    setSelectedChannel(null); // Clear selected channel when switching sections
   };
 
   // Show loading state while auth is loading
   if (authLoading) {
     return (
-      <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
         <div className="p-4 text-center">
           <div className="text-sm text-gray-500">Loading Oasis...</div>
         </div>
@@ -81,7 +95,7 @@ export function OasisLeftPanel({ activeSection, onSectionChange }: OasisLeftPane
   }
 
   return (
-    <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Speedrun style */}
@@ -155,6 +169,40 @@ export function OasisLeftPanel({ activeSection, onSectionChange }: OasisLeftPane
             );
           })}
         </nav>
+
+        {/* Channels List - Show when channels section is active */}
+        {activeSection === 'channels' && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="px-3 mb-2">
+              <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide">Channels</h3>
+            </div>
+            <div className="space-y-1">
+              {[
+                { id: 'general', name: 'general', unread: 3, members: 12 },
+                { id: 'design', name: 'design', unread: 0, members: 5 },
+                { id: 'dev-team', name: 'dev-team', unread: 7, members: 8 }
+              ].map((channel) => (
+                <button
+                  key={channel.id}
+                  onClick={() => setSelectedChannel(channel)}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">#{channel.name}</span>
+                    {channel.unread > 0 && (
+                      <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+                        {channel.unread}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    {channel.members} members
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Fixed Bottom Section - Profile Button */}

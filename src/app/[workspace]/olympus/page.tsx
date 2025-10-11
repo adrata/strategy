@@ -7,6 +7,7 @@ import { CodeEditor } from "./components/CodeEditor";
 import { Toolbar } from "./components/Toolbar";
 import { ContextMenu } from "./components/ContextMenu";
 import { CommentaryPanel } from "./components/CommentaryPanel";
+import { StartPipelineModal } from "./components/StartPipelineModal";
 import { useDrag } from "./hooks/useDrag";
 import { useZoomPan } from "./hooks/useZoomPan";
 import { 
@@ -22,6 +23,10 @@ import {
 } from "./utils/workflowUtils";
 
 export default function OlympusPage() {
+  // Set browser title
+  useEffect(() => {
+    document.title = 'Olympus • Workflows';
+  }, []);
   const [activeTool, setActiveTool] = useState<ActiveTool>('cursor');
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -35,6 +40,7 @@ export default function OlympusPage() {
   const [connections, setConnections] = useState<WorkflowConnection[]>([]);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [showPlayPopup, setShowPlayPopup] = useState(false);
+  const [showStartModal, setShowStartModal] = useState(false);
   const [isCommentaryMode, setIsCommentaryMode] = useState(false);
   const [commentaryLog, setCommentaryLog] = useState<string[]>([]);
   const [stepStatus, setStepStatus] = useState<Record<string, 'success' | 'error' | 'pending'>>({});
@@ -275,6 +281,18 @@ export default function OlympusPage() {
     intervalRef.current = interval;
   }, [workflowSteps]);
 
+  const handleStartWithConfig = useCallback((config: any) => {
+    // Here you would typically save the config and start the pipeline
+    console.log('Starting pipeline with config:', config);
+    handleExecute();
+  }, [handleExecute]);
+
+  const handleStartWithCommentaryAndConfig = useCallback((config: any) => {
+    // Here you would typically save the config and start the pipeline with commentary
+    console.log('Starting pipeline with commentary and config:', config);
+    handleExecuteWithCommentary();
+  }, [handleExecuteWithCommentary]);
+
   const handleBackgroundClick = useCallback(() => {
     setSelectedStep(null);
     setWorkflowSteps(prev => prev.map(step => ({ ...step, isActive: false })));
@@ -315,14 +333,6 @@ export default function OlympusPage() {
     setContextMenu({ x: e.clientX, y: e.clientY, stepId });
   }, []);
 
-  // Custom hooks
-  const { draggingStep, dragPosition, handleStepMouseDown } = useDrag(
-    workflowSteps,
-    setWorkflowSteps,
-    activeTool,
-    saveToHistory
-  );
-
   const {
     zoom,
     pan,
@@ -331,6 +341,16 @@ export default function OlympusPage() {
     handleBackgroundMouseMove,
     handleBackgroundMouseUp
   } = useZoomPan(activeTool);
+
+  // Custom hooks
+  const { draggingStep, dragPosition, handleStepMouseDown } = useDrag(
+    workflowSteps,
+    setWorkflowSteps,
+    activeTool,
+    saveToHistory,
+    zoom,
+    pan
+  );
 
   // Add background mouse move/up listeners
   useEffect(() => {
@@ -447,9 +467,18 @@ export default function OlympusPage() {
           onExecute={handleExecute}
           onExecuteWithCommentary={handleExecuteWithCommentary}
           onTogglePlayPopup={() => setShowPlayPopup(!showPlayPopup)}
+          onOpenStartModal={() => setShowStartModal(true)}
           getTypeIcon={getTypeIcon}
         />
       )}
+
+      {/* Start Pipeline Modal */}
+      <StartPipelineModal
+        isOpen={showStartModal}
+        onClose={() => setShowStartModal(false)}
+        onStart={handleStartWithConfig}
+        onStartWithCommentary={handleStartWithCommentaryAndConfig}
+      />
 
       {/* Context Menu */}
       <ContextMenu

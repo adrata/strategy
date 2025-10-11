@@ -41,6 +41,16 @@ interface ChatMessage {
   }>;
   browserResults?: any[];
   isBrowsing?: boolean;
+  // OpenRouter routing information
+  routingInfo?: {
+    complexity: number;
+    selectedModel: string;
+    fallbackUsed: boolean;
+    failoverChain: string[];
+  };
+  cost?: number;
+  model?: string;
+  provider?: string;
 }
 
 interface Conversation {
@@ -740,8 +750,8 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           : conv
       ));
 
-      // Enhanced AI API call with performance optimizations
-      console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat');
+      // Enhanced AI API call with OpenRouter integration
+      console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat with OpenRouter');
       const startTime = performance.now();
       
       const response = await fetch('/api/ai-chat', {
@@ -762,6 +772,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           recordType,
           enableVoiceResponse: false,
           selectedVoiceId: 'default',
+          useOpenRouter: true, // Enable OpenRouter intelligent routing
           // Enhanced context for smarter responses
           context: {
             currentUrl: window.location.href,
@@ -825,8 +836,24 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           todos: data.todos || undefined,
           sources: data.sources || undefined,
           browserResults: data.browserResults || undefined,
-          isBrowsing: data.metadata?.hasWebResearch || false
+          isBrowsing: data.metadata?.hasWebResearch || false,
+          // OpenRouter routing information
+          routingInfo: data.metadata?.routingInfo,
+          cost: data.metadata?.cost,
+          model: data.metadata?.model,
+          provider: data.metadata?.provider
         };
+
+        // Log routing information for monitoring
+        if (data.metadata?.routingInfo) {
+          console.log('🎯 [AI CHAT] Routing info:', {
+            model: data.metadata.model,
+            provider: data.metadata.provider,
+            complexity: data.metadata.routingInfo.complexity,
+            cost: data.metadata.cost,
+            fallbackUsed: data.metadata.routingInfo.fallbackUsed
+          });
+        }
         
         messagesToAdd.push(assistantMessage);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRecordTitle } from '@/platform/hooks/useRecordTitle';
 
@@ -69,6 +69,7 @@ const getPageName = (pathname: string): string => {
 
 export function DynamicTitle() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   
   // Early return for auth/public pages to prevent hydration mismatches
   const isAuthPage = pathname === "/sign-in" || 
@@ -130,9 +131,58 @@ export function DynamicTitle() {
           console.log('🔍 [DYNAMIC TITLE] Setting document title to:', title);
           document['title'] = title;
         } else {
-          // No record data available, use generic page name
-          const pageName = getPageName(pathname);
-          document['title'] = pageName;
+          // No record data available, generate title based on URL params and path
+          let title = getPageName(pathname);
+          
+          // Handle URL parameters for enhanced titles
+          const view = searchParams.get('view');
+          const section = searchParams.get('section');
+          
+          // Handle Speedrun view changes
+          if (pathname.includes('/speedrun/sprint') && view) {
+            const viewLabels: Record<string, string> = {
+              'actions': 'Actions',
+              'targets': 'Targets', 
+              'calendar': 'Calendar',
+              'insights': 'Insights'
+            };
+            const viewLabel = viewLabels[view] || view;
+            title = `Sprint • ${viewLabel}`;
+          }
+          
+          // Handle pipeline section changes
+          else if (pathname.includes('/pipeline') && section) {
+            const sectionLabels: Record<string, string> = {
+              'opportunities': 'Opportunities',
+              'leads': 'Leads',
+              'prospects': 'Prospects',
+              'companies': 'Companies',
+              'people': 'People',
+              'clients': 'Customers',
+              'partners': 'Partners',
+              'sellers': 'Sellers'
+            };
+            const sectionLabel = sectionLabels[section] || section;
+            title = sectionLabel;
+          }
+          
+          // Handle product-specific titles
+          else if (pathname.includes('/monaco')) {
+            title = 'Monaco • Analytics';
+          } else if (pathname.includes('/olympus')) {
+            title = 'Olympus • Workflows';
+          } else if (pathname.includes('/grand-central')) {
+            title = 'Grand Central • Integrations';
+          } else if (pathname.includes('/tower')) {
+            title = 'Tower • Intelligence';
+          } else if (pathname.includes('/database')) {
+            title = 'Database • Records';
+          } else if (pathname.includes('/atrium')) {
+            title = 'Atrium • Documents';
+          }
+          
+          console.log('🔍 [DYNAMIC TITLE] Setting document title to:', title);
+          document['title'] = title;
         }
       } else {
         // Fallback to default title
@@ -142,7 +192,7 @@ export function DynamicTitle() {
       // No workspaces available, use default title
       document['title'] = 'Adrata | Dashboard';
     }
-  }, [user?.activeWorkspaceId, user?.workspaces, pathname, recordData, isLoading]);
+  }, [user?.activeWorkspaceId, user?.workspaces, pathname, recordData, isLoading, searchParams]);
 
   // This component doesn't render anything
   return null;

@@ -21,7 +21,7 @@ export function DocumentList() {
     searchQuery,
     selectedDocumentType,
     currentFolderId,
-    setSelectedDocument,
+    setViewingDocument,
   } = useAtrium();
 
   const [documents, setDocuments] = useState<AtriumDocument[]>([]);
@@ -67,6 +67,7 @@ export function DocumentList() {
           downloadCount: 3,
           createdAt: new Date('2024-01-15'),
           updatedAt: new Date('2024-01-20'),
+          content: '<h1>Project Proposal</h1><p>This is a sample project proposal document. You can edit this content by clicking the Edit button above.</p><h2>Objectives</h2><ul><li>Increase productivity by 25%</li><li>Reduce costs by 15%</li><li>Improve customer satisfaction</li></ul><h2>Timeline</h2><p>The project is expected to be completed within 6 months, starting from Q1 2024.</p>',
           owner: {
             id: 'user1',
             name: 'John Doe',
@@ -81,15 +82,15 @@ export function DocumentList() {
         },
         {
           id: '2',
-          title: 'Sales Presentation',
-          description: 'Q1 sales results and projections',
-          documentType: 'pitch',
+          title: 'JavaScript Code Sample',
+          description: 'Sample JavaScript code for demonstration',
+          documentType: 'code',
           status: 'published',
           version: '2.1',
           isEncrypted: false,
           classification: 'internal',
           requiresAuth: false,
-          tags: ['sales', 'presentation'],
+          tags: ['javascript', 'sample'],
           isStarred: true,
           isTemplate: false,
           ownerId: 'user2',
@@ -100,6 +101,22 @@ export function DocumentList() {
           downloadCount: 1,
           createdAt: new Date('2024-01-10'),
           updatedAt: new Date('2024-01-18'),
+          content: `// Welcome to Atrium Code Editor
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+const products = [
+  { name: 'Laptop', price: 999 },
+  { name: 'Mouse', price: 25 },
+  { name: 'Keyboard', price: 75 }
+];
+
+const total = calculateTotal(products);
+console.log('Total:', total);
+
+// This is a sample code document
+// You can edit this code by clicking the Edit button above`,
           owner: {
             id: 'user2',
             name: 'Jane Smith',
@@ -282,7 +299,7 @@ export function DocumentList() {
             return (
               <div
                 key={document.id}
-                onClick={() => setSelectedDocument(document)}
+                onClick={() => setViewingDocument(document)}
                 className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer group"
               >
                 {/* Name */}

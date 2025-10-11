@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
@@ -13,6 +13,26 @@ import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
+
+// Oasis Context
+interface OasisContextType {
+  activeSection: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings';
+  setActiveSection: (section: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings') => void;
+  selectedChannel: any | null;
+  setSelectedChannel: (channel: any | null) => void;
+}
+
+const OasisContext = createContext<OasisContextType | undefined>(undefined);
+
+export const useOasis = () => {
+  const context = useContext(OasisContext);
+  if (!context) {
+    console.error('useOasis hook called outside of OasisProvider');
+    console.error('Current context value:', context);
+    throw new Error('useOasis must be used within OasisProvider');
+  }
+  return context;
+};
 
 interface PipelineLayoutProps {
   children: React.ReactNode;
@@ -59,7 +79,7 @@ function PipelineLayoutContent({
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     if (pathname.includes('/oasis')) {
-      return <OasisLeftPanel activeSection="channels" onSectionChange={() => {}} />;
+      return <OasisLeftPanel />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel />;
     } else {
@@ -158,6 +178,17 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const [isCustomersVisible, setIsCustomersVisible] = useState(false);
   const [isPartnersVisible, setIsPartnersVisible] = useState(true);
 
+  // Oasis context state
+  const [activeSection, setActiveSection] = useState<'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings'>('channels');
+  const [selectedChannel, setSelectedChannel] = useState<any | null>(null);
+
+  const oasisContextValue = {
+    activeSection,
+    setActiveSection,
+    selectedChannel,
+    setSelectedChannel
+  };
+
   // Handle section changes with proper navigation
   const handleSectionChange = (section: string) => {
     console.log(`🔄 [PipelineLayout] Section change requested: ${section}`);
@@ -177,26 +208,28 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
       <ZoomProvider>
         <PipelineProvider>
           <StacksProvider>
-            <ProfilePopupProvider>
-              <PipelineLayoutContent
-                currentSection={currentSection}
-                onSectionChange={handleSectionChange}
-                isSpeedrunVisible={isSpeedrunVisible}
-                setIsSpeedrunVisible={setIsSpeedrunVisible}
-                isOpportunitiesVisible={isOpportunitiesVisible}
-                setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                isProspectsVisible={isProspectsVisible}
-                setIsProspectsVisible={setIsProspectsVisible}
-                isLeadsVisible={isLeadsVisible}
-                setIsLeadsVisible={setIsLeadsVisible}
-                isCustomersVisible={isCustomersVisible}
-                setIsCustomersVisible={setIsCustomersVisible}
-                isPartnersVisible={isPartnersVisible}
-                setIsPartnersVisible={setIsPartnersVisible}
-              >
-                {children}
-              </PipelineLayoutContent>
-            </ProfilePopupProvider>
+            <OasisContext.Provider value={oasisContextValue}>
+              <ProfilePopupProvider>
+                <PipelineLayoutContent
+                  currentSection={currentSection}
+                  onSectionChange={handleSectionChange}
+                  isSpeedrunVisible={isSpeedrunVisible}
+                  setIsSpeedrunVisible={setIsSpeedrunVisible}
+                  isOpportunitiesVisible={isOpportunitiesVisible}
+                  setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                  isProspectsVisible={isProspectsVisible}
+                  setIsProspectsVisible={setIsProspectsVisible}
+                  isLeadsVisible={isLeadsVisible}
+                  setIsLeadsVisible={setIsLeadsVisible}
+                  isCustomersVisible={isCustomersVisible}
+                  setIsCustomersVisible={setIsCustomersVisible}
+                  isPartnersVisible={isPartnersVisible}
+                  setIsPartnersVisible={setIsPartnersVisible}
+                >
+                  {children}
+                </PipelineLayoutContent>
+              </ProfilePopupProvider>
+            </OasisContext.Provider>
           </StacksProvider>
         </PipelineProvider>
       </ZoomProvider>

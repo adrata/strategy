@@ -7,6 +7,9 @@ import { PipelineFilters } from './PipelineFilters';
 import { PipelineHeader } from './PipelineHeader';
 import { OpportunitiesKanban } from './OpportunitiesKanban';
 import { MetricsDashboard } from './MetricsDashboard';
+import { MetricsWall } from './MetricsWall';
+import { ChronicleList } from './ChronicleList';
+import { ChronicleReport } from './ChronicleReport';
 import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
@@ -21,6 +24,7 @@ import { Pagination } from './table/Pagination';
 import { AddModal } from '@/platform/ui/components/AddModal';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
+import { ThemePickerModal } from '@/platform/ui/components/ThemePickerModal';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
@@ -66,6 +70,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     profilePopupRef
   } = useProfilePopup();
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
+  const [selectedChronicleReport, setSelectedChronicleReport] = useState<any>(null);
   
   // Check if we're in demo mode to set appropriate defaults
   const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
@@ -77,6 +82,7 @@ export const PipelineContent = React.memo(function PipelineContent({
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
+  const [isThemePickerOpen, setIsThemePickerOpen] = useState(false);
   // Default sorting: prospects by oldest Last Action, others by rank
   const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
@@ -562,6 +568,20 @@ export const PipelineContent = React.memo(function PipelineContent({
   const handleSectionChange = useCallback((newSection: string) => {
     console.log(`🔄 [UNIFIED NAV] Switching from ${section} to ${newSection}`);
     
+    // Update browser title
+    const sectionLabels: Record<string, string> = {
+      'opportunities': 'Opportunities',
+      'leads': 'Leads',
+      'prospects': 'Prospects',
+      'companies': 'Companies',
+      'people': 'People',
+      'clients': 'Customers',
+      'partners': 'Partners',
+      'sellers': 'Sellers'
+    };
+    const sectionLabel = sectionLabels[newSection] || newSection;
+    document.title = sectionLabel;
+    
     // Use workspace-aware navigation for consistency
     navigateToPipeline(newSection);
     
@@ -714,7 +734,16 @@ export const PipelineContent = React.memo(function PipelineContent({
 
   // Create the middle panel content
   const middlePanel = section === 'metrics' ? (
-    <MetricsDashboard />
+    <MetricsWall />
+  ) : section === 'chronicle' ? (
+    selectedChronicleReport ? (
+      <ChronicleReport 
+        report={selectedChronicleReport} 
+        onBack={() => setSelectedChronicleReport(null)}
+      />
+    ) : (
+      <ChronicleList onReportSelect={setSelectedChronicleReport} />
+    )
   ) : section === 'dashboard' ? (
     (() => {
       console.log('🚨 [PipelineContent] Rendering Dashboard component!');
@@ -1045,6 +1074,8 @@ export const PipelineContent = React.memo(function PipelineContent({
                 console.log(`🎯 PipelineContent: Demo scenario selected: ${scenarioSlug}`);
                 // The ProfileBox will handle the navigation
               }}
+              isThemePickerOpen={isThemePickerOpen}
+              setIsThemePickerOpen={setIsThemePickerOpen}
             />
           </div>
         )}
@@ -1053,6 +1084,15 @@ export const PipelineContent = React.memo(function PipelineContent({
         <SpeedrunEngineModal
           isOpen={isSpeedrunEngineModalOpen}
           onClose={() => setIsSpeedrunEngineModalOpen(false)}
+        />
+
+        {/* Theme Picker Modal */}
+        <ThemePickerModal
+          isOpen={isThemePickerOpen}
+          onClose={() => setIsThemePickerOpen(false)}
+          onThemeSelect={(theme) => {
+            console.log(`🎨 Theme selected: ${theme.displayName}`);
+          }}
         />
 
         {/* Monaco Signal Popup - Only show for speedrun section */}

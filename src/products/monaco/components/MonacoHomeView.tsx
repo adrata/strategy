@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ChartBarIcon,
   UsersIcon,
@@ -13,8 +13,12 @@ interface MonacoHomeViewProps {
 }
 
 export function MonacoHomeView({}: MonacoHomeViewProps) {
+  // Set browser title
+  useEffect(() => {
+    document.title = 'Monaco • Analytics';
+  }, []);
   const homeLeftPanel = (
-    <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col pt-0 pr-2 pb-6 pl-2 overflow-y-auto">
       <div className="flex-1 flex flex-col">
         <div className="mx-2 mt-4 mb-6">
           <h3 className="text-xl font-bold mb-0.5 mt-[2px]">Home</h3>

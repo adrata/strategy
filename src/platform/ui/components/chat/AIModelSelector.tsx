@@ -55,6 +55,7 @@ export function AIModelSelector({ selectedModel, onModelChange, className = "" }
         style={{ marginLeft: '-2px', marginTop: '5px' }}
       >
         <span>{selectedModel.provider}</span>
+        <span className="text-xs text-gray-500">• Auto-routed</span>
       </div>
     </div>
   );

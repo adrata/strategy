@@ -106,19 +106,11 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       const url = `/api/data/section?section=${section}&limit=${limit}&t=${timestamp}`;
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
-      const response = await authFetch(url);
+      const result = await authFetch(url);
       
-      console.log(`📡 [FAST SECTION DATA] Response status:`, response.status, response.statusText);
+      console.log(`📡 [FAST SECTION DATA] Response received:`, result);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`❌ [FAST SECTION DATA] API Error:`, errorText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.success && result.data) {
+      if (result && result.success && result.data) {
         setData(result.data.data || []);
         setCount(result.data.totalCount || result.data.count || 0); // Use totalCount for pagination
         setLoadedSections(prev => new Set(prev).add(section));
@@ -134,7 +126,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           } : null
         });
       } else {
-        throw new Error(result.error || 'Failed to load section data');
+        throw new Error(result?.error || 'Failed to load section data');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

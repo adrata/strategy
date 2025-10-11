@@ -3,10 +3,21 @@ import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
 
-const nango = new Nango({
-  secretKey: process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY!,
-  host: process.env.NANGO_HOST || 'https://api.nango.dev'
-});
+// Initialize Nango with error handling
+let nango: Nango | null = null;
+try {
+  const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;
+  if (!secretKey) {
+    console.warn('Nango secret key not found in environment variables');
+  } else {
+    nango = new Nango({
+      secretKey,
+      host: process.env.NANGO_HOST || 'https://api.nango.dev'
+    });
+  }
+} catch (error) {
+  console.error('Failed to initialize Nango:', error);
+}
 
 /**
  * GET /api/grand-central/nango/connections
@@ -42,10 +53,10 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Verify connection status with Nango for active connections
+    // Verify connection status with Nango for active connections (if Nango is configured)
     const verifiedConnections = await Promise.all(
       connections.map(async (connection) => {
-        if (connection.status === 'active') {
+        if (connection.status === 'active' && nango) {
           try {
             // Test connection with Nango
             const testResult = await nango.proxy({
@@ -71,6 +82,15 @@ export async function GET(request: NextRequest) {
               }
             };
           }
+        } else if (!nango) {
+          // If Nango is not configured, return connection as-is with a warning
+          return {
+            ...connection,
+            metadata: {
+              ...connection.metadata,
+              warning: 'Nango not configured - connection status not verified'
+            }
+          };
         }
         return connection;
       })

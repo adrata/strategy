@@ -180,6 +180,10 @@ export function PipelineHeader({
     newSearchParams.set('view', getUrlParamForView(view));
     router.replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
     
+    // Update browser title
+    const viewLabel = getViewLabel(view);
+    document.title = `Sprint • ${viewLabel}`;
+    
     // Emit event to update middle panel content based on selected view
     window.dispatchEvent(new CustomEvent('speedrun-view-change', { 
       detail: { view } 

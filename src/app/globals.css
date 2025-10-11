@@ -163,7 +163,56 @@ body:not(.website) {
   --high-contrast-accent: #000000;
 }
 
-/* Use data-theme attribute instead of media query */
+/* Enhanced theme system with comprehensive CSS variables */
+:root {
+  /* Theme transition support */
+  --theme-transition-duration: 0ms;
+  
+  /* Default light theme variables - will be overridden by theme system */
+  --background: #ffffff;
+  --foreground: #1e1e1e;
+  --accent: #000000;
+  --border: #e3e4e8;
+  --muted: #666666;
+  --muted-light: #999999;
+  --hover: #f5f5f5;
+  --button-text: #ffffff;
+  --button-background: #000000;
+  --button-hover: #333333;
+  --button-active: #666666;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  --badge-new-bg: #f3f4f6;
+  --badge-new-text: #374151;
+  --badge-contacted-bg: #dbeafe;
+  --badge-contacted-text: #1e40af;
+  --badge-qualified-bg: #dcfce7;
+  --badge-qualified-text: #166534;
+  --badge-lost-bg: #fee2e2;
+  --badge-lost-text: #dc2626;
+  --active-app-border: #000000;
+  --panel-background: #f7f7f9;
+  --scrollbar-thumb: #e0e0e0;
+  --focus-ring: #3b82f6;
+  --focus-ring-width: 2px;
+  --high-contrast-bg: #ffffff;
+  --high-contrast-fg: #000000;
+  --high-contrast-border: #000000;
+  --high-contrast-accent: #000000;
+}
+
+/* Theme transition support */
+.theme-transitioning * {
+  transition: 
+    background-color var(--theme-transition-duration) ease,
+    border-color var(--theme-transition-duration) ease,
+    color var(--theme-transition-duration) ease,
+    box-shadow var(--theme-transition-duration) ease;
+}
+
+/* Legacy dark theme support - will be overridden by theme system */
 [data-theme="dark"] {
   --background: #0a0a0a;
   --foreground: #ededed;
@@ -183,10 +232,8 @@ body:not(.website) {
   --badge-lost-bg: #374151;
   --badge-lost-text: #d1d5db;
   --active-app-border: #fff;
-  /* --panel-background: #18181b; */
+  --panel-background: #18181b;
   --scrollbar-thumb: #444444;
-
-  /* ENHANCED DARK MODE ACCESSIBILITY */
   --focus-ring: #60a5fa;
   --high-contrast-bg: #000000;
   --high-contrast-fg: #ffffff;

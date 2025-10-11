@@ -265,6 +265,24 @@ export function SpeedrunSprintView() {
     ui.setActiveSubApp('Speedrun');
   }, [ui]);
 
+  // Listen for view changes and update browser title
+  useEffect(() => {
+    const handleViewChange = (event: CustomEvent) => {
+      const { view } = event.detail;
+      const viewLabels: Record<string, string> = {
+        'sales_actions': 'Actions',
+        'prospects': 'Targets',
+        'time': 'Calendar',
+        'insights': 'Insights'
+      };
+      const viewLabel = viewLabels[view] || view;
+      document.title = `Sprint • ${viewLabel}`;
+    };
+
+    window.addEventListener('speedrun-view-change', handleViewChange as EventListener);
+    return () => window.removeEventListener('speedrun-view-change', handleViewChange as EventListener);
+  }, []);
+
   // Clear selected record when sprint changes
   useEffect(() => {
     setSelectedRecord(null);
@@ -467,7 +485,7 @@ export function SpeedrunSprintView() {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] h-full bg-white border-r border-gray-100">
+          <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full bg-white border-r border-gray-100">
             {/* Left Panel Skeleton */}
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between mb-2">
@@ -580,7 +598,7 @@ export function SpeedrunSprintView() {
 
   // Sprint card list for left panel
   const sprintCardList = (
-    <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] h-full flex flex-col bg-white border-r border-gray-100">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full flex flex-col bg-white border-r border-gray-100">
       {/* Header */}
       <div className="p-4 border-b border-gray-100 bg-white">
         <div className="flex flex-col space-y-2">

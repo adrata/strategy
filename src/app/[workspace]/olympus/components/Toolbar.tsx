@@ -18,6 +18,7 @@ interface ToolbarProps {
   onExecute: () => void;
   onExecuteWithCommentary: () => void;
   onTogglePlayPopup: () => void;
+  onOpenStartModal: () => void;
   getTypeIcon: (id: string) => React.ComponentType<any>;
 }
 
@@ -37,6 +38,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onExecute,
   onExecuteWithCommentary,
   onTogglePlayPopup,
+  onOpenStartModal,
   getTypeIcon
 }) => {
   return (
@@ -143,42 +145,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           )}
         </div>
         
-        {/* Play Button with Popup */}
-        <div className="relative play-popup-container">
-          <button 
-            onClick={onExecute}
-            disabled={isExecuting}
-            onMouseEnter={onTogglePlayPopup}
-            onMouseLeave={onTogglePlayPopup}
-            className="p-1.5 text-gray-600 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <PlayIcon className="w-4 h-4" />
-          </button>
-          
-          {/* Play Options Popup */}
-          {showPlayPopup && (
-            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[200px] z-20">
-              <button
-                onClick={onExecute}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <PlayIcon className="w-4 h-4" />
-                  <span>Start</span>
-                </div>
-              </button>
-              <button
-                onClick={onExecuteWithCommentary}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
-                  <span>Start with Adrata Commentary</span>
-                </div>
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Start Button */}
+        <button 
+          onClick={onOpenStartModal}
+          disabled={isExecuting}
+          className="p-1.5 text-gray-600 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <PlayIcon className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

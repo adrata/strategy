@@ -1,12 +1,15 @@
 /**
  * 🤖 AI CHAT API ENDPOINT
  * 
- * Direct Claude AI integration for intelligent sales chat responses
- * Provides fast, context-aware responses using Anthropic's Claude API
+ * OpenRouter-powered AI integration with intelligent model routing
+ * Provides fast, context-aware responses with automatic failover and cost optimization
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { claudeAIService } from '@/platform/services/ClaudeAIService';
+import { openRouterService } from '@/platform/services/OpenRouterService';
+import { modelCostTracker } from '@/platform/services/ModelCostTracker';
+import { gradualRolloutService } from '@/platform/services/GradualRolloutService';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +25,8 @@ export async function POST(request: NextRequest) {
       currentRecord, 
       recordType,
       enableVoiceResponse,
-      selectedVoiceId 
+      selectedVoiceId,
+      useOpenRouter = true // New parameter to control routing
     } = body;
 
     console.log('🤖 [AI CHAT] Processing request:', {
@@ -31,7 +35,8 @@ export async function POST(request: NextRequest) {
       workspaceId,
       userId,
       hasCurrentRecord: !!currentRecord,
-      recordType
+      recordType,
+      useOpenRouter
     });
 
     // Validate required fields
@@ -42,42 +47,197 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Generate Claude AI response
-    const claudeResponse = await claudeAIService.generateChatResponse({
-      message,
-      conversationHistory,
-      currentRecord,
-      recordType,
-      appType,
-      workspaceId,
-      userId
-    });
+    let response: any;
+    let costRecordId: string | null = null;
 
-    console.log('🤖 [AI CHAT] Claude response generated:', {
-      responseLength: claudeResponse.response.length,
-      confidence: claudeResponse.confidence,
-      model: claudeResponse.model,
-      processingTime: claudeResponse.processingTime
-    });
+    // Determine if we should use OpenRouter based on gradual rollout
+    const shouldUseOpenRouter = useOpenRouter && 
+                               process.env.OPENROUTER_API_KEY && 
+                               gradualRolloutService.shouldUseOpenRouter(userId, workspaceId);
 
-    // Return the response in the expected format
-    return NextResponse.json({
-      success: true,
-      response: claudeResponse.response,
-      todos: [], // Claude can generate actionable items in the response text
-      navigation: null,
-      voice: null,
-      sources: claudeResponse.sources || [], // Web sources from browser automation
-      browserResults: claudeResponse.browserResults || [], // Raw browser results
-      metadata: {
-        model: claudeResponse.model,
-        confidence: claudeResponse.confidence,
-        processingTime: claudeResponse.processingTime,
-        tokensUsed: claudeResponse.tokensUsed,
-        hasWebResearch: (claudeResponse.browserResults?.length || 0) > 0,
-        sourcesCount: claudeResponse.sources?.length || 0
+    // Route to OpenRouter or fallback to Claude
+    if (shouldUseOpenRouter) {
+      try {
+        console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
+        
+        // Generate OpenRouter response
+        const openRouterResponse = await openRouterService.generateResponse({
+          message,
+          conversationHistory,
+          currentRecord,
+          recordType,
+          appType,
+          workspaceId,
+          userId,
+          context: {
+            currentUrl: request.headers.get('referer'),
+            userAgent: request.headers.get('user-agent'),
+            timestamp: new Date().toISOString()
+          }
+        });
+
+        // Record cost
+        costRecordId = modelCostTracker.recordCost({
+          model: openRouterResponse.model,
+          provider: openRouterResponse.provider,
+          inputTokens: Math.floor(openRouterResponse.tokensUsed * 0.7), // Estimate input/output split
+          outputTokens: Math.floor(openRouterResponse.tokensUsed * 0.3),
+          cost: openRouterResponse.cost,
+          category: openRouterResponse.routingInfo.complexity < 30 ? 'simple' : 
+                   openRouterResponse.routingInfo.complexity < 70 ? 'standard' : 'complex',
+          complexity: openRouterResponse.routingInfo.complexity,
+          processingTime: openRouterResponse.processingTime,
+          userId,
+          workspaceId,
+          appType,
+          success: true,
+          fallbackUsed: openRouterResponse.routingInfo.fallbackUsed
+        });
+
+        response = {
+          success: true,
+          response: openRouterResponse.response,
+          todos: [],
+          navigation: null,
+          voice: null,
+          sources: openRouterResponse.sources || [],
+          browserResults: openRouterResponse.browserResults || [],
+          metadata: {
+            model: openRouterResponse.model,
+            provider: openRouterResponse.provider,
+            confidence: openRouterResponse.confidence,
+            processingTime: openRouterResponse.processingTime,
+            tokensUsed: openRouterResponse.tokensUsed,
+            cost: openRouterResponse.cost,
+            hasWebResearch: (openRouterResponse.browserResults?.length || 0) > 0,
+            sourcesCount: openRouterResponse.sources?.length || 0,
+            routingInfo: openRouterResponse.routingInfo,
+            costRecordId
+          }
+        };
+
+        console.log('✅ [AI CHAT] OpenRouter response generated:', {
+          model: openRouterResponse.model,
+          provider: openRouterResponse.provider,
+          cost: openRouterResponse.cost,
+          complexity: openRouterResponse.routingInfo.complexity,
+          processingTime: openRouterResponse.processingTime
+        });
+
+        // Record request for gradual rollout monitoring
+        gradualRolloutService.recordRequest({
+          userId,
+          workspaceId,
+          usedOpenRouter: true,
+          success: true,
+          responseTime: openRouterResponse.processingTime,
+          cost: openRouterResponse.cost
+        });
+
+      } catch (openRouterError) {
+        console.warn('⚠️ [AI CHAT] OpenRouter failed, falling back to Claude:', openRouterError);
+        
+        // Record OpenRouter failure
+        gradualRolloutService.recordRequest({
+          userId,
+          workspaceId,
+          usedOpenRouter: true,
+          success: false,
+          responseTime: 0,
+          cost: 0,
+          error: openRouterError instanceof Error ? openRouterError.message : 'Unknown error'
+        });
+
+        // Fallback to Claude
+        const claudeResponse = await claudeAIService.generateChatResponse({
+          message,
+          conversationHistory,
+          currentRecord,
+          recordType,
+          appType,
+          workspaceId,
+          userId
+        });
+
+        response = {
+          success: true,
+          response: claudeResponse.response,
+          todos: [],
+          navigation: null,
+          voice: null,
+          sources: claudeResponse.sources || [],
+          browserResults: claudeResponse.browserResults || [],
+          metadata: {
+            model: claudeResponse.model,
+            provider: 'Anthropic',
+            confidence: claudeResponse.confidence,
+            processingTime: claudeResponse.processingTime,
+            tokensUsed: claudeResponse.tokensUsed,
+            cost: 0, // Claude costs not tracked in this fallback
+            hasWebResearch: (claudeResponse.browserResults?.length || 0) > 0,
+            sourcesCount: claudeResponse.sources?.length || 0,
+            routingInfo: {
+              complexity: 0,
+              selectedModel: claudeResponse.model,
+              fallbackUsed: true,
+              failoverChain: []
+            },
+            fallbackReason: 'OpenRouter unavailable'
+          }
+        };
       }
-    });
+    } else {
+      // Direct Claude fallback
+      console.log('🤖 [AI CHAT] Using Claude directly (OpenRouter disabled or not selected)');
+      
+      const claudeResponse = await claudeAIService.generateChatResponse({
+        message,
+        conversationHistory,
+        currentRecord,
+        recordType,
+        appType,
+        workspaceId,
+        userId
+      });
+
+      // Record Claude request for monitoring
+      gradualRolloutService.recordRequest({
+        userId,
+        workspaceId,
+        usedOpenRouter: false,
+        success: true,
+        responseTime: claudeResponse.processingTime,
+        cost: 0 // Claude costs not tracked in this context
+      });
+
+      response = {
+        success: true,
+        response: claudeResponse.response,
+        todos: [],
+        navigation: null,
+        voice: null,
+        sources: claudeResponse.sources || [],
+        browserResults: claudeResponse.browserResults || [],
+        metadata: {
+          model: claudeResponse.model,
+          provider: 'Anthropic',
+          confidence: claudeResponse.confidence,
+          processingTime: claudeResponse.processingTime,
+          tokensUsed: claudeResponse.tokensUsed,
+          cost: 0,
+          hasWebResearch: (claudeResponse.browserResults?.length || 0) > 0,
+          sourcesCount: claudeResponse.sources?.length || 0,
+          routingInfo: {
+            complexity: 0,
+            selectedModel: claudeResponse.model,
+            fallbackUsed: false,
+            failoverChain: []
+          }
+        }
+      };
+    }
+
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('❌ [AI CHAT] Error:', error);

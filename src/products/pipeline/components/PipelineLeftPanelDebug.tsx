@@ -144,7 +144,7 @@ export function PipelineLeftPanelDebug({
   }, [workspaceId, userId, authUser, acquisitionData, apiResponse, counts]);
 
   return (
-    <div className="w-[14.085rem] min-w-[14.085rem] max-w-[14.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
         <h2 className="text-lg font-bold text-gray-900">Debug Left Panel</h2>

@@ -61,6 +61,14 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onWheel,
   onBackgroundMouseDown
 }) => {
+  // Helper function to get step position (either from dragPosition or step.position)
+  const getStepPosition = useCallback((step: WorkflowStep) => {
+    if (draggingStep === step.id && dragPosition) {
+      return dragPosition;
+    }
+    return step.position;
+  }, [draggingStep, dragPosition]);
+
   // Memoize connection lines for better performance
   const connectionLines = useMemo(() => {
     return workflowSteps.map((step, index) => {
@@ -70,10 +78,14 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       const widgetHeight = 60;
       const widgetWidth = 200;
       
-      const startX = step.position.x + widgetWidth;
-      const startY = step.position.y + widgetHeight / 2;
-      const endX = nextStep.position.x;
-      const endY = nextStep.position.y + widgetHeight / 2;
+      // Use helper function to get current position (including during drag)
+      const currentStepPos = getStepPosition(step);
+      const currentNextStepPos = getStepPosition(nextStep);
+      
+      const startX = currentStepPos.x + widgetWidth;
+      const startY = currentStepPos.y + widgetHeight / 2;
+      const endX = currentNextStepPos.x;
+      const endY = currentNextStepPos.y + widgetHeight / 2;
       
       const distance = Math.abs(endX - startX);
       const controlOffset = Math.min(distance * 0.3, 100);
@@ -96,21 +108,21 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         />
       );
     });
-  }, [workflowSteps]);
+  }, [workflowSteps, getStepPosition]);
 
   return (
-    <div className="flex-1 bg-white overflow-hidden relative">
-      {/* Background layer for panning - always receives mouse events */}
+    <div className={`flex-1 bg-white overflow-hidden relative ${
+      activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
+    }`}>
+      {/* Background layer for panning */}
       <div 
-        className={`absolute inset-0 ${
-          activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
-        }`}
+        className="absolute inset-0"
         style={{
           backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
           backgroundSize: '20px 20px',
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
           transformOrigin: 'center center',
-          zIndex: 0
+          zIndex: 1
         }}
         onWheel={onWheel}
         onMouseDown={onBackgroundMouseDown}
@@ -123,7 +135,8 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
           transformOrigin: 'center center',
-          zIndex: 1
+          zIndex: 2,
+          pointerEvents: 'none'
         }}
       >
         <div className="relative w-full h-full">
@@ -156,9 +169,10 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                   ? `translate3d(${dragPosition.x}px, ${dragPosition.y}px, 0)`
                   : `translate(${step.position.x}px, ${step.position.y}px)`,
                 willChange: draggingStep === step.id ? 'transform' : 'auto',
-                zIndex: draggingStep === step.id ? 1000 : 2,
+                zIndex: draggingStep === step.id ? 1000 : 3,
                 width: '200px',
-                minHeight: '60px'
+                minHeight: '60px',
+                pointerEvents: 'auto'
               }}
               onMouseDown={(e) => onStepMouseDown(e, step.id)}
               onClick={() => onStepClick(step.id)}

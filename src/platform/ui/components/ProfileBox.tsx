@@ -18,7 +18,8 @@ import {
   QuestionMarkCircleIcon,
   AcademicCapIcon,
   CogIcon,
-  SwatchIcon,
+  ComputerDesktopIcon,
+  DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
 // import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher"; // Removed - no longer using demo scenarios popup
 import { GrandCentralModal } from "./GrandCentralModal";
@@ -58,6 +59,9 @@ interface ProfileBoxProps {
   isDemoMode?: boolean;
   currentDemoScenario?: string;
   onDemoScenarioChange?: (scenarioSlug: string) => void;
+  // Theme picker props
+  isThemePickerOpen?: boolean;
+  setIsThemePickerOpen?: (open: boolean) => void;
 }
 
 interface DocItem {
@@ -98,6 +102,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   isDemoMode,
   currentDemoScenario,
   onDemoScenarioChange,
+  isThemePickerOpen,
+  setIsThemePickerOpen,
 }) => {
   const router = useRouter();
   const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
@@ -456,6 +462,29 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
     document.body.removeChild(link);
   };
 
+  // Platform detection for appropriate icon
+  const getPlatformIcon = () => {
+    if (typeof window === 'undefined') return ComputerDesktopIcon;
+    
+    const platform = navigator.platform.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
+    
+    // Check if mobile device
+    if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent)) {
+      return DevicePhoneMobileIcon;
+    }
+    
+    // Check if Mac
+    if (platform.includes('mac') || userAgent.includes('mac')) {
+      return ComputerDesktopIcon; // Mac desktop
+    }
+    
+    // Default to PC desktop icon
+    return ComputerDesktopIcon;
+  };
+
+  const PlatformIcon = getPlatformIcon();
+
   return (
     <div
       className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden z-50"
@@ -494,20 +523,21 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* Download Button - Show only for web users */}
         {!isDesktop && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center"
             onClick={handleDownloadDesktopApp}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
           >
-            Download Desktop App
+            <PlatformIcon className="w-4 h-4 mr-2" />
+            Download
           </div>
         )}
 
         {/* Demo Section - Show for Adrata users (dan and ross) */}
         {isAdrataUser && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             onClick={handleDemoWorkspaceClick}
             role="button"
             tabIndex={0}
@@ -660,9 +690,40 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </>
         )}
         
-        {/* 1. Settings */}
+        {/* 1. Themes */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🎨 Themes clicked - opening theme picker');
+            console.log('🎨 Current isThemePickerOpen:', isThemePickerOpen);
+            setIsProfileOpen(false);
+            // Use setTimeout to ensure state update happens after profile closes
+            setTimeout(() => {
+              console.log('🎨 Setting isThemePickerOpen to true after timeout');
+              setIsThemePickerOpen?.(true);
+            }, 100);
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsProfileOpen(false);
+              setTimeout(() => {
+                setIsThemePickerOpen?.(true);
+              }, 100);
+            }
+          }}
+        >
+          Themes
+        </div>
+        
+        {/* 2. Settings */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           onClick={() => handleNavigation("./grand-central/profile")}
           role="button"
           tabIndex={0}
@@ -673,10 +734,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Settings
         </div>
         
-        {/* 2. Workspaces Section - Show for users with multiple workspaces */}
+        {/* 3. Workspaces Section - Show for users with multiple workspaces */}
         {authUser?.workspaces && authUser.workspaces.length > 1 && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             onClick={() => handleNavigation("/workspaces")}
             role="button"
             tabIndex={0}
@@ -686,9 +747,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 3. Olympus */}
+        {/* 4. Olympus */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           onClick={() => {
             console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
             setIsProfileOpen(false); // Close profile popup
@@ -706,9 +767,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Olympus
         </div>
         
-        {/* 4. Tower */}
+        {/* 5. Tower */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           onClick={() => {
             console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
             setIsProfileOpen(false); // Close profile popup
@@ -726,9 +787,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Tower
         </div>
         
-        {/* 4. Grand Central */}
+        {/* 6. Grand Central */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           onClick={() => {
             console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
             setIsProfileOpen(false); // Close profile popup
@@ -746,10 +807,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Grand Central
         </div>
         
-        {/* 5. Speedrun Engine Configuration - Available for all users */}
+        {/* 7. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-2"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -766,9 +827,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 6. Sign Out */}
+        {/* 8. Sign Out */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           onClick={handleSignOut}
           role="button"
           tabIndex={0}
