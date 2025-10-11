@@ -27,7 +27,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import { ErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
@@ -366,7 +366,7 @@ export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) 
                   />
                 }
                 placeholder={<Placeholder />}
-                ErrorBoundary={ErrorBoundary}
+                ErrorBoundary={LexicalErrorBoundary}
               />
               <HistoryPlugin />
               <AutoFocusPlugin />

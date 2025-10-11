@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     console.log(`👥 Existing people: ${company.people.length}`);
 
     // Import and run the analysis script
-    const FiveBarsBuyerGroupAnalyzer = require('../../../../platform/pipelines/pipelines/core/archive/buyer-group-legacy/scripts/analyze-5bars-buyer-group-comprehensive.js');
+    const FiveBarsBuyerGroupAnalyzer = require('../../../../src/platform/pipelines/pipelines/core/archive/buyer-group-legacy/scripts/analyze-5bars-buyer-group-comprehensive.js');
     const analyzer = new FiveBarsBuyerGroupAnalyzer();
     
     // Run the analysis

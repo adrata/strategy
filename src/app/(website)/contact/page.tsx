@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 
-export default function ContactPage() {
+function ContactPageContent() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -402,5 +402,13 @@ export default function ContactPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContactPageContent />
+    </Suspense>
   );
 } 
