@@ -280,24 +280,6 @@ export const PipelineContent = React.memo(function PipelineContent({
     };
   }, [isSlideUpVisible, activeSignal, acceptSignal]);
   
-  const { 
-    data, 
-    error, 
-    refresh, 
-    clearCache 
-  } = section === 'metrics' 
-    ? { 
-        data: [], 
-        error: null, 
-        refresh: () => Promise.resolve([]), 
-        clearCache: () => {} 
-      }
-    : (pipelineData || { 
-        data: [], 
-        error: null, 
-        refresh: () => Promise.resolve([]), 
-        clearCache: () => {} 
-      });
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
   const metrics = section === 'metrics' 
@@ -310,13 +292,13 @@ export const PipelineContent = React.memo(function PipelineContent({
         data: [] // Include data for unique company calculation
       }
     : { 
-        total: data?.length || 0, 
-        totalLeads: data?.length || 0, // Add totalLeads property for PipelineHeader
-        active: data?.length || 0, 
+        total: finalData?.length || 0, 
+        totalLeads: finalData?.length || 0, // Add totalLeads property for PipelineHeader
+        active: finalData?.length || 0, 
         completed: 0, 
         conversionRate: 0, 
         avgResponseTime: 0,
-        data: data || [] // Include data for unique company calculation
+        data: finalData || [] // Include data for unique company calculation
       };
 
   // Helper function to get sortable value from record
@@ -600,14 +582,14 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Handle refresh
   const handleRefresh = async () => {
     console.log(`🔄 Refreshing ${section} data...`);
-    await refresh();
+    await fastSectionData.refresh();
   };
 
   // Handle cache clear
   const handleClearCache = () => {
     console.log(`🧹 Clearing ${section} cache...`);
-    clearCache();
-    refresh();
+    fastSectionData.clearCache();
+    fastSectionData.refresh();
   };
 
   // Handle add record
@@ -1161,7 +1143,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                           console.log(`✅ [Pipeline Speedrun] Signal accepted successfully for: ${contactName}`);
                           
                           // Refresh the pipeline data to show the new lead
-                          refresh(); // Use the refresh function instead of reload
+                          fastSectionData.refresh(); // Use the refresh function instead of reload
                           
                           // Force refresh of Speedrun data specifically
                           window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
@@ -1209,7 +1191,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           </div>
         )}
         
-        <AddModal refreshData={async () => { await refresh(); }} />
+        <AddModal refreshData={async () => { await fastSectionData.refresh(); }} />
       </>
     </PipelineHydrationFix>
   );
