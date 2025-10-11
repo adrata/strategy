@@ -104,6 +104,17 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
     });
   };
 
+  // Show loading state while waiting for workspace
+  if (!workspaceId) {
+    return (
+      <div className="p-6">
+        <div className="text-center text-[var(--muted)]">
+          Loading workspace...
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="p-6">

@@ -2,6 +2,14 @@
 
 import { useState } from "react";
 
+// Theme keys that should be preserved during sign-out to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
+
 export function SimpleSignOut() {
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -11,15 +19,27 @@ export function SimpleSignOut() {
     try {
       console.log("🚪 Starting sign out process...");
 
-      // Clear all local storage
+      // Clear all local storage except theme preferences
       if (typeof window !== "undefined") {
-        // Specifically clear speedrun engine settings for demo reset
-        localStorage.removeItem('speedrun-engine-settings');
-        console.log("🎯 Speedrun engine settings cleared for demo reset");
+        // Save theme preferences before clearing
+        const themeData: Record<string, string | null> = {};
+        THEME_KEYS_TO_PRESERVE.forEach(key => {
+          themeData[key] = localStorage.getItem(key);
+        });
         
+        // Clear all localStorage
         localStorage.clear();
         sessionStorage.clear();
-        console.log("✅ Local storage cleared");
+        
+        // Restore theme preferences to prevent flash
+        Object.entries(themeData).forEach(([key, value]) => {
+          if (value !== null) {
+            localStorage.setItem(key, value);
+          }
+        });
+        
+        console.log("✅ Local storage cleared (theme preferences preserved)");
+        console.log("🎨 Theme preferences preserved to prevent flash");
       }
 
       // Try to clear any cookies

@@ -15,6 +15,7 @@ import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
+import { StandardHeader } from '@/platform/ui/components/layout/StandardHeader';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 // Removed usePipelineData import - using useFastSectionData exclusively
@@ -714,16 +715,32 @@ export const PipelineContent = React.memo(function PipelineContent({
 
   // Create the middle panel content
   const middlePanel = section === 'metrics' ? (
-    <MetricsWall />
-  ) : section === 'chronicle' ? (
-    selectedChronicleReport ? (
-      <ChronicleReport 
-        report={selectedChronicleReport} 
-        onBack={() => setSelectedChronicleReport(null)}
+    <div className="h-full flex flex-col">
+      <StandardHeader
+        title="Metrics"
+        subtitle="Sales performance and KPIs"
       />
-    ) : (
-      <ChronicleList onReportSelect={setSelectedChronicleReport} />
-    )
+      <div className="flex-1 overflow-auto">
+        <MetricsWall />
+      </div>
+    </div>
+  ) : section === 'chronicle' ? (
+    <div className="h-full flex flex-col">
+      <StandardHeader
+        title="Chronicle"
+        subtitle="Weekly reports and business intelligence"
+      />
+      <div className="flex-1 overflow-auto">
+        {selectedChronicleReport ? (
+          <ChronicleReport 
+            report={selectedChronicleReport} 
+            onBack={() => setSelectedChronicleReport(null)}
+          />
+        ) : (
+          <ChronicleList onReportSelect={setSelectedChronicleReport} />
+        )}
+      </div>
+    </div>
   ) : section === 'dashboard' ? (
     (() => {
       console.log('🚨 [PipelineContent] Rendering Dashboard component!');

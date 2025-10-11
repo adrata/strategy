@@ -43,6 +43,14 @@ const CACHE_KEYS = {
   PIPELINE: 'pipeline-cache',
 } as const;
 
+// Theme keys that should be preserved during sign-out to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+] as const;
+
 // -------- Helpers --------
 function isBrowser(): boolean {
   return typeof window !== 'undefined';
@@ -82,6 +90,29 @@ function clearCacheStorage(): void {
       });
     });
   }
+}
+
+// Helper function to clear all localStorage except theme preferences
+function clearLocalStorageExceptTheme(): void {
+  if (!isBrowser()) return;
+  
+  // Save theme preferences before clearing
+  const themeData: Record<string, string | null> = {};
+  THEME_KEYS_TO_PRESERVE.forEach(key => {
+    themeData[key] = localStorage.getItem(key);
+  });
+  
+  // Clear all localStorage
+  localStorage.clear();
+  
+  // Restore theme preferences to prevent flash
+  Object.entries(themeData).forEach(([key, value]) => {
+    if (value !== null) {
+      localStorage.setItem(key, value);
+    }
+  });
+  
+  console.log('🎨 [SIGN-OUT] Theme preferences preserved to prevent flash');
 }
 
 // -------- Main hook --------

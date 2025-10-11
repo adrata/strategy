@@ -331,7 +331,18 @@ export function MetricsDashboard() {
     lastUpdated: new Date(metrics.lastUpdated)
   } : null;
 
-
+  // Show loading state while waiting for workspace
+  if (!currentWorkspaceId) {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        <div className="flex-1 p-6">
+          <div className="text-center text-[var(--muted)]">
+            Loading workspace...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
