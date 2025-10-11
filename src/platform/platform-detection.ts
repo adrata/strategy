@@ -548,15 +548,10 @@ export function handleSafariError(error: Error, context: string): void {
       (window as any).__TAURI_METADATA__ = undefined;
       (window as any).__TAURI_INTERNALS__ = undefined;
       
-      // Force web protocol detection
+      // Force web mode (protocol override removed - causes Safari readonly property error)
       if (window.location.protocol === 'tauri:') {
         console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - forcing web mode');
-        // This is a Safari-specific workaround
-        Object.defineProperty(window.location, 'protocol', {
-          value: 'https:',
-          writable: false,
-          configurable: false
-        });
+        // Note: Protocol override removed to prevent Safari readonly property error
       }
     }
   }
@@ -588,18 +583,10 @@ export function initializeSafariCompatibility(): void {
     (window as any).__ADRATA_FORCE_WEB__ = true;
     (window as any).__ADRATA_SAFARI_MODE__ = true;
     
-    // Override protocol if it's tauri:
+    // Force web mode (protocol override removed - causes Safari readonly property error)
     if (window.location.protocol === 'tauri:') {
-      console.warn('🚨 [SAFARI COMPAT] Overriding tauri: protocol for Safari');
-      try {
-        Object.defineProperty(window.location, 'protocol', {
-          value: 'https:',
-          writable: false,
-          configurable: false
-        });
-      } catch (e) {
-        console.warn('🚨 [SAFARI COMPAT] Could not override protocol:', e);
-      }
+      console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - forcing web mode');
+      // Note: Protocol override removed to prevent Safari readonly property error
     }
   }
 
