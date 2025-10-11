@@ -82,35 +82,36 @@ class ExecutiveResearch {
                 console.log('   ⚠️ Leadership scraping found no CFO/CRO');
             }
 
-            // LAYER 2: Original Executive Research (Secondary)
+            // LAYER 2: CoreSignal Multi-Source Research (Secondary)
             if (!result.cfo || !result.cro) {
-                console.log('\n🔍 LAYER 2: Original Executive Research');
+                console.log('\n🔍 LAYER 2: CoreSignal Multi-Source Research');
                 
                 try {
-                    const originalResult = await this.originalResearch.researchExecutives(companyInfo);
+                    // Use CoreSignal Multi-Source as fallback
+                    const { CoreSignalMultiSource } = require('./CoreSignalMultiSource');
+                    const coreSignalMultiSource = new CoreSignalMultiSource(this.config);
                     
-                    // Fill gaps with original research
-                    if (!result.cfo && originalResult.cfo) {
-                        result.cfo = this.enhanceExecutiveData(originalResult.cfo, 'original_research');
-                        console.log(`   ✅ CFO found via original research: ${result.cfo.name}`);
+                    const multiSourceResult = await coreSignalMultiSource.discoverExecutives(
+                        companyInfo.companyName, 
+                        ['CFO', 'CRO'], 
+                        companyInfo.website
+                    );
+                    
+                    // Fill gaps with multi-source research
+                    if (!result.cfo && multiSourceResult.cfo) {
+                        result.cfo = this.enhanceExecutiveData(multiSourceResult.cfo, 'coresignal_multisource');
+                        console.log(`   ✅ CFO found via CoreSignal multi-source: ${result.cfo.name}`);
                     }
                     
-                    if (!result.cro && originalResult.cro) {
-                        result.cro = this.enhanceExecutiveData(originalResult.cro, 'original_research');
-                        console.log(`   ✅ CRO found via original research: ${result.cro.name}`);
+                    if (!result.cro && multiSourceResult.cro) {
+                        result.cro = this.enhanceExecutiveData(multiSourceResult.cro, 'coresignal_multisource');
+                        console.log(`   ✅ CRO found via CoreSignal multi-source: ${result.cro.name}`);
                     }
 
-                    // Add department executives
-                    if (originalResult.departmentExecutives) {
-                        result.departmentExecutives = originalResult.departmentExecutives.map(exec => 
-                            this.enhanceExecutiveData(exec, 'department_search')
-                        );
-                    }
-
-                    result.researchMethods.push('original_research');
+                    result.researchMethods.push('coresignal_multisource');
                     
-                } catch (originalError) {
-                    console.log(`   ⚠️ Original research failed: ${originalError.message}`);
+                } catch (multiSourceError) {
+                    console.log(`   ⚠️ CoreSignal multi-source research failed: ${multiSourceError.message}`);
                 }
             }
 

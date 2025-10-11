@@ -11,6 +11,8 @@
  */
 
 const { CoreSignalMultiSource } = require('./CoreSignalMultiSource');
+const RetryHandler = require('./RetryHandler');
+const TimeoutHandler = require('./TimeoutHandler');
 
 class MultiSourceVerifier {
     constructor(config = {}) {
@@ -21,11 +23,24 @@ class MultiSourceVerifier {
             PROSPEO_API_KEY: config.PROSPEO_API_KEY || process.env.PROSPEO_API_KEY,
             PERPLEXITY_API_KEY: config.PERPLEXITY_API_KEY || process.env.PERPLEXITY_API_KEY,
             PEOPLE_DATA_LABS_API_KEY: config.PEOPLE_DATA_LABS_API_KEY || process.env.PEOPLE_DATA_LABS_API_KEY,
+            TWILIO_ACCOUNT_SID: config.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID,
+            TWILIO_AUTH_TOKEN: config.TWILIO_AUTH_TOKEN || process.env.TWILIO_AUTH_TOKEN,
             TIMEOUT: config.TIMEOUT || 30000,
             ...config
         };
 
         this.coresignal = new CoreSignalMultiSource(config);
+        
+        // Initialize retry and timeout handlers
+        this.retryHandler = new RetryHandler({
+            maxRetries: 2,
+            baseDelay: 1000,
+            maxDelay: 10000
+        });
+        
+        this.timeoutHandler = new TimeoutHandler({
+            defaultTimeout: this.config.TIMEOUT
+        });
         
         this.stats = {
             personVerifications: 0,
@@ -34,6 +49,48 @@ class MultiSourceVerifier {
             highConfidenceResults: 0,
             totalCreditsUsed: 0
         };
+
+        // Lusha rate limiting (2000 calls/day)
+        this.lushaUsage = {
+            dailyCount: 0,
+            lastResetDate: new Date().toDateString(),
+            maxDailyCalls: 2000
+        };
+    }
+
+    /**
+     * 🚦 CHECK LUSHA RATE LIMIT
+     * 
+     * Check if we can make Lusha API calls without exceeding daily limit
+     */
+    checkLushaRateLimit() {
+        const today = new Date().toDateString();
+        
+        // Reset counter if new day
+        if (this.lushaUsage.lastResetDate !== today) {
+            this.lushaUsage.dailyCount = 0;
+            this.lushaUsage.lastResetDate = today;
+        }
+        
+        const remainingCalls = this.lushaUsage.maxDailyCalls - this.lushaUsage.dailyCount;
+        
+        if (remainingCalls <= 0) {
+            console.log(`   ⚠️ Lusha daily limit reached (${this.lushaUsage.maxDailyCalls} calls). Skipping Lusha verification.`);
+            return false;
+        }
+        
+        if (remainingCalls < 100) {
+            console.log(`   ⚠️ Lusha calls remaining: ${remainingCalls}. Consider reducing usage.`);
+        }
+        
+        return true;
+    }
+
+    /**
+     * 📊 INCREMENT LUSHA USAGE
+     */
+    incrementLushaUsage() {
+        this.lushaUsage.dailyCount++;
     }
 
     /**
@@ -61,21 +118,27 @@ class MultiSourceVerifier {
             sourceCount++;
         }
 
-        // Source 2: Lusha (person lookup)
-        try {
-            const lushaData = await this.verifyWithLusha(personData.name, company, domain);
-            if (lushaData) {
-                verificationSources.push({
-                    source: 'Lusha',
-                    confidence: lushaData.confidence || 0,
-                    verified: true,
-                    reasoning: `Lusha person lookup: ${lushaData.reasoning || 'Profile found'}`
-                });
-                totalConfidence += lushaData.confidence || 0;
-                sourceCount++;
+        // Source 2: Lusha (person lookup) - with rate limiting
+        if (this.checkLushaRateLimit()) {
+            try {
+                const lushaData = await this.verifyWithLusha(personData.name, company, domain);
+                this.incrementLushaUsage();
+                if (lushaData) {
+                    verificationSources.push({
+                        source: 'Lusha',
+                        confidence: lushaData.confidence || 0,
+                        verified: true,
+                        reasoning: `Lusha person lookup: ${lushaData.reasoning || 'Profile found'}`
+                    });
+                    totalConfidence += lushaData.confidence || 0;
+                    sourceCount++;
+                }
+            } catch (error) {
+                console.log(`   ⚠️ Lusha verification failed: ${error.message}`);
+                this.incrementLushaUsage(); // Still count failed calls
             }
-        } catch (error) {
-            console.log(`   ⚠️ Lusha verification failed: ${error.message}`);
+        } else {
+            console.log(`   ⚠️ Skipping Lusha verification due to rate limit`);
         }
 
         // Source 3: Perplexity AI (real-time employment check)
@@ -230,11 +293,12 @@ class MultiSourceVerifier {
     }
 
     /**
-     * 📱 VERIFY PHONE (2x sources)
+     * 📱 VERIFY PHONE (4x sources)
      * 
-     * Verify phone numbers using Lusha + People Data Labs
+     * Verify phone numbers using Lusha + People Data Labs + Twilio + Prospeo Mobile Finder
+     * Note: Prospeo provides both email verification AND mobile number finder
      */
-    async verifyPhone(phone, personName, company) {
+    async verifyPhone(phone, personName, company, linkedinUrl = null) {
         if (!phone) {
             return {
                 valid: false,
@@ -251,21 +315,27 @@ class MultiSourceVerifier {
         let totalConfidence = 0;
         let sourceCount = 0;
 
-        // Source 1: Lusha phone lookup
-        try {
-            const lushaPhone = await this.verifyPhoneWithLusha(phone, personName, company);
-            if (lushaPhone) {
-                verificationSources.push({
-                    source: 'Lusha',
-                    confidence: lushaPhone.confidence || 0,
-                    verified: lushaPhone.valid,
-                    reasoning: lushaPhone.reasoning || 'Lusha phone verification'
-                });
-                totalConfidence += lushaPhone.confidence || 0;
-                sourceCount++;
+        // Source 1: Lusha phone lookup - with rate limiting
+        if (this.checkLushaRateLimit()) {
+            try {
+                const lushaPhone = await this.verifyPhoneWithLusha(phone, personName, company);
+                this.incrementLushaUsage();
+                if (lushaPhone) {
+                    verificationSources.push({
+                        source: 'Lusha',
+                        confidence: lushaPhone.confidence || 0,
+                        verified: lushaPhone.valid,
+                        reasoning: lushaPhone.reasoning || 'Lusha phone verification'
+                    });
+                    totalConfidence += lushaPhone.confidence || 0;
+                    sourceCount++;
+                }
+            } catch (error) {
+                console.log(`   ⚠️ Lusha phone verification failed: ${error.message}`);
+                this.incrementLushaUsage(); // Still count failed calls
             }
-        } catch (error) {
-            console.log(`   ⚠️ Lusha phone verification failed: ${error.message}`);
+        } else {
+            console.log(`   ⚠️ Skipping Lusha phone verification due to rate limit`);
         }
 
         // Source 2: People Data Labs phone enrichment
@@ -283,6 +353,40 @@ class MultiSourceVerifier {
             }
         } catch (error) {
             console.log(`   ⚠️ People Data Labs phone verification failed: ${error.message}`);
+        }
+
+        // Source 3: Twilio phone validation
+        try {
+            const twilioPhone = await this.verifyPhoneWithTwilio(phone);
+            if (twilioPhone) {
+                verificationSources.push({
+                    source: 'Twilio',
+                    confidence: twilioPhone.confidence || 0,
+                    verified: twilioPhone.valid,
+                    reasoning: twilioPhone.reasoning || 'Twilio phone validation'
+                });
+                totalConfidence += twilioPhone.confidence || 0;
+                sourceCount++;
+            }
+        } catch (error) {
+            console.log(`   ⚠️ Twilio phone verification failed: ${error.message}`);
+        }
+
+        // Source 4: Prospeo Mobile Finder
+        try {
+            const prospeoPhone = await this.verifyPhoneWithProspeo(phone, personName, company, linkedinUrl);
+            if (prospeoPhone) {
+                verificationSources.push({
+                    source: 'Prospeo Mobile',
+                    confidence: prospeoPhone.confidence || 0,
+                    verified: prospeoPhone.valid,
+                    reasoning: prospeoPhone.reasoning || 'Prospeo mobile finder'
+                });
+                totalConfidence += prospeoPhone.confidence || 0;
+                sourceCount++;
+            }
+        } catch (error) {
+            console.log(`   ⚠️ Prospeo mobile verification failed: ${error.message}`);
         }
 
 
@@ -324,18 +428,19 @@ class MultiSourceVerifier {
         try {
             console.log(`   🔍 Lusha: Looking up person ${name} at ${company}...`);
 
-            const response = await fetch('https://api.lusha.com/person', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': this.config.LUSHA_API_KEY.trim()
-                },
-                body: JSON.stringify({
-                    name: name,
-                    company: company,
-                    domain: domain
-                }),
-                timeout: this.config.TIMEOUT
+            const response = await this.retryHandler.execute(async () => {
+                return this.timeoutHandler.fetchWithTimeout('https://api.lusha.com/person', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': this.config.LUSHA_API_KEY.trim()
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        company: company,
+                        domain: domain
+                    })
+                }, this.timeoutHandler.getApiTimeout('lusha'));
             });
 
             if (!response.ok) {
@@ -378,47 +483,73 @@ class MultiSourceVerifier {
 
     async verifyWithPerplexity(name, title, company) {
         if (!this.config.PERPLEXITY_API_KEY) {
+            console.log('   ⚠️ Perplexity API key not configured');
             return null;
         }
 
         try {
-            const prompt = `Verify if ${name} is currently the ${title} at ${company}. Respond with: CURRENT or NOT_CURRENT, followed by confidence level (0-100).`;
+            console.log(`   🔍 Perplexity: Verifying employment status for ${name} at ${company}...`);
+            
+            const prompt = `Is ${name} currently employed as ${title} at ${company} as of ${new Date().toISOString().split('T')[0]}? 
+            
+            Respond in this exact format:
+            STATUS: [CURRENT|FORMER|UNKNOWN]
+            CONFIDENCE: [0-100]
+            LAST_KNOWN_DATE: [YYYY-MM-DD or UNKNOWN]
+            NOTES: [Brief explanation]`;
 
-            const response = await fetch('https://api.perplexity.ai/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: 'llama-3.1-sonar-small-128k-online',
-                    messages: [{ role: 'user', content: prompt }],
-                    temperature: 0.1,
-                    max_tokens: 100
-                })
+            const response = await this.retryHandler.execute(async () => {
+                return this.timeoutHandler.fetchWithTimeout('https://api.perplexity.ai/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'sonar',
+                        messages: [{ role: 'user', content: prompt }],
+                        temperature: 0.1,
+                        max_tokens: 150
+                    })
+                }, this.timeoutHandler.getApiTimeout('perplexity'));
             });
 
             if (response.ok) {
                 const data = await response.json();
                 const content = data.choices?.[0]?.message?.content || '';
                 
-                const isCurrent = content.toUpperCase().includes('CURRENT') && 
-                                 !content.toUpperCase().includes('NOT_CURRENT');
+                console.log(`   🔍 Perplexity response: ${content.substring(0, 200)}...`);
                 
-                const confidenceMatch = content.match(/(\d+)/);
-                const confidence = confidenceMatch ? parseInt(confidenceMatch[1]) : 80;
+                // Parse structured response
+                const statusMatch = content.match(/STATUS:\s*([A-Z]+)/);
+                const confidenceMatch = content.match(/CONFIDENCE:\s*(\d+)/);
+                const dateMatch = content.match(/LAST_KNOWN_DATE:\s*([^\n]+)/);
+                const notesMatch = content.match(/NOTES:\s*([^\n]+)/);
+                
+                const status = statusMatch ? statusMatch[1] : 'UNKNOWN';
+                const confidence = confidenceMatch ? parseInt(confidenceMatch[1]) : 50;
+                const lastKnownDate = dateMatch ? dateMatch[1].trim() : 'UNKNOWN';
+                const notes = notesMatch ? notesMatch[1].trim() : 'No additional notes';
+                
+                const isCurrent = status === 'CURRENT';
 
-                return {
+                const result = {
                     isCurrent,
                     confidence,
-                    reasoning: `Perplexity real-time check: ${isCurrent ? 'Currently employed' : 'Not currently employed'}`
+                    lastKnownDate,
+                    reasoning: `Perplexity real-time check: ${status} (${confidence}% confidence) - ${notes}`
                 };
+                
+                console.log(`   ✅ Perplexity: ${status} employment status (${confidence}% confidence)`);
+                return result;
+            } else {
+                console.log(`   ⚠️ Perplexity API error: ${response.status} ${response.statusText}`);
+                return null;
             }
         } catch (error) {
-            console.log(`   ⚠️ Perplexity verification error: ${error.message}`);
+            console.log(`   ❌ Perplexity verification error: ${error.message}`);
+            return null;
         }
-
-        return null;
     }
 
     validateEmailSyntax(email) {
@@ -473,7 +604,7 @@ class MultiSourceVerifier {
             }
         }
 
-        // Fallback to MyEmailVerifier
+        // Fallback to MyEmailVerifier (with 429 error handling)
         if (this.config.MYEMAILVERIFIER_API_KEY) {
             try {
                 const response = await fetch(`https://api.myemailverifier.com/api/verify?ApiKey=${this.config.MYEMAILVERIFIER_API_KEY}&Email=${email}`);
@@ -484,9 +615,20 @@ class MultiSourceVerifier {
                         confidence: data.status === 'valid' ? 90 : 10,
                         reasoning: `MyEmailVerifier: ${data.status}`
                     };
+                } else if (response.status === 429) {
+                    console.log(`   ⚠️ MyEmailVerifier rate limit exceeded (429). Skipping this verification.`);
+                    return {
+                        valid: false,
+                        confidence: 0,
+                        reasoning: 'MyEmailVerifier rate limit exceeded'
+                    };
                 }
             } catch (error) {
-                console.log(`   ⚠️ MyEmailVerifier validation failed: ${error.message}`);
+                if (error.message.includes('429')) {
+                    console.log(`   ⚠️ MyEmailVerifier rate limit exceeded. Skipping this verification.`);
+                } else {
+                    console.log(`   ⚠️ MyEmailVerifier validation failed: ${error.message}`);
+                }
             }
         }
 
@@ -510,7 +652,7 @@ class MultiSourceVerifier {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'apikey': this.config.LUSHA_API_KEY.trim()
+                    'X-API-Key': this.config.LUSHA_API_KEY.trim()
                 },
                 body: JSON.stringify({
                     phone: phone,
@@ -595,6 +737,10 @@ class MultiSourceVerifier {
             });
 
             if (!response.ok) {
+                if (response.status === 402) {
+                    console.log(`   ⚠️ People Data Labs: Payment required (credits exhausted) - ${response.status}`);
+                    return null;
+                }
                 throw new Error(`People Data Labs phone verification error: ${response.status}`);
             }
 
@@ -625,52 +771,240 @@ class MultiSourceVerifier {
         }
     }
 
+    /**
+     * 📱 VERIFY PHONE WITH TWILIO
+     * 
+     * Use Twilio Lookup API to validate phone numbers
+     * Checks if number is valid, active, and reachable
+     */
+    async verifyPhoneWithTwilio(phone) {
+        if (!this.config.TWILIO_ACCOUNT_SID || !this.config.TWILIO_AUTH_TOKEN) {
+            console.log('   ⚠️ Twilio credentials not configured');
+            return null;
+        }
+
+        try {
+            console.log(`   🔍 Twilio: Validating phone ${phone}...`);
+
+            // Clean phone number for Twilio API
+            const cleanPhone = phone.replace(/[^\d+]/g, '');
+            const encodedPhone = encodeURIComponent(cleanPhone);
+            
+            const url = `https://lookups.twilio.com/v1/PhoneNumbers/${encodedPhone}`;
+            
+            const response = await this.retryHandler.execute(async () => {
+                return this.timeoutHandler.fetchWithTimeout(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${Buffer.from(`${this.config.TWILIO_ACCOUNT_SID}:${this.config.TWILIO_AUTH_TOKEN}`).toString('base64')}`,
+                        'Accept': 'application/json'
+                    }
+                }, this.timeoutHandler.getApiTimeout('twilio'));
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log(`   ⚠️ Twilio: Phone number not found or invalid: ${phone}`);
+                    return {
+                        valid: false,
+                        confidence: 0,
+                        reasoning: 'Phone number not found in Twilio database'
+                    };
+                }
+                throw new Error(`Twilio phone validation error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(`   ✅ Twilio: Phone validation successful for ${data.phone_number}`);
+
+            // Calculate confidence based on Twilio response
+            let confidence = 70; // Base confidence for valid number
+            
+            // Boost confidence for mobile numbers (more likely to be current)
+            if (data.line_type === 'mobile') {
+                confidence += 15;
+            }
+            
+            // Boost confidence for US numbers (better data quality)
+            if (data.country_code === 'US') {
+                confidence += 10;
+            }
+
+            return {
+                valid: true,
+                confidence: Math.min(100, confidence),
+                reasoning: `Valid ${data.line_type} number, carrier: ${data.carrier?.name || 'Unknown'}`,
+                metadata: {
+                    lineType: data.line_type,
+                    carrier: data.carrier?.name,
+                    countryCode: data.country_code,
+                    nationalFormat: data.national_format
+                }
+            };
+
+        } catch (error) {
+            console.log(`   ❌ Twilio phone verification failed: ${error.message}`);
+            return null;
+        }
+    }
+
+    /**
+     * 📱 VERIFY PHONE WITH PROSPEO MOBILE FINDER
+     * 
+     * Use Prospeo's Mobile Finder API to find mobile numbers via LinkedIn URL
+     * Prospeo Mobile Finder REQUIRES a LinkedIn URL to work
+     */
+    async verifyPhoneWithProspeo(phone, personName, company, linkedinUrl) {
+        if (!this.config.PROSPEO_API_KEY) {
+            console.log('   ⚠️ Prospeo API key not configured');
+            return null;
+        }
+        
+        if (!linkedinUrl) {
+            console.log('   ⚠️ Prospeo Mobile: LinkedIn URL required, skipping');
+            return null;
+        }
+
+        // Validate and clean LinkedIn URL format
+        let cleanLinkedInUrl = linkedinUrl;
+        
+        // Remove any query parameters or fragments
+        if (linkedinUrl.includes('?')) {
+            cleanLinkedInUrl = linkedinUrl.split('?')[0];
+        }
+        if (cleanLinkedInUrl.includes('#')) {
+            cleanLinkedInUrl = cleanLinkedInUrl.split('#')[0];
+        }
+        
+        // Check if it's a valid LinkedIn profile URL
+        if (!cleanLinkedInUrl.includes('linkedin.com/in/')) {
+            console.log('   ⚠️ Prospeo Mobile: Invalid LinkedIn URL format, skipping');
+            return null;
+        }
+        
+        // Skip if it contains special LinkedIn IDs (these are usually private)
+        if (cleanLinkedInUrl.includes('ACw') || cleanLinkedInUrl.includes('ACo') || cleanLinkedInUrl.includes('/AC')) {
+            console.log('   ⚠️ Prospeo Mobile: LinkedIn URL contains private ID, skipping');
+            return null;
+        }
+
+        try {
+            console.log(`   🔍 Prospeo Mobile: Finding mobile via LinkedIn ${linkedinUrl}...`);
+
+            // Prospeo Mobile Finder endpoint
+            const url = 'https://api.prospeo.io/mobile-finder';
+            
+            const response = await this.retryHandler.execute(async () => {
+                return this.timeoutHandler.fetchWithTimeout(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-KEY': this.config.PROSPEO_API_KEY.trim(),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: cleanLinkedInUrl  // Use cleaned LinkedIn URL
+                    })
+                }, this.timeoutHandler.getApiTimeout('prospeo'));
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.log(`   ⚠️ Prospeo: No mobile number found via LinkedIn`);
+                    return {
+                        valid: false,
+                        confidence: 0,
+                        reasoning: 'No mobile number found via LinkedIn'
+                    };
+                }
+                if (response.status === 400) {
+                    console.log(`   ⚠️ Prospeo: Bad request (likely LinkedIn URL validation issue) - ${response.status}`);
+                    return null;
+                }
+                throw new Error(`Prospeo mobile finder error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const foundPhone = data.mobile || data.phone_number;
+            
+            if (foundPhone) {
+                console.log(`   ✅ Prospeo Mobile: Found ${foundPhone}`);
+                
+                let confidence = 75; // Base confidence for Prospeo mobile finder
+                if (phone && foundPhone === phone) {
+                    confidence += 15; // Phone matches
+                }
+
+                return {
+                    valid: true,
+                    confidence: Math.min(100, confidence),
+                    reasoning: `Mobile found via LinkedIn: ${foundPhone}`,
+                    metadata: {
+                        mobile: foundPhone,
+                        source: 'prospeo-linkedin',
+                        linkedinUrl: linkedinUrl
+                    }
+                };
+            } else {
+                console.log(`   ⚠️ Prospeo: No mobile number found in LinkedIn profile`);
+                return {
+                    valid: false,
+                    confidence: 0,
+                    reasoning: 'No mobile number found in LinkedIn profile'
+                };
+            }
+
+        } catch (error) {
+            console.log(`   ❌ Prospeo mobile failed: ${error.message}`);
+            return null;
+        }
+    }
+
     async verifyEmailWithProspeo(email, personName, domain) {
         if (!this.config.PROSPEO_API_KEY) {
             return null;
         }
 
-        try {
-            console.log(`   🔍 Prospeo: Verifying email ${email}...`);
+        console.log(`   🔍 Prospeo: Verifying email ${email}...`);
 
+        // Use the working endpoint directly (confirmed working in tests)
+        try {
             const response = await fetch('https://api.prospeo.io/email-verifier', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-KEY': this.config.PROSPEO_API_KEY
+                    'X-KEY': this.config.PROSPEO_API_KEY.trim()
                 },
-                body: JSON.stringify({
-                    email: email,
-                    person_name: personName,
-                    domain: domain
-                }),
+                body: JSON.stringify({ email, person_name: personName, domain: domain }),
                 timeout: this.config.TIMEOUT
             });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`   ✅ Prospeo email verification: ${data.response?.email_status || 'success'} (${data.response?.confidence || 80}%)`);
 
-            if (!response.ok) {
-                throw new Error(`Prospeo email verification error: ${response.status}`);
+                return {
+                    email: email,
+                    isValid: data.response?.email_status === 'valid' || data.response?.email_status === 'deliverable',
+                    confidence: data.response?.confidence || 80,
+                    status: data.response?.email_status || 'verified',
+                    source: 'prospeo',
+                    reasoning: `Prospeo verification: ${data.response?.email_status || 'success'}`,
+                    metadata: {
+                        endpoint: 'https://api.prospeo.io/email-verifier',
+                        verificationId: data.response?.verification_id,
+                        verifiedAt: data.response?.verified_at || new Date().toISOString()
+                    }
+                };
+            } else {
+                const error = await response.text();
+                console.log(`   ❌ Prospeo failed: ${response.status} ${response.statusText} - ${error}`);
             }
-
-            const data = await response.json();
-            console.log(`   ✅ Prospeo email verification: ${data.status} (${data.confidence}%)`);
-
-            return {
-                email: email,
-                isValid: data.status === 'valid',
-                confidence: data.confidence || 0,
-                status: data.status,
-                source: 'prospeo',
-                reasoning: data.reasoning || `Prospeo verification: ${data.status}`,
-                metadata: {
-                    verificationId: data.verification_id,
-                    verifiedAt: data.verified_at
-                }
-            };
-
         } catch (error) {
-            console.log(`   ❌ Prospeo email verification failed: ${error.message}`);
-            return null;
+            console.log(`   ❌ Prospeo error: ${error.message}`);
         }
+        
+        return null;
     }
 
     calculateAgreementBonus(sources) {

@@ -902,15 +902,26 @@ Provide ONLY a JSON response:
             }
 
             const searchData = await searchResponse.json();
-            const hits = searchData.hits?.hits || [];
             
-            if (hits.length === 0) {
+            // Handle both array format (current) and Elasticsearch format (expected)
+            let employeeIds = [];
+            if (Array.isArray(searchData)) {
+                employeeIds = searchData;
+                console.log(`   📊 Response is array format: ${employeeIds.length} employee IDs`);
+            } else if (searchData.hits?.hits) {
+                employeeIds = searchData.hits.hits.map(hit => hit._source.id);
+                console.log(`   📊 Response is Elasticsearch format: ${employeeIds.length} employee IDs`);
+            } else {
+                console.log(`   ⚠️ Unknown response format: ${Object.keys(searchData)}`);
+            }
+            
+            if (employeeIds.length === 0) {
                 console.log(`   ⚠️ No CoreSignal results for ${executiveName}`);
                 return null;
             }
 
             // STEP 2: Collect the first matching profile
-            const employeeId = hits[0]._id;
+            const employeeId = employeeIds[0];
             console.log(`   🔍 Collecting profile for employee ID: ${employeeId}`);
 
             const collectResponse = await fetch(`https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${employeeId}`, {

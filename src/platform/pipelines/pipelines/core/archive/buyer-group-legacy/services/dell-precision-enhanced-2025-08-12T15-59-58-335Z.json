@@ -1,0 +1,622 @@
+{
+  "companyName": "Dell Technologies",
+  "sellerProfile": {
+    "productName": "Buyer Group Intelligence",
+    "sellerCompanyName": "Adrata",
+    "solutionCategory": "revenue_technology",
+    "targetMarket": "enterprise",
+    "dealSize": "enterprise",
+    "buyingCenter": "functional",
+    "decisionLevel": "vp",
+    "rolePriorities": {
+      "decision": [
+        "senior vice president sales",
+        "svp sales",
+        "svp, sales",
+        "executive vice president sales",
+        "evp sales",
+        "evp, sales",
+        "vice president sales",
+        "vp sales",
+        "vp, sales",
+        "vice president enterprise sales",
+        "vp enterprise sales",
+        "vice president field sales",
+        "vp field sales",
+        "chief revenue officer",
+        "cro",
+        "vice president revenue",
+        "vp revenue",
+        "vice president sales operations",
+        "vp sales operations",
+        "senior vice president commercial",
+        "svp commercial"
+      ],
+      "champion": [
+        "director sales operations",
+        "director revenue operations",
+        "director sales",
+        "director business development",
+        "director enterprise sales",
+        "director field sales",
+        "director customer success",
+        "director sales enablement",
+        "head of sales operations",
+        "head of revenue operations",
+        "head of sales enablement",
+        "head of revops",
+        "principal manager sales",
+        "senior manager sales operations",
+        "principal sales manager",
+        "director commercial operations"
+      ],
+      "stakeholder": [
+        "vice president marketing",
+        "vp marketing",
+        "director product marketing",
+        "director marketing",
+        "vice president customer success",
+        "vp customer success",
+        "chief information officer",
+        "cio",
+        "vice president information technology",
+        "vp it",
+        "vp information technology",
+        "vice president engineering",
+        "vp engineering",
+        "director analytics",
+        "director business analytics",
+        "director finance",
+        "director financial planning",
+        "vice president finance",
+        "vp finance",
+        "chief technology officer",
+        "cto",
+        "CTO",
+        "VP Engineering",
+        "Security",
+        "Product"
+      ],
+      "blocker": [
+        "director procurement",
+        "vp procurement",
+        "chief information security officer",
+        "ciso",
+        "vice president legal",
+        "vp legal",
+        "general counsel",
+        "director security",
+        "director information security",
+        "chief security officer",
+        "cso",
+        "director compliance",
+        "vp compliance",
+        "chief legal officer",
+        "clo",
+        "director risk management",
+        "vp risk",
+        "Security",
+        "Privacy",
+        "SOC2"
+      ],
+      "introducer": [
+        "enterprise account executive",
+        "major account executive",
+        "strategic account executive",
+        "global account executive",
+        "senior account executive",
+        "account executive",
+        "territory manager",
+        "territory sales manager",
+        "territory account manager",
+        "regional sales manager",
+        "area sales manager",
+        "district sales manager",
+        "field sales manager",
+        "field account manager",
+        "customer success manager",
+        "customer account manager",
+        "solutions specialist",
+        "solutions consultant",
+        "technical account manager",
+        "client executive",
+        "business development manager",
+        "partner account manager"
+      ]
+    },
+    "mustHaveTitles": [
+      "svp sales",
+      "vp sales",
+      "vice president sales",
+      "cro",
+      "chief revenue officer",
+      "director sales operations",
+      "director revenue operations",
+      "account executive",
+      "territory manager"
+    ],
+    "disqualifiers": [
+      "intern",
+      "assistant",
+      "temporary",
+      "consultant",
+      "ceo",
+      "chief executive officer",
+      "president",
+      "chairman",
+      "chief operating officer",
+      "coo",
+      "founder",
+      "co-founder",
+      "reseller",
+      "partner",
+      "distributor",
+      "vendor",
+      "supplier",
+      "police",
+      "government",
+      "university",
+      "school",
+      "hospital",
+      "medical center",
+      "healthcare",
+      "education",
+      "military"
+    ],
+    "geo": [
+      "US",
+      "United States"
+    ],
+    "adjacentFunctions": [
+      "customer success",
+      "product marketing",
+      "analytics",
+      "it",
+      "finance"
+    ],
+    "productCriticality": "important",
+    "integrationDepth": "light",
+    "dataSensitivity": "medium",
+    "deploymentModel": "saas",
+    "buyingGovernance": "structured",
+    "securityGateLevel": "high",
+    "procurementMaturity": "developing",
+    "vendorConsolidation": "preferred",
+    "decisionStyle": "consensus",
+    "primaryPainPoints": [
+      "buyer gap/dark funnel",
+      "deal slippage and miss-forecasting",
+      "low multi-threading across buyer group",
+      "unidentified blockers",
+      "unpredictable pipeline conversion"
+    ],
+    "targetDepartments": [
+      "sales",
+      "revenue operations",
+      "sales operations",
+      "customer success"
+    ],
+    "competitiveThreats": [
+      "status quo",
+      "internal build",
+      "sales ops bandwidth"
+    ]
+  },
+  "query": {},
+  "buyerGroup": {
+    "id": "dell_technologies_1755014398006",
+    "companyName": "Dell Technologies",
+    "totalMembers": 2,
+    "roles": {
+      "decision": [
+        {
+          "personId": 210172622,
+          "role": "decision",
+          "score": 51,
+          "confidence": 0.9,
+          "rationale": [
+            "Authority level: High",
+            "Sufficient authority for enterprise deals",
+            "Above-the-line seniority detected",
+            "CHAMPION: Title \"Managing Legal Director - Global Oem Sales\" matches champion patterns",
+            "Influence score: 11, Above the line: true",
+            "Promoted from champion: ensuring minimum 1 decision maker"
+          ],
+          "scoreBreakdown": {
+            "relevant_experience": 4,
+            "decision_authority": 30,
+            "org_influence": 2,
+            "role_assignment": 4,
+            "above_the_line": 1
+          },
+          "rank": 1,
+          "isLead": true,
+          "importanceScore": 100,
+          "painIntelligence": {
+            "primaryChallenges": [],
+            "painScore": 0,
+            "urgencyLevel": "low",
+            "buyingSignals": [],
+            "engagementStrategy": {
+              "approach": "consultative",
+              "messagingAngle": "Operational efficiency and growth enablement",
+              "valueProposition": "Accelerate your success with proven solutions",
+              "urgencyTriggers": [],
+              "recommendedTiming": "1-3 months",
+              "collateral": [
+                "Product Demo",
+                "ROI Calculator",
+                "Use Case Studies",
+                "Customer Success Stories"
+              ]
+            },
+            "lastUpdated": "2025-08-12T15:59:57.426Z"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "personId": 324986675,
+          "role": "champion",
+          "score": 9,
+          "confidence": 0.85,
+          "rationale": [
+            "CHAMPION: Title \"Technical Staff, Software Engineering\" matches decision patterns but lacks economic authority - demoted to champion",
+            "Influence score: 4, Above the line: false"
+          ],
+          "scoreBreakdown": {
+            "org_influence": 0,
+            "role_assignment": 5
+          },
+          "rank": 1,
+          "isLead": true,
+          "importanceScore": 92,
+          "painIntelligence": {
+            "primaryChallenges": [],
+            "painScore": 0,
+            "urgencyLevel": "low",
+            "buyingSignals": [],
+            "engagementStrategy": {
+              "approach": "consultative",
+              "messagingAngle": "Operational efficiency and growth enablement",
+              "valueProposition": "Accelerate your success with proven solutions",
+              "urgencyTriggers": [],
+              "recommendedTiming": "1-3 months",
+              "collateral": [
+                "Product Demo",
+                "ROI Calculator",
+                "Use Case Studies",
+                "Customer Success Stories"
+              ]
+            },
+            "lastUpdated": "2025-08-12T15:59:56.855Z"
+          }
+        }
+      ],
+      "stakeholder": [],
+      "blocker": [],
+      "introducer": []
+    },
+    "dynamics": {
+      "powerDistribution": 0.8,
+      "consensusLevel": 1,
+      "riskLevel": "low",
+      "decisionComplexity": 1.2
+    },
+    "decisionFlow": {
+      "criticalPath": [
+        324986675,
+        210172622
+      ],
+      "bottlenecks": [],
+      "estimatedDuration": 36
+    },
+    "flightRisk": [
+      {
+        "personId": 210172622,
+        "riskLevel": "ROOTED",
+        "riskScore": 0,
+        "factors": [],
+        "mitigation": []
+      },
+      {
+        "personId": 324986675,
+        "riskLevel": "ROOTED",
+        "riskScore": 0,
+        "factors": [],
+        "mitigation": []
+      }
+    ],
+    "opportunitySignals": [],
+    "cohesion": {
+      "score": 50,
+      "level": "Fair",
+      "overallScore": 50,
+      "departmentAlignment": 0.8,
+      "managementLevelDistribution": 0.7,
+      "crossFunctionalRep": 0.6,
+      "primaryBusinessUnit": "Dell Technologies",
+      "departmentClusters": [
+        "Technology"
+      ],
+      "networkConnections": 45
+    },
+    "metadata": {
+      "generatedAt": "2025-08-12T15:59:58.006Z",
+      "collectionMethod": "coresignal_progressive_cohesive",
+      "totalCandidates": 2,
+      "finalCount": 2,
+      "costInCredits": 4
+    }
+  },
+  "opportunitySignals": [],
+  "painIntelligence": {
+    "aggregatedChallenges": [
+      {
+        "challenge": "operational",
+        "frequency": 1,
+        "urgency": 8,
+        "impact": 7
+      },
+      {
+        "challenge": "operational",
+        "frequency": 1,
+        "urgency": 8,
+        "impact": 7
+      },
+      {
+        "challenge": "operational",
+        "frequency": 1,
+        "urgency": 8,
+        "impact": 7
+      }
+    ],
+    "companyWideTrends": [],
+    "strategicInitiatives": []
+  },
+  "engagementStrategy": {
+    "primaryApproach": "Direct executive engagement",
+    "sequencing": [
+      "introducer",
+      "champion",
+      "decision",
+      "stakeholder"
+    ],
+    "messaging": {
+      "message_0": "Buyer Group Intelligence value proposition",
+      "message_1": "ROI and efficiency gains",
+      "message_2": "Competitive differentiation",
+      "message_3": "Implementation timeline and support"
+    },
+    "riskMitigation": []
+  },
+  "metadata": {
+    "generatedAt": "2025-08-12T15:59:58.333Z",
+    "version": "1.0",
+    "creditsUsed": {
+      "search": 0,
+      "collect": 0
+    },
+    "processingTime": 0
+  },
+  "validationResults": {
+    "decision": [
+      {
+        "isValid": false,
+        "reasons": [
+          "Profile not found"
+        ],
+        "confidence": 0
+      }
+    ],
+    "champion": [
+      {
+        "isValid": false,
+        "reasons": [
+          "Profile not found"
+        ],
+        "confidence": 0
+      }
+    ]
+  },
+  "qualityScore": 0,
+  "precisionAnalysis": {
+    "companyIdsUsed": [
+      89904894,
+      148419,
+      4301121,
+      10506156,
+      12693899,
+      1234567,
+      2345678,
+      3456789
+    ],
+    "roleSearchConfigs": {
+      "decision": {
+        "titles": [
+          "senior vice president sales",
+          "svp sales",
+          "svp, sales",
+          "executive vice president sales",
+          "evp sales",
+          "evp, sales",
+          "vice president sales",
+          "vp sales",
+          "vp, sales",
+          "vice president enterprise sales",
+          "vp enterprise sales",
+          "vice president field sales",
+          "vp field sales",
+          "chief revenue officer",
+          "cro",
+          "vice president revenue",
+          "vp revenue",
+          "vice president sales operations",
+          "vp sales operations",
+          "senior vice president commercial",
+          "svp commercial"
+        ],
+        "departments": [
+          "sales",
+          "revenue",
+          "commercial",
+          "business development"
+        ],
+        "maxCollects": 4,
+        "priority": "critical"
+      },
+      "champion": {
+        "titles": [
+          "director sales operations",
+          "director revenue operations",
+          "director sales",
+          "director business development",
+          "director enterprise sales",
+          "director field sales",
+          "director customer success",
+          "director sales enablement",
+          "head of sales operations",
+          "head of revenue operations",
+          "head of sales enablement",
+          "head of revops",
+          "principal manager sales",
+          "senior manager sales operations",
+          "principal sales manager",
+          "director commercial operations"
+        ],
+        "departments": [
+          "sales",
+          "revenue operations",
+          "sales operations",
+          "customer success"
+        ],
+        "maxCollects": 5,
+        "priority": "high"
+      },
+      "stakeholder": {
+        "titles": [
+          "vice president marketing",
+          "vp marketing",
+          "director product marketing",
+          "director marketing",
+          "vice president customer success",
+          "vp customer success",
+          "chief information officer",
+          "cio",
+          "vice president information technology",
+          "vp it",
+          "vp information technology",
+          "vice president engineering",
+          "vp engineering",
+          "director analytics",
+          "director business analytics",
+          "director finance",
+          "director financial planning",
+          "vice president finance",
+          "vp finance",
+          "chief technology officer",
+          "cto"
+        ],
+        "departments": [
+          "marketing",
+          "customer success",
+          "it",
+          "engineering",
+          "analytics",
+          "finance"
+        ],
+        "maxCollects": 4,
+        "priority": "medium"
+      },
+      "blocker": {
+        "titles": [
+          "director procurement",
+          "vp procurement",
+          "chief information security officer",
+          "ciso",
+          "vice president legal",
+          "vp legal",
+          "general counsel",
+          "director security",
+          "director information security",
+          "chief security officer",
+          "cso",
+          "director compliance",
+          "vp compliance",
+          "chief legal officer",
+          "clo",
+          "director risk management",
+          "vp risk"
+        ],
+        "departments": [
+          "procurement",
+          "legal",
+          "security",
+          "compliance",
+          "risk"
+        ],
+        "maxCollects": 3,
+        "priority": "medium"
+      },
+      "introducer": {
+        "titles": [
+          "enterprise account executive",
+          "major account executive",
+          "strategic account executive",
+          "global account executive",
+          "senior account executive",
+          "account executive",
+          "territory manager",
+          "territory sales manager",
+          "territory account manager",
+          "regional sales manager",
+          "area sales manager",
+          "district sales manager",
+          "field sales manager",
+          "field account manager",
+          "customer success manager",
+          "customer account manager",
+          "solutions specialist",
+          "solutions consultant",
+          "technical account manager",
+          "client executive",
+          "business development manager",
+          "partner account manager"
+        ],
+        "departments": [
+          "sales",
+          "account management",
+          "customer success",
+          "business development"
+        ],
+        "maxCollects": 6,
+        "priority": "high"
+      }
+    },
+    "collectionRate": 0.4,
+    "statisticalConfidence": 12.666666666666666,
+    "roleCoverageScore": 0,
+    "defensibilityScore": 6.333333333333333,
+    "processingTimeMs": 24675,
+    "validationSummary": {
+      "decision": [
+        {
+          "isValid": false,
+          "reasons": [
+            "Profile not found"
+          ],
+          "confidence": 0
+        }
+      ],
+      "champion": [
+        {
+          "isValid": false,
+          "reasons": [
+            "Profile not found"
+          ],
+          "confidence": 0
+        }
+      ]
+    }
+  }
+}

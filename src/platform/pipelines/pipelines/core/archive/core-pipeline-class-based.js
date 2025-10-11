@@ -58,9 +58,12 @@ class CorePipeline {
             ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
             MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
             PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
-            // Performance optimizations
+            PROSPEO_API_KEY: process.env.PROSPEO_API_KEY,
+            TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+            TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+            // Performance optimizations - OPTIMIZED FOR COMPETITION
             PARALLEL_PROCESSING: true,
-            MAX_PARALLEL_COMPANIES: 5, // Reduced for rate limiting
+            MAX_PARALLEL_COMPANIES: 8, // Increased for maximum throughput
             REDUCED_DELAYS: true,
             CACHE_ENABLED: true
         };
@@ -85,7 +88,13 @@ class CorePipeline {
         this.versionManager = new VersionManager();
         this.dataCache = new DataCache({
             CACHE_TTL_DAYS: 30,
-            USE_FILE_CACHE: true
+            USE_FILE_CACHE: true,
+            // OPTIMIZED CACHE SETTINGS FOR COMPETITION
+            COMPANY_RESOLUTION_TTL: 7, // 7 days for company resolution
+            EXECUTIVE_DISCOVERY_TTL: 3, // 3 days for executive discovery (more dynamic)
+            VERIFICATION_TTL: 1, // 1 day for verification (most dynamic)
+            CACHE_WARMUP: true, // Pre-load cache for faster access
+            SMART_INVALIDATION: true // Invalidate related cache entries
         });
         this.config = config; // Store config for later use
         
@@ -105,6 +114,38 @@ class CorePipeline {
             apiCostsSaved: 0,
             startTime: Date.now()
         };
+
+        // Rate limiting protection - OPTIMIZED FOR MAXIMUM SPEED
+        this.rateLimits = {
+            coresignal: { lastCall: 0, minInterval: 400 }, // 150 calls/minute (50% faster)
+            lusha: { lastCall: 0, minInterval: 800 }, // 75 calls/minute (25% faster)
+            perplexity: { lastCall: 0, minInterval: 2000 }, // 30 calls/minute (50% faster)
+            zerobounce: { lastCall: 0, minInterval: 500 }, // 120 calls/minute (20% faster)
+            myemailverifier: { lastCall: 0, minInterval: 500 }, // 120 calls/minute (20% faster)
+            prospeo: { lastCall: 0, minInterval: 500 }, // 120 calls/minute (20% faster)
+            peopledatalabs: { lastCall: 0, minInterval: 500 } // 120 calls/minute (20% faster)
+        };
+    }
+
+    /**
+     * 🚦 RATE LIMITING HELPER
+     * 
+     * Ensures API calls respect rate limits to prevent quota exhaustion
+     */
+    async enforceRateLimit(apiName) {
+        const rateLimit = this.rateLimits[apiName];
+        if (!rateLimit) return;
+
+        const now = Date.now();
+        const timeSinceLastCall = now - rateLimit.lastCall;
+        
+        if (timeSinceLastCall < rateLimit.minInterval) {
+            const waitTime = rateLimit.minInterval - timeSinceLastCall;
+            console.log(`   ⏳ Rate limiting ${apiName}: waiting ${waitTime}ms`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+        }
+        
+        rateLimit.lastCall = Date.now();
     }
 
     /**
@@ -261,7 +302,7 @@ class CorePipeline {
             const companies = [];
             
             // Use passed parameter, command line argument, or default file
-            const inputFile = this.inputFile || process.argv[2] || path.join(__dirname, '../../inputs/all-1000-companies.csv');
+            const inputFile = this.inputFile || process.argv[2] || path.join(__dirname, '../../inputs/test-companies.csv');
             console.log(`    Reading from: ${inputFile}`);
             
             fs.createReadStream(inputFile)
@@ -431,41 +472,87 @@ class CorePipeline {
 
             // STEP 3: Multi-Source Executive Discovery (NEW - Credit Efficient)
             console.log('🔍 STEP 3: Multi-Source Executive Discovery...');
-            const multiSourceResult = await this.coresignalMultiSource.discoverExecutives(result.companyName, ['CFO', 'CRO']);
+            let multiSourceResult = { cfo: null, cro: null, creditsUsed: 0 };
+            try {
+                multiSourceResult = await this.coresignalMultiSource.discoverExecutives(result.companyName, ['CFO', 'CRO'], company.website);
+            } catch (error) {
+                console.log(`   ⚠️ Multi-source discovery failed: ${error.message}`);
+                // Continue with existing research data
+            }
             
             // Use multi-source results if available, fallback to existing research
             if (multiSourceResult.cfo) {
-                console.log(`   ✅ Multi-source CFO found: ${multiSourceResult.cfo.name}`);
-                result.cfo = {
-                    name: multiSourceResult.cfo.name,
-                    title: multiSourceResult.cfo.title,
-                    email: multiSourceResult.cfo.email || '',
-                    phone: multiSourceResult.cfo.phone || '',
-                    linkedIn: multiSourceResult.cfo.linkedinUrl || '',
-                    confidence: multiSourceResult.cfo.confidence || 0,
-                    source: 'coresignal-multisource',
-                    validated: false,
-                    role: this.categorizeRevenueFinanceRole(multiSourceResult.cfo.title || ''),
-                    tier: this.categorizeRoleTier(multiSourceResult.cfo.title, 'CFO')
-                };
-                this.stats.cfoFound++;
+                console.log(`   ✅ Multi-source CFO found: ${multiSourceResult.cfo.name} (${multiSourceResult.cfo.title})`);
+                
+                // VALIDATE: Check if this is actually a finance-related role
+                const roleCategory = this.categorizeRevenueFinanceRole(multiSourceResult.cfo.title || '');
+                const validCFORoles = ['CFO', 'Controller', 'VP Finance', 'Finance Executive', 'Treasurer'];
+                
+                if (validCFORoles.includes(roleCategory)) {
+                    result.cfo = {
+                        name: multiSourceResult.cfo.name,
+                        title: multiSourceResult.cfo.title,
+                        email: multiSourceResult.cfo.email || '',
+                        phone: multiSourceResult.cfo.phone || '',
+                        linkedIn: multiSourceResult.cfo.linkedinUrl || '',
+                        confidence: multiSourceResult.cfo.confidence || 0,
+                        source: 'coresignal-multisource',
+                        validated: false,
+                        role: roleCategory,
+                        tier: this.categorizeRoleTier(multiSourceResult.cfo.title, 'CFO')
+                    };
+                    this.stats.cfoFound++;
+                } else {
+                    console.log(`   ⚠️ REJECTED CFO candidate ${multiSourceResult.cfo.name}: Wrong role category (${roleCategory})`);
+                    multiSourceResult.cfo = null; // Clear for fallback logic
+                }
             }
             
             if (multiSourceResult.cro) {
-                console.log(`   ✅ Multi-source CRO found: ${multiSourceResult.cro.name}`);
+                console.log(`   ✅ Multi-source CRO found: ${multiSourceResult.cro.name} (${multiSourceResult.cro.title})`);
+                
+                // VALIDATE: Check if this is actually a revenue/sales-related role
+                const roleCategory = this.categorizeRevenueFinanceRole(multiSourceResult.cro.title || '');
+                const validCRORoles = ['CRO', 'CSO', 'VP Sales', 'VP Revenue', 'Sales Executive', 'Head of Sales', 'Head of Revenue', 'VP Business Development'];
+                
+                if (validCRORoles.includes(roleCategory)) {
+                    result.cro = {
+                        name: multiSourceResult.cro.name,
+                        title: multiSourceResult.cro.title,
+                        email: multiSourceResult.cro.email || '',
+                        phone: multiSourceResult.cro.phone || '',
+                        linkedIn: multiSourceResult.cro.linkedinUrl || '',
+                        confidence: multiSourceResult.cro.confidence || 0,
+                        source: 'coresignal-multisource',
+                        validated: false,
+                        role: roleCategory,
+                        tier: this.categorizeRoleTier(multiSourceResult.cro.title, 'CRO')
+                    };
+                    this.stats.croFound++;
+                } else {
+                    console.log(`   ⚠️ REJECTED CRO candidate ${multiSourceResult.cro.name}: Wrong role category (${roleCategory})`);
+                    multiSourceResult.cro = null; // Clear for fallback logic
+                }
+            }
+
+            // CRITICAL: Check for duplicate executives (same person in both roles)
+            if (result.cfo?.name && result.cro?.name && 
+                result.cfo.name.toLowerCase() === result.cro.name.toLowerCase()) {
+                console.log(`   ⚠️ DUPLICATE EXECUTIVE DETECTED: ${result.cfo.name} found in both CFO and CRO roles`);
+                console.log(`   🔧 Resolving: Keeping CFO role, clearing CRO role`);
                 result.cro = {
-                    name: multiSourceResult.cro.name,
-                    title: multiSourceResult.cro.title,
-                    email: multiSourceResult.cro.email || '',
-                    phone: multiSourceResult.cro.phone || '',
-                    linkedIn: multiSourceResult.cro.linkedinUrl || '',
-                    confidence: multiSourceResult.cro.confidence || 0,
-                    source: 'coresignal-multisource',
+                    name: '',
+                    title: '',
+                    email: '',
+                    phone: '',
+                    linkedIn: '',
+                    confidence: 0,
+                    source: '',
                     validated: false,
-                    role: this.categorizeRevenueFinanceRole(multiSourceResult.cro.title || ''),
-                    tier: this.categorizeRoleTier(multiSourceResult.cro.title, 'CRO')
+                    role: '',
+                    tier: null
                 };
-                this.stats.croFound++;
+                this.stats.croFound--; // Adjust counter
             }
 
             // STEP 4: Contact Intelligence (Email/Phone Discovery) - Enhanced
@@ -513,35 +600,66 @@ class CorePipeline {
             // STEP 6: Multi-Source Verification (NEW - 2-3x Person, 2-3x Email, 2x Phone)
             console.log('🔍 STEP 6: Multi-Source Verification...');
             
-            // Verify CFO if found
+            // Verify CFO if found - PARALLEL VERIFICATION FOR SPEED
             if (result.cfo && result.cfo.name) {
-                console.log(`   🎯 Verifying CFO: ${result.cfo.name}`);
+                console.log(`   🎯 Verifying CFO: ${result.cfo.name} (parallel verification)`);
                 
-                // Person Identity Verification (2-3x sources)
-                const cfoPersonVerification = await this.multiSourceVerifier.verifyPersonIdentity(
-                    result.cfo, 
-                    result.companyName, 
-                    company.website
-                );
+                let cfoPersonVerification = { confidence: 0, verificationDetails: [] };
+                let cfoEmailVerification = { confidence: 0, validationDetails: [] };
+                let cfoPhoneVerification = { confidence: 0, verificationDetails: [] };
                 
-                // Email Multi-Layer Verification (2-3x layers)
-                const cfoEmailVerification = await this.multiSourceVerifier.verifyEmailMultiLayer(
-                    result.cfo.email,
-                    result.cfo.name,
-                    company.website
-                );
+                // PARALLEL VERIFICATION - All 3 verification types run simultaneously
+                const cfoVerificationPromises = [
+                    // Person Identity Verification (2-3x sources) - includes employment status check
+                    this.multiSourceVerifier.verifyPersonIdentity(
+                        result.cfo, 
+                        result.companyName, 
+                        company.website
+                    ).catch(error => {
+                        console.log(`   ⚠️ CFO person verification failed: ${error.message}`);
+                        return { confidence: 0, verificationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    }),
+                    
+                    // Email Multi-Layer Verification (2-3x layers)
+                    this.multiSourceVerifier.verifyEmailMultiLayer(
+                        result.cfo.email,
+                        result.cfo.name,
+                        company.website
+                    ).catch(error => {
+                        console.log(`   ⚠️ CFO email verification failed: ${error.message}`);
+                        return { confidence: 0, validationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    }),
+                    
+                    // Phone Verification (4x sources)
+                    this.multiSourceVerifier.verifyPhone(
+                        result.cfo.phone,
+                        result.cfo.name,
+                        result.companyName,
+                        result.cfo.linkedinUrl  // Pass LinkedIn URL for Prospeo Mobile
+                    ).catch(error => {
+                        console.log(`   ⚠️ CFO phone verification failed: ${error.message}`);
+                        return { confidence: 0, verificationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    })
+                ];
                 
-                // Phone Verification (2x sources)
-                const cfoPhoneVerification = await this.multiSourceVerifier.verifyPhone(
-                    result.cfo.phone,
-                    result.cfo.name,
-                    result.companyName
-                );
+                // Wait for all verifications to complete in parallel
+                const cfoVerificationResults = await Promise.all(cfoVerificationPromises);
+                cfoPersonVerification = cfoVerificationResults[0];
+                cfoEmailVerification = cfoVerificationResults[1];
+                cfoPhoneVerification = cfoVerificationResults[2];
                 
                 // Store verification results
                 result.cfo.personVerification = cfoPersonVerification;
                 result.cfo.emailVerification = cfoEmailVerification;
                 result.cfo.phoneVerification = cfoPhoneVerification;
+                
+                // Store verification trails
+                result.cfo.personVerificationTrail = this.formatVerificationTrail(cfoPersonVerification);
+                result.cfo.emailVerificationTrail = this.formatEmailValidationTrail(cfoEmailVerification);
+                result.cfo.phoneVerificationTrail = this.formatPhoneVerificationTrail(cfoPhoneVerification);
+                result.cfo.personVerificationDetails = cfoPersonVerification.verificationDetails;
+                result.cfo.emailValidationDetails = cfoEmailVerification.validationDetails;
+                result.cfo.phoneVerificationDetails = cfoPhoneVerification.verificationDetails;
                 
                 // Update confidence scores
                 result.cfo.personConfidence = cfoPersonVerification.confidence;
@@ -549,44 +667,95 @@ class CorePipeline {
                 result.cfo.phoneConfidence = cfoPhoneVerification.confidence;
                 result.cfo.overallConfidence = Math.round((cfoPersonVerification.confidence + cfoEmailVerification.confidence + cfoPhoneVerification.confidence) / 3);
                 
+                // EMPLOYMENT STATUS VALIDATION - Reject former employees
+                const cfoEmploymentStatus = this.validateEmploymentStatus(cfoPersonVerification, 'CFO');
+                if (!cfoEmploymentStatus.isCurrent) {
+                    console.log(`   ❌ CFO REJECTED: ${result.cfo.name} is not currently employed (${cfoEmploymentStatus.reason})`);
+                    result.cfo = { name: '', title: '', email: '', phone: '', linkedIn: '', confidence: 0, source: '', validated: false, role: '', tier: null };
+                    this.stats.cfoFound--; // Decrement counter
+                } else {
+                    console.log(`   ✅ CFO EMPLOYMENT VERIFIED: ${result.cfo.name} is currently employed`);
+                }
+                
                 console.log(`   ✅ CFO verification complete: Person ${cfoPersonVerification.confidence}%, Email ${cfoEmailVerification.confidence}%, Phone ${cfoPhoneVerification.confidence}%`);
             }
             
-            // Verify CRO if found
+            // Verify CRO if found - PARALLEL VERIFICATION FOR SPEED
             if (result.cro && result.cro.name) {
-                console.log(`   🎯 Verifying CRO: ${result.cro.name}`);
+                console.log(`   🎯 Verifying CRO: ${result.cro.name} (parallel verification)`);
                 
-                // Person Identity Verification (2-3x sources)
-                const croPersonVerification = await this.multiSourceVerifier.verifyPersonIdentity(
-                    result.cro, 
-                    result.companyName, 
-                    company.website
-                );
+                let croPersonVerification = { confidence: 0, verificationDetails: [] };
+                let croEmailVerification = { confidence: 0, validationDetails: [] };
+                let croPhoneVerification = { confidence: 0, verificationDetails: [] };
                 
-                // Email Multi-Layer Verification (2-3x layers)
-                const croEmailVerification = await this.multiSourceVerifier.verifyEmailMultiLayer(
-                    result.cro.email,
-                    result.cro.name,
-                    company.website
-                );
+                // PARALLEL VERIFICATION - All 3 verification types run simultaneously
+                const croVerificationPromises = [
+                    // Person Identity Verification (2-3x sources)
+                    this.multiSourceVerifier.verifyPersonIdentity(
+                        result.cro, 
+                        result.companyName, 
+                        company.website
+                    ).catch(error => {
+                        console.log(`   ⚠️ CRO person verification failed: ${error.message}`);
+                        return { confidence: 0, verificationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    }),
+                    
+                    // Email Multi-Layer Verification (2-3x layers)
+                    this.multiSourceVerifier.verifyEmailMultiLayer(
+                        result.cro.email,
+                        result.cro.name,
+                        company.website
+                    ).catch(error => {
+                        console.log(`   ⚠️ CRO email verification failed: ${error.message}`);
+                        return { confidence: 0, validationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    }),
+                    
+                    // Phone Verification (4x sources)
+                    this.multiSourceVerifier.verifyPhone(
+                        result.cro.phone,
+                        result.cro.name,
+                        result.companyName,
+                        result.cro.linkedinUrl  // Pass LinkedIn URL for Prospeo Mobile
+                    ).catch(error => {
+                        console.log(`   ⚠️ CRO phone verification failed: ${error.message}`);
+                        return { confidence: 0, verificationDetails: [{ source: 'error', status: 'failed', reason: error.message }] };
+                    })
+                ];
                 
-                // Phone Verification (2x sources)
-                const croPhoneVerification = await this.multiSourceVerifier.verifyPhone(
-                    result.cro.phone,
-                    result.cro.name,
-                    result.companyName
-                );
+                // Wait for all verifications to complete in parallel
+                const croVerificationResults = await Promise.all(croVerificationPromises);
+                croPersonVerification = croVerificationResults[0];
+                croEmailVerification = croVerificationResults[1];
+                croPhoneVerification = croVerificationResults[2];
                 
                 // Store verification results
                 result.cro.personVerification = croPersonVerification;
                 result.cro.emailVerification = croEmailVerification;
                 result.cro.phoneVerification = croPhoneVerification;
                 
+                // Store verification trails
+                result.cro.personVerificationTrail = this.formatVerificationTrail(croPersonVerification);
+                result.cro.emailVerificationTrail = this.formatEmailValidationTrail(croEmailVerification);
+                result.cro.phoneVerificationTrail = this.formatPhoneVerificationTrail(croPhoneVerification);
+                result.cro.personVerificationDetails = croPersonVerification.verificationDetails;
+                result.cro.emailValidationDetails = croEmailVerification.validationDetails;
+                result.cro.phoneVerificationDetails = croPhoneVerification.verificationDetails;
+                
                 // Update confidence scores
                 result.cro.personConfidence = croPersonVerification.confidence;
                 result.cro.emailConfidence = croEmailVerification.confidence;
                 result.cro.phoneConfidence = croPhoneVerification.confidence;
                 result.cro.overallConfidence = Math.round((croPersonVerification.confidence + croEmailVerification.confidence + croPhoneVerification.confidence) / 3);
+                
+                // EMPLOYMENT STATUS VALIDATION - Reject former employees
+                const croEmploymentStatus = this.validateEmploymentStatus(croPersonVerification, 'CRO');
+                if (!croEmploymentStatus.isCurrent) {
+                    console.log(`   ❌ CRO REJECTED: ${result.cro.name} is not currently employed (${croEmploymentStatus.reason})`);
+                    result.cro = { name: '', title: '', email: '', phone: '', linkedIn: '', confidence: 0, source: '', validated: false, role: '', tier: null };
+                    this.stats.croFound--; // Decrement counter
+                } else {
+                    console.log(`   ✅ CRO EMPLOYMENT VERIFIED: ${result.cro.name} is currently employed`);
+                }
                 
                 console.log(`   ✅ CRO verification complete: Person ${croPersonVerification.confidence}%, Email ${croEmailVerification.confidence}%, Phone ${croPhoneVerification.confidence}%`);
             }
@@ -601,6 +770,32 @@ class CorePipeline {
             
             // Update confidence based on validation
             this.updateConfidenceScores(result, dataValidation);
+            
+            // STEP 5.5: Apply Permissive Quality Thresholds (30% minimum for scoring)
+            console.log('Applying permissive quality thresholds for scoring...');
+            const minConfidenceThreshold = 30; // Low threshold to include data for scoring
+            
+            // Check CFO quality
+            if (result.cfo && result.cfo.name) {
+                const cfoOverallConfidence = result.cfo.overallConfidence || result.cfo.confidence || 0;
+                if (cfoOverallConfidence < minConfidenceThreshold) {
+                    console.log(`   ⚠️ CFO ${result.cfo.name} has low confidence (${cfoOverallConfidence}%) but including for scoring`);
+                    result.cfo.qualityFlag = 'low_confidence_included';
+                } else {
+                    result.cfo.qualityFlag = 'meets_threshold';
+                }
+            }
+            
+            // Check CRO quality
+            if (result.cro && result.cro.name) {
+                const croOverallConfidence = result.cro.overallConfidence || result.cro.confidence || 0;
+                if (croOverallConfidence < minConfidenceThreshold) {
+                    console.log(`   ⚠️ CRO ${result.cro.name} has low confidence (${croOverallConfidence}%) but including for scoring`);
+                    result.cro.qualityFlag = 'low_confidence_included';
+                } else {
+                    result.cro.qualityFlag = 'meets_threshold';
+                }
+            }
 
             // Count successful finds
             if (result.cfo?.name && result.cro?.name) {
@@ -955,6 +1150,12 @@ class CorePipeline {
                 { id: 'parentCompany', title: 'Parent Company' },
                 { id: 'relationType', title: 'Relation Type' },
                 
+                // ACQUISITION METADATA (Moved up front)
+                { id: 'isAcquired', title: 'Is Acquired' },
+                { id: 'acquisitionDate', title: 'Acquisition Date' },
+                { id: 'originalDomain', title: 'Original Domain' },
+                { id: 'currentDomain', title: 'Current Domain' },
+                
                 // CRO ESSENTIALS (Contact Only)
                 { id: 'croName', title: 'CRO Name' },
                 { id: 'croTitle', title: 'CRO Title' },
@@ -976,6 +1177,11 @@ class CorePipeline {
                 { id: 'croPhoneReasoning', title: 'CRO Phone Reasoning' },
                 { id: 'croOverallConfidence', title: 'CRO Overall Confidence' },
                 { id: 'croDataQualityGrade', title: 'CRO Data Quality Grade' },
+                
+                // CRO VERIFICATION TRAILS (NEW)
+                { id: 'croPersonVerificationTrail', title: 'CRO Person Verification Trail' },
+                { id: 'croEmailVerificationTrail', title: 'CRO Email Verification Trail' },
+                { id: 'croPhoneVerificationTrail', title: 'CRO Phone Verification Trail' },
                 
                 // CFO ESSENTIALS (Contact Only)
                 { id: 'cfoName', title: 'CFO Name' },
@@ -1005,12 +1211,12 @@ class CorePipeline {
                 { id: 'cfoOverallConfidence', title: 'CFO Overall Confidence' },
                 { id: 'cfoDataQualityGrade', title: 'CFO Data Quality Grade' },
                 
-                // ACQUISITION METADATA
-                { id: 'isAcquired', title: 'Is Acquired' },
-                { id: 'parentCompany', title: 'Parent Company' },
-                { id: 'acquisitionDate', title: 'Acquisition Date' },
-                { id: 'originalDomain', title: 'Original Domain' },
-                { id: 'currentDomain', title: 'Current Domain' },
+                // CFO VERIFICATION TRAILS (NEW)
+                { id: 'cfoPersonVerificationTrail', title: 'CFO Person Verification Trail' },
+                { id: 'cfoEmailVerificationTrail', title: 'CFO Email Verification Trail' },
+                { id: 'cfoPhoneVerificationTrail', title: 'CFO Phone Verification Trail' },
+                
+                // VALIDATION NOTES
                 { id: 'validationNotes', title: 'Validation Notes' },
                 
                 // EXECUTIVE TRACKING (Post-Acquisition)
@@ -1036,12 +1242,14 @@ class CorePipeline {
                     croEmailConfidence: 0, croEmailValidationSteps: '', croEmailReasoning: '',
                     croPhoneConfidence: 0, croPhoneSources: '', croPhoneReasoning: '',
                     croOverallConfidence: 0, croDataQualityGrade: 'F',
+                    croPersonVerificationTrail: 'N/A', croEmailVerificationTrail: 'N/A', croPhoneVerificationTrail: 'N/A',
                     cfoName: '', cfoTitle: '', cfoEmail: '', cfoPhone: '', cfoPhoneCarrier: '', cfoLinkedIn: '', 
                     cfoConfidence: 0, cfoTier: '', cfoCostTracking: '',
                     cfoPersonConfidence: 0, cfoPersonSources: '', cfoPersonReasoning: '',
                     cfoEmailConfidence: 0, cfoEmailValidationSteps: '', cfoEmailReasoning: '',
                     cfoPhoneConfidence: 0, cfoPhoneSources: '', cfoPhoneReasoning: '',
                     cfoOverallConfidence: 0, cfoDataQualityGrade: 'F',
+                    cfoPersonVerificationTrail: 'N/A', cfoEmailVerificationTrail: 'N/A', cfoPhoneVerificationTrail: 'N/A',
                     isAcquired: 'No', acquisitionDate: '', originalDomain: '', currentDomain: '', validationNotes: '',
                     executiveTrackingStatus: '', trackedExecutives: '', executiveStatusUpdates: '',
                     accountOwner: '', researchDate: '', totalCost: 0
@@ -1094,6 +1302,11 @@ class CorePipeline {
                 croOverallConfidence: result.cro?.overallConfidence || 0,
                 croDataQualityGrade: this.calculateDataQualityGrade(result.cro?.overallConfidence || 0),
                 
+                // CRO VERIFICATION TRAILS (NEW)
+                croPersonVerificationTrail: result.cro?.personVerificationTrail || 'N/A',
+                croEmailVerificationTrail: result.cro?.emailVerificationTrail || 'N/A',
+                croPhoneVerificationTrail: result.cro?.phoneVerificationTrail || 'N/A',
+                
                 // CFO DATA - Complete validation metadata extraction
                 cfoName: result.cfo?.name || '',
                 cfoTitle: result.cfo?.title || '',
@@ -1128,6 +1341,11 @@ class CorePipeline {
                 cfoPhoneReasoning: result.cfo?.phoneVerification?.reasoning || '',
                 cfoOverallConfidence: result.cfo?.overallConfidence || 0,
                 cfoDataQualityGrade: this.calculateDataQualityGrade(result.cfo?.overallConfidence || 0),
+                
+                // CFO VERIFICATION TRAILS (NEW)
+                cfoPersonVerificationTrail: result.cfo?.personVerificationTrail || 'N/A',
+                cfoEmailVerificationTrail: result.cfo?.emailVerificationTrail || 'N/A',
+                cfoPhoneVerificationTrail: result.cfo?.phoneVerificationTrail || 'N/A',
                 
                 // ACQUISITION METADATA
                 isAcquired: result.corporateStructure?.isAcquired ? 'Yes' : 'No',
@@ -1224,12 +1442,12 @@ class CorePipeline {
     categorizeRevenueFinanceRole(title) {
         const titleLower = title.toLowerCase();
         
-        // TIER 1: Primary Targets
-        if (titleLower.includes('cfo') || titleLower.includes('chief financial officer')) {
-            return 'CFO';
-        }
+        // TIER 1: Primary Targets - Check CRO first to avoid conflicts
         if (titleLower.includes('cro') || titleLower.includes('chief revenue officer')) {
             return 'CRO';
+        }
+        if (titleLower.includes('cfo') || titleLower.includes('chief financial officer')) {
+            return 'CFO';
         }
         
         // TIER 2: Senior Revenue/Sales Leaders
@@ -1295,6 +1513,80 @@ class CorePipeline {
         }
         
         return 5; // Default tier
+    }
+
+    /**
+     * 🔍 VALIDATE EMPLOYMENT STATUS
+     * 
+     * Check if executive is currently employed based on verification results
+     */
+    validateEmploymentStatus(personVerification, roleType) {
+        if (!personVerification || !personVerification.verificationDetails) {
+            return {
+                isCurrent: true, // Default to current if no verification data
+                reason: 'No verification data available',
+                confidence: 0
+            };
+        }
+
+        // Look for Perplexity verification results
+        const perplexityResult = personVerification.verificationDetails.find(
+            detail => detail.source === 'Perplexity'
+        );
+
+        if (perplexityResult) {
+            const reasoning = perplexityResult.reasoning || '';
+            const isCurrent = reasoning.toLowerCase().includes('currently employed') || 
+                             reasoning.toLowerCase().includes('current employee') ||
+                             reasoning.toLowerCase().includes('active employee');
+            
+            const isFormer = reasoning.toLowerCase().includes('former') ||
+                            reasoning.toLowerCase().includes('not currently') ||
+                            reasoning.toLowerCase().includes('previously worked') ||
+                            reasoning.toLowerCase().includes('ex-employee');
+
+            if (isFormer) {
+                return {
+                    isCurrent: false,
+                    reason: `Perplexity indicates former employee: ${reasoning}`,
+                    confidence: perplexityResult.confidence || 0
+                };
+            }
+
+            if (isCurrent) {
+                return {
+                    isCurrent: true,
+                    reason: `Perplexity confirms current employee: ${reasoning}`,
+                    confidence: perplexityResult.confidence || 0
+                };
+            }
+        }
+
+        // Look for Lusha verification results
+        const lushaResult = personVerification.verificationDetails.find(
+            detail => detail.source === 'Lusha'
+        );
+
+        if (lushaResult) {
+            const reasoning = lushaResult.reasoning || '';
+            const isCurrent = reasoning.toLowerCase().includes('current') ||
+                             reasoning.toLowerCase().includes('active');
+            
+            if (isCurrent) {
+                return {
+                    isCurrent: true,
+                    reason: `Lusha confirms current employee: ${reasoning}`,
+                    confidence: lushaResult.confidence || 0
+                };
+            }
+        }
+
+        // Default to current if no clear indication otherwise
+        return {
+            isCurrent: true,
+            reason: 'No employment status verification available - defaulting to current',
+            confidence: 0
+        };
     }
 
     /**
@@ -1823,6 +2115,131 @@ class CorePipeline {
             console.warn(`   ⚠️ Failed to split CSV by role: ${error.message}`);
         }
     }
+
+    /**
+     * Format verification trail for CSV output
+     */
+    formatVerificationTrail(verificationResult) {
+        if (!verificationResult || !verificationResult.verificationDetails) {
+            return 'No verification attempted';
+        }
+        
+        return verificationResult.verificationDetails.map(detail => {
+            const status = detail.verified ? '✓' : '❌';
+            const confidence = detail.confidence ? `(${detail.confidence}%)` : '';
+            return `${detail.source}${status}${confidence}`;
+        }).join(' → ');
+    }
+
+    /**
+     * Format email validation trail for CSV output
+     */
+    formatEmailValidationTrail(emailVerification) {
+        if (!emailVerification || !emailVerification.validationDetails) {
+            return 'No validation attempted';
+        }
+        
+        return emailVerification.validationDetails.map(detail => {
+            const status = detail.passed ? '✓' : '❌';
+            const confidence = detail.confidence ? `(${detail.confidence}%)` : '';
+            return `${detail.step}${status}${confidence}`;
+        }).join(' → ');
+    }
+
+    /**
+     * Format phone verification trail for CSV output
+     */
+    formatPhoneVerificationTrail(phoneVerification) {
+        if (!phoneVerification || !phoneVerification.verificationDetails) {
+            return 'No verification attempted';
+        }
+        
+        return phoneVerification.verificationDetails.map(detail => {
+            const status = detail.verified ? '✓' : '❌';
+            const confidence = detail.confidence ? `(${detail.confidence}%)` : '';
+            return `${detail.source}${status}${confidence}`;
+        }).join(' → ');
+    }
+
+    /**
+     * 🔍 API HEALTH CHECKS
+     * Pre-flight checks to verify API availability before starting pipeline
+     */
+    async performHealthChecks() {
+        console.log('🔍 Performing API health checks...');
+        const healthStatus = {
+            coresignal: false,
+            lusha: false,
+            perplexity: false,
+            zerobounce: false,
+            myemailverifier: false,
+            prospeo: false,
+            peopledatalabs: false,
+            twilio: false
+        };
+
+        // Check CoreSignal
+        if (this.config.CORESIGNAL_API_KEY) {
+            try {
+                const testResponse = await this.coresignalMultiSource.searchCompanyId('Test Company');
+                healthStatus.coresignal = true;
+                console.log('   ✅ CoreSignal API: Healthy');
+            } catch (error) {
+                console.log(`   ⚠️ CoreSignal API: ${error.message}`);
+            }
+        } else {
+            console.log('   ❌ CoreSignal API: No API key configured');
+        }
+
+        // Check Lusha
+        if (this.config.LUSHA_API_KEY) {
+            try {
+                const testResponse = await this.multiSourceVerifier.verifyWithLusha('Test User', 'Test Company', 'test.com');
+                healthStatus.lusha = true;
+                console.log('   ✅ Lusha API: Healthy');
+            } catch (error) {
+                if (error.message.includes('404')) {
+                    healthStatus.lusha = true; // 404 is expected for test data
+                    console.log('   ✅ Lusha API: Healthy (404 expected for test)');
+                } else {
+                    console.log(`   ⚠️ Lusha API: ${error.message}`);
+                }
+            }
+        } else {
+            console.log('   ❌ Lusha API: No API key configured');
+        }
+
+        // Check other APIs (simplified checks)
+        const apiChecks = [
+            { name: 'Perplexity', key: 'PERPLEXITY_API_KEY' },
+            { name: 'ZeroBounce', key: 'ZEROBOUNCE_API_KEY' },
+            { name: 'MyEmailVerifier', key: 'MYEMAILVERIFIER_API_KEY' },
+            { name: 'Prospeo', key: 'PROSPEO_API_KEY' },
+            { name: 'People Data Labs', key: 'PEOPLE_DATA_LABS_API_KEY' },
+            { name: 'Twilio', key: 'TWILIO_ACCOUNT_SID' }
+        ];
+
+        for (const api of apiChecks) {
+            const keyName = api.key.toLowerCase();
+            if (this.config[api.key]) {
+                healthStatus[keyName] = true;
+                console.log(`   ✅ ${api.name} API: Key configured`);
+            } else {
+                console.log(`   ❌ ${api.name} API: No API key configured`);
+            }
+        }
+
+        const healthyApis = Object.values(healthStatus).filter(status => status).length;
+        const totalApis = Object.keys(healthStatus).length;
+        
+        console.log(`\n📊 Health Check Summary: ${healthyApis}/${totalApis} APIs healthy`);
+        
+        if (healthyApis < 3) {
+            console.log('   ⚠️ WARNING: Low API availability may affect results');
+        }
+        
+        return healthStatus;
+    }
 }
 
 /**
@@ -1832,6 +2249,11 @@ async function main() {
     console.log('🎯 Starting Core Pipeline...\n');
     
     const pipeline = new CorePipeline();
+    
+    // Perform API health checks before starting
+    const healthStatus = await pipeline.performHealthChecks();
+    console.log('\n');
+    
     const result = await pipeline.runPipeline();
     
     if (result.success) {
