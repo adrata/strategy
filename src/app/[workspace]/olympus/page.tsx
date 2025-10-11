@@ -25,6 +25,7 @@ export default function OlympusPage() {
   const [positionHistory, setPositionHistory] = useState<Array<typeof workflowSteps>>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<string | null>(null);
+  const [isCodeMode, setIsCodeMode] = useState(false);
   const { setSelectedStep } = useOlympus();
 
   // Load active tool from localStorage on mount
@@ -59,15 +60,57 @@ export default function OlympusPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showAddPopup]);
 
-  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>(
-    CFO_CRO_PIPELINE_STEPS.map((step, index) => ({
-      id: step.id,
-      title: step.name,
-      description: step.description,
-      position: { x: 100, y: 100 + (index * 120) },
+  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([
+    {
+      id: 'company-resolution',
+      title: 'Company Resolution',
+      description: 'Input company name, resolve domain/ID, detect size',
+      position: { x: 100, y: 100 },
       isActive: false
-    }))
-  );
+    },
+    {
+      id: 'executive-discovery',
+      title: 'Multi-Strategy Executive Discovery',
+      description: '3-tier waterfall: CoreSignal → Executive Research → AI Research (Claude)',
+      position: { x: 100, y: 220 },
+      isActive: false
+    },
+    {
+      id: 'contact-enrichment',
+      title: 'Contact Enrichment',
+      description: 'Enhance and validate contact data',
+      position: { x: 100, y: 340 },
+      isActive: false
+    },
+    {
+      id: 'parallel-verification',
+      title: 'Parallel Multi-Source Verification',
+      description: 'Run 3 verification types simultaneously (Email/Phone/Person)',
+      position: { x: 100, y: 460 },
+      isActive: false
+    },
+    {
+      id: 'result-aggregation',
+      title: 'Result Aggregation',
+      description: 'Merge results with confidence scores',
+      position: { x: 100, y: 580 },
+      isActive: false
+    },
+    {
+      id: 'efficacy-tracking',
+      title: 'Efficacy Tracking',
+      description: 'Monitor performance, costs, success rates',
+      position: { x: 100, y: 700 },
+      isActive: false
+    },
+    {
+      id: 'results-storage',
+      title: 'Results Storage',
+      description: 'Save with full audit trail',
+      position: { x: 100, y: 820 },
+      isActive: false
+    }
+  ]);
 
   // Initialize position history
   useEffect(() => {
@@ -83,36 +126,33 @@ export default function OlympusPage() {
 
   const workflowCategories = [
     {
-      category: 'Data',
-      icon: '📊',
+      category: 'Data Processing',
       color: 'blue',
       items: [
-        { id: 'data-source', title: 'Data Source', description: 'Fetch data from database or API' },
-        { id: 'data-transform', title: 'Transform', description: 'Transform or map data fields' },
-        { id: 'data-filter', title: 'Filter', description: 'Filter data based on conditions' },
+        { id: 'data-source', title: 'Data Source', description: 'Connect to database or API' },
+        { id: 'data-transform', title: 'Transform', description: 'Modify data structure' },
+        { id: 'data-filter', title: 'Filter', description: 'Apply conditions to data' },
         { id: 'data-aggregate', title: 'Aggregate', description: 'Group and summarize data' }
       ]
     },
     {
-      category: 'Logic',
-      icon: '🔀',
+      category: 'Flow Control',
       color: 'purple',
       items: [
-        { id: 'condition', title: 'Condition', description: 'Branch based on if/else logic' },
-        { id: 'switch', title: 'Switch', description: 'Multiple conditional branches' },
-        { id: 'loop', title: 'Loop', description: 'Repeat actions for each item' },
-        { id: 'parallel', title: 'Parallel', description: 'Run multiple paths simultaneously' }
+        { id: 'condition', title: 'Condition', description: 'If/else branching logic' },
+        { id: 'switch', title: 'Switch', description: 'Multiple condition branches' },
+        { id: 'loop', title: 'Loop', description: 'Repeat for each item' },
+        { id: 'parallel', title: 'Parallel', description: 'Run multiple paths' }
       ]
     },
     {
-      category: 'Actions',
-      icon: '⚡',
+      category: 'External Actions',
       color: 'green',
       items: [
-        { id: 'http-request', title: 'HTTP Request', description: 'Call external API endpoint' },
-        { id: 'webhook', title: 'Webhook', description: 'Send data to webhook URL' },
-        { id: 'delay', title: 'Delay', description: 'Wait for specified duration' },
-        { id: 'schedule', title: 'Schedule', description: 'Schedule action for later' }
+        { id: 'http-request', title: 'API Call', description: 'Send HTTP request' },
+        { id: 'webhook', title: 'Webhook', description: 'Trigger external service' },
+        { id: 'delay', title: 'Wait', description: 'Pause execution' },
+        { id: 'schedule', title: 'Schedule', description: 'Run at specific time' }
       ]
     }
   ];
@@ -380,8 +420,8 @@ export default function OlympusPage() {
         <div className="px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center">
-                <span className="text-gray-700 font-bold text-sm">O</span>
+              <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center">
+                <span className="text-gray-700 font-bold text-base">O</span>
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900">Olympus</h1>
@@ -389,6 +429,12 @@ export default function OlympusPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setIsCodeMode(!isCodeMode)}
+                className="px-4 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                {isCodeMode ? 'Build' : 'Code'}
+              </button>
               <button className="px-4 py-1 bg-white text-gray-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                 Share
               </button>
@@ -405,20 +451,55 @@ export default function OlympusPage() {
       </div>
 
       {/* Main Content - CFO/CRO Discovery Pipeline Flow */}
-      <div 
-        className={`flex-1 flex items-center justify-center p-8 bg-white overflow-hidden ${
-          activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
-        }`}
-        style={{
-          backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: 'center center'
-        }}
-        onWheel={handleWheel}
-        onMouseDown={handleBackgroundMouseDown}
-        onClick={handleBackgroundClick}
-      >
+      {isCodeMode ? (
+        <div className="flex-1 bg-white overflow-hidden">
+          <div className="h-full flex">
+            {/* Line Numbers */}
+            <div className="bg-gray-50 border-r border-gray-200 px-3 py-4 text-sm text-gray-500 font-mono">
+              {workflowSteps.map((_, index) => (
+                <div key={index} className="leading-6">
+                  {index + 1}
+                </div>
+              ))}
+            </div>
+            {/* Code Editor */}
+            <div className="flex-1 p-4">
+              <div className="font-mono text-sm text-gray-800 leading-6">
+                {workflowSteps.map((step, index) => (
+                  <div key={step.id} className="mb-2">
+                    <span className="text-blue-600 font-semibold">step</span>{' '}
+                    <span className="text-green-600">"{step.id}"</span>{' '}
+                    <span className="text-gray-600">=</span>{' '}
+                    <span className="text-purple-600">&#123;</span>
+                    <div className="ml-4">
+                      <div><span className="text-blue-600">title:</span> <span className="text-green-600">"{step.title}"</span>,</div>
+                      <div><span className="text-blue-600">description:</span> <span className="text-green-600">"{step.description}"</span>,</div>
+                      <div><span className="text-blue-600">position:</span> <span className="text-purple-600">&#123;</span> <span className="text-blue-600">x:</span> <span className="text-orange-600">{step.position.x}</span>, <span className="text-blue-600">y:</span> <span className="text-orange-600">{step.position.y}</span> <span className="text-purple-600">&#125;</span>,</div>
+                      <div><span className="text-blue-600">isActive:</span> <span className="text-orange-600">{step.isActive ? 'true' : 'false'}</span></div>
+                    </div>
+                    <span className="text-purple-600">&#125;</span>
+                    {index < workflowSteps.length - 1 && <span className="text-gray-400">,</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div 
+          className={`flex-1 flex items-center justify-center p-8 bg-white overflow-hidden ${
+            activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
+          }`}
+          style={{
+            backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: 'center center'
+          }}
+          onWheel={handleWheel}
+          onMouseDown={handleBackgroundMouseDown}
+          onClick={handleBackgroundClick}
+        >
         <div 
           className="relative w-full h-full"
         >
@@ -539,6 +620,7 @@ export default function OlympusPage() {
           ))}
         </div>
       </div>
+      )}
 
       {/* Bottom Toolbar - Floating over dotted area */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
@@ -614,23 +696,22 @@ export default function OlympusPage() {
             
             {/* Add Items Popup */}
             {showAddPopup && (
-              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[280px] max-h-[400px] overflow-y-auto">
+              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
                 {workflowCategories.map((category) => (
                   <div key={category.category}>
-                    <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-                      <span className="text-base">{category.icon}</span>
-                      <span className="text-xs font-semibold text-gray-700">{category.category}</span>
+                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                      <span className="text-sm font-semibold text-gray-800">{category.category}</span>
                     </div>
                     {category.items.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => handleAddItem(item)}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                       >
-                        <div className={`w-2 h-2 rounded-full ${getTypeColor(item.id)}`} />
-                        <div>
-                          <div className="text-sm font-medium text-gray-700">{item.title}</div>
-                          <div className="text-xs text-gray-500">{item.description}</div>
+                        <div className={`w-3 h-3 rounded-full ${getTypeColor(item.id)}`} />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-800">{item.title}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
                         </div>
                       </button>
                     ))}
