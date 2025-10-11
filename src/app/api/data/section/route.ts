@@ -297,8 +297,8 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // Use company rank first like people
-            { rank: 'asc' }, // Then by person rank
+            { company: { globalRank: 'asc' } }, // Use company rank first like people
+            { globalRank: 'asc' }, // Then by person rank
             { updatedAt: 'desc' }
           ],
           take: 10000, // Increased limit to ensure we get all leads (same as unified API)
@@ -315,13 +315,13 @@ export async function GET(request: NextRequest) {
                 name: true,
                 industry: true,
                 size: true,
-                rank: true
+                globalRank: true
               }
             },
             status: true,
             createdAt: true,
             updatedAt: true,
-            rank: true,
+            globalRank: true,
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
@@ -408,8 +408,8 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [
-            { company: { rank: 'asc' } }, // Use company rank first like people
-            { rank: 'asc' }, // Then by person rank
+            { company: { globalRank: 'asc' } }, // Use company rank first like people
+            { globalRank: 'asc' }, // Then by person rank
             { updatedAt: 'desc' }
           ],
           take: 10000, // Increased limit to ensure we get all prospects (same as unified API)
@@ -426,13 +426,13 @@ export async function GET(request: NextRequest) {
                 name: true,
                 industry: true,
                 size: true,
-                rank: true
+                globalRank: true
               }
             },
             status: true,
             createdAt: true,
             updatedAt: true,
-            rank: true,
+            globalRank: true,
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
@@ -493,11 +493,12 @@ export async function GET(request: NextRequest) {
         break;
         
       case 'opportunities':
-        // 🚀 CONSISTENT RANKING: Use same logic as speedrun for consistent ranking
-        const opportunitiesData = await prisma.opportunities.findMany({
+        // 🚀 FIX: Opportunities are companies with OPPORTUNITY status in streamlined schema
+        const opportunitiesData = await prisma.companies.findMany({
           where: {
             workspaceId,
             deletedAt: null,
+            status: 'OPPORTUNITY', // Filter for OPPORTUNITY status
             ...(isDemoMode ? {} : {
               OR: [
                 { assignedUserId: userId },
@@ -510,12 +511,17 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            amount: true,
+            industry: true,
+            size: true,
+            revenue: true,
             currency: true,
-            stage: true,
-            expectedCloseDate: true,
-            lastActivityDate: true,
-            nextActivityDate: true,
+            status: true,
+            priority: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            assignedUserId: true,
             createdAt: true,
             updatedAt: true
           }
@@ -533,18 +539,23 @@ export async function GET(request: NextRequest) {
         });
         
         // Apply consistent ranking logic
-        sectionData = deduplicatedOpportunities.map((opportunity, index) => ({
-          id: opportunity.id,
+        sectionData = deduplicatedOpportunities.map((company, index) => ({
+          id: company.id,
           rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after deduplication
-          name: opportunity.name || 'Unknown Opportunity',
-          amount: opportunity.amount || 0,
-          currency: opportunity.currency || 'USD',
-          stage: opportunity.stage || 'Unknown',
-          expectedCloseDate: opportunity.expectedCloseDate,
-          lastAction: opportunity.lastActivityDate ? 'Activity recorded' : 'No action taken',
-          nextAction: opportunity.nextActivityDate ? 'Activity planned' : 'No action planned',
-          createdAt: opportunity.createdAt,
-          updatedAt: opportunity.updatedAt
+          name: company.name,
+          industry: company.industry || 'Unknown',
+          size: company.size || 'Unknown',
+          amount: company.revenue ? Number(company.revenue) : 0,
+          currency: company.currency || 'USD',
+          stage: company.status || 'OPPORTUNITY',
+          priority: company.priority || 'MEDIUM',
+          lastAction: company.lastAction || 'No action taken',
+          nextAction: company.nextAction || 'No action planned',
+          lastActionDate: company.lastActionDate,
+          nextActionDate: company.nextActionDate,
+          assignedUserId: company.assignedUserId,
+          createdAt: company.createdAt,
+          updatedAt: company.updatedAt
         }));
         break;
         
@@ -562,7 +573,7 @@ export async function GET(request: NextRequest) {
             })
           },
           orderBy: [
-            { rank: 'asc' }, // Use actual company ranks first
+            { globalRank: 'asc' }, // Use actual company ranks first
             { updatedAt: 'desc' } // Then by update time for companies without ranks
           ],
           take: limit,
@@ -575,7 +586,7 @@ export async function GET(request: NextRequest) {
             assignedUserId: true,
             createdAt: true,
             updatedAt: true,
-            rank: true,
+            globalRank: true,
             lastAction: true,
             lastActionDate: true,
             nextAction: true,
@@ -630,8 +641,8 @@ export async function GET(request: NextRequest) {
               })
             },
             orderBy: [
-              { company: { rank: 'asc' } }, // Use company rank first like speedrun
-              { rank: 'asc' }, // Then by person rank
+              { company: { globalRank: 'asc' } }, // Use company rank first like speedrun
+              { globalRank: 'asc' }, // Then by person rank
               { updatedAt: 'desc' }
             ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
@@ -648,7 +659,7 @@ export async function GET(request: NextRequest) {
               // Remove customFields to avoid large JSON data issues
               tags: true,
               status: true,
-              rank: true,
+              globalRank: true,
               lastAction: true,
               lastActionDate: true,
               nextAction: true,
@@ -662,7 +673,7 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   name: true,
-                  rank: true
+                  globalRank: true
                 }
               }
               // Remove notes and bio from select to avoid string length issues
@@ -701,7 +712,7 @@ export async function GET(request: NextRequest) {
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
-              companyRank: person.company?.rank || 0, // Include company rank for proper ordering
+              companyRank: person.company?.globalRank || 0, // Include company rank for proper ordering
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
@@ -891,10 +902,11 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'opportunities':
-          totalCount = await prisma.opportunities.count({
+          totalCount = await prisma.companies.count({
             where: {
               workspaceId,
               deletedAt: null,
+              status: 'OPPORTUNITY',
               ...(isDemoMode ? {} : {
                 OR: [
                   { assignedUserId: userId },

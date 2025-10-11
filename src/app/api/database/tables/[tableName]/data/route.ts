@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/platform/auth/options';
+import { authOptions } from '@/lib/auth-options';
 
 /**
  * GET /api/database/tables/[tableName]/data

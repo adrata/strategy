@@ -95,122 +95,43 @@ export async function GET(request: NextRequest) {
                       userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
-    // 🚀 PERFORMANCE: Run all count queries in parallel
-    const [
-      leadsCount,
-      prospectsCount,
-      opportunitiesCount,
-      companiesCount,
-      peopleCount,
-      clientsCount,
-      partnersCount,
-      sellersCount,
-      speedrunCount
-    ] = await Promise.all([
-      // Leads count
-      prisma.leads.count({
-        where: {
-          workspaceId,
-          deletedAt: null
+    // 🚀 PERFORMANCE: Use v1 APIs for counts instead of direct Prisma queries
+    const [peopleCountsResponse, companiesCountsResponse] = await Promise.all([
+      // Get people counts by status from v1 API
+      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/people?counts=true`, {
+        headers: {
+          'Cookie': request.headers.get('cookie') || '',
+          'Authorization': request.headers.get('authorization') || ''
         }
       }),
-      
-      // Prospects count
-      prisma.prospects.count({
-        where: {
-          workspaceId,
-          deletedAt: null
+      // Get companies counts by status from v1 API  
+      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/companies?counts=true`, {
+        headers: {
+          'Cookie': request.headers.get('cookie') || '',
+          'Authorization': request.headers.get('authorization') || ''
         }
-      }),
-      
-      // Opportunities count
-      prisma.opportunities.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }),
-      
-      // Companies count
-      prisma.companies.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }),
-      
-      // People count
-      prisma.people.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }),
-      
-      // Clients count (with fallback)
-      prisma.clients.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }).catch(() => 0),
-      
-      // Partners count (with fallback)
-      prisma.partners.count({
-        where: {
-          workspaceId,
-          deletedAt: null
-        }
-      }).catch(() => 0),
-      
-      // Sellers count - count from both sellers table AND people table with role 'seller'
-      Promise.all([
-        prisma.sellers.count({
-          where: {
-            workspaceId,
-            deletedAt: null
-          }
-        }).catch(() => 0),
-        prisma.people.count({
-          where: {
-            workspaceId,
-            deletedAt: null,
-            role: 'seller'
-          }
-        }).catch(() => 0)
-      ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
-      
-      // Speedrun count - count speedrun leads, fallback to people if no speedrun leads
-      (async () => {
-        try {
-          // First try to count speedrun-tagged leads
-          const speedrunLeadsCount = await prisma.leads.count({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              tags: { has: 'speedrun' }
-            }
-          });
-          
-          // If no speedrun leads found, count people with company relationships as fallback
-          if (speedrunLeadsCount === 0) {
-            console.log(`🔄 [COUNTS API] No speedrun leads found, falling back to people count for workspace: ${workspaceId}`);
-            return await prisma.people.count({
-              where: {
-                workspaceId,
-                deletedAt: null,
-                companyId: { not: null }
-              }
-            });
-          }
-          
-          return speedrunLeadsCount;
-        } catch (error) {
-          console.error('❌ [COUNTS API] Error counting speedrun data:', error);
-          return 0;
-        }
-      })()
+      })
     ]);
+
+    const [peopleCountsData, companiesCountsData] = await Promise.all([
+      peopleCountsResponse.json(),
+      companiesCountsResponse.json()
+    ]);
+
+    // Extract counts from v1 API responses
+    const peopleCounts = peopleCountsData.success ? peopleCountsData.data : {};
+    const companiesCounts = companiesCountsData.success ? companiesCountsData.data : {};
+
+    // Map v1 API counts to our expected format
+    const leadsCount = peopleCounts.LEAD || 0;
+    const prospectsCount = peopleCounts.PROSPECT || 0;
+    const opportunitiesCount = companiesCounts.OPPORTUNITY || 0;
+    const companiesCount = Object.values(companiesCounts).reduce((sum: number, count: any) => sum + count, 0);
+    const peopleCount = Object.values(peopleCounts).reduce((sum: number, count: any) => sum + count, 0);
+    const clientsCount = companiesCounts.CLIENT || 0;
+    const partnersCount = companiesCounts.ACTIVE || 0; // Use ACTIVE as fallback for partners
+    const sellersCount = peopleCounts.CLIENT || 0; // Use CLIENT status as fallback for sellers
+    const speedrunCount = peopleCount; // Use total people count as speedrun count
     
     const counts = {
       leads: leadsCount,

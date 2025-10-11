@@ -49,6 +49,7 @@ export interface TableData {
   pageSize: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+  totalPages: number;
 }
 
 export interface QueryResult {
