@@ -108,7 +108,7 @@ export default function OlympusPage() {
       setPositionHistory([[...workflowSteps]]);
       setHistoryIndex(0);
     }
-  }, [workflowSteps, positionHistory.length]);
+  }, [positionHistory.length]);
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -298,15 +298,8 @@ export default function OlympusPage() {
               >
                 {isCodeMode ? 'Build' : 'Code'}
               </button>
-              <button className="px-4 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">
+              <button className="px-4 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors">
                 Share
-              </button>
-              <button 
-                onClick={handleExecute}
-                disabled={isExecuting}
-                className="px-4 py-1 bg-green-100 text-green-600 text-sm font-medium rounded-lg hover:bg-green-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isExecuting ? 'Executing...' : 'Execute'}
               </button>
             </div>
           </div>
@@ -352,11 +345,13 @@ export default function OlympusPage() {
           positionHistoryLength={positionHistory.length}
           showAddPopup={showAddPopup}
           workflowCategories={workflowCategories}
+          isExecuting={isExecuting}
           onToolClick={handleToolClick}
           onUndo={handleUndo}
           onRedo={handleRedo}
           onToggleAddPopup={() => setShowAddPopup(!showAddPopup)}
           onAddItem={handleAddItem}
+          onExecute={handleExecute}
           getTypeIcon={getTypeIcon}
         />
       )}

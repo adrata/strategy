@@ -7,11 +7,13 @@ interface ToolbarProps {
   positionHistoryLength: number;
   showAddPopup: boolean;
   workflowCategories: WorkflowCategory[];
+  isExecuting: boolean;
   onToolClick: (tool: 'cursor' | 'hand') => void;
   onUndo: () => void;
   onRedo: () => void;
   onToggleAddPopup: () => void;
   onAddItem: (item: WorkflowItem) => void;
+  onExecute: () => void;
   getTypeIcon: (id: string) => React.ComponentType<any>;
 }
 
@@ -21,11 +23,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   positionHistoryLength,
   showAddPopup,
   workflowCategories,
+  isExecuting,
   onToolClick,
   onUndo,
   onRedo,
   onToggleAddPopup,
   onAddItem,
+  onExecute,
   getTypeIcon
 }) => {
   return (
@@ -131,6 +135,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             </div>
           )}
         </div>
+        
+        {/* Play Button */}
+        <button 
+          onClick={onExecute}
+          disabled={isExecuting}
+          className="p-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
       </div>
     </div>
   );

@@ -11,23 +11,29 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   setWorkflowSteps
 }) => {
   const codeString = JSON.stringify(workflowSteps, null, 2);
-  const lineCount = codeString.split('\n').length;
+  const lines = codeString.split('\n');
+  const lineCount = lines.length;
 
   return (
-    <div className="flex-1 bg-gray-50 overflow-hidden">
-      <div className="h-full flex bg-white">
-        {/* Line Numbers - Fluid with content */}
-        <div className="bg-gray-50 px-4 py-4 text-sm text-gray-500 font-mono select-none">
-          {Array.from({ length: Math.max(lineCount, 20) }, (_, index) => (
-            <div key={index} className="leading-6 h-6 flex items-center">
+    <div className="flex-1 bg-white overflow-hidden">
+      <div className="h-full flex">
+        {/* Line Numbers */}
+        <div className="bg-gray-50 text-gray-500 font-mono text-sm select-none flex-shrink-0" style={{ width: '50px' }}>
+          {lines.map((_, index) => (
+            <div 
+              key={index} 
+              className="h-6 flex items-center justify-end pr-3"
+              style={{ lineHeight: '24px' }}
+            >
               {index + 1}
             </div>
           ))}
         </div>
+        
         {/* Code Editor */}
-        <div className="flex-1 py-4 pr-4">
+        <div className="flex-1 relative">
           <textarea
-            className="w-full h-full font-mono text-sm text-gray-800 leading-6 bg-transparent border-none outline-none resize-none"
+            className="absolute inset-0 w-full h-full font-mono text-sm text-gray-800 bg-transparent border-none outline-none resize-none p-0 m-0"
             value={codeString}
             onChange={(e) => {
               try {
@@ -41,7 +47,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               }
             }}
             spellCheck={false}
-            style={{ tabSize: 2 }}
+            style={{ 
+              lineHeight: '24px',
+              tabSize: 2,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+            }}
           />
         </div>
       </div>
