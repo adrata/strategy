@@ -139,7 +139,7 @@ export function AddLeadsModal({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm disabled:opacity-50"
+            className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm disabled:opacity-50"
           >
             Cancel
           </button>

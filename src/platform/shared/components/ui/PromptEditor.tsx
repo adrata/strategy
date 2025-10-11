@@ -15,7 +15,7 @@ export function PromptEditor({ isOpen, onClose }: PromptEditorProps) {
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl w-[800px] max-w-[95vw] max-h-[95vh] border shadow-2xl">
+      <div className="bg-[var(--background)] rounded-xl w-[800px] max-w-[95vw] max-h-[95vh] border shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
             <SparklesIcon className="w-6 h-6 text-purple-600" />

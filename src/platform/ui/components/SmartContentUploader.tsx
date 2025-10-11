@@ -218,7 +218,7 @@ export function SmartContentUploader({
         className={`relative border-2 border-dashed rounded-lg p-6 transition-all duration-200 ${
           isDragging
             ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-gray-300 dark:border-gray-600 hover:border-gray-400"
+            : "border-[var(--border)] dark:border-[var(--border)] hover:border-gray-400"
         }`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -235,13 +235,13 @@ export function SmartContentUploader({
 
         <div className="text-center">
           <CloudArrowUpIcon
-            className={`mx-auto h-12 w-12 ${isDragging ? "text-blue-500" : "text-gray-400"}`}
+            className={`mx-auto h-12 w-12 ${isDragging ? "text-blue-500" : "text-[var(--muted)]"}`}
           />
           <div className="mt-4">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">
               {isDragging ? "Drop files here" : "Drag & drop any files here"}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
               or{" "}
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -250,7 +250,7 @@ export function SmartContentUploader({
                 browse to upload
               </button>
             </p>
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-[var(--muted)] mt-2">
               PNG, JPG, PDF, XLSX, CSV, DOCX and more...
             </p>
           </div>
@@ -262,7 +262,7 @@ export function SmartContentUploader({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <SparklesIcon className="w-4 h-4 text-blue-600" />
-            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <h4 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">
               AI-Enhanced Content ({uploadedContent.length})
             </h4>
           </div>
@@ -273,20 +273,20 @@ export function SmartContentUploader({
             return (
               <div
                 key={content.id}
-                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800"
+                className="border border-[var(--border)] dark:border-[var(--border)] rounded-lg p-4 bg-[var(--background)]"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
-                    <IconComponent className="w-8 h-8 text-gray-400" />
+                    <IconComponent className="w-8 h-8 text-[var(--muted)]" />
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        <h5 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
                           {content.aiGeneratedName}
                         </h5>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
                           {content.originalName} •{" "}
                           {formatFileSize(content.size)}
                         </p>
@@ -301,7 +301,7 @@ export function SmartContentUploader({
                         )}
                         <button
                           onClick={() => handleRemoveContent(content.id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          className="text-[var(--muted)] hover:text-red-500 transition-colors"
                         >
                           <XMarkIcon className="w-4 h-4" />
                         </button>
@@ -309,7 +309,7 @@ export function SmartContentUploader({
                     </div>
 
                     {content['summary'] && (
-                      <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
+                      <p className="text-xs text-[var(--muted)] dark:text-gray-300 mb-2">
                         {content.summary}
                       </p>
                     )}

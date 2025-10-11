@@ -47,11 +47,11 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
   // Show error state
   if (error) {
     return (
-      <div className="h-full bg-white flex items-center justify-center">
+      <div className="h-full bg-[var(--background)] flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-2xl mb-4">⚠️</div>
-          <h4 className="text-lg font-medium text-gray-900 mb-2">Error loading data</h4>
-          <p className="text-sm text-gray-600">{error instanceof Error ? error.message : String(error)}</p>
+          <h4 className="text-lg font-medium text-[var(--foreground)] mb-2">Error loading data</h4>
+          <p className="text-sm text-[var(--muted)]">{error instanceof Error ? error.message : String(error)}</p>
         </div>
       </div>
     );
@@ -60,11 +60,11 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
   // Show empty state
   if (data['length'] === 0) {
     return (
-      <div className="h-full bg-white flex items-center justify-center">
+      <div className="h-full bg-[var(--background)] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-gray-400 text-2xl mb-4">📋</div>
-          <h4 className="text-lg font-medium text-gray-900 mb-2">No {section} yet</h4>
-          <p className="text-sm text-gray-600">Add your first {section.slice(0, -1)} to get started</p>
+          <div className="text-[var(--muted)] text-2xl mb-4">📋</div>
+          <h4 className="text-lg font-medium text-[var(--foreground)] mb-2">No {section} yet</h4>
+          <p className="text-sm text-[var(--muted)]">Add your first {section.slice(0, -1)} to get started</p>
         </div>
       </div>
     );
@@ -76,12 +76,12 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
   const visibleColumns = ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
   
   return (
-    <div className="h-full bg-white">
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 capitalize">
+    <div className="h-full bg-[var(--background)]">
+      <div className="p-6 border-b border-[var(--border)]">
+        <h2 className="text-lg font-semibold text-[var(--foreground)] capitalize">
           {section} ({data.length})
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-[var(--muted)]">
           Showing all {data.length} {section}
         </p>
       </div>

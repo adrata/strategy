@@ -136,7 +136,7 @@ export function IndustryDeepReport({
         </div>
 
         {/* Company Overview */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)] mb-6">
           <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -159,7 +159,7 @@ export function IndustryDeepReport({
         </div>
 
         {/* AI Generated Report */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
           <div className="prose prose-gray dark:prose-invert max-w-none">
             <div className="whitespace-pre-wrap text-[var(--foreground)]">
               {report}

@@ -108,7 +108,7 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
       case 'completed': return 'bg-green-500 border-green-600';
       case 'error': return 'bg-red-500 border-red-600';
       case 'skipped': return 'bg-gray-400 border-gray-500';
-      default: return 'bg-white border-gray-300';
+      default: return 'bg-[var(--background)] border-[var(--border)]';
     }
   };
 
@@ -125,14 +125,14 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Toolbar */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center justify-between p-4 border-b border-[var(--border)] bg-[var(--panel-background)]">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-gray-900">CFO/CRO Discovery Pipeline</h2>
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">CFO/CRO Discovery Pipeline</h2>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Nodes: {state.nodes.length}</span>
-            <span className="text-sm text-gray-600">Connections: {state.connections.length}</span>
+            <span className="text-sm text-[var(--muted)]">Nodes: {state.nodes.length}</span>
+            <span className="text-sm text-[var(--muted)]">Connections: {state.connections.length}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
       {/* Canvas */}
       <div 
         ref={canvasRef}
-        className="flex-1 relative overflow-hidden bg-gray-50"
+        className="flex-1 relative overflow-hidden bg-[var(--panel-background)]"
         style={{
           backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
           backgroundSize: '20px 20px'
@@ -210,8 +210,8 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-lg">{getNodeIcon(node)}</span>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm text-gray-900">{node.title}</h3>
-                  <p className="text-xs text-gray-600 mt-1">{node.description}</p>
+                  <h3 className="font-semibold text-sm text-[var(--foreground)]">{node.title}</h3>
+                  <p className="text-xs text-[var(--muted)] mt-1">{node.description}</p>
                 </div>
               </div>
               
@@ -224,17 +224,17 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
                     node.status === 'error' ? 'bg-red-500' :
                     'bg-gray-300'
                   }`}></div>
-                  <span className="text-xs text-gray-600 capitalize">{node.status}</span>
+                  <span className="text-xs text-[var(--muted)] capitalize">{node.status}</span>
                 </div>
                 
                 {/* Cost and Time */}
                 {node.cost !== undefined && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-[var(--muted)]">
                     ${node.cost.toFixed(2)}
                   </div>
                 )}
                 {node.executionTime !== undefined && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-[var(--muted)]">
                     {node.executionTime}ms
                   </div>
                 )}
@@ -252,7 +252,7 @@ export default function WorkflowBuilder({ onExecute }: WorkflowBuilderProps) {
       </div>
 
       {/* Status Bar */}
-      <div className="flex items-center justify-between px-4 py-2 border-t border-gray-200 bg-gray-50 text-sm text-gray-600">
+      <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--border)] bg-[var(--panel-background)] text-sm text-[var(--muted)]">
         <div className="flex items-center gap-4">
           <span>Zoom: {Math.round(state.zoom * 100)}%</span>
           <span>Pan: ({Math.round(state.pan.x)}, {Math.round(state.pan.y)})</span>

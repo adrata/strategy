@@ -5,34 +5,34 @@ import Link from "next/link";
 
 export default function CompanyPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--background)]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-gray-900">
+              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
                 Adrata
               </Link>
               
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-900 font-semibold">
+                <Link href="/company" className="text-sm text-[var(--foreground)] font-semibold">
                   Company
                 </Link>
               </nav>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                 Sign In
               </Link>
               <Link
@@ -47,13 +47,13 @@ export default function CompanyPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-32 bg-white">
+      <section className="pt-40 pb-32 bg-[var(--background)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--foreground)] mb-6">
               Pursuing the Unified Revenue Formula
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl mx-auto">
               How a quest to mathematically predict revenue led to the discovery of the biggest problem in enterprise sales
             </p>
           </div>
@@ -61,12 +61,12 @@ export default function CompanyPage() {
       </section>
 
       {/* Founder's Story */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-[var(--panel-background)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="space-y-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-4">The Discovery</h2>
-              <p className="text-lg text-gray-600">A founder's journey through the mathematics of sales</p>
+              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">The Discovery</h2>
+              <p className="text-lg text-[var(--muted)]">A founder's journey through the mathematics of sales</p>
             </div>
 
             <div className="prose prose-lg max-w-4xl mx-auto text-gray-700 leading-relaxed">
@@ -171,28 +171,28 @@ export default function CompanyPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-100">
+      <section className="py-20 bg-[var(--hover)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 border border-gray-300 rounded-full mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--loading-bg)] border border-[var(--border)] rounded-full mb-8">
               <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
-              <span className="text-gray-600 text-sm font-medium">
+              <span className="text-[var(--muted)] text-sm font-medium">
                 From Mathematical Theory to Market Reality
               </span>
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-gray-900">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-[var(--foreground)]">
               Experience the Breakthrough
             </h2>
             
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl mx-auto leading-relaxed">
               See how the mathematical pursuit of revenue optimization led to the world's first buyer group intelligence platform—and discover your own buyer groups in seconds.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
               <Link
                 href="/find-your-buyer-group"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-gray-200"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--background)] text-black rounded-xl font-semibold text-lg hover:bg-[var(--panel-background)] transition-all duration-200 shadow-lg hover:shadow-xl border border-[var(--border)]"
               >
                 Find Your Buyer Group
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +202,7 @@ export default function CompanyPage() {
               
               <Link
                 href="/demo"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-gray-700 border border-gray-300 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-200"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-gray-700 border border-[var(--border)] rounded-xl font-semibold text-lg hover:bg-[var(--panel-background)] transition-all duration-200"
               >
                 See Live Demo
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,8 +213,8 @@ export default function CompanyPage() {
             
 
             
-            <div className="mt-12 pt-8 border-t border-gray-300">
-              <p className="text-gray-500 text-sm">
+            <div className="mt-12 pt-8 border-t border-[var(--border)]">
+              <p className="text-[var(--muted)] text-sm">
                 The mathematical formula for revenue isn't just theory anymore—it's measurable, predictable, and optimizable.
               </p>
             </div>
@@ -267,7 +267,7 @@ export default function CompanyPage() {
           </div>
 
           {/* Security & Compliance */}
-          <div className="border-t border-gray-700 pt-8 mb-8">
+          <div className="border-t border-[var(--border)] pt-8 mb-8">
             <div className="flex flex-wrap items-center justify-center gap-8">
               <div className="flex items-center gap-2 text-gray-300">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,14 +297,14 @@ export default function CompanyPage() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+          <div className="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="text-[var(--muted)] text-sm mb-4 md:mb-0">
               © 2025 Adrata. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/privacy" className="text-[var(--muted)] hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-[var(--muted)] hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookies" className="text-[var(--muted)] hover:text-white transition-colors">Cookie Policy</Link>
             </div>
           </div>
         </div>

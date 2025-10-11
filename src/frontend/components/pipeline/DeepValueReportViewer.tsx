@@ -30,7 +30,7 @@ export function DeepValueReportViewer({
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -39,10 +39,10 @@ export function DeepValueReportViewer({
           </button>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-8">
+        <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-8">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600">Generating deep value report...</span>
+            <span className="ml-3 text-[var(--muted)]">Generating deep value report...</span>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ export function DeepValueReportViewer({
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -85,7 +85,7 @@ export function DeepValueReportViewer({
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -96,7 +96,7 @@ export function DeepValueReportViewer({
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">AI Generated</span>
+            <span className="text-sm text-[var(--muted)]">AI Generated</span>
           </div>
           
           {isPublic && (
@@ -119,12 +119,12 @@ export function DeepValueReportViewer({
       </div>
 
       {/* Report Content */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] shadow-sm">
+        <div className="p-6 border-b border-[var(--border)]">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
             {reportData?.title || 'Deep Value Report'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-[var(--muted)]">
             Strategic intelligence for {record?.fullName || record?.name} at {record?.company?.name || 'their organization'}
           </p>
         </div>

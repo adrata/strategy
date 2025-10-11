@@ -331,8 +331,8 @@ export function HyperIntelligentOnboarding() {
             />
           </svg>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Welcome to Adrata</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-bold text-[var(--foreground)]">Welcome to Adrata</h1>
+        <p className="text-[var(--muted)]">
           Let&apos;s get you set up in seconds. Our AI will analyze your needs
           and create the perfect workspace.
         </p>
@@ -347,7 +347,7 @@ export function HyperIntelligentOnboarding() {
               setUserProfile((prev) => ({ ...prev, email: e.target.value }))
             }
             placeholder="Enter your work email"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
+            className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg"
             autoFocus
           />
         </div>
@@ -368,7 +368,7 @@ export function HyperIntelligentOnboarding() {
         </button>
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-[var(--muted)]">
         No passwords needed. We&apos;ll send you a secure link.
       </p>
     </div>
@@ -380,7 +380,7 @@ export function HyperIntelligentOnboarding() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         {/* User Profile Display */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6">
           <div className="flex items-center space-x-4">
             {userProfile['gravatar'] && (
               <Image
@@ -392,12 +392,12 @@ export function HyperIntelligentOnboarding() {
               />
             )}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-[var(--foreground)]">
                 Hi {userProfile.firstName || "there"}! 👋
               </h2>
-              <p className="text-gray-600">{userProfile.email}</p>
+              <p className="text-[var(--muted)]">{userProfile.email}</p>
               {userProfile['companyName'] && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[var(--muted)]">
                   {userProfile.companyName}
                 </p>
               )}
@@ -424,7 +424,7 @@ export function HyperIntelligentOnboarding() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-[var(--foreground)] mb-2">
                 AI Analysis Complete (
                 {Math.round(onboardingIntent.confidence * 100)}% confidence)
               </h3>
@@ -444,7 +444,7 @@ export function HyperIntelligentOnboarding() {
           {/* Join Existing */}
           <button
             onClick={() => selectPath("join")}
-            className="p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
+            className="p-6 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group text-left"
           >
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -462,22 +462,22 @@ export function HyperIntelligentOnboarding() {
                   />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900">Join Your Team</h3>
+              <h3 className="font-semibold text-[var(--foreground)]">Join Your Team</h3>
             </div>
 
             {onboardingIntent.companyMatches.length > 0 ? (
               <div className="space-y-2">
                 {onboardingIntent.companyMatches.map((company) => (
                   <div key={company.id} className="text-sm">
-                    <p className="font-medium text-gray-900">{company.name}</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-[var(--foreground)]">{company.name}</p>
+                    <p className="text-[var(--muted)]">
                       {company.workspaces.length} workspaces available
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 text-sm">
+              <p className="text-[var(--muted)] text-sm">
                 We&apos;ll help you find your team
               </p>
             )}
@@ -486,7 +486,7 @@ export function HyperIntelligentOnboarding() {
           {/* Create New */}
           <button
             onClick={() => selectPath("create")}
-            className="p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group text-left"
+            className="p-6 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group text-left"
           >
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -504,11 +504,11 @@ export function HyperIntelligentOnboarding() {
                   />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="font-semibold text-[var(--foreground)]">
                 Create New Workspace
               </h3>
             </div>
-            <p className="text-gray-600 text-sm">
+            <p className="text-[var(--muted)] text-sm">
               Set up {userProfile.companyName || "your company"} with AI-powered
               workspace suggestions
             </p>
@@ -537,11 +537,11 @@ export function HyperIntelligentOnboarding() {
       </div>
 
       <div className="space-y-3">
-        <h2 className="text-2xl font-bold text-gray-900">Check your email!</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">Check your email!</h2>
+        <p className="text-[var(--muted)]">
           We sent a secure link to <strong>{userProfile.email}</strong>
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[var(--muted)]">
           Click the link to{" "}
           {selectedPath === "join" ? "join your team" : "create your workspace"}{" "}
           instantly
@@ -585,16 +585,16 @@ export function HyperIntelligentOnboarding() {
       </div>
 
       <div className="space-y-3">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-3xl font-bold text-[var(--foreground)]">
           🎉 Welcome to Adrata!
         </h2>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-[var(--muted)]">
           Your {selectedPath === "join" ? "team access" : "workspace"} is ready
         </p>
       </div>
 
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-blue-200 p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">
+        <h3 className="font-semibold text-[var(--foreground)] mb-4">
           🚀 What happens next:
         </h3>
         <div className="space-y-3 text-left">
@@ -643,7 +643,7 @@ export function HyperIntelligentOnboarding() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Progress Indicator */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center space-x-2">
             {[0, 1, 2, 3].map((stepNumber) => (
@@ -652,7 +652,7 @@ export function HyperIntelligentOnboarding() {
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                     step >= stepNumber
                       ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-600"
+                      : "bg-[var(--loading-bg)] text-[var(--muted)]"
                   }`}
                 >
                   {step > stepNumber ? "✓" : stepNumber + 1}
@@ -660,7 +660,7 @@ export function HyperIntelligentOnboarding() {
                 {stepNumber < 3 && (
                   <div
                     className={`w-16 h-1 mx-2 ${
-                      step > stepNumber ? "bg-blue-600" : "bg-gray-200"
+                      step > stepNumber ? "bg-blue-600" : "bg-[var(--loading-bg)]"
                     }`}
                   ></div>
                 )}

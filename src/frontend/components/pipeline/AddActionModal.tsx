@@ -158,9 +158,9 @@ export function AddActionModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-md">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${section === 'speedrun' ? 'bg-green-100' : 'bg-blue-100'}`}>
               <svg className={`w-5 h-5 ${section === 'speedrun' ? 'text-green-600' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,10 +168,10 @@ export function AddActionModal({
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-[var(--foreground)]">
                 Add Action
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-[var(--muted)]">
                 Log your interaction with {personName}
               </p>
             </div>
@@ -179,9 +179,9 @@ export function AddActionModal({
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -193,7 +193,7 @@ export function AddActionModal({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Person
             </label>
-            <div className={`px-3 py-2 ${section === 'speedrun' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'} border rounded-lg text-gray-900 text-sm`}>
+            <div className={`px-3 py-2 ${section === 'speedrun' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'} border rounded-lg text-[var(--foreground)] text-sm`}>
               {personName}
             </div>
           </div>
@@ -207,7 +207,7 @@ export function AddActionModal({
               id="type"
               value={formData.type}
               onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors`}
+              className={`w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-[var(--background)] text-[var(--foreground)] text-sm shadow-sm hover:border-gray-400 transition-colors`}
               disabled={isLoading}
             >
               <option value="LinkedIn Friend Request">1. LinkedIn Friend Request</option>
@@ -218,7 +218,7 @@ export function AddActionModal({
               <option value="Meeting">6. Meeting</option>
               <option value="Custom">7. Custom</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--muted)] mt-1">
               Press 1-7 to select, press same number to cycle through options
             </p>
           </div>
@@ -234,7 +234,7 @@ export function AddActionModal({
               value={formData.action}
               onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
               rows={4}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500' : 'focus:ring-blue-500'} focus:border-transparent text-gray-900 bg-white resize-none text-sm`}
+              className={`w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500' : 'focus:ring-blue-500'} focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-sm`}
               placeholder="Describe what happened during this interaction..."
               disabled={isLoading}
               required
@@ -253,7 +253,7 @@ export function AddActionModal({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+              className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
             >
               Cancel
             </button>

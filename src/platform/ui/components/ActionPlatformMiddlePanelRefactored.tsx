@@ -35,12 +35,12 @@ export function ActionPlatformMiddlePanelRefactored() {
           ),
           React.createElement(
             'h3',
-            { className: "text-lg font-medium text-gray-900 mb-2" },
+            { className: "text-lg font-medium text-[var(--foreground)] mb-2" },
             'AcquisitionOS'
           ),
           React.createElement(
             'p',
-            { className: "text-gray-600" },
+            { className: "text-[var(--muted)]" },
             `Unknown application: ${activeSubApp}`
           )
         )

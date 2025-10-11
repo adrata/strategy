@@ -11,27 +11,27 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* Executive Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📊 Executive Summary</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Executive Summary</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">✅</div>
-                        <div className="text-sm text-gray-600">Zero Hallucination</div>
+                        <div className="text-sm text-[var(--muted)]">Zero Hallucination</div>
                         <div className="text-xs text-green-600">PASSED</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-blue-600">67%</div>
-                        <div className="text-sm text-gray-600">API Success Rate</div>
+                        <div className="text-sm text-[var(--muted)]">API Success Rate</div>
                         <div className="text-xs text-blue-600">2/3 Working</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-purple-600">1,342</div>
-                        <div className="text-sm text-gray-600">Real TOP Contacts</div>
+                        <div className="text-sm text-[var(--muted)]">Real TOP Contacts</div>
                         <div className="text-xs text-purple-600">Production Data</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-orange-600">451</div>
-                        <div className="text-sm text-gray-600">Real Companies</div>
+                        <div className="text-sm text-[var(--muted)]">Real Companies</div>
                         <div className="text-xs text-orange-600">Utility Focus</div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ export default function FinalSystemCompletionReport() {
                 <h2 className="text-2xl font-semibold text-green-800 mb-4">🎯 CRITICAL ACHIEVEMENT: Zero Hallucination Confirmed</h2>
                 
                 <div className="space-y-4">
-                    <div className="bg-white border border-green-300 rounded-lg p-4">
+                    <div className="bg-[var(--background)] border border-green-300 rounded-lg p-4">
                         <h3 className="font-semibold text-green-800 mb-2">✅ Real API Validation Test</h3>
                         <div className="text-sm text-green-700 space-y-2">
                             <div><strong>Test Case:</strong> Employment verification for Justin Bedard</div>
@@ -53,7 +53,7 @@ export default function FinalSystemCompletionReport() {
                         </div>
                     </div>
                     
-                    <div className="bg-white border border-green-300 rounded-lg p-4">
+                    <div className="bg-[var(--background)] border border-green-300 rounded-lg p-4">
                         <h3 className="font-semibold text-green-800 mb-2">✅ Source Attribution Verified</h3>
                         <ul className="text-sm text-green-700 space-y-1">
                             <li>• <strong>Database queries:</strong> All results traced to production PostgreSQL</li>
@@ -67,8 +67,8 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* API Integration Status */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔗 API Integration Final Status</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔗 API Integration Final Status</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
@@ -137,8 +137,8 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* Real Data Verification */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📊 Real TOP Data Verification</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Real TOP Data Verification</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -172,11 +172,11 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* Enrichment Flow Validation */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔄 Enrichment Flow Validation</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔄 Enrichment Flow Validation</h2>
                 
                 <div className="space-y-4">
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-3">Test Case: Complete Enrichment Pipeline</h3>
                         
                         <div className="space-y-3">
@@ -184,8 +184,8 @@ export default function FinalSystemCompletionReport() {
                                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
                                 <div>
                                     <div className="font-medium">Database Query</div>
-                                    <div className="text-sm text-gray-600">✅ Retrieved Justin Bedard from TOP workspace</div>
-                                    <div className="text-xs text-gray-500">Source: PostgreSQL production database</div>
+                                    <div className="text-sm text-[var(--muted)]">✅ Retrieved Justin Bedard from TOP workspace</div>
+                                    <div className="text-xs text-[var(--muted)]">Source: PostgreSQL production database</div>
                                 </div>
                             </div>
                             
@@ -193,8 +193,8 @@ export default function FinalSystemCompletionReport() {
                                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
                                 <div>
                                     <div className="font-medium">Email Validation</div>
-                                    <div className="text-sm text-gray-600">✅ Validated jbedard@topengineersplus.com as professional</div>
-                                    <div className="text-xs text-gray-500">Source: DropContact API real-time validation</div>
+                                    <div className="text-sm text-[var(--muted)]">✅ Validated jbedard@topengineersplus.com as professional</div>
+                                    <div className="text-xs text-[var(--muted)]">Source: DropContact API real-time validation</div>
                                 </div>
                             </div>
                             
@@ -202,8 +202,8 @@ export default function FinalSystemCompletionReport() {
                                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">3</div>
                                 <div>
                                     <div className="font-medium">Employment Verification</div>
-                                    <div className="text-sm text-gray-600">✅ Verified different Justin Bedard (no false positives)</div>
-                                    <div className="text-xs text-gray-500">Source: Perplexity sonar-pro web search with citations</div>
+                                    <div className="text-sm text-[var(--muted)]">✅ Verified different Justin Bedard (no false positives)</div>
+                                    <div className="text-xs text-[var(--muted)]">Source: Perplexity sonar-pro web search with citations</div>
                                 </div>
                             </div>
                             
@@ -211,8 +211,8 @@ export default function FinalSystemCompletionReport() {
                                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">4</div>
                                 <div>
                                     <div className="font-medium">Person Search</div>
-                                    <div className="text-sm text-gray-600">✅ API connected, search functionality available</div>
-                                    <div className="text-xs text-gray-500">Source: CoreSignal v2 employee multi-source API</div>
+                                    <div className="text-sm text-[var(--muted)]">✅ API connected, search functionality available</div>
+                                    <div className="text-xs text-[var(--muted)]">Source: CoreSignal v2 employee multi-source API</div>
                                 </div>
                             </div>
                         </div>
@@ -222,11 +222,11 @@ export default function FinalSystemCompletionReport() {
 
             {/* Client Presentation Readiness */}
             <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🎯 Client Presentation Status</h2>
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🎯 Client Presentation Status</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                        <div className="bg-white border border-green-300 rounded-lg p-4">
+                        <div className="bg-[var(--background)] border border-green-300 rounded-lg p-4">
                             <h3 className="font-semibold text-green-800 mb-2">✅ READY FOR PRESENTATION</h3>
                             <ul className="text-sm text-green-700 space-y-1">
                                 <li>• ✅ Zero hallucination confirmed with real test</li>
@@ -240,7 +240,7 @@ export default function FinalSystemCompletionReport() {
                     </div>
                     
                     <div className="space-y-4">
-                        <div className="bg-white border border-blue-300 rounded-lg p-4">
+                        <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-4">
                             <h3 className="font-semibold text-blue-800 mb-2">🔧 ENHANCEMENT OPPORTUNITIES</h3>
                             <ul className="text-sm text-blue-700 space-y-1">
                                 <li>• Optimize CoreSignal search queries for better results</li>
@@ -255,13 +255,13 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* Technical Architecture Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🏗️ Technical Architecture Completed</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🏗️ Technical Architecture Completed</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-2">Database Layer</h3>
-                        <ul className="text-sm text-gray-600 space-y-1">
+                        <ul className="text-sm text-[var(--muted)] space-y-1">
                             <li>• PostgreSQL with Prisma ORM</li>
                             <li>• 1,342 real TOP contacts</li>
                             <li>• 451 companies with utility focus</li>
@@ -269,9 +269,9 @@ export default function FinalSystemCompletionReport() {
                         </ul>
                     </div>
                     
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-2">API Integration</h3>
-                        <ul className="text-sm text-gray-600 space-y-1">
+                        <ul className="text-sm text-[var(--muted)] space-y-1">
                             <li>• DropContact: Email validation</li>
                             <li>• Perplexity: AI employment verification</li>
                             <li>• CoreSignal: B2B person search</li>
@@ -279,9 +279,9 @@ export default function FinalSystemCompletionReport() {
                         </ul>
                     </div>
                     
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-2">Quality Assurance</h3>
-                        <ul className="text-sm text-gray-600 space-y-1">
+                        <ul className="text-sm text-[var(--muted)] space-y-1">
                             <li>• Zero hallucination validated</li>
                             <li>• Complete source attribution</li>
                             <li>• Real API response verification</li>
@@ -308,8 +308,8 @@ export default function FinalSystemCompletionReport() {
             </div>
 
             {/* Footer */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-600">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                <p className="text-sm text-[var(--muted)]">
                     <strong>System Validation Completed:</strong> December 19, 2024 | 
                     <strong> Zero Hallucination:</strong> ✅ CONFIRMED | 
                     <strong> Client Ready:</strong> ✅ YES

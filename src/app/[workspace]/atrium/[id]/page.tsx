@@ -120,11 +120,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
       case 'grid':
         return <TableCellsIcon className="w-6 h-6 text-green-600" />;
       case 'code':
-        return <CodeBracketIcon className="w-6 h-6 text-gray-600" />;
+        return <CodeBracketIcon className="w-6 h-6 text-[var(--muted)]" />;
       case 'matrix':
         return <ChartBarIcon className="w-6 h-6 text-orange-600" />;
       default:
-        return <DocumentTextIcon className="w-6 h-6 text-gray-600" />;
+        return <DocumentTextIcon className="w-6 h-6 text-[var(--muted)]" />;
     }
   };
 
@@ -164,32 +164,32 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
       case 'pitch':
         // TODO: Implement PitchEditor
         return (
-          <div className="h-full flex items-center justify-center bg-white">
+          <div className="h-full flex items-center justify-center bg-[var(--background)]">
             <div className="text-center">
               <PresentationChartBarIcon className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Pitch Editor</h3>
-              <p className="text-gray-500">Presentation editor coming soon...</p>
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Pitch Editor</h3>
+              <p className="text-[var(--muted)]">Presentation editor coming soon...</p>
             </div>
           </div>
         );
       case 'grid':
         // TODO: Implement GridEditor
         return (
-          <div className="h-full flex items-center justify-center bg-white">
+          <div className="h-full flex items-center justify-center bg-[var(--background)]">
             <div className="text-center">
               <TableCellsIcon className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Grid Editor</h3>
-              <p className="text-gray-500">Spreadsheet editor coming soon...</p>
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Grid Editor</h3>
+              <p className="text-[var(--muted)]">Spreadsheet editor coming soon...</p>
             </div>
           </div>
         );
       default:
         return (
-          <div className="h-full flex items-center justify-center bg-white">
+          <div className="h-full flex items-center justify-center bg-[var(--background)]">
             <div className="text-center">
               <ExclamationTriangleIcon className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Unknown Document Type</h3>
-              <p className="text-gray-500">This document type is not supported yet.</p>
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Unknown Document Type</h3>
+              <p className="text-[var(--muted)]">This document type is not supported yet.</p>
             </div>
           </div>
         );
@@ -198,10 +198,10 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Loading document...</p>
+          <p className="text-[var(--muted)]">Loading document...</p>
         </div>
       </div>
     );
@@ -209,11 +209,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <ExclamationTriangleIcon className="w-16 h-16 text-red-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Document</h3>
-          <p className="text-gray-500 mb-4">{error}</p>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Error Loading Document</h3>
+          <p className="text-[var(--muted)] mb-4">{error}</p>
           <button
             onClick={() => router.back()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -227,11 +227,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   if (!document) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <ExclamationTriangleIcon className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Document Not Found</h3>
-          <p className="text-gray-500 mb-4">The document you're looking for doesn't exist or you don't have access to it.</p>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Document Not Found</h3>
+          <p className="text-[var(--muted)] mb-4">The document you're looking for doesn't exist or you don't have access to it.</p>
           <button
             onClick={() => router.back()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -244,22 +244,22 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 px-6 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
         >
           <ArrowLeftIcon className="w-4 h-4" />
           Back
         </button>
-        <span className="text-gray-400">/</span>
-        <span className="text-sm text-gray-600">Atrium</span>
-        <span className="text-gray-400">/</span>
+        <span className="text-[var(--muted)]">/</span>
+        <span className="text-sm text-[var(--muted)]">Atrium</span>
+        <span className="text-[var(--muted)]">/</span>
         <div className="flex items-center gap-2">
           {getDocumentIcon(document.documentType)}
-          <span className="text-sm font-medium text-gray-900">{document.title}</span>
+          <span className="text-sm font-medium text-[var(--foreground)]">{document.title}</span>
         </div>
       </div>
 

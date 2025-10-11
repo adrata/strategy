@@ -136,7 +136,7 @@ export function ChatWindow({
               {message.sender ||
                 (message['type'] === "user" ? "You" : "AI Assistant")}
             </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
               {formatTime(message.timestamp)}
             </span>
           </div>
@@ -146,7 +146,7 @@ export function ChatWindow({
             className={`rounded-lg px-3 py-2 ${
               isUser
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                : "bg-[var(--hover)] text-[var(--foreground)] dark:text-white"
             }`}
           >
             {/* Text content */}
@@ -192,7 +192,7 @@ export function ChatWindow({
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+        <div className="flex items-center space-x-2 text-[var(--muted)] dark:text-[var(--muted)]">
           <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent"></div>
           <span>Loading conversation...</span>
         </div>
@@ -204,7 +204,7 @@ export function ChatWindow({
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {/* Welcome message for empty chats */}
       {messages['length'] === 0 && welcomeMessage && (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+        <div className="text-center text-[var(--muted)] dark:text-[var(--muted)] py-8">
           <div className="text-4xl mb-4">🤖</div>
           <p className="text-lg font-medium mb-2">Welcome to AI Chat</p>
           <p className="text-sm">{welcomeMessage}</p>
@@ -221,11 +221,11 @@ export function ChatWindow({
             <span className="text-white text-xs font-bold">...</span>
           </div>
           <div className="flex-1">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mb-1">
               {typingUsers.join(", ")} {typingUsers['length'] === 1 ? "is" : "are"}{" "}
               typing...
             </div>
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
+            <div className="bg-[var(--hover)] rounded-lg px-3 py-2">
               {/* TypingIndicator removed - Oasis product no longer available */}
             </div>
           </div>

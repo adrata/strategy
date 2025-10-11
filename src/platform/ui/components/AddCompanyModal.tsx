@@ -102,16 +102,16 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <button
               onClick={handleClose}
-              className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1 hover:bg-[var(--hover)] rounded-lg transition-colors"
             >
-              <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
+              <ArrowLeftIcon className="w-5 h-5 text-[var(--muted)]" />
             </button>
             <div 
               className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -138,9 +138,9 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
           </div>
           <button
             onClick={handleClose}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-gray-500" />
+            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
           </button>
         </div>
 
@@ -156,7 +156,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
               required
             />
           </div>
@@ -171,7 +171,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
               placeholder="https://example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>
 
@@ -185,7 +185,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               placeholder="Additional notes about this company"
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>
 
@@ -195,7 +195,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
               type="button"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm disabled:opacity-50"
             >
               Cancel
             </button>

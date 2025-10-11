@@ -57,9 +57,9 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
         };
       case "role_level":
         return {
-              bg: "bg-gray-100 dark:bg-gray-900/30",
+              bg: "bg-[var(--hover)] dark:bg-[var(--foreground)]/30",
     text: "text-gray-700 dark:text-gray-300",
-    border: "border-gray-300 dark:border-gray-600",
+    border: "border-[var(--border)] dark:border-[var(--border)]",
         };
       case "department":
         return {
@@ -90,13 +90,13 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
         className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full border text-sm font-medium ${
           pill.isActive
             ? `${colors.bg} ${colors.text} ${colors.border}`
-            : "bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600"
+            : "bg-[var(--panel-background)]/50 text-[var(--muted)] dark:text-[var(--muted)] border-[var(--border)] dark:border-[var(--border)]"
         } transition-all duration-200`}
       >
         <button
           onClick={() => onToggle(pill.id)}
           className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
-            pill.isActive ? "bg-current border-current" : "border-gray-300"
+            pill.isActive ? "bg-current border-current" : "border-[var(--border)]"
           }`}
         >
           {pill['isActive'] && (
@@ -134,7 +134,7 @@ export const SearchPillComponent: React.FC<SearchPillComponentProps> = ({
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-48">
+        <div className="absolute top-full left-0 mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50 min-w-48">
           <div className="p-2">
             <div className="text-xs font-medium text-[var(--muted)] mb-2 uppercase tracking-wide">
               Alternative {pill.type}s

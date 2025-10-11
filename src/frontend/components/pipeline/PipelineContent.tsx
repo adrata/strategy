@@ -705,15 +705,15 @@ export const PipelineContent = React.memo(function PipelineContent({
   // 🚀 CACHE ERROR FIX: Only show error state for persistent errors, not during loading
   if (finalError && !finalLoading && finalData.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center max-w-md">
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⚠️</span>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
             Error Loading {section}
           </h3>
-          <p className="text-gray-600 mb-4">{finalError instanceof Error ? finalError.message : String(finalError)}</p>
+          <p className="text-[var(--muted)] mb-4">{finalError instanceof Error ? finalError.message : String(finalError)}</p>
           <div className="space-x-3">
             <button
               onClick={handleRefresh}
@@ -752,31 +752,31 @@ export const PipelineContent = React.memo(function PipelineContent({
     })()
   ) : finalLoading ? (
     // 🚀 PERFORMANCE: Show XL loading skeleton while fast section data loads
-    <div className="h-full flex flex-col bg-white max-w-full overflow-hidden">
+    <div className="h-full flex flex-col bg-[var(--background)] max-w-full overflow-hidden">
       {/* Top header skeleton - includes title, count, and action buttons */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-48 animate-pulse"></div>
           </div>
           <div className="flex gap-2">
-            <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
           </div>
         </div>
       </div>
       
       {/* Search and filters skeleton - includes search bar, filter buttons, and count */}
-      <div className="flex-shrink-0 px-6 py-3 border-b border-gray-200">
+      <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
         <div className="flex gap-4 items-center justify-between">
           <div className="flex gap-4 items-center">
-            <div className="h-10 bg-gray-200 rounded w-80 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
+            <div className="h-10 bg-[var(--loading-bg)] rounded w-80 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
           </div>
-          <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+          <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
         </div>
       </div>
       
@@ -784,31 +784,31 @@ export const PipelineContent = React.memo(function PipelineContent({
       <div className="flex-1 p-6 max-w-full overflow-hidden">
         <div className="space-y-4">
           {/* Table header skeleton */}
-          <div className="grid grid-cols-6 gap-4 py-3 border-b border-gray-200">
-            <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-            <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+          <div className="grid grid-cols-6 gap-4 py-3 border-b border-[var(--border)]">
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
           </div>
           
           {/* Table rows skeleton */}
           {[...Array(15)].map((_, i) => (
             <div key={i} className="grid grid-cols-6 gap-4 py-3">
-              <div className="h-4 bg-gray-200 rounded w-8 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-36 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-40 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-36 animate-pulse"></div>
             </div>
           ))}
         </div>
       </div>
     </div>
   ) : (
-    <div className="h-full flex flex-col bg-white overflow-hidden">
+    <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden">
 
       {/* Header with metrics and actions */}
       <PipelineHeader
@@ -856,11 +856,11 @@ export const PipelineContent = React.memo(function PipelineContent({
         {Array.isArray(finalData) && finalData.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
-            <div className="text-center text-gray-500 p-6">
-              <h4 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="text-center text-[var(--muted)] p-6">
+              <h4 className="text-lg font-medium text-[var(--foreground)] mb-2">
                 No results found
               </h4>
-              <p className="text-sm text-gray-600 max-w-sm">
+              <p className="text-sm text-[var(--muted)] max-w-sm">
                 No {section} match your current filters. Try adjusting your search or filters.
               </p>
             </div>
@@ -1099,7 +1099,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         {/* Monaco Signal Popup - Only show for speedrun section */}
         {section === 'speedrun' && isSlideUpVisible && (
           <div className="fixed bottom-6 right-4 z-[9999] animate-in slide-in-from-right duration-300">
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl w-[520px] p-7">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl w-[520px] p-7">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
@@ -1108,8 +1108,8 @@ export const PipelineContent = React.memo(function PipelineContent({
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 text-lg">Buying Intent Detected</h3>
-                    <p className="text-gray-600 text-sm">Pipeline Speedrun Signal</p>
+                    <h3 className="font-semibold text-[var(--foreground)] text-lg">Buying Intent Detected</h3>
+                    <p className="text-[var(--muted)] text-sm">Pipeline Speedrun Signal</p>
                   </div>
                 </div>
                 <button
@@ -1120,7 +1120,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                     }
                     setIsSlideUpVisible(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1129,14 +1129,14 @@ export const PipelineContent = React.memo(function PipelineContent({
               </div>
               
               <div className="space-y-4">
-                <div className="bg-gray-50 rounded-xl p-4">
+                <div className="bg-[var(--panel-background)] rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm">
                       {activeSignal?.contact.name?.charAt(0) || 'R'}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{activeSignal?.contact.name || 'Real Time'}</p>
-                      <p className="text-sm text-gray-600">{(activeSignal?.contact as any)?.title || 'IT Director'} at {activeSignal?.contact.company || 'RealTime Corp'}</p>
+                      <p className="font-medium text-[var(--foreground)]">{activeSignal?.contact.name || 'Real Time'}</p>
+                      <p className="text-sm text-[var(--muted)]">{(activeSignal?.contact as any)?.title || 'IT Director'} at {activeSignal?.contact.company || 'RealTime Corp'}</p>
                     </div>
                   </div>
                   <p className="text-sm text-gray-700 leading-relaxed">
@@ -1145,7 +1145,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                 </div>
                 
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  <span className="text-gray-900 font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
+                  <span className="text-[var(--foreground)] font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
                 </p>
                 
                 <div className="flex items-center gap-2">
@@ -1202,7 +1202,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                       }
                       setIsSlideUpVisible(false);
                     }}
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
+                    className="bg-[var(--hover)] hover:bg-[var(--loading-bg)] text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
                   >
                     Dismiss
                   </button>

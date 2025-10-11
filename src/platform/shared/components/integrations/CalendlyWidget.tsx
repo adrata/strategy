@@ -199,11 +199,11 @@ export default function CalendlyWidget({
     <div ref={containerRef} className={`relative ${className}`}>
       {/* Loading overlay */}
       {!isLoaded && (
-        <div className={`absolute inset-0 bg-white flex items-center justify-center z-10 min-h-[${height}px] rounded-lg border border-gray-200`}>
+        <div className={`absolute inset-0 bg-[var(--background)] flex items-center justify-center z-10 min-h-[${height}px] rounded-lg border border-[var(--border)]`}>
           <div className="text-center">
-            <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Loading calendar...</p>
-            <p className="text-gray-500 text-sm mt-2">Please wait while we prepare your booking page</p>
+            <div className="w-8 h-8 border-4 border-[var(--border)] border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-[var(--muted)] font-medium">Loading calendar...</p>
+            <p className="text-[var(--muted)] text-sm mt-2">Please wait while we prepare your booking page</p>
           </div>
         </div>
       )}

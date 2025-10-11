@@ -18,17 +18,17 @@ export function EmptyState({
   return (
     <div className={`flex flex-col items-center justify-center py-16 px-8 text-center ${className}`}>
       {/* Clean geometric icon */}
-      <div className="w-16 h-16 mb-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
+      <div className="w-16 h-16 mb-6 rounded-full border-2 border-[var(--border)] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-gray-400 rounded"></div>
       </div>
       
       {/* Title */}
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
         {title}
       </h3>
       
       {/* Description */}
-      <p className="text-gray-600 mb-6 max-w-md">
+      <p className="text-[var(--muted)] mb-6 max-w-md">
         {description}
       </p>
       
@@ -36,7 +36,7 @@ export function EmptyState({
       {actionText && onAction && (
         <button
           onClick={onAction}
-          className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium"
+          className="px-6 py-2 bg-[var(--foreground)] text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium"
         >
           {actionText}
         </button>

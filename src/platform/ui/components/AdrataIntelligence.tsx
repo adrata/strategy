@@ -142,7 +142,7 @@ export function AdrataIntelligence({
       {/* Current Mode Display */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="group flex items-center space-x-3 px-4 py-3 bg-white/50 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/70 transition-all duration-300 shadow-lg"
+        className="group flex items-center space-x-3 px-4 py-3 bg-[var(--background)]/50 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-[var(--background)]/70 transition-all duration-300 shadow-lg"
       >
         <div
           className={`relative p-2 rounded-lg bg-gradient-to-r ${currentModeData.gradient} shadow-lg`}
@@ -157,19 +157,19 @@ export function AdrataIntelligence({
 
         <div className="flex-1 text-left">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-gray-900">Adrata</span>
+            <span className="font-semibold text-[var(--foreground)]">Adrata</span>
             <span className={`text-sm font-medium ${currentModeData.color}`}>
               {currentModeData.name}
             </span>
           </div>
-          <p className="text-xs text-gray-600">{currentModeData.description}</p>
+          <p className="text-xs text-[var(--muted)]">{currentModeData.description}</p>
         </div>
 
         <div
           className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
         >
           <svg
-            className="w-4 h-4 text-gray-400"
+            className="w-4 h-4 text-[var(--muted)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -194,13 +194,13 @@ export function AdrataIntelligence({
           />
 
           {/* Mode Selection Panel */}
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl z-50 overflow-hidden">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--background)]/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl z-50 overflow-hidden">
             <div className="p-6">
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
                   How intelligent should Adrata be?
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[var(--muted)]">
                   Choose how proactively Adrata helps you win deals
                 </p>
               </div>
@@ -223,7 +223,7 @@ export function AdrataIntelligence({
                       className={`w-full flex items-start space-x-4 p-4 rounded-xl transition-all duration-200 text-left group ${
                         isActive
                           ? "bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 shadow-md"
-                          : "hover:bg-gray-50 border border-transparent"
+                          : "hover:bg-[var(--panel-background)] border border-transparent"
                       }`}
                     >
                       <div
@@ -241,7 +241,7 @@ export function AdrataIntelligence({
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-semibold text-gray-900">
+                          <h4 className="font-semibold text-[var(--foreground)]">
                             {mode.name}
                           </h4>
                           {isActive && (
@@ -251,7 +251,7 @@ export function AdrataIntelligence({
                           )}
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-[var(--muted)] mb-2">
                           {mode.capability}
                         </p>
 
@@ -261,7 +261,7 @@ export function AdrataIntelligence({
                             .map((example, idx) => (
                               <div
                                 key={idx}
-                                className="flex items-center space-x-2 text-xs text-gray-500"
+                                className="flex items-center space-x-2 text-xs text-[var(--muted)]"
                               >
                                 <div className="w-1 h-1 bg-gray-300 rounded-full flex-shrink-0" />
                                 <span>{example}</span>
@@ -275,7 +275,7 @@ export function AdrataIntelligence({
                         className={`transition-opacity duration-200 ${hoveredMode === mode.id ? "opacity-100" : "opacity-0"}`}
                       >
                         <svg
-                          className="w-5 h-5 text-gray-400"
+                          className="w-5 h-5 text-[var(--muted)]"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -294,8 +294,8 @@ export function AdrataIntelligence({
               </div>
 
               {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-500 text-center">
+              <div className="mt-6 pt-4 border-t border-[var(--border)]">
+                <p className="text-xs text-[var(--muted)] text-center">
                   Adrata learns from your preferences and becomes more effective
                   over time
                 </p>

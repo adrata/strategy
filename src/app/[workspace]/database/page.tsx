@@ -29,7 +29,7 @@ export default function DatabasePage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Main Content - each component handles its own header */}
       <div className="flex-1 overflow-hidden">
         {renderContent()}

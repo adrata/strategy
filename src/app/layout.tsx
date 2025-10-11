@@ -131,11 +131,11 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
       className={`font-sans antialiased ${
         isWebsite
           ? "min-h-screen bg-black text-white overflow-x-hidden overflow-y-auto"
-          : "h-screen overflow-hidden bg-white"
+          : "h-screen overflow-hidden"
       }`}
       style={{
-        // Ensure consistent background during navigation transitions
-        backgroundColor: isWebsite ? '#000000' : '#ffffff',
+        // Use CSS variables for theme-aware background
+        backgroundColor: isWebsite ? '#000000' : 'var(--background, #ffffff)',
         transition: 'background-color 0.1s ease-in-out'
       }}
       suppressHydrationWarning

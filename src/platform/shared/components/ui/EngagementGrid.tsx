@@ -199,7 +199,7 @@ export function EngagementGrid({
   const getLevelColor = (level: 0 | 1 | 2 | 3 | 4 | 5): string => {
     switch (level) {
       case 0:
-        return "bg-gray-100 dark:bg-gray-800"; // No activity
+        return "bg-[var(--hover)]"; // No activity
       case 1:
         return "bg-blue-100 dark:bg-blue-900"; // Light
       case 2:
@@ -211,7 +211,7 @@ export function EngagementGrid({
       case 5:
         return "bg-gradient-to-r from-blue-800 to-purple-800 dark:from-blue-300 dark:to-purple-300"; // Power user!
       default:
-        return "bg-gray-100 dark:bg-gray-800";
+        return "bg-[var(--hover)]";
     }
   };
 

@@ -161,13 +161,13 @@ export function PipelineFiltersV2({
       case 'search':
         return (
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         );
@@ -177,7 +177,7 @@ export function PipelineFiltersV2({
           <select
             value={verticalFilter}
             onChange={(e) => handleVerticalChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Verticals</option>
             <option value="technology">Technology</option>
@@ -194,7 +194,7 @@ export function PipelineFiltersV2({
           <select
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {statusOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -209,7 +209,7 @@ export function PipelineFiltersV2({
           <select
             value={priorityFilter}
             onChange={(e) => handlePriorityChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {priorityOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -224,7 +224,7 @@ export function PipelineFiltersV2({
           <select
             value={revenueFilter}
             onChange={(e) => handleRevenueChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {revenueOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -239,7 +239,7 @@ export function PipelineFiltersV2({
           <select
             value={lastContactedFilter}
             onChange={(e) => handleLastContactedChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Time</option>
             <option value="today">Today</option>
@@ -255,7 +255,7 @@ export function PipelineFiltersV2({
           <select
             value={timezoneFilter}
             onChange={(e) => handleTimezoneChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {timezoneOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -270,7 +270,7 @@ export function PipelineFiltersV2({
           <select
             value={companySizeFilter}
             onChange={(e) => handleCompanySizeChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {companySizeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -285,7 +285,7 @@ export function PipelineFiltersV2({
           <select
             value={locationFilter}
             onChange={(e) => handleLocationChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {locationOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -300,7 +300,7 @@ export function PipelineFiltersV2({
           <select
             value={technologyFilter}
             onChange={(e) => handleTechnologyChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {technologyOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -316,20 +316,20 @@ export function PipelineFiltersV2({
   };
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">
             {sectionConfig.label}
           </h2>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-[var(--muted)]">
             {totalCount} {sectionConfig.label.toLowerCase()}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowColumnSelector(!showColumnSelector)}
-            className="px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="px-3 py-2 text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
           >
             <AdjustmentsHorizontalIcon className="w-4 h-4" />
             Columns
@@ -354,8 +354,8 @@ export function PipelineFiltersV2({
 
       {/* Column selector */}
       {showColumnSelector && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-900 mb-3">Visible Columns</h3>
+        <div className="mt-4 p-4 bg-[var(--panel-background)] rounded-lg">
+          <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Visible Columns</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {sectionConfig.defaultColumns.map((column) => (
               <label key={column} className="flex items-center gap-2">
@@ -369,7 +369,7 @@ export function PipelineFiltersV2({
                       handleColumnVisibilityChange(visibleColumns.filter(c => c !== column));
                     }
                   }}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-700 capitalize">
                   {column.replace(/([A-Z])/g, ' $1').trim()}

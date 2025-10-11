@@ -286,9 +286,9 @@ export default function UniversalSearch({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="flex items-start justify-center pt-[15vh] px-4">
-        <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="w-full max-w-4xl bg-[var(--background)] dark:bg-[var(--foreground)] rounded-xl shadow-2xl border border-[var(--border)] dark:border-[var(--border)] overflow-hidden">
           {/* Search Header */}
-          <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="border-b border-[var(--border)] dark:border-[var(--border)]">
             {/* Search Input */}
             <div className="flex items-center px-4 py-3">
               <input
@@ -296,14 +296,14 @@ export default function UniversalSearch({
                 placeholder="Search across all your data..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 text-lg ml-3"
+                className="flex-1 bg-transparent outline-none text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 text-lg ml-3"
                 autoFocus
               />
               {isLoading && (
                 <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-3" />
               )}
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded border">
+              <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+                <kbd className="px-2 py-1 bg-[var(--hover)] rounded border">
                   ↵
                 </kbd>
                 <span>to select</span>
@@ -321,7 +321,7 @@ export default function UniversalSearch({
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       selectedFilter === filter.id
                         ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        : "text-[var(--muted)] dark:text-[var(--muted)] hover:bg-[var(--hover)]"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -339,7 +339,7 @@ export default function UniversalSearch({
               <div className="p-4">
                 {recentSearches.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] mb-2 flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       Recent Searches
                     </h3>
@@ -348,7 +348,7 @@ export default function UniversalSearch({
                         <button
                           key={index}
                           onClick={() => setQuery(search)}
-                          className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                          className="px-3 py-1.5 text-sm bg-[var(--hover)] text-gray-700 dark:text-gray-300 rounded-lg hover:bg-[var(--loading-bg)] transition-colors"
                         >
                           {search}
                         </button>
@@ -358,7 +358,7 @@ export default function UniversalSearch({
                 )}
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] mb-2 flex items-center gap-2">
                     <Star className="w-4 h-4" />
                     Quick Access
                   </h3>
@@ -391,12 +391,12 @@ export default function UniversalSearch({
                           router.push(item.url);
                           onClose();
                         }}
-                        className="p-3 text-left bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        className="p-3 text-left bg-[var(--panel-background)] rounded-lg hover:bg-[var(--hover)] transition-colors"
                       >
-                        <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
+                        <div className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)] text-sm">
                           {item.title}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
                           {item.desc}
                         </div>
                       </button>
@@ -406,7 +406,7 @@ export default function UniversalSearch({
               </div>
             ) : filteredResults['length'] === 0 ? (
               // No results
-              <div className="px-4 py-8 text-center text-gray-500">
+              <div className="px-4 py-8 text-center text-[var(--muted)]">
                 <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No results found for &quot;{query}&quot;</p>
                 <p className="text-sm">
@@ -422,33 +422,33 @@ export default function UniversalSearch({
                     <button
                       key={result.id}
                       onClick={() => selectResult(result)}
-                      className={`w-full flex items-start px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                      className={`w-full flex items-start px-4 py-3 text-left hover:bg-[var(--panel-background)] transition-colors ${
                         index === selectedIndex
                           ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
                           : ""
                       }`}
                     >
-                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 mr-3 mt-0.5">
-                        <TypeIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--hover)] mr-3 mt-0.5">
+                        <TypeIcon className="w-5 h-5 text-[var(--muted)] dark:text-[var(--muted)]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <h3 className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
                             {result.title}
                           </h3>
-                          <span className="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full">
+                          <span className="px-2 py-0.5 text-xs bg-[var(--hover)] text-[var(--muted)] dark:text-[var(--muted)] rounded-full">
                             {result.source}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)] mb-1">
                           {result.description}
                         </p>
                         {result['preview'] && (
-                          <p className="text-xs text-gray-500 dark:text-gray-500 line-clamp-2">
+                          <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)] line-clamp-2">
                             {result.preview}
                           </p>
                         )}
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-[var(--muted)]">
                           {result['metadata']['date'] && (
                             <span>
                               {new Date(
@@ -467,7 +467,7 @@ export default function UniversalSearch({
                                   .map((tag, i) => (
                                     <span
                                       key={i}
-                                      className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs"
+                                      className="px-1.5 py-0.5 bg-[var(--hover)] rounded text-xs"
                                     >
                                       {tag}
                                     </span>
@@ -477,7 +477,7 @@ export default function UniversalSearch({
                         </div>
                       </div>
                       {result['metadata']['score'] && (
-                        <div className="text-xs text-gray-400 ml-2">
+                        <div className="text-xs text-[var(--muted)] ml-2">
                           {Math.round(result.metadata.score * 100)}%
                         </div>
                       )}
@@ -489,29 +489,29 @@ export default function UniversalSearch({
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="px-4 py-2 bg-[var(--panel-background)] border-t border-[var(--border)] dark:border-[var(--border)]">
+            <div className="flex items-center justify-between text-xs text-[var(--muted)]">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded border">
+                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
                     ↑↓
                   </kbd>
                   <span>navigate</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded border">
+                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
                     tab
                   </kbd>
                   <span>filter</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded border">
+                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
                     esc
                   </kbd>
                   <span>close</span>
                 </div>
               </div>
-              <div className="text-gray-400">
+              <div className="text-[var(--muted)]">
                 {query.trim()
                   ? `${filteredResults.length} results`
                   : "Start typing to search"}

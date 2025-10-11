@@ -152,12 +152,12 @@ interface OpportunitiesKanbanProps {
 
 // Dano's deal stages in order - minimal black/white/gray design
 const DEAL_STAGES = [
-  { key: 'qualification', label: 'Qualification', color: 'bg-white border-gray-300' },
-  { key: 'discovery', label: 'Discovery', color: 'bg-gray-50 border-gray-300' },
-  { key: 'proposal', label: 'Proposal', color: 'bg-white border-gray-300' },
-  { key: 'negotiation', label: 'Negotiation', color: 'bg-gray-50 border-gray-300' },
-  { key: 'closed-won', label: 'Closed Won', color: 'bg-gray-100 border-gray-400' },
-  { key: 'closed-lost', label: 'Closed Lost', color: 'bg-gray-200 border-gray-400' }
+  { key: 'qualification', label: 'Qualification', color: 'bg-[var(--background)] border-[var(--border)]' },
+  { key: 'discovery', label: 'Discovery', color: 'bg-[var(--panel-background)] border-[var(--border)]' },
+  { key: 'proposal', label: 'Proposal', color: 'bg-[var(--background)] border-[var(--border)]' },
+  { key: 'negotiation', label: 'Negotiation', color: 'bg-[var(--panel-background)] border-[var(--border)]' },
+  { key: 'closed-won', label: 'Closed Won', color: 'bg-[var(--hover)] border-gray-400' },
+  { key: 'closed-lost', label: 'Closed Lost', color: 'bg-[var(--loading-bg)] border-gray-400' }
 ];
 
 export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanbanProps) {
@@ -310,30 +310,30 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
             onDragEnter={handleDragEnter}
             onDrop={(e) => handleDrop(e, stage.key)}
           >
-            <div className={`bg-white rounded-lg border ${stage.color.replace('border-gray-300', 'border-gray-200').replace('border-gray-400', 'border-gray-300')} h-full flex flex-col`}>
+            <div className={`bg-[var(--background)] rounded-lg border ${stage.color.replace('border-[var(--border)]', 'border-[var(--border)]').replace('border-gray-400', 'border-[var(--border)]')} h-full flex flex-col`}>
               {/* Stage Header */}
-              <div className="p-4 border-b border-gray-300">
-                <h3 className="font-medium text-gray-900 mb-2 text-sm uppercase tracking-wide">{stage.label}</h3>
-                <div className="flex justify-between text-xs text-gray-500">
+              <div className="p-4 border-b border-[var(--border)]">
+                <h3 className="font-medium text-[var(--foreground)] mb-2 text-sm uppercase tracking-wide">{stage.label}</h3>
+                <div className="flex justify-between text-xs text-[var(--muted)]">
                   <span>{totals.count} {totals['count'] === 1 ? 'opportunity' : 'opportunities'}</span>
-                  <span className="font-medium text-gray-900">{formatCurrency(totals.value)}</span>
+                  <span className="font-medium text-[var(--foreground)]">{formatCurrency(totals.value)}</span>
                 </div>
               </div>
 
               {/* Opportunities List */}
               <div className="flex-1 p-4 space-y-3 overflow-y-auto">
                 {opportunities['length'] === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
+                  <div className="text-center py-8 text-[var(--muted)]">
                     <p className="text-xs">No opportunities</p>
                   </div>
                 ) : (
                   opportunities.map((opportunity, index) => (
                     <div
                       key={opportunity.id}
-                      className={`bg-white border rounded-sm p-3 hover:border-gray-300 transition-colors cursor-pointer relative ${
+                      className={`bg-[var(--background)] border rounded-sm p-3 hover:border-[var(--border)] transition-colors cursor-pointer relative ${
                         opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' 
                           ? 'border-red-200 bg-red-50' 
-                          : 'border-gray-200'
+                          : 'border-[var(--border)]'
                       }`}
                       draggable={true}
                       onDragStart={(e) => handleDragStart(e, opportunity)}
@@ -342,13 +342,13 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                     >
                       {/* Rank Display */}
                       <div className="absolute top-2 right-2">
-                        <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
+                        <span className="bg-[var(--hover)] text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
                           #{getPersonMasterRank(opportunity, index)}
                         </span>
                       </div>
                       
                       <div className="mb-3 pr-8">
-                        <h4 className="font-medium text-gray-900 text-sm leading-tight mb-1 flex items-center gap-1">
+                        <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1 flex items-center gap-1">
                           {opportunity.name}
                           {opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' && (
                             <span className="text-red-600 text-xs font-medium px-1.5 py-0.5 bg-red-100 rounded" title="Lost to Competition">
@@ -356,7 +356,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                             </span>
                           )}
                         </h4>
-                        <p className="text-xs text-gray-600 font-medium">
+                        <p className="text-xs text-[var(--muted)] font-medium">
                           {opportunity.account?.name || 'No Account'}
                         </p>
                       </div>
@@ -365,7 +365,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                         <span className="font-semibold text-black">
                           {formatCurrency(opportunity.amount || 0)}
                         </span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-[var(--muted)] text-xs">
                           {formatDate(opportunity.expectedCloseDate)}
                         </span>
                       </div>
@@ -379,7 +379,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${nextAction.timingColor}`}>
                                 {nextAction.timing}
                               </span>
-                              <span className="text-xs text-gray-600 truncate">
+                              <span className="text-xs text-[var(--muted)] truncate">
                                 {nextAction.action}
                               </span>
                             </div>
@@ -391,11 +391,11 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                         const progress = getStageProgress(opportunity.stage, opportunity);
                         return progress > 0 && (
                           <div className="mb-2">
-                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <div className="flex justify-between text-xs text-[var(--muted)] mb-1">
                               <span>Progress</span>
                               <span>{progress}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5">
+                            <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5">
                               <div 
                                 className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(progress)}`}
                                 style={{ width: `${progress}%` }}
@@ -406,7 +406,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       })()}
 
                       {opportunity['assignedUser'] && (
-                        <div className="text-xs text-gray-500 border-t border-gray-200 pt-2">
+                        <div className="text-xs text-[var(--muted)] border-t border-[var(--border)] pt-2">
                           {opportunity.assignedUser.name}
                         </div>
                       )}
@@ -528,7 +528,7 @@ function getOpportunityNextAction(opportunity: any): { timing: string; timingCol
         
       case 'closed-lost':
       case 'closed-lost-to-competition':
-        return { timing: 'Next Month', color: 'bg-gray-100 text-gray-800' };
+        return { timing: 'Next Month', color: 'bg-[var(--hover)] text-gray-800' };
         
       default:
         if (isHighValue) {

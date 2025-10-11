@@ -137,17 +137,17 @@ export function MessageInput({
   };
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div className="border-t border-[var(--border)] dark:border-[var(--border)] bg-[var(--background)] dark:bg-[var(--foreground)]">
       {/* Attached files preview */}
       {attachedFiles.length > 0 && (
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-3 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex flex-wrap gap-2">
             {attachedFiles.map((file, index) => (
               <div
                 key={index}
-                className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-2"
+                className="flex items-center space-x-2 bg-[var(--hover)] rounded-lg p-2"
               >
-                <span className="text-sm text-gray-600 dark:text-gray-300">
+                <span className="text-sm text-[var(--muted)] dark:text-gray-300">
                   {file.name}
                 </span>
                 <button
@@ -179,7 +179,7 @@ export function MessageInput({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || uploadingImage}
-            className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50"
+            className="flex-shrink-0 p-2 text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-200 disabled:opacity-50"
           >
             <PlusIcon className="h-5 w-5" />
           </button>
@@ -197,7 +197,7 @@ export function MessageInput({
               placeholder={placeholder}
               disabled={disabled}
               rows={1}
-              className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full resize-none border border-[var(--border)] dark:border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--background)] text-[var(--foreground)] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 minHeight: "40px",
                 maxHeight: "120px",
@@ -209,14 +209,14 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="absolute right-2 top-2 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="absolute right-2 top-2 p-1 text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-200"
             >
               😊
             </button>
 
             {/* Emoji picker */}
             {showEmojiPicker && (
-              <div className="absolute bottom-full right-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 z-50">
+              <div className="absolute bottom-full right-0 mb-2 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg p-3 z-50">
                 <div className="grid grid-cols-6 gap-2">
                   {[
                     "😊",
@@ -235,7 +235,7 @@ export function MessageInput({
                     <button
                       key={emoji}
                       onClick={() => insertEmoji(emoji)}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-lg"
+                      className="p-2 hover:bg-[var(--hover)] rounded text-lg"
                     >
                       {emoji}
                     </button>
@@ -267,7 +267,7 @@ export function MessageInput({
 
         {/* Upload indicator */}
         {uploadingImage && (
-          <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center rounded-lg">
+          <div className="absolute inset-0 bg-[var(--background)]/80 dark:bg-[var(--foreground)]/80 flex items-center justify-center rounded-lg">
             <div className="flex items-center space-x-2 text-blue-600">
               <PipelineSkeleton message="Uploading..." />
               <span className="text-sm font-medium">Uploading image...</span>

@@ -11,8 +11,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* Executive Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🎯 Executive Summary</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🎯 Executive Summary</h2>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-3">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
@@ -40,8 +40,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* Intelligence Test Results */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📊 Intelligence Test Results</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Intelligence Test Results</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -144,8 +144,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* API Integration Status */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔗 Comprehensive API Integration Status</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔗 Comprehensive API Integration Status</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -225,8 +225,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* McKinsey-Level Intelligence Capabilities */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🎯 McKinsey-Level Intelligence Capabilities</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🎯 McKinsey-Level Intelligence Capabilities</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
@@ -284,8 +284,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* Quality Assurance & Zero Hallucination */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🛡️ Quality Assurance & Zero Hallucination</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🛡️ Quality Assurance & Zero Hallucination</h2>
                 
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                     <h3 className="font-semibold text-green-800 mb-2">✅ Zero Hallucination Confirmed</h3>
@@ -328,36 +328,36 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* Performance Metrics */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">⚡ Performance Metrics</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">⚡ Performance Metrics</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">13-26s</div>
-                        <div className="text-sm text-gray-600">Response Time</div>
+                        <div className="text-sm text-[var(--muted)]">Response Time</div>
                         <div className="text-xs text-green-600">Multi-source analysis</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-blue-600">95.75%</div>
-                        <div className="text-sm text-gray-600">Avg Confidence</div>
+                        <div className="text-sm text-[var(--muted)]">Avg Confidence</div>
                         <div className="text-xs text-blue-600">McKinsey standard</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-purple-600">4</div>
-                        <div className="text-sm text-gray-600">Avg Sources</div>
+                        <div className="text-sm text-[var(--muted)]">Avg Sources</div>
                         <div className="text-xs text-purple-600">Per analysis</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-orange-600">100%</div>
-                        <div className="text-sm text-gray-600">Success Rate</div>
+                        <div className="text-sm text-[var(--muted)]">Success Rate</div>
                         <div className="text-xs text-orange-600">All tests passed</div>
                     </div>
                 </div>
             </div>
 
             {/* Strategic Recommendations */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibent text-gray-900 mb-4">🚀 Strategic Recommendations</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibent text-[var(--foreground)] mb-4">🚀 Strategic Recommendations</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -410,8 +410,8 @@ export default function GeniusLevelIntelligenceReport() {
             </div>
 
             {/* Footer */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-600">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                <p className="text-sm text-[var(--muted)]">
                     <strong>Genius-Level Intelligence Confirmed:</strong> December 19, 2024 | 
                     <strong> McKinsey Level:</strong> GENIUS | 
                     <strong> Ready for:</strong> Fortune 500 Strategic Analysis

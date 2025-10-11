@@ -317,11 +317,11 @@ export default function SellerCompaniesPage() {
 
   if (error || !seller) {
     return (
-      <div className="h-screen flex items-center justify-center bg-white">
+      <div className="h-screen flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Error</h1>
-          <p className="text-gray-600 mb-6">{error || 'Seller not found'}</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Error</h1>
+          <p className="text-[var(--muted)] mb-6">{error || 'Seller not found'}</p>
           <button 
             onClick={() => window.history.back()}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -357,46 +357,46 @@ export default function SellerCompaniesPage() {
                   />
                 }
                 middlePanel={
-                  <div className="h-full flex flex-col bg-white">
+                  <div className="h-full flex flex-col bg-[var(--background)]">
                     {/* Breadcrumb Header */}
-                    <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-3">
+                    <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)] px-6 py-3">
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => window.history.back()}
-                          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-gray-700 transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
                           </svg>
                           All Sellers
                         </button>
-                        <span className="text-sm text-gray-400">/</span>
-                        <span className="text-sm text-gray-500">{seller.name}</span>
-                        <span className="text-sm text-gray-400">/</span>
-                        <span className="text-sm font-medium text-gray-900">Companies</span>
+                        <span className="text-sm text-[var(--muted)]">/</span>
+                        <span className="text-sm text-[var(--muted)]">{seller.name}</span>
+                        <span className="text-sm text-[var(--muted)]">/</span>
+                        <span className="text-sm font-medium text-[var(--foreground)]">Companies</span>
                       </div>
                     </div>
 
                     {/* Main Header */}
-                    <div className="flex-shrink-0 border-b border-gray-200 px-6 py-6">
+                    <div className="flex-shrink-0 border-b border-[var(--border)] px-6 py-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           {/* Avatar */}
-                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-2xl flex items-center justify-center shadow-sm">
+                          <div className="w-12 h-12 bg-[var(--background)] border border-[var(--border)] rounded-2xl flex items-center justify-center shadow-sm">
                             <span className="text-lg font-semibold text-gray-700">
                               {seller.firstName?.[0] || seller.name?.[0] || 'S'}
                             </span>
                           </div>
                           <div>
-                            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">
                               {seller.name || `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Unknown Seller'}
                             </h1>
-                            <p className="text-sm text-gray-600">{seller.role || 'Sales Representative'} • {workspace}</p>
+                            <p className="text-sm text-[var(--muted)]">{seller.role || 'Sales Representative'} • {workspace}</p>
                           </div>
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors">
                             Update Seller
                           </button>
                           <button className="px-4 py-2 text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors">
@@ -408,16 +408,16 @@ export default function SellerCompaniesPage() {
                       {/* Metrics Row */}
                       <div className="mt-4 flex items-center gap-6">
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">{companies.length}</div>
-                          <div className="text-xs text-gray-500">Companies</div>
+                          <div className="text-lg font-semibold text-[var(--foreground)]">{companies.length}</div>
+                          <div className="text-xs text-[var(--muted)]">Companies</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">25</div>
-                          <div className="text-xs text-gray-500">Opportunities</div>
+                          <div className="text-lg font-semibold text-[var(--foreground)]">25</div>
+                          <div className="text-xs text-[var(--muted)]">Opportunities</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold text-gray-900">12</div>
-                          <div className="text-xs text-gray-500">Closed Won</div>
+                          <div className="text-lg font-semibold text-[var(--foreground)]">12</div>
+                          <div className="text-xs text-[var(--muted)]">Closed Won</div>
                         </div>
                       </div>
                     </div>
@@ -427,13 +427,13 @@ export default function SellerCompaniesPage() {
 
                       {companies.length === 0 ? (
                         <div className="text-center py-12">
-                          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 bg-[var(--hover)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                           </div>
-                          <p className="text-gray-600 font-medium">No companies assigned</p>
-                          <p className="text-sm text-gray-500 mt-1">This seller doesn't have any companies assigned yet</p>
+                          <p className="text-[var(--muted)] font-medium">No companies assigned</p>
+                          <p className="text-sm text-[var(--muted)] mt-1">This seller doesn't have any companies assigned yet</p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -441,30 +441,30 @@ export default function SellerCompaniesPage() {
                             <div
                               key={company.id}
                               onClick={() => handleCompanyClick(company)}
-                              className="group bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
+                              className="group bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
                             >
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-2">
-                                    <h4 className="font-semibold text-gray-900 text-lg group-hover:text-blue-700 transition-colors">
+                                    <h4 className="font-semibold text-[var(--foreground)] text-lg group-hover:text-blue-700 transition-colors">
                                       {company.name}
                                     </h4>
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                       {company.status || 'Active'}
                                     </span>
                                   </div>
-                                  <div className="text-sm text-gray-600 space-y-1">
+                                  <div className="text-sm text-[var(--muted)] space-y-1">
                                     <div>{company.industry}</div>
                                     <div>{company.size ? `${company.size} employees` : company.employeeCount}</div>
                                     <div>{company.revenue || 'N/A'}</div>
                                     <div>{company.city && company.state ? `${company.city}, ${company.state}` : company.country}</div>
                                   </div>
-                                  <div className="mt-2 text-sm text-gray-500">
+                                  <div className="mt-2 text-sm text-[var(--muted)]">
                                     Last Updated: {company.updatedAt ? new Date(company.updatedAt).toLocaleDateString() : 'N/A'}
                                   </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
-                                  <div className="text-sm text-gray-500">
+                                  <div className="text-sm text-[var(--muted)]">
                                     {company.lastAction || 'Initial Contact'}
                                   </div>
                                 </div>

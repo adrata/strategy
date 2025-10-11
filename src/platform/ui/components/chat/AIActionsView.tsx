@@ -54,7 +54,7 @@ export function AIActionsView({ actions, onBack }: AIActionsViewProps) {
                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                   : action['status'] === 'in_progress'
                   ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                  : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                  : 'bg-[var(--hover)] text-gray-800 dark:bg-[var(--foreground)] dark:text-gray-200'
               }`}>
                 {action.status.replace('_', ' ')}
               </span>

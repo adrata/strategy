@@ -135,15 +135,15 @@ export function ProfileImageUploadModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-w-[90vw]">
+      <div className="bg-[var(--background)] rounded-lg p-6 w-96 max-w-[90vw]">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">
             Update Profile Photo
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -151,7 +151,7 @@ export function ProfileImageUploadModal({
 
         {/* Current/Preview Image with Zoom Controls */}
         <div className="mb-4">
-          <div className="w-32 h-32 mx-auto bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden border-2 border-gray-300 relative">
+          <div className="w-32 h-32 mx-auto bg-[var(--loading-bg)] rounded-xl flex items-center justify-center overflow-hidden border-2 border-[var(--border)] relative">
             {previewUrl ? (
               <div 
                 className="w-full h-full relative overflow-hidden cursor-move"
@@ -179,7 +179,7 @@ export function ProfileImageUploadModal({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-3xl font-medium text-gray-600">
+              <span className="text-3xl font-medium text-[var(--muted)]">
                 {personName.charAt(0).toUpperCase()}
               </span>
             )}
@@ -190,20 +190,20 @@ export function ProfileImageUploadModal({
             <div className="flex justify-center gap-2 mt-2">
               <button
                 onClick={handleZoomOut}
-                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="p-1 rounded-full bg-[var(--hover)] hover:bg-[var(--loading-bg)] transition-colors"
                 title="Zoom Out"
               >
-                <MagnifyingGlassMinusIcon className="w-4 h-4 text-gray-600" />
+                <MagnifyingGlassMinusIcon className="w-4 h-4 text-[var(--muted)]" />
               </button>
-              <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded">
+              <span className="text-xs text-[var(--muted)] px-2 py-1 bg-[var(--hover)] rounded">
                 {Math.round(zoom * 100)}%
               </span>
               <button
                 onClick={handleZoomIn}
-                className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="p-1 rounded-full bg-[var(--hover)] hover:bg-[var(--loading-bg)] transition-colors"
                 title="Zoom In"
               >
-                <MagnifyingGlassPlusIcon className="w-4 h-4 text-gray-600" />
+                <MagnifyingGlassPlusIcon className="w-4 h-4 text-[var(--muted)]" />
               </button>
             </div>
           )}
@@ -220,7 +220,7 @@ export function ProfileImageUploadModal({
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-6 py-2 border border-[var(--border)] rounded-lg text-sm font-medium text-gray-700 hover:bg-[var(--panel-background)] transition-colors"
           >
             {selectedFile ? 'Choose Different Photo' : 'Choose Photo'}
           </button>
@@ -242,7 +242,7 @@ export function ProfileImageUploadModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex-1 py-2 px-4 border border-[var(--border)] rounded-lg text-sm font-medium text-gray-700 hover:bg-[var(--panel-background)] transition-colors"
           >
             Cancel
           </button>

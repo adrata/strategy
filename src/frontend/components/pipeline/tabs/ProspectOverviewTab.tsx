@@ -305,51 +305,51 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Name:</span>
-                <span className="text-sm font-medium text-gray-900">{prospectData.name}</span>
+                <span className="text-sm text-[var(--muted)]">Name:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Title:</span>
-                <span className="text-sm font-medium text-gray-900">{prospectData.title}</span>
+                <span className="text-sm text-[var(--muted)]">Title:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.title}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{prospectData.company}</span>
+                <span className="text-sm text-[var(--muted)]">Company:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.company}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{prospectData.department}</span>
+                <span className="text-sm text-[var(--muted)]">Department:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.department}</span>
               </div>
             </div>
           </div>
 
           {/* Role & Influence Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role & Influence</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Role & Influence</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Role:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group Role:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
                   prospectData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
+                  'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {prospectData.buyerGroupRole}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{prospectData.influenceLevel}</span>
+                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{prospectData.influenceLevel}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Priority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{prospectData.engagementPriority}</span>
+                <span className="text-sm text-[var(--muted)]">Engagement Priority:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{prospectData.engagementPriority}</span>
               </div>
             </div>
           </div>
@@ -360,12 +360,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Email:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Email:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {prospectData.email !== '-' ? (
                     <a href={`mailto:${prospectData.email}`} className="text-blue-600 hover:underline">
                       {prospectData.email}
@@ -376,8 +376,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Phone:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Phone:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {prospectData.phone !== '-' ? (
                     <a href={`tel:${prospectData.phone}`} className="text-blue-600 hover:underline">
                       {prospectData.phone}
@@ -388,8 +388,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">LinkedIn:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {prospectData.linkedin !== '-' ? (
                     <a 
                       href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
@@ -408,24 +408,24 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           </div>
 
           {/* Engagement History Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Contact:</span>
-                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(prospectData.lastContact)}</span>
+                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(prospectData.lastContact)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Next Action:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Next Action:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {prospectData.nextActionDate ? formatRelativeDate(prospectData.nextActionDate) : prospectData.nextAction}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Status:</span>
+                <span className="text-sm text-[var(--muted)]">Status:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   prospectData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  prospectData.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                  prospectData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
                   'bg-yellow-100 text-yellow-800'
                 }`}>
                   {prospectData.status}
@@ -438,8 +438,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
 
       {/* What do they care about */}
       <div className="space-y-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+          <h4 className="font-medium text-[var(--foreground)] mb-3">
             Wants & Needs: Based on their role as {prospectData.title} at {prospectData.company}, they likely care about:
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -447,8 +447,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
+                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <span className="text-[var(--muted)] mr-2">•</span>
                     {want}
                   </li>
                 ))}
@@ -458,8 +458,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
               <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
+                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <span className="text-[var(--muted)] mr-2">•</span>
                     {need}
                   </li>
                 ))}
@@ -471,12 +471,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
 
       {/* What did I last do */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">What did I last do</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">Last 3 Actions:</h4>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+          <h4 className="font-medium text-[var(--foreground)] mb-3">Last 3 Actions:</h4>
           <ul className="space-y-2">
             {lastActions.map((action, index) => (
-              <li key={index} className="text-sm text-gray-600">
+              <li key={index} className="text-sm text-[var(--muted)]">
                 • {action.action} - {action.date}
               </li>
             ))}
@@ -486,19 +486,19 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
 
       {/* Notes on them */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               {prospectData.notes && prospectData.notes !== 'No notes available' && prospectData.notes.trim() !== '' ? prospectData.notes : 
                 `—`
               }
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               Focus on {prospectData.engagementPriority.toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(prospectData.lastContact)}. 
               Next action: {prospectData.nextAction}.

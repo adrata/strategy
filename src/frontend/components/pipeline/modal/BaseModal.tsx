@@ -82,9 +82,9 @@ export function BaseModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col ${className}`}>
+      <div className={`bg-[var(--background)] rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col ${className}`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center space-x-3">
             {icon && (
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -92,11 +92,11 @@ export function BaseModal({
               </div>
             )}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-[var(--foreground)]">
                 {title}
               </h2>
               {subtitle && (
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-[var(--muted)] mt-1">
                   {subtitle}
                 </p>
               )}
@@ -105,16 +105,16 @@ export function BaseModal({
           
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
             title="Close"
           >
-            <XMarkIcon className="h-5 w-5 text-gray-500" />
+            <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
           </button>
         </div>
 
         {/* Tab Navigation */}
         {tabs && tabs.length > 0 && (
-          <div className="border-b border-gray-200">
+          <div className="border-b border-[var(--border)]">
             <nav className="flex space-x-8 px-6">
               {tabs.map((tab) => (
                 <button
@@ -123,7 +123,7 @@ export function BaseModal({
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
                   }`}
                 >
                   <span className="flex items-center space-x-2">
@@ -143,7 +143,7 @@ export function BaseModal({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
             {footer}
           </div>
         )}

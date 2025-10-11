@@ -720,7 +720,7 @@ export function UniversalAIAssistant({
                     </div>
                   ))}
                   {uploadedContent.length > 3 && (
-                    <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-xs text-center">
+                    <div className="px-3 py-2 bg-[var(--panel-background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg text-xs text-center">
                       +{uploadedContent.length - 3} more
                     </div>
                   )}
@@ -816,7 +816,7 @@ export function UniversalAIAssistant({
                           setInputMessage(suggestion);
                           setTimeout(handleSendMessage, 100);
                         }}
-                        className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-white text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
                       >
                         <span>{suggestion}</span>
                       </button>

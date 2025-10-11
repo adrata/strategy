@@ -38,8 +38,8 @@ export function UniversalLandminesTab({ record, recordType }: { record: any; rec
   return (
     <div className="p-6">
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Landmines & Risks</h3>
-        <p className="text-gray-600">Risk assessment and potential issues coming soon</p>
+        <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Landmines & Risks</h3>
+        <p className="text-[var(--muted)]">Risk assessment and potential issues coming soon</p>
       </div>
     </div>
   );
@@ -52,21 +52,21 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Opportunities</h2>
-        <p className="text-gray-600">Sales opportunities associated with this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)}</p>
+        <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Opportunities</h2>
+        <p className="text-[var(--muted)]">Sales opportunities associated with this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)}</p>
       </div>
 
       {opportunities['length'] === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No opportunities yet</h3>
-          <p className="text-gray-600">Create opportunities to track potential deals</p>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No opportunities yet</h3>
+          <p className="text-[var(--muted)]">Create opportunities to track potential deals</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {opportunities.map((opp: any, index: number) => (
-            <div key={opp.id || index} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div key={opp.id || index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
               <div className="flex items-start justify-between mb-3">
-                <h4 className="font-medium text-gray-900">{opp.name || 'Untitled Opportunity'}</h4>
+                <h4 className="font-medium text-[var(--foreground)]">{opp.name || 'Untitled Opportunity'}</h4>
                 <div className="flex flex-col items-end space-y-1">
                   <span className="px-4 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
                     {opp.stage || 'Discovery'}
@@ -85,7 +85,7 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
               <p className="text-2xl font-bold text-green-600 mb-2">
                 ${(opp.amount || 0).toLocaleString()}
               </p>
-              <div className="space-y-1 text-sm text-gray-600">
+              <div className="space-y-1 text-sm text-[var(--muted)]">
                 <p>
                   Expected close: {opp.expectedCloseDate ? new Date(opp.expectedCloseDate).toLocaleDateString() : 'TBD'}
                 </p>
@@ -96,7 +96,7 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
                   <p>Source: {opp.source}</p>
                 )}
                 {opp['nextSteps'] && (
-                  <p className="text-xs text-gray-500">Next: {opp.nextSteps}</p>
+                  <p className="text-xs text-[var(--muted)]">Next: {opp.nextSteps}</p>
                 )}
               </div>
             </div>

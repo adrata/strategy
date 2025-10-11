@@ -74,26 +74,26 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
   // Keep the old tabbed interface as fallback (unreachable code for now)
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
             <BoltIcon className="w-8 h-8 text-blue-600" />
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Speedrun Engine</h2>
-              <p className="text-gray-600">Intelligent Daily Prospect Prioritization</p>
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">Speedrun Engine</h2>
+              <p className="text-[var(--muted)]">Intelligent Daily Prospect Prioritization</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-[var(--border)]">
           <nav className="flex space-x-8 px-6">
             {[
               { id: 'overview', label: 'How It Works' },
@@ -107,7 +107,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-[var(--muted)] hover:text-gray-700'
                 }`}
               >
                 {tab.label}
@@ -121,8 +121,8 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
           {activeTab === 'overview' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Daily Intelligent Prioritization</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Daily Intelligent Prioritization</h3>
+                <p className="text-[var(--muted)] mb-6">
                   Speedrun analyzes all your leads, opportunities, accounts, and contacts to surface the 
                   <strong> top 20 companies</strong> and <strong>50+ prospects</strong> you should focus on each day.
                 </p>
@@ -137,7 +137,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Companies are ranked 1, 2, 3... based on total business value and engagement signals.
                     </p>
                     <div className="space-y-2 text-sm">
@@ -156,7 +156,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       When someone emails "Hey! I want to buy!" they automatically jump to the top.
                     </p>
                     <div className="space-y-2 text-sm">
@@ -175,7 +175,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       AI analyzes timing signals to identify hot prospects who need immediate attention.
                     </p>
                     <div className="space-y-2 text-sm">
@@ -194,7 +194,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Higher value opportunities and larger companies get priority in your daily list.
                     </p>
                     <div className="space-y-2 text-sm">
@@ -211,15 +211,15 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
           {activeTab === 'algorithm' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">How Daily Rankings Are Calculated</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">How Daily Rankings Are Calculated</h3>
+                <p className="text-[var(--muted)] mb-6">
                   The Speedrun algorithm combines multiple factors to create your optimal daily prospect list:
                 </p>
               </div>
 
               <div className="bg-blue-50 p-6 rounded-lg">
                 <h4 className="font-semibold text-blue-900 mb-4">Final Score Formula:</h4>
-                <div className="font-mono text-sm bg-white p-4 rounded border">
+                <div className="font-mono text-sm bg-[var(--background)] p-4 rounded border">
                   Final Score = Base Priority + (Recency × 30%) + (Value × 25%) + (Engagement × 20%) + (Strategic × 15%) + (Urgency × 10%)
                 </div>
               </div>
@@ -227,22 +227,22 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <div className="border-l-4 border-blue-500 pl-4">
-                    <h5 className="font-semibold text-gray-900">Recency Score (30%)</h5>
-                    <p className="text-sm text-gray-600">
+                    <h5 className="font-semibold text-[var(--foreground)]">Recency Score (30%)</h5>
+                    <p className="text-sm text-[var(--muted)]">
                       How recently you've interacted with this contact. Recent activity = higher priority.
                     </p>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4">
-                    <h5 className="font-semibold text-gray-900">Business Value (25%)</h5>
-                    <p className="text-sm text-gray-600">
+                    <h5 className="font-semibold text-[var(--foreground)]">Business Value (25%)</h5>
+                    <p className="text-sm text-[var(--muted)]">
                       Deal size, company revenue, and strategic importance to your business.
                     </p>
                   </div>
                   
                   <div className="border-l-4 border-purple-500 pl-4">
-                    <h5 className="font-semibold text-gray-900">Engagement (20%)</h5>
-                    <p className="text-sm text-gray-600">
+                    <h5 className="font-semibold text-[var(--foreground)]">Engagement (20%)</h5>
+                    <p className="text-sm text-[var(--muted)]">
                       Email opens, responses, meeting attendance, and other engagement signals.
                     </p>
                   </div>
@@ -250,23 +250,23 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
 
                 <div className="space-y-4">
                   <div className="border-l-4 border-yellow-500 pl-4">
-                    <h5 className="font-semibold text-gray-900">Strategic Score (15%)</h5>
-                    <p className="text-sm text-gray-600">
+                    <h5 className="font-semibold text-[var(--foreground)]">Strategic Score (15%)</h5>
+                    <p className="text-sm text-[var(--muted)]">
                       Company fit with your ideal customer profile and market position.
                     </p>
                   </div>
                   
                   <div className="border-l-4 border-red-500 pl-4">
-                    <h5 className="font-semibold text-gray-900">Urgency Score (10%)</h5>
-                    <p className="text-sm text-gray-600">
+                    <h5 className="font-semibold text-[var(--foreground)]">Urgency Score (10%)</h5>
+                    <p className="text-sm text-[var(--muted)]">
                       Time-sensitive signals like close dates and buying timeline indicators.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-3">Company-Based Ranking System</h4>
+              <div className="bg-[var(--panel-background)] p-6 rounded-lg">
+                <h4 className="font-semibold text-[var(--foreground)] mb-3">Company-Based Ranking System</h4>
                 <div className="space-y-2 text-sm">
                   <div>1. <strong>Aggregate company scores</strong> from all contacts at each company</div>
                   <div>2. <strong>Sort companies by total potential</strong> (highest to lowest)</div>
@@ -280,8 +280,8 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
           {activeTab === 'signals' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Real-Time Signal Processing</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Real-Time Signal Processing</h3>
+                <p className="text-[var(--muted)] mb-6">
                   Speedrun continuously monitors activity across all channels and instantly adjusts priorities 
                   when buying signals are detected.
                 </p>
@@ -320,7 +320,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     <CardTitle className="text-base">Email Monitoring</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Real-time scanning of all incoming emails for buying intent keywords.
                     </p>
                     <div className="text-xs space-y-1">
@@ -336,7 +336,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     <CardTitle className="text-base">Activity Tracking</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Monitors all touchpoints and interaction patterns with prospects.
                     </p>
                     <div className="text-xs space-y-1">
@@ -352,7 +352,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
                     <CardTitle className="text-base">Smart Notifications</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Instant alerts when high-priority signals are detected.
                     </p>
                     <div className="text-xs space-y-1">
@@ -366,7 +366,7 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
 
               <div className="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
                 <h4 className="font-semibold text-yellow-900 mb-3">Example: Inbound Interest Detection</h4>
-                <div className="bg-white p-4 rounded border text-sm">
+                <div className="bg-[var(--background)] p-4 rounded border text-sm">
                   <div className="mb-2"><strong>Scenario:</strong> Customer emails: "Hi! We're interested in your retail fixtures for our new store locations. Can we schedule a call this week?"</div>
                   <div className="mb-2"><strong>System Response:</strong></div>
                   <ul className="list-disc list-inside space-y-1 text-gray-700">
@@ -384,8 +384,8 @@ export function SpeedrunEngineModal({ isOpen, onClose }: SpeedrunEngineModalProp
           {activeTab === 'optimizer' && (
             <div className="p-6">
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Engine Configuration</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">Engine Configuration</h3>
+                <p className="text-[var(--muted)]">
                   Customize how the Speedrun Engine prioritizes and ranks your prospects. 
                   Changes will immediately re-rank your current list.
                 </p>

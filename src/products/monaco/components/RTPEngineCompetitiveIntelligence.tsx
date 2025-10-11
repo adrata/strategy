@@ -327,7 +327,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Pain Quantification Engine */}
-      <div className="bg-white border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <CurrencyDollarIcon className="w-7 h-7 text-green-600" />
           <div>
@@ -342,7 +342,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                   painEngine.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -360,7 +360,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {Object.entries(painEngine.painIdentificationSources).map(([source, enabled]) => (
-                  <label key={source} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50">
+                  <label key={source} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[var(--panel-background)]">
                     <input
                       type="checkbox"
                       checked={enabled}
@@ -406,7 +406,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                       }`}
                     >
                       <div
-                        className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                        className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                           enabled ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
@@ -475,7 +475,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* MEDDPICC Framework Integration */}
-      <div className="bg-white border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <DocumentTextIcon className="w-7 h-7 text-purple-600" />
           <div>
@@ -490,7 +490,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                   meddpiccConfig.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -559,7 +559,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                             }
                           }
                         }))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                   </div>
@@ -611,7 +611,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Proactive Pain Detection */}
-      <div className="bg-white border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <FireIcon className="w-7 h-7 text-red-600" />
           <div>
@@ -626,7 +626,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                   proactivePain.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -638,7 +638,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(proactivePain.detectionMethods).map(([method, enabled]) => (
-                <label key={method} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50">
+                <label key={method} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[var(--panel-background)]">
                   <input
                     type="checkbox"
                     checked={enabled}
@@ -695,7 +695,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Seller-Account Matching */}
-      <div className="bg-white border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <UserGroupIcon className="w-7 h-7 text-blue-600" />
           <div>
@@ -710,7 +710,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                   sellerMatching.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -746,7 +746,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                           [criteria]: parseInt(e.target.value)
                         }
                       }))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
                 ))}

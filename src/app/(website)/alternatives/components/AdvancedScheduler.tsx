@@ -127,20 +127,20 @@ export default function AdvancedScheduler({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
-        <div className="sticky top-0 bg-gray-900 border-b border-gray-800 p-6">
+      <div className="bg-[var(--foreground)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border)]">
+        <div className="sticky top-0 bg-[var(--foreground)] border-b border-gray-800 p-6">
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-white">
                 Schedule Your Demo
               </h2>
-              <p className="text-gray-400 mt-1">
+              <p className="text-[var(--muted)] mt-1">
                 AI-optimized scheduling for maximum impact
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-2xl w-8 h-8 flex items-center justify-center"
+              className="text-[var(--muted)] hover:text-white text-2xl w-8 h-8 flex items-center justify-center"
             >
               ×
             </button>
@@ -160,7 +160,7 @@ export default function AdvancedScheduler({
                   className={`block p-4 rounded-xl border cursor-pointer transition ${
                     meetingType === type.id
                       ? "border-blue-500 bg-blue-500/10"
-                      : "border-gray-700 hover:border-gray-600"
+                      : "border-[var(--border)] hover:border-[var(--border)]"
                   }`}
                 >
                   <input
@@ -177,7 +177,7 @@ export default function AdvancedScheduler({
                       <div className="font-semibold text-white">
                         {type.label}
                       </div>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-[var(--muted)]">
                         {type.duration} • {type.description}
                       </div>
                     </div>
@@ -199,7 +199,7 @@ export default function AdvancedScheduler({
                   className={`block p-3 rounded-lg border cursor-pointer transition ${
                     urgency === level.id
                       ? "border-orange-500 bg-orange-500/10"
-                      : "border-gray-700 hover:border-gray-600"
+                      : "border-[var(--border)] hover:border-[var(--border)]"
                   }`}
                 >
                   <input
@@ -212,7 +212,7 @@ export default function AdvancedScheduler({
                   />
                   <div className="flex justify-between items-center">
                     <span className="text-white">{level.label}</span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-[var(--muted)]">
                       {level.multiplier}
                     </span>
                   </div>
@@ -249,7 +249,7 @@ export default function AdvancedScheduler({
                             ? "bg-blue-600 text-white"
                             : slot.available
                               ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                              : "bg-gray-900 text-gray-500 cursor-not-allowed"
+                              : "bg-[var(--foreground)] text-[var(--muted)] cursor-not-allowed"
                         }`}
                       >
                         {slot.time}
@@ -262,7 +262,7 @@ export default function AdvancedScheduler({
                 </div>
               ))}
             </div>
-            <div className="mt-4 text-sm text-gray-500 flex items-center">
+            <div className="mt-4 text-sm text-[var(--muted)] flex items-center">
               <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
               Green dot = AI-optimized time (higher demo effectiveness)
             </div>
@@ -280,7 +280,7 @@ export default function AdvancedScheduler({
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
                 placeholder="Your full name"
               />
             </div>
@@ -294,7 +294,7 @@ export default function AdvancedScheduler({
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
                 placeholder="your@company.com"
               />
             </div>
@@ -308,7 +308,7 @@ export default function AdvancedScheduler({
                 onChange={(e) =>
                   setFormData({ ...formData, company: e.target.value })
                 }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
                 placeholder="Your company name"
               />
             </div>
@@ -321,7 +321,7 @@ export default function AdvancedScheduler({
                 onChange={(e) =>
                   setFormData({ ...formData, role: e.target.value })
                 }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">Select your role</option>
                 <option value="ceo">CEO/Founder</option>
@@ -346,7 +346,7 @@ export default function AdvancedScheduler({
                 setFormData({ ...formData, requirements: e.target.value })
               }
               rows={3}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
               placeholder="Tell us what you'd like to focus on during the demo..."
             />
           </div>
@@ -355,7 +355,7 @@ export default function AdvancedScheduler({
           <div className="flex justify-end space-x-4">
             <button
               onClick={onClose}
-              className="px-6 py-3 border border-gray-600 rounded-lg text-gray-300 hover:border-gray-500 transition"
+              className="px-6 py-3 border border-[var(--border)] rounded-lg text-gray-300 hover:border-gray-500 transition"
             >
               Cancel
             </button>

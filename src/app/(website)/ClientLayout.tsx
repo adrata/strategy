@@ -45,7 +45,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
     return (
-      <div className="min-h-screen font-sans antialiased bg-white text-gray-900 overflow-x-hidden transition-colors duration-300">
+      <div className="min-h-screen font-sans antialiased bg-[var(--background)] text-[var(--foreground)] overflow-x-hidden transition-colors duration-300">
         {children}
       </div>
     );
@@ -56,7 +56,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
       <div className={`min-h-screen font-sans antialiased ${
         theme === 'dark' 
           ? 'bg-gray-950 text-white' 
-          : 'bg-white text-gray-900'
+          : 'bg-[var(--background)] text-[var(--foreground)]'
         } overflow-x-hidden overflow-y-auto transition-colors duration-300`}>
         {children}
       </div>

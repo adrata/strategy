@@ -13,7 +13,7 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
   if (!record) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500">No record data available</div>
+        <div className="text-center text-[var(--muted)]">No record data available</div>
       </div>
     );
   }
@@ -132,17 +132,17 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'Decision Maker':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'Champion':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'Stakeholder':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'Blocker':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'Opener':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
     }
   };
 
@@ -154,47 +154,47 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
     } else if (engagement.includes('Cold')) {
       return 'text-red-600';
     }
-    return 'text-gray-600';
+    return 'text-[var(--muted)]';
   };
 
   return (
     <div className="p-6 space-y-8">
       {/* Buyer Group Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Overview</h3>
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Buyer Group Overview</h3>
+        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Group Details</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Group Details</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Group Name</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.groupName}</span>
+                  <span className="text-sm text-[var(--muted)]">Group Name</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.groupName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Company</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.company}</span>
+                  <span className="text-sm text-[var(--muted)]">Company</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.company}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Total Members</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.totalMembers}</span>
+                  <span className="text-sm text-[var(--muted)]">Total Members</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.totalMembers}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Decision Timeline</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.decisionTimeline}</span>
+                  <span className="text-sm text-[var(--muted)]">Decision Timeline</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.decisionTimeline}</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Financial Details</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Financial Details</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Budget Authority</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.budgetAuthority}</span>
+                  <span className="text-sm text-[var(--muted)]">Budget Authority</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.budgetAuthority}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Risk Level</span>
+                  <span className="text-sm text-[var(--muted)]">Risk Level</span>
                   <span className={`text-sm font-medium ${
                     buyerGroupData['riskLevel'] === 'Low' ? 'text-green-600' :
                     buyerGroupData['riskLevel'] === 'Medium' ? 'text-yellow-600' : 'text-red-600'
@@ -203,36 +203,36 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Group Influence</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.groupInfluence}%</span>
+                  <span className="text-sm text-[var(--muted)]">Group Influence</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.groupInfluence}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Avg Engagement</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.averageEngagement}/5</span>
+                  <span className="text-sm text-[var(--muted)]">Avg Engagement</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.averageEngagement}/5</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Activity Status</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Activity Status</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Last Activity</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.lastActivity}</span>
+                  <span className="text-sm text-[var(--muted)]">Last Activity</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.lastActivity}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Next Milestone</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerGroupData.nextMilestone}</span>
+                  <span className="text-sm text-[var(--muted)]">Next Milestone</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerGroupData.nextMilestone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Your Role</span>
+                  <span className="text-sm text-[var(--muted)]">Your Role</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getRoleColor(buyerRole)}`}>
                     {buyerRole}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Your Influence</span>
-                  <span className="text-sm font-medium text-gray-900">{influence}%</span>
+                  <span className="text-sm text-[var(--muted)]">Your Influence</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{influence}%</span>
                 </div>
               </div>
             </div>
@@ -242,37 +242,37 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
 
       {/* Role Analysis */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Role Analysis</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role Analysis</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-2xl font-bold text-red-600">{buyerGroupData.decisionMakers}</div>
-            <div className="text-sm text-gray-600">Decision Makers</div>
+            <div className="text-sm text-[var(--muted)]">Decision Makers</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-2xl font-bold text-green-600">{buyerGroupData.champions}</div>
-            <div className="text-sm text-gray-600">Champions</div>
+            <div className="text-sm text-[var(--muted)]">Champions</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-2xl font-bold text-blue-600">{buyerGroupData.stakeholders}</div>
-            <div className="text-sm text-gray-600">Stakeholders</div>
+            <div className="text-sm text-[var(--muted)]">Stakeholders</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-2xl font-bold text-orange-600">{buyerGroupData.blockers}</div>
-            <div className="text-sm text-gray-600">Blockers</div>
+            <div className="text-sm text-[var(--muted)]">Blockers</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-2xl font-bold text-purple-600">{buyerGroupData.openers}</div>
-            <div className="text-sm text-gray-600">Openers</div>
+            <div className="text-sm text-[var(--muted)]">Openers</div>
           </div>
         </div>
       </div>
 
       {/* Buyer Group Members */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Buyer Group Members</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Buyer Group Members</h3>
         <div className="space-y-4">
           {buyerGroupData.members.map((member, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+            <div key={index} className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -281,8 +281,8 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
                     </span>
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{member.name}</div>
-                    <div className="text-sm text-gray-600">{member.title}</div>
+                    <div className="font-semibold text-[var(--foreground)]">{member.name}</div>
+                    <div className="text-sm text-[var(--muted)]">{member.title}</div>
                   </div>
                 </div>
                 
@@ -292,26 +292,26 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
                       {member.role}
                     </div>
                     {member['fallbackRole'] && (
-                      <div className="text-xs text-gray-500 mt-1">{member.fallbackRole}</div>
+                      <div className="text-xs text-[var(--muted)] mt-1">{member.fallbackRole}</div>
                     )}
                   </div>
                   
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-900">{member.influence}%</div>
-                    <div className="text-xs text-gray-500">Influence</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">{member.influence}%</div>
+                    <div className="text-xs text-[var(--muted)]">Influence</div>
                   </div>
                   
                   <div className="text-right">
                     <div className={`text-sm font-medium ${getEngagementColor(member.engagement)}`}>
                       {member.engagement}
                     </div>
-                    <div className="text-xs text-gray-500">Engagement</div>
+                    <div className="text-xs text-[var(--muted)]">Engagement</div>
                   </div>
                   
                   {member['riskStatus'] && (
                     <div className="text-right">
                       <div className="text-sm font-medium text-orange-600">{member.riskStatus}</div>
-                      <div className="text-xs text-gray-500">Risk</div>
+                      <div className="text-xs text-[var(--muted)]">Risk</div>
                     </div>
                   )}
                 </div>
@@ -323,58 +323,58 @@ export function UniversalBuyerGroupTab({ recordType }: UniversalBuyerGroupTabPro
 
       {/* Engagement Strategy */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Strategy</h3>
-        <div className="bg-white p-6 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Engagement Strategy</h3>
+        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Recommended Approach</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-3">Recommended Approach</h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Focus on Champions</div>
-                    <div className="text-sm text-gray-600">Leverage Sarah Rodriguez and Kevin Zhang to build internal support</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Focus on Champions</div>
+                    <div className="text-sm text-[var(--muted)]">Leverage Sarah Rodriguez and Kevin Zhang to build internal support</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Address Security Concerns</div>
-                    <div className="text-sm text-gray-600">Schedule security review with David Park to address blockers</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Address Security Concerns</div>
+                    <div className="text-sm text-[var(--muted)]">Schedule security review with David Park to address blockers</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Executive Engagement</div>
-                    <div className="text-sm text-gray-600">Present business case to Michael Chen and James Wilson</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Executive Engagement</div>
+                    <div className="text-sm text-[var(--muted)]">Present business case to Michael Chen and James Wilson</div>
                   </div>
                 </div>
               </div>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Next Steps</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-3">Next Steps</h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Technical Demo</div>
-                    <div className="text-sm text-gray-600">Schedule comprehensive demo for entire team</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Technical Demo</div>
+                    <div className="text-sm text-[var(--muted)]">Schedule comprehensive demo for entire team</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Reference Calls</div>
-                    <div className="text-sm text-gray-600">Arrange calls with similar enterprise clients</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Reference Calls</div>
+                    <div className="text-sm text-[var(--muted)]">Arrange calls with similar enterprise clients</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">Pilot Program</div>
-                    <div className="text-sm text-gray-600">Propose limited pilot to reduce risk</div>
+                    <div className="text-sm font-medium text-[var(--foreground)]">Pilot Program</div>
+                    <div className="text-sm text-[var(--muted)]">Propose limited pilot to reduce risk</div>
                   </div>
                 </div>
               </div>

@@ -440,19 +440,19 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-gray-200 text-gray-900 border border-gray-300";
-      case "medium": return "bg-gray-100 text-gray-800 border border-gray-200";
-      case "low": return "bg-white text-gray-700 border border-gray-200";
-      default: return "bg-gray-100 text-gray-800 border border-gray-200";
+      case "high": return "bg-[var(--loading-bg)] text-[var(--foreground)] border border-[var(--border)]";
+      case "medium": return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
+      case "low": return "bg-[var(--background)] text-gray-700 border border-[var(--border)]";
+      default: return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "prospect": return "bg-white text-gray-800 border border-gray-200";
-      case "contacted": return "bg-gray-100 text-gray-900 border border-gray-300";
-      case "qualified": return "bg-gray-200 text-gray-900 border border-gray-400";
-      default: return "bg-white text-gray-800 border border-gray-200";
+      case "prospect": return "bg-[var(--background)] text-gray-800 border border-[var(--border)]";
+      case "contacted": return "bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]";
+      case "qualified": return "bg-[var(--loading-bg)] text-[var(--foreground)] border border-gray-400";
+      default: return "bg-[var(--background)] text-gray-800 border border-[var(--border)]";
     }
   };
 
@@ -461,19 +461,19 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
       
 
       {/* Stats Header */}
-      <div className="flex-shrink-0 p-3 border-b border-[var(--border)] bg-gray-50">
+      <div className="flex-shrink-0 p-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-red-600">{doneContacts.length}</span>
-            <span className="text-gray-400">/</span>
-            <span className="text-lg font-bold text-gray-900">{activeContacts.length + doneContacts.length}</span>
+            <span className="text-[var(--muted)]">/</span>
+            <span className="text-lg font-bold text-[var(--foreground)]">{activeContacts.length + doneContacts.length}</span>
           </div>
           <div className="flex items-center gap-2">
             {/* View Dropdown */}
             <div className="relative dropdown-container">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-300 text-xs font-medium rounded hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1 px-2 py-1 bg-[var(--background)] border border-[var(--border)] text-xs font-medium rounded hover:bg-[var(--panel-background)] transition-colors"
               >
                 {React.createElement(getViewIcon(currentView), { className: "w-3 h-3" })}
                 <span>{getViewLabel(currentView)}</span>
@@ -481,15 +481,15 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               </button>
               
               {showDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                <div className="absolute top-full left-0 mt-1 w-32 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg z-50">
                   {(['prospects', 'sales_actions', 'time'] as SpeedrunView[]).map((view) => {
                     const Icon = getViewIcon(view);
                     return (
                       <button
                         key={view}
                         onClick={() => handleViewChange(view)}
-                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-gray-50 transition-colors ${
-                          currentView === view ? 'bg-gray-100 font-medium' : ''
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[var(--panel-background)] transition-colors ${
+                          currentView === view ? 'bg-[var(--hover)] font-medium' : ''
                         }`}
                       >
                         <Icon className="w-3 h-3" />
@@ -507,7 +507,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             </button>
           </div>
         </div>
-        <div className="flex items-center justify-between text-xs text-gray-600">
+        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
           <span>Daily Target</span>
           <span>{currentView === 'prospects' ? 'People' : currentView === 'sales_actions' ? 'Actions' : 'Time'}</span>
         </div>
@@ -570,7 +570,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
         </div>
 
         {/* Pipeline Indicator */}
-        <div className="text-xs text-[var(--muted)] bg-gray-50 rounded px-2 py-1">
+        <div className="text-xs text-[var(--muted)] bg-[var(--panel-background)] rounded px-2 py-1">
           {Math.max(0, (dynamicRtpProspects?.length || 0) - activeContacts.length)} more contacts in pipeline
         </div>
 
@@ -581,18 +581,18 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
         {currentView === 'prospects' && (
           <div className="space-y-2">
             {/* Progress Bar for Speedrun Goal */}
-            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--panel-background)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-gray-700">Daily Progress</span>
-                <span className="text-xs text-gray-600">{doneContacts.length}/50</span>
+                <span className="text-xs text-[var(--muted)]">{doneContacts.length}/50</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                 <div 
                   className="bg-red-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, (doneContacts.length / 50) * 100)}%` }}
                 ></div>
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-[var(--muted)] mt-1">
                 {50 - doneContacts.length} contacts remaining
               </div>
             </div>
@@ -608,8 +608,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 onClick={() => handleContactClick(contact)}
                 className={`p-3 rounded-lg border transition-all cursor-pointer ${
                   selectedPerson?.id === contact.id 
-                    ? "border-gray-400 bg-gray-100 shadow-sm" 
-                    : "border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300"
+                    ? "border-gray-400 bg-[var(--hover)] shadow-sm" 
+                    : "border-[var(--border)] bg-[var(--background)] hover:bg-[var(--panel-background)] hover:border-[var(--border)]"
                 }`}
               >
                 <div className="flex items-start justify-between mb-1">
@@ -622,9 +622,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 </div>
                 
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-gray-900 leading-tight">{contact.name}</h4>
-                  <p className="text-xs text-gray-600">{contact.title}</p>
-                  <p className="text-xs text-gray-500">{contact.company}</p>
+                  <h4 className="text-sm font-medium text-[var(--foreground)] leading-tight">{contact.name}</h4>
+                  <p className="text-xs text-[var(--muted)]">{contact.title}</p>
+                  <p className="text-xs text-[var(--muted)]">{contact.company}</p>
                   
                   <div className="flex items-center justify-between mt-2">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(contact.status || 'prospect')}`}>
@@ -639,7 +639,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             
             {/* Show "more contacts" indicator when displaying limited view */}
             {activeContacts.length > 50 && (
-              <div className="mt-3 p-2 text-center text-xs text-[var(--muted)] bg-gray-50 rounded">
+              <div className="mt-3 p-2 text-center text-xs text-[var(--muted)] bg-[var(--panel-background)] rounded">
                 Showing 50 of {activeContacts.length} contacts
                 <br />
                 <span className="text-xs font-medium">Complete contacts to see more in your daily queue</span>
@@ -657,24 +657,24 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             ) : (
               <>
                 {/* Daily Goals Summary */}
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <div className="mb-4 p-3 bg-[var(--panel-background)] rounded-lg">
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Goals</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
-                      <div className="font-bold text-gray-900">50</div>
-                      <div className="text-gray-600">Contacts</div>
+                      <div className="font-bold text-[var(--foreground)]">50</div>
+                      <div className="text-[var(--muted)]">Contacts</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-gray-900">4</div>
-                      <div className="text-gray-600">Meetings</div>
+                      <div className="font-bold text-[var(--foreground)]">4</div>
+                      <div className="text-[var(--muted)]">Meetings</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-gray-900">25</div>
-                      <div className="text-gray-600">Emails</div>
+                      <div className="font-bold text-[var(--foreground)]">25</div>
+                      <div className="text-[var(--muted)]">Emails</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-gray-900">15</div>
-                      <div className="text-gray-600">Calls</div>
+                      <div className="font-bold text-[var(--foreground)]">15</div>
+                      <div className="text-[var(--muted)]">Calls</div>
                     </div>
                   </div>
                 </div>
@@ -685,7 +685,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                     className={`p-3 rounded-lg border transition-all ${
                       action.isCompleted 
                         ? "border-green-200 bg-green-50" 
-                        : "border-gray-200 bg-white"
+                        : "border-[var(--border)] bg-[var(--background)]"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -695,7 +695,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                             action.isCompleted
                               ? "border-green-500 bg-green-500"
-                              : "border-gray-300 hover:border-gray-400"
+                              : "border-[var(--border)] hover:border-gray-400"
                           }`}
                         >
                           {action['isCompleted'] && (
@@ -706,31 +706,31 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           action['priority'] === 'critical' ? 'bg-red-100 text-red-800' :
                           action['priority'] === 'high' ? 'bg-orange-100 text-orange-800' :
                           action['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                          'bg-[var(--hover)] text-gray-800'
                         }`}>
                           {action.priority}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
                         <ClockIcon className="w-3 h-3" />
                         {action.estimatedTime}m
                       </div>
                     </div>
                     
                     <h4 className={`text-sm font-medium mb-1 ${
-                      action.isCompleted ? 'text-green-800 line-through' : 'text-gray-900'
+                      action.isCompleted ? 'text-green-800 line-through' : 'text-[var(--foreground)]'
                     }`}>
                       {action.title}
                     </h4>
-                    <p className="text-xs text-gray-600 mb-2">{action.description}</p>
+                    <p className="text-xs text-[var(--muted)] mb-2">{action.description}</p>
                     
                     {action['relatedCompany'] && (
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-[var(--muted)]">
                         Company: {action.relatedCompany}
                       </div>
                     )}
                     
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-[var(--muted)] mt-1">
                       Expected: {action.expectedOutcome}
                     </div>
                   </div>
@@ -738,8 +738,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
                 {salesActions['length'] === 0 && (
                   <div className="text-center py-8">
-                    <CheckCircleIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-xs text-gray-600">No actions available</p>
+                    <CheckCircleIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
+                    <p className="text-xs text-[var(--muted)]">No actions available</p>
                   </div>
                 )}
               </>
@@ -756,16 +756,16 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             ) : dailySchedule ? (
               <>
                 {/* Schedule Summary */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Schedule</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
-                      <div className="font-semibold text-gray-900">{dailySchedule.events.length}</div>
-                      <div className="text-gray-500">Meetings</div>
+                      <div className="font-semibold text-[var(--foreground)]">{dailySchedule.events.length}</div>
+                      <div className="text-[var(--muted)]">Meetings</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-semibold text-gray-900">{Math.round(dailySchedule.availableTime / 60)}h</div>
-                      <div className="text-gray-500">Available</div>
+                      <div className="font-semibold text-[var(--foreground)]">{Math.round(dailySchedule.availableTime / 60)}h</div>
+                      <div className="text-[var(--muted)]">Available</div>
                     </div>
                   </div>
                 </div>
@@ -781,24 +781,24 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           className={`p-2 rounded border text-xs ${
                             event.isSpeedrunRelated
                               ? 'border-red-200 bg-red-50'
-                              : 'border-gray-200 bg-white'
+                              : 'border-[var(--border)] bg-[var(--background)]'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium text-gray-900">
+                            <span className="font-medium text-[var(--foreground)]">
                               {event.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               event['type'] === 'demo' ? 'bg-purple-100 text-purple-800' :
                               event['type'] === 'call' ? 'bg-green-100 text-green-800' :
-                              'bg-gray-100 text-gray-800'
+                              'bg-[var(--hover)] text-gray-800'
                             }`}>
                               {event.type}
                             </span>
                           </div>
                           <div className="text-gray-700">{event.title}</div>
                           {event['relatedCompany'] && (
-                            <div className="text-gray-500 mt-1">{event.relatedCompany}</div>
+                            <div className="text-[var(--muted)] mt-1">{event.relatedCompany}</div>
                           )}
                         </div>
                       ))}
@@ -808,8 +808,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               </>
             ) : (
               <div className="text-center py-8">
-                <CalendarIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-xs text-gray-600">No schedule data available</p>
+                <CalendarIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
+                <p className="text-xs text-[var(--muted)]">No schedule data available</p>
               </div>
             )}
           </div>
@@ -827,13 +827,13 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             {doneContacts.map((contact) => (
               <div
                 key={`done-${contact.id}`}
-                className="p-2 rounded border border-gray-300 bg-gray-100"
+                className="p-2 rounded border border-[var(--border)] bg-[var(--hover)]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-900">{contact.name}</span>
-                  <span className="text-xs text-gray-600">✓</span>
+                  <span className="text-xs font-medium text-[var(--foreground)]">{contact.name}</span>
+                  <span className="text-xs text-[var(--muted)]">✓</span>
                 </div>
-                <p className="text-xs text-gray-600">{contact.company}</p>
+                <p className="text-xs text-[var(--muted)]">{contact.company}</p>
               </div>
             ))}
           </div>

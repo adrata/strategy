@@ -57,17 +57,17 @@ export function OasisPageContent() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Standardized Header */}
       <StandardHeader
         title="Oasis"
         subtitle={
           <div className="flex items-center gap-2">
             {getSectionIcon()}
-            <span className="text-sm text-gray-500">{getSectionTitle()}</span>
+            <span className="text-sm text-[var(--muted)]">{getSectionTitle()}</span>
             {selectedChannel && (
               <>
-                <span className="text-gray-400">/</span>
+                <span className="text-[var(--muted)]">/</span>
                 <span className="text-sm text-gray-700">#{selectedChannel.name}</span>
               </>
             )}
@@ -80,7 +80,7 @@ export function OasisPageContent() {
         ]}
         actions={
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors">
               <PlusIcon className="w-4 h-4" />
               New Channel
             </button>
@@ -93,7 +93,7 @@ export function OasisPageContent() {
       />
 
       {/* Sub-header with Search and Controls */}
-      <div className="flex items-center gap-4 py-2 w-full bg-white px-6">
+      <div className="flex items-center gap-4 py-2 w-full bg-[var(--background)] px-6">
         {/* Search */}
         <div className="relative flex-1">
           <input
@@ -101,10 +101,10 @@ export function OasisPageContent() {
             placeholder="Search messages..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-white"
+            className="pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-[var(--background)]"
           />
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
+            <MagnifyingGlassIcon className="h-4 w-4 text-[var(--muted)]" />
           </div>
         </div>
 
@@ -113,10 +113,10 @@ export function OasisPageContent() {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <FunnelIcon className="w-4 h-4 text-gray-500" />
-            <span className="block truncate text-gray-900">Filter</span>
+            <FunnelIcon className="w-4 h-4 text-[var(--muted)]" />
+            <span className="block truncate text-[var(--foreground)]">Filter</span>
           </button>
         </div>
 
@@ -125,10 +125,10 @@ export function OasisPageContent() {
           <button
             type="button"
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-            className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
-            <span className="block truncate text-gray-900">Sort</span>
+            <ArrowsUpDownIcon className="w-4 h-4 text-[var(--muted)]" />
+            <span className="block truncate text-[var(--foreground)]">Sort</span>
           </button>
         </div>
       </div>

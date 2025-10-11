@@ -75,23 +75,23 @@ export function UniversalCompetitorsTab({ record, recordType }: UniversalCompeti
     <div className="space-y-6">
       {/* Simple Header */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{competitors.length} Competitors</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">{competitors.length} Competitors</h3>
       </div>
 
       {/* Simple Competitors List */}
       {competitors.length === 0 ? (
         <div className="text-center py-8">
-          <BuildingOfficeIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">No competitors identified</p>
+          <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
+          <p className="text-[var(--muted)]">No competitors identified</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {competitors.map((competitor) => (
             <div
               key={competitor.id}
-              className="bg-white border border-gray-200 rounded-lg p-4 text-center"
+              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center"
             >
-              <h4 className="font-medium text-gray-900">{competitor.name.split(' ').map(word => 
+              <h4 className="font-medium text-[var(--foreground)]">{competitor.name.split(' ').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
               ).join(' ')}</h4>
             </div>

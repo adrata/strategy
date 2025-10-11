@@ -11,27 +11,27 @@ export default function RealSystemValidationReport() {
             </div>
 
             {/* Executive Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📊 Executive Summary</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Executive Summary</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">80%</div>
-                        <div className="text-sm text-gray-600">System Success Rate</div>
+                        <div className="text-sm text-[var(--muted)]">System Success Rate</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-blue-600">451</div>
-                        <div className="text-sm text-gray-600">Real TOP Companies</div>
+                        <div className="text-sm text-[var(--muted)]">Real TOP Companies</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-purple-600">1,342</div>
-                        <div className="text-sm text-gray-600">Real TOP Contacts</div>
+                        <div className="text-sm text-[var(--muted)]">Real TOP Contacts</div>
                     </div>
                 </div>
             </div>
 
             {/* Real Data Verification */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">✅ Real Data Verification</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">✅ Real Data Verification</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -58,8 +58,8 @@ export default function RealSystemValidationReport() {
             </div>
 
             {/* API Integration Status */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔗 API Integration Status</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔗 API Integration Status</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -87,8 +87,8 @@ export default function RealSystemValidationReport() {
             </div>
 
             {/* Zero Hallucination Analysis */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🚨 Zero Hallucination Analysis</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🚨 Zero Hallucination Analysis</h2>
                 
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                     <h3 className="font-semibold text-red-800 mb-2">❌ Current Status: FAILED</h3>
@@ -102,7 +102,7 @@ export default function RealSystemValidationReport() {
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                         <div>
                             <div className="font-medium">Database Data: 100% Real</div>
-                            <div className="text-sm text-gray-600">All TOP companies and contacts verified in production database</div>
+                            <div className="text-sm text-[var(--muted)]">All TOP companies and contacts verified in production database</div>
                         </div>
                     </div>
                     
@@ -110,7 +110,7 @@ export default function RealSystemValidationReport() {
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                         <div>
                             <div className="font-medium">Email Validation: Real API Response</div>
-                            <div className="text-sm text-gray-600">DropContact API returning actual validation results</div>
+                            <div className="text-sm text-[var(--muted)]">DropContact API returning actual validation results</div>
                         </div>
                     </div>
                     
@@ -118,7 +118,7 @@ export default function RealSystemValidationReport() {
                         <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                         <div>
                             <div className="font-medium">Employment Verification: Not Functional</div>
-                            <div className="text-sm text-gray-600">Perplexity API needs fixing before employment data can be verified</div>
+                            <div className="text-sm text-[var(--muted)]">Perplexity API needs fixing before employment data can be verified</div>
                         </div>
                     </div>
                     
@@ -126,15 +126,15 @@ export default function RealSystemValidationReport() {
                         <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                         <div>
                             <div className="font-medium">Person Search: Not Functional</div>
-                            <div className="text-sm text-gray-600">CoreSignal API needs endpoint correction before person search works</div>
+                            <div className="text-sm text-[var(--muted)]">CoreSignal API needs endpoint correction before person search works</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Enrichment Flow Test Results */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔄 Enrichment Flow Test Results</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔄 Enrichment Flow Test Results</h2>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h3 className="font-semibold text-blue-800 mb-3">Test Case: Justin Bedard Enrichment</h3>
@@ -161,8 +161,8 @@ export default function RealSystemValidationReport() {
             </div>
 
             {/* Client Presentation Readiness */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🎯 Client Presentation Readiness</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🎯 Client Presentation Readiness</h2>
                 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-3">
@@ -187,8 +187,8 @@ export default function RealSystemValidationReport() {
             </div>
 
             {/* Audit Trail Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📋 Audit Trail Summary</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📋 Audit Trail Summary</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
@@ -207,21 +207,21 @@ export default function RealSystemValidationReport() {
                     </div>
                 </div>
                 
-                <div className="mt-4 text-sm text-gray-600">
+                <div className="mt-4 text-sm text-[var(--muted)]">
                     <strong>Total Audit Entries:</strong> 15 | All data sources tracked and attributed
                 </div>
             </div>
 
             {/* Next Steps */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🚀 Immediate Next Steps</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🚀 Immediate Next Steps</h2>
                 
                 <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
                         <div>
                             <div className="font-medium">Fix CoreSignal API Integration</div>
-                            <div className="text-sm text-gray-600">Correct endpoint URL and authentication for person search functionality</div>
+                            <div className="text-sm text-[var(--muted)]">Correct endpoint URL and authentication for person search functionality</div>
                         </div>
                     </div>
                     
@@ -229,7 +229,7 @@ export default function RealSystemValidationReport() {
                         <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
                         <div>
                             <div className="font-medium">Fix Perplexity API Request Format</div>
-                            <div className="text-sm text-gray-600">Correct request payload for employment verification queries</div>
+                            <div className="text-sm text-[var(--muted)]">Correct request payload for employment verification queries</div>
                         </div>
                     </div>
                     
@@ -237,7 +237,7 @@ export default function RealSystemValidationReport() {
                         <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">3</div>
                         <div>
                             <div className="font-medium">Test Twilio Phone Validation</div>
-                            <div className="text-sm text-gray-600">Verify phone number validation and line type detection</div>
+                            <div className="text-sm text-[var(--muted)]">Verify phone number validation and line type detection</div>
                         </div>
                     </div>
                     
@@ -245,15 +245,15 @@ export default function RealSystemValidationReport() {
                         <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">4</div>
                         <div>
                             <div className="font-medium">Re-run Zero Hallucination Test</div>
-                            <div className="text-sm text-gray-600">Validate that all APIs return real data with proper source attribution</div>
+                            <div className="text-sm text-[var(--muted)]">Validate that all APIs return real data with proper source attribution</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Footer */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-600">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                <p className="text-sm text-[var(--muted)]">
                     <strong>Report Generated:</strong> December 19, 2024 | 
                     <strong> System Status:</strong> 80% Complete | 
                     <strong> Client Ready:</strong> Pending API Fixes

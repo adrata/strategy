@@ -110,7 +110,7 @@ export function UpdateModalRefactored({
     
     if (!TabComponent) {
       return (
-        <div className="p-6 text-center text-gray-500">
+        <div className="p-6 text-center text-[var(--muted)]">
           <p>Tab "{activeTab}" not found for record type "{recordType}"</p>
         </div>
       );
@@ -119,11 +119,11 @@ export function UpdateModalRefactored({
     return (
       <div className="p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-medium text-gray-900">
+          <h3 className="text-lg font-medium text-[var(--foreground)]">
             {tabConfig?.label || activeTab}
           </h3>
           {tabConfig?.description && (
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[var(--muted)] mt-1">
               {tabConfig.description}
             </p>
           )}
@@ -142,9 +142,9 @@ export function UpdateModalRefactored({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
               {recordType === 'people' && <UserIcon className="h-6 w-6 text-blue-600" />}
@@ -154,10 +154,10 @@ export function UpdateModalRefactored({
               {recordType === 'opportunities' && <BriefcaseIcon className="h-6 w-6 text-blue-600" />}
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-[var(--foreground)]">
                 Edit {recordType.slice(0, -1)}
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[var(--muted)]">
                 {formData.name || formData.fullName || 'Untitled'}
               </p>
             </div>
@@ -165,15 +165,15 @@ export function UpdateModalRefactored({
           
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
             title={`Close (${getCommonShortcut('close')})`}
           >
-            <XMarkIcon className="h-5 w-5 text-gray-500" />
+            <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-[var(--border)]">
           <nav className="flex space-x-8 px-6">
             {availableTabs.map((tab) => (
               <button
@@ -182,7 +182,7 @@ export function UpdateModalRefactored({
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
                 }`}
               >
                 <span className="flex items-center space-x-2">
@@ -200,7 +200,7 @@ export function UpdateModalRefactored({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
           <div className="flex space-x-3">
             {onDelete && (
               <button
@@ -216,7 +216,7 @@ export function UpdateModalRefactored({
           <div className="flex space-x-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="px-4 py-2 text-gray-700 hover:bg-[var(--hover)] rounded-lg transition-colors"
               disabled={loading}
             >
               Cancel
@@ -234,11 +234,11 @@ export function UpdateModalRefactored({
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <div className="bg-[var(--background)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
                 Confirm Delete
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-[var(--muted)] mb-4">
                 Are you sure you want to delete this {recordType.slice(0, -1)}? This action cannot be undone.
               </p>
               <div className="mb-4">
@@ -250,7 +250,7 @@ export function UpdateModalRefactored({
                   value={deleteConfirmName}
                   onChange={(e) => setDeleteConfirmName(e.target.value)}
                   placeholder={formData.name || formData.fullName || 'Record name'}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
               <div className="flex space-x-3">
@@ -259,7 +259,7 @@ export function UpdateModalRefactored({
                     setShowDeleteConfirm(false);
                     setDeleteConfirmName('');
                   }}
-                  className="flex-1 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 hover:bg-[var(--hover)] rounded-lg transition-colors"
                 >
                   Cancel
                 </button>

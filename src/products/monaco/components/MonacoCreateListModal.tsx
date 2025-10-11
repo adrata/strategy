@@ -251,7 +251,7 @@ export function MonacoCreateListModal({
               className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                 name.trim()
                   ? "bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-[var(--muted)] cursor-not-allowed"
               }`}
             >
               Create List

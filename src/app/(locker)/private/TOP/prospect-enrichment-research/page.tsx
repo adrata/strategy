@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default function ProspectEnrichmentResearchPage() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
-      <div className="min-h-screen bg-white" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-gray-200">
+        <header className="border-b border-[var(--border)]">
           <div className="max-w-6xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-medium text-black">Adrata Intelligence</h1>
@@ -17,13 +17,13 @@ export default function ProspectEnrichmentResearchPage() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/private/TOP/summary" 
-                  className="text-sm text-gray-600 hover:text-black transition-colors"
+                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
                 >
                   ← Back to Summary
                 </Link>
                 <Link 
                   href="/" 
-                  className="text-sm text-gray-600 hover:text-black transition-colors"
+                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
                 >
                   Home
                 </Link>
@@ -45,7 +45,7 @@ export default function ProspectEnrichmentResearchPage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Use Case #2: Prospect Enrichment Research
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-[var(--muted)] mb-8">
               Strategic Analysis for Chris Mantle at Puget Sound Energy: Complete Profile Intelligence
             </p>
             
@@ -72,7 +72,7 @@ export default function ProspectEnrichmentResearchPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-black mb-6">Contact Found in Database</h2>
             
-            <div className="bg-gray-50 p-8">
+            <div className="bg-[var(--panel-background)] p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-lg font-bold text-black mb-4">Verified Contact Information</h3>
@@ -146,8 +146,8 @@ export default function ProspectEnrichmentResearchPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-black mb-6">Role & Responsibility Analysis</h2>
             
-            <div className="bg-gray-50 p-6">
-              <p className="text-gray-600 mb-6">Based on PSE organizational structure and utility industry patterns:</p>
+            <div className="bg-[var(--panel-background)] p-6">
+              <p className="text-[var(--muted)] mb-6">Based on PSE organizational structure and utility industry patterns:</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -233,9 +233,9 @@ export default function ProspectEnrichmentResearchPage() {
           </section>
 
           {/* Footer */}
-          <footer className="border-t border-gray-200 pt-8">
+          <footer className="border-t border-[var(--border)] pt-8">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-[var(--muted)]">
                 Report generated: December 19, 2024 | Contact verified: Real TOP production database
               </p>
               <Link 

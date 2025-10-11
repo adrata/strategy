@@ -54,7 +54,7 @@ export function WelcomeSection({
                 <button
                   key={`${activeSubApp}-${action}-${index}`}
                   onClick={() => onQuickAction(action)}
-                  className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-white text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
                 >
                   <span>{action}</span>
                 </button>

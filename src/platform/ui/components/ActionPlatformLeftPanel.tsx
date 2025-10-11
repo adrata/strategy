@@ -420,7 +420,7 @@ export function AcquisitionOSLeftPanel() {
                           </span>
                           <span>
                             This Week: <span className="text-[var(--foreground)] font-semibold">{stats.week}</span>
-                            <span className="ml-2 font-semibold text-gray-400">{formatChange(stats.change)}</span>
+                            <span className="ml-2 font-semibold text-[var(--muted)]">{formatChange(stats.change)}</span>
                           </span>
                         </div>
                       )}

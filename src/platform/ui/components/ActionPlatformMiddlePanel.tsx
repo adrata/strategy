@@ -37,7 +37,7 @@ function ModuleErrorBoundary({
         { className: "flex items-center justify-center h-64" },
         React.createElement(
           'div',
-          { className: "text-gray-500" },
+          { className: "text-[var(--muted)]" },
           `Loading ${moduleName}...`
         )
       )
@@ -52,7 +52,7 @@ function createErrorBoundary(name: string, error: boolean) {
     return React.createElement(
       'div',
       { 
-        className: "h-full flex items-center justify-center bg-gray-50",
+        className: "h-full flex items-center justify-center bg-[var(--panel-background)]",
         style: { padding: '2rem' }
       },
       React.createElement(
@@ -68,19 +68,19 @@ function createErrorBoundary(name: string, error: boolean) {
         ),
         React.createElement(
           'h2',
-          { className: "text-lg font-semibold text-gray-900 mb-2" },
+          { className: "text-lg font-semibold text-[var(--foreground)] mb-2" },
           `${name} Error`
         ),
         React.createElement(
           'p',
-          { className: "text-gray-600 mb-4" },
+          { className: "text-[var(--muted)] mb-4" },
           `The ${name} module encountered an error and could not load.`
         ),
         React.createElement(
           'button',
           {
             onClick: () => window.location.reload(),
-            className: "px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            className: "px-4 py-2 bg-[var(--foreground)] text-white rounded-lg hover:bg-gray-800 transition-colors"
           },
           'Reload Page'
         )
@@ -129,11 +129,11 @@ function SpeedrunMiddlePanelDB() {
 
   return React.createElement(
     'div',
-    { className: "h-full flex flex-col bg-white" },
+    { className: "h-full flex flex-col bg-[var(--background)]" },
     // Header
     React.createElement(
       'div',
-      { className: "flex-shrink-0 bg-gray-50 border-b" },
+      { className: "flex-shrink-0 bg-[var(--panel-background)] border-b" },
       React.createElement(
         'div',
         { className: "px-6 py-4" },
@@ -145,12 +145,12 @@ function SpeedrunMiddlePanelDB() {
             null,
             React.createElement(
               'h1',
-              { className: "text-2xl font-bold text-gray-900 tracking-tight" },
+              { className: "text-2xl font-bold text-[var(--foreground)] tracking-tight" },
               "Today's Speedrun"
             ),
             React.createElement(
               'p',
-              { className: "text-gray-600 text-sm" },
+              { className: "text-[var(--muted)] text-sm" },
               'Prepare to win'
             )
           )
@@ -169,7 +169,7 @@ function SpeedrunMiddlePanelDB() {
             'div',
             {
               key: contact.id,
-              className: "p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              className: "p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             },
             React.createElement(
               'div',
@@ -182,22 +182,22 @@ function SpeedrunMiddlePanelDB() {
                   { className: "flex items-center gap-2" },
                   React.createElement(
                     'span',
-                    { className: "text-sm font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded" },
+                    { className: "text-sm font-bold text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded" },
                     contact.priority.toUpperCase()
                   ),
                   React.createElement(
                     'h3',
-                    { className: "text-lg font-semibold text-gray-900" },
+                    { className: "text-lg font-semibold text-[var(--foreground)]" },
                     contact.name
                   )
                 )
               ),
               React.createElement(
                 'div',
-                { className: "flex items-center gap-4 text-sm text-gray-600" },
+                { className: "flex items-center gap-4 text-sm text-[var(--muted)]" },
                 React.createElement(
                   'span',
-                  { className: "px-3 py-1.5 bg-gray-100 text-gray-800 rounded-lg text-xs font-semibold" },
+                  { className: "px-3 py-1.5 bg-[var(--hover)] text-gray-800 rounded-lg text-xs font-semibold" },
                   contact.status
                 )
               )
@@ -207,7 +207,7 @@ function SpeedrunMiddlePanelDB() {
               { className: "flex items-center justify-between mb-4" },
               React.createElement(
                 'div',
-                { className: "flex items-center gap-4 text-sm text-gray-600" },
+                { className: "flex items-center gap-4 text-sm text-[var(--muted)]" },
                 contact['title'] && React.createElement('span', null, contact.title),
                 contact['title'] && React.createElement('span', null, '•'),
                 React.createElement('span', null, contact.company),
@@ -231,7 +231,7 @@ function SpeedrunMiddlePanelDB() {
               { className: "mb-4" },
               React.createElement(
                 'div',
-                { className: "p-3 bg-gray-50 border-l-4 border-gray-300 rounded-r-lg" },
+                { className: "p-3 bg-[var(--panel-background)] border-l-4 border-[var(--border)] rounded-r-lg" },
                 React.createElement(
                   'div',
                   { className: "flex items-start gap-2" },
@@ -256,7 +256,7 @@ function SpeedrunMiddlePanelDB() {
                 { className: "flex items-center gap-4" },
                 React.createElement(
                   'span',
-                  { className: "text-xs font-medium text-gray-600" },
+                  { className: "text-xs font-medium text-[var(--muted)]" },
                   'Status: ',
                   React.createElement(
                     'span',
@@ -266,17 +266,17 @@ function SpeedrunMiddlePanelDB() {
                 ),
                 React.createElement(
                   'span',
-                  { className: "text-xs font-medium text-gray-600" },
+                  { className: "text-xs font-medium text-[var(--muted)]" },
                   'Priority: ',
                   React.createElement(
                     'span',
-                    { className: "font-semibold text-gray-900" },
+                    { className: "font-semibold text-[var(--foreground)]" },
                     contact.priority
                   )
                 ),
                 React.createElement(
                   'span',
-                  { className: "text-xs font-medium text-gray-600" },
+                  { className: "text-xs font-medium text-[var(--muted)]" },
                   'Updated: ',
                   React.createElement(
                     'span',
@@ -341,12 +341,12 @@ export function AcquisitionOSMiddlePanel() {
         ),
         React.createElement(
           'h3',
-          { className: "text-lg font-medium text-gray-900 mb-2" },
+          { className: "text-lg font-medium text-[var(--foreground)] mb-2" },
           'AcquisitionOS'
         ),
         React.createElement(
           'p',
-          { className: "text-gray-600" },
+          { className: "text-[var(--muted)]" },
           'Select an application from the left panel to get started.'
         )
       )
@@ -419,12 +419,12 @@ export function AcquisitionOSMiddlePanel() {
             ),
             React.createElement(
               'h3',
-              { className: "text-lg font-medium text-gray-900 mb-2" },
+              { className: "text-lg font-medium text-[var(--foreground)] mb-2" },
               'AcquisitionOS'
             ),
             React.createElement(
               'p',
-              { className: "text-gray-600" },
+              { className: "text-[var(--muted)]" },
               `Unknown application: ${activeSubApp}`
             )
           )

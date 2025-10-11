@@ -951,7 +951,7 @@ export function ThinLeftPanel({
           {/* Adrata branding */}
           <div className="flex items-center gap-1 mt-1 mb-1">
             <span className="text-xl font-semibold text-[var(--foreground)]">Adrata</span>
-            <span className="bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-[var(--panel-background)]0 text-white text-xs font-bold px-2 py-0.5 rounded-full">
               Pro
             </span>
           </div>
@@ -1001,7 +1001,7 @@ export function ThinLeftPanel({
                             : app.notificationCount}
                         </span>
                       ) : (
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                        <div className="w-2 h-2 bg-[var(--background)] rounded-full"></div>
                       )}
                     </div>
                   )}

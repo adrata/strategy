@@ -20,22 +20,22 @@ export function UniversalIndustryTab({ record, recordType }: UniversalIndustryTa
     <div className="space-y-8">
       {/* Industry Information */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Industry Information</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Industry Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Industry</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Industry</label>
             <p className="text-sm text-gray-800 font-medium">{industry}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Company Size</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Company Size</label>
             <p className="text-sm text-gray-800 font-medium">{companySize}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Sector</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Sector</label>
             <p className="text-sm text-gray-800 font-medium">{sector}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Vertical</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Vertical</label>
             <p className="text-sm text-gray-800 font-medium">{vertical}</p>
           </div>
         </div>

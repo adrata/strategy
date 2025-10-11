@@ -54,8 +54,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-            <div className="text-gray-500">No record data available</div>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
+            <div className="text-[var(--muted)]">No record data available</div>
           </div>
         </div>
       </div>
@@ -66,9 +66,9 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-            <div className="mt-2 text-gray-600">Loading company news...</div>
+            <div className="mt-2 text-[var(--muted)]">Loading company news...</div>
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
             <div className="text-red-600">Error loading news: {error}</div>
             <button 
               onClick={fetchCompanyNews}
@@ -97,8 +97,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-            <div className="text-gray-500">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
+            <div className="text-[var(--muted)]">
               <div className="text-lg font-medium mb-2">No Recent News</div>
               <div className="text-sm">No company updates available for {companyName}</div>
             </div>
@@ -123,10 +123,10 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Company News</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Company News</h3>
         <div className="space-y-4">
           {newsArticles.map((article: NewsArticle, index: number) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm transition-shadow">
+            <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center">
@@ -135,32 +135,32 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
                     </span>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-[var(--foreground)]">
                       {companyName}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-[var(--muted)]">
                       {formatDate(article.publishedAt)} • {article.source}
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-[var(--muted)]">
                   #{index + 1}
                 </div>
               </div>
 
               <div className="mb-4">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
                   {article.title}
                 </h4>
                 <p className="text-gray-800 leading-relaxed mb-3">
                   {article.description}
                 </p>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-[var(--muted)] text-sm leading-relaxed">
                   {article.content}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between text-sm text-gray-500">
+              <div className="flex items-center justify-between text-sm text-[var(--muted)]">
                 <div className="flex items-center space-x-4">
                   <span className="flex items-center space-x-1">
                     <span className="text-blue-500">📰</span>
@@ -189,8 +189,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
 
       {newsArticles.length > 10 && (
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-            <div className="text-sm text-gray-500">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
+            <div className="text-sm text-[var(--muted)]">
               Showing {newsArticles.length} recent news articles
             </div>
           </div>

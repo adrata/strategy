@@ -245,7 +245,7 @@ export function CompleteActionModal({
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-white text-gray-900 text-sm shadow-sm hover:border-gray-400 transition-colors`}
+                className={`w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 ${section === 'speedrun' ? 'focus:ring-green-500/30 focus:border-green-500' : 'focus:ring-blue-500/30 focus:border-blue-500'} bg-[var(--background)] text-[var(--foreground)] text-sm shadow-sm hover:border-gray-400 transition-colors`}
                 disabled={isLoading}
               >
                 <option value="LinkedIn Friend Request">1. LinkedIn Friend Request</option>
@@ -289,7 +289,7 @@ export function CompleteActionModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
               >
                 Cancel
               </button>

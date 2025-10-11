@@ -104,7 +104,7 @@ export default function CostOptimizationDashboard() {
       case "high":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
@@ -127,7 +127,7 @@ export default function CostOptimizationDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Cost Optimization Engine</h1>
-          <p className="text-gray-600">Maximize margins for R&D reinvestment</p>
+          <p className="text-[var(--muted)]">Maximize margins for R&D reinvestment</p>
         </div>
         <Button onClick={loadCostAnalysis} disabled={loading}>
           Refresh Analysis
@@ -241,7 +241,7 @@ export default function CostOptimizationDashboard() {
 
             <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
               <h4 className="font-medium mb-2">Impact Projection</h4>
-              <ul className="text-sm space-y-1 text-gray-600">
+              <ul className="text-sm space-y-1 text-[var(--muted)]">
                 <li>• 3-5 additional engineers</li>
                 <li>• 2x faster feature development</li>
                 <li>• Premium enterprise features</li>
@@ -300,17 +300,17 @@ export default function CostOptimizationDashboard() {
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-sm text-gray-600">Current</p>
+                    <p className="text-sm text-[var(--muted)]">Current</p>
                     <p className="text-lg font-bold">${rec.currentCost}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Optimized</p>
+                    <p className="text-sm text-[var(--muted)]">Optimized</p>
                     <p className="text-lg font-bold text-green-600">
                       ${rec.optimizedCost}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Savings</p>
+                    <p className="text-sm text-[var(--muted)]">Savings</p>
                     <p className="text-lg font-bold text-blue-600">
                       ${rec.savings}
                     </p>
@@ -322,7 +322,7 @@ export default function CostOptimizationDashboard() {
 
                   <div className="flex justify-between items-center">
                     <div className="text-sm">
-                      <span className="text-gray-600">Monthly ROI: </span>
+                      <span className="text-[var(--muted)]">Monthly ROI: </span>
                       <span className="font-bold text-green-600">
                         {((rec.savings / rec.currentCost) * 100).toFixed(0)}%
                       </span>
@@ -368,7 +368,7 @@ export default function CostOptimizationDashboard() {
               <Zap className="h-5 w-5 text-blue-600" />
               <div className="text-left">
                 <p className="font-medium">Enable Auto-Optimization</p>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-[var(--muted)]">
                   Automatic COGS monitoring
                 </p>
               </div>
@@ -381,7 +381,7 @@ export default function CostOptimizationDashboard() {
               <Server className="h-5 w-5 text-green-600" />
               <div className="text-left">
                 <p className="font-medium">Edge Function Migration</p>
-                <p className="text-xs text-gray-600">60% cost reduction</p>
+                <p className="text-xs text-[var(--muted)]">60% cost reduction</p>
               </div>
             </Button>
 
@@ -392,7 +392,7 @@ export default function CostOptimizationDashboard() {
               <Database className="h-5 w-5 text-purple-600" />
               <div className="text-left">
                 <p className="font-medium">Smart Query Caching</p>
-                <p className="text-xs text-gray-600">Save $150/month</p>
+                <p className="text-xs text-[var(--muted)]">Save $150/month</p>
               </div>
             </Button>
           </div>

@@ -27,7 +27,7 @@ export function SpeedrunCompletionModal({
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+      <div className="relative bg-[var(--background)] rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
         {/* Success Icon */}
         <div className="flex items-center justify-center mb-4">
           <CheckCircleIcon className="w-12 h-12 text-green-500" />
@@ -35,10 +35,10 @@ export function SpeedrunCompletionModal({
         
         {/* Content */}
         <div className="text-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
             Great Work!
           </h3>
-          <p className="text-gray-600">
+          <p className="text-[var(--muted)]">
             You've completed {completedCount} prospects today.
           </p>
         </div>
@@ -47,7 +47,7 @@ export function SpeedrunCompletionModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            className="flex-1 px-4 py-2 text-gray-700 bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-lg transition-colors"
           >
             Done for Today
           </button>

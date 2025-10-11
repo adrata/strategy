@@ -349,14 +349,14 @@ export function MessageList({
                       {source.title}
                     </a>
                     {source.snippet && (
-                      <p className="text-gray-600 text-xs mt-1 line-clamp-2">
+                      <p className="text-[var(--muted)] text-xs mt-1 line-clamp-2">
                         {source.snippet}
                       </p>
                     )}
                   </div>
                 ))}
                 {message.sources.length > 3 && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--muted)]">
                     +{message.sources.length - 3} more sources
                   </p>
                 )}

@@ -485,28 +485,28 @@ export function SpeedrunSprintView() {
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full bg-white border-r border-gray-100">
+          <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full bg-[var(--background)] border-r border-gray-100">
             {/* Left Panel Skeleton */}
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between mb-2">
-                <div className="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-5 w-12 bg-gray-200 rounded-full animate-pulse"></div>
+                <div className="h-6 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-5 w-12 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
               </div>
-              <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             </div>
             
             {/* Sprint Cards Skeleton */}
             <div className="flex-1 overflow-auto p-3 space-y-2">
               {Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="p-3 rounded-lg border border-gray-100 bg-white">
+                <div key={index} className="p-3 rounded-lg border border-gray-100 bg-[var(--background)]">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 bg-gray-200 rounded-xl animate-pulse"></div>
-                        <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="w-6 h-6 bg-[var(--loading-bg)] rounded-xl animate-pulse"></div>
+                        <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                       </div>
-                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mb-1"></div>
-                      <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-3 w-16 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
+                      <div className="h-3 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                     </div>
                   </div>
                 </div>
@@ -516,33 +516,33 @@ export function SpeedrunSprintView() {
             {/* Footer Skeleton */}
             <div className="p-3 border-t border-gray-100">
               <div className="flex justify-between items-center">
-                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-8 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-8 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
               </div>
             </div>
           </div>
         }
         middlePanel={
-          <div className="h-full flex flex-col bg-white">
+          <div className="h-full flex flex-col bg-[var(--background)]">
             {/* Middle Panel Header Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+            <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
               <div className="flex items-center justify-between mb-2">
-                <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 </div>
               </div>
-              <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-48 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             </div>
             
             {/* Middle Panel Content Skeleton */}
             <div className="flex-1 p-6">
               <div className="text-center max-w-md mx-auto">
-                <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 animate-pulse"></div>
-                <div className="h-6 w-48 bg-gray-200 rounded mx-auto mb-2 animate-pulse"></div>
-                <div className="h-4 w-64 bg-gray-200 rounded mx-auto mb-4 animate-pulse"></div>
-                <div className="h-10 w-32 bg-gray-200 rounded mx-auto animate-pulse"></div>
+                <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full mx-auto mb-4 animate-pulse"></div>
+                <div className="h-6 w-48 bg-[var(--loading-bg)] rounded mx-auto mb-2 animate-pulse"></div>
+                <div className="h-4 w-64 bg-[var(--loading-bg)] rounded mx-auto mb-4 animate-pulse"></div>
+                <div className="h-10 w-32 bg-[var(--loading-bg)] rounded mx-auto animate-pulse"></div>
               </div>
             </div>
           </div>
@@ -560,15 +560,15 @@ export function SpeedrunSprintView() {
   // Error state
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center max-w-md">
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⚠️</span>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
             Error Loading Sprint
           </h3>
-          <p className="text-gray-600 mb-4">{error && typeof error === 'object' && 'message' in error ? (error as Error).message : String(error)}</p>
+          <p className="text-[var(--muted)] mb-4">{error && typeof error === 'object' && 'message' in error ? (error as Error).message : String(error)}</p>
           <button
             onClick={refresh}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -583,12 +583,12 @@ export function SpeedrunSprintView() {
   // Empty state
   if (!data || data['length'] === 0) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center max-w-md">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
             No Sprint Data
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[var(--muted)] mb-4">
             No speedrun records found. Add some prospects to your speedrun to get started.
           </p>
         </div>
@@ -598,17 +598,17 @@ export function SpeedrunSprintView() {
 
   // Sprint card list for left panel
   const sprintCardList = (
-    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full flex flex-col bg-white border-r border-gray-100">
+    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full flex flex-col bg-[var(--background)] border-r border-gray-100">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 bg-white">
+      <div className="p-4 border-b border-gray-100 bg-[var(--background)]">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-gray-900">Sprint {currentSprintNumber}</h2>
+              <h2 className="text-lg font-bold text-[var(--foreground)]">Sprint {currentSprintNumber}</h2>
             </div>
-            <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
+            <span className="text-xs font-medium text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-[var(--muted)]">
             {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
           </div>
         </div>
@@ -619,8 +619,8 @@ export function SpeedrunSprintView() {
         {/* Loading indicator for data refresh */}
         {loading && data.length > 0 && (
           <div className="flex items-center justify-center py-2">
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+            <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
+              <div className="w-3 h-3 border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin"></div>
               <span>Updating sprint data...</span>
             </div>
           </div>
@@ -644,10 +644,10 @@ export function SpeedrunSprintView() {
               onClick={() => handleRecordSelect(record)}
               className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
                 isCompleted
-                  ? 'bg-gray-50 text-gray-400 border-gray-200 opacity-60'
+                  ? 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] opacity-60'
                   : isSelected 
-                    ? 'bg-gray-100 text-gray-900 border-gray-200 shadow-sm' 
-                    : 'bg-white hover:bg-gray-50 border-gray-100 hover:border-gray-200 hover:shadow-sm'
+                    ? 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)] shadow-sm' 
+                    : 'bg-[var(--background)] hover:bg-[var(--panel-background)] border-gray-100 hover:border-[var(--border)] hover:shadow-sm'
               }`}
             >
               <div className="flex items-start justify-between">
@@ -658,14 +658,14 @@ export function SpeedrunSprintView() {
                         ? 'bg-green-100 text-green-800'
                         : isSelected 
                           ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-600'
+                          : 'bg-[var(--hover)] text-[var(--muted)]'
                     }`}>
                       {displayNumber}
                     </span>
                     <h3 className={`text-sm font-semibold truncate ${
                       isCompleted 
-                        ? 'text-gray-400' 
-                        : isSelected ? 'text-gray-900' : 'text-gray-900'
+                        ? 'text-[var(--muted)]' 
+                        : isSelected ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]'
                     }`}>
                       {displayName}
                     </h3>
@@ -677,15 +677,15 @@ export function SpeedrunSprintView() {
                   </div>
                   <p className={`text-xs truncate mb-1 ${
                     isCompleted 
-                      ? 'text-gray-400' 
-                      : isSelected ? 'text-gray-600' : 'text-gray-600'
+                      ? 'text-[var(--muted)]' 
+                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
                   }`}>
                     {record.title || record.jobTitle || 'No Title'}
                   </p>
                   <p className={`text-xs truncate ${
                     isCompleted 
-                      ? 'text-gray-400' 
-                      : isSelected ? 'text-gray-500' : 'text-gray-500'
+                      ? 'text-[var(--muted)]' 
+                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
                   }`}>
                     {record.company || 'Unknown Company'}
                   </p>
@@ -701,12 +701,12 @@ export function SpeedrunSprintView() {
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Loading overlay for action submission */}
       {isSubmittingAction && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-          <div className="flex items-center gap-3 bg-white rounded-lg shadow-lg px-6 py-4">
-            <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 bg-[var(--background)] bg-opacity-75 flex items-center justify-center z-50">
+          <div className="flex items-center gap-3 bg-[var(--background)] rounded-lg shadow-lg px-6 py-4">
+            <div className="w-5 h-5 border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin"></div>
             <span className="text-sm font-medium text-gray-700">Saving action...</span>
           </div>
         </div>
@@ -775,15 +775,15 @@ export function SpeedrunSprintView() {
       />
     </div>
   ) : (
-    <div className="h-full flex items-center justify-center bg-white">
+    <div className="h-full flex items-center justify-center bg-[var(--background)]">
       <div className="text-center">
-        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-12 h-12 bg-[var(--hover)] rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">👆</span>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
           Select a Prospect
         </h3>
-        <p className="text-gray-600">
+        <p className="text-[var(--muted)]">
           Choose a prospect from the left panel to view their details.
         </p>
       </div>

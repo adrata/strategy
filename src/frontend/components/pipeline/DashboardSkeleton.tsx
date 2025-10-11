@@ -4,22 +4,22 @@ import React from 'react';
 
 export function DashboardSkeleton() {
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Main Content Skeleton */}
       <div className="flex-1 p-6 space-y-8">
         {/* Weekly Activity Section Skeleton */}
         <div>
-          <div className="h-6 bg-gray-200 rounded w-32 mb-4 animate-pulse"></div>
+          <div className="h-6 bg-[var(--loading-bg)] rounded w-32 mb-4 animate-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-200">
+              <div key={i} className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-                  <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+                  <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+                  <div className="h-4 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
                 </div>
-                <div className="h-8 bg-gray-200 rounded w-16 mb-1 animate-pulse"></div>
-                <div className="h-3 bg-gray-200 rounded w-24 mb-3 animate-pulse"></div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5 animate-pulse"></div>
+                <div className="h-8 bg-[var(--loading-bg)] rounded w-16 mb-1 animate-pulse"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-24 mb-3 animate-pulse"></div>
+                <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5 animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -27,12 +27,12 @@ export function DashboardSkeleton() {
 
         {/* Pipeline Performance Section Skeleton */}
         <div>
-          <div className="h-6 bg-gray-200 rounded w-40 mb-4 animate-pulse"></div>
+          <div className="h-6 bg-[var(--loading-bg)] rounded w-40 mb-4 animate-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-200">
-                <div className="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 rounded w-16 animate-pulse"></div>
+              <div key={i} className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-24 mb-2 animate-pulse"></div>
+                <div className="h-6 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -40,12 +40,12 @@ export function DashboardSkeleton() {
 
         {/* Revenue Performance Section Skeleton */}
         <div>
-          <div className="h-6 bg-gray-200 rounded w-36 mb-4 animate-pulse"></div>
+          <div className="h-6 bg-[var(--loading-bg)] rounded w-36 mb-4 animate-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-200">
-                <div className="h-4 bg-gray-200 rounded w-28 mb-2 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 rounded w-20 animate-pulse"></div>
+              <div key={i} className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-28 mb-2 animate-pulse"></div>
+                <div className="h-6 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -53,12 +53,12 @@ export function DashboardSkeleton() {
 
         {/* Team Performance Section Skeleton */}
         <div>
-          <div className="h-6 bg-gray-200 rounded w-32 mb-4 animate-pulse"></div>
+          <div className="h-6 bg-[var(--loading-bg)] rounded w-32 mb-4 animate-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg border border-gray-200">
-                <div className="h-4 bg-gray-200 rounded w-20 mb-2 animate-pulse"></div>
-                <div className="h-6 bg-gray-200 rounded w-16 animate-pulse"></div>
+              <div key={i} className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-20 mb-2 animate-pulse"></div>
+                <div className="h-6 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
               </div>
             ))}
           </div>

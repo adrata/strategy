@@ -590,7 +590,7 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Hours Left',
             value: formatHours(timeData.hoursLeft),
-            color: 'text-gray-900',
+            color: 'text-[var(--foreground)]',
             isHighlight: false
           });
           metricItems.push({
@@ -598,14 +598,14 @@ export function PipelineHeader({
             value: timeData.todayProgress,
             target: 50, // Speedrun target - top 50 people
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'This Week',
             value: timeData.weekProgress,
             target: 50, // Speedrun weekly target - top 50 people
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           // Removed 'All Time' to show only 3 stats
           break;
@@ -615,28 +615,28 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Actions Left',
             value: '8', // TODO: Calculate from actual actions
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Calls',
             value: '0',
             target: 15,
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Emails',
             value: '0',
             target: 25,
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Meetings',
             value: '0',
             target: 4,
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           break;
 
@@ -645,22 +645,22 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Fresh Insights',
             value: '12',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Industry Trends',
             value: '8',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Competitive Intel',
             value: '5',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Last Updated',
             value: '2h ago',
-            color: 'text-gray-500'
+            color: 'text-[var(--muted)]'
           });
           break;
 
@@ -669,22 +669,22 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Free Time',
             value: '4.5h', // TODO: Calculate from calendar
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Meetings',
             value: '5',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Focus Blocks',
             value: '3',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Busy Time',
             value: '3.5h',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           break;
 
@@ -693,7 +693,7 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Hours Left',
             value: formatHours(timeData.hoursLeft),
-            color: 'text-gray-900',
+            color: 'text-[var(--foreground)]',
             isHighlight: false
           });
           metricItems.push({
@@ -701,19 +701,19 @@ export function PipelineHeader({
             value: timeData.todayProgress,
             target: timeData.todayTarget,
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'This Week',
             value: timeData.weekProgress,
             target: timeData.weekTarget,
             isProgress: true,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'All Time',
             value: timeData.allTimeRecord.toString(),
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
       }
       
@@ -725,12 +725,12 @@ export function PipelineHeader({
       metricItems.push({
         label: 'KPIs Tracked',
         value: '16',
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
       metricItems.push({
         label: 'Data Sources',
         value: '5',
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
       metricItems.push({
         label: 'Real-time',
@@ -749,7 +749,7 @@ export function PipelineHeader({
       metricItems.push({
         label: 'Total',
         value: totalCount.toString(),
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
       
       return metricItems;
@@ -760,7 +760,7 @@ export function PipelineHeader({
       metricItems.push({
         label: section === 'opportunities' ? 'Pipeline Value' : 'Total Value',
         value: metrics.totalPipelineValue,
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
     }
     
@@ -788,19 +788,19 @@ export function PipelineHeader({
       metricItems.push({
         label: 'Actions',
         value: overdueActions > 0 ? overdueActions.toString() : '—',
-        color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
+        color: overdueActions > 0 ? 'text-red-600' : 'text-[var(--foreground)]'
       });
       
       metricItems.push({
         label: uniqueCompanies['size'] === 1 ? 'Company' : 'Companies',
         value: uniqueCompanies.size > 0 ? uniqueCompanies.size.toString() : '—',
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
       
       metricItems.push({
         label: leadsCount === 1 ? 'Lead' : 'Leads',
         value: leadsCount > 0 ? leadsCount.toString() : '—',
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
     } else if (section !== 'dashboard') {
       // For prospects section, show detailed stats instead of just total
@@ -836,19 +836,19 @@ export function PipelineHeader({
         metricItems.push({
           label: 'Actions',
           value: overdueActions > 0 ? overdueActions.toString() : '—',
-          color: overdueActions > 0 ? 'text-red-600' : 'text-gray-900'
+          color: overdueActions > 0 ? 'text-red-600' : 'text-[var(--foreground)]'
         });
         
         metricItems.push({
           label: uniqueCompanies.size === 1 ? 'Company' : 'Companies',
           value: uniqueCompanies.size > 0 ? uniqueCompanies.size.toString() : '—',
-          color: 'text-gray-900'
+          color: 'text-[var(--foreground)]'
         });
         
         metricItems.push({
           label: 'Prospects',
           value: totalCount > 0 ? totalCount.toString() : '—',
-          color: 'text-gray-900'
+          color: 'text-[var(--foreground)]'
         });
       } else {
         // Use recordCount for all other sections
@@ -859,18 +859,18 @@ export function PipelineHeader({
           metricItems.push({
             label: section === 'companies' ? 'Companies' : 'People',
             value: totalCount > 0 ? totalCount.toString() : '—',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'Actions',
             value: '—',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
         } else {
           metricItems.push({
             label: 'Total',
             value: totalCount > 0 ? totalCount.toString() : '—',
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
         }
         
@@ -878,7 +878,7 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Win Rate',
             value: metrics.winRate,
-            color: 'text-gray-900'
+            color: 'text-[var(--foreground)]'
           });
         }
       }
@@ -888,7 +888,7 @@ export function PipelineHeader({
       metricItems.push({
         label: 'Conversion',
         value: metrics.leadConversionRate,
-        color: 'text-gray-900'
+        color: 'text-[var(--foreground)]'
       });
     }
     
@@ -910,14 +910,14 @@ export function PipelineHeader({
 
   return (
     <>
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left side: Title only */}
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold text-[var(--foreground)]">
               {sectionInfo.title}
             </h1>
-            <p className="text-sm text-gray-500">{sectionInfo.subtitle}</p>
+            <p className="text-sm text-[var(--muted)]">{sectionInfo.subtitle}</p>
           </div>
           
           {/* Right side: Compact metrics and Add button */}
@@ -932,14 +932,14 @@ export function PipelineHeader({
                     )}
                     {metric.isProgress ? (
                       <>
-                        <span className={metric.color || 'text-gray-900'}>{metric.value}</span>
-                        <span className="text-gray-900">/{metric.target}</span>
+                        <span className={metric.color || 'text-[var(--foreground)]'}>{metric.value}</span>
+                        <span className="text-[var(--foreground)]">/{metric.target}</span>
                       </>
                     ) : (
-                      <span className={metric.color || 'text-gray-900'}>{metric.value}</span>
+                      <span className={metric.color || 'text-[var(--foreground)]'}>{metric.value}</span>
                     )}
                   </div>
-                  <div className="text-xs text-gray-500 tracking-wide">
+                  <div className="text-xs text-[var(--muted)] tracking-wide">
                     {metric.label}
                   </div>
                 </div>
@@ -958,7 +958,7 @@ export function PipelineHeader({
                   {sectionInfo['actionButton'] && (
                     <button
                       onClick={handleAction}
-                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                      className="bg-[var(--background)] text-black border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
                     >
                       {sectionInfo.actionButton}
                     </button>
@@ -981,7 +981,7 @@ export function PipelineHeader({
                   <div className="relative share-dropdown-container">
                     <button
                       onClick={() => setShowShareDropdown(!showShareDropdown)}
-                      className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                      className="bg-[var(--background)] text-black border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
                     >
                       Share
                       <EllipsisHorizontalIcon className="w-4 h-4" />
@@ -995,10 +995,10 @@ export function PipelineHeader({
                     )}
                     
                     {showShareDropdown && (
-                      <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                      <div className="absolute top-full right-0 mt-1 w-48 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg z-50">
                         <button
                           onClick={handleCopyUrl}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-[var(--panel-background)] transition-colors"
                         >
                           <LinkIcon className="w-4 h-4" />
                           Copy URL
@@ -1015,7 +1015,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="px-4 py-2 bg-white text-black border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                          className="px-4 py-2 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
                         >
                           {
                             (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
@@ -1053,7 +1053,7 @@ export function PipelineHeader({
                               ? 'bg-violet-50 text-violet-600 border-violet-200 hover:bg-violet-100'
                               : section === 'companies'
                               ? 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                              : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                              : 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--hover)]'
                           }`}
                         >
                           {section === 'speedrun' ? `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
@@ -1078,7 +1078,7 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
+                          className="bg-[var(--background)] text-black border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
                         >
                           {sectionInfo.actionButton}
                         </button>

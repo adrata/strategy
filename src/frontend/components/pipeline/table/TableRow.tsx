@@ -130,8 +130,8 @@ export function TableRow({
     return (
       <tr key={record.id || index} className="h-16">
         <td colSpan={headers.length} className="px-6 py-4 text-center">
-          <span className="text-sm text-gray-600">
-            {record.name} <span className="font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => onRecordClick(record)}>{(record as any).actionText}</span>
+          <span className="text-sm text-[var(--muted)]">
+            {record.name} <span className="font-bold text-[var(--foreground)] cursor-pointer hover:text-blue-600 transition-colors" onClick={() => onRecordClick(record)}>{(record as any).actionText}</span>
           </span>
         </td>
       </tr>
@@ -141,16 +141,16 @@ export function TableRow({
   const displayName = getCleanPersonName(record);
 
   const commonClasses = "px-6 py-3 whitespace-nowrap text-sm h-full";
-  const nameClasses = `${commonClasses} font-medium text-gray-900`;
-  const textClasses = `${commonClasses} text-gray-900`;
-  const mutedClasses = `${commonClasses} text-gray-500`;
+  const nameClasses = `${commonClasses} font-medium text-[var(--foreground)]`;
+  const textClasses = `${commonClasses} text-[var(--foreground)]`;
+  const mutedClasses = `${commonClasses} text-[var(--muted)]`;
 
   // Render based on section
   if (section === 'leads' || section === 'prospects') {
     return (
          <tr 
            key={record.id || index} 
-           className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+           className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
            onClick={handleRowClick}
          >
         {(() => {
@@ -197,7 +197,7 @@ export function TableRow({
                     <div className="text-left font-medium">
                       <div className="text-sm font-semibold">{displayRank}</div>
                       {companyRank > 0 && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-[var(--muted)]">
                           Company #{companyRank}
                         </div>
                       )}
@@ -276,7 +276,7 @@ export function TableRow({
                             <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
                               {nextAction.timing}
                             </span>
-                            <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
                               {nextAction.action}
                             </span>
                           </>
@@ -299,7 +299,7 @@ export function TableRow({
                             <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
                               {timing.text}
                             </span>
-                            <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
                               {actionText}
                             </span>
                           </>
@@ -339,7 +339,7 @@ export function TableRow({
   // Default rendering for other sections
   return (
        <tr
-         className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+         className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
          onClick={handleRowClick}
        >
       {headers.map((header, index) => {
@@ -367,7 +367,7 @@ export function TableRow({
                 />
               </div>
             ) : (
-              <div className="text-sm text-gray-900 truncate">
+              <div className="text-sm text-[var(--foreground)] truncate">
                 {String(record[header.toLowerCase()] || record[header] || header)}
               </div>
             )}

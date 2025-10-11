@@ -589,23 +589,23 @@ export function MonacoContent({
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "Decision Maker":
-        return <ShieldCheckIcon className="w-4 h-4 text-gray-600" />;
+        return <ShieldCheckIcon className="w-4 h-4 text-[var(--muted)]" />;
       case "Champion":
-        return <StarIcon className="w-4 h-4 text-gray-600" />;
+        return <StarIcon className="w-4 h-4 text-[var(--muted)]" />;
       case "Stakeholder":
-        return <UsersIcon className="w-4 h-4 text-gray-600" />;
+        return <UsersIcon className="w-4 h-4 text-[var(--muted)]" />;
       case "Blocker":
-        return <XMarkIcon className="w-4 h-4 text-gray-600" />;
+        return <XMarkIcon className="w-4 h-4 text-[var(--muted)]" />;
       case "Openers":
-        return <PlusIcon className="w-4 h-4 text-gray-600" />;
+        return <PlusIcon className="w-4 h-4 text-[var(--muted)]" />;
       default:
-        return <UsersIcon className="w-4 h-4 text-gray-600" />;
+        return <UsersIcon className="w-4 h-4 text-[var(--muted)]" />;
     }
   };
 
   // Get role color - all gray now
   const getRoleColor = (role: string) => {
-    return "bg-gray-50 text-gray-700 border-gray-200";
+    return "bg-[var(--panel-background)] text-gray-700 border-[var(--border)]";
   };
 
   // Render buyer group view
@@ -659,7 +659,7 @@ export function MonacoContent({
         <div className="grid grid-cols-5 gap-4 mb-8">
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <StarIcon className="w-5 h-5 text-gray-600" />
+              <StarIcon className="w-5 h-5 text-[var(--muted)]" />
               <span className="text-sm font-semibold text-[var(--foreground)]">Champions</span>
             </div>
             <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -668,7 +668,7 @@ export function MonacoContent({
           </div>
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldCheckIcon className="w-5 h-5 text-gray-600" />
+              <ShieldCheckIcon className="w-5 h-5 text-[var(--muted)]" />
               <span className="text-sm font-semibold text-[var(--foreground)]">Decision Makers</span>
             </div>
             <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -677,7 +677,7 @@ export function MonacoContent({
           </div>
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <UsersIcon className="w-5 h-5 text-gray-600" />
+              <UsersIcon className="w-5 h-5 text-[var(--muted)]" />
               <span className="text-sm font-semibold text-[var(--foreground)]">Stakeholders</span>
             </div>
             <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -686,7 +686,7 @@ export function MonacoContent({
           </div>
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <XMarkIcon className="w-5 h-5 text-gray-600" />
+              <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
               <span className="text-sm font-semibold text-[var(--foreground)]">Blockers</span>
             </div>
             <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -695,7 +695,7 @@ export function MonacoContent({
           </div>
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <PlusIcon className="w-5 h-5 text-gray-600" />
+              <PlusIcon className="w-5 h-5 text-[var(--muted)]" />
               <span className="text-sm font-semibold text-[var(--foreground)]">Openers</span>
             </div>
             <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -822,7 +822,7 @@ export function MonacoContent({
               case "qualified": return "bg-green-100 text-green-800";
               case "contacted": return "bg-blue-100 text-blue-800";
               case "prospect": return "bg-yellow-100 text-yellow-800";
-              default: return "bg-gray-100 text-gray-800";
+              default: return "bg-[var(--hover)] text-gray-800";
             }
           }}
           getRankNumber={(record: any) => 1}
@@ -846,7 +846,7 @@ export function MonacoContent({
   const getEmptyStateMessage = () => {
     if (searchQuery.trim()) {
       return {
-        icon: <MagnifyingGlassIcon className="h-16 w-16 text-gray-400" />,
+        icon: <MagnifyingGlassIcon className="h-16 w-16 text-[var(--muted)]" />,
         title: `No ${activeSection} found`,
         description: `No ${activeSection} match your search for "${searchQuery}". Try adjusting your search terms or filters.`,
       };
@@ -855,7 +855,7 @@ export function MonacoContent({
     switch (activeSection) {
       case "companies":
         return {
-          icon: <BuildingOfficeIcon className="h-16 w-16 text-gray-400" />,
+          icon: <BuildingOfficeIcon className="h-16 w-16 text-[var(--muted)]" />,
           title: "Loading Companies...",
           description:
             "Fetching company intelligence from your database. This may take a moment.",
@@ -863,7 +863,7 @@ export function MonacoContent({
         };
       case "people":
         return {
-          icon: <UsersIcon className="h-16 w-16 text-gray-400" />,
+          icon: <UsersIcon className="h-16 w-16 text-[var(--muted)]" />,
           title: "Loading People...",
           description:
             "Fetching contact intelligence from your database. This may take a moment.",
@@ -871,7 +871,7 @@ export function MonacoContent({
         };
       case "partners":
         return {
-          icon: <UserGroupIcon className="h-16 w-16 text-gray-400" />,
+          icon: <UserGroupIcon className="h-16 w-16 text-[var(--muted)]" />,
           title: "Loading Partners...",
           description:
             "Fetching partnership data from your database. This may take a moment.",
@@ -880,7 +880,7 @@ export function MonacoContent({
       default:
         if (isICPList) {
           return {
-            icon: <ArrowPathRoundedSquareIcon className="h-16 w-16 text-gray-400" />,
+            icon: <ArrowPathRoundedSquareIcon className="h-16 w-16 text-[var(--muted)]" />,
             title: `${currentList?.name} ICP`,
             description: `This ICP contains companies that match your ideal customer profile. ${(filteredData?.length || 0) > 0 ? `Found ${filteredData?.length || 0} matching companies.` : "Loading companies from your database..."}`,
           };
@@ -1056,7 +1056,7 @@ export function MonacoContent({
                                   ? "bg-blue-100 text-blue-800"
                                   : record['status'] === "active"
                                     ? "bg-emerald-100 text-emerald-800"
-                                    : "bg-gray-100 text-gray-800"
+                                    : "bg-[var(--hover)] text-gray-800"
                             }`}
                           >
                             {record.status.toUpperCase()}
@@ -1084,7 +1084,7 @@ export function MonacoContent({
                             <p>
                               {record.name}—{record.company}
                             </p>
-                            <p className="text-gray-600">
+                            <p className="text-[var(--muted)]">
                               {record.title}
                             </p>
                             <p>
@@ -1113,7 +1113,7 @@ export function MonacoContent({
                             handleRunPipeline(record);
                           }}
                           disabled={isCompanyPipelineRunning(record.id)}
-                          className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors disabled:opacity-50"
+                          className="px-3 py-1 text-xs font-medium bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors disabled:opacity-50"
                         >
                           {isCompanyPipelineRunning(record.id)
                             ? "Running..."
@@ -1127,7 +1127,7 @@ export function MonacoContent({
                             `Adding ${record.name} to Action Platform`,
                           );
                         }}
-                        className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                        className="px-3 py-1 rounded-lg text-xs font-medium bg-[var(--hover)] text-gray-700 hover:bg-[var(--loading-bg)] transition-colors"
                       >
                         Add to Acquire
                       </button>

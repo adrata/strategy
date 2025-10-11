@@ -82,36 +82,36 @@ export default function CloseTheBuyerGapPage() {
             <div className="bg-black rounded-lg p-4 mb-8">
               <div className="text-2xl font-bold text-white mb-2">85%</div>
               <p className="text-gray-300 text-sm">
-                of top performers include Economic Buyers in their sales process vs 8% of low performers<a href="#footnote-1" className="text-gray-400 hover:text-white ml-1 text-xs">¹</a>
+                of top performers include Economic Buyers in their sales process vs 8% of low performers<a href="#footnote-1" className="text-[var(--muted)] hover:text-white ml-1 text-xs">¹</a>
               </p>
             </div>
             
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Identify Decision Makers</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     Find who actually controls the budget and timeline.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Map Hidden Influencers</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     Discover stakeholders you never knew existed.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Close Faster</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     Engage the right people from day one.
                   </p>
                 </div>
@@ -121,11 +121,11 @@ export default function CloseTheBuyerGapPage() {
         </div>
 
         {/* Right Side - Opportunity Form */}
-        <div className="w-1/2 bg-white flex items-center justify-center p-8">
+        <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             <form onSubmit={handleStep1Submit} className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Tell Us About Your Deal</h3>
+                <h3 className="text-2xl font-bold text-[var(--foreground)] mb-6">Tell Us About Your Deal</h3>
               </div>
 
               <div>
@@ -138,7 +138,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.targetCompany}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Which company are you selling to?"
                 />
               </div>
@@ -152,7 +152,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.industry}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select industry</option>
                   <option value="technology">Technology</option>
@@ -173,7 +173,7 @@ export default function CloseTheBuyerGapPage() {
                   name="dealSize"
                   value={formData.dealSize}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select deal size</option>
                   <option value="<50k">Under $50K</option>
@@ -191,7 +191,7 @@ export default function CloseTheBuyerGapPage() {
                   name="timeframe"
                   value={formData.timeframe}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select timeframe</option>
                   <option value="immediate">This month</option>
@@ -210,7 +210,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.currentChallenge}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Can't reach decision makers? Deal stalled? Working wrong people?"
                 />
               </div>
@@ -254,30 +254,30 @@ export default function CloseTheBuyerGapPage() {
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Custom Analysis</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     We'll map your specific buyer group.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Gap Identification</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     See exactly who you're missing.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Action Plan</h3>
-                  <p className="text-gray-400">
+                  <p className="text-[var(--muted)]">
                     Specific steps to close your gap.
                   </p>
                 </div>
@@ -287,7 +287,7 @@ export default function CloseTheBuyerGapPage() {
             <div className="mt-8 pt-8 border-t border-gray-800">
               <button
                 onClick={() => setStep(1)}
-                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-white transition-colors"
               >
                 ← Back to Deal Details
               </button>
@@ -296,11 +296,11 @@ export default function CloseTheBuyerGapPage() {
         </div>
 
         {/* Right Side - Contact Form */}
-        <div className="w-1/2 bg-white flex items-center justify-center p-8">
+        <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             <form onSubmit={handleStep2Submit} className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Your Information</h3>
+                <h3 className="text-2xl font-bold text-[var(--foreground)] mb-6">Your Information</h3>
               </div>
 
               <div>
@@ -313,7 +313,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Full name"
                 />
               </div>
@@ -328,7 +328,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="you@company.com"
                 />
               </div>
@@ -343,7 +343,7 @@ export default function CloseTheBuyerGapPage() {
                   value={formData.company}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Your company name"
                 />
               </div>
@@ -355,7 +355,7 @@ export default function CloseTheBuyerGapPage() {
                 Get My Buyer Gap Analysis →
               </button>
 
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-[var(--muted)] text-center">
                 We'll analyze your buyer gap and prepare specific recommendations.
               </p>
             </form>
@@ -390,30 +390,30 @@ export default function CloseTheBuyerGapPage() {
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">30-Minute Session</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Review your buyer gap analysis and close strategy.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Specific Actions</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Exactly who to contact and how to reach them.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Ongoing Access</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Learn how to close buyer gaps on every deal.
                 </p>
               </div>
@@ -423,7 +423,7 @@ export default function CloseTheBuyerGapPage() {
           <div className="mt-8 pt-8 border-t border-gray-800">
             <button
               onClick={() => setStep(2)}
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-white transition-colors"
             >
               ← Back to Contact Info
             </button>
@@ -432,7 +432,7 @@ export default function CloseTheBuyerGapPage() {
       </div>
 
       {/* Right Side - Calendly Scheduling */}
-      <div className="w-1/2 bg-white flex items-center justify-center p-8">
+      <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
         <div className="w-full max-w-full">
           {/* Calendly widget */}
           <CalendlyWidget 
@@ -448,11 +448,11 @@ export default function CloseTheBuyerGapPage() {
             }}
           />
           
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="mt-6 p-4 bg-[var(--panel-background)] rounded-lg">
+            <p className="text-sm text-[var(--muted)] mb-2">
               <strong>What happens next:</strong>
             </p>
-            <ol className="text-xs text-gray-500 space-y-1">
+            <ol className="text-xs text-[var(--muted)] space-y-1">
               <li>1. We analyze your buyer gap at {formData.targetCompany}</li>
               <li>2. You get a personalized gap report</li>
               <li>3. We review who you're missing and why</li>
@@ -463,7 +463,7 @@ export default function CloseTheBuyerGapPage() {
       </div>
       
       {/* Footnotes Section - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-200 p-4 z-10">
+      <div className="fixed bottom-0 left-0 right-0 bg-[var(--hover)] border-t border-[var(--border)] p-4 z-10">
         <div className="max-w-4xl mx-auto">
           <div className="space-y-2 text-xs text-gray-700">
             <div id="footnote-1">

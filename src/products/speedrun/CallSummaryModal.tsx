@@ -81,7 +81,7 @@ const SUMMARY_OPTIONS = [
     outcome: "not-interested" as CallOutcome,
     label: "Not Interested",
     description: "Contact politely declined",
-    color: "bg-gray-500 hover:bg-gray-600",
+    color: "bg-[var(--panel-background)]0 hover:bg-gray-600",
     icon: XMarkIcon,
     category: "closure",
   },
@@ -97,7 +97,7 @@ const SUMMARY_OPTIONS = [
     outcome: "wrong-number" as CallOutcome,
     label: "Wrong Number",
     description: "Phone number was incorrect or invalid",
-    color: "bg-gray-400 hover:bg-gray-500",
+    color: "bg-gray-400 hover:bg-[var(--panel-background)]0",
     icon: XMarkIcon,
     category: "closure",
   },
@@ -221,7 +221,7 @@ export function CallSummaryModal({
                   </div>
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                      <div className="w-2 h-2 bg-[var(--background)] rounded-full"></div>
                     </div>
                   )}
                 </button>
@@ -271,7 +271,7 @@ export function CallSummaryModal({
                 <>
                   Save & Continue
                   {selectedOutcome && (
-                    <span className="ml-2 px-2 py-1 bg-white/20 rounded text-xs">
+                    <span className="ml-2 px-2 py-1 bg-[var(--background)]/20 rounded text-xs">
                       {selectedOption?.label}
                     </span>
                   )}

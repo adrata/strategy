@@ -387,24 +387,24 @@ export default function OlympusPage() {
   }, [setSelectedStep, isExecuting]);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-gray-200 bg-white">
+      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-lg flex items-center justify-center">
                 <span className="text-gray-700 font-bold text-base">O</span>
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Olympus</h1>
-                <p className="text-xs text-gray-600">CFO/CRO Discovery Pipeline</p>
+                <h1 className="text-xl font-semibold text-[var(--foreground)]">Olympus</h1>
+                <p className="text-xs text-[var(--muted)]">CFO/CRO Discovery Pipeline</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setIsCodeMode(!isCodeMode)}
-                className="px-4 py-1 bg-white text-gray-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="px-4 py-1 bg-[var(--background)] text-[var(--muted)] text-sm font-medium rounded-lg border border-[var(--border)] hover:bg-[var(--panel-background)] transition-colors"
               >
                 {isCodeMode ? 'Build' : 'Code'}
               </button>

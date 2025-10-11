@@ -159,16 +159,16 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-[var(--background)] rounded-xl shadow-2xl border border-[var(--border)] w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-[var(--border)]">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">
               Edit Lead: {lead.name}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
             >
               <svg
                 className="w-6 h-6"
@@ -188,7 +188,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-[var(--border)]">
           <nav className="flex space-x-8 px-6">
             {tabs.map((tab) => (
               <button
@@ -197,7 +197,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]"
                 }`}
               >
                 {tab.label}
@@ -218,7 +218,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -229,7 +229,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   type="text"
                   value={formData.company}
                   onChange={(e) => handleInputChange("company", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -240,7 +240,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -256,7 +256,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -267,7 +267,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                 <select
                   value={formData.source}
                   onChange={(e) => handleInputChange("source", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select source...</option>
                   <option value="Web">Web</option>
@@ -303,7 +303,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   onChange={(e) =>
                     handleInputChange("currentStage", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="Generate">Generate</option>
                   <option value="Initiate">Initiate</option>
@@ -319,7 +319,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   onChange={(e) =>
                     handleInputChange("buyerGroupRole", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select role...</option>
                   <option value="Champion">Champion</option>
@@ -339,7 +339,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   onChange={(e) =>
                     handleInputChange("relationship", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select status...</option>
                   <option value="Hot">Hot</option>
@@ -382,7 +382,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   </div>
                 )}
 
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-[var(--muted)] mt-1">
                   AI-powered status based on engagement data
                 </p>
               </div>
@@ -399,7 +399,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Add notes about this lead..."
                 />
               </div>
@@ -413,7 +413,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                   onChange={(e) =>
                     handleInputChange("nextAction", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="What's the next step for this lead?"
                 />
               </div>
@@ -422,12 +422,12 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+        <div className="px-6 py-4 border-t border-[var(--border)] flex justify-between">
           <div>
             {onDelete && (
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center gap-2"
+                className="px-4 py-2 text-sm font-medium text-red-700 bg-[var(--background)] border border-red-300 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center gap-2"
               >
                 <TrashIcon className="h-4 w-4" />
                 Delete Lead
@@ -437,7 +437,7 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
           <div className="flex space-x-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Cancel
             </button>
@@ -454,12 +454,12 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">Delete Lead</h3>
+          <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-md w-full">
+            <div className="px-6 py-4 border-b border-[var(--border)]">
+              <h3 className="text-lg font-medium text-[var(--foreground)]">Delete Lead</h3>
             </div>
             <div className="px-6 py-4">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-[var(--muted)] mb-4">
                 This action cannot be undone. This will soft delete the record and remove it from your active lists.
               </p>
               <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
@@ -472,13 +472,13 @@ export const EditLeadModal: React.FC<EditLeadModalProps> = ({
                 value={deleteConfirmName}
                 onChange={(e) => setDeleteConfirmName(e.target.value)}
                 placeholder={`Type "${lead.name}" to confirm`}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+            <div className="px-6 py-4 border-t border-[var(--border)] flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Cancel
               </button>

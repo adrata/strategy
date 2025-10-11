@@ -285,7 +285,8 @@ model users {
   atrium_documents        AtriumDocument[]
   atrium_folders          AtriumFolder[]
   atrium_versions         AtriumVersion[]
-  atrium_comments         AtriumComment[]
+  atrium_comments         AtriumComment[] @relation("CommentAuthor")
+  atrium_resolved_comments AtriumComment[] @relation("CommentResolver")
   atrium_activities       AtriumActivity[]
 
   @@index([activeWorkspaceId])
@@ -956,7 +957,7 @@ model AtriumVersion {
   
   // Relations
   document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdBy       users             @relation(fields: [createdById], references: [id])
   parentVersion   AtriumVersion?    @relation("VersionHierarchy", fields: [parentVersionId], references: [id])
   childVersions   AtriumVersion[]   @relation("VersionHierarchy")
   
@@ -987,11 +988,11 @@ model AtriumComment {
   
   // Relations
   document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  author          User              @relation(fields: [authorId], references: [id])
+  author          users             @relation("CommentAuthor", fields: [authorId], references: [id])
   authorId        String
   parentComment   AtriumComment?    @relation("CommentThread", fields: [parentCommentId], references: [id])
   replies         AtriumComment[]   @relation("CommentThread")
-  resolvedBy      User?             @relation(fields: [resolvedById], references: [id])
+  resolvedBy      users?            @relation("CommentResolver", fields: [resolvedById], references: [id])
   
   @@index([documentId])
   @@index([authorId])
@@ -1015,7 +1016,7 @@ model AtriumActivity {
   
   // Relations
   document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  user            User              @relation(fields: [userId], references: [id])
+  user            users             @relation(fields: [userId], references: [id])
   userId          String
   
   @@index([documentId])

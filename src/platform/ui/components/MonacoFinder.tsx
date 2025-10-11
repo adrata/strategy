@@ -392,7 +392,7 @@ export function MonacoFinder({
           <button
             onClick={handleSearch}
             disabled={search.isLoading || !search.query.trim()}
-                            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-4 py-2 bg-[var(--foreground)] text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {search.isLoading ? "..." : "Find"}
           </button>
@@ -453,7 +453,7 @@ export function MonacoFinder({
                             ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                             : person['influence'] === "Medium"
                               ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                              : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                              : "bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-[var(--muted)]"
                         }`}
                       >
                         {person.confidence}% match
@@ -477,7 +477,7 @@ export function MonacoFinder({
                         onClick={() =>
                           window.open(person.linkedinUrl, "_blank")
                         }
-                        className="text-xs text-gray-600 hover:text-gray-700 hover:underline"
+                        className="text-xs text-[var(--muted)] hover:text-gray-700 hover:underline"
                       >
                         LinkedIn
                       </button>

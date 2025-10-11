@@ -28,7 +28,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
   if (!record) {
     return (
       <div className="space-y-6">
-        <div className="text-center text-gray-500">No record data available</div>
+        <div className="text-center text-[var(--muted)]">No record data available</div>
       </div>
     );
   }
@@ -181,13 +181,13 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       {/* Summary */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Intelligence Summary</h3>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
         </div>
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-          <div className="text-sm text-gray-900 leading-relaxed">
+        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="text-sm text-[var(--foreground)] leading-relaxed">
             {intelligenceSummary || (
               <>
-                <span className="font-semibold text-gray-900">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+                <span className="font-semibold text-[var(--foreground)]">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
                 They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
                 Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
               </>
@@ -198,27 +198,27 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Intelligence Profile */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Intelligence Profile</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Intelligence Profile</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Key Metrics Card */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-900">Key Metrics</h4>
+              <h4 className="font-semibold text-[var(--foreground)]">Key Metrics</h4>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Influence Level:</span>
+                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   influenceLevel === 'High' ? 'bg-red-100 text-red-800' :
                   influenceLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-gray-100 text-gray-800'
+                  'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {influenceLevel}
                 </span>
               </div>
               <div className="flex flex-col items-start">
-                <span className="text-sm text-gray-600 mb-2">Engagement Strategy:</span>
-                <div className="text-sm text-gray-900">
+                <span className="text-sm text-[var(--muted)] mb-2">Engagement Strategy:</span>
+                <div className="text-sm text-[var(--foreground)]">
                   {engagementStrategy && engagementStrategy.length > 80 ? (
                     <div className="space-y-2">
                       {engagementStrategy.split(/[.!?]+/).filter(sentence => sentence.trim().length > 10).map((strategy, index) => (
@@ -229,58 +229,58 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                       ))}
                     </div>
                   ) : (
-                    <span className="text-sm font-medium text-gray-900">{engagementStrategy}</span>
+                    <span className="text-sm font-medium text-[var(--foreground)]">{engagementStrategy}</span>
                   )}
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   isBuyerGroupMember 
                     ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Seniority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{seniority}</span>
+                <span className="text-sm text-[var(--muted)]">Seniority:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{seniority}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{department}</span>
+                <span className="text-sm text-[var(--muted)]">Department:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{department}</span>
               </div>
             </div>
           </div>
 
           {/* Role & Influence Analysis Card */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-900">Role & Influence Analysis</h4>
+              <h4 className="font-semibold text-[var(--foreground)]">Role & Influence Analysis</h4>
             </div>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">Primary Role</span>
-                  <span className="text-sm font-medium text-gray-900">{buyerRole}</span>
+                  <span className="text-sm text-[var(--muted)]">Primary Role</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerRole}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">Engagement Level</span>
-                  <span className="text-sm font-medium text-gray-900">{engagementLevel || 'Medium'}</span>
+                  <span className="text-sm text-[var(--muted)]">Engagement Level</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">{engagementLevel || 'Medium'}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">Influence Level</span>
+                  <span className="text-sm text-[var(--muted)]">Influence Level</span>
                   <span className={`text-sm font-semibold ${
-                    influence >= 80 ? 'text-green-600' : influence >= 60 ? 'text-yellow-600' : 'text-gray-600'
+                    influence >= 80 ? 'text-green-600' : influence >= 60 ? 'text-yellow-600' : 'text-[var(--muted)]'
                   }`}>
                     {influence >= 80 ? 'High' : influence >= 60 ? 'Moderate' : 'Limited'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">Decision Authority</span>
+                  <span className="text-sm text-[var(--muted)]">Decision Authority</span>
                   <span className={`text-sm font-semibold ${
-                    decisionPower >= 80 ? 'text-purple-600' : decisionPower >= 60 ? 'text-blue-600' : 'text-gray-600'
+                    decisionPower >= 80 ? 'text-purple-600' : decisionPower >= 60 ? 'text-blue-600' : 'text-[var(--muted)]'
                   }`}>
                     {decisionPower >= 80 ? 'Strong' : decisionPower >= 60 ? 'Moderate' : 'Limited'}
                   </span>
@@ -288,23 +288,23 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </div>
               
               <div className="border-t pt-4">
-                <h5 className="text-sm font-medium text-gray-900 mb-2">Communication Profile</h5>
+                <h5 className="text-sm font-medium text-[var(--foreground)] mb-2">Communication Profile</h5>
                 <div className="space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-xs text-gray-600">Style:</span>
-                    <span className="text-xs font-medium text-gray-900">{communicationStyle}</span>
+                    <span className="text-xs text-[var(--muted)]">Style:</span>
+                    <span className="text-xs font-medium text-[var(--foreground)]">{communicationStyle}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-gray-600">Decision Making:</span>
-                    <span className="text-xs font-medium text-gray-900">{decisionMaking || 'Data-driven'}</span>
+                    <span className="text-xs text-[var(--muted)]">Decision Making:</span>
+                    <span className="text-xs font-medium text-[var(--foreground)]">{decisionMaking || 'Data-driven'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-gray-600">Preferred Contact:</span>
-                    <span className="text-xs font-medium text-gray-900">Email</span>
+                    <span className="text-xs text-[var(--muted)]">Preferred Contact:</span>
+                    <span className="text-xs font-medium text-[var(--foreground)]">Email</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-gray-600">Response Time:</span>
-                    <span className="text-xs font-medium text-gray-900">24-48 hours</span>
+                    <span className="text-xs text-[var(--muted)]">Response Time:</span>
+                    <span className="text-xs font-medium text-[var(--foreground)]">24-48 hours</span>
                   </div>
                 </div>
               </div>
@@ -316,12 +316,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Engagement Strategy */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Engagement Strategy</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Engagement Strategy</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Approach</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Approach</h4>
+              <p className="text-sm text-[var(--muted)]">
                 {buyerRole === 'Decision Maker' ? 'Direct, data-driven approach with ROI focus' :
                  buyerRole === 'Champion' ? 'Collaborative approach with solution benefits' :
                  buyerRole === 'Stakeholder' ? 'Educational approach with use cases' :
@@ -329,8 +329,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Key Messages</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Key Messages</h4>
+              <p className="text-sm text-[var(--muted)]">
                 {buyerRole === 'Decision Maker' ? 'Focus on business impact and competitive advantage' :
                  buyerRole === 'Champion' ? 'Emphasize innovation and team success' :
                  buyerRole === 'Stakeholder' ? 'Highlight efficiency and process improvement' :
@@ -338,8 +338,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Next Steps</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Next Steps</h4>
+              <p className="text-sm text-[var(--muted)]">
                 {(engagementLevel || 'Medium').includes('High') ? 'Schedule technical demo and stakeholder meeting' :
                  (engagementLevel || 'Medium').includes('Medium') ? 'Provide case studies and reference calls' :
                  (engagementLevel || 'Medium').includes('Low') ? 'Identify pain points and build urgency' :
@@ -352,55 +352,55 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Role & Influence Analysis */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Role & Influence Analysis</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role & Influence Analysis</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Role Analysis</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Role Analysis</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Primary Role</span>
+                <span className="text-sm text-[var(--muted)]">Primary Role</span>
                 <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                   buyerRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   buyerRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   buyerRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
+                  'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {buyerRole}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Level</span>
-                <span className="text-sm font-medium text-gray-900">{engagementLevel || 'Medium'}</span>
+                <span className="text-sm text-[var(--muted)]">Engagement Level</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{engagementLevel || 'Medium'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Score</span>
-                <span className="text-sm font-medium text-gray-900">{influence}%</span>
+                <span className="text-sm text-[var(--muted)]">Influence Score</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{influence}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Power</span>
-                <span className="text-sm font-medium text-gray-900">{decisionPower}%</span>
+                <span className="text-sm text-[var(--muted)]">Decision Power</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{decisionPower}%</span>
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Communication Profile</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Communication Profile</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Style</span>
-                <span className="text-sm font-medium text-gray-900">{communicationStyle}</span>
+                <span className="text-sm text-[var(--muted)]">Style</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{communicationStyle}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Making</span>
-                <span className="text-sm font-medium text-gray-900">{decisionMaking || 'Data-driven'}</span>
+                <span className="text-sm text-[var(--muted)]">Decision Making</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{decisionMaking || 'Data-driven'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Preferred Contact</span>
-                <span className="text-sm font-medium text-gray-900">Email</span>
+                <span className="text-sm text-[var(--muted)]">Preferred Contact</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">Email</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Response Time</span>
-                <span className="text-sm font-medium text-gray-900">24-48 hours</span>
+                <span className="text-sm text-[var(--muted)]">Response Time</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">24-48 hours</span>
               </div>
             </div>
           </div>
@@ -409,12 +409,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Pain Points & Interests */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Pain Points & Interests</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Pain Points & Interests</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pain Points Card */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-900">Pain Points</h4>
+              <h4 className="font-semibold text-[var(--foreground)]">Pain Points</h4>
             </div>
             <div className="space-y-3">
               {insights.painPoints.map((point: string, index: number) => (
@@ -427,9 +427,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
           </div>
           
           {/* Interests Card */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-900">Interests</h4>
+              <h4 className="font-semibold text-[var(--foreground)]">Interests</h4>
             </div>
             <div className="space-y-3">
               {interests.length > 0 ? (
@@ -440,7 +440,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                   </div>
                 ))
               ) : (
-                <div className="text-sm text-gray-500 italic">No specific interests identified</div>
+                <div className="text-sm text-[var(--muted)] italic">No specific interests identified</div>
               )}
             </div>
           </div>
@@ -449,10 +449,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Goals & Objectives */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Goals & Objectives</h3>
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Goals & Objectives</h3>
+        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-semibold text-gray-900">Professional Goals</h4>
+            <h4 className="font-semibold text-[var(--foreground)]">Professional Goals</h4>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -472,10 +472,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
 
       {/* Challenges & Opportunities */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Challenges & Opportunities</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Challenges & Opportunities</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Current Challenges</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Current Challenges</h4>
             <div className="space-y-3">
               {insights.challenges.map((challenge: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
@@ -486,8 +486,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Strategic Opportunities</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Opportunities</h4>
             <div className="space-y-3">
               {insights.opportunities.map((opportunity: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
@@ -505,12 +505,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-gray-900">Deep Value Reports</h3>
-            <p className="text-sm text-gray-600 mt-1">AI-powered insights tailored to this contact</p>
+            <h3 className="text-xl font-bold text-[var(--foreground)]">Deep Value Reports</h3>
+            <p className="text-sm text-[var(--muted)] mt-1">AI-powered insights tailored to this contact</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-600">Adrata Generated</span>
+            <span className="text-sm text-[var(--muted)]">Adrata Generated</span>
           </div>
         </div>
         
@@ -519,7 +519,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               <div className="col-span-full flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
-                  <div className="text-gray-500">Generating intelligent reports...</div>
+                  <div className="text-[var(--muted)]">Generating intelligent reports...</div>
                 </div>
               </div>
             ) : reports.length > 0 ? (
@@ -527,24 +527,24 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                 return (
                   <div
                     key={report.id}
-                    className="bg-white p-6 rounded-lg border border-gray-200 cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-200 group"
+                    className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-md hover:border-[var(--border)] transition-all duration-200 group"
                     onClick={() => handleReportClick(report.id)}
                   >
                     <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-[var(--hover)] rounded-lg flex items-center justify-center group-hover:bg-[var(--loading-bg)] transition-colors">
+                        <svg className="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                        <h4 className="font-medium text-[var(--foreground)] mb-2 group-hover:text-gray-700 transition-colors">
                           {report.title}
                         </h4>
-                        <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                        <p className="text-sm text-[var(--muted)] leading-relaxed mb-3">
                           {report.description}
                         </p>
                         <div className="flex items-center justify-end">
-                          <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                          <div className="text-[var(--muted)] group-hover:text-[var(--muted)] transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
@@ -556,7 +556,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
                     {report.isGenerating && (
                       <div className="mt-4 flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-                        <span className="text-xs text-gray-600 font-medium">Generating...</span>
+                        <span className="text-xs text-[var(--muted)] font-medium">Generating...</span>
                       </div>
                     )}
                   </div>
@@ -564,9 +564,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
               })
             ) : (
               <div className="col-span-full text-center py-12">
-                <div className="text-gray-400 text-4xl mb-4">📊</div>
-                <div className="text-gray-500 italic">No deep value reports available</div>
-                <div className="text-sm text-gray-400 mt-2">Reports will appear here once generated</div>
+                <div className="text-[var(--muted)] text-4xl mb-4">📊</div>
+                <div className="text-[var(--muted)] italic">No deep value reports available</div>
+                <div className="text-sm text-[var(--muted)] mt-2">Reports will appear here once generated</div>
               </div>
             )}
         </div>

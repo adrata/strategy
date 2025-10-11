@@ -438,15 +438,15 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                     Live Priority Updates
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
                       <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">ZeroPoint raised priority (+25 points)</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">Microsoft engagement spike detected</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
                       <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">3 new decision makers identified</span>
                     </div>
@@ -524,7 +524,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                           }`}
                         >
                           <div
-                            className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                            className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                               config.aiPredictiveScoring ? 'translate-x-6' : 'translate-x-1'
                             }`}
                           />
@@ -534,7 +534,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                         Uses historical data and buyer behavior patterns to predict deal closure probability with 94.2% accuracy.
                       </p>
                       {config['aiPredictiveScoring'] && (
-                        <div className="mt-4 p-3 bg-white/50 rounded-lg">
+                        <div className="mt-4 p-3 bg-[var(--background)]/50 rounded-lg">
                           <div className="text-xs text-[var(--muted)] mb-1">Current Model Performance:</div>
                           <div className="flex justify-between text-sm">
                             <span>Accuracy:</span>
@@ -567,7 +567,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             }`}
                           >
                             <div
-                              className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                              className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                                 value ? 'translate-x-6' : 'translate-x-1'
                               }`}
                             />
@@ -586,7 +586,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                   </h3>
                   <div className="space-y-3">
                     {aiRecommendations.map((rec, index) => (
-                      <div key={index} className="p-4 bg-white/50 rounded-lg">
+                      <div key={index} className="p-4 bg-[var(--background)]/50 rounded-lg">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -623,7 +623,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {Object.entries(config.productStrategies).map(([id, strategy]) => (
-                    <div key={id} className="bg-white border border-[var(--border)] rounded-xl p-6 shadow-sm">
+                    <div key={id} className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                           <RocketLaunchIcon className="w-5 h-5 text-white" />
@@ -643,7 +643,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             step="0.1"
                             value={strategy.priorityMultiplier}
                             onChange={(e) => handleConfigChange(`productStrategies.${id}.priorityMultiplier`, parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
                             <span>0.5x</span>
@@ -698,7 +698,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             step="0.1"
                             value={strategy.salesCycleWeight}
                             onChange={(e) => handleConfigChange(`productStrategies.${id}.salesCycleWeight`, parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                           />
                           <div className="text-center text-sm text-[var(--muted)] mt-1">
                             {strategy.salesCycleWeight}x
@@ -730,7 +730,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {Object.entries(config.behavioralTriggers).map(([trigger, value]) => (
-                    <div key={trigger} className="bg-white border border-[var(--border)] rounded-xl p-6">
+                    <div key={trigger} className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
                       <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                         {trigger.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                       </h3>
@@ -746,7 +746,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             max="50"
                             value={value}
                             onChange={(e) => handleConfigChange(`behavioralTriggers.${trigger}`, parseInt(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
                             <span>0%</span>
@@ -754,7 +754,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                           </div>
                         </div>
 
-                        <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="p-3 bg-[var(--panel-background)] rounded-lg">
                           <div className="text-sm text-[var(--muted)]">
                             {trigger === 'emailEngagement' && 'Opens, clicks, and replies to your emails'}
                             {trigger === 'websiteActivity' && 'Page views, time on site, and content consumption'}
@@ -795,7 +795,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                         max="50"
                         value={value}
                         onChange={(e) => handleConfigChange(`riskFactors.${factor}`, parseInt(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mb-3"
+                        className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer mb-3"
                       />
                       
                       <div className="text-sm text-[var(--muted)]">
@@ -853,7 +853,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       max="200"
                       value={config.sellerProfile.quotaAttainment}
                       onChange={(e) => handleConfigChange('sellerProfile.quotaAttainment', parseInt(e.target.value))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                     />
                     <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
                       <span>0%</span>
@@ -926,7 +926,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                   </div>
                 </div>
 
-                <div className="mt-8 bg-white border border-[var(--border)] rounded-xl p-6">
+                <div className="mt-8 bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Priority Changes</h3>
                   <div className="space-y-3">
                     {[
@@ -935,7 +935,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       { company: "Apple", change: "-8", reason: "Competitor activity", time: "12 min ago" },
                       { company: "Nike", change: "+12", reason: "Website engagement", time: "18 min ago" },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 bg-[var(--panel-background)] rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${item.change.startsWith('+') ? 'bg-green-500' : 'bg-red-500'}`}></div>
                           <span className="font-medium">{item.company}</span>
@@ -957,7 +957,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-gray-50 dark:bg-gray-900/20">
+        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20">
           <div className="flex items-center gap-4">
             <div className="text-sm text-[var(--muted)]">
               Last updated: {new Date().toLocaleTimeString()}

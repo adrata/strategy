@@ -128,6 +128,7 @@ export class ThemeApplier2025 {
       '--border': colors.border,
       '--muted': colors.muted,
       '--muted-light': colors.mutedLight,
+      '--loading-bg': colors.loadingBg,
       '--hover': colors.hover,
       '--button-text': colors.buttonText,
       '--button-background': colors.buttonBackground,

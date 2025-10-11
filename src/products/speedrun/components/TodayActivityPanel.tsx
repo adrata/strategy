@@ -89,9 +89,9 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-semibold text-gray-900">Today's Outreach</h3>
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">Today's Outreach</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setShowMarkForm(!showMarkForm)}
@@ -114,25 +114,25 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
       <div className="grid grid-cols-4 gap-2 mb-3">
         <div className="text-center">
           <div className="text-lg font-bold text-blue-600">{counts.email || 0}</div>
-          <div className="text-xs text-gray-500">Emails</div>
+          <div className="text-xs text-[var(--muted)]">Emails</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-green-600">{counts.call || 0}</div>
-          <div className="text-xs text-gray-500">Calls</div>
+          <div className="text-xs text-[var(--muted)]">Calls</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-purple-600">{counts.message || 0}</div>
-          <div className="text-xs text-gray-500">Messages</div>
+          <div className="text-xs text-[var(--muted)]">Messages</div>
         </div>
         <div className="text-center">
           <div className="text-lg font-bold text-orange-600">{companiesContacted.size}</div>
-          <div className="text-xs text-gray-500">Companies</div>
+          <div className="text-xs text-[var(--muted)]">Companies</div>
         </div>
       </div>
 
       {/* Manual Mark Form */}
       {showMarkForm && (
-        <div className="bg-gray-50 p-3 rounded border mb-3">
+        <div className="bg-[var(--panel-background)] p-3 rounded border mb-3">
           <div className="text-xs font-medium text-gray-700 mb-2">
             Mark External Outreach (Email sent outside Speedrun, calls, etc.)
           </div>
@@ -142,21 +142,21 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
               placeholder="Prospect Name"
               value={markFormData.prospectName}
               onChange={(e) => setMarkFormData({...markFormData, prospectName: e.target.value})}
-              className="text-xs border border-gray-300 rounded px-2 py-1"
+              className="text-xs border border-[var(--border)] rounded px-2 py-1"
             />
             <input
               type="text"
               placeholder="Company Name"
               value={markFormData.company}
               onChange={(e) => setMarkFormData({...markFormData, company: e.target.value})}
-              className="text-xs border border-gray-300 rounded px-2 py-1"
+              className="text-xs border border-[var(--border)] rounded px-2 py-1"
             />
           </div>
           <div className="flex gap-2">
             <select
               value={markFormData.activityType}
               onChange={(e) => setMarkFormData({...markFormData, activityType: e.target.value as any})}
-              className="text-xs border border-gray-300 rounded px-2 py-1 flex-1"
+              className="text-xs border border-[var(--border)] rounded px-2 py-1 flex-1"
             >
               <option value="email">Email</option>
               <option value="call">Call</option>
@@ -193,7 +193,7 @@ export function TodayActivityPanel({ onActivityRecorded }: TodayActivityPanelPro
       )}
 
       {activities['length'] === 0 && !showMarkForm && (
-        <div className="text-xs text-gray-500 text-center py-2">
+        <div className="text-xs text-[var(--muted)] text-center py-2">
           No outreach activities recorded today
         </div>
       )}

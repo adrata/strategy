@@ -13,10 +13,10 @@ export default function FindBuyerGroupRedirect() {
 
   // Show a loading state while redirecting
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirecting...</p>
+        <p className="text-[var(--muted)]">Redirecting...</p>
       </div>
     </div>
   );

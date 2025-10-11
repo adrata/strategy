@@ -92,19 +92,19 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
   const getStageColor = (stage: string) => {
     switch (stage.toLowerCase()) {
       case "discovery":
-        return "bg-gray-200 text-gray-800";
+        return "bg-[var(--loading-bg)] text-gray-800";
       case "qualification":
         return "bg-gray-300 text-gray-800";
       case "proposal":
         return "bg-gray-400 text-gray-800";
       case "negotiation":
-        return "bg-gray-500 text-white";
+        return "bg-[var(--panel-background)]0 text-white";
       case "closed-won":
         return "bg-gray-800 text-white";
       case "closed-lost":
         return "bg-gray-600 text-white";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
@@ -113,11 +113,11 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
       case "ahead":
         return "bg-gray-800 text-white";
       case "on-pace":
-        return "bg-gray-500 text-white";
+        return "bg-[var(--panel-background)]0 text-white";
       case "behind":
         return "bg-gray-300 text-gray-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
@@ -132,9 +132,9 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
       case "skeptical":
         return "bg-gray-300 text-gray-800";
       case "blocker":
-        return "bg-gray-200 text-gray-800";
+        return "bg-[var(--loading-bg)] text-gray-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
@@ -147,25 +147,25 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
       case "budget":
         return "bg-gray-400 text-gray-800";
       case "timing":
-        return "bg-gray-500 text-white";
+        return "bg-[var(--panel-background)]0 text-white";
       case "company":
         return "bg-gray-300 text-gray-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm max-w-6xl mx-auto">
+    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-sm max-w-6xl mx-auto">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-gray-200">
+      <div className="px-8 py-6 border-b border-[var(--border)]">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">
               {opportunity.name}
             </h1>
             <div className="flex items-center space-x-4 mt-2">
-              <span className="text-lg text-gray-600">
+              <span className="text-lg text-[var(--muted)]">
                 {opportunity.accountName}
               </span>
               <span
@@ -183,42 +183,42 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
             </div>
             <div className="flex items-center space-x-6 mt-3">
               <div>
-                <span className="text-sm text-gray-500">Value:</span>
+                <span className="text-sm text-[var(--muted)]">Value:</span>
                 <span className="ml-2 text-xl font-bold text-green-600">
                   ${opportunity.value.toLocaleString()}
                 </span>
               </div>
               <div>
-                <span className="text-sm text-gray-500">Probability:</span>
+                <span className="text-sm text-[var(--muted)]">Probability:</span>
                 <span className="ml-2 text-lg font-semibold">
                   {opportunity.probability}%
                 </span>
               </div>
               <div>
-                <span className="text-sm text-gray-500">Close Date:</span>
-                <span className="ml-2 text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Close Date:</span>
+                <span className="ml-2 text-[var(--foreground)]">
                   {opportunity.closeDate}
                 </span>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">Owner</div>
-            <div className="font-medium text-gray-900">{opportunity.owner}</div>
-            <div className="text-sm text-gray-500 mt-2">Created</div>
-            <div className="text-gray-900">{opportunity.createdAt}</div>
+            <div className="text-sm text-[var(--muted)]">Owner</div>
+            <div className="font-medium text-[var(--foreground)]">{opportunity.owner}</div>
+            <div className="text-sm text-[var(--muted)] mt-2">Created</div>
+            <div className="text-[var(--foreground)]">{opportunity.createdAt}</div>
           </div>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
+      <div className="px-8 py-6 bg-[var(--panel-background)] border-b border-[var(--border)]">
         <div className="grid grid-cols-4 gap-8">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">
               {opportunity.buyerGroup.stakeholders.length}
             </div>
-            <div className="text-sm text-gray-600">Stakeholders</div>
+            <div className="text-sm text-[var(--muted)]">Stakeholders</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">
@@ -229,25 +229,25 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                 ).length
               }
             </div>
-            <div className="text-sm text-gray-600">Supporters</div>
+            <div className="text-sm text-[var(--muted)]">Supporters</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">
               {opportunity.landmines.length}
             </div>
-            <div className="text-sm text-gray-600">Landmines</div>
+            <div className="text-sm text-[var(--muted)]">Landmines</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">
               {opportunity.competitorAnalysis.length}
             </div>
-            <div className="text-sm text-gray-600">Competitors</div>
+            <div className="text-sm text-[var(--muted)]">Competitors</div>
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-[var(--border)]">
         <nav className="flex space-x-8 px-8">
           {tabs.map((tab) => (
             <button
@@ -256,7 +256,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
                   ? "border-gray-400 text-gray-700"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  : "border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]"
               }`}
             >
               {tab.label}
@@ -270,7 +270,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
         {activeTab === "overview" && (
           <div className="space-y-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                 Opportunity Details
               </h3>
               <div className="grid grid-cols-2 gap-8">
@@ -279,19 +279,19 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Type
                     </label>
-                    <p className="text-gray-900">{opportunity.type}</p>
+                    <p className="text-[var(--foreground)]">{opportunity.type}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Source
                     </label>
-                    <p className="text-gray-900">{opportunity.source}</p>
+                    <p className="text-[var(--foreground)]">{opportunity.source}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Next Steps
                     </label>
-                    <p className="text-gray-900">{opportunity.nextSteps}</p>
+                    <p className="text-[var(--foreground)]">{opportunity.nextSteps}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -299,7 +299,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Last Activity
                     </label>
-                    <p className="text-gray-900">{opportunity.lastActivity}</p>
+                    <p className="text-[var(--foreground)]">{opportunity.lastActivity}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -319,8 +319,8 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Notes
               </label>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-900 whitespace-pre-wrap">
+              <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                <p className="text-[var(--foreground)] whitespace-pre-wrap">
                   {opportunity.notes}
                 </p>
               </div>
@@ -331,12 +331,12 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
         {activeTab === "buyer-group" && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Buyer Group Analysis
               </h3>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-[var(--muted)]">
                 Group Sentiment:{" "}
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-[var(--foreground)]">
                   {opportunity.buyerGroup.groupSentiment}
                 </span>
               </div>
@@ -347,12 +347,12 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                 (stakeholder: any, index: number) => (
                   <div
                     key={index}
-                    className="border border-gray-200 rounded-lg p-6"
+                    className="border border-[var(--border)] rounded-lg p-6"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3">
-                          <h4 className="font-semibold text-gray-900">
+                          <h4 className="font-semibold text-[var(--foreground)]">
                             {stakeholder.name}
                           </h4>
                           <span
@@ -366,16 +366,16 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-600 mt-1">
+                        <p className="text-[var(--muted)] mt-1">
                           {stakeholder.title} • {stakeholder.department}
                         </p>
                         <div className="grid grid-cols-2 gap-6 mt-4">
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">
+                            <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                               INFLUENCE LEVEL
                             </label>
                             <div className="flex items-center space-x-2">
-                              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                              <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
                                 <div
                                   className="bg-blue-600 h-2 rounded-full"
                                   style={{
@@ -389,11 +389,11 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                             </div>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">
+                            <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                               ENGAGEMENT LEVEL
                             </label>
                             <div className="flex items-center space-x-2">
-                              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                              <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
                                 <div
                                   className="bg-green-600 h-2 rounded-full"
                                   style={{
@@ -408,7 +408,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                           </div>
                         </div>
                         <div className="mt-4">
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                             NOTES
                           </label>
                           <p className="text-sm text-gray-700">
@@ -426,27 +426,27 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
 
         {activeTab === "pain" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">
               Pain Points & Positioning
             </h3>
             <div className="space-y-6">
               {opportunity.painPositioning.map((pain: any, index: number) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-6"
+                  className="border border-[var(--border)] rounded-lg p-6"
                 >
                   <div className="grid grid-cols-2 gap-8">
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
+                      <h4 className="font-semibold text-[var(--foreground)] mb-2">
                         Pain Point
                       </h4>
                       <p className="text-gray-700 mb-4">{pain.painPoint}</p>
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                           IMPACT LEVEL
                         </label>
                         <div className="flex items-center space-x-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
                             <div
                               className="bg-red-600 h-2 rounded-full"
                               style={{
@@ -461,16 +461,16 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                       </div>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
+                      <h4 className="font-semibold text-[var(--foreground)] mb-2">
                         Our Solution
                       </h4>
                       <p className="text-gray-700 mb-4">{pain.ourSolution}</p>
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">
+                        <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                           SOLUTION FIT
                         </label>
                         <div className="flex items-center space-x-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
                             <div
                               className="bg-green-600 h-2 rounded-full"
                               style={{
@@ -486,7 +486,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                    <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                       EVIDENCE/METRICS
                     </label>
                     <p className="text-sm text-gray-700">{pain.evidence}</p>
@@ -499,7 +499,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
 
         {activeTab === "competitive" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">
               Competitive Analysis
             </h3>
             <div className="space-y-6">
@@ -507,10 +507,10 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                 (competitor: any, index: number) => (
                   <div
                     key={index}
-                    className="border border-gray-200 rounded-lg p-6"
+                    className="border border-[var(--border)] rounded-lg p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-xl font-semibold text-gray-900">
+                      <h4 className="text-xl font-semibold text-[var(--foreground)]">
                         {competitor.competitorName}
                       </h4>
                       <span
@@ -528,7 +528,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
 
                     <div className="grid grid-cols-2 gap-8">
                       <div>
-                        <h5 className="font-medium text-gray-900 mb-2">
+                        <h5 className="font-medium text-[var(--foreground)] mb-2">
                           Their Advantages
                         </h5>
                         <ul className="space-y-1">
@@ -546,7 +546,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                         </ul>
                       </div>
                       <div>
-                        <h5 className="font-medium text-gray-900 mb-2">
+                        <h5 className="font-medium text-[var(--foreground)] mb-2">
                           Our Advantages
                         </h5>
                         <ul className="space-y-1">
@@ -567,7 +567,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
 
                     <div className="mt-6 space-y-4">
                       <div>
-                        <h5 className="font-medium text-gray-900 mb-2">
+                        <h5 className="font-medium text-[var(--foreground)] mb-2">
                           Battle Card Strategy
                         </h5>
                         <div className="bg-blue-50 rounded-lg p-4">
@@ -585,7 +585,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                           <ul className="space-y-1">
                             {competitor.battleCard.trapQuestions.map(
                               (question: any, idx: number) => (
-                                <li key={idx} className="text-sm text-gray-600">
+                                <li key={idx} className="text-sm text-[var(--muted)]">
                                   <span className="font-medium text-orange-600">
                                     Q:
                                   </span>{" "}
@@ -602,7 +602,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                           <ul className="space-y-1">
                             {competitor.battleCard.winStories.map(
                               (story: any, idx: number) => (
-                                <li key={idx} className="text-sm text-gray-600">
+                                <li key={idx} className="text-sm text-[var(--muted)]">
                                   <span className="font-medium text-green-600">
                                     ✓
                                   </span>{" "}
@@ -624,10 +624,10 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
         {activeTab === "landmines" && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Risk Management & Landmines
               </h3>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-[var(--muted)]">
                 Total Risks:{" "}
                 <span className="font-medium text-red-600">
                   {opportunity.landmines.length}
@@ -639,7 +639,7 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
               {opportunity.landmines.map((landmine: any, index: number) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-6"
+                  className="border border-[var(--border)] rounded-lg p-6"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
@@ -673,19 +673,19 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                     </span>
                   </div>
 
-                  <h4 className="font-semibold text-gray-900 mb-2">
+                  <h4 className="font-semibold text-[var(--foreground)] mb-2">
                     {landmine.description}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-6 mt-4">
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                         IMPACT
                       </label>
                       <p className="text-sm text-gray-700">{landmine.impact}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                         MITIGATION PLAN
                       </label>
                       <p className="text-sm text-gray-700">
@@ -695,10 +695,10 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                    <label className="block text-xs font-medium text-[var(--muted)] mb-1">
                       OWNER
                     </label>
-                    <p className="text-sm text-gray-900 font-medium">
+                    <p className="text-sm text-[var(--foreground)] font-medium">
                       {landmine.owner}
                     </p>
                   </div>
@@ -710,10 +710,10 @@ export function EnhancedOpportunityView({ opportunity }: OpportunityProps) {
 
         {activeTab === "activity" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">
             Action Timeline
             </h3>
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-[var(--muted)]">
               <div className="text-4xl mb-4">📈</div>
               <p>Action timeline will be displayed here</p>
               <p className="text-sm mt-2">

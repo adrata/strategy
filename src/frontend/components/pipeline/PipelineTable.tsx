@@ -77,20 +77,20 @@ function getLastActionTiming(record: PipelineRecord) {
   if (lastActionTime) {
     // Color coding for Speedrun timing
     if (lastActionTime === 'Never') {
-      return { text: lastActionTime, color: 'bg-gray-100 text-gray-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime === 'Today') {
       return { text: lastActionTime, color: 'bg-green-100 text-green-800' };
     } else if (lastActionTime === 'Yesterday') {
       return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
     } else {
-      return { text: lastActionTime, color: 'bg-gray-100 text-gray-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     }
   }
   
   // Fallback: Calculate timing from date
   const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
   const timing = getRealtimeActionTiming(lastActionDate);
-  return { ...timing, color: 'bg-gray-100 text-gray-800' };
+  return { ...timing, color: 'bg-[var(--hover)] text-gray-800' };
 }
 
 function getNextActionTiming(record: PipelineRecord) {
@@ -103,14 +103,14 @@ function getNextActionTiming(record: PipelineRecord) {
     } else if (nextActionTiming === 'Today') {
       return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' };
     } else {
-      return { text: nextActionTiming, color: 'bg-gray-100 text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     }
   }
   
   // Fallback: For next actions, we need to calculate timing based on when the next action should happen
   const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
   if (!nextActionDate) {
-    return { text: 'No date set', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'No date set', color: 'bg-[var(--hover)] text-gray-800' };
   }
   
   const now = new Date();
@@ -119,19 +119,19 @@ function getNextActionTiming(record: PipelineRecord) {
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   
   if (diffDays < 0) {
-    return { text: 'Overdue', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Overdue', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays === 0) {
-    return { text: 'Today', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays === 1) {
-    return { text: 'Tomorrow', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Tomorrow', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 7) {
-    return { text: 'This week', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'This week', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 14) {
-    return { text: 'Next week', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Next week', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 30) {
-    return { text: 'This month', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'This month', color: 'bg-[var(--hover)] text-gray-800' };
   } else {
-    return { text: 'Future', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Future', color: 'bg-[var(--hover)] text-gray-800' };
   }
 }
 
@@ -338,7 +338,7 @@ export function PipelineTable({
   return (
     <div 
       key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
-      className="bg-white rounded-lg border border-gray-200 flex flex-col relative" 
+      className="bg-[var(--background)] rounded-lg border border-[var(--border)] flex flex-col relative" 
       style={{ height: `${tableHeight}px` }}
     >
       {/* Table container */}
@@ -378,7 +378,7 @@ export function PipelineTable({
               return (
                 <tr
                   key={record.id}
-                  className="cursor-pointer transition-colors hover:bg-gray-50 h-16 border-b border-gray-200"
+                  className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
                   onClick={() => onRecordClick(record)}
                 >
                   {headers.map((header, headerIndex) => {
@@ -452,7 +452,7 @@ export function PipelineTable({
                     return (
                       <td
                         key={`${record.id}-${header}`}
-                        className="px-6 py-3 whitespace-nowrap text-sm text-gray-900"
+                        className="px-6 py-3 whitespace-nowrap text-sm text-[var(--foreground)]"
                         style={{ width: getColumnWidth(headerIndex) }}
                       >
                         {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
@@ -466,7 +466,7 @@ export function PipelineTable({
                                   <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
                                     {timing.text}
                                   </span>
-                                  <span className="text-sm text-gray-600 font-normal truncate max-w-32">
+                                  <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
                                     {cellContent}
                                   </span>
                                 </>
@@ -474,7 +474,7 @@ export function PipelineTable({
                             })()}
                           </div>
                         ) : (
-                          <div className="text-sm text-gray-900 truncate">
+                          <div className="text-sm text-[var(--foreground)] truncate">
                             {cellContent}
                           </div>
                         )}

@@ -72,30 +72,30 @@ export function DemoScenarioSwitcher({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+          <h2 className="text-xl font-semibold text-[var(--foreground)]">
             Demo Scenarios
           </h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-gray-500" />
+            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-[var(--border)]">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute right-3 top-3 w-5 h-5 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search scenarios..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none"
+              className="w-full pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none"
             />
           </div>
         </div>
@@ -104,11 +104,11 @@ export function DemoScenarioSwitcher({
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-gray-500">Loading scenarios...</div>
+              <div className="text-[var(--muted)]">Loading scenarios...</div>
             </div>
           ) : filteredScenarios['length'] === 0 ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-gray-500">No scenarios found</div>
+              <div className="text-[var(--muted)]">No scenarios found</div>
             </div>
           ) : (
             <div className="space-y-0">
@@ -123,34 +123,34 @@ export function DemoScenarioSwitcher({
                   <button
                     key={scenario.id}
                     onClick={() => handleScenarioSelect(scenario.slug)}
-                    className={`w-full text-left p-6 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
-                      currentScenario === scenario.slug ? 'bg-gray-100' : ''
+                    className={`w-full text-left p-6 hover:bg-[var(--panel-background)] transition-colors border-b border-gray-100 last:border-b-0 ${
+                      currentScenario === scenario.slug ? 'bg-[var(--hover)]' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-[var(--foreground)]">
                             {scenario.name}
                           </h3>
                           {currentScenario === scenario['slug'] && (
-                            <span className="px-2 py-1 text-xs font-medium bg-gray-900 text-white rounded">
+                            <span className="px-2 py-1 text-xs font-medium bg-[var(--foreground)] text-white rounded">
                               Current
                             </span>
                           )}
                         </div>
                         
-                        <p className="text-gray-600 text-sm mb-3 leading-relaxed">
+                        <p className="text-[var(--muted)] text-sm mb-3 leading-relaxed">
                           {scenario.description}
                         </p>
                         
                         {/* Demo User Info */}
-                        <div className="mb-3 p-3 bg-white border border-gray-200 rounded-lg">
+                        <div className="mb-3 p-3 bg-[var(--background)] border border-[var(--border)] rounded-lg">
                           <div className="text-sm font-medium text-gray-800">{userName}</div>
-                          <div className="text-xs text-gray-600">{userTitle} at {userCompany}</div>
+                          <div className="text-xs text-[var(--muted)]">{userTitle} at {userCompany}</div>
                         </div>
                         
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
                           <span className="font-medium">
                             Industry: {scenario.industry}
                           </span>
@@ -169,14 +169,14 @@ export function DemoScenarioSwitcher({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
+        <div className="p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-[var(--muted)]">
               Select a scenario to experience different client perspectives
             </div>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
             >
               Cancel
             </button>

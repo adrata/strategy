@@ -556,7 +556,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   };
 
   return (
-    <div className="flex items-center gap-4 py-2 w-full bg-white">
+    <div className="flex items-center gap-4 py-2 w-full bg-[var(--background)]">
       {/* Search - full width with icon on right */}
       <div className="relative flex-1">
         <input
@@ -564,11 +564,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           placeholder={`Search ${section === 'speedrun' ? 'Speedrun' : section}...`}
           value={searchQuery}
           onChange={handleSearchChange}
-          className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-white"
+          className="pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-[var(--background)]"
           title=""
         />
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -579,22 +579,22 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         <button
           type="button"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+          className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
         >
-          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          <span className="block truncate text-gray-900">
+          <span className="block truncate text-[var(--foreground)]">
             Filter
           </span>
         </button>
 
         {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
         {isDropdownOpen && (
-          <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+          <div className="absolute z-50 mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-900">Filter By</h3>
+                <h3 className="text-sm font-medium text-[var(--foreground)]">Filter By</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
@@ -605,7 +605,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       onCompanySizeChange?.('all');
                       onLocationChange?.('all');
                     }}
-                    className="text-xs text-gray-500 hover:text-gray-700"
+                    className="text-xs text-[var(--muted)] hover:text-gray-700"
                   >
                     Reset
                   </button>
@@ -613,7 +613,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     onClick={() => {
                       setIsDropdownOpen(false);
                     }}
-                    className="text-xs text-gray-500 hover:text-gray-700"
+                    className="text-xs text-[var(--muted)] hover:text-gray-700"
                   >
                     Close
                   </button>
@@ -626,7 +626,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <select
                   value={statusFilter}
                   onChange={(e) => handleStageChange(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 >
                   {stageOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -642,7 +642,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <select
                   value={companySizeFilter}
                   onChange={(e) => handleCompanySizeChange(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 >
                   {companySizeOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -658,7 +658,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <select
                   value={locationFilter}
                   onChange={(e) => handleLocationChange(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 >
                   {locationOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -669,7 +669,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
               </div>
 
               {/* Apply/Cancel Buttons */}
-              <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end">
+              <div className="flex gap-2 pt-2 border-t border-[var(--border)] justify-end">
                 <button
                   onClick={() => {
                     setCompanySizeFilter('all');
@@ -678,7 +678,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     onLocationChange?.('all');
                     setIsDropdownOpen(false);
                   }}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--hover)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>
@@ -699,20 +699,20 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <button
                   type="button"
                   onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                  className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+                  className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
                 >
-                  <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
-                  <span className="block truncate text-gray-900">
+                  <ArrowsUpDownIcon className="w-4 h-4 text-[var(--muted)]" />
+                  <span className="block truncate text-[var(--foreground)]">
                     Sort
                   </span>
                 </button>
 
                 {/* Sort Dropdown Menu - Match Filter styling */}
                 {isSortDropdownOpen && (
-                  <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+                  <div className="absolute z-50 mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-gray-900">Sort By</h3>
+                        <h3 className="text-sm font-medium text-[var(--foreground)]">Sort By</h3>
                         <div className="flex gap-2">
                           <button
                             onClick={() => {
@@ -720,7 +720,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                               onSortChange?.('rank');
                               setIsSortDropdownOpen(false);
                             }}
-                            className="text-xs text-gray-500 hover:text-gray-700"
+                            className="text-xs text-[var(--muted)] hover:text-gray-700"
                           >
                             Reset
                           </button>
@@ -728,7 +728,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                             onClick={() => {
                               setIsSortDropdownOpen(false);
                             }}
-                            className="text-xs text-gray-500 hover:text-gray-700"
+                            className="text-xs text-[var(--muted)] hover:text-gray-700"
                           >
                             Close
                           </button>
@@ -744,8 +744,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                           onClick={() => handleSortSelect(option.value)}
                           className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
                             option.value === sortBy 
-                              ? 'bg-gray-100 text-gray-800 border border-gray-300' 
-                              : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
+                              ? 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]' 
+                              : 'hover:bg-[var(--panel-background)] focus:outline-none focus:bg-[var(--panel-background)]'
                           }`}
                         >
                           <input
@@ -760,12 +760,12 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       </div>
 
                       {/* Apply/Cancel Buttons */}
-                      <div className="flex gap-2 pt-2 border-t border-gray-200 justify-end mt-4">
+                      <div className="flex gap-2 pt-2 border-t border-[var(--border)] justify-end mt-4">
                         <button
                           onClick={() => {
                             setIsSortDropdownOpen(false);
                           }}
-                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                          className="px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--hover)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-gray-500"
                         >
                           Cancel
                         </button>
@@ -790,22 +790,22 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 <button
                   type="button"
                   onClick={() => setIsColumnsDropdownOpen(!isColumnsDropdownOpen)}
-                  className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+                  className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
                   </svg>
-                  <span className="block truncate text-gray-900">
+                  <span className="block truncate text-[var(--foreground)]">
                     {section === 'opportunities' ? 'Show' : 'Columns'}
                   </span>
                 </button>
 
                 {/* Columns Dropdown Menu - Match Filter/Sort styling */}
                 {isColumnsDropdownOpen && (
-                  <div className="absolute z-50 mt-1 w-64 bg-white border border-gray-300 rounded-lg shadow-lg">
+                  <div className="absolute z-50 mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-gray-900">Show Columns</h3>
+                        <h3 className="text-sm font-medium text-[var(--foreground)]">Show Columns</h3>
                       </div>
                       
                       {/* Column Options */}
@@ -824,8 +824,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                               onClick={() => handleColumnToggle(option.value)}
                               className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 ${
                                 isChecked 
-                                  ? 'bg-gray-100 text-gray-800 border border-gray-300' 
-                                  : 'hover:bg-gray-50 focus:outline-none focus:bg-gray-50'
+                                  ? 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]' 
+                                  : 'hover:bg-[var(--panel-background)] focus:outline-none focus:bg-[var(--panel-background)]'
                               }`}
                             >
                               <input

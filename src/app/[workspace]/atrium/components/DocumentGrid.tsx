@@ -160,9 +160,9 @@ console.log('Total:', total);
       case 'grid':
         return 'text-green-600 bg-green-100';
       case 'code':
-        return 'text-gray-600 bg-gray-100';
+        return 'text-[var(--muted)] bg-[var(--hover)]';
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-[var(--muted)] bg-[var(--hover)]';
     }
   };
 
@@ -177,7 +177,7 @@ console.log('Total:', total);
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-3 text-gray-600">Loading documents...</span>
+        <span className="ml-3 text-[var(--muted)]">Loading documents...</span>
       </div>
     );
   }
@@ -202,9 +202,9 @@ console.log('Total:', total);
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <DocumentTextIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No documents found</h3>
-          <p className="text-gray-500 mb-4">
+          <DocumentTextIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No documents found</h3>
+          <p className="text-[var(--muted)] mb-4">
             {searchQuery 
               ? "No documents match your search criteria."
               : "Get started by creating or uploading your first document."
@@ -226,7 +226,7 @@ console.log('Total:', total);
             <div
               key={document.id}
               onClick={() => setViewingDocument(document)}
-              className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
             >
               {/* Document Header */}
               <div className="flex items-start justify-between mb-3">
@@ -234,37 +234,37 @@ console.log('Total:', total);
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <EyeIcon className="w-4 h-4 text-gray-600" />
+                  <button className="p-1 hover:bg-[var(--hover)] rounded">
+                    <EyeIcon className="w-4 h-4 text-[var(--muted)]" />
                   </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <ShareIcon className="w-4 h-4 text-gray-600" />
+                  <button className="p-1 hover:bg-[var(--hover)] rounded">
+                    <ShareIcon className="w-4 h-4 text-[var(--muted)]" />
                   </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <EllipsisVerticalIcon className="w-4 h-4 text-gray-600" />
+                  <button className="p-1 hover:bg-[var(--hover)] rounded">
+                    <EllipsisVerticalIcon className="w-4 h-4 text-[var(--muted)]" />
                   </button>
                 </div>
               </div>
 
               {/* Document Info */}
               <div className="space-y-2">
-                <h3 className="font-medium text-gray-900 line-clamp-2">
+                <h3 className="font-medium text-[var(--foreground)] line-clamp-2">
                   {document.title}
                 </h3>
                 {document.description && (
-                  <p className="text-sm text-gray-500 line-clamp-2">
+                  <p className="text-sm text-[var(--muted)] line-clamp-2">
                     {document.description}
                   </p>
                 )}
                 
                 {/* Document Meta */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span className="capitalize">{document.documentType}</span>
                   <span>{formatFileSize(document.fileSize)}</span>
                 </div>
 
                 {/* Owner and Date */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span>{document.owner?.name}</span>
                   <span>{new Date(document.updatedAt).toLocaleDateString()}</span>
                 </div>
@@ -275,13 +275,13 @@ console.log('Total:', total);
                     {document.tags.slice(0, 2).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[var(--hover)] text-[var(--muted)]"
                       >
                         {tag}
                       </span>
                     ))}
                     {document.tags.length > 2 && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[var(--muted)]">
                         +{document.tags.length - 2} more
                       </span>
                     )}

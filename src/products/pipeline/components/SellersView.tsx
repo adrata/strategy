@@ -171,10 +171,10 @@ export function SellersView() {
     return (
       <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+          <div className="h-8 bg-[var(--loading-bg)] rounded w-1/4 mb-6"></div>
           <div className="space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded"></div>
+              <div key={i} className="h-20 bg-[var(--loading-bg)] rounded"></div>
             ))}
           </div>
         </div>
@@ -189,7 +189,7 @@ export function SellersView() {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handleBackToCompanies}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -199,36 +199,36 @@ export function SellersView() {
         </div>
         
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-8">
             <div className="flex items-center mb-6">
               <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-xl mr-6">
                 {selectedPerson.fullName?.split(' ').map((n: string) => n[0]).join('') || '??'}
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">{selectedPerson.fullName}</h1>
-                <p className="text-xl text-gray-600">{selectedPerson.jobTitle}</p>
-                <p className="text-lg text-gray-500">{selectedPerson.company}</p>
+                <h1 className="text-3xl font-bold text-[var(--foreground)]">{selectedPerson.fullName}</h1>
+                <p className="text-xl text-[var(--muted)]">{selectedPerson.jobTitle}</p>
+                <p className="text-lg text-[var(--muted)]">{selectedPerson.company}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Contact Information</h3>
                 <div className="space-y-3">
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Email:</span>
-                    <p className="text-gray-900">{selectedPerson.email}</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Email:</span>
+                    <p className="text-[var(--foreground)]">{selectedPerson.email}</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Phone:</span>
-                    <p className="text-gray-900">{selectedPerson.phone}</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Phone:</span>
+                    <p className="text-[var(--foreground)]">{selectedPerson.phone}</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Location:</span>
-                    <p className="text-gray-900">{selectedPerson.city}, {selectedPerson.state}</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Location:</span>
+                    <p className="text-[var(--foreground)]">{selectedPerson.city}, {selectedPerson.state}</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">LinkedIn:</span>
+                    <span className="text-sm font-medium text-[var(--muted)]">LinkedIn:</span>
                     <a href={selectedPerson.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                       View Profile
                     </a>
@@ -237,30 +237,30 @@ export function SellersView() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Intelligence Profile</h3>
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Intelligence Profile</h3>
                 <div className="space-y-3">
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Wants:</span>
-                    <p className="text-gray-900">Increase conversion rates, optimize user experience, reduce customer acquisition costs</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Wants:</span>
+                    <p className="text-[var(--foreground)]">Increase conversion rates, optimize user experience, reduce customer acquisition costs</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Needs:</span>
-                    <p className="text-gray-900">Better analytics tools, A/B testing platform, customer journey mapping</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Needs:</span>
+                    <p className="text-[var(--foreground)]">Better analytics tools, A/B testing platform, customer journey mapping</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Pain Points:</span>
-                    <p className="text-gray-900">Current tools are fragmented, lack of real-time insights, manual reporting processes</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Pain Points:</span>
+                    <p className="text-[var(--foreground)]">Current tools are fragmented, lack of real-time insights, manual reporting processes</p>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500">Goals:</span>
-                    <p className="text-gray-900">Improve conversion rates by 25%, reduce CAC by 30%, increase customer lifetime value</p>
+                    <span className="text-sm font-medium text-[var(--muted)]">Goals:</span>
+                    <p className="text-[var(--foreground)]">Improve conversion rates by 25%, reduce CAC by 30%, increase customer lifetime value</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Reports & Analysis</h3>
+            <div className="mt-8 pt-8 border-t border-[var(--border)]">
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Reports & Analysis</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <h4 className="font-semibold text-blue-900 mb-2">Deep Value Report</h4>
@@ -411,7 +411,7 @@ export function SellersView() {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handleBackToCompanies}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -421,8 +421,8 @@ export function SellersView() {
         </div>
         
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{selectedCompany} Buyer Group</h1>
-          <p className="text-gray-600">Key stakeholders and decision makers</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">{selectedCompany} Buyer Group</h1>
+          <p className="text-[var(--muted)]">Key stakeholders and decision makers</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -430,32 +430,32 @@ export function SellersView() {
             <div 
               key={person.id}
               onClick={() => handlePersonClick(person)}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg mr-4">
                   {person.fullName.split(' ').map((n: string) => n[0]).join('')}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{person.fullName}</h3>
-                  <p className="text-gray-600">{person.jobTitle}</p>
+                  <h3 className="text-lg font-semibold text-[var(--foreground)]">{person.fullName}</h3>
+                  <p className="text-[var(--muted)]">{person.jobTitle}</p>
                 </div>
               </div>
               
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Role:</span>
+                  <span className="text-sm text-[var(--muted)]">Role:</span>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     person['role'] === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                     person['role'] === 'Champion' ? 'bg-green-100 text-green-800' :
                     person['role'] === 'Influencer' ? 'bg-blue-100 text-blue-800' :
-                    'bg-gray-100 text-gray-800'
+                    'bg-[var(--hover)] text-gray-800'
                   }`}>
                     {person.role}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Flight Risk:</span>
+                  <span className="text-sm text-[var(--muted)]">Flight Risk:</span>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     person['flightRisk'] === 'Low' ? 'bg-green-100 text-green-800' :
                     person['flightRisk'] === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -465,17 +465,17 @@ export function SellersView() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Influence:</span>
+                  <span className="text-sm text-[var(--muted)]">Influence:</span>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     person['influence'] === 'High' ? 'bg-purple-100 text-purple-800' :
                     person['influence'] === 'Medium' ? 'bg-blue-100 text-blue-800' :
-                    'bg-gray-100 text-gray-800'
+                    'bg-[var(--hover)] text-gray-800'
                   }`}>
                     {person.influence}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Engagement:</span>
+                  <span className="text-sm text-[var(--muted)]">Engagement:</span>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${
                     person['engagement'] === 'High' ? 'bg-green-100 text-green-800' :
                     person['engagement'] === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -505,7 +505,7 @@ export function SellersView() {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handleBackToSeller}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="flex items-center text-[var(--muted)] hover:text-[var(--foreground)]"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -521,17 +521,17 @@ export function SellersView() {
             </div>
             <div>
               <div className="flex items-center mb-1">
-                <h1 className="text-3xl font-bold text-gray-900">{selectedSeller.name}</h1>
+                <h1 className="text-3xl font-bold text-[var(--foreground)]">{selectedSeller.name}</h1>
                 {isCurrentUserLeader && (
                   <span className="ml-3 px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                     Leader
                   </span>
                 )}
               </div>
-              <p className="text-gray-600 text-lg">Senior Account Executive - Enterprise West</p>
+              <p className="text-[var(--muted)] text-lg">Senior Account Executive - Enterprise West</p>
               <div className="flex items-center mt-2">
                 <div className={`w-3 h-3 rounded-full mr-2 ${selectedSeller.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                <span className="text-sm text-gray-500">{selectedSeller.isOnline ? 'Online' : 'Offline'}</span>
+                <span className="text-sm text-[var(--muted)]">{selectedSeller.isOnline ? 'Online' : 'Offline'}</span>
               </div>
             </div>
           </div>
@@ -539,21 +539,21 @@ export function SellersView() {
 
         {/* Performance Overview */}
         <div className="grid grid-cols-4 gap-6 mb-8">
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
             <div className="text-2xl font-bold text-blue-600 mb-1">89%</div>
-            <div className="text-sm text-gray-500">Decision Maker Engagement</div>
+            <div className="text-sm text-[var(--muted)]">Decision Maker Engagement</div>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
             <div className="text-2xl font-bold text-green-600 mb-1">4.5</div>
-            <div className="text-sm text-gray-500">Avg Stakeholders/Group</div>
+            <div className="text-sm text-[var(--muted)]">Avg Stakeholders/Group</div>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
             <div className="text-2xl font-bold text-purple-600 mb-1">40/50</div>
-            <div className="text-sm text-gray-500">Active Buyer Groups</div>
+            <div className="text-sm text-[var(--muted)]">Active Buyer Groups</div>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
             <div className="text-2xl font-bold text-orange-600 mb-1">105%</div>
-            <div className="text-sm text-gray-500">% to Goal</div>
+            <div className="text-sm text-[var(--muted)]">% to Goal</div>
           </div>
         </div>
 
@@ -561,10 +561,10 @@ export function SellersView() {
         {companiesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+              <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 animate-pulse">
+                <div className="h-6 bg-[var(--loading-bg)] rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/3"></div>
               </div>
             ))}
           </div>
@@ -575,38 +575,38 @@ export function SellersView() {
                 <div 
                   key={company.id || index} 
                   onClick={() => handleCompanyClick(company.name)}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer group"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{company.name}</h3>
-                      <p className="text-gray-600">{company.industry || 'Unknown'} • {company.size || 'Unknown'}</p>
+                      <h3 className="text-xl font-semibold text-[var(--foreground)] mb-1">{company.name}</h3>
+                      <p className="text-[var(--muted)]">{company.industry || 'Unknown'} • {company.size || 'Unknown'}</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-gray-500">Revenue</div>
-                      <div className="text-lg font-semibold text-gray-900">$100M+</div>
+                      <div className="text-sm text-[var(--muted)]">Revenue</div>
+                      <div className="text-lg font-semibold text-[var(--foreground)]">$100M+</div>
                     </div>
                   </div>
               
                   <div className="space-y-3 mb-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">Buyer Group Identified</span>
+                      <span className="text-sm text-[var(--muted)]">Buyer Group Identified</span>
                       <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                         Complete
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">Deal Size</span>
-                      <span className="text-sm font-medium text-gray-900">$250K</span>
+                      <span className="text-sm text-[var(--muted)]">Deal Size</span>
+                      <span className="text-sm font-medium text-[var(--foreground)]">$250K</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">Buyer Group Engaged</span>
+                      <span className="text-sm text-[var(--muted)]">Buyer Group Engaged</span>
                       <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                         Active
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">Priority</span>
+                      <span className="text-sm text-[var(--muted)]">Priority</span>
                       <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
                         High
                       </span>
@@ -624,8 +624,8 @@ export function SellersView() {
               ))
             ) : (
               <div className="col-span-full text-center py-12">
-                <div className="text-gray-500 text-lg">No companies assigned to this seller</div>
-                <div className="text-gray-400 text-sm mt-2">Companies will appear here once they are assigned</div>
+                <div className="text-[var(--muted)] text-lg">No companies assigned to this seller</div>
+                <div className="text-[var(--muted)] text-sm mt-2">Companies will appear here once they are assigned</div>
               </div>
             )}
           </div>
@@ -638,32 +638,32 @@ export function SellersView() {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sellers</h1>
-        <p className="text-gray-600 text-lg">Sales Team</p>
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">Sellers</h1>
+        <p className="text-[var(--muted)] text-lg">Sales Team</p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-4 gap-6 mb-8">
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
           <div className="text-2xl font-bold text-blue-600 mb-1">{sellers.length}</div>
-          <div className="text-sm text-gray-500">Active Sellers</div>
+          <div className="text-sm text-[var(--muted)]">Active Sellers</div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
           <div className="text-2xl font-bold text-green-600 mb-1">{sellers.reduce((sum, seller) => sum + seller.assignedCompanies.length, 0)}</div>
-          <div className="text-sm text-gray-500">Total Companies</div>
+          <div className="text-sm text-[var(--muted)]">Total Companies</div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
           <div className="text-2xl font-bold text-purple-600 mb-1">{sellers.reduce((sum, seller) => sum + seller.assignedProspects + seller.assignedLeads, 0)}</div>
-          <div className="text-sm text-gray-500">Total Prospects</div>
+          <div className="text-sm text-[var(--muted)]">Total Prospects</div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
           <div className="text-2xl font-bold text-orange-600 mb-1">89%</div>
-          <div className="text-sm text-gray-500">Engagement Rate</div>
+          <div className="text-sm text-[var(--muted)]">Engagement Rate</div>
         </div>
       </div>
 
       {/* Sellers Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
         <PipelineTable
           section="sellers"
           data={sellers}

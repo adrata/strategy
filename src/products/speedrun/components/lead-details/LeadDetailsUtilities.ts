@@ -19,7 +19,7 @@ export class LeadDetailsUtilities {
       case "Stakeholder":
         return "bg-purple-100 text-purple-800 border-purple-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
     }
   }
 
@@ -216,7 +216,7 @@ export class LeadDetailsUtilities {
       case "low":
         return "bg-green-100 text-green-800 border-green-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
     }
   }
 
@@ -231,7 +231,7 @@ export class LeadDetailsUtilities {
       case "influencer":
         return "bg-orange-100 text-orange-800 border-orange-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
     }
   }
 }

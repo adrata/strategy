@@ -130,32 +130,32 @@ export function DatePicker({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          w-full px-3 py-2 text-left border border-gray-300 rounded-md 
-          bg-white text-gray-900 placeholder-gray-500
+          w-full px-3 py-2 text-left border border-[var(--border)] rounded-md 
+          bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           hover:border-gray-400 transition-colors
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
       >
         <div className="flex items-center justify-between">
-          <span className={value ? 'text-gray-900' : 'text-gray-500'}>
+          <span className={value ? 'text-[var(--foreground)]' : 'text-[var(--muted)]'}>
             {displayValue}
           </span>
-          <CalendarIcon className="w-4 h-4 text-gray-400" />
+          <CalendarIcon className="w-4 h-4 text-[var(--muted)]" />
         </div>
       </button>
 
       {/* Dropdown menu */}
       {isOpen && !disabled && (
-        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
+        <div className="absolute z-50 mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg">
           {/* Quick options */}
           <div className="p-2">
-            <div className="text-xs font-medium text-gray-500 mb-2 px-2">Quick Options</div>
+            <div className="text-xs font-medium text-[var(--muted)] mb-2 px-2">Quick Options</div>
             {QUICK_DATE_OPTIONS.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleQuickOption(option)}
-                className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-[var(--hover)] rounded"
               >
                 {option.label}
               </button>
@@ -164,8 +164,8 @@ export function DatePicker({
 
           {/* Custom date picker */}
           {selectedOption?.type === 'custom' && (
-            <div className="border-t border-gray-200 p-3">
-              <div className="text-xs font-medium text-gray-500 mb-2">Custom Date</div>
+            <div className="border-t border-[var(--border)] p-3">
+              <div className="text-xs font-medium text-[var(--muted)] mb-2">Custom Date</div>
               <div className="space-y-2">
                 <div>
                   <input
@@ -174,7 +174,7 @@ export function DatePicker({
                     onChange={(e) => setCustomDate(e.target.value)}
                     min={minDate?.toISOString().split('T')[0]}
                     max={maxDate?.toISOString().split('T')[0]}
-                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 {showTime && (
@@ -183,7 +183,7 @@ export function DatePicker({
                       type="time"
                       value={customTime}
                       onChange={(e) => setCustomTime(e.target.value)}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 )}
@@ -197,7 +197,7 @@ export function DatePicker({
                   </button>
                   <button
                     onClick={() => setSelectedOption(null)}
-                    className="flex-1 px-3 py-1 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                    className="flex-1 px-3 py-1 text-xs border border-[var(--border)] text-gray-700 rounded hover:bg-[var(--panel-background)]"
                   >
                     Cancel
                   </button>
@@ -207,15 +207,15 @@ export function DatePicker({
           )}
 
           {/* Direct date input */}
-          <div className="border-t border-gray-200 p-3">
-            <div className="text-xs font-medium text-gray-500 mb-2">Or pick a date</div>
+          <div className="border-t border-[var(--border)] p-3">
+            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or pick a date</div>
             <input
               type={showTime ? 'datetime-local' : 'date'}
               value={value ? (typeof value === 'string' ? value : value.toISOString().split('T')[0]) : ''}
               onChange={handleDateChange}
               min={minDate?.toISOString().split('T')[0]}
               max={maxDate?.toISOString().split('T')[0]}
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>

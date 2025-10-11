@@ -315,11 +315,11 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       case 'note':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'created':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'status_change':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
     }
   };
 
@@ -335,12 +335,12 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
     <div className="space-y-8">
       <div>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Timeline</h3>
           <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+            <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
               {timelineEvents.length}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[var(--muted)]">
               {timelineEvents['length'] === 1 ? 'Action' : 'Actions'}
             </span>
           </div>
@@ -353,8 +353,8 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
         </div>
       ) : timelineEvents['length'] === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No timeline events yet</h3>
-          <p className="text-gray-600">Activities and interactions will appear here</p>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No timeline events yet</h3>
+          <p className="text-[var(--muted)]">Activities and interactions will appear here</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -362,21 +362,21 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
             <div key={event.id} className="flex items-start gap-4">
               {/* Timeline indicator */}
               <div className="flex flex-col items-center pt-1">
-                <div className="w-8 h-8 rounded bg-white border-2 border-gray-300 flex items-center justify-center">
+                <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
                   {getEventIcon(event.type)}
                 </div>
                 {index < timelineEvents.length - 1 && (
-                  <div className="w-px h-12 bg-gray-200 mt-2" />
+                  <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
                 )}
               </div>
 
               {/* Event content */}
               <div className="flex-1 min-w-0 pb-6">
-                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-4 shadow-sm">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="text-sm font-medium text-gray-900">{event.title}</h4>
+                        <h4 className="text-sm font-medium text-[var(--foreground)]">{event.title}</h4>
                         {!isPastEvent(event.date) && (
                           <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
                             Scheduled
@@ -386,7 +386,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             event.metadata.status === 'completed' ? 'bg-green-100 text-green-800' :
                             event.metadata.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                            'bg-gray-100 text-gray-800'
+                            'bg-[var(--hover)] text-gray-800'
                           }`}>
                             {event.metadata.status}
                           </span>
@@ -394,7 +394,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                       </div>
                       
                       {event['description'] && (
-                        <p className="text-sm text-gray-600 mb-3">{event.description}</p>
+                        <p className="text-sm text-[var(--muted)] mb-3">{event.description}</p>
                       )}
                       
                       {/* Expandable content for emails and notes */}
@@ -413,7 +413,7 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                           </button>
                           
                           {expandedEvents.has(event.id) && (
-                            <div className="mt-2 p-3 bg-gray-50 rounded-lg border">
+                            <div className="mt-2 p-3 bg-[var(--panel-background)] rounded-lg border">
                               <div className="text-sm text-gray-700 whitespace-pre-wrap">
                                 {event.content}
                               </div>
@@ -424,12 +424,12 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                       
                       {/* Business Context */}
                       {event.metadata && (
-                        <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                        <div className="bg-[var(--panel-background)] rounded-lg p-3 mb-3">
                           <div className="grid grid-cols-2 gap-4 text-xs">
                             {event.metadata.type && (
                               <div>
                                 <span className="font-medium text-gray-700">Type:</span>
-                                <span className="ml-1 text-gray-600 capitalize">{event.metadata.type}</span>
+                                <span className="ml-1 text-[var(--muted)] capitalize">{event.metadata.type}</span>
                               </div>
                             )}
                             {event.metadata.priority && (
@@ -447,20 +447,20 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
                             {event.duration && (
                               <div>
                                 <span className="font-medium text-gray-700">Duration:</span>
-                                <span className="ml-1 text-gray-600">{event.duration} min</span>
+                                <span className="ml-1 text-[var(--muted)]">{event.duration} min</span>
                               </div>
                             )}
                             {event.actionOutcome && (
                               <div>
                                 <span className="font-medium text-gray-700">Outcome:</span>
-                                <span className="ml-1 text-gray-600">{event.actionOutcome}</span>
+                                <span className="ml-1 text-[var(--muted)]">{event.actionOutcome}</span>
                               </div>
                             )}
                           </div>
                         </div>
                       )}
                       
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
                         <span>{formatDistanceToNow(event.date, { addSuffix: true })}</span>
                         {event['user'] && <span>by {event.user}</span>}
                         <span>•</span>
@@ -476,24 +476,24 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       )}
 
       {/* Data Sources */}
-      <div className="pt-6 border-t border-gray-200">
+      <div className="pt-6 border-t border-[var(--border)]">
         <h4 className="text-sm font-medium text-gray-700 mb-3">Data Sources</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="font-medium text-gray-900">System Records</div>
-            <div className="text-gray-600">Created, Updated</div>
+          <div className="bg-[var(--panel-background)] rounded-lg p-3">
+            <div className="font-medium text-[var(--foreground)]">System Records</div>
+            <div className="text-[var(--muted)]">Created, Updated</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="font-medium text-gray-900">Actions</div>
-            <div className="text-gray-600">Calls, Emails, Meetings</div>
+          <div className="bg-[var(--panel-background)] rounded-lg p-3">
+            <div className="font-medium text-[var(--foreground)]">Actions</div>
+            <div className="text-[var(--muted)]">Calls, Emails, Meetings</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="font-medium text-gray-900">Email Data</div>
-            <div className="text-gray-600">Connected email threads</div>
+          <div className="bg-[var(--panel-background)] rounded-lg p-3">
+            <div className="font-medium text-[var(--foreground)]">Email Data</div>
+            <div className="text-[var(--muted)]">Connected email threads</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="font-medium text-gray-900">Notes</div>
-            <div className="text-gray-600">Manual entries</div>
+          <div className="bg-[var(--panel-background)] rounded-lg p-3">
+            <div className="font-medium text-[var(--foreground)]">Notes</div>
+            <div className="text-[var(--muted)]">Manual entries</div>
           </div>
         </div>
       </div>

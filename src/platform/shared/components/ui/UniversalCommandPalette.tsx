@@ -311,19 +311,19 @@ export default function UniversalCommandPalette({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="flex items-start justify-center pt-[20vh] px-4">
-        <div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="w-full max-w-2xl bg-[var(--background)] dark:bg-[var(--foreground)] rounded-xl shadow-2xl border border-[var(--border)] dark:border-[var(--border)] overflow-hidden">
           {/* Search Input */}
-          <div className="flex items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center px-4 py-3 border-b border-[var(--border)] dark:border-[var(--border)]">
             <input
               type="text"
               placeholder="Type a command or search..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 ml-3"
+              className="flex-1 bg-transparent outline-none text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 ml-3"
               autoFocus
             />
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded border">
+            <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+              <kbd className="px-2 py-1 bg-[var(--hover)] rounded border">
                 ↵
               </kbd>
               <span>to select</span>
@@ -333,7 +333,7 @@ export default function UniversalCommandPalette({
           {/* Commands List */}
           <div className="max-h-96 overflow-y-auto">
             {filteredCommands['length'] === 0 ? (
-              <div className="px-4 py-8 text-center text-gray-500">
+              <div className="px-4 py-8 text-center text-[var(--muted)]">
                 <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No commands found</p>
                 <p className="text-sm">Try a different search term</p>
@@ -344,18 +344,18 @@ export default function UniversalCommandPalette({
                   <button
                     key={command.id}
                     onClick={() => executeCommand(command)}
-                    className={`w-full flex items-center px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                    className={`w-full flex items-center px-4 py-3 text-left hover:bg-[var(--panel-background)] transition-colors ${
                       index === selectedIndex
                         ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
                         : ""
                     }`}
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 mr-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--hover)] mr-3">
                       {command.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                        <h3 className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
                           {command.title}
                         </h3>
                         {recentCommands.includes(command.id) && (
@@ -364,16 +364,16 @@ export default function UniversalCommandPalette({
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)] truncate">
                         {command.description}
                       </p>
                     </div>
                     {command['shortcut'] && (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
                         {command.shortcut.split("").map((key, i) => (
                           <kbd
                             key={i}
-                            className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded border"
+                            className="px-2 py-1 bg-[var(--hover)] rounded border"
                           >
                             {key}
                           </kbd>
@@ -387,23 +387,23 @@ export default function UniversalCommandPalette({
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="px-4 py-2 bg-[var(--panel-background)] border-t border-[var(--border)] dark:border-[var(--border)]">
+            <div className="flex items-center justify-between text-xs text-[var(--muted)]">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded border">
+                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
                     ↑↓
                   </kbd>
                   <span>to navigate</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-white dark:bg-gray-700 rounded border">
+                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
                     esc
                   </kbd>
                   <span>to close</span>
                 </div>
               </div>
-              <div className="text-gray-400">
+              <div className="text-[var(--muted)]">
                 {filteredCommands.length} commands
               </div>
             </div>

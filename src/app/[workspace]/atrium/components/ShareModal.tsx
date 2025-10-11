@@ -78,18 +78,18 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="fixed inset-0 bg-[var(--panel-background)]0 bg-opacity-75 transition-opacity" onClick={onClose} />
         
-        <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full">
+        <div className="relative bg-[var(--background)] rounded-lg shadow-xl max-w-2xl w-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Share Document</h3>
-              <p className="text-sm text-gray-500">{document.title}</p>
+              <h3 className="text-lg font-semibold text-[var(--foreground)]">Share Document</h3>
+              <p className="text-sm text-[var(--muted)]">{document.title}</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
             >
               <XMarkIcon className="w-5 h-5" />
             </button>
@@ -111,7 +111,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                       { value: 'external', label: 'External', description: 'Anyone with the link can access' },
                       { value: 'public', label: 'Public', description: 'Publicly accessible' },
                     ].map((type) => (
-                      <label key={type.value} className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                      <label key={type.value} className="flex items-start gap-3 p-3 border border-[var(--border)] rounded-lg cursor-pointer hover:bg-[var(--panel-background)]">
                         <input
                           type="radio"
                           name="shareType"
@@ -121,8 +121,8 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                           className="mt-1"
                         />
                         <div>
-                          <div className="font-medium text-gray-900">{type.label}</div>
-                          <div className="text-sm text-gray-500">{type.description}</div>
+                          <div className="font-medium text-[var(--foreground)]">{type.label}</div>
+                          <div className="text-sm text-[var(--muted)]">{type.description}</div>
                         </div>
                       </label>
                     ))}
@@ -143,7 +143,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                     ].map((perm) => {
                       const Icon = perm.icon;
                       return (
-                        <label key={perm.value} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <label key={perm.value} className="flex items-center gap-3 p-3 border border-[var(--border)] rounded-lg cursor-pointer hover:bg-[var(--panel-background)]">
                           <input
                             type="radio"
                             name="permission"
@@ -151,10 +151,10 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                             checked={permission === perm.value}
                             onChange={(e) => setPermission(e.target.value as any)}
                           />
-                          <Icon className="w-5 h-5 text-gray-400" />
+                          <Icon className="w-5 h-5 text-[var(--muted)]" />
                           <div>
-                            <div className="font-medium text-gray-900">{perm.label}</div>
-                            <div className="text-sm text-gray-500">{perm.description}</div>
+                            <div className="font-medium text-[var(--foreground)]">{perm.label}</div>
+                            <div className="text-sm text-[var(--muted)]">{perm.description}</div>
                           </div>
                         </label>
                       );
@@ -164,7 +164,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
 
                 {/* Advanced Options */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Advanced Options</h4>
+                  <h4 className="font-medium text-[var(--foreground)]">Advanced Options</h4>
                   
                   {/* Expiration */}
                   <div>
@@ -175,7 +175,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                       type="datetime-local"
                       value={expiresAt}
                       onChange={(e) => setExpiresAt(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
@@ -189,7 +189,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                       value={maxViews}
                       onChange={(e) => setMaxViews(e.target.value)}
                       placeholder="No limit"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
@@ -203,7 +203,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Optional password"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
@@ -217,7 +217,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                       value={allowedEmails}
                       onChange={(e) => setAllowedEmails(e.target.value)}
                       placeholder="email1@example.com, email2@example.com"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
@@ -266,7 +266,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                 <div className="flex items-center justify-end gap-3 pt-4">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
                   >
                     Cancel
                   </button>
@@ -287,21 +287,21 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                 </div>
                 
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
                     Share Link Created
                   </h4>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[var(--muted)]">
                     Your document is now accessible via the link below
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 bg-[var(--panel-background)] rounded-lg">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={shareUrl}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm"
+                      className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
                     />
                     <button
                       onClick={copyToClipboard}
@@ -315,7 +315,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
                 <div className="flex items-center justify-center gap-3">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
                   >
                     Close
                   </button>

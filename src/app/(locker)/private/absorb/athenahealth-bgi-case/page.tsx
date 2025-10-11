@@ -7,24 +7,24 @@ import Link from 'next/link';
 export default function AthenahealthBusinessCasePage() {
   return (
     <PasswordProtection correctPassword="Absorb-Athena-2025">
-      <div className="min-h-screen bg-white" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
         <header className="border-b border-gray-100">
           <div className="max-w-4xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold text-gray-900">Absorb Adrata</h1>
+              <h1 className="text-lg font-semibold text-[var(--foreground)]">Absorb Adrata</h1>
               
               {/* Navigation Links */}
               <div className="flex items-center space-x-6">
                 <Link 
                   href="/" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/platform" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
                 >
                   Platform
                 </Link>
@@ -46,26 +46,26 @@ export default function AthenahealthBusinessCasePage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               athenahealth Buyer Group Intelligence Report
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-[var(--muted)] mb-8">
               Strategic Analysis for Absorb: Navigating athenahealth's LMS Decision-Making Structure
             </p>
             
-            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-400">
+            <div className="bg-[var(--panel-background)] p-6 rounded-lg border-l-4 border-gray-400">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared For</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared For</p>
                   <p className="text-sm font-semibold text-black">Absorb LMS Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Target Company</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Target Company</p>
                   <p className="text-sm font-semibold text-black">athenahealth</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared By</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared By</p>
                   <p className="text-sm font-semibold text-black">Adrata Sales Intelligence Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Strategic Focus</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Strategic Focus</p>
                   <p className="text-sm font-semibold text-black">LMS Cost Optimization</p>
                 </div>
               </div>
@@ -83,7 +83,7 @@ export default function AthenahealthBusinessCasePage() {
               As Absorb offers expensive, comprehensive LMS solutions designed for enterprise healthcare organizations, understanding athenahealth's complex compliance requirements, training needs, and procurement process is critical for successful engagement with their revenue and sales teams.
             </p>
 
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-6">
               <h3 className="text-lg font-semibold text-black mb-3">Strategic Intelligence Advantage</h3>
               <p className="text-gray-700 mb-4">
                 We've identified athenahealth's exact buyer group structure, saving you months of research and guesswork. Our intelligence reveals the specific decision-makers, their influence patterns, and the precise engagement sequence needed for successful deal closure.
@@ -112,21 +112,21 @@ export default function AthenahealthBusinessCasePage() {
 
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">10</div>
-                <div className="text-sm text-gray-600">Buyer Group Size</div>
+                <div className="text-sm text-[var(--muted)]">Buyer Group Size</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">2</div>
-                <div className="text-sm text-gray-600">Decision Makers</div>
+                <div className="text-sm text-[var(--muted)]">Decision Makers</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">3</div>
-                <div className="text-sm text-gray-600">Champions</div>
+                <div className="text-sm text-[var(--muted)]">Champions</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">$200K+</div>
-                <div className="text-sm text-gray-600">Deal Value Range</div>
+                <div className="text-sm text-[var(--muted)]">Deal Value Range</div>
               </div>
             </div>
           </section>
@@ -135,7 +135,7 @@ export default function AthenahealthBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">athenahealth Company Overview</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Company Profile</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -153,7 +153,7 @@ export default function AthenahealthBusinessCasePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-black mb-4">LMS Use Cases</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
                 <div>
@@ -182,7 +182,7 @@ export default function AthenahealthBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Research Methodology & Intelligence Sources</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Human-AI Partnership Approach</h3>
               <p className="text-gray-700 mb-4">
                 This buyer group intelligence represents a sophisticated fusion of human expertise and AI-powered data analysis, 
@@ -212,7 +212,7 @@ export default function AthenahealthBusinessCasePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-black mb-4">Intelligence Validation Process</h3>
               <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
                 <div>
@@ -247,7 +247,7 @@ export default function AthenahealthBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">athenahealth Buyer Group Intelligence</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Strategic Context</h3>
               <p className="text-gray-700 mb-4">
                 athenahealth operates in the complex healthcare technology market, where training and compliance are critical for patient safety and regulatory adherence. 
@@ -260,13 +260,13 @@ export default function AthenahealthBusinessCasePage() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Decision Makers (2)</h4>
                 
                 <div className="space-y-6">
                   <div className="border-l-4 border-black pl-4">
                     <h5 className="font-semibold text-black text-lg">Scott O'Neil (Vice President, Customer Success Management)</h5>
-                    <p className="text-sm text-gray-600 mb-3">Budget authority and final approval for LMS decisions</p>
+                    <p className="text-sm text-[var(--muted)] mb-3">Budget authority and final approval for LMS decisions</p>
                     <div className="text-sm text-gray-700 space-y-2">
                       <p><strong>Pain Points:</strong> Customer onboarding complexity and training effectiveness. Current LMS may not provide optimal user experience for healthcare providers learning athenahealth platform.</p>
                       <p><strong>Strategic Priorities:</strong> Customer satisfaction, training effectiveness, user adoption, and platform proficiency.</p>
@@ -276,7 +276,7 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                   <div className="border-l-4 border-black pl-4">
                     <h5 className="font-semibold text-black text-lg">Brittany Podolak (Chief People Officer)</h5>
-                    <p className="text-sm text-gray-600 mb-3">Oversees HR, culture, talent retention & acquisition, DEI at athenahealth</p>
+                    <p className="text-sm text-[var(--muted)] mb-3">Oversees HR, culture, talent retention & acquisition, DEI at athenahealth</p>
                     <div className="text-sm text-gray-700 space-y-2">
                       <p><strong>Pain Points:</strong> Employee training efficiency, talent development, and compliance tracking. Need for comprehensive learning solutions that support HR initiatives and employee growth.</p>
                       <p><strong>Strategic Priorities:</strong> Employee development, talent retention, compliance training, operational efficiency, and cost optimization.</p>
@@ -286,14 +286,14 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Champions (3)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Brittany Freeman (Director, Workplace Experience)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> High - Directors don't buy at that pricepoint across that large of an organization, but can influence decision makers</p>
                       <p><strong>Key Motivations:</strong> Employee training efficiency, operational cost savings, compliance tracking, workplace experience improvement</p>
                       <p><strong>Engagement Strategy:</strong> Training effectiveness, operational efficiency, cost savings, compliance benefits, employee satisfaction</p>
@@ -301,8 +301,8 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Priya Dixit (HR Manager)</h5>
-                    <p className="text-sm text-gray-600 mb-2">11+ yrs tenure, based in Boston alongside Nikki</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">11+ yrs tenure, based in Boston alongside Nikki</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> High - Long tenure provides deep organizational knowledge and influence</p>
                       <p><strong>Key Motivations:</strong> Employee development, training effectiveness, compliance efficiency, operational improvements</p>
                       <p><strong>Engagement Strategy:</strong> Training effectiveness, employee satisfaction, compliance benefits, operational efficiency</p>
@@ -310,8 +310,8 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Sarah Rixey Pharr (Director Of Strategic Programs)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Internal advocate for LMS change and improvement</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Internal advocate for LMS change and improvement</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> Medium - Focused on partner enablement and strategic relationship growth</p>
                       <p><strong>Key Motivations:</strong> Partner enablement, strategic growth, scalable solutions, relationship value</p>
                       <p><strong>Engagement Strategy:</strong> Partner enablement capabilities, strategic value, scalable training solutions</p>
@@ -319,35 +319,35 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (3)</h4>
                 
                 <div className="space-y-3">
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Sarah Ugaz Grove (Senior Solution Design Manager)</h5>
-                    <p className="text-sm text-gray-600">14+ years at athenahealth, key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> High - Long tenure and solution design expertise provides significant influence on LMS selection and implementation decisions</p>
+                    <p className="text-sm text-[var(--muted)]">14+ years at athenahealth, key influencer in LMS selection process</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Influence:</strong> High - Long tenure and solution design expertise provides significant influence on LMS selection and implementation decisions</p>
                   </div>
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Erica Canuto (Manager Platform Services & Solutions)</h5>
-                    <p className="text-sm text-gray-600">Based in Boston, key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Platform services expertise provides operational influence on training processes and user experience</p>
+                    <p className="text-sm text-[var(--muted)]">Based in Boston, key influencer in LMS selection process</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Influence:</strong> Medium - Platform services expertise provides operational influence on training processes and user experience</p>
                   </div>
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Emily Anderson (Marketing And Events Coordinator)</h5>
-                    <p className="text-sm text-gray-600">Key influencer in LMS selection process</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Medium - Stakeholder influence on training effectiveness and user satisfaction</p>
+                    <p className="text-sm text-[var(--muted)]">Key influencer in LMS selection process</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Influence:</strong> Medium - Stakeholder influence on training effectiveness and user satisfaction</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Openers (2)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-blue-500 pl-4">
                     <h5 className="font-semibold text-black">Nikki Ward (Former Global Executive Dir of Learning & Development)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Now SVP HR for OncoHealth - Leverage to get inside baseball on athenahealth prior to activating Priya</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Now SVP HR for OncoHealth - Leverage to get inside baseball on athenahealth prior to activating Priya</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Opening Potential:</strong> High - Former insider with deep knowledge of athenahealth's training needs and organizational dynamics</p>
                       <p><strong>Key Value:</strong> Inside intelligence on athenahealth's training challenges, organizational structure, and decision-making processes</p>
                       <p><strong>Engagement Strategy:</strong> Leverage former insider knowledge to understand athenahealth's specific training pain points and organizational dynamics before engaging current team</p>
@@ -355,8 +355,8 @@ export default function AthenahealthBusinessCasePage() {
                   </div>
                   <div className="border-l-4 border-blue-500 pl-4">
                     <h5 className="font-semibold text-black">David Onorato (Former Director Platform Sales)</h5>
-                    <p className="text-sm text-gray-600 mb-2">12+ years at athenahealth, now sales specialist at Snowflake based in Boston - Get him to vent about issues with training reps</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">12+ years at athenahealth, now sales specialist at Snowflake based in Boston - Get him to vent about issues with training reps</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Opening Potential:</strong> High - Former sales leader with deep understanding of athenahealth's training challenges and sales team needs</p>
                       <p><strong>Key Value:</strong> Sales training insights, understanding of rep training pain points, and organizational knowledge</p>
                       <p><strong>Engagement Strategy:</strong> Leverage his experience with training challenges at athenahealth to understand specific pain points and training needs</p>
@@ -371,7 +371,7 @@ export default function AthenahealthBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">LinkedIn Profiles Reference</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg">
               <h3 className="text-xl font-semibold text-black mb-4">Key Contact LinkedIn Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div>
@@ -408,7 +408,7 @@ export default function AthenahealthBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Absorb Engagement Strategy</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Cost-Focused Approach</h3>
               <p className="text-gray-700 mb-6">
                 Given athenahealth's primary concern about rising LMS costs, the strategy centers on demonstrating clear cost savings and operational efficiency improvements while maintaining or enhancing training effectiveness.
@@ -416,7 +416,7 @@ export default function AthenahealthBusinessCasePage() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 1: Economic Buyer Engagement (Premium LMS)</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -440,7 +440,7 @@ export default function AthenahealthBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 2: Champion Development</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -462,7 +462,7 @@ export default function AthenahealthBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 3: Technical Validation</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -491,7 +491,7 @@ export default function AthenahealthBusinessCasePage() {
             <h2 className="text-3xl font-bold text-black mb-6">Key Success Factors</h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Critical Success Elements</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• <strong>Cost Savings:</strong> Demonstrate immediate and long-term cost reduction</li>
@@ -502,7 +502,7 @@ export default function AthenahealthBusinessCasePage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Risk Mitigation</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• <strong>Compliance Concerns:</strong> Address healthcare data security early</li>
@@ -517,11 +517,11 @@ export default function AthenahealthBusinessCasePage() {
 
           {/* Next Steps */}
           <section className="mb-12">
-            <div className="bg-gray-50 border border-gray-200 p-8 rounded-lg">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-8 rounded-lg">
               <h2 className="text-2xl font-bold text-black mb-6">Recommended Next Steps</h2>
               
               <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white border border-gray-200 p-4 rounded-lg">
+                <div className="bg-[var(--background)] border border-[var(--border)] p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Immediate Actions (Week 1-2)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Research athenahealth's current LMS costs and pain points</li>
@@ -531,7 +531,7 @@ export default function AthenahealthBusinessCasePage() {
                   </ul>
                 </div>
                 
-                <div className="bg-white border border-gray-200 p-4 rounded-lg">
+                <div className="bg-[var(--background)] border border-[var(--border)] p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Strategic Engagement (Week 3-4)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Schedule meetings with Scott O'Neil and Brittany Podolak (Decision Makers)</li>
@@ -542,7 +542,7 @@ export default function AthenahealthBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg text-center">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg text-center">
                 <p className="text-lg font-bold text-black mb-3">
                   <strong>Key Question for athenahealth Engagement:</strong> "How can Absorb's premium, enterprise-grade LMS solution help athenahealth reduce expensive LMS costs while improving training effectiveness for both clients and employees in the healthcare sector?"
                 </p>
@@ -563,9 +563,9 @@ export default function AthenahealthBusinessCasePage() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-50 border-t border-gray-100">
+        <footer className="bg-[var(--panel-background)] border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-6 py-6 text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Adrata - Buyer Group Intelligence Platform</h3>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Adrata - Buyer Group Intelligence Platform</h3>
             <p className="text-sm text-gray-700 mb-2">
               <strong>Contact:</strong> Dan Mirolli, Head of Revenue - dan@adrata.com
             </p>
@@ -573,7 +573,7 @@ export default function AthenahealthBusinessCasePage() {
               <strong>Demo:</strong> Schedule Executive Demo<br/>
               <a href="https://calendly.com/dan-adrata/biz-dev-call" className="text-gray-700 underline">Schedule Call With Dan</a>
             </p>
-            <p className="text-xs text-gray-500">© 2025 Adrata. All rights reserved.</p>
+            <p className="text-xs text-[var(--muted)]">© 2025 Adrata. All rights reserved.</p>
           </div>
         </footer>
       </div>

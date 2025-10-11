@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
   if (showCostOptimization) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[var(--panel-background)]">
         <div className="p-6">
           <Button
             onClick={() => setShowCostOptimization(false)}
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                     selectedTheme === 'light' ? 'border-[var(--primary)] bg-[var(--primary-bg)]' : 'border-[var(--border)]'
                   }`}
                 >
-                  <div className="w-full h-6 bg-white border rounded mb-2"></div>
+                  <div className="w-full h-6 bg-[var(--background)] border rounded mb-2"></div>
                   <span className="text-xs">Light</span>
                 </button>
                 <button 

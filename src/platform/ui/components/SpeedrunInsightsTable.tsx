@@ -104,7 +104,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
       case 'low':
         return 'bg-green-100 text-green-800 border-green-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
     }
   };
 
@@ -121,7 +121,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
       case 'tactical':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
     }
   };
 
@@ -138,7 +138,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
     return (
       <div className={`flex items-center justify-center p-8 ${className}`}>
         <PipelineSkeleton message="Loading insights..." />
-        <span className="ml-2 text-sm text-gray-600">Loading insights...</span>
+        <span className="ml-2 text-sm text-[var(--muted)]">Loading insights...</span>
       </div>
     );
   }
@@ -148,20 +148,20 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
       {/* Header with search and filters */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">Expert Insights</h3>
-          <span className="text-sm text-gray-500">({filteredInsights.length} of {insights.length})</span>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Expert Insights</h3>
+          <span className="text-sm text-[var(--muted)]">({filteredInsights.length} of {insights.length})</span>
         </div>
         
         <div className="flex items-center space-x-2">
           {/* Search */}
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search insights..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
@@ -171,7 +171,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
             className={`flex items-center space-x-1 px-3 py-2 border rounded-lg text-sm transition-colors ${
               showFilters 
                 ? 'bg-blue-50 border-blue-300 text-blue-700' 
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                : 'bg-[var(--background)] border-[var(--border)] text-gray-700 hover:bg-[var(--panel-background)]'
             }`}
           >
             <FunnelIcon className="h-4 w-4" />
@@ -182,7 +182,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
 
       {/* Filter panel */}
       {showFilters && (
-        <div className="bg-gray-50 p-4 rounded-lg border">
+        <div className="bg-[var(--panel-background)] p-4 rounded-lg border">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Category filter */}
             <div>
@@ -190,7 +190,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
               <select
                 value={filters.category || ''}
                 onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value || undefined }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Categories</option>
                 <option value="industry">Industry</option>
@@ -207,7 +207,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
               <select
                 value={filters.urgency || ''}
                 onChange={(e) => setFilters(prev => ({ ...prev, urgency: e.target.value || undefined }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Urgency Levels</option>
                 <option value="high">High</option>
@@ -223,7 +223,7 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
                   setFilters({});
                   setSearchTerm('');
                 }}
-                className="w-full px-3 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors"
+                className="w-full px-3 py-2 bg-[var(--loading-bg)] text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors"
               >
                 Clear All Filters
               </button>
@@ -233,41 +233,41 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
       )}
 
       {/* Insights table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[var(--panel-background)]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Insight
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Urgency
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Relevance
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Tags
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Source
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-[var(--background)] divide-y divide-gray-200">
               {filteredInsights.map((insight) => {
                 const CategoryIcon = getCategoryIcon(insight.category);
                 return (
-                  <tr key={insight.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={insight.id} className="hover:bg-[var(--panel-background)] transition-colors">
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <h4 className="text-sm font-medium text-gray-900">{insight.title}</h4>
-                        <p className="text-sm text-gray-600 line-clamp-2">{insight.description}</p>
-                        <div className="flex items-center space-x-2 text-xs text-gray-500">
+                        <h4 className="text-sm font-medium text-[var(--foreground)]">{insight.title}</h4>
+                        <p className="text-sm text-[var(--muted)] line-clamp-2">{insight.description}</p>
+                        <div className="flex items-center space-x-2 text-xs text-[var(--muted)]">
                           <span>{formatDate(insight.createdAt)}</span>
                           {insight['expiresAt'] && (
                             <>
@@ -291,13 +291,13 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                        <div className="w-16 bg-[var(--loading-bg)] rounded-full h-2">
                           <div 
                             className="bg-blue-600 h-2 rounded-full" 
                             style={{ width: `${insight.relevance}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm text-gray-600">{insight.relevance}%</span>
+                        <span className="text-sm text-[var(--muted)]">{insight.relevance}%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -305,20 +305,20 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
                         {insight.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800"
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-[var(--hover)] text-gray-800"
                           >
                             {tag}
                           </span>
                         ))}
                         {insight.tags.length > 3 && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600">
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-[var(--hover)] text-[var(--muted)]">
                             +{insight.tags.length - 3}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{insight.source}</span>
+                      <span className="text-sm text-[var(--muted)]">{insight.source}</span>
                     </td>
                   </tr>
                 );
@@ -330,9 +330,9 @@ export function SpeedrunInsightsTable({ className = '' }: SpeedrunInsightsTableP
         {/* Empty state */}
         {filteredInsights['length'] === 0 && (
           <div className="text-center py-8">
-            <LightBulbIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No insights found</h3>
-            <p className="text-sm text-gray-600">
+            <LightBulbIcon className="h-12 w-12 text-[var(--muted)] mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No insights found</h3>
+            <p className="text-sm text-[var(--muted)]">
               Try adjusting your search or filters to find relevant insights.
             </p>
           </div>

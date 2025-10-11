@@ -288,7 +288,7 @@ export function EnhancedEngagementGrid({
             <div className="text-lg font-medium text-gray-700 dark:text-gray-300">
               Most Used:
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
               {topActivities.length > 0 && topActivities[0]
                 ? topActivities[0].name
                 : "No activity yet"}
@@ -349,19 +349,19 @@ export function EnhancedEngagementGrid({
       </div>
 
       {/* 📈 Original Engagement Grid with Enhanced Data */}
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg border border-[var(--border)]">
+      <div className="bg-[var(--background)] dark:bg-[var(--foreground)] p-6 rounded-lg border border-[var(--border)]">
         <h4 className="text-lg font-semibold text-[var(--foreground)] mb-4">
           📈 5-Level Engagement Heatmap
         </h4>
 
         {/* 🎨 5-Level Legend */}
-        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="mb-4 p-4 bg-[var(--panel-background)] rounded-lg">
           <div className="text-sm font-medium text-[var(--foreground)] mb-2">
             5-Level System:
           </div>
           <div className="flex items-center space-x-4 text-xs">
             <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-gray-100 dark:bg-gray-800 rounded-sm"></div>
+              <div className="w-3 h-3 bg-[var(--hover)] rounded-sm"></div>
               <span>Level 0: No activity</span>
             </div>
             <div className="flex items-center space-x-1">

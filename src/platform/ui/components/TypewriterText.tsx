@@ -86,7 +86,7 @@ export function TypewriterText({
               });
               onLinkClick?.(linkId);
             }}
-            className="inline-block bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg cursor-pointer border border-gray-200 font-medium text-sm transition-colors"
+            className="inline-block bg-[var(--panel-background)] hover:bg-[var(--hover)] text-gray-700 px-3 py-1.5 rounded-lg cursor-pointer border border-[var(--border)] font-medium text-sm transition-colors"
           >
             {linkText}
           </button>,

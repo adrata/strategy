@@ -109,11 +109,11 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
       <div className="p-6">
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+            <div key={i} className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6 animate-pulse">
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 mb-4"></div>
+              <div className="h-3 bg-[var(--loading-bg)] rounded w-full mb-2"></div>
+              <div className="h-3 bg-[var(--loading-bg)] rounded w-2/3"></div>
             </div>
           ))}
         </div>
@@ -134,11 +134,11 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
   return (
     <div className="h-full w-full">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Chronicle</h1>
-            <p className="text-gray-600 mt-1">Weekly reports and chronicles</p>
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">Chronicle</h1>
+            <p className="text-[var(--muted)] mt-1">Weekly reports and chronicles</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -161,13 +161,13 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
       <div className="p-6">
         {reports.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
+            <div className="text-[var(--muted)] mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No reports yet</h3>
-            <p className="text-gray-600 mb-4">Generate your first weekly report to get started.</p>
+            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No reports yet</h3>
+            <p className="text-[var(--muted)] mb-4">Generate your first weekly report to get started.</p>
             <div className="flex gap-2 justify-center">
               <button
                 onClick={() => generateReport('MONDAY_PREP')}
@@ -189,17 +189,17 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
               <div
                 key={report.id}
                 onClick={() => onReportSelect?.(report)}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+                className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6 hover:border-[var(--border)] hover:shadow-sm transition-all cursor-pointer"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{report.title}</h3>
+                      <h3 className="text-lg font-semibold text-[var(--foreground)]">{report.title}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getReportTypeColor(report.reportType)}`}>
                         {getReportTypeLabel(report.reportType)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--muted)] mb-3">
                       Generated on {formatDate(report.createdAt)}
                     </p>
                     <div className="text-sm text-gray-700">
@@ -210,14 +210,14 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
                   </div>
                   <div className="flex items-center gap-2 ml-4">
                     {report.shares.length > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                         </svg>
                         {report.shares.reduce((sum, share) => sum + share.viewCount, 0)} views
                       </div>
                     )}
-                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>

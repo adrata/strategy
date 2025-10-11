@@ -165,11 +165,11 @@ function ToolbarPlugin() {
   };
 
   return (
-    <div className="flex items-center gap-1 p-2 border-b border-gray-200 bg-white">
+    <div className="flex items-center gap-1 p-2 border-b border-[var(--border)] bg-[var(--background)]">
       <button
         type="button"
         onClick={() => formatText('bold')}
-        className={`p-2 rounded hover:bg-gray-100 ${isBold ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded hover:bg-[var(--hover)] ${isBold ? 'bg-[var(--loading-bg)]' : ''}`}
         title="Bold"
       >
         <BoldIcon className="w-4 h-4" />
@@ -177,7 +177,7 @@ function ToolbarPlugin() {
       <button
         type="button"
         onClick={() => formatText('italic')}
-        className={`p-2 rounded hover:bg-gray-100 ${isItalic ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded hover:bg-[var(--hover)] ${isItalic ? 'bg-[var(--loading-bg)]' : ''}`}
         title="Italic"
       >
         <ItalicIcon className="w-4 h-4" />
@@ -185,7 +185,7 @@ function ToolbarPlugin() {
       <button
         type="button"
         onClick={() => formatText('underline')}
-        className={`p-2 rounded hover:bg-gray-100 ${isUnderline ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded hover:bg-[var(--hover)] ${isUnderline ? 'bg-[var(--loading-bg)]' : ''}`}
         title="Underline"
       >
         <UnderlineIcon className="w-4 h-4" />
@@ -194,7 +194,7 @@ function ToolbarPlugin() {
       <button
         type="button"
         onClick={() => formatText('bullet')}
-        className="p-2 rounded hover:bg-gray-100"
+        className="p-2 rounded hover:bg-[var(--hover)]"
         title="Bullet List"
       >
         <ListBulletIcon className="w-4 h-4" />
@@ -202,7 +202,7 @@ function ToolbarPlugin() {
       <button
         type="button"
         onClick={insertLink}
-        className="p-2 rounded hover:bg-gray-100"
+        className="p-2 rounded hover:bg-[var(--hover)]"
         title="Insert Link"
       >
         <LinkIcon className="w-4 h-4" />
@@ -210,7 +210,7 @@ function ToolbarPlugin() {
       <button
         type="button"
         onClick={() => formatText('code')}
-        className="p-2 rounded hover:bg-gray-100"
+        className="p-2 rounded hover:bg-[var(--hover)]"
         title="Code"
       >
         <CodeBracketIcon className="w-4 h-4" />
@@ -296,20 +296,20 @@ export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) 
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center gap-3">
           <DocumentTextIcon className="w-6 h-6 text-blue-600" />
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">{document.title}</h1>
-            <p className="text-sm text-gray-500">Paper Document</p>
+            <h1 className="text-lg font-semibold text-[var(--foreground)]">{document.title}</h1>
+            <p className="text-sm text-[var(--muted)]">Paper Document</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
           {/* Word/Character Count */}
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-[var(--muted)]">
             {wordCount} words • {charCount} characters
           </div>
           

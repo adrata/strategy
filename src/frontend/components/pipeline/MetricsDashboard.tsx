@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { authFetch } from '@/platform/api-fetch';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
@@ -73,7 +73,7 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, trend, trendValue, color = 'default' }: MetricCardProps) {
   const colorClasses = {
-    default: 'border-gray-200 bg-white',
+    default: 'border-[var(--border)] bg-[var(--background)]',
     success: 'border-green-200 bg-green-50',
     warning: 'border-yellow-200 bg-yellow-50',
     danger: 'border-red-200 bg-red-50'
@@ -82,7 +82,7 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
   const trendColors = {
     up: 'text-green-600',
     down: 'text-red-600',
-    stable: 'text-gray-500'
+    stable: 'text-[var(--muted)]'
   };
 
   const trendIcons = {
@@ -95,12 +95,12 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
     <div className={`p-4 rounded-lg border ${colorClasses[color]} transition-all hover:shadow-sm`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-600 mb-1">{title}</h3>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
+          <h3 className="text-sm font-medium text-[var(--muted)] mb-1">{title}</h3>
+          <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
             {typeof value === 'number' ? value.toLocaleString() : value}
           </div>
           {subtitle && (
-            <p className="text-xs text-gray-500">{subtitle}</p>
+            <p className="text-xs text-[var(--muted)]">{subtitle}</p>
           )}
         </div>
         {trend && trendValue && (
@@ -117,7 +117,7 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
 function MetricsSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-8">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4 pb-2 border-b border-[var(--border)]">
         {title}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -335,7 +335,7 @@ export function MetricsDashboard() {
 
   if (error) {
     return (
-      <div className="h-full flex flex-col bg-white">
+      <div className="h-full flex flex-col bg-[var(--background)]">
         {/* Header matching other pipeline pages */}
         <PipelineHeader
           section="metrics"
@@ -364,7 +364,7 @@ export function MetricsDashboard() {
 
   if (!metrics) {
     return (
-      <div className="h-full flex flex-col bg-white">
+      <div className="h-full flex flex-col bg-[var(--background)]">
         {/* Header matching other pipeline pages */}
         <PipelineHeader
           section="metrics"
@@ -376,7 +376,7 @@ export function MetricsDashboard() {
         />
         
         <div className="flex-1 p-6">
-          <div className="text-center text-gray-500">
+          <div className="text-center text-[var(--muted)]">
             <p>No metrics data available</p>
           </div>
         </div>
@@ -385,7 +385,7 @@ export function MetricsDashboard() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header matching other pipeline pages */}
               <PipelineHeader
           section="metrics"
@@ -398,7 +398,7 @@ export function MetricsDashboard() {
 
       {/* Metrics Content */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar">
-        <div className="p-6 bg-gray-50 min-h-full">
+        <div className="p-6 bg-[var(--panel-background)] min-h-full">
 
           {/* Pipeline Health */}
           <MetricsSection title="Pipeline Health">

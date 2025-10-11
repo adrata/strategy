@@ -51,7 +51,7 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col mx-6 mb-8">
+      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col mx-6 mb-8">
         <PipelineSkeleton message="Loading pipeline data..." />
       </div>
     );
@@ -59,7 +59,7 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col mx-6 mb-8">
+      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col mx-6 mb-8">
         <div className="p-8 text-center text-red-500 flex-1 flex items-center justify-center">
           <div>
             <p className="text-sm">Error loading {section}: {error}</p>
@@ -77,8 +77,8 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
 
   if (data['length'] === 0) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col mx-6 mb-8">
-        <div className="p-8 text-center text-gray-500 flex-1 flex items-center justify-center">
+      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col mx-6 mb-8">
+        <div className="p-8 text-center text-[var(--muted)] flex-1 flex items-center justify-center">
           <div>
             <p className="text-lg mb-2">No {section} found</p>
             <p className="text-sm">Data loaded successfully but no records returned</p>
@@ -95,10 +95,10 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col mx-6 mb-8">
+    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col mx-6 mb-8">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 capitalize">
+      <div className="px-6 py-4 border-b border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] capitalize">
           {section} {section === 'companies' ? '(Business entities)' : section === 'people' ? '(Individual entities)' : `(${data.length} records)`}
         </h3>
       </div>
@@ -107,35 +107,35 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
       <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0 z-10">
+            <thead className="bg-[var(--panel-background)] sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Company
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-[var(--background)] divide-y divide-gray-200">
               {data.map((record, index) => (
-                <tr key={record.id || index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <tr key={record.id || index} className="hover:bg-[var(--panel-background)]">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
                     {record.fullName || record.name || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
                     {record.company || 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
                     {record.email || 'No email'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
                     {record.status || 'Unknown'}
                   </td>
                 </tr>

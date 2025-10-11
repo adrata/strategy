@@ -13,7 +13,7 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
   if (!record) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500">No record data available</div>
+        <div className="text-center text-[var(--muted)]">No record data available</div>
       </div>
     );
   }
@@ -56,10 +56,10 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
     <div className="p-6 space-y-8">
       {/* Personal Information */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Personal Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Contact Details</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Contact Details</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -68,8 +68,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Email</div>
-                  <div className="text-sm text-gray-600">{profileData.personalInfo.email}</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Email</div>
+                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.email}</div>
                 </div>
               </div>
               
@@ -80,8 +80,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Phone</div>
-                  <div className="text-sm text-gray-600">{profileData.personalInfo.phone}</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Phone</div>
+                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.phone}</div>
                 </div>
               </div>
               
@@ -92,8 +92,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">LinkedIn</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn</div>
+                  <div className="text-sm text-[var(--muted)]">
                     {profileData.personalInfo.linkedin !== '-' ? (
                       <a href={profileData.personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                         View Profile
@@ -105,8 +105,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Location & Timezone</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Location & Timezone</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -116,8 +116,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Location</div>
-                  <div className="text-sm text-gray-600">{profileData.personalInfo.location}</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Location</div>
+                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.location}</div>
                 </div>
               </div>
               
@@ -128,8 +128,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Timezone</div>
-                  <div className="text-sm text-gray-600">EST (UTC-5)</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Timezone</div>
+                  <div className="text-sm text-[var(--muted)]">EST (UTC-5)</div>
                 </div>
               </div>
               
@@ -140,8 +140,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Preferred Contact Time</div>
-                  <div className="text-sm text-gray-600">9:00 AM - 5:00 PM EST</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Preferred Contact Time</div>
+                  <div className="text-sm text-[var(--muted)]">9:00 AM - 5:00 PM EST</div>
                 </div>
               </div>
             </div>
@@ -151,54 +151,54 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
       
       {/* Professional Information */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Professional Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Role & Responsibilities</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Role & Responsibilities</h4>
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Job Title</div>
-                <div className="text-sm text-gray-600">{profileData.personalInfo.title}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Job Title</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.title}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Department</div>
-                <div className="text-sm text-gray-600">{profileData.professionalInfo.department}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Department</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.professionalInfo.department}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Seniority Level</div>
-                <div className="text-sm text-gray-600">{profileData.professionalInfo.seniority}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Seniority Level</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.professionalInfo.seniority}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Company</div>
-                <div className="text-sm text-gray-600">{profileData.personalInfo.company}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Company</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.company}</div>
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Communication Preferences</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Communication Preferences</h4>
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Communication Style</div>
-                <div className="text-sm text-gray-600">{profileData.communication.style}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Communication Style</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.communication.style}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Decision Making Style</div>
-                <div className="text-sm text-gray-600">{profileData.communication.decisionMaking}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Decision Making Style</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.communication.decisionMaking}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Preferred Communication Method</div>
-                <div className="text-sm text-gray-600">{profileData.communication.preferredMethod}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Preferred Communication Method</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.communication.preferredMethod}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-gray-900 mb-1">Response Time</div>
-                <div className="text-sm text-gray-600">{profileData.communication.responseTime}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Response Time</div>
+                <div className="text-sm text-[var(--muted)]">{profileData.communication.responseTime}</div>
               </div>
             </div>
           </div>
@@ -207,10 +207,10 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
       
       {/* Contact History */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact History</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Contact History</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Recent Activity</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Recent Activity</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -219,8 +219,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Last Contact</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm font-medium text-[var(--foreground)]">Last Contact</div>
+                  <div className="text-sm text-[var(--muted)]">
                     {new Date(profileData.contactHistory.lastContact).toLocaleDateString()} at {new Date(profileData.contactHistory.lastContact).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -233,8 +233,8 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Next Follow-up</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm font-medium text-[var(--foreground)]">Next Follow-up</div>
+                  <div className="text-sm text-[var(--muted)]">
                     {new Date(profileData.contactHistory.nextFollowUp).toLocaleDateString()} at {new Date(profileData.contactHistory.nextFollowUp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -247,42 +247,42 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Total Interactions</div>
-                  <div className="text-sm text-gray-600">{profileData.contactHistory.totalInteractions} interactions this quarter</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Total Interactions</div>
+                  <div className="text-sm text-[var(--muted)]">{profileData.contactHistory.totalInteractions} interactions this quarter</div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-4">Engagement Metrics</h4>
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-4">Engagement Metrics</h4>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-gray-900">Email Response Rate</div>
-                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.emailResponseRate}%</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Email Response Rate</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.emailResponseRate}%</div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                   <div className="bg-green-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.emailResponseRate}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-gray-900">Meeting Attendance</div>
-                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.meetingAttendance}%</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Meeting Attendance</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.meetingAttendance}%</div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                   <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.meetingAttendance}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-gray-900">Engagement Score</div>
-                  <div className="text-sm font-medium text-gray-900">{profileData.contactHistory.engagementScore}/5</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Engagement Score</div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.engagementScore}/5</div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${(profileData.contactHistory.engagementScore / 5) * 100}%` }}></div>
                 </div>
               </div>

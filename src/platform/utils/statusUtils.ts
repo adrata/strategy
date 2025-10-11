@@ -9,11 +9,11 @@ export type StatusColor = string;
 
 // -------- Status Colors --------
 export function getStatusColor(status?: string): StatusColor {
-  if (!status) return 'bg-gray-100 text-gray-800';
+  if (!status) return 'bg-[var(--hover)] text-gray-800';
   
   const statusLower = status.toLowerCase();
   if (['active', 'qualified', 'hot', 'won'].includes(statusLower)) {
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-[var(--hover)] text-gray-800';
   }
   if (['new', 'discovery', 'proposal'].includes(statusLower)) {
     return 'bg-orange-100 text-orange-800';
@@ -21,42 +21,42 @@ export function getStatusColor(status?: string): StatusColor {
   if (['cold', 'lost', 'closed'].includes(statusLower)) {
     return 'bg-red-100 text-red-800';
   }
-  return 'bg-gray-100 text-gray-800';
+  return 'bg-[var(--hover)] text-gray-800';
 }
 
 // -------- Priority Colors --------
 export function getPriorityColor(priority?: string): StatusColor {
-  if (!priority) return 'bg-gray-100 text-gray-800';
+  if (!priority) return 'bg-[var(--hover)] text-gray-800';
   
   const priorityLower = priority.toLowerCase();
   if (priorityLower === 'high') return 'bg-red-100 text-red-800';
   if (priorityLower === 'medium') return 'bg-orange-100 text-orange-800';
-  if (priorityLower === 'low') return 'bg-gray-100 text-gray-800';
-  return 'bg-gray-100 text-gray-800';
+  if (priorityLower === 'low') return 'bg-[var(--hover)] text-gray-800';
+  return 'bg-[var(--hover)] text-gray-800';
 }
 
 // -------- Stage Colors --------
 export function getStageColor(stage?: string): StatusColor {
-  if (!stage) return 'bg-gray-100 text-gray-800';
+  if (!stage) return 'bg-[var(--hover)] text-gray-800';
   
   const stageLower = stage.toLowerCase().replace(/\s+/g, '-');
   
   // Closed stages
   if (['won', 'closed-won'].includes(stageLower)) return 'bg-green-100 text-green-800';
-  if (['lost', 'closed-lost'].includes(stageLower)) return 'bg-gray-100 text-gray-800';
+  if (['lost', 'closed-lost'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
   if (stageLower === 'closed-lost-to-competition') return 'bg-red-100 text-red-800 border border-red-200';
   
   // Active stages  
   if (['proposal', 'proposal-price-quote'].includes(stageLower)) return 'bg-navy-100 text-navy-800';
   if (['negotiation', 'negotiation-review'].includes(stageLower)) return 'bg-orange-100 text-orange-800';
-  if (['discovery', 'qualification', 'needs-analysis'].includes(stageLower)) return 'bg-gray-100 text-gray-800';
+  if (['discovery', 'qualification', 'needs-analysis'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
   
-  return 'bg-gray-100 text-gray-800';
+  return 'bg-[var(--hover)] text-gray-800';
 }
 
 // -------- Speedrun Status Colors --------
 export function getSpeedrunStatusColor(status?: string): StatusColor {
-  if (!status) return 'bg-gray-100 text-gray-800';
+  if (!status) return 'bg-[var(--hover)] text-gray-800';
   
   const statusLower = status.toLowerCase();
   
@@ -72,10 +72,10 @@ export function getSpeedrunStatusColor(status?: string): StatusColor {
   
   // Low priority statuses
   if (['cold', 'lost', 'closed'].includes(statusLower)) {
-    return 'bg-gray-100 text-gray-800 border border-gray-200';
+    return 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]';
   }
   
-  return 'bg-gray-100 text-gray-800';
+  return 'bg-[var(--hover)] text-gray-800';
 }
 
 // -------- Speedrun Status Labels --------
@@ -125,13 +125,13 @@ export function getStandardizedActionTimingColor(timing: string, isLastAction: b
   }
   
   // Default timing
-  return 'bg-gray-100 text-gray-800 border border-gray-200';
+  return 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]';
 }
 
 // -------- Realtime Action Timing --------
 export function getRealtimeActionTiming(lastActionDate?: string | Date): { text: string; color: StatusColor } {
   if (!lastActionDate) {
-    return { text: 'Never', color: 'bg-gray-100 text-gray-800' };
+    return { text: 'Never', color: 'bg-[var(--hover)] text-gray-800' };
   }
   
   const now = new Date();
@@ -173,5 +173,5 @@ export function getRealtimeActionTiming(lastActionDate?: string | Date): { text:
   }
   
   // Very old - Gray
-  return { text: `${diffYears}y ago`, color: 'bg-gray-100 text-gray-800' };
+  return { text: `${diffYears}y ago`, color: 'bg-[var(--hover)] text-gray-800' };
 }
