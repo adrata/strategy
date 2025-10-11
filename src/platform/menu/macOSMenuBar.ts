@@ -369,21 +369,6 @@ export const ADRATA_MENU_CONFIG: MenuBarConfig[] = [
         type: "separator",
       },
       {
-        label: "Zoom In",
-        accelerator: "CmdOrCtrl+Plus",
-        action: "view:zoom-in",
-      },
-      {
-        label: "Zoom Out",
-        accelerator: "CmdOrCtrl+-",
-        action: "view:zoom-out",
-      },
-      {
-        label: "Reset Zoom",
-        accelerator: "CmdOrCtrl+0",
-        action: "view:zoom-reset",
-      },
-      {
         type: "separator",
       },
       {

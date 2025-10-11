@@ -197,7 +197,7 @@ export function PipelineTable({
   
   // Dynamic height calculation - keep table height reasonable
   const headerHeight = 40; // Height of table header
-  const rowHeight = 64; // Approximate height per row
+  const rowHeight = 62; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
   // Account for tabs/filters section - increase space reservation for sections with tabs
   const hasTabs = ['leads', 'prospects', 'opportunities'].includes(section);
@@ -376,11 +376,11 @@ export function PipelineTable({
               
               // Simple table row for debugging
               return (
-                <tr
-                  key={record.id}
-                  className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-16 border-b border-[var(--border)]"
-                  onClick={() => onRecordClick(record)}
-                >
+                  <tr
+                    key={record.id}
+                    className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+                    onClick={() => onRecordClick(record)}
+                  >
                   {headers.map((header, headerIndex) => {
                     let cellContent = '';
                     

@@ -23,6 +23,9 @@ const config: Config = {
         'tighter': '-0.015em',
         'enterprise': '-0.025em',
       },
+      height: {
+        'table-row': '62px',
+      },
       colors: {
         // Custom navy color scheme based on #1B3758
         navy: {

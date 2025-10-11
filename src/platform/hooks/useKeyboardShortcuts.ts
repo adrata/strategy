@@ -68,15 +68,6 @@ export function useKeyboardShortcuts(
         case "toggle-right-panel":
           onToggleRightPanel?.();
           break;
-        case "zoom-in":
-          // Handled by ZoomProvider
-          break;
-        case "zoom-out":
-          // Handled by ZoomProvider
-          break;
-        case "zoom-reset":
-          // Handled by ZoomProvider
-          break;
         case "navigate-to-aos":
           navigateToAOS();
           break;

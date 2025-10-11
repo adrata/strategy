@@ -109,42 +109,6 @@ export const UNIVERSAL_SHORTCUTS: KeyboardShortcut[] = [
     ergonomics: 0.75,
   },
 
-  // Zoom Controls (Browser-like)
-  {
-    id: "zoom-in",
-    keys: ["⌘+=", "Ctrl+="],
-    description: "Zoom in",
-    category: "view",
-    context: ["global"],
-    platform: ["web", "desktop"],
-    action: "zoom-in",
-    confidence: 0.95,
-    ergonomics: 0.8,
-  },
-
-  {
-    id: "zoom-out",
-    keys: ["⌘+-", "Ctrl+-"],
-    description: "Zoom out",
-    category: "view",
-    context: ["global"],
-    platform: ["web", "desktop"],
-    action: "zoom-out",
-    confidence: 0.95,
-    ergonomics: 0.8,
-  },
-
-  {
-    id: "zoom-reset",
-    keys: ["⌘+0", "Ctrl+0"],
-    description: "Reset zoom to 100%",
-    category: "view",
-    context: ["global"],
-    platform: ["web", "desktop"],
-    action: "zoom-reset",
-    confidence: 0.9,
-    ergonomics: 0.85,
-  },
 ];
 
 /**

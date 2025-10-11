@@ -272,6 +272,23 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
     };
   }, [selectedFolder]);
 
+  // Watch for speedrun engine settings changes
+  React.useEffect(() => {
+    const handleSpeedrunSettingsChange = () => {
+      console.log('🎯 [Speedrun Context] Speedrun engine settings changed - triggering data refresh');
+      // Force a refresh of the speedrun data by clearing the current state
+      // This will cause the data loader to re-fetch and re-rank with new settings
+      setIsDataLoaded(false);
+    };
+
+    // Listen for speedrun settings changes
+    window.addEventListener('speedrunSettingsChanged', handleSpeedrunSettingsChange);
+
+    return () => {
+      window.removeEventListener('speedrunSettingsChanged', handleSpeedrunSettingsChange);
+    };
+  }, []);
+
   // CRITICAL: Auto-select first person whenever readyPeople changes and no person is selected
   React.useEffect(() => {
     console.log("🔥 [PROVIDER AUTO-SELECT] Checking auto-selection:", {

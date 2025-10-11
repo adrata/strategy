@@ -69,7 +69,7 @@ export function PanelLayout({
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
   const dividerHitArea = 8; // Reduced for more precise cursor alignment
   const dividerLineWidth = 1;
-  const dividerLineColor = "#E5E7EB"; // Light gray like original
+  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)";
   
   // Simple divider styles without visual effects
   const dividerStyle = {
@@ -304,11 +304,6 @@ export function PanelLayout({
           case '0':
             e.preventDefault();
             resizePanel(0.35); // Default size
-            break;
-          case '=':
-          case '+':
-            e.preventDefault();
-            resizePanel(1.8); // Maximize
             break;
         }
       }

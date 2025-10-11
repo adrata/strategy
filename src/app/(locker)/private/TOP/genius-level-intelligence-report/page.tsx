@@ -1,10 +1,10 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import PasswordProtection from '../../PasswordProtection';
 import Link from 'next/link';
 
-export default function GeniusLevelIntelligenceReportPage() {
+function GeniusLevelIntelligenceReportContent() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
       <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
@@ -425,5 +425,13 @@ export default function GeniusLevelIntelligenceReportPage() {
         </main>
       </div>
     </PasswordProtection>
+  );
+}
+
+export default function GeniusLevelIntelligenceReportPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--background)] flex items-center justify-center">Loading...</div>}>
+      <GeniusLevelIntelligenceReportContent />
+    </Suspense>
   );
 }

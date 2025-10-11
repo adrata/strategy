@@ -6,6 +6,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")  // For migrations
+  connection_limit = 10  // Neon.tech recommended
 }
 
 /// RBAC models for granular permission control
@@ -329,6 +331,11 @@ model people {
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
+  // 🚀 PERFORMANCE: Composite indexes for fast section queries
+  @@index([workspaceId, status, globalRank, deletedAt])  // Speedrun/section queries
+  @@index([workspaceId, assignedUserId, status, deletedAt])  // User-assigned filtering
+  @@index([workspaceId, deletedAt, globalRank])  // Fast pagination
+  @@index([workspaceId, companyId, status, deletedAt])  // Company-filtered people
 }
 
 /// Activity and task tracking

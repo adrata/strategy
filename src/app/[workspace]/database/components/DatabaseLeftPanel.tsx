@@ -124,7 +124,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
   // Show loading state while auth is loading
   if (authLoading) {
     return (
-      <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
         <div className="p-4 text-center">
           <div className="text-sm text-[var(--muted)]">Loading Database...</div>
         </div>
@@ -133,7 +133,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
   }
 
   return (
-    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header */}

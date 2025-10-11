@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { cache } from '@/platform/services/unified-cache';
 
-// Response cache for fast performance
-const responseCache = new Map<string, { data: any, timestamp: number }>();
-const CACHE_TTL = 30000; // 30 seconds
+// 🚀 PERFORMANCE: Enhanced caching with Redis
+const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
+const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes for speedrun
 
 // Connection pooling optimization
 let connectionCheck: Promise<boolean> | null = null;
@@ -44,24 +45,52 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
     const countsOnly = searchParams.get('counts') === 'true';
+    const section = searchParams.get('section') || ''; // 🚀 NEW: Section parameter for pre-filtered results
+    const cursor = searchParams.get('cursor') || ''; // 🚀 NEW: Cursor-based pagination
+    const forceRefresh = searchParams.get('refresh') === 'true';
     
     const offset = (page - 1) * limit;
     
-    // Check cache first (but skip cache for demo workspace to avoid bad data)
-    const isDemoWorkspace = context.workspaceId === '01K1VBYV8ETM2RCQA4GNN9EG72';
-    const cacheKey = `people-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
-    const cached = responseCache.get(cacheKey);
+    // 🚀 CACHE: Check Redis cache first (unless force refresh)
+    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${limit}-${page}`;
     
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL && !isDemoWorkspace) {
-      return NextResponse.json(cached.data);
+    if (!forceRefresh) {
+      try {
+        const cached = await cache.get(cacheKey);
+        if (cached) {
+          console.log(`⚡ [PEOPLE API] Cache hit - returning cached data`);
+          return NextResponse.json(cached);
+        }
+      } catch (error) {
+        console.warn('⚠️ [PEOPLE API] Cache read failed, proceeding with database query:', error);
+      }
     }
 
     // Enhanced where clause for pipeline management
-    console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId);
+    console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
     const where: any = {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
     };
+
+    // 🚀 SECTION FILTERING: Pre-filter by section for better performance
+    if (section) {
+      switch (section) {
+        case 'leads':
+          where.status = { in: ['new', 'lead', 'LEAD'] };
+          break;
+        case 'prospects':
+          where.status = { in: ['prospect', 'PROSPECT'] };
+          break;
+        case 'speedrun':
+          where.companyId = { not: null }; // Only people with companies
+          where.globalRank = { not: null }; // Only ranked people
+          break;
+        default:
+          // No additional filtering for other sections
+          break;
+      }
+    }
     
     if (search) {
       where.OR = [
@@ -176,11 +205,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Cache the result (but not for demo workspace)
-    if (!isDemoWorkspace) {
-      responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
+    // 🚀 CACHE: Store in Redis for future requests
+    try {
+      const cacheTTL = section === 'speedrun' ? SPEEDRUN_CACHE_TTL : PEOPLE_CACHE_TTL;
+      await cache.set(cacheKey, result, {
+        ttl: cacheTTL,
+        priority: 'high',
+        tags: ['people', section, context.workspaceId, context.userId]
+      });
+      console.log(`💾 [PEOPLE API] Cached result for key: ${cacheKey}`);
+    } catch (error) {
+      console.warn('⚠️ [PEOPLE API] Cache write failed:', error);
     }
-    
     
     return result;
 
@@ -315,6 +351,15 @@ export async function POST(request: NextRequest) {
     });
 
     const person = result.person;
+
+    // 🚀 CACHE INVALIDATION: Clear people cache when new person is created
+    try {
+      const cachePattern = `people-${context.workspaceId}-${context.userId}-*`;
+      await cache.invalidateByPattern(cachePattern);
+      console.log(`🗑️ [PEOPLE API] Invalidated cache for pattern: ${cachePattern}`);
+    } catch (error) {
+      console.warn('⚠️ [PEOPLE API] Cache invalidation failed:', error);
+    }
 
     return createSuccessResponse(person, {
       message: 'Person created successfully',
