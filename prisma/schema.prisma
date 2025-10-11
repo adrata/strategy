@@ -463,3 +463,53 @@ model audit_logs {
   @@index([workspaceId, action, timestamp])
   @@index([success])
 }
+
+enum BuyerGroupRole {
+  decision
+  champion
+  stakeholder
+  blocker
+  introducer
+}
+
+model BuyerGroups {
+  id               String   @id @default(uuid())
+  companyName      String
+  website          String?
+  industry         String?
+  companySize      String?
+  workspaceId      String?
+  cohesionScore    Decimal? @default(0) @db.Decimal(5, 2)
+  overallConfidence Decimal? @default(0) @db.Decimal(5, 2)
+  totalMembers     Int      @default(0)
+  processingTime   Int      @default(0)
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  members BuyerGroupMembers[]
+
+  @@index([companyName])
+  @@index([workspaceId])
+  @@index([createdAt])
+}
+
+model BuyerGroupMembers {
+  id            String         @id @default(uuid())
+  buyerGroupId  String
+  name          String
+  title         String?
+  role          BuyerGroupRole
+  email         String?
+  phone         String?
+  linkedin      String?
+  confidence    Decimal?       @default(0) @db.Decimal(5, 2)
+  influenceScore Decimal?      @default(0) @db.Decimal(5, 2)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  buyerGroup BuyerGroups @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([buyerGroupId])
+  @@index([role])
+}

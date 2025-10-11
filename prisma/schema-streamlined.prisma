@@ -83,6 +83,68 @@ enum PersonPriority {
   HIGH
 }
 
+enum BuyerGroupRole {
+  decision
+  champion
+  stakeholder
+  blocker
+  introducer
+}
+
+// Webhook and Change Detection Models
+model WebhookEvent {
+  id               String    @id @default(cuid())
+  idempotencyKey   String    @unique // For deduplication
+  source           String    // 'coresignal', 'linkedin', 'manual', etc.
+  eventType        String    // 'person.role_change', 'company.update', etc.
+  payload          Json      // Full event payload
+  processed        Boolean   @default(false)
+  receivedAt       DateTime  @default(now())
+  processedAt      DateTime?
+  error            String?   // Error message if processing failed
+  
+  @@index([source, eventType])
+  @@index([processed, receivedAt])
+  @@index([idempotencyKey])
+  @@map("webhook_events")
+}
+
+model BuyerGroupRefreshLog {
+  id          String    @id @default(cuid())
+  companyId   String
+  workspaceId String
+  reason      String    // 'webhook', 'manual', 'scheduled', 'cdc', 'api'
+  triggeredBy String?   // personId or userId who triggered
+  status      String    // 'pending', 'processing', 'completed', 'failed'
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  changes     Json?     // What changed in the buyer group
+  error       String?   // Error message if failed
+  
+  @@index([companyId, startedAt])
+  @@index([workspaceId, status])
+  @@index([status, startedAt])
+  @@map("buyer_group_refresh_logs")
+}
+
+model PipelineOperation {
+  id             String    @id @default(cuid())
+  idempotencyKey String    @unique // For ensuring operations run only once
+  pipelineName   String    // 'buyer-group-discovery', 'person-enrichment', etc.
+  input          Json      // Input parameters
+  output         Json?     // Result data
+  status         String    // 'pending', 'processing', 'completed', 'failed'
+  createdAt      DateTime  @default(now())
+  completedAt    DateTime?
+  duration       Int?      // Processing time in milliseconds
+  error          String?   // Error message if failed
+  
+  @@index([idempotencyKey])
+  @@index([pipelineName, status])
+  @@index([createdAt])
+  @@map("pipeline_operations")
+}
+
 /// RBAC models for granular permission control
 model roles {
   id          String   @id @default(ulid())
@@ -378,6 +440,9 @@ model people {
   engagementScore   Float?    @default(0)
   globalRank        Int?      @default(0)
   companyRank       Int?      @default(0)
+  buyerGroupRole    BuyerGroupRole?
+  buyerGroupConfidence Float? @default(0)
+  influenceScore    Float?    @default(0)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime
   entityId          String?   @db.VarChar(30)
@@ -397,6 +462,7 @@ model people {
   @@index([workspaceId, assignedUserId, status])
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
+  @@index([workspaceId, buyerGroupRole])
   @@index([customFields], type: Gin)
 }
 
