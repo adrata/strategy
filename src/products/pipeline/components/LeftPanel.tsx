@@ -718,7 +718,7 @@ function PipelineSections({
     // Show loading state while acquisitionData is loading or auth is loading
     if (!acquisitionData || acquisitionData.data?.loading?.isLoading || authLoading) {
       return (
-        <div className="w-[13.835rem] min-w-[13.835rem] max-w-[13.835rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+        <div className="w-[13.585rem] min-w-[13.585rem] max-w-[13.585rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
           <div className="p-4 text-center">
             <div className="text-sm text-gray-500">Loading workspace...</div>
           </div>
@@ -736,7 +736,7 @@ function PipelineSections({
     });
     // Don't show loading state if we don't have valid context
     return (
-      <div className="w-[13.835rem] min-w-[13.835rem] max-w-[13.835rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.585rem] min-w-[13.585rem] max-w-[13.585rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
         <div className="p-4 text-center">
           <div className="text-sm text-red-500">Invalid workspace context</div>
           <div className="text-xs text-gray-500 mt-1">Please refresh the page</div>
@@ -930,7 +930,7 @@ export function PipelineLeftPanelStandalone({
   // No separate API call needed - uses acquisitionData from useAcquisitionOS hook
 
   return (
-    <div className="w-[13.835rem] min-w-[13.835rem] max-w-[13.835rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.585rem] min-w-[13.585rem] max-w-[13.585rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Monaco style */}
