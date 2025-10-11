@@ -1,0 +1,106 @@
+"use client";
+
+/**
+ * Stacks Content Component
+ * 
+ * Main component for the Stacks section, similar to speedrun but with Jira-like functionality.
+ * Follows 2025 best practices with proper modularization and performance optimization.
+ */
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useUnifiedAuth } from '@/platform/auth';
+import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
+import { StacksLeftPanel } from './StacksLeftPanel';
+import { StacksMiddlePanel } from './StacksMiddlePanel';
+import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
+
+interface StacksContentProps {
+  section: string;
+}
+
+export function StacksContent({ section }: StacksContentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, workspace } = useUnifiedAuth();
+  const { ui } = useAcquisitionOS();
+  
+  // State management
+  const [activeSubSection, setActiveSubSection] = useState<string>('stacks');
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Determine active subsection from pathname
+  useEffect(() => {
+    if (pathname.includes('/backlog')) {
+      setActiveSubSection('backlog');
+    } else if (pathname.includes('/epics')) {
+      setActiveSubSection('epics');
+    } else if (pathname.includes('/stories')) {
+      setActiveSubSection('stories');
+    } else if (pathname.includes('/bugs')) {
+      setActiveSubSection('bugs');
+    } else {
+      setActiveSubSection('stacks');
+    }
+  }, [pathname]);
+
+  // Navigation handlers
+  const handleSubSectionChange = (newSubSection: string) => {
+    setActiveSubSection(newSubSection);
+    const basePath = pathname.split('/').slice(0, -1).join('/');
+    
+    if (newSubSection === 'stacks') {
+      router.push(basePath);
+    } else {
+      router.push(`${basePath}/${newSubSection}`);
+    }
+  };
+
+  const handleItemClick = (item: any) => {
+    setSelectedItem(item);
+  };
+
+  // Memoized components for performance
+  const leftPanel = useMemo(() => (
+    <StacksLeftPanel
+      activeSubSection={activeSubSection}
+      onSubSectionChange={handleSubSectionChange}
+    />
+  ), [activeSubSection]);
+
+  const middlePanel = useMemo(() => (
+    <StacksMiddlePanel
+      activeSubSection={activeSubSection}
+      selectedItem={selectedItem}
+      onItemClick={handleItemClick}
+      isLoading={isLoading}
+    />
+  ), [activeSubSection, selectedItem, isLoading]);
+
+  const rightPanel = useMemo(() => (
+    <RightPanel />
+  ), []);
+
+  return (
+    <ProfilePopupProvider>
+      <div className="h-full w-full">
+        <PanelLayout
+          thinLeftPanel={null}
+          leftPanel={leftPanel}
+          middlePanel={middlePanel}
+          rightPanel={rightPanel}
+          zoom={100}
+          isLeftPanelVisible={ui.isLeftPanelVisible}
+          isRightPanelVisible={ui.isRightPanelVisible}
+          onToggleLeftPanel={ui.toggleLeftPanel}
+          onToggleRightPanel={ui.toggleRightPanel}
+        />
+      </div>
+    </ProfilePopupProvider>
+  );
+}
+
+

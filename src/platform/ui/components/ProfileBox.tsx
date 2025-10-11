@@ -643,27 +643,47 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 3. Grand Central */}
+        {/* 3. Olympus */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
           onClick={() => {
-            console.log("🏢 ProfileBox: Grand Central clicked - navigating to integrations hub");
+            console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
             setIsProfileOpen(false); // Close profile popup
-            handleNavigation("./grand-central/integrations");
+            handleNavigation("./olympus");
           }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e['key'] === "Enter") {
               setIsProfileOpen(false);
-              handleNavigation("./grand-central/integrations");
+              handleNavigation("./olympus");
+            }
+          }}
+        >
+          Olympus
+        </div>
+        
+        {/* 4. Grand Central */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          onClick={() => {
+            console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
+            setIsProfileOpen(false); // Close profile popup
+            handleNavigation("./grand-central");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              handleNavigation("./grand-central");
             }
           }}
         >
           Grand Central
         </div>
         
-        {/* 4. Speedrun Engine Configuration - Available for all users */}
+        {/* 5. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-2"
@@ -683,7 +703,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 5. Sign Out */}
+        {/* 6. Sign Out */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
           onClick={handleSignOut}

@@ -9,6 +9,7 @@ import {
   Users,
   Settings,
   Sparkles,
+  BarChart,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
@@ -141,6 +142,17 @@ export default function UniversalCommandPalette({
         action: () => router.push("/store"),
         keywords: ["store", "apps", "applications", "browse"],
         shortcut: "GS",
+        priority: 8,
+      },
+      {
+        id: "nav-olympus",
+        title: "Olympus",
+        description: "Advanced analytics and intelligence hub",
+        category: "navigation",
+        icon: <BarChart className="w-4 h-4" />,
+        action: () => router.push("./olympus"),
+        keywords: ["olympus", "analytics", "intelligence", "insights", "ai"],
+        shortcut: "GO",
         priority: 8,
       },
 

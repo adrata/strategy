@@ -104,6 +104,9 @@ export function useKeyboardShortcuts(
         case "navigate-to-chessboard":
           router.push("/chessboard");
           break;
+        case "navigate-to-olympus":
+          router.push("./olympus");
+          break;
         case "navigate-to-grand-central":
           router.push("./grand-central");
           break;
