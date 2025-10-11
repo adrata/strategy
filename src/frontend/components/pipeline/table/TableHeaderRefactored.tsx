@@ -49,8 +49,8 @@ export function TableHeaderRefactored({
 
   // Get header classes
   const getHeaderClasses = (column: ColumnConfig) => {
-    const baseClasses = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
-    const sortableClasses = column.sortable ? 'cursor-pointer hover:bg-gray-100' : '';
+    const baseClasses = 'px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider';
+    const sortableClasses = column.sortable ? 'cursor-pointer hover:bg-[var(--hover)]' : '';
     const widthClasses = column.width ? `w-${column.width}` : '';
     
     return `${baseClasses} ${sortableClasses} ${widthClasses}`.trim();
@@ -62,9 +62,9 @@ export function TableHeaderRefactored({
     
     if (sortField === column.key) {
       return sortDirection === 'asc' ? (
-        <ChevronUpIcon className="h-4 w-4 text-gray-400" />
+        <ChevronUpIcon className="h-4 w-4 text-[var(--muted)]" />
       ) : (
-        <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+        <ChevronDownIcon className="h-4 w-4 text-[var(--muted)]" />
       );
     }
     
@@ -72,7 +72,7 @@ export function TableHeaderRefactored({
   };
 
   return (
-    <thead className={`bg-gray-50 ${className}`}>
+    <thead className={`bg-[var(--panel-background)] ${className}`}>
       <tr>
         {columns.map((column) => (
           <th

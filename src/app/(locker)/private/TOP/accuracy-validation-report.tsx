@@ -11,8 +11,8 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Executive Summary */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📊 Executive Summary</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Executive Summary</h2>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-3">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
@@ -26,14 +26,14 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Database Verification Results */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔍 Database Verification Results</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔍 Database Verification Results</h2>
                 
                 <div className="space-y-6">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <h3 className="font-semibold text-blue-800 mb-3">Companies Mentioned in Reports</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Idaho Power Company</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Status:</strong> Found in database</li>
@@ -43,7 +43,7 @@ export default function AccuracyValidationReport() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Puget Sound Energy</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Status:</strong> Found in database</li>
@@ -53,7 +53,7 @@ export default function AccuracyValidationReport() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ NV Energy</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Status:</strong> Found in database</li>
@@ -68,7 +68,7 @@ export default function AccuracyValidationReport() {
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                         <h3 className="font-semibold text-purple-800 mb-3">Contacts Mentioned in Reports</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Chris Mantle</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Email:</strong> chris.mantle@pse.com</li>
@@ -78,7 +78,7 @@ export default function AccuracyValidationReport() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Adam Mattson</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Email:</strong> amattson@idahopower.com</li>
@@ -88,7 +88,7 @@ export default function AccuracyValidationReport() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-white border border-green-300 rounded-lg p-3">
+                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Greg Frankamp</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Email:</strong> gfrankamp@idahopower.com</li>
@@ -103,8 +103,8 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Report-by-Report Accuracy Assessment */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📋 Report-by-Report Accuracy Assessment</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📋 Report-by-Report Accuracy Assessment</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -206,36 +206,36 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Data Quality Metrics */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">📈 Data Quality Metrics</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📈 Data Quality Metrics</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">100%</div>
-                        <div className="text-sm text-gray-600">Companies Verified</div>
+                        <div className="text-sm text-[var(--muted)]">Companies Verified</div>
                         <div className="text-xs text-green-600">3/3 Found in Database</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">100%</div>
-                        <div className="text-sm text-gray-600">Contacts Verified</div>
+                        <div className="text-sm text-[var(--muted)]">Contacts Verified</div>
                         <div className="text-xs text-green-600">3/3 Found in Database</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">100%</div>
-                        <div className="text-sm text-gray-600">Email Accuracy</div>
+                        <div className="text-sm text-[var(--muted)]">Email Accuracy</div>
                         <div className="text-xs text-green-600">All Professional Domains</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl font-bold text-green-600">67%</div>
-                        <div className="text-sm text-gray-600">Phone Coverage</div>
+                        <div className="text-sm text-[var(--muted)]">Phone Coverage</div>
                         <div className="text-xs text-green-600">2/3 Have Phone Numbers</div>
                     </div>
                 </div>
             </div>
 
             {/* Market Context Validation */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🏢 Market Context Validation</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🏢 Market Context Validation</h2>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h3 className="font-semibold text-blue-800 mb-3">TOP's Actual Market Confirmed</h3>
@@ -263,8 +263,8 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Accuracy Improvements Made */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔧 Accuracy Improvements Made</h2>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔧 Accuracy Improvements Made</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -319,8 +319,8 @@ export default function AccuracyValidationReport() {
             </div>
 
             {/* Footer */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-600">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                <p className="text-sm text-[var(--muted)]">
                     <strong>Accuracy Validation Completed:</strong> December 19, 2024 | 
                     <strong> All Reports:</strong> ✅ ACCURATE | 
                     <strong> Data Quality:</strong> ✅ VERIFIED

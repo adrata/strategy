@@ -655,20 +655,20 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           />
         }
         middlePanel={
-          <div className="h-full flex flex-col bg-white">
+          <div className="h-full flex flex-col bg-[var(--background)]">
             {/* Person Detail Loading Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+            <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
                   <div>
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
+                    <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -677,7 +677,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             <div className="flex-shrink-0 px-6 pt-2 pb-1">
               <div className="flex items-center gap-8">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  <div key={i} className="h-10 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 ))}
               </div>
             </div>
@@ -687,23 +687,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column */}
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-32 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="space-y-2">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className="flex justify-between">
-                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                          <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-40 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="space-y-2">
                       {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                        <div key={i} className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
                       ))}
                     </div>
                   </div>
@@ -711,23 +711,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                 
                 {/* Right Column */}
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-36 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="grid grid-cols-2 gap-4">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className="text-center">
-                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                          <div className="h-6 w-12 bg-[var(--loading-bg)] rounded animate-pulse mx-auto mb-1"></div>
+                          <div className="h-3 w-16 bg-[var(--loading-bg)] rounded animate-pulse mx-auto"></div>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-28 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="flex flex-wrap gap-2">
                       {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div key={i} className="h-6 w-20 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
                       ))}
                     </div>
                   </div>
@@ -762,10 +762,10 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           />
         }
         middlePanel={
-          <div className="h-full flex items-center justify-center bg-white">
+          <div className="h-full flex items-center justify-center bg-[var(--background)]">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading {section}</h3>
-              <p className="text-gray-600 mb-4">{directRecordError || error}</p>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Error Loading {section}</h3>
+              <p className="text-[var(--muted)] mb-4">{directRecordError || error}</p>
               <button
                 onClick={handleBack}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -1062,20 +1062,20 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
           />
         }
         middlePanel={
-          <div className="h-full flex flex-col bg-white">
+          <div className="h-full flex flex-col bg-[var(--background)]">
             {/* Person Detail Loading Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+            <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
                   <div>
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                    <div className="h-6 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
+                    <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -1084,7 +1084,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
             <div className="flex-shrink-0 px-6 pt-2 pb-1">
               <div className="flex items-center gap-8">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  <div key={i} className="h-10 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 ))}
               </div>
             </div>
@@ -1094,23 +1094,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column */}
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-32 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="space-y-2">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className="flex justify-between">
-                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                          <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-40 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="space-y-2">
                       {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                        <div key={i} className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
                       ))}
                     </div>
                   </div>
@@ -1118,23 +1118,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
                 
                 {/* Right Column */}
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-36 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="grid grid-cols-2 gap-4">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className="text-center">
-                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                          <div className="h-6 w-12 bg-[var(--loading-bg)] rounded animate-pulse mx-auto mb-1"></div>
+                          <div className="h-3 w-16 bg-[var(--loading-bg)] rounded animate-pulse mx-auto"></div>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                  <div className="bg-[var(--panel-background)] rounded-lg p-4">
+                    <div className="h-5 w-28 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
                     <div className="flex flex-wrap gap-2">
                       {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div key={i} className="h-6 w-20 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
                       ))}
                     </div>
                   </div>

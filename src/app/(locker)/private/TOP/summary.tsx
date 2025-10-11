@@ -1,11 +1,11 @@
 export default function TOPSystemSummaryReport() {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
+    <div className="max-w-4xl mx-auto p-6 bg-[var(--background)]">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           TOP Engineering Plus - Unified Enrichment System QA Summary
         </h1>
-        <p className="text-gray-600">Complete System Validation Report</p>
+        <p className="text-[var(--muted)]">Complete System Validation Report</p>
       </div>
 
       <div className="space-y-6">
@@ -21,15 +21,15 @@ export default function TOPSystemSummaryReport() {
         </div>
 
         {/* Use Cases Tested */}
-        <div className="bg-white border rounded p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Use Cases Validated</h2>
+        <div className="bg-[var(--background)] border rounded p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Use Cases Validated</h2>
           
           <div className="space-y-4">
             <div className="flex items-start">
               <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">1</div>
               <div>
-                <h3 className="font-semibold text-gray-900">Utility Communications Buyer Group Research</h3>
-                <p className="text-sm text-gray-600">Idaho Power Company - Found 3 existing contacts, identified buyer group roles, employment verification</p>
+                <h3 className="font-semibold text-[var(--foreground)]">Utility Communications Buyer Group Research</h3>
+                <p className="text-sm text-[var(--muted)]">Idaho Power Company - Found 3 existing contacts, identified buyer group roles, employment verification</p>
                 <p className="text-xs text-green-600">✓ Real data, utility context applied, employment verification working</p>
               </div>
             </div>
@@ -37,8 +37,8 @@ export default function TOPSystemSummaryReport() {
             <div className="flex items-start">
               <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</div>
               <div>
-                <h3 className="font-semibold text-gray-900">Prospect Enrichment Research</h3>
-                <p className="text-sm text-gray-600">Chris Mantle at Puget Sound Energy - Complete profile enrichment with employment verification</p>
+                <h3 className="font-semibold text-[var(--foreground)]">Prospect Enrichment Research</h3>
+                <p className="text-sm text-[var(--muted)]">Chris Mantle at Puget Sound Energy - Complete profile enrichment with employment verification</p>
                 <p className="text-xs text-green-600">✓ Real contact, current employment verified, engagement history leveraged</p>
               </div>
             </div>
@@ -46,8 +46,8 @@ export default function TOPSystemSummaryReport() {
             <div className="flex items-start">
               <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">3</div>
               <div>
-                <h3 className="font-semibold text-gray-900">Find Communications Engineer</h3>
-                <p className="text-sm text-gray-600">NV Energy SCADA engineer search - Found 3 high-relevance candidates with 91% average match score</p>
+                <h3 className="font-semibold text-[var(--foreground)]">Find Communications Engineer</h3>
+                <p className="text-sm text-[var(--muted)]">NV Energy SCADA engineer search - Found 3 high-relevance candidates with 91% average match score</p>
                 <p className="text-xs text-green-600">✓ Technology search working, employment verification, relevance scoring accurate</p>
               </div>
             </div>
@@ -55,8 +55,8 @@ export default function TOPSystemSummaryReport() {
             <div className="flex items-start">
               <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">4</div>
               <div>
-                <h3 className="font-semibold text-gray-900">Competitor Intelligence Research</h3>
-                <p className="text-sm text-gray-600">Tri-State Generation project - Identified 9 competitors, leveraged 8 existing contacts for advantage</p>
+                <h3 className="font-semibold text-[var(--foreground)]">Competitor Intelligence Research</h3>
+                <p className="text-sm text-[var(--muted)]">Tri-State Generation project - Identified 9 competitors, leveraged 8 existing contacts for advantage</p>
                 <p className="text-xs text-green-600">✓ Industry-specific analysis, relationship advantage quantified, strategic recommendations</p>
               </div>
             </div>
@@ -64,25 +64,25 @@ export default function TOPSystemSummaryReport() {
         </div>
 
         {/* System Performance Metrics */}
-        <div className="bg-white border rounded p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">System Performance Metrics</h2>
+        <div className="bg-[var(--background)] border rounded p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">System Performance Metrics</h2>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">2.6s</div>
-              <div className="text-sm text-gray-600">Average Response Time</div>
+              <div className="text-sm text-[var(--muted)]">Average Response Time</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">100%</div>
-              <div className="text-sm text-gray-600">Real Data Usage</div>
+              <div className="text-sm text-[var(--muted)]">Real Data Usage</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">89%</div>
-              <div className="text-sm text-gray-600">Average Accuracy Score</div>
+              <div className="text-sm text-[var(--muted)]">Average Accuracy Score</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">4/4</div>
-              <div className="text-sm text-gray-600">Use Cases Validated</div>
+              <div className="text-sm text-[var(--muted)]">Use Cases Validated</div>
             </div>
           </div>
         </div>
@@ -138,8 +138,8 @@ export default function TOPSystemSummaryReport() {
         </div>
 
         {/* TOP Context Model Validation */}
-        <div className="bg-white border rounded p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">TOP Context Model Validation</h2>
+        <div className="bg-[var(--background)] border rounded p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">TOP Context Model Validation</h2>
           
           <div className="space-y-3">
             <div className="flex items-center">
@@ -186,8 +186,8 @@ export default function TOPSystemSummaryReport() {
         </div>
 
         {/* Next Steps */}
-        <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Recommended Next Steps</h2>
+        <div className="bg-[var(--panel-background)] border-l-4 border-gray-400 p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">Recommended Next Steps</h2>
           <ol className="list-decimal list-inside text-gray-700 space-y-1">
             <li>Deploy unified system to production environment</li>
             <li>Train TOP sellers on new AI right panel capabilities</li>

@@ -10,9 +10,9 @@ function Badge({ className = "", variant = "default", ...props }: BadgeProps) {
 
   const variantClasses = {
     default: "border-transparent bg-blue-500 text-white hover:bg-blue-600",
-    secondary: "border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200",
+    secondary: "border-transparent bg-[var(--hover)] text-gray-800 hover:bg-[var(--loading-bg)]",
     destructive: "border-transparent bg-red-500 text-white hover:bg-red-600",
-    outline: "text-gray-700 border-gray-300",
+    outline: "text-gray-700 border-[var(--border)]",
   };
 
   const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;

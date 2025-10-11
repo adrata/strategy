@@ -8,24 +8,24 @@ import Link from 'next/link';
 export default function FlexeraBusinessCasePage() {
   return (
     <PasswordProtection correctPassword="SBI-Flexera-2025">
-      <div className="min-h-screen bg-white" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
         <header className="border-b border-gray-100">
           <div className="max-w-4xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold text-gray-900">SBI Growth Adrata</h1>
+              <h1 className="text-lg font-semibold text-[var(--foreground)]">SBI Growth Adrata</h1>
               
               {/* Navigation Links */}
               <div className="flex items-center space-x-6">
                 <Link 
                   href="/" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/platform" 
-                  className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
                 >
                   Platform
                 </Link>
@@ -47,26 +47,26 @@ export default function FlexeraBusinessCasePage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Flexera Buyer Group Intelligence Report
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-[var(--muted)] mb-8">
               Strategic Analysis for SBI Growth: Navigating Flexera's Complex Decision-Making Structure
             </p>
             
-            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-400">
+            <div className="bg-[var(--panel-background)] p-6 rounded-lg border-l-4 border-gray-400">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared For</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared For</p>
                   <p className="text-sm font-semibold text-black">SBI Growth Leadership Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Target Company</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Target Company</p>
                   <p className="text-sm font-semibold text-black">Flexera Software</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared By</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared By</p>
                   <p className="text-sm font-semibold text-black">Adrata Sales Intelligence Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Strategic Focus</p>
+                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Strategic Focus</p>
                   <p className="text-sm font-semibold text-black">CRO/CFO Level Engagement</p>
                 </div>
               </div>
@@ -84,7 +84,7 @@ export default function FlexeraBusinessCasePage() {
               As SBI Growth targets CRO/CFO level executives with expensive, high-value consulting services, understanding Flexera's complex decision-making hierarchy and their specific growth challenges is critical for successful engagement.
             </p>
 
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-6">
               <h3 className="text-lg font-semibold text-black mb-3">Strategic Intelligence Advantage</h3>
               <p className="text-gray-700 mb-4">
                 We've identified Flexera's exact buyer group structure, saving you months of research and guesswork. Our intelligence reveals the specific decision-makers, their influence patterns, and the precise engagement sequence needed for successful deal closure.
@@ -113,21 +113,21 @@ export default function FlexeraBusinessCasePage() {
 
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">11</div>
-                <div className="text-sm text-gray-600">Buyer Group Size</div>
+                <div className="text-sm text-[var(--muted)]">Buyer Group Size</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">2</div>
-                <div className="text-sm text-gray-600">Decision Makers</div>
+                <div className="text-sm text-[var(--muted)]">Decision Makers</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">5</div>
-                <div className="text-sm text-gray-600">Champions</div>
+                <div className="text-sm text-[var(--muted)]">Champions</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg text-center border border-gray-200">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
                 <div className="text-3xl font-bold text-black">$500K+</div>
-                <div className="text-sm text-gray-600">Deal Value Range</div>
+                <div className="text-sm text-[var(--muted)]">Deal Value Range</div>
               </div>
             </div>
           </section>
@@ -136,7 +136,7 @@ export default function FlexeraBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Flexera Company Overview</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Company Profile</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -154,7 +154,7 @@ export default function FlexeraBusinessCasePage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-black mb-4">Leadership Team</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
                 <div>
@@ -178,7 +178,7 @@ export default function FlexeraBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Flexera Buyer Group Intelligence</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Strategic Context</h3>
               <p className="text-gray-700 mb-4">
                 Flexera operates in the complex IT Asset Management (ITAM) market, where software licensing costs consume 15-30% of IT budgets. 
@@ -193,13 +193,13 @@ export default function FlexeraBusinessCasePage() {
 
             <div className="space-y-8">
               {/* Decision Makers */}
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Decision Makers (2)</h4>
                 
                 <div className="space-y-6">
                   <div className="border-l-4 border-black pl-4">
                     <h5 className="font-semibold text-black text-lg">Jim Ryan (CEO)</h5>
-                    <p className="text-sm text-gray-600 mb-3">Ultimate decision authority for strategic initiatives</p>
+                    <p className="text-sm text-[var(--muted)] mb-3">Ultimate decision authority for strategic initiatives</p>
                     <div className="text-sm text-gray-700 space-y-2">
                       <p><strong>Pain Points:</strong> Growth plateaued in core ITAM market. Needs expansion into cloud governance and SaaS management.</p>
                       <p><strong>Strategic Priorities:</strong> Market expansion, competitive differentiation, revenue diversification.</p>
@@ -208,9 +208,9 @@ export default function FlexeraBusinessCasePage() {
                     </div>
                   </div>
 
-                  <div className="border-l-4 border-gray-600 pl-4">
+                  <div className="border-l-4 border-[var(--border)] pl-4">
                     <h5 className="font-semibold text-black text-lg">Josh Fraser (CFO)</h5>
-                    <p className="text-sm text-gray-600 mb-3">Financial gatekeeper and ROI validator</p>
+                    <p className="text-sm text-[var(--muted)] mb-3">Financial gatekeeper and ROI validator</p>
                     <div className="text-sm text-gray-700 space-y-2">
                       <p><strong>Pain Points:</strong> Pressure to optimize costs while funding growth. ITAM commoditization squeezing margins.</p>
                       <p><strong>Strategic Priorities:</strong> Cost optimization, margin improvement, predictable revenue growth.</p>
@@ -222,14 +222,14 @@ export default function FlexeraBusinessCasePage() {
               </div>
 
               {/* Champions */}
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Champions (5)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-green-500 pl-4">
                     <h5 className="font-semibold text-black">Cathleen Neibch (Sr Manager Rev Ops)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Primary champion with 7 years tenure and direct RevOps alignment</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Primary champion with 7 years tenure and direct RevOps alignment</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> Very High - Perfect role alignment with SBI's RevOps GTM consulting focus, 7 years tenure</p>
                       <p><strong>Key Motivations:</strong> RevOps optimization, GTM efficiency, process improvement, strategic growth acceleration</p>
                       <p><strong>Engagement Strategy:</strong> Direct RevOps consulting value proposition, GTM process optimization</p>
@@ -240,8 +240,8 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Eric Free (Chief Growth Officer)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Growth strategy champion and market expansion advocate</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Growth strategy champion and market expansion advocate</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> High - Directly responsible for growth initiatives and market expansion</p>
                       <p><strong>Key Motivations:</strong> Market opportunity identification, competitive advantage, growth acceleration</p>
                       <p><strong>Engagement Strategy:</strong> Market analysis, competitive intelligence, growth opportunity mapping</p>
@@ -250,8 +250,8 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Shinie Shaw (VP Global Sales)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Sales process champion and revenue impact advocate</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Sales process champion and revenue impact advocate</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> High - Directly impacted by go-to-market improvements</p>
                       <p><strong>Key Motivations:</strong> Sales efficiency, deal velocity, revenue growth, competitive positioning</p>
                       <p><strong>Engagement Strategy:</strong> Sales process optimization, competitive analysis, revenue impact metrics</p>
@@ -260,8 +260,8 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Michael Beaver (VP Marketing)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Marketing strategy champion and brand positioning advocate</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Marketing strategy champion and brand positioning advocate</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> High - Directly responsible for market positioning and growth initiatives</p>
                       <p><strong>Key Motivations:</strong> Brand differentiation, market share growth, lead generation, competitive advantage</p>
                       <p><strong>Engagement Strategy:</strong> Market analysis, competitive positioning, brand strategy, growth acceleration</p>
@@ -270,8 +270,8 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-gray-500 pl-4">
                     <h5 className="font-semibold text-black">Barbara Boyer (SVP Customer Experience)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Customer success champion and retention advocate</p>
-                    <div className="text-xs text-gray-500">
+                    <p className="text-sm text-[var(--muted)] mb-2">Customer success champion and retention advocate</p>
+                    <div className="text-xs text-[var(--muted)]">
                       <p><strong>Champion Potential:</strong> Medium - Focused on customer outcomes and satisfaction</p>
                       <p><strong>Key Motivations:</strong> Customer success, retention improvement, satisfaction metrics</p>
                       <p><strong>Engagement Strategy:</strong> Customer success stories, retention impact, satisfaction improvement</p>
@@ -281,38 +281,38 @@ export default function FlexeraBusinessCasePage() {
               </div>
 
               {/* Stakeholders */}
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Key Stakeholders (3)</h4>
                 
                 <div className="space-y-3">
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Mike Jerich (President)</h5>
-                    <p className="text-sm text-gray-600">Operational execution and team alignment</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Implementation feasibility and operational impact assessment</p>
+                    <p className="text-sm text-[var(--muted)]">Operational execution and team alignment</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Influence:</strong> Implementation feasibility and operational impact assessment</p>
                   </div>
 
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">EL Lages (Chief People Officer)</h5>
-                    <p className="text-sm text-gray-600">Organizational change and team development</p>
-                    <p className="text-xs text-gray-500"><strong>Influence:</strong> Change management and organizational readiness</p>
+                    <p className="text-sm text-[var(--muted)]">Organizational change and team development</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Influence:</strong> Change management and organizational readiness</p>
                   </div>
 
                   <div className="border-l-4 border-gray-400 pl-4">
                     <h5 className="font-semibold text-black">Thomas Charles Davis, Jr (Technology Operating Partner, Thoma Bravo)</h5>
-                    <p className="text-sm text-gray-600">Strategic opener with VC/PE influence and direct buyer group access</p>
-                    <p className="text-xs text-gray-500"><strong>Strategic Value:</strong> Primary investor relationship (Thoma Bravo purchased Flexera in 2008, reacquired controlling stake in 2020 for $2.85B with KKR as financier). Direct connection to Anthony Erickson (Head of Commercial Sales at SBI) provides warm introduction pathway to Flexera buyer group.</p>
+                    <p className="text-sm text-[var(--muted)]">Strategic opener with VC/PE influence and direct buyer group access</p>
+                    <p className="text-xs text-[var(--muted)]"><strong>Strategic Value:</strong> Primary investor relationship (Thoma Bravo purchased Flexera in 2008, reacquired controlling stake in 2020 for $2.85B with KKR as financier). Direct connection to Anthony Erickson (Head of Commercial Sales at SBI) provides warm introduction pathway to Flexera buyer group.</p>
                   </div>
                 </div>
               </div>
 
               {/* Blockers */}
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-4">Definitive Blockers (4)</h4>
                 
                 <div className="space-y-4">
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Jill DelGrosso (McNamara) (VP GTM Readiness & Programs)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Primary blocker with threat perception and territorial concerns</p>
+                    <p className="text-sm text-[var(--muted)] mb-2">Primary blocker with threat perception and territorial concerns</p>
                     <div className="text-sm text-gray-700">
                       <p><strong>Blocking Potential:</strong> Very High - Only 10 months tenure, perceives outside consultants as threat to her mandate</p>
                       <p><strong>Blocking Tactics:</strong> "We can do this ourselves, this is why I was hired" - internal capability claims, territorial protection</p>
@@ -323,7 +323,7 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Chris Anderson (VP Operations)</h5>
-                    <p className="text-sm text-gray-600 mb-2">Operational efficiency gatekeeper and change resistance advocate</p>
+                    <p className="text-sm text-[var(--muted)] mb-2">Operational efficiency gatekeeper and change resistance advocate</p>
                     <div className="text-sm text-gray-700">
                       <p><strong>Blocking Potential:</strong> High - Can block initiatives that disrupt current operations or require significant change</p>
                       <p><strong>Blocking Tactics:</strong> Operational risk concerns, implementation complexity, resource allocation challenges</p>
@@ -333,7 +333,7 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Procurement & Legal Team</h5>
-                    <p className="text-sm text-gray-600 mb-2">Vendor evaluation and contract negotiation gatekeepers</p>
+                    <p className="text-sm text-[var(--muted)] mb-2">Vendor evaluation and contract negotiation gatekeepers</p>
                     <div className="text-sm text-gray-700">
                       <p><strong>Blocking Potential:</strong> High - Can delay or derail deals through extended evaluation processes</p>
                       <p><strong>Blocking Tactics:</strong> Extended RFP processes, competitive bidding requirements, contract complexity</p>
@@ -343,7 +343,7 @@ export default function FlexeraBusinessCasePage() {
 
                   <div className="border-l-4 border-red-500 pl-4">
                     <h5 className="font-semibold text-black">Finance & Budget Committee</h5>
-                    <p className="text-sm text-gray-600 mb-2">Budget allocation and financial approval authority</p>
+                    <p className="text-sm text-[var(--muted)] mb-2">Budget allocation and financial approval authority</p>
                     <div className="text-sm text-gray-700">
                       <p><strong>Blocking Potential:</strong> High - Can block deals based on budget constraints or ROI concerns</p>
                       <p><strong>Blocking Tactics:</strong> Budget limitations, ROI skepticism, cost-benefit analysis requirements</p>
@@ -359,7 +359,7 @@ export default function FlexeraBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Strategic Opener Analysis</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Primary Strategic Opener</h3>
               <p className="text-gray-700 mb-4">
                 The optimal entry point leverages the existing relationship between SBI Growth and Thoma Bravo, Flexera's primary investor, 
@@ -372,7 +372,7 @@ export default function FlexeraBusinessCasePage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 p-6 rounded-lg">
+            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Thomas Charles Davis, Jr - Technology Operating Partner, Thoma Bravo</h4>
               
               <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -396,7 +396,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-[var(--panel-background)] p-4 rounded-lg">
                 <h5 className="font-semibold text-black mb-3">Strategic Advantages</h5>
                 <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
                   <div>
@@ -424,7 +424,7 @@ export default function FlexeraBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">SBI Growth Engagement Strategy</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">CRO/CFO Level Approach</h3>
               <p className="text-gray-700">
                 Given SBI Growth's focus on CRO/CFO level engagement, the strategy centers on demonstrating clear ROI and strategic value to Flexera's growth objectives.
@@ -432,7 +432,7 @@ export default function FlexeraBusinessCasePage() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 1: Strategic Opener Engagement</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -456,7 +456,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 2: Primary Champion Development</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -480,7 +480,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 3a: C-Suite Executive Engagement (Parallel Track)</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -504,7 +504,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 3b: Secondary Champion Development (Parallel Track)</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -528,7 +528,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 4: Primary Blocker Neutralization</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -552,7 +552,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Phase 5: Technical Validation</h4>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -580,7 +580,7 @@ export default function FlexeraBusinessCasePage() {
           <section className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">Research Methodology</h2>
             
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-8">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
               <h3 className="text-xl font-semibold text-black mb-4">Intelligence Gathering Process</h3>
               <p className="text-gray-700 mb-4">
                 This buyer group intelligence was developed through systematic analysis of SBI's sales process, 
@@ -593,7 +593,7 @@ export default function FlexeraBusinessCasePage() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Research Sources</h4>
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• SBI Growth company website and service descriptions</li>
@@ -603,7 +603,7 @@ export default function FlexeraBusinessCasePage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Strategic Analysis</h4>
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Company website leadership roster and organizational structure</li>
@@ -620,7 +620,7 @@ export default function FlexeraBusinessCasePage() {
             <h2 className="text-3xl font-bold text-black mb-6">Success Strategy</h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Critical Success Elements</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• <strong>ROI Focus:</strong> Quantify business impact and cost savings</li>
@@ -631,7 +631,7 @@ export default function FlexeraBusinessCasePage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-black mb-3">Risk Mitigation</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
                   <li>• <strong>Procurement Process:</strong> Understand vendor evaluation criteria</li>
@@ -646,11 +646,11 @@ export default function FlexeraBusinessCasePage() {
 
           {/* Next Steps */}
           <section className="mb-12">
-            <div className="bg-gray-50 border border-gray-200 p-8 rounded-lg">
+            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-8 rounded-lg">
               <h2 className="text-2xl font-bold text-black mb-6">Recommended Next Steps</h2>
               
               <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white border border-gray-200 p-4 rounded-lg">
+                <div className="bg-[var(--background)] border border-[var(--border)] p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Immediate Actions (Week 1-2)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Leverage Anthony Erickson connection to Thomas Charles Davis, Jr</li>
@@ -660,7 +660,7 @@ export default function FlexeraBusinessCasePage() {
                   </ul>
                 </div>
                 
-                <div className="bg-white border border-gray-200 p-4 rounded-lg">
+                <div className="bg-[var(--background)] border border-[var(--border)] p-4 rounded-lg">
                   <h4 className="font-bold text-black mb-3">Strategic Engagement (Week 3-4)</h4>
                   <ul className="text-sm text-gray-700 space-y-2">
                     <li>• Execute Thoma Bravo introduction through warm connection</li>
@@ -671,7 +671,7 @@ export default function FlexeraBusinessCasePage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 p-6 rounded-lg text-center">
+              <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg text-center">
                 <p className="text-lg font-bold text-black mb-3">
                   <strong>Strategic Engagement Question:</strong> "How can SBI Growth's premium consulting services directly impact Flexera's revenue growth, market positioning, and operational efficiency in the competitive ITAM space while leveraging our strategic investor relationship for accelerated deal velocity?"
                 </p>
@@ -693,9 +693,9 @@ export default function FlexeraBusinessCasePage() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-50 border-t border-gray-100">
+        <footer className="bg-[var(--panel-background)] border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-6 py-6 text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Adrata - Buyer Group Intelligence Platform</h3>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Adrata - Buyer Group Intelligence Platform</h3>
             <p className="text-sm text-gray-700 mb-2">
               <strong>Contact:</strong> Dan Mirolli, Head of Revenue - dan@adrata.com
             </p>
@@ -703,7 +703,7 @@ export default function FlexeraBusinessCasePage() {
               <strong>Demo:</strong> Schedule Executive Demo<br/>
               <a href="https://calendly.com/dan-adrata/biz-dev-call" className="text-gray-700 underline">Schedule Call With Dan</a>
             </p>
-            <p className="text-xs text-gray-500">© 2025 Adrata. All rights reserved.</p>
+            <p className="text-xs text-[var(--muted)]">© 2025 Adrata. All rights reserved.</p>
           </div>
         </footer>
       </div>

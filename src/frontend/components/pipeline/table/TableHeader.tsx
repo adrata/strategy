@@ -81,8 +81,8 @@ export function TableHeader({
           return (
             <th 
               key={header}
-              className={`px-6 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 h-8 border-b border-gray-200 ${
-                !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-gray-100 transition-colors group' : ''
+              className={`px-6 py-1 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider bg-[var(--panel-background)] h-8 border-b border-[var(--border)] ${
+                !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-[var(--hover)] transition-colors group' : ''
               }`}
               style={{ 
                 width: columnWidthFn(index),
@@ -103,13 +103,13 @@ export function TableHeader({
                   <div className="flex items-center ml-2">
                     {isCurrentSort ? (
                       sortDirection === 'asc' ? (
-                        <ChevronUpIcon className="w-4 h-4 text-gray-600" />
+                        <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
                       ) : (
-                        <ChevronDownIcon className="w-4 h-4 text-gray-600" />
+                        <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />
                       )
                     ) : (
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ChevronUpIcon className="w-4 h-4 text-gray-400" />
+                        <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
                       </div>
                     )}
                   </div>

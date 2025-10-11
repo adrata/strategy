@@ -92,15 +92,15 @@ export function EditRecordModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">
             Update {recordType === 'speedrun' ? 'Contact' : recordType.charAt(0).toUpperCase() + recordType.slice(1)}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -118,7 +118,7 @@ export function EditRecordModal({
                 type="text"
                 value={formData.firstName || ''}
                 onChange={(e) => handleChange('firstName', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
@@ -129,7 +129,7 @@ export function EditRecordModal({
                 type="text"
                 value={formData.lastName || ''}
                 onChange={(e) => handleChange('lastName', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -142,7 +142,7 @@ export function EditRecordModal({
                 type="text"
                 value={formData.title || ''}
                 onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -155,7 +155,7 @@ export function EditRecordModal({
                 type="text"
                 value={formData.company || ''}
                 onChange={(e) => handleChange('company', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -168,7 +168,7 @@ export function EditRecordModal({
                 type="email"
                 value={formData.email || ''}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -181,7 +181,7 @@ export function EditRecordModal({
                 type="tel"
                 value={formData.phone || ''}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -193,7 +193,7 @@ export function EditRecordModal({
               <select
                 value={formData.status || ''}
                 onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select Status</option>
                 <option value="new">New</option>
@@ -215,7 +215,7 @@ export function EditRecordModal({
               <select
                 value={formData.priority || ''}
                 onChange={(e) => handleChange('priority', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -233,7 +233,7 @@ export function EditRecordModal({
               type="text"
               value={formData.industry || ''}
               onChange={(e) => handleChange('industry', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -246,7 +246,7 @@ export function EditRecordModal({
               type="url"
               value={formData.linkedin || ''}
               onChange={(e) => handleChange('linkedin', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -259,16 +259,16 @@ export function EditRecordModal({
               value={formData.notes || ''}
               onChange={(e) => handleChange('notes', e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--hover)] rounded-md hover:bg-[var(--loading-bg)] focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Cancel
             </button>

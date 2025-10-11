@@ -20,6 +20,7 @@ allThemes.forEach(theme => {
     "--border": theme.colors.border,
     "--muted": theme.colors.muted,
     "--muted-light": theme.colors.mutedLight,
+    "--loading-bg": theme.colors.loadingBg,
     "--hover": theme.colors.hover,
     "--button-text": theme.colors.buttonText,
     "--button-background": theme.colors.buttonBackground,

@@ -82,7 +82,7 @@ export const EmailTimelineTab: React.FC<EmailTimelineTabProps> = ({
       case 'pricing_inquiry': return 'text-blue-600 bg-blue-50';
       case 'demo_request': return 'text-purple-600 bg-purple-50';
       case 'trial_request': return 'text-orange-600 bg-orange-50';
-      default: return 'text-gray-600 bg-gray-50';
+      default: return 'text-[var(--muted)] bg-[var(--panel-background)]';
     }
   };
 

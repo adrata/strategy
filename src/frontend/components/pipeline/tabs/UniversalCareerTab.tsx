@@ -117,56 +117,56 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
     <div className="space-y-6">
       {/* Career Overview */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Overview</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Career Overview</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Career Overview Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Career Overview</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Career Overview</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Department:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {careerData.department || (isDemoWorkspace ? 'Information Security' : 'Not available')}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Company:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {careerData.companyName || (isDemoWorkspace ? 'Current Company' : 'Not available')}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Total Experience:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Total Experience:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {careerData.totalExperience || (isDemoWorkspace ? '15+ years' : 'Not available')}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Data Fields:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.totalFields}</span>
+                <span className="text-sm text-[var(--muted)]">Data Fields:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{careerData.totalFields}</span>
               </div>
             </div>
           </div>
 
           {/* Enrichment Info Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Enrichment Info</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Enrichment Info</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Enriched:</span>
-                <span className="text-sm font-medium text-gray-900">{formatDate(careerData.lastEnrichedAt)}</span>
+                <span className="text-sm text-[var(--muted)]">Last Enriched:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{formatDate(careerData.lastEnrichedAt)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Skills Available:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.skills.length}</span>
+                <span className="text-sm text-[var(--muted)]">Skills Available:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{careerData.skills.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Education Records:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.education.length}</span>
+                <span className="text-sm text-[var(--muted)]">Education Records:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{careerData.education.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Experience Records:</span>
-                <span className="text-sm font-medium text-gray-900">{careerData.experience.length}</span>
+                <span className="text-sm text-[var(--muted)]">Experience Records:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{careerData.experience.length}</span>
               </div>
             </div>
           </div>
@@ -175,24 +175,24 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
 
       {/* Current Position */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Position</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Current Position</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Title:</span>
-              <span className="text-sm font-medium text-gray-900">{record?.jobTitle || record?.title || '-'}</span>
+              <span className="text-sm text-[var(--muted)]">Title:</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">{record?.jobTitle || record?.title || '-'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Company:</span>
-              <span className="text-sm font-medium text-gray-900">{careerData.companyName}</span>
+              <span className="text-sm text-[var(--muted)]">Company:</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">{careerData.companyName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Department:</span>
-              <span className="text-sm font-medium text-gray-900">{careerData.department}</span>
+              <span className="text-sm text-[var(--muted)]">Department:</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">{careerData.department}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Total Experience:</span>
-              <span className="text-sm font-medium text-gray-900">{careerData.totalExperience}</span>
+              <span className="text-sm text-[var(--muted)]">Total Experience:</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">{careerData.totalExperience}</span>
             </div>
           </div>
         </div>
@@ -202,27 +202,27 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
       {/* Experience Timeline */}
       {(careerData.experience.length > 0 || coresignalExperience.length > 0) && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Career Timeline</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Career Timeline</h3>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <div className="space-y-4">
               {(careerData.experience.length > 0 ? careerData.experience : coresignalExperience).slice(0, 5).map((exp: any, index: number) => (
-                <div key={index} className="border-l-2 border-gray-200 pl-4 pb-4">
+                <div key={index} className="border-l-2 border-[var(--border)] pl-4 pb-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-900">{exp.position_title || exp.title || exp.position || '-'}</h4>
-                      <p className="text-sm text-gray-600">{exp.company_name || exp.company || exp.organization || '-'}</p>
+                      <h4 className="text-sm font-medium text-[var(--foreground)]">{exp.position_title || exp.title || exp.position || '-'}</h4>
+                      <p className="text-sm text-[var(--muted)]">{exp.company_name || exp.company || exp.organization || '-'}</p>
                       {exp.department && exp.department !== 'Other' && (
-                        <p className="text-xs text-gray-500">Department: {exp.department}</p>
+                        <p className="text-xs text-[var(--muted)]">Department: {exp.department}</p>
                       )}
                       {exp.management_level && (
-                        <p className="text-xs text-gray-500">Level: {exp.management_level}</p>
+                        <p className="text-xs text-[var(--muted)]">Level: {exp.management_level}</p>
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-[var(--muted)]">
                         {exp.date_from ? formatDate(exp.date_from) : 'Unknown'} - {exp.date_to ? formatDate(exp.date_to) : 'Present'}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-[var(--muted)]">
                         {formatDuration(exp.date_from, exp.date_to)}
                       </p>
                     </div>
@@ -230,32 +230,32 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
                   
                   {/* Company Details */}
                   {exp.company_industry && (
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-[var(--muted)]">
                       <span className="font-medium">Industry:</span> {exp.company_industry}
                     </div>
                   )}
                   {exp.company_size_range && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--muted)]">
                       <span className="font-medium">Company Size:</span> {exp.company_size_range}
                     </div>
                   )}
                   {exp.company_employees_count && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--muted)]">
                       <span className="font-medium">Employees:</span> {exp.company_employees_count.toLocaleString()}
                     </div>
                   )}
                   {exp.company_annual_revenue_source_1 && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--muted)]">
                       <span className="font-medium">Revenue:</span> ${(exp.company_annual_revenue_source_1 / 1000000).toFixed(1)}M
                     </div>
                   )}
                   {exp.company_hq_full_address && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--muted)]">
                       <span className="font-medium">Location:</span> {exp.company_hq_full_address}
                     </div>
                   )}
                   {exp.company_founded_year && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[var(--muted)]">
                       <span className="font-medium">Founded:</span> {exp.company_founded_year}
                     </div>
                   )}
@@ -263,22 +263,22 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
                   {/* Company Keywords/Tags */}
                   {exp.company_categories_and_keywords && exp.company_categories_and_keywords.length > 0 && (
                     <div className="mt-2">
-                      <p className="text-xs font-medium text-gray-500 mb-1">Company Focus:</p>
+                      <p className="text-xs font-medium text-[var(--muted)] mb-1">Company Focus:</p>
                       <div className="flex flex-wrap gap-1">
                         {exp.company_categories_and_keywords.slice(0, 8).map((keyword: string, keyIndex: number) => (
-                          <span key={keyIndex} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                          <span key={keyIndex} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-[var(--hover)] text-gray-700">
                             {keyword}
                           </span>
                         ))}
                         {exp.company_categories_and_keywords.length > 8 && (
-                          <span className="text-xs text-gray-400">+{exp.company_categories_and_keywords.length - 8} more</span>
+                          <span className="text-xs text-[var(--muted)]">+{exp.company_categories_and_keywords.length - 8} more</span>
                         )}
                       </div>
                     </div>
                   )}
                   
                   {exp.description && (
-                    <p className="text-sm text-gray-600 mt-2">{exp.description}</p>
+                    <p className="text-sm text-[var(--muted)] mt-2">{exp.description}</p>
                   )}
                 </div>
               ))}
@@ -290,8 +290,8 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
       {/* Skills & Expertise */}
       {careerData.skills.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Skills & Expertise</h3>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <div className="flex flex-wrap gap-2">
               {careerData.skills.map((skill: string, index: number) => (
                 <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -306,20 +306,20 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
       {/* Education */}
       {careerData.education.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Education</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Education</h3>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <div className="space-y-3">
               {careerData.education.map((edu: any, index: number) => (
                 <div key={index} className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900">{edu.degree || edu.qualification || '-'}</h4>
-                    <p className="text-sm text-gray-600">{edu.institution_name || edu.institution || edu.school || '-'}</p>
+                    <h4 className="text-sm font-medium text-[var(--foreground)]">{edu.degree || edu.qualification || '-'}</h4>
+                    <p className="text-sm text-[var(--muted)]">{edu.institution_name || edu.institution || edu.school || '-'}</p>
                     {edu.field_of_study && (
-                      <p className="text-sm text-gray-500">{edu.field_of_study}</p>
+                      <p className="text-sm text-[var(--muted)]">{edu.field_of_study}</p>
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[var(--muted)]">
                       {formatDate(edu.date_from_year)} - {edu.date_to_year ? formatDate(edu.date_to_year) : 'Present'}
                     </p>
                   </div>

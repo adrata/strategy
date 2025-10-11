@@ -63,7 +63,7 @@ export function LeadDetailsHeader({
       <div className="flex items-center gap-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 bg-[var(--hover)] text-gray-700 rounded-lg hover:bg-[var(--loading-bg)] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
@@ -74,13 +74,13 @@ export function LeadDetailsHeader({
           {(person as any).winningScore?.rank || personIndex}
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">
+          <h1 className="text-xl font-semibold text-[var(--foreground)]">
             {person.name}
           </h1>
           <div className="mt-1 space-y-0.5">
             <div className="flex items-center gap-2">
-              <BuildingOfficeIcon className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-500">
+              <BuildingOfficeIcon className="w-4 h-4 text-[var(--muted)]" />
+              <p className="text-sm text-[var(--muted)]">
                 {person.company}
               </p>
             </div>
@@ -110,7 +110,7 @@ export function LeadDetailsHeader({
         {/* DIAL BUTTON TEMPORARILY HIDDEN
         <button
           onClick={onDial}
-          className="hidden md:flex items-center gap-2 px-4 py-2 border border-gray-300 bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          className="hidden md:flex items-center gap-2 px-4 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
         >
           <span className="text-sm">⌘</span>
           <span className="text-sm">D</span>
@@ -144,7 +144,7 @@ export function LeadDetailsHeader({
                 className="fixed inset-0 z-10"
                 onClick={() => onMoreActions(false)}
               />
-              <div className="absolute right-0 top-12 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+              <div className="absolute right-0 top-12 w-48 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg z-50">
                 <div className="py-1">
                   {/* Pulse button removed per user request */}
 
@@ -161,7 +161,7 @@ export function LeadDetailsHeader({
                     Dial
                   </button>
 
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-1 md:hidden"></div>
+                  <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-1 md:hidden"></div>
                   */}
 
                   <button
@@ -169,14 +169,14 @@ export function LeadDetailsHeader({
                       onUpdate?.();
                       onMoreActions(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900/20 transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--muted)] hover:bg-[var(--panel-background)] dark:hover:bg-[var(--foreground)]/20 transition-colors flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Update
                   </button>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                  <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-1"></div>
                   <button
                     onClick={() => {
                       onSnooze(person.id);
@@ -207,7 +207,7 @@ export function LeadDetailsHeader({
         <button
           onClick={onNavigatePrevious}
           disabled={!canNavigatePrevious()}
-          className="px-3 py-2 border border-gray-300 bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </button>
@@ -215,7 +215,7 @@ export function LeadDetailsHeader({
         <button
           onClick={onNavigateNext}
           disabled={!canNavigateNext()}
-          className="px-3 py-2 border border-gray-300 bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronRightIcon className="w-4 h-4" />
         </button>

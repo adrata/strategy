@@ -97,7 +97,7 @@ export function CompanyDetailView({
       case "closed lost":
         return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
     }
   };
 
@@ -114,7 +114,7 @@ export function CompanyDetailView({
       case "closed lost":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[var(--hover)] text-gray-800";
     }
   };
 
@@ -246,7 +246,7 @@ export function CompanyDetailView({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Company Information */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
                 <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                   Company Information
                 </h3>
@@ -340,7 +340,7 @@ export function CompanyDetailView({
               </div>
 
               {/* Recent Activity */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
                 <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                   Recent Activity
                 </h3>
@@ -400,7 +400,7 @@ export function CompanyDetailView({
             {/* Right Sidebar */}
             <div className="space-y-6">
               {/* Key Metrics */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
                 <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                   Key Metrics
                 </h3>
@@ -436,7 +436,7 @@ export function CompanyDetailView({
 
               {/* Primary Contact */}
               {companyData['primaryContact'] && (
-                <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+                <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                     Primary Contact
                   </h3>
@@ -476,7 +476,7 @@ export function CompanyDetailView({
               )}
 
               {/* Engagement Timeline */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
                 <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                   Engagement Timeline
                 </h3>
@@ -531,7 +531,7 @@ export function CompanyDetailView({
                 {companyData.buyerGroups.map((group: any) => (
                   <div
                     key={group.id}
-                    className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6 cursor-pointer hover:shadow-md transition-all"
+                    className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6 cursor-pointer hover:shadow-md transition-all"
                     onClick={() => setSelectedBuyerGroup(group)}
                   >
                     <div className="flex items-start justify-between mb-4">
@@ -588,7 +588,7 @@ export function CompanyDetailView({
 
         {activeTab === "People" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] overflow-hidden">
+            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] overflow-hidden">
               <table className="w-full">
                 <thead className="bg-[var(--hover-bg)]">
                   <tr>
@@ -675,7 +675,7 @@ export function CompanyDetailView({
               {companyData.opportunities.map((opp: any) => (
                 <div
                   key={opp.id}
-                  className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6"
+                  className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -725,7 +725,7 @@ export function CompanyDetailView({
 
         {activeTab === "Activity" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                 Recent Action Timeline
               </h3>
@@ -772,7 +772,7 @@ export function CompanyDetailView({
 
         {activeTab === "Intelligence" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-[var(--border)] p-6">
+            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                 Company Intelligence
               </h3>
@@ -784,7 +784,7 @@ export function CompanyDetailView({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasAccount ? "text-green-500" : "text-gray-400"}`}
+                        className={`w-4 h-4 ${companyData.hasAccount ? "text-green-500" : "text-[var(--muted)]"}`}
                       />
                       <span className="text-[var(--foreground)]">
                         Pipeline Account
@@ -792,7 +792,7 @@ export function CompanyDetailView({
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasBuyerProfile ? "text-green-500" : "text-gray-400"}`}
+                        className={`w-4 h-4 ${companyData.hasBuyerProfile ? "text-green-500" : "text-[var(--muted)]"}`}
                       />
                       <span className="text-[var(--foreground)]">
                         Buyer Profile
@@ -800,7 +800,7 @@ export function CompanyDetailView({
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasLeads ? "text-green-500" : "text-gray-400"}`}
+                        className={`w-4 h-4 ${companyData.hasLeads ? "text-green-500" : "text-[var(--muted)]"}`}
                       />
                       <span className="text-[var(--foreground)]">
                         Lead Data
@@ -808,7 +808,7 @@ export function CompanyDetailView({
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasOpportunities ? "text-green-500" : "text-gray-400"}`}
+                        className={`w-4 h-4 ${companyData.hasOpportunities ? "text-green-500" : "text-[var(--muted)]"}`}
                       />
                       <span className="text-[var(--foreground)]">
                         Opportunity Data
@@ -836,7 +836,7 @@ export function CompanyDetailView({
                           %
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                         <div
                           className="bg-[#10B981] h-2 rounded-full"
                           style={{
@@ -855,7 +855,7 @@ export function CompanyDetailView({
                           {companyData.winRate}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
                           style={{ width: `${companyData.winRate}%` }}

@@ -38,8 +38,8 @@ function MonacoSections({
           onClick={() => handleSectionClick(section.id)}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             activeSection === section.id
-              ? 'bg-gray-100 text-gray-900'
-              : 'hover:bg-gray-50 text-gray-700'
+              ? 'bg-[var(--hover)] text-[var(--foreground)]'
+              : 'hover:bg-[var(--panel-background)] text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -146,22 +146,22 @@ export function MonacoLeftPanel() {
         </div>
 
         {/* Executive Performance Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Total Prospects</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Total Prospects</span>
               <span className="text-sm font-semibold text-black">3,247</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Target Accounts</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Target Accounts</span>
               <span className="text-sm font-semibold text-black">{(590).toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Decision Makers</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Decision Makers</span>
               <span className="text-sm font-semibold text-black">1,847</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Pipeline Growth</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Pipeline Growth</span>
               <span className="text-sm font-semibold text-black">+12%</span>
             </div>
           </div>

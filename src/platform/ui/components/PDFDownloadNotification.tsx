@@ -59,7 +59,7 @@ export function PDFDownloadNotification({
       case 'error':
         return 'border-red-200 bg-red-50';
       default:
-        return 'border-gray-200 bg-gray-50';
+        return 'border-[var(--border)] bg-[var(--panel-background)]';
     }
   };
 
@@ -88,14 +88,14 @@ export function PDFDownloadNotification({
               {status === 'success' && 'PDF Ready!'}
               {status === 'error' && 'PDF Generation Failed'}
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-[var(--muted)] mt-1">
               {message}
             </p>
           </div>
           
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

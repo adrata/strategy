@@ -70,32 +70,32 @@ export default function BuyerGapCostPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[var(--background)] flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="flex justify-between items-center py-4">
             {/* Logo and Navigation */}
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-gray-900">
+              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
                 Adrata
               </Link>
               
               {/* Navigation */}
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/buyer-gap-cost" className="text-sm text-gray-900 font-semibold">
+                <Link href="/buyer-gap-cost" className="text-sm text-[var(--foreground)] font-semibold">
                   Cost Calculator
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/company" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Company
                 </Link>
               </nav>
@@ -103,7 +103,7 @@ export default function BuyerGapCostPage() {
 
             {/* Sign In and CTA Button */}
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                 Sign In
               </Link>
               <Link
@@ -120,13 +120,13 @@ export default function BuyerGapCostPage() {
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-32 bg-white">
+        <section className="py-32 bg-[var(--background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-left">
-              <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-6">
+              <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--foreground)] mb-6">
                 Calculate Your Buyer Gap Cost
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl">
+              <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl">
                 Discover how much your organization loses annually due to poor stakeholder visibility in complex sales. Enter your numbers below to see your personalized Buyer Gap Cost calculation based on proven industry research.
               </p>
             </div>
@@ -134,24 +134,24 @@ export default function BuyerGapCostPage() {
         </section>
 
         {/* Interactive Calculator Section */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-[var(--panel-background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="grid lg:grid-cols-2 gap-12">
               
               {/* Calculator Inputs */}
-              <div className="bg-white p-8 rounded-xl border border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+              <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-6">
                   Your Numbers
                 </h2>
                 
                 <div className="space-y-6">
                   {/* Average Deal Size */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                       Average Deal Size (ADS)
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--muted)]">$</span>
                       <input
                         type="text"
                         value={dealSize.toLocaleString()}
@@ -159,7 +159,7 @@ export default function BuyerGapCostPage() {
                           const numericValue = e.target.value.replace(/,/g, '');
                           setDealSize(Number(numericValue) || 0);
                         }}
-                        className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                        className="w-full pl-8 pr-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
                         placeholder="57,500"
                       />
                     </div>
@@ -167,21 +167,21 @@ export default function BuyerGapCostPage() {
 
                   {/* Total Annual Opportunities */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                       Total Annual Opportunities (TAO)
                     </label>
                     <input
                       type="number"
                       value={annualOpportunities}
                       onChange={(e) => setAnnualOpportunities(Number(e.target.value) || 0)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
                       placeholder="100"
                     />
                   </div>
 
                   {/* Stakeholder Visibility Rate */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                       Stakeholder Visibility Rate (SVR)
                     </label>
                     <div className="space-y-2">
@@ -192,13 +192,13 @@ export default function BuyerGapCostPage() {
                           max="90"
                           value={visibilityRate}
                           onChange={(e) => setVisibilityRate(Number(e.target.value))}
-                          className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          className="flex-1 h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                         />
-                        <span className="text-sm font-medium text-gray-900 w-12">
+                        <span className="text-sm font-medium text-[var(--foreground)] w-12">
                           {visibilityRate}%
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-[var(--muted)]">
                         Default 40% (conservative estimate based on industry research showing B2B sales involve significantly more stakeholders than sellers typically identify)
                       </p>
                     </div>
@@ -207,25 +207,25 @@ export default function BuyerGapCostPage() {
               </div>
 
               {/* Results */}
-              <div className="bg-white p-8 rounded-xl border border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+              <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-6">
                   Your Buyer Gap Cost
                 </h2>
                 
                 {/* Main Result */}
-                <div className="bg-gray-50 p-6 rounded-xl mb-6">
+                <div className="bg-[var(--panel-background)] p-6 rounded-xl mb-6">
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-gray-900 mb-2">
+                    <div className="text-4xl font-bold text-[var(--foreground)] mb-2">
                       -{formatCurrency(calculatedCost)}
                     </div>
-                    <p className="text-gray-600">Annual revenue lost to Buyer Gap</p>
+                    <p className="text-[var(--muted)]">Annual revenue lost to Buyer Gap</p>
                   </div>
                 </div>
 
                 {/* Formula Breakdown */}
-                <div className="space-y-3 text-sm text-gray-600 mb-6">
-                  <h3 className="font-medium text-gray-900">Calculation:</h3>
-                  <div className="font-mono bg-gray-50 p-3 rounded">
+                <div className="space-y-3 text-sm text-[var(--muted)] mb-6">
+                  <h3 className="font-medium text-[var(--foreground)]">Calculation:</h3>
+                  <div className="font-mono bg-[var(--panel-background)] p-3 rounded">
                     {formatCurrency(dealSize)} (ADS) × {annualOpportunities} (TAO) × (1 - {visibilityRate}% SVR) × 30% = <span className="font-semibold">-{formatCurrency(calculatedCost)}</span>
                   </div>
                   <p className="text-xs">
@@ -236,9 +236,9 @@ export default function BuyerGapCostPage() {
                 </div>
 
                 {/* Email Results */}
-                <form onSubmit={handleEmailSubmit} className="border-t border-gray-200 pt-6">
-                  <h3 className="font-medium text-gray-900 mb-3">Download PDF Report</h3>
-                  <p className="text-sm text-gray-600 mb-3">
+                <form onSubmit={handleEmailSubmit} className="border-t border-[var(--border)] pt-6">
+                  <h3 className="font-medium text-[var(--foreground)] mb-3">Download PDF Report</h3>
+                  <p className="text-sm text-[var(--muted)] mb-3">
                     Generate a professional PDF report with your calculation and methodology.
                   </p>
                   <div className="flex space-x-3">
@@ -247,7 +247,7 @@ export default function BuyerGapCostPage() {
                       value={emailAddress}
                       onChange={(e) => setEmailAddress(e.target.value)}
                       placeholder="your@email.com"
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+                      className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
                     />
                     <button
                       type="submit"
@@ -266,48 +266,48 @@ export default function BuyerGapCostPage() {
         </section>
 
         {/* Formula Explanation */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-[var(--background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
                 How We Calculate Your Buyer Gap Cost
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-[var(--muted)]">
                 Based on research from Gartner, Forrester, and industry analysis
               </p>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-xl mb-12">
+            <div className="bg-[var(--panel-background)] p-8 rounded-xl mb-12">
               <div className="text-center mb-8">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">The Formula</h3>
-                <div className="text-lg font-mono bg-white p-4 rounded-lg border border-gray-200">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">The Formula</h3>
+                <div className="text-lg font-mono bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
                   Buyer Gap Cost = ADS × TAO × (1 - Stakeholder Visibility Rate) × 30%
                 </div>
               </div>
 
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2">ADS</h4>
-                    <p className="text-sm text-gray-600">Average Deal Size</p>
+                  <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <h4 className="font-semibold text-[var(--foreground)] mb-2">ADS</h4>
+                    <p className="text-sm text-[var(--muted)]">Average Deal Size</p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2">TAO</h4>
-                    <p className="text-sm text-gray-600">Total Annual Opportunities</p>
+                  <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <h4 className="font-semibold text-[var(--foreground)] mb-2">TAO</h4>
+                    <p className="text-sm text-[var(--muted)]">Total Annual Opportunities</p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2">Visibility Rate</h4>
-                    <p className="text-sm text-gray-600">% of stakeholders you identify</p>
+                  <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <h4 className="font-semibold text-[var(--foreground)] mb-2">Visibility Rate</h4>
+                    <p className="text-sm text-[var(--muted)]">% of stakeholders you identify</p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2">30%</h4>
-                    <p className="text-sm text-gray-600">Fixed risk multiplier</p>
+                  <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                    <h4 className="font-semibold text-[var(--foreground)] mb-2">30%</h4>
+                    <p className="text-sm text-[var(--muted)]">Fixed risk multiplier</p>
                   </div>
                 </div>
               </div>
@@ -316,32 +316,32 @@ export default function BuyerGapCostPage() {
         </section>
 
         {/* Example Scenarios */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-[var(--panel-background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
                 Industry Examples
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-[var(--muted)]">
                 See how the Buyer Gap impacts different market segments
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
               {/* Mid Market Example */}
-              <div className="bg-white p-8 rounded-xl border border-gray-200">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Mid Market</h3>
+              <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Mid Market</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Average Deal Size:</span>
+                    <span className="text-[var(--muted)]">Average Deal Size:</span>
                     <span className="font-medium">$57,500<a href="#footnote-4" className="text-black hover:underline">⁴</a></span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Annual Opportunities:</span>
+                    <span className="text-[var(--muted)]">Annual Opportunities:</span>
                     <span className="font-medium">100</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Visibility Rate:</span>
+                    <span className="text-[var(--muted)]">Visibility Rate:</span>
                     <span className="font-medium">40%</span>
                   </div>
                   <hr className="my-4" />
@@ -353,19 +353,19 @@ export default function BuyerGapCostPage() {
               </div>
 
               {/* Enterprise Example */}
-              <div className="bg-white p-8 rounded-xl border border-gray-200">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Enterprise</h3>
+              <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Enterprise</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Average Deal Size:</span>
+                    <span className="text-[var(--muted)]">Average Deal Size:</span>
                     <span className="font-medium">$275,000<a href="#footnote-5" className="text-black hover:underline">⁵</a></span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Annual Opportunities:</span>
+                    <span className="text-[var(--muted)]">Annual Opportunities:</span>
                     <span className="font-medium">300</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Visibility Rate:</span>
+                    <span className="text-[var(--muted)]">Visibility Rate:</span>
                     <span className="font-medium">40%</span>
                   </div>
                   <hr className="my-4" />
@@ -380,13 +380,13 @@ export default function BuyerGapCostPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-[var(--background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
             <div className="text-center">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
                 Ready to Eliminate This Revenue Loss?
               </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-[var(--muted)] mb-8 max-w-2xl mx-auto">
                 See how Adrata's Buyer Group Intelligence helps you identify and engage the right stakeholders to recover this lost revenue and close your Buyer Gap.
               </p>
               <div className="flex justify-center space-x-4">
@@ -398,7 +398,7 @@ export default function BuyerGapCostPage() {
                 </Link>
                 <Link
                   href="/what-is-the-buyer-gap"
-                  className="bg-white text-black border border-black px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  className="bg-[var(--background)] text-black border border-black px-8 py-3 rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
                 >
                   Learn About Buyer Gap
                 </Link>
@@ -408,9 +408,9 @@ export default function BuyerGapCostPage() {
         </section>
 
         {/* References & Sources */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-[var(--panel-background)]">
           <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">References & Sources</h3>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-6">References & Sources</h3>
             <div className="space-y-4 text-sm text-gray-700">
               <div id="footnote-1" className="border-l-4 border-black pl-4">
                 <strong>¹</strong> Industry research shows B2B sales involve significantly more stakeholders than sellers typically identify. This 40% default represents a conservative estimate based on multiple studies including Gartner's analysis of 11.7 average stakeholders per B2B decision.
@@ -439,8 +439,8 @@ export default function BuyerGapCostPage() {
 
             </div>
             
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-600">
+            <div className="mt-8 pt-6 border-t border-[var(--border)]">
+              <p className="text-xs text-[var(--muted)]">
                 <strong>Calculation Methodology:</strong> The Buyer Gap Cost formula (ADS × TAO × (1 - Stakeholder Visibility Rate) × 30%) represents conservative estimates based on peer-reviewed sales research. The 30% multiplier combines documented impact factors: deal cycle extension costs (5%) and increased loss rates due to incomplete stakeholder engagement (25%). Individual results may vary based on industry, sales process maturity, and market conditions.
               </p>
             </div>
@@ -493,14 +493,14 @@ export default function BuyerGapCostPage() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+          <div className="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="text-[var(--muted)] text-sm mb-4 md:mb-0">
               © 2025 Adrata. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/privacy" className="text-[var(--muted)] hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-[var(--muted)] hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookies" className="text-[var(--muted)] hover:text-white transition-colors">Cookie Policy</Link>
             </div>
           </div>
         </div>

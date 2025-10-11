@@ -8,90 +8,90 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
     <div className="p-6 space-y-8">
       {/* Performance Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Dashboard</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Performance Dashboard</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Overall Score</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Overall Score</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.performanceScore ? `${Math.round(record.performanceScore)}/100` : '87/100'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Partnership performance</p>
+            <p className="text-sm text-[var(--muted)] mt-1">Partnership performance</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Revenue</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Revenue</h4>
             <div className="text-lg font-bold text-green-600">
               {record?.partnerRevenue ? `$${record.partnerRevenue.toLocaleString()}` : '$2.8M'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">This year</p>
+            <p className="text-sm text-[var(--muted)] mt-1">This year</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Growth</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Growth</h4>
             <div className="text-lg font-bold text-purple-600">
               {record?.revenueGrowth ? `${Math.round(record.revenueGrowth)}%` : '+35%'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Year over year</p>
+            <p className="text-sm text-[var(--muted)] mt-1">Year over year</p>
           </div>
           
           <div className="bg-orange-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Opportunities Closed</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Opportunities Closed</h4>
             <div className="text-2xl font-bold text-orange-600">
               {record?.dealsClosed || '42'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">This year</p>
+            <p className="text-sm text-[var(--muted)] mt-1">This year</p>
           </div>
         </div>
       </div>
 
       {/* Sales Performance */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Sales Performance</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Sales Performance</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Sales Metrics</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Sales Metrics</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Pipeline Value:</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-[var(--muted)]">Pipeline Value:</span>
+                <span className="font-medium text-[var(--foreground)]">
                   {record?.pipelineValue ? `$${record.pipelineValue.toLocaleString()}` : '$12.5M'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Win Rate:</span>
-                <span className="font-medium text-gray-900">{record?.winRate || '38%'}</span>
+                <span className="text-[var(--muted)]">Win Rate:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.winRate || '38%'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Average Deal Size:</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-[var(--muted)]">Average Deal Size:</span>
+                <span className="font-medium text-[var(--foreground)]">
                   {record?.avgDealSize ? `$${record.avgDealSize.toLocaleString()}` : '$67K'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Sales Cycle:</span>
-                <span className="font-medium text-gray-900">{record?.avgSalesCycle || '4.2 months'}</span>
+                <span className="text-[var(--muted)]">Sales Cycle:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.avgSalesCycle || '4.2 months'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Activity Metrics</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Activity Metrics</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Leads Generated:</span>
-                <span className="font-medium text-gray-900">{record?.leadsGenerated || '156'}</span>
+                <span className="text-[var(--muted)]">Leads Generated:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.leadsGenerated || '156'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Qualified Leads:</span>
-                <span className="font-medium text-gray-900">{record?.qualifiedLeads || '89'}</span>
+                <span className="text-[var(--muted)]">Qualified Leads:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.qualifiedLeads || '89'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Conversion Rate:</span>
-                <span className="font-medium text-gray-900">{record?.conversionRate || '57%'}</span>
+                <span className="text-[var(--muted)]">Conversion Rate:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.conversionRate || '57%'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Customer Meetings:</span>
-                <span className="font-medium text-gray-900">{record?.customerMeetings || '78'}</span>
+                <span className="text-[var(--muted)]">Customer Meetings:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.customerMeetings || '78'}</span>
               </div>
             </div>
           </div>
@@ -100,57 +100,57 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
 
       {/* Performance Trends */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Performance Trends</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Quarterly Performance</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Quarterly Performance</h4>
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div className="text-center">
-                <p className="text-gray-600">Q1</p>
-                <p className="font-medium text-gray-900">$580K</p>
+                <p className="text-[var(--muted)]">Q1</p>
+                <p className="font-medium text-[var(--foreground)]">$580K</p>
                 <p className="text-green-600 text-xs">+12%</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-600">Q2</p>
-                <p className="font-medium text-gray-900">$720K</p>
+                <p className="text-[var(--muted)]">Q2</p>
+                <p className="font-medium text-[var(--foreground)]">$720K</p>
                 <p className="text-green-600 text-xs">+24%</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-600">Q3</p>
-                <p className="font-medium text-gray-900">$890K</p>
+                <p className="text-[var(--muted)]">Q3</p>
+                <p className="font-medium text-[var(--foreground)]">$890K</p>
                 <p className="text-green-600 text-xs">+23%</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-600">Q4</p>
-                <p className="font-medium text-gray-900">$610K</p>
+                <p className="text-[var(--muted)]">Q4</p>
+                <p className="font-medium text-[var(--foreground)]">$610K</p>
                 <p className="text-blue-600 text-xs">Projected</p>
               </div>
             </div>
           </div>
 
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Key Performance Indicators</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Key Performance Indicators</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-600">Revenue Attainment:</span>
+                <span className="text-[var(--muted)]">Revenue Attainment:</span>
                 <span className="ml-2 font-medium text-green-600">
                   {record?.revenueAttainment || '112%'} of target
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Deal Velocity:</span>
+                <span className="text-[var(--muted)]">Deal Velocity:</span>
                 <span className="ml-2 font-medium text-blue-600">
                   {record?.dealVelocityTrend || '15%'} improvement
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Customer Satisfaction:</span>
+                <span className="text-[var(--muted)]">Customer Satisfaction:</span>
                 <span className="ml-2 font-medium text-purple-600">
                   {record?.partnerCsat || '4.6/5.0'}
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Certification Level:</span>
+                <span className="text-[var(--muted)]">Certification Level:</span>
                 <span className="ml-2 font-medium text-orange-600">
                   {record?.certificationLevel || 'Gold Partner'}
                 </span>
@@ -162,7 +162,7 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
 
       {/* Strengths & Opportunities */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Analysis</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Performance Analysis</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Key Strengths</label>
@@ -224,13 +224,13 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
 
       {/* Support & Development */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Partner Development</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Partner Development</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Training & Certification Status</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Training & Certification Status</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-600">Sales Certification:</span>
+                <span className="text-[var(--muted)]">Sales Certification:</span>
                 <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
                   record?.salesCertified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
@@ -238,7 +238,7 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Technical Certification:</span>
+                <span className="text-[var(--muted)]">Technical Certification:</span>
                 <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
                   record?.techCertified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                 }`}>
@@ -246,14 +246,14 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Last Training:</span>
-                <span className="ml-2 font-medium text-gray-900">
+                <span className="text-[var(--muted)]">Last Training:</span>
+                <span className="ml-2 font-medium text-[var(--foreground)]">
                   {record?.lastTrainingDate ? new Date(record.lastTrainingDate).toLocaleDateString() : 'Q3 2024'}
                 </span>
               </div>
               <div>
-                <span className="text-gray-600">Next Training:</span>
-                <span className="ml-2 font-medium text-gray-900">
+                <span className="text-[var(--muted)]">Next Training:</span>
+                <span className="ml-2 font-medium text-[var(--foreground)]">
                   {record?.nextTrainingDate ? new Date(record.nextTrainingDate).toLocaleDateString() : 'Q1 2025'}
                 </span>
               </div>
@@ -261,7 +261,7 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
           </div>
 
           <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Support & Resources</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Support & Resources</h4>
             <div className="space-y-2 text-sm text-gray-700">
               <p>• Dedicated partner success manager assigned</p>
               <p>• Access to partner portal and resources</p>
@@ -275,35 +275,35 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
 
       {/* Goals & Targets */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Goals & Targets</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Goals & Targets</h3>
         <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Current Year Targets</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Current Year Targets</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Revenue Target:</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-[var(--muted)]">Revenue Target:</span>
+                  <span className="font-medium text-[var(--foreground)]">
                     {record?.revenueTarget ? `$${record.revenueTarget.toLocaleString()}` : '$3.2M'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Opportunities Target:</span>
-                  <span className="font-medium text-gray-900">{record?.dealsTarget || '55 opportunities'}</span>
+                  <span className="text-[var(--muted)]">Opportunities Target:</span>
+                  <span className="font-medium text-[var(--foreground)]">{record?.dealsTarget || '55 opportunities'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">New Customers:</span>
-                  <span className="font-medium text-gray-900">{record?.newCustomersTarget || '35'}</span>
+                  <span className="text-[var(--muted)]">New Customers:</span>
+                  <span className="font-medium text-[var(--foreground)]">{record?.newCustomersTarget || '35'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Progress to Goal:</span>
+                  <span className="text-[var(--muted)]">Progress to Goal:</span>
                   <span className="font-medium text-green-600">{record?.progressToGoal || '87%'}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Strategic Objectives</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Strategic Objectives</h4>
               <div className="space-y-1 text-sm text-gray-700">
                 <p>• Achieve Gold Partner status by Q4</p>
                 <p>• Expand into healthcare vertical</p>

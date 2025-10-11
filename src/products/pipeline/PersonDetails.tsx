@@ -668,8 +668,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             
                             {/* Show additional metadata for specific event types */}
                             {event['type'] === 'email' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                                <div className="text-xs text-gray-600 space-y-1">
+                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
+                                <div className="text-xs text-[var(--muted)] space-y-1">
                                   <div><strong>From:</strong> {event.metadata.from}</div>
                                   {event['metadata']['to'] && (
                                     <div><strong>To:</strong> {Array.isArray(event.metadata.to) ? event.metadata.to.join(', ') : event.metadata.to}</div>
@@ -682,8 +682,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             )}
                             
                             {event['type'] === 'calendar_event' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                                <div className="text-xs text-gray-600 space-y-1">
+                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
+                                <div className="text-xs text-[var(--muted)] space-y-1">
                                   {event['metadata']['location'] && (
                                     <div><strong>Location:</strong> {event.metadata.location}</div>
                                   )}
@@ -787,7 +787,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                                 <span className={`text-xs px-2 py-1 rounded font-medium ${
                                   note['priority'] === 'high' ? 'bg-red-100 text-red-700' :
                                   note['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-gray-100 text-gray-700'
+                                  'bg-[var(--hover)] text-gray-700'
                                 }`}>
                                   {note.priority} priority
                                 </span>
@@ -796,7 +796,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             
                             {/* Show note content if available */}
                             {note['metadata'] && note['metadata']['content'] && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
                                 <div className="text-sm text-gray-700">
                                   {note.metadata.content}
                                 </div>

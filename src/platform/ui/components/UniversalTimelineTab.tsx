@@ -338,13 +338,13 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'record_created':
       case 'created':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
       case 'status_change':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'assignment_change':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
     }
   };
 
@@ -352,7 +352,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     <div className="space-y-4">
       {timelineEvents['length'] === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-sm">No timeline events yet</div>
+          <div className="text-[var(--muted)] text-sm">No timeline events yet</div>
         </div>
       ) : (
         timelineEvents.map((event, index) => (
@@ -362,7 +362,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
                 {getEventIcon(event.type)}
               </div>
               {index < timelineEvents.length - 1 && (
-                <div className="w-px h-8 bg-gray-200 mt-2" />
+                <div className="w-px h-8 bg-[var(--loading-bg)] mt-2" />
               )}
             </div>
 
@@ -370,7 +370,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-[var(--foreground)]">
                       {formatEventTitle(event.title)}
                     </span>
                     {event['buyingSignal'] && (
@@ -381,10 +381,10 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
                   </div>
                   
                   {event['description'] && (
-                    <p className="text-sm text-gray-600 mb-1">{event.description}</p>
+                    <p className="text-sm text-[var(--muted)] mb-1">{event.description}</p>
                   )}
                   
-                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
                     <span>{formatDistanceToNow(event.date, { addSuffix: true })}</span>
                     {event['user'] && <span>• by {formatUserName(event.user)}</span>}
                   </div>
@@ -393,7 +393,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
                 {event['type'] === 'email' && (
                   <button
                     onClick={() => setSelectedEmail(event.metadata)}
-                    className="text-gray-500 hover:text-gray-700 text-xs px-2 py-1 rounded hover:bg-gray-100"
+                    className="text-[var(--muted)] hover:text-gray-700 text-xs px-2 py-1 rounded hover:bg-[var(--hover)]"
                   >
                     View
                   </button>
@@ -410,14 +410,14 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     <div className="space-y-4">
       {emailThreads['length'] === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-sm">No email threads yet</div>
+          <div className="text-[var(--muted)] text-sm">No email threads yet</div>
         </div>
       ) : (
         emailThreads.map((thread, threadIndex) => (
-          <div key={thread.threadId} className="border border-gray-200 rounded-lg p-4">
+          <div key={thread.threadId} className="border border-[var(--border)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {thread.subject}
                 </span>
                 {thread.buyingSignals > 0 && (
@@ -426,7 +426,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[var(--muted)]">
                 {thread.emails.length} messages • {thread.participantCount} people
               </span>
             </div>
@@ -435,18 +435,18 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
               {thread.emails.map((email, emailIndex) => (
                 <div 
                   key={email.id} 
-                  className="flex items-center gap-3 py-2 px-3 rounded hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="flex items-center gap-3 py-2 px-3 rounded hover:bg-[var(--panel-background)] cursor-pointer transition-colors"
                   onClick={() => setSelectedEmail(email.metadata)}
                 >
                   <div className={`w-2 h-2 rounded-full ${
                     email.metadata.from.includes('dano') ? 'bg-blue-500' : 'bg-green-500'
                   }`} />
                   
-                  <span className="text-sm text-gray-900 min-w-0 flex-1">
+                  <span className="text-sm text-[var(--foreground)] min-w-0 flex-1">
                     {email.metadata.from.includes('dano') ? 'You' : email.metadata.from.split('@')[0]}
                   </span>
                   
-                  <span className="text-xs text-gray-500 shrink-0">
+                  <span className="text-xs text-[var(--muted)] shrink-0">
                     {format(email.date, 'MMM d')}
                   </span>
                 </div>
@@ -470,8 +470,8 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-medium text-gray-900">Timeline</h3>
-          <span className="text-xs text-gray-500">
+          <h3 className="text-sm font-medium text-[var(--foreground)]">Timeline</h3>
+          <span className="text-xs text-[var(--muted)]">
             {timelineEvents.length} events • {timelineEvents.filter(e => e['type'] === 'email').length} emails
           </span>
         </div>
@@ -482,7 +482,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             className={`px-3 py-1 text-xs rounded transition-colors ${
               viewMode === 'unified' 
                 ? 'bg-blue-100 text-blue-700' 
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[var(--muted)] hover:text-gray-700'
             }`}
           >
             All
@@ -492,7 +492,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             className={`px-3 py-1 text-xs rounded transition-colors ${
               viewMode === 'threaded' 
                 ? 'bg-blue-100 text-blue-700' 
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[var(--muted)] hover:text-gray-700'
             }`}
           >
             Threads
@@ -506,15 +506,15 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
 
       {selectedEmail && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setSelectedEmail(null)}>
-          <div className="bg-white border border-gray-200 rounded-lg max-w-4xl max-h-[80vh] w-full mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg max-w-4xl max-h-[80vh] w-full mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-[var(--border)]">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">
                   {selectedEmail.subject || '(No Subject)'}
                 </h3>
                 <button 
                   onClick={() => setSelectedEmail(null)}
-                  className="text-gray-500 hover:text-gray-700 text-xl"
+                  className="text-[var(--muted)] hover:text-gray-700 text-xl"
                 >
                   ×
                 </button>
@@ -522,25 +522,25 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
               
               <div className="mt-4 space-y-2">
                 <div className="text-sm">
-                  <span className="font-medium text-gray-900">From:</span>
-                  <span className="ml-2 text-gray-600">{selectedEmail.from}</span>
+                  <span className="font-medium text-[var(--foreground)]">From:</span>
+                  <span className="ml-2 text-[var(--muted)]">{selectedEmail.from}</span>
                 </div>
                 
                 <div className="text-sm">
-                  <span className="font-medium text-gray-900">To:</span>
-                  <span className="ml-2 text-gray-600">{selectedEmail.to?.join(', ')}</span>
+                  <span className="font-medium text-[var(--foreground)]">To:</span>
+                  <span className="ml-2 text-[var(--muted)]">{selectedEmail.to?.join(', ')}</span>
                 </div>
                 
                 <div className="text-sm">
-                  <span className="font-medium text-gray-900">Date:</span>
-                  <span className="ml-2 text-gray-600">
+                  <span className="font-medium text-[var(--foreground)]">Date:</span>
+                  <span className="ml-2 text-[var(--muted)]">
                     {format(new Date(selectedEmail.receivedAt), 'PPp')}
                   </span>
                 </div>
 
                 {selectedEmail['buyingSignal'] && (
                   <div className="text-sm">
-                    <span className="font-medium text-gray-900">Buying Signal:</span>
+                    <span className="font-medium text-[var(--foreground)]">Buying Signal:</span>
                     <span className="ml-2 px-2 py-1 rounded text-xs bg-green-100 text-green-800">
                       {selectedEmail.buyingSignal.replace('_', ' ')} ({Math.round((selectedEmail.buyingSignalScore || 0) * 100)}%)
                     </span>
@@ -551,7 +551,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             
             <div className="p-6 max-h-96 overflow-y-auto">
               <div 
-                className="text-gray-900 leading-relaxed prose prose-sm max-w-none"
+                className="text-[var(--foreground)] leading-relaxed prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ 
                   __html: selectedEmail.body || selectedEmail.bodyHtml || 'No content available'
                 }}

@@ -70,7 +70,7 @@ export function Pagination({
   const pageNumbers = getPageNumbers(currentPage, totalPages);
   
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+    <div className="flex items-center justify-between px-4 py-3 bg-[var(--background)] border-t border-[var(--border)]">
       {/* Page size selector */}
       {onPageSizeChange && (
         <div className="flex items-center space-x-2">
@@ -78,7 +78,7 @@ export function Pagination({
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-[var(--border)] rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
@@ -106,8 +106,8 @@ export function Pagination({
           className={`
             p-2 rounded-md text-sm font-medium
             ${currentPage === 1 
-              ? 'text-gray-400 cursor-not-allowed' 
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'text-[var(--muted)] cursor-not-allowed' 
+              : 'text-gray-700 hover:bg-[var(--hover)]'
             }
           `}
         >
@@ -123,10 +123,10 @@ export function Pagination({
             className={`
               px-3 py-2 text-sm font-medium rounded-md
               ${page === '...'
-                ? 'text-gray-400 cursor-default'
+                ? 'text-[var(--muted)] cursor-default'
                 : page === currentPage
                 ? 'bg-navy-50 text-navy-900 border border-navy-200'
-                : 'text-gray-700 hover:bg-gray-100'
+                : 'text-gray-700 hover:bg-[var(--hover)]'
               }
             `}
           >
@@ -141,8 +141,8 @@ export function Pagination({
           className={`
             p-2 rounded-md text-sm font-medium
             ${currentPage === totalPages 
-              ? 'text-gray-400 cursor-not-allowed' 
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'text-[var(--muted)] cursor-not-allowed' 
+              : 'text-gray-700 hover:bg-[var(--hover)]'
             }
           `}
         >

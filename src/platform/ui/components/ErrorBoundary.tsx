@@ -81,7 +81,7 @@ class ErrorBoundary extends React.Component<Props, State> {
                 Component Error
               </h1>
               
-              <p className="text-gray-400 text-lg leading-relaxed mb-8">
+              <p className="text-[var(--muted)] text-lg leading-relaxed mb-8">
                 A component encountered an unexpected error. Please try refreshing or resetting the component.
               </p>
             </div>
@@ -99,7 +99,7 @@ class ErrorBoundary extends React.Component<Props, State> {
                     window.location.reload();
                   }
                 }}
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 border border-gray-700 hover:border-gray-600"
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 border border-[var(--border)] hover:border-[var(--border)]"
               >
                 Refresh Page
               </button>
@@ -107,17 +107,17 @@ class ErrorBoundary extends React.Component<Props, State> {
             
             {process['env']['NODE_ENV'] === "development" && this['state']['error'] && (
               <details className="mt-8 text-left">
-                <summary className="cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-300 border-b border-gray-700 pb-2">
+                <summary className="cursor-pointer text-sm font-medium text-[var(--muted)] hover:text-gray-300 border-b border-[var(--border)] pb-2">
                   Error Details (Development)
                 </summary>
-                <div className="mt-4 p-4 bg-gray-900 border border-gray-700 rounded-lg text-xs font-mono text-gray-300 overflow-auto max-h-40">
+                <div className="mt-4 p-4 bg-[var(--foreground)] border border-[var(--border)] rounded-lg text-xs font-mono text-gray-300 overflow-auto max-h-40">
                   <div className="mb-2">
                     <span className="text-red-400 font-semibold">Error:</span> {this.state.error.toString()}
                   </div>
                   {this.state['error']['stack'] && (
                     <div>
                       <span className="text-red-400 font-semibold">Stack:</span>
-                      <pre className="mt-1 whitespace-pre-wrap text-gray-400">{this.state.error.stack}</pre>
+                      <pre className="mt-1 whitespace-pre-wrap text-[var(--muted)]">{this.state.error.stack}</pre>
                     </div>
                   )}
                 </div>

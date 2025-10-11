@@ -230,7 +230,7 @@ export function PipelineMiddlePanel() {
           title: 'Leads',
           subtitle: 'Convert to prospects',
           metrics: [
-            { label: 'Total Pipeline', value: leadsValue > 0 ? `$${(leadsValue / 1000000).toFixed(1)}M` : '$0.0M', color: 'text-gray-900' },
+            { label: 'Total Pipeline', value: leadsValue > 0 ? `$${(leadsValue / 1000000).toFixed(1)}M` : '$0.0M', color: 'text-[var(--foreground)]' },
             { label: 'Open Opportunities', value: sectionData.length.toString(), color: 'text-blue-600' },
             { label: 'Win Rate', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -242,7 +242,7 @@ export function PipelineMiddlePanel() {
           title: 'Prospects',
           subtitle: 'Create opportunity',
           metrics: [
-            { label: 'Total Value', value: prospectsValue > 0 ? `$${(prospectsValue / 1000000).toFixed(1)}M` : '$0.0M', color: 'text-gray-900' },
+            { label: 'Total Value', value: prospectsValue > 0 ? `$${(prospectsValue / 1000000).toFixed(1)}M` : '$0.0M', color: 'text-[var(--foreground)]' },
             { label: 'Active', value: sectionData.length.toString(), color: 'text-blue-600' },
             { label: 'Conversion', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -254,7 +254,7 @@ export function PipelineMiddlePanel() {
           title: 'Opportunities',
           subtitle: 'Active opportunities',
           metrics: [
-            { label: 'Pipeline Value', value: `$${(totalValue / 1000000).toFixed(1)}M`, color: 'text-gray-900' },
+            { label: 'Pipeline Value', value: `$${(totalValue / 1000000).toFixed(1)}M`, color: 'text-[var(--foreground)]' },
             { label: 'Open Opportunities', value: sectionData.length.toString(), color: 'text-blue-600' },
             { label: 'Win Rate', value: '63%', color: 'text-green-600' }
           ],
@@ -266,7 +266,7 @@ export function PipelineMiddlePanel() {
           title: 'People',
           subtitle: 'People',
           metrics: [
-            { label: 'Total People', value: sectionData.length.toString(), color: 'text-gray-900' },
+            { label: 'Total People', value: sectionData.length.toString(), color: 'text-[var(--foreground)]' },
             { label: 'Active', value: activePeople.toString(), color: 'text-blue-600' },
             { label: 'Response Rate', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -278,7 +278,7 @@ export function PipelineMiddlePanel() {
           title: 'Companies',
           subtitle: 'Companies',
           metrics: [
-            { label: 'Total Companies', value: sectionData.length.toString(), color: 'text-gray-900' },
+            { label: 'Total Companies', value: sectionData.length.toString(), color: 'text-[var(--foreground)]' },
             { label: 'Active', value: activeCompanies.toString(), color: 'text-blue-600' },
             { label: 'Growth', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -290,7 +290,7 @@ export function PipelineMiddlePanel() {
           title: 'Partners',
           subtitle: 'Strategic alliances',
           metrics: [
-            { label: 'Total Partners', value: sectionData.length.toString(), color: 'text-gray-900' },
+            { label: 'Total Partners', value: sectionData.length.toString(), color: 'text-[var(--foreground)]' },
             { label: 'Active', value: activePartners.toString(), color: 'text-blue-600' },
             { label: 'Revenue Impact', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -303,7 +303,7 @@ export function PipelineMiddlePanel() {
           title: 'Customers',
           subtitle: 'Earned relationships',
           metrics: [
-            { label: 'Total Customers', value: sectionData.length.toString(), color: 'text-gray-900' },
+            { label: 'Total Customers', value: sectionData.length.toString(), color: 'text-[var(--foreground)]' },
             { label: 'Active', value: activeCustomers.toString(), color: 'text-blue-600' },
             { label: 'Satisfaction', value: 'Calculating...', color: 'text-green-600' }
           ],
@@ -338,24 +338,24 @@ export function PipelineMiddlePanel() {
   
   if (shouldShowLoading) {
     return (
-      <div className="h-full flex flex-col bg-white">
+      <div className="h-full flex flex-col bg-[var(--background)]">
         {/* Header skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <div className="h-6 bg-gray-200 rounded w-24 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+              <div className="h-6 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
             </div>
-            <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
           </div>
         </div>
         
         {/* Filters skeleton */}
-        <div className="flex-shrink-0 px-6 py-3 border-b border-gray-200">
+        <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
           <div className="flex gap-4">
-            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-48 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
           </div>
         </div>
         
@@ -364,12 +364,12 @@ export function PipelineMiddlePanel() {
           <div className="space-y-3">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="flex gap-4">
-                <div className="h-4 bg-gray-200 rounded w-8 animate-pulse"></div>
-                <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
-                <div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div>
-                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                <div className="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
-                <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-40 animate-pulse"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
               </div>
             ))}
           </div>
@@ -519,25 +519,25 @@ export function PipelineMiddlePanel() {
         {/* Fallback for other sections */}
         {!['leads', 'opportunities', 'people', 'companies', 'partners'].includes(activeSection) && (
           <div className="p-6">
-            <div className="bg-white border border-gray-200 rounded-lg">
-              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg">
+              <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => ui.setSelectedRecord(null)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
                   >
                     ← Back
                   </button>
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-[var(--foreground)]">
                     {selectedRecord.name || selectedRecord.companyName || selectedRecord.company || 'Record Details'}
                   </h3>
                 </div>
-                <div className="text-sm text-gray-500 capitalize">
+                <div className="text-sm text-[var(--muted)] capitalize">
                   {activeSection}
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-gray-600">
+                <p className="text-[var(--muted)]">
                   Detail view for {activeSection} is not yet implemented.
                 </p>
               </div>
@@ -550,12 +550,12 @@ export function PipelineMiddlePanel() {
 
   // Render header with section info and metrics (like original implementation)
   const renderHeader = () => (
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{sectionInfo.title}</h1>
-            <p className="text-sm text-gray-500">{sectionInfo.subtitle}</p>
+            <h1 className="text-2xl font-semibold text-[var(--foreground)]">{sectionInfo.title}</h1>
+            <p className="text-sm text-[var(--muted)]">{sectionInfo.subtitle}</p>
           </div>
           
           {/* Metrics like the original */}
@@ -565,7 +565,7 @@ export function PipelineMiddlePanel() {
                 <div className={`text-lg font-semibold ${metric.color}`}>
                   {metric.value}
                 </div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                <div className="text-xs text-[var(--muted)] uppercase tracking-wide">
                   {metric.label}
                 </div>
               </div>
@@ -580,7 +580,7 @@ export function PipelineMiddlePanel() {
             // Open the Add Modal for the current section
             ui.setIsAddModalOpen(true);
           }}
-          className="bg-white text-black border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="bg-[var(--button-background)] text-[var(--button-text)] border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--button-hover)] transition-colors"
         >
           {sectionInfo.actionButton}
         </button>
@@ -593,7 +593,7 @@ export function PipelineMiddlePanel() {
   
   if (showTableView) {
     return (
-      <div className="h-full flex flex-col bg-white overflow-hidden">
+      <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden">
         {renderHeader()}
         <div className="flex-1 px-6 pt-2">
           <PipelineFilters activeSection={activeSection} />
@@ -607,7 +607,7 @@ export function PipelineMiddlePanel() {
 
   // Kanban view for other sections
   return (
-    <div className="h-full flex flex-col bg-white overflow-hidden">
+    <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden">
       {renderHeader()}
       <div className="flex-1 px-6 pt-2 pb-4">
         <PipelineFilters activeSection={activeSection} />

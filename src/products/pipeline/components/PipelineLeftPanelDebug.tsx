@@ -147,8 +147,8 @@ export function PipelineLeftPanelDebug({
     <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
-        <h2 className="text-lg font-bold text-gray-900">Debug Left Panel</h2>
-        <p className="text-xs text-gray-600">TOP Engineering Plus Counts</p>
+        <h2 className="text-lg font-bold text-[var(--foreground)]">Debug Left Panel</h2>
+        <p className="text-xs text-[var(--muted)]">TOP Engineering Plus Counts</p>
       </div>
 
       {/* Debug Information */}
@@ -205,7 +205,7 @@ export function PipelineLeftPanelDebug({
         {/* Raw Debug Data */}
         <details className="text-xs">
           <summary className="cursor-pointer text-gray-700 font-medium">Raw Debug Data</summary>
-          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-64">
+          <pre className="mt-2 p-2 bg-[var(--hover)] rounded text-xs overflow-auto max-h-64">
             {JSON.stringify(debugInfo, null, 2)}
           </pre>
         </details>

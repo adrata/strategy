@@ -576,7 +576,7 @@ export function MonacoRecordDetail({
                         </div>
                       </div>
                       <div>
-                                        <div className="text-2xl font-bold text-gray-600">
+                                        <div className="text-2xl font-bold text-[var(--muted)]">
                   {Math.round(
                     (pipelineIntelligence.confidenceMetrics
                       ?.uniquenessScore || 0) * 100,

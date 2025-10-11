@@ -75,7 +75,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "strategic":
         return <LightBulbIcon className="w-5 h-5 text-blue-500" />;
       default:
-        return <ExclamationTriangleIcon className="w-5 h-5 text-gray-500" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-[var(--muted)]" />;
     }
   };
 
@@ -92,7 +92,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "strategic":
         return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20";
       default:
-        return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/20";
+        return "border-l-gray-500 bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20";
     }
   };
 
@@ -107,7 +107,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
+        return "bg-[var(--hover)] text-gray-800 dark:bg-[var(--foreground)]/30 dark:text-gray-300";
     }
   };
 
@@ -390,7 +390,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                 {painData.criticalPainPoints
                   .flatMap(pain => pain.sources.filter(s => s['type'] === "external"))
                   .map((source, index) => (
-                    <div key={index} className="bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded p-3">
+                    <div key={index} className="bg-[var(--background)] border border-blue-200 dark:border-blue-700 rounded p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{source.source}</span>
                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
@@ -413,7 +413,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                 {painData.criticalPainPoints
                   .flatMap(pain => pain.sources.filter(s => s['type'] === "discovery"))
                   .map((source, index) => (
-                    <div key={index} className="bg-white dark:bg-gray-800 border border-green-200 dark:border-green-700 rounded p-3">
+                    <div key={index} className="bg-[var(--background)] border border-green-200 dark:border-green-700 rounded p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{source.source}</span>
                         <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded">

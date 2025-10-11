@@ -193,35 +193,35 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     <div className="space-y-8">
       {/* Company Summary */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Summary</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-sm text-gray-900 leading-relaxed font-medium">{companyData.description}</div>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Summary</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+          <div className="text-sm text-[var(--foreground)] leading-relaxed font-medium">{companyData.description}</div>
         </div>
       </div>
 
       {/* Company Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company Name:</span>
-                <span className="text-sm font-medium text-gray-900">{companyData.name}</span>
+                <span className="text-sm text-[var(--muted)]">Company Name:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Size:</span>
-                <span className="text-sm font-medium text-gray-900">{companyData.size}</span>
+                <span className="text-sm text-[var(--muted)]">Size:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.size}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Headquarters:</span>
-                <span className="text-sm font-medium text-gray-900">{companyData.headquarters}</span>
+                <span className="text-sm text-[var(--muted)]">Headquarters:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.headquarters}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Founded:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Founded:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {(() => {
                     if (record?.foundedYear) {
                       const currentYear = new Date().getFullYear();
@@ -233,14 +233,14 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company Type:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Company Type:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : '-'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Phone:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Phone:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {record?.phone || '-'}
                 </span>
               </div>
@@ -248,11 +248,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
           </div>
 
           {/* Right Column */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact & Market</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact & Market</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Website:</span>
+                <span className="text-sm text-[var(--muted)]">Website:</span>
                 <span className="text-sm font-medium">
                   {companyData.website && companyData.website !== 'No website' ? (
                     <a 
@@ -273,7 +273,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">LinkedIn:</span>
+                <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
                 <span className="text-sm font-medium">
                   {companyData.linkedin && companyData.linkedin !== '-' ? (
                     <a 
@@ -294,12 +294,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Market:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.industry || '-'}</span>
+                <span className="text-sm text-[var(--muted)]">Market:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record?.industry || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Category:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Category:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {(() => {
                     // AI-powered market category determination
                     const industry = record?.industry?.toLowerCase() || '';
@@ -330,8 +330,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Segment:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Segment:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {(() => {
                     // AI-powered market segment determination
                     const industry = record?.industry?.toLowerCase() || '';
@@ -387,55 +387,55 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
 
       {/* Seller Intelligence - Key Metrics */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Seller Intelligence</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Seller Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Technology Stack</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology Stack</h4>
             <div className="text-2xl font-bold text-green-600">{record?.technologiesUsed?.length || 0}</div>
-            <div className="text-xs text-gray-500 mt-1">Systems in use</div>
-            <div className="text-xs text-gray-400 mt-1">Complexity indicator</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Systems in use</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Complexity indicator</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Hiring Activity</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Hiring Activity</h4>
             <div className="text-2xl font-bold text-purple-600">{record?.activeJobPostings || 0}</div>
-            <div className="text-xs text-gray-500 mt-1">Active job postings</div>
-            <div className="text-xs text-gray-400 mt-1">Growth indicator</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Active job postings</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Growth indicator</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Social Reach</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Social Reach</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.linkedinFollowers ? `${(record.linkedinFollowers / 1000).toFixed(0)}K` : '-'}
             </div>
-            <div className="text-xs text-gray-500 mt-1">LinkedIn followers</div>
-            <div className="text-xs text-gray-400 mt-1">Brand strength</div>
+            <div className="text-xs text-[var(--muted)] mt-1">LinkedIn followers</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Brand strength</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Competitive Landscape</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Competitive Landscape</h4>
             <div className="text-2xl font-bold text-orange-600">{record?.competitors?.length || 0}</div>
-            <div className="text-xs text-gray-500 mt-1">Competitors identified</div>
-            <div className="text-xs text-gray-400 mt-1">Market positioning</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Competitors identified</div>
+            <div className="text-xs text-[var(--muted)] mt-1">Market positioning</div>
           </div>
         </div>
       </div>
 
       {/* Strategic Seller Insights */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Strategic Seller Insights</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Strategic Seller Insights</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Technology Complexity</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology Complexity</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Total Technologies:</span>
-                <span className="text-sm font-medium text-gray-900">{record?.technologiesUsed?.length || 0}</span>
+                <span className="text-sm text-[var(--muted)]">Total Technologies:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record?.technologiesUsed?.length || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Integration Complexity:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Integration Complexity:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {(record?.technologiesUsed?.length || 0) > 200 ? 'High' : (record?.technologiesUsed?.length || 0) > 50 ? 'Medium' : 'Low'}
                 </span>
               </div>
-              <div className="text-xs text-gray-500 mt-2">
+              <div className="text-xs text-[var(--muted)] mt-2">
                 {(record?.technologiesUsed?.length || 0) > 200 ? 'Complex integration challenges - TOP\'s expertise valuable' : 
                  (record?.technologiesUsed?.length || 0) > 50 ? 'Moderate complexity - strategic planning needed' : 
                  'Simple stack - focus on efficiency gains'}
@@ -443,23 +443,23 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Market Position</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Market Position</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company Type:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Company Type:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {record?.isPublic ? 'Public Company' : 'Private Company'}
                   {record?.stockSymbol && ` (${record.stockSymbol})`}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Competitive Pressure:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Competitive Pressure:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {(record?.competitors?.length || 0) > 15 ? 'High' : (record?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
                 </span>
               </div>
-              <div className="text-xs text-gray-500 mt-2">
+              <div className="text-xs text-[var(--muted)] mt-2">
                 {(record?.competitors?.length || 0) > 15 ? 'Highly competitive market - differentiation key' : 
                  (record?.competitors?.length || 0) > 5 ? 'Moderate competition - value proposition important' : 
                  'Less competitive - relationship building crucial'}
@@ -471,8 +471,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
 
       {/* Recent Company Activity */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Company Activity</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Company Activity</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="space-y-3">
             {recentActivity.map((activity: any, index: number) => (
               <div key={index} className="flex items-start space-x-3">
@@ -483,10 +483,10 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
                   'bg-orange-500'
                 }`}></div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-[var(--foreground)]">
                     {activity.type} from {activity.contact}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-[var(--muted)]">
                     {activity.time} • {activity.description}
                   </div>
                 </div>

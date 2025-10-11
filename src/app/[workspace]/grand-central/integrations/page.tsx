@@ -392,7 +392,7 @@ const IntegrationsHub = () => {
               <span>{oauthMessage.message}</span>
               <button
                 onClick={() => setOauthMessage(null)}
-                className="ml-4 text-gray-500 hover:text-gray-700"
+                className="ml-4 text-[var(--muted)] hover:text-gray-700"
               >
                 ✕
               </button>
@@ -466,8 +466,8 @@ const IntegrationsHub = () => {
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <Clock className="h-5 w-5 text-gray-400" />
-                        <span className="text-sm text-gray-500">
+                        <Clock className="h-5 w-5 text-[var(--muted)]" />
+                        <span className="text-sm text-[var(--muted)]">
                           Not Connected
                         </span>
                       </div>
@@ -527,8 +527,8 @@ const IntegrationsHub = () => {
               </div>
               <span className="text-[var(--muted)]">•</span>
               <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-500">
+                <Clock className="h-4 w-4 text-[var(--muted)]" />
+                <span className="text-sm text-[var(--muted)]">
                   {integrations.length - connectedProviders.length} Available
                 </span>
               </div>

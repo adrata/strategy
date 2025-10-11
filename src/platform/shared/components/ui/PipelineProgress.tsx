@@ -63,7 +63,7 @@ export function PipelineProgress({
                     className={`text-xs font-medium ${
                       isCompleted || isCurrent
                         ? "text-blue-500"
-                        : "text-gray-500"
+                        : "text-[var(--muted)]"
                     }`}
                   >
                     {stage.name}

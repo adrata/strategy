@@ -107,10 +107,10 @@ export function LeadDetailsTabContent({
       default:
         return (
           <div className="p-8 text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
               Tab Not Found
             </h3>
-            <p className="text-gray-500">
+            <p className="text-[var(--muted)]">
               The requested tab &quot;{activeTab}&quot; is not available.
             </p>
           </div>

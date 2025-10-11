@@ -99,7 +99,7 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Goals */}
           {content.thisWeekGoals && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">This Week's Goals</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">This Week's Goals</h3>
               <ul className="space-y-2">
                 {content.thisWeekGoals.map((goal: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
@@ -114,19 +114,19 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Key Opportunities */}
           {content.keyOpportunities && content.keyOpportunities.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Opportunities</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Key Opportunities</h3>
               <div className="space-y-3">
                 {content.keyOpportunities.map((opp: any, index: number) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium text-gray-900">{opp.name}</h4>
-                        <p className="text-sm text-gray-600">Stage: {opp.stage}</p>
+                        <h4 className="font-medium text-[var(--foreground)]">{opp.name}</h4>
+                        <p className="text-sm text-[var(--muted)]">Stage: {opp.stage}</p>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">${opp.amount?.toLocaleString() || '0'}</div>
+                        <div className="font-semibold text-[var(--foreground)]">${opp.amount?.toLocaleString() || '0'}</div>
                         {opp.closeDate && (
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-[var(--muted)]">
                             Close: {new Date(opp.closeDate).toLocaleDateString()}
                           </div>
                         )}
@@ -141,7 +141,7 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Action Items */}
           {content.actionItems && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Action Items</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Action Items</h3>
               <ul className="space-y-2">
                 {content.actionItems.map((item: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
@@ -180,7 +180,7 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Achievements */}
           {content.achievements && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">This Week's Achievements</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">This Week's Achievements</h3>
               <ul className="space-y-2">
                 {content.achievements.map((achievement: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
@@ -195,17 +195,17 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Wins */}
           {content.wins && content.wins.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Wins This Week</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Wins This Week</h3>
               <div className="space-y-3">
                 {content.wins.map((win: any, index: number) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-medium text-gray-900">{win.name}</h4>
-                        <p className="text-sm text-gray-600">Stage: {win.stage}</p>
+                        <h4 className="font-medium text-[var(--foreground)]">{win.name}</h4>
+                        <p className="text-sm text-[var(--muted)]">Stage: {win.stage}</p>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">${win.amount?.toLocaleString() || '0'}</div>
+                        <div className="font-semibold text-[var(--foreground)]">${win.amount?.toLocaleString() || '0'}</div>
                       </div>
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Next Week Priorities */}
           {content.nextWeekPriorities && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Next Week's Priorities</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Next Week's Priorities</h3>
               <ul className="space-y-2">
                 {content.nextWeekPriorities.map((priority: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
@@ -232,19 +232,19 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
           {/* Metrics */}
           {content.metrics && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Metrics</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Activity Metrics</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{content.metrics.callsCompleted || 0}</div>
-                  <div className="text-sm text-gray-600">Calls Made</div>
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-[var(--foreground)]">{content.metrics.callsCompleted || 0}</div>
+                  <div className="text-sm text-[var(--muted)]">Calls Made</div>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{content.metrics.emailsCompleted || 0}</div>
-                  <div className="text-sm text-gray-600">Emails Sent</div>
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-[var(--foreground)]">{content.metrics.emailsCompleted || 0}</div>
+                  <div className="text-sm text-[var(--muted)]">Emails Sent</div>
                 </div>
-                <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{content.metrics.meetingsCompleted || 0}</div>
-                  <div className="text-sm text-gray-600">Meetings Scheduled</div>
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-[var(--foreground)]">{content.metrics.meetingsCompleted || 0}</div>
+                  <div className="text-sm text-[var(--muted)]">Meetings Scheduled</div>
                 </div>
               </div>
             </div>
@@ -256,10 +256,10 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading shared report...</p>
+          <p className="text-[var(--muted)]">Loading shared report...</p>
         </div>
       </div>
     );
@@ -267,7 +267,7 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <div className="text-red-600 mb-4">
@@ -285,27 +285,27 @@ export function ChronicleSharedView({ token }: ChronicleSharedViewProps) {
 
   if (!report) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Report not found</p>
+          <p className="text-[var(--muted)]">Report not found</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--panel-background)]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{report.title}</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">{report.title}</h1>
+              <p className="text-[var(--muted)] mt-1">
                 Generated on {formatDate(report.createdAt)}
               </p>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
               </svg>

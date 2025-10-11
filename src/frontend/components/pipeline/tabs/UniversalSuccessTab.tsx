@@ -8,81 +8,81 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
     <div className="p-6 space-y-8">
       {/* Success Metrics Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Success Metrics</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Success Metrics</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Health Score</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Health Score</h4>
             <div className="text-2xl font-bold text-green-600">
               {record?.healthScore ? `${Math.round(record.healthScore)}/100` : '85/100'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Overall account health</p>
+            <p className="text-sm text-[var(--muted)] mt-1">Overall account health</p>
           </div>
           
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">ROI Achieved</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">ROI Achieved</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.roiAchieved ? `${Math.round(record.roiAchieved)}%` : '240%'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Return on investment</p>
+            <p className="text-sm text-[var(--muted)] mt-1">Return on investment</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Time to Value</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Time to Value</h4>
             <div className="text-lg font-bold text-purple-600">
               {record?.timeToValue ? `${record.timeToValue} days` : '45 days'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">Initial value realization</p>
+            <p className="text-sm text-[var(--muted)] mt-1">Initial value realization</p>
           </div>
         </div>
       </div>
 
       {/* Key Performance Indicators */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Performance Indicators</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Key Performance Indicators</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Usage Metrics</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Usage Metrics</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Daily Active Users:</span>
-                <span className="font-medium text-gray-900">{record?.dailyActiveUsers || '127'}</span>
+                <span className="text-[var(--muted)]">Daily Active Users:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.dailyActiveUsers || '127'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Feature Adoption:</span>
-                <span className="font-medium text-gray-900">{record?.featureAdoption ? `${Math.round(record.featureAdoption)}%` : '78%'}</span>
+                <span className="text-[var(--muted)]">Feature Adoption:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.featureAdoption ? `${Math.round(record.featureAdoption)}%` : '78%'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Login Frequency:</span>
-                <span className="font-medium text-gray-900">{record?.loginFrequency || 'Daily'}</span>
+                <span className="text-[var(--muted)]">Login Frequency:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.loginFrequency || 'Daily'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Support Tickets:</span>
-                <span className="font-medium text-gray-900">{record?.supportTickets || '3/month'}</span>
+                <span className="text-[var(--muted)]">Support Tickets:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.supportTickets || '3/month'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Business Impact</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Business Impact</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Cost Savings:</span>
+                <span className="text-[var(--muted)]">Cost Savings:</span>
                 <span className="font-medium text-green-600">
                   {record?.costSavings ? `$${record.costSavings.toLocaleString()}` : '$125,000'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Efficiency Gain:</span>
+                <span className="text-[var(--muted)]">Efficiency Gain:</span>
                 <span className="font-medium text-blue-600">{record?.efficiencyGain ? `${Math.round(record.efficiencyGain)}%` : '35%'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Revenue Impact:</span>
+                <span className="text-[var(--muted)]">Revenue Impact:</span>
                 <span className="font-medium text-green-600">
                   {record?.revenueImpact ? `$${record.revenueImpact.toLocaleString()}` : '$450,000'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Time Saved:</span>
+                <span className="text-[var(--muted)]">Time Saved:</span>
                 <span className="font-medium text-purple-600">{record?.timeSaved || '20 hrs/week'}</span>
               </div>
             </div>
@@ -92,7 +92,7 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
 
       {/* Success Milestones */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Success Milestones</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Success Milestones</h3>
         <div className="space-y-3">
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex justify-between items-start">
@@ -146,10 +146,10 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
 
       {/* Success Plan */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Success Plan</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Success Plan</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">90-Day Goals</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">90-Day Goals</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.ninetyDayGoals?.length > 0 ? (
                 record.ninetyDayGoals.map((goal: string, index: number) => (
@@ -167,7 +167,7 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
           </div>
 
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Annual Objectives</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Annual Objectives</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.annualObjectives?.length > 0 ? (
                 record.annualObjectives.map((objective: string, index: number) => (
@@ -188,7 +188,7 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
 
       {/* Risk Assessment */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Risk Assessment</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Risk Assessment</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Success Risks</label>
@@ -200,9 +200,9 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
                   </div>
                 ))
               ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <p className="text-gray-600 text-sm">Low risk - strong adoption and engagement</p>
-                  <p className="text-gray-500 text-xs mt-1">Continue monitoring usage patterns</p>
+                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
+                  <p className="text-[var(--muted)] text-sm">Low risk - strong adoption and engagement</p>
+                  <p className="text-[var(--muted)] text-xs mt-1">Continue monitoring usage patterns</p>
                 </div>
               )}
             </div>
@@ -230,27 +230,27 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
 
       {/* Renewal & Expansion */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Renewal & Expansion</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Renewal & Expansion</h3>
         <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Renewal Outlook</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Renewal Outlook</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Renewal Date:</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-[var(--muted)]">Renewal Date:</span>
+                  <span className="font-medium text-[var(--foreground)]">
                     {record?.renewalDate ? new Date(record.renewalDate).toLocaleDateString() : 'Dec 2024'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Renewal Probability:</span>
+                  <span className="text-[var(--muted)]">Renewal Probability:</span>
                   <span className="font-medium text-green-600">
                     {record?.renewalProbability ? `${Math.round(record.renewalProbability)}%` : '95%'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Contract Value:</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-[var(--muted)]">Contract Value:</span>
+                  <span className="font-medium text-[var(--foreground)]">
                     {record?.contractValue ? `$${record.contractValue.toLocaleString()}` : '$180,000'}
                   </span>
                 </div>
@@ -258,7 +258,7 @@ export function UniversalSuccessTab({ record, recordType }: UniversalSuccessTabP
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Expansion Opportunities</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Expansion Opportunities</h4>
               <div className="space-y-1 text-sm text-gray-700">
                 <p>• Additional user licenses (50+ users)</p>
                 <p>• Advanced analytics module</p>

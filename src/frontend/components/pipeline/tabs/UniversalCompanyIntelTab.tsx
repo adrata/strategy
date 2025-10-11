@@ -100,7 +100,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
   if (!record) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500">No record data available</div>
+        <div className="text-center text-[var(--muted)]">No record data available</div>
       </div>
     );
   }
@@ -110,7 +110,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
       <div className="p-6">
         <div className="text-center">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading intelligence...</p>
+          <p className="mt-2 text-[var(--muted)]">Loading intelligence...</p>
         </div>
       </div>
     );
@@ -156,7 +156,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">No intelligence data available</p>
+          <p className="text-[var(--muted)] mb-4">No intelligence data available</p>
           <button
             onClick={loadIntelligence}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -172,13 +172,13 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
         <div className="space-y-6">
           {/* Header */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Company Intelligence</h2>
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">Company Intelligence</h2>
           </div>
 
           {/* Strategic Intelligence (moved to top, sub-header removed) */}
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-sm text-gray-900 leading-relaxed">
+            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+              <div className="text-sm text-[var(--foreground)] leading-relaxed">
                 {intelligence?.strategicIntelligence || 'Strategic intelligence not available.'}
               </div>
             </div>
@@ -186,10 +186,10 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
 
           {/* Company Wants & Needs Analysis */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Wants & Needs Analysis</h3>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Wants & Needs Analysis</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">Strategic Wants</h4>
+              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Wants</h4>
                 <div className="space-y-2">
                   {(intelligence?.strategicWants || []).map((want, index) => (
                     <div key={index} className="text-sm text-gray-700 flex items-start">
@@ -198,12 +198,12 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
                     </div>
                   ))}
                   {(!intelligence?.strategicWants || intelligence.strategicWants.length === 0) && (
-                    <div className="text-sm text-gray-500 italic">No strategic wants data available.</div>
+                    <div className="text-sm text-[var(--muted)] italic">No strategic wants data available.</div>
                   )}
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">Critical Needs</h4>
+              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                <h4 className="font-medium text-[var(--foreground)] mb-3">Critical Needs</h4>
                 <div className="space-y-2">
                   {(intelligence?.criticalNeeds || []).map((need, index) => (
                     <div key={index} className="text-sm text-gray-700 flex items-start">
@@ -212,7 +212,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
                     </div>
                   ))}
                   {(!intelligence?.criticalNeeds || intelligence.criticalNeeds.length === 0) && (
-                    <div className="text-sm text-gray-500 italic">No critical needs data available.</div>
+                    <div className="text-sm text-[var(--muted)] italic">No critical needs data available.</div>
                   )}
                 </div>
               </div>
@@ -221,9 +221,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
 
           {/* Adrata Strategy */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Adrata Intelligence</h3>
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-sm text-gray-900 leading-relaxed">
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Adrata Intelligence</h3>
+            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+              <div className="text-sm text-[var(--foreground)] leading-relaxed">
                 {intelligence?.adrataStrategy || 'Adrata intelligence not available.'}
               </div>
             </div>
@@ -232,11 +232,11 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
           {/* Business Units - Only show if we have data */}
           {intelligence?.businessUnits && intelligence.businessUnits.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Units</h3>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Units</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {intelligence.businessUnits.map((unit, index) => (
-                  <div key={index} className={`p-4 rounded-lg border-2 ${unit.color || 'bg-gray-100 border-gray-200'}`}>
-                    <h4 className="font-medium text-gray-900 mb-3">{unit.name || 'Business Unit'}</h4>
+                  <div key={index} className={`p-4 rounded-lg border-2 ${unit.color || 'bg-[var(--hover)] border-[var(--border)]'}`}>
+                    <h4 className="font-medium text-[var(--foreground)] mb-3">{unit.name || 'Business Unit'}</h4>
                     <div className="space-y-1">
                       {(unit.functions || []).map((func, funcIndex) => (
                         <div key={funcIndex} className="text-xs text-gray-700">
@@ -244,7 +244,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
                         </div>
                       ))}
                       {(!unit.functions || unit.functions.length === 0) && (
-                        <div className="text-xs text-gray-500 italic">No functions listed.</div>
+                        <div className="text-xs text-[var(--muted)] italic">No functions listed.</div>
                       )}
                     </div>
                   </div>

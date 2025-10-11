@@ -94,7 +94,7 @@ export function NotesTab({
                       className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                         note['author'] === "System"
                           ? "bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                          : "bg-[var(--hover)] text-gray-800 dark:text-gray-200"
                       }`}
                     >
                       {note.author}

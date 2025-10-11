@@ -129,21 +129,21 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Pipeline Configuration</h2>
-        <p className="text-sm text-gray-600">Configure API keys, settings, and limits for the CFO/CRO discovery pipeline</p>
+      <div className="p-4 border-b border-[var(--border)]">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">Pipeline Configuration</h2>
+        <p className="text-sm text-[var(--muted)]">Configure API keys, settings, and limits for the CFO/CRO discovery pipeline</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-[var(--border)]">
         <button
           onClick={() => setActiveTab('apis')}
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'apis' 
               ? 'text-blue-600 border-b-2 border-blue-600' 
-              : 'text-gray-600 hover:text-gray-900'
+              : 'text-[var(--muted)] hover:text-[var(--foreground)]'
           }`}
         >
           API Keys
@@ -153,7 +153,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'settings' 
               ? 'text-blue-600 border-b-2 border-blue-600' 
-              : 'text-gray-600 hover:text-gray-900'
+              : 'text-[var(--muted)] hover:text-[var(--foreground)]'
           }`}
         >
           Settings
@@ -163,7 +163,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'limits' 
               ? 'text-blue-600 border-b-2 border-blue-600' 
-              : 'text-gray-600 hover:text-gray-900'
+              : 'text-[var(--muted)] hover:text-[var(--foreground)]'
           }`}
         >
           Limits & Costs
@@ -175,11 +175,11 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
         {activeTab === 'apis' && (
           <div className="p-4 space-y-4">
             {Object.entries(configs).map(([apiId, config]) => (
-              <div key={apiId} className="border border-gray-200 rounded-lg p-4">
+              <div key={apiId} className="border border-[var(--border)] rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="font-medium text-gray-900">{config.name}</h3>
-                    <p className="text-sm text-gray-600">{config.description}</p>
+                    <h3 className="font-medium text-[var(--foreground)]">{config.name}</h3>
+                    <p className="text-sm text-[var(--muted)]">{config.description}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <label className="flex items-center">
@@ -187,7 +187,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                         type="checkbox"
                         checked={config.enabled}
                         onChange={(e) => handleConfigChange(apiId, 'enabled', e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
                       />
                       <span className="ml-2 text-sm text-gray-700">Enabled</span>
                     </label>
@@ -205,7 +205,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                         value={config.key}
                         onChange={(e) => handleConfigChange(apiId, 'key', e.target.value)}
                         placeholder={`Enter ${config.name} API key`}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <button
                         onClick={() => testApiConnection(apiId)}
@@ -223,8 +223,8 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
 
         {activeTab === 'settings' && (
           <div className="p-4 space-y-6">
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h3 className="font-medium text-gray-900 mb-3">Execution Settings</h3>
+            <div className="border border-[var(--border)] rounded-lg p-4">
+              <h3 className="font-medium text-[var(--foreground)] mb-3">Execution Settings</h3>
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -233,7 +233,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                   <input
                     type="number"
                     defaultValue={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -244,7 +244,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                     type="number"
                     step="0.01"
                     defaultValue={0.50}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -254,14 +254,14 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                   <input
                     type="number"
                     defaultValue={80}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h3 className="font-medium text-gray-900 mb-3">Retry Settings</h3>
+            <div className="border border-[var(--border)] rounded-lg p-4">
+              <h3 className="font-medium text-[var(--foreground)] mb-3">Retry Settings</h3>
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -270,7 +270,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                   <input
                     type="number"
                     defaultValue={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -280,7 +280,7 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
                   <input
                     type="number"
                     defaultValue={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -303,14 +303,14 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
 
             <div className="space-y-3">
               {Object.entries(configs).map(([apiId, config]) => (
-                <div key={apiId} className="border border-gray-200 rounded-lg p-3">
+                <div key={apiId} className="border border-[var(--border)] rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-900">{config.name}</h4>
-                      <p className="text-sm text-gray-600">Cost: ${config.costPerCall} | Limit: {config.rateLimit}/hr</p>
+                      <h4 className="font-medium text-[var(--foreground)]">{config.name}</h4>
+                      <p className="text-sm text-[var(--muted)]">Cost: ${config.costPerCall} | Limit: {config.rateLimit}/hr</p>
                     </div>
                     <div className={`px-2 py-1 rounded text-xs font-medium ${
-                      config.enabled ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      config.enabled ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
                     }`}>
                       {config.enabled ? 'Active' : 'Disabled'}
                     </div>
@@ -323,9 +323,9 @@ export default function ConfigurationPanel({ onConfigChange }: ConfigurationPane
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
+      <div className="p-4 border-t border-[var(--border)] bg-[var(--panel-background)]">
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-[var(--muted)]">
             Configuration saved automatically
           </div>
           <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">

@@ -22,9 +22,9 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 bg-white z-50 flex flex-col">
+    <div className="absolute inset-0 bg-[var(--background)] z-50 flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-gray-200 bg-white px-6 py-4">
+      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -33,8 +33,8 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Adrata Execution Commentary</h2>
-              <p className="text-sm text-gray-600">Real-time workflow execution details</p>
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">Adrata Execution Commentary</h2>
+              <p className="text-sm text-[var(--muted)]">Real-time workflow execution details</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto">
           {commentaryLog.length === 0 ? (
-            <div className="text-center text-gray-500 py-12">
+            <div className="text-center text-[var(--muted)] py-12">
               <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
@@ -63,7 +63,7 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
               {commentaryLog.map((entry, index) => (
                 <div 
                   key={index} 
-                  className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500 animate-fade-in"
+                  className="bg-[var(--panel-background)] rounded-lg p-4 border-l-4 border-blue-500 animate-fade-in"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
@@ -71,7 +71,7 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
                     </div>
                     <div className="flex-1">
                       <p className="text-sm text-gray-800 leading-relaxed">{entry}</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-[var(--muted)] mt-1">
                         {new Date().toLocaleTimeString()}
                       </p>
                     </div>
@@ -85,7 +85,7 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
 
       {/* Error Log Box */}
       {showErrorBox && (
-        <div className="flex-shrink-0 border-t border-gray-200 bg-red-50 p-4">
+        <div className="flex-shrink-0 border-t border-[var(--border)] bg-red-50 p-4">
           <div className="max-w-4xl mx-auto">
             <div className="bg-red-100 border border-red-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">

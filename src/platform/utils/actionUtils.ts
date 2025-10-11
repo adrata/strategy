@@ -237,7 +237,7 @@ export function getHealthStatus(record: any): HealthData {
   if (!record) {
     return {
       status: 'unknown',
-      color: 'bg-gray-100 text-gray-800',
+      color: 'bg-[var(--hover)] text-gray-800',
       text: 'Unknown',
     };
   }

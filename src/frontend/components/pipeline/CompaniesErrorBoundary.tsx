@@ -161,11 +161,11 @@ export const CompaniesErrorFallback: React.FC<CompaniesErrorFallbackProps> = ({
             </svg>
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">
             Companies Page Error
           </h1>
           
-          <p className="text-gray-600 text-lg leading-relaxed mb-8">
+          <p className="text-[var(--muted)] text-lg leading-relaxed mb-8">
             We encountered an issue loading the companies page. This is usually temporary and can be resolved by refreshing the page.
           </p>
         </motion.div>

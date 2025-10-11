@@ -39,7 +39,7 @@ export function TowerHeader({
   };
 
   return (
-    <div className="flex-shrink-0 border-b border-gray-200 bg-white">
+    <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
       <div className="px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -47,25 +47,25 @@ export function TowerHeader({
               <span className="text-white font-bold text-base">T</span>
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">Tower</h1>
-              <p className="text-xs text-gray-600">System Monitoring & Analytics</p>
+              <h1 className="text-xl font-semibold text-[var(--foreground)]">Tower</h1>
+              <p className="text-xs text-[var(--muted)]">System Monitoring & Analytics</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
             {/* Last updated timestamp */}
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-[var(--muted)]">
               Last updated: {formatLastUpdated(lastUpdated)}
             </div>
             
             {/* Auto-refresh toggle */}
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-gray-600">
+              <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                 <input
                   type="checkbox"
                   checked={autoRefresh}
                   onChange={onToggleAutoRefresh}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-4 h-4 text-blue-600 bg-[var(--hover)] border-[var(--border)] rounded focus:ring-blue-500 focus:ring-2"
                 />
                 Auto-refresh
               </label>
@@ -78,7 +78,7 @@ export function TowerHeader({
               className={`
                 px-4 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2
                 ${isRefreshing 
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  ? 'bg-[var(--hover)] text-[var(--muted)] cursor-not-allowed' 
                   : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                 }
               `}

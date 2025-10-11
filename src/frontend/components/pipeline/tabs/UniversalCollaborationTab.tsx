@@ -8,40 +8,40 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
     <div className="p-6 space-y-8">
       {/* Active Collaborations */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Collaborations</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Active Collaborations</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Joint Opportunities</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Joint Opportunities</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.activeOpportunities || '12'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">In pipeline</p>
+            <p className="text-sm text-[var(--muted)] mt-1">In pipeline</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Joint Revenue</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Joint Revenue</h4>
             <div className="text-lg font-bold text-green-600">
               {record?.jointRevenue ? `$${record.jointRevenue.toLocaleString()}` : '$2.4M'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">This year</p>
+            <p className="text-sm text-[var(--muted)] mt-1">This year</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Projects</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Projects</h4>
             <div className="text-2xl font-bold text-purple-600">
               {record?.activeProjects || '8'}
             </div>
-            <p className="text-sm text-gray-500 mt-1">In progress</p>
+            <p className="text-sm text-[var(--muted)] mt-1">In progress</p>
           </div>
         </div>
       </div>
 
       {/* Collaboration Areas */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Collaboration Focus Areas</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Collaboration Focus Areas</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Go-to-Market Collaboration</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Go-to-Market Collaboration</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.goToMarketAreas?.length > 0 ? (
                 record.goToMarketAreas.map((area: string, index: number) => (
@@ -59,7 +59,7 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
           </div>
 
           <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Technical Collaboration</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Technical Collaboration</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.technicalAreas?.length > 0 ? (
                 record.technicalAreas.map((area: string, index: number) => (
@@ -80,7 +80,7 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
 
       {/* Joint Initiatives */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Joint Initiatives</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Joint Initiatives</h3>
         <div className="space-y-3">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="flex justify-between items-start">
@@ -125,48 +125,48 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
 
       {/* Communication & Meetings */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Communication Cadence</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Communication Cadence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Regular Meetings</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Regular Meetings</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Executive Reviews:</span>
-                <span className="font-medium text-gray-900">{record?.executiveReviewFreq || 'Quarterly'}</span>
+                <span className="text-[var(--muted)]">Executive Reviews:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.executiveReviewFreq || 'Quarterly'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Business Reviews:</span>
-                <span className="font-medium text-gray-900">{record?.businessReviewFreq || 'Monthly'}</span>
+                <span className="text-[var(--muted)]">Business Reviews:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.businessReviewFreq || 'Monthly'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Technical Sync:</span>
-                <span className="font-medium text-gray-900">{record?.technicalSyncFreq || 'Bi-weekly'}</span>
+                <span className="text-[var(--muted)]">Technical Sync:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.technicalSyncFreq || 'Bi-weekly'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Sales Alignment:</span>
-                <span className="font-medium text-gray-900">{record?.salesAlignmentFreq || 'Weekly'}</span>
+                <span className="text-[var(--muted)]">Sales Alignment:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.salesAlignmentFreq || 'Weekly'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-3">Communication Channels</h4>
+          <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Communication Channels</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Primary Channel:</span>
-                <span className="font-medium text-gray-900">{record?.primaryCommChannel || 'Slack/Teams'}</span>
+                <span className="text-[var(--muted)]">Primary Channel:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.primaryCommChannel || 'Slack/Teams'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Project Management:</span>
-                <span className="font-medium text-gray-900">{record?.projectMgmtTool || 'Asana'}</span>
+                <span className="text-[var(--muted)]">Project Management:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.projectMgmtTool || 'Asana'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Document Sharing:</span>
-                <span className="font-medium text-gray-900">{record?.documentSharing || 'Google Drive'}</span>
+                <span className="text-[var(--muted)]">Document Sharing:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.documentSharing || 'Google Drive'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">CRM Integration:</span>
-                <span className="font-medium text-gray-900">{record?.crmIntegration || 'Salesforce'}</span>
+                <span className="text-[var(--muted)]">CRM Integration:</span>
+                <span className="font-medium text-[var(--foreground)]">{record?.crmIntegration || 'Salesforce'}</span>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
 
       {/* Shared Resources */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Shared Resources & Assets</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Shared Resources & Assets</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Marketing Assets</label>
@@ -217,35 +217,35 @@ export function UniversalCollaborationTab({ record, recordType }: UniversalColla
 
       {/* Success Metrics */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Collaboration Success Metrics</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Collaboration Success Metrics</h3>
         <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Performance Indicators</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Performance Indicators</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Joint Pipeline:</span>
+                  <span className="text-[var(--muted)]">Joint Pipeline:</span>
                   <span className="font-medium text-green-600">
                     {record?.jointPipeline ? `$${record.jointPipeline.toLocaleString()}` : '$8.5M'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Win Rate:</span>
+                  <span className="text-[var(--muted)]">Win Rate:</span>
                   <span className="font-medium text-green-600">{record?.jointWinRate || '45%'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Deal Velocity:</span>
+                  <span className="text-[var(--muted)]">Deal Velocity:</span>
                   <span className="font-medium text-blue-600">{record?.dealVelocity || '15% faster'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Customer Satisfaction:</span>
+                  <span className="text-[var(--muted)]">Customer Satisfaction:</span>
                   <span className="font-medium text-blue-600">{record?.jointCsat || '4.7/5'}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Growth Targets</h4>
+              <h4 className="font-medium text-[var(--foreground)] mb-2">Growth Targets</h4>
               <div className="space-y-1 text-sm text-gray-700">
                 <p>• Increase joint revenue by 40% YoY</p>
                 <p>• Expand into 3 new market segments</p>

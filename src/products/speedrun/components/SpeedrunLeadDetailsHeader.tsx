@@ -62,10 +62,10 @@ export function SpeedrunLeadDetailsHeader({
 
           <div className="flex items-center space-x-3">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl font-semibold text-[var(--foreground)]">
                 {person.name}
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-[var(--muted)] mt-1">
                 {person.company}
               </p>
             </div>
@@ -120,13 +120,13 @@ export function SpeedrunLeadDetailsHeader({
               </button>
 
               {showMoreActions && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-[var(--border)]">
+                <div className="absolute right-0 mt-2 w-48 bg-[var(--background)] rounded-md shadow-lg z-10 border border-[var(--border)]">
                   <button
                     onClick={() => {
                       onShowSnoozeRemoveModal(true);
                       onShowMoreActions(false);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2"
+                    className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] flex items-center space-x-2"
                   >
                     <ClockIcon className="w-4 h-4" />
                     <span>Snooze</span>
@@ -136,7 +136,7 @@ export function SpeedrunLeadDetailsHeader({
                       onShowSnoozeRemoveModal(true);
                       onShowMoreActions(false);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-red-600"
+                    className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] flex items-center space-x-2 text-red-600"
                   >
                     <TrashIcon className="w-4 h-4" />
                     <span>Remove</span>

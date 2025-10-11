@@ -642,7 +642,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
       case "Opener":
         return "bg-purple-100 text-purple-800 border-purple-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
     }
   };
 
@@ -705,8 +705,8 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Error</h1>
-                        <p className="text-gray-600 mb-6">{error}</p>
+                        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Error</h1>
+                        <p className="text-[var(--muted)] mb-6">{error}</p>
                       </div>
                     </div>
                   }
@@ -767,9 +767,9 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center">
-                          <div className="text-gray-400 text-6xl mb-4">👤</div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">Person Not Found</h3>
-                          <p className="text-gray-600 mb-4">Unable to load person details.</p>
+                          <div className="text-[var(--muted)] text-6xl mb-4">👤</div>
+                          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Person Not Found</h3>
+                          <p className="text-[var(--muted)] mb-4">Unable to load person details.</p>
                           <button
                             onClick={() => {
                               const newUrl = new URL(window.location.href);
@@ -786,48 +786,48 @@ Create opportunities for ongoing engagement and relationship development. Provid
                   ) : (
                     <div className="flex flex-col h-full">
                       {/* Breadcrumb */}
-                      <div className="border-b border-gray-200 px-6 py-3 bg-white">
+                      <div className="border-b border-[var(--border)] px-6 py-3 bg-[var(--background)]">
                         <nav className="flex items-center space-x-2 text-sm">
                           <button
                             onClick={() => router.push(`/${workspace}/sellers`)}
-                            className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="flex items-center gap-1 text-[var(--muted)] hover:text-gray-700 transition-colors"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                             Sellers
                           </button>
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                           <button
                             onClick={() => router.push(`/${workspace}/sellers/${sellerId}/companies`)}
-                            className="text-gray-500 hover:text-gray-700 transition-colors"
+                            className="text-[var(--muted)] hover:text-gray-700 transition-colors"
                           >
                             Companies
                           </button>
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                          <span className="text-gray-900 font-medium">Buyer Group</span>
+                          <span className="text-[var(--foreground)] font-medium">Buyer Group</span>
                         </nav>
                       </div>
 
                     {/* Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+                    <div className="flex items-center justify-between p-6 border-b border-[var(--border)] bg-[var(--background)]">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[var(--background)] border-2 border-[var(--border)] rounded-xl flex items-center justify-center">
                           <span className="text-gray-700 font-bold text-xl">
                             {company.name.charAt(0)}
                           </span>
                         </div>
                         <div>
-                          <h1 className="text-2xl font-bold text-gray-900">{company.name} - Buyer Group</h1>
-                          <p className="text-gray-600">{buyerGroupMembers.length} stakeholders mapped • {company.industry}</p>
+                          <h1 className="text-2xl font-bold text-[var(--foreground)]">{company.name} - Buyer Group</h1>
+                          <p className="text-[var(--muted)]">{buyerGroupMembers.length} stakeholders mapped • {company.industry}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors">
                           Edit Company
                         </button>
                         <button className="px-4 py-2 text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors">
@@ -837,43 +837,43 @@ Create opportunities for ongoing engagement and relationship development. Provid
                     </div>
 
                     {/* Role Summary Cards */}
-                    <div className="p-6 border-b border-gray-200 bg-white">
+                    <div className="p-6 border-b border-[var(--border)] bg-[var(--background)]">
                       <div className="flex gap-4">
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.length}
                           </div>
-                          <div className="text-sm text-gray-600">Total</div>
+                          <div className="text-sm text-[var(--muted)]">Total</div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Decision Maker').length}
                           </div>
-                          <div className="text-sm text-gray-600">Decision Makers</div>
+                          <div className="text-sm text-[var(--muted)]">Decision Makers</div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Champion').length}
                           </div>
-                          <div className="text-sm text-gray-600">Champions</div>
+                          <div className="text-sm text-[var(--muted)]">Champions</div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Stakeholder').length}
                           </div>
-                          <div className="text-sm text-gray-600">Stakeholders</div>
+                          <div className="text-sm text-[var(--muted)]">Stakeholders</div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Blocker').length}
                           </div>
-                          <div className="text-sm text-gray-600">Blockers</div>
+                          <div className="text-sm text-[var(--muted)]">Blockers</div>
                         </div>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-gray-900">
+                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-[var(--foreground)]">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Opener').length}
                           </div>
-                          <div className="text-sm text-gray-600">Introducers</div>
+                          <div className="text-sm text-[var(--muted)]">Introducers</div>
                         </div>
                       </div>
                     </div>
@@ -924,34 +924,34 @@ Create opportunities for ongoing engagement and relationship development. Provid
                               <div
                                 key={member.id}
                                 onClick={() => handleMemberClick(member)}
-                                className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
+                                className="group bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
                               >
                                 <div className="flex items-start justify-between">
                                   <div className="flex items-start gap-3 flex-1">
-                                    <div className="w-10 h-10 bg-white border border-gray-300 rounded-lg flex items-center justify-center shadow-sm">
+                                    <div className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-lg flex items-center justify-center shadow-sm">
                                       <span className="text-gray-700 font-semibold text-sm">
                                         {member.name.split(' ').map(n => n[0]).join('')}
                                       </span>
                                     </div>
                                     <div className="flex-1">
                                       <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+                                        <h4 className="font-semibold text-[var(--foreground)] group-hover:text-blue-700 transition-colors">
                                           {member.name}
                                         </h4>
                                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(role)}`}>
                                           {role}
                                         </span>
                                         {fallbackRole && (
-                                          <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">
+                                          <span className="px-2 py-1 bg-[var(--hover)] text-gray-800 text-xs font-medium rounded-full">
                                             {fallbackRole}
                                           </span>
                                         )}
                                       </div>
-                                      <div className="text-sm text-gray-600 mb-1">
+                                      <div className="text-sm text-[var(--muted)] mb-1">
                                         {title}
                                       </div>
                                       <div className="flex items-center gap-3 mb-2">
-                                        <span className="text-sm text-gray-500">
+                                        <span className="text-sm text-[var(--muted)]">
                                           {status}
                                         </span>
                                         {riskStatus && (
@@ -962,7 +962,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
                                       </div>
                                       {member.directionalIntelligence && (
                                         <div className="mt-2">
-                                          <div className="text-xs font-medium text-gray-600 mb-1">Directional Intelligence</div>
+                                          <div className="text-xs font-medium text-[var(--muted)] mb-1">Directional Intelligence</div>
                                           <div className="text-sm text-gray-700">
                                             {member.directionalIntelligence}
                                           </div>
@@ -977,9 +977,9 @@ Create opportunities for ongoing engagement and relationship development. Provid
                         </div>
                       ) : (
                         <div className="text-center py-12">
-                          <div className="text-gray-400 text-6xl mb-4">👥</div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">No Buyer Group Found</h3>
-                          <p className="text-gray-600">This company doesn't have any buyer group members mapped yet.</p>
+                          <div className="text-[var(--muted)] text-6xl mb-4">👥</div>
+                          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Buyer Group Found</h3>
+                          <p className="text-[var(--muted)]">This company doesn't have any buyer group members mapped yet.</p>
                         </div>
                       )}
                     </div>

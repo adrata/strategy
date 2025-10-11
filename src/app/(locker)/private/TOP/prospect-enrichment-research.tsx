@@ -1,11 +1,11 @@
 export default function ProspectEnrichmentResearchReport() {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
+    <div className="max-w-4xl mx-auto p-6 bg-[var(--background)]">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           TOP Engineering Plus - Use Case #2: Prospect Enrichment Research
         </h1>
-        <p className="text-gray-600">QA Report - Real System Test</p>
+        <p className="text-[var(--muted)]">QA Report - Real System Test</p>
       </div>
 
       <div className="space-y-6">
@@ -25,8 +25,8 @@ export default function ProspectEnrichmentResearchReport() {
           
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-gray-900">Contact Found in Database:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Contact Found in Database:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <p><strong>Name:</strong> Chris Mantle (✅ Verified in production database)</p>
                 <p><strong>Email:</strong> chris.mantle@pse.com (✅ Professional email confirmed)</p>
                 <p><strong>Phone:</strong> (425) 248-5632 (✅ Available for validation)</p>
@@ -35,19 +35,19 @@ export default function ProspectEnrichmentResearchReport() {
                 <p><strong>Current Status:</strong> Opportunity stage (High engagement)</p>
                 <p><strong>Tags:</strong> UTC 9 attendee</p>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-[var(--muted)] mt-2">
                 <strong>Data Sources:</strong> Production database + DropContact email validation
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Employment Verification:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Employment Verification:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <div className="flex items-center mb-2">
                   <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                   <span className="text-sm font-medium">VERIFIED CURRENT EMPLOYEE</span>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[var(--muted)]">
                   Verified through multiple sources as of September 2025. Chris Mantle is currently 
                   employed at Puget Sound Energy in their engineering division.
                 </p>
@@ -55,9 +55,9 @@ export default function ProspectEnrichmentResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Role & Responsibility Analysis:</h3>
-              <div className="bg-white border rounded p-3">
-                <p className="text-sm text-gray-600 mb-2">Based on PSE organizational structure and utility industry patterns:</p>
+              <h3 className="font-semibold text-[var(--foreground)]">Role & Responsibility Analysis:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
+                <p className="text-sm text-[var(--muted)] mb-2">Based on PSE organizational structure and utility industry patterns:</p>
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                   <li><strong>Likely Role:</strong> Communications Engineer or System Engineer</li>
                   <li><strong>Department:</strong> Engineering/Operations</li>
@@ -69,8 +69,8 @@ export default function ProspectEnrichmentResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Company Context - Puget Sound Energy:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Company Context - Puget Sound Energy:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                   <li>Major utility serving Washington state</li>
                   <li>Focus on grid modernization and smart infrastructure</li>
@@ -82,8 +82,8 @@ export default function ProspectEnrichmentResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Engagement History:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Engagement History:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                   <li>UTC 9 conference attendee (utility telecommunications conference)</li>
                   <li>Opportunity stage - indicates previous meaningful engagement</li>
@@ -94,7 +94,7 @@ export default function ProspectEnrichmentResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Recommended Approach:</h3>
+              <h3 className="font-semibold text-[var(--foreground)]">Recommended Approach:</h3>
               <ol className="list-decimal list-inside text-gray-700 space-y-1">
                 <li>Reference UTC 9 conference for warm opening</li>
                 <li>Focus on PSE's grid modernization initiatives</li>
@@ -107,8 +107,8 @@ export default function ProspectEnrichmentResearchReport() {
         </div>
 
         {/* System Performance */}
-        <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">System Performance:</h2>
+        <div className="bg-[var(--panel-background)] border-l-4 border-gray-400 p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">System Performance:</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="font-medium">Response Time:</span> 1.8 seconds

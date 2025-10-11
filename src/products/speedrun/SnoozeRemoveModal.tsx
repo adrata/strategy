@@ -173,11 +173,11 @@ export function SnoozeRemoveModal({
                           className={`w-4 h-4 rounded-full border-2 ${
                             selectedSnooze?.id === option.id
                               ? "border-blue-500 bg-blue-500"
-                              : "border-gray-300"
+                              : "border-[var(--border)]"
                           }`}
                         >
                           {selectedSnooze?.id === option['id'] && (
-                            <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                            <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
                           )}
                         </div>
                       </div>
@@ -187,7 +187,7 @@ export function SnoozeRemoveModal({
 
                 {/* Custom Date/Time Picker */}
                 {selectedSnooze?.type === "custom" && (
-                  <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <div className="mt-4 p-4 bg-[var(--panel-background)]/50 rounded-lg">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
@@ -282,11 +282,11 @@ export function SnoozeRemoveModal({
                         className={`w-4 h-4 rounded-full border-2 ${
                           removeType === "temp"
                             ? "border-orange-500 bg-orange-500"
-                            : "border-gray-300"
+                            : "border-[var(--border)]"
                         }`}
                       >
                         {removeType === "temp" && (
-                          <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                          <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
                         )}
                       </div>
                     </div>
@@ -313,11 +313,11 @@ export function SnoozeRemoveModal({
                         className={`w-4 h-4 rounded-full border-2 ${
                           removeType === "permanent"
                             ? "border-red-500 bg-red-500"
-                            : "border-gray-300"
+                            : "border-[var(--border)]"
                         }`}
                       >
                         {removeType === "permanent" && (
-                          <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
+                          <div className="w-2 h-2 bg-[var(--background)] rounded-full m-0.5"></div>
                         )}
                       </div>
                     </div>

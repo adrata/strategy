@@ -73,10 +73,10 @@ export function HistoryTab({ person, historyData }: HistoryTabProps) {
         {actionLogsLoading ? (
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
             <div className="animate-pulse flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
               <div className="flex-1">
-                <div className="w-3/4 h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="w-1/2 h-3 bg-gray-200 rounded"></div>
+                <div className="w-3/4 h-4 bg-[var(--loading-bg)] rounded mb-2"></div>
+                <div className="w-1/2 h-3 bg-[var(--loading-bg)] rounded"></div>
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ export function HistoryTab({ person, historyData }: HistoryTabProps) {
           </div>
         ) : (
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 text-center">
-            <div className="text-gray-400 mb-2">📝</div>
+            <div className="text-[var(--muted)] mb-2">📝</div>
             <p className="text-[var(--muted)] text-sm">
               No actions logged yet. Complete a Speedrun to start tracking!
             </p>

@@ -70,7 +70,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         <div className="mx-2 mt-4 mb-2">
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">S</span>
             </div>
             <div>
@@ -81,22 +81,22 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         </div>
 
         {/* Project Management Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Total Items</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Total Items</span>
               <span className="text-xs font-semibold text-black">
                 {navigationItems.length * 12}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Active</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Active</span>
               <span className="text-xs font-semibold text-black">
                 {navigationItems.length * 8}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-gray-600">Completed</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Completed</span>
               <span className="text-xs font-semibold text-black">
                 {navigationItems.length * 4}
               </span>
@@ -118,8 +118,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
                 onClick={() => onSubSectionChange(item.id)}
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                   isActive
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'hover:bg-gray-50 text-gray-700'
+                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
+                    : 'hover:bg-[var(--panel-background)] text-gray-700'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
                 aria-describedby={`${item.id}-description`}
@@ -139,15 +139,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-gray-200 rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">U</span>
           </div>
           <div className="flex-1 text-left">
             <div className="text-sm font-medium text-[var(--foreground)]">User</div>
-            <div className="text-xs text-gray-400">Workspace</div>
+            <div className="text-xs text-[var(--muted)]">Workspace</div>
           </div>
         </button>
       </div>

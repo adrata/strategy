@@ -127,7 +127,7 @@ export const PartnerDetails: React.FC<PartnerDetailsProps> = ({
             type="skeleton" 
             size="md"
             message="Loading partner details..."
-            className="bg-white"
+            className="bg-[var(--background)]"
           />
         )}
 

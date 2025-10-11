@@ -326,7 +326,7 @@ export const RTPEnginePopup: React.FC<RTPEnginePopupProps> = ({
                       max="100"
                       value={value}
                       onChange={(e) => handleWeightingChange(key as keyof RTPConfig["weightings"], parseInt(e.target.value))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
                 ))}
@@ -359,7 +359,7 @@ export const RTPEnginePopup: React.FC<RTPEnginePopupProps> = ({
                         }`}
                       >
                         <div
-                          className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                          className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                             value ? 'translate-x-6' : 'translate-x-1'
                           }`}
                         />
@@ -398,7 +398,7 @@ export const RTPEnginePopup: React.FC<RTPEnginePopupProps> = ({
                       max="100"
                       value={config.thresholds.minCloseProb}
                       onChange={(e) => handleThresholdChange("minCloseProb", parseInt(e.target.value))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
                     />
                     <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
                       <span>0%</span>
@@ -441,7 +441,7 @@ export const RTPEnginePopup: React.FC<RTPEnginePopupProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         config.aiInsights ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -460,7 +460,7 @@ export const RTPEnginePopup: React.FC<RTPEnginePopupProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         config.autoRefresh ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />

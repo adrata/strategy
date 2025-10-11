@@ -76,14 +76,14 @@ export default function AtriumPage() {
   }, [isEditMode, setIsEditMode]);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Standardized Header - Only show when not viewing a document */}
       {!viewingDocument && (
         <StandardHeader
           title="Atrium"
           subtitle={
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[var(--muted)]">
                 {activeTab === 'my-documents' && 'My Documents'}
                 {activeTab === 'shared-with-me' && 'Shared with Me'}
                 {activeTab === 'recent' && 'Recent'}
@@ -92,7 +92,7 @@ export default function AtriumPage() {
               </span>
               {selectedFolder && (
                 <>
-                  <span className="text-gray-400">/</span>
+                  <span className="text-[var(--muted)]">/</span>
                   <span className="text-sm text-gray-700">{selectedFolder.name}</span>
                 </>
               )}
@@ -102,7 +102,7 @@ export default function AtriumPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleUploadFiles}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
               >
                 <CloudArrowUpIcon className="w-4 h-4" />
                 Upload
@@ -121,7 +121,7 @@ export default function AtriumPage() {
 
       {/* Sub-header with Search and Controls - Only show when not viewing a document */}
       {!viewingDocument && (
-        <div className="flex items-center gap-4 py-2 w-full bg-white px-6">
+        <div className="flex items-center gap-4 py-2 w-full bg-[var(--background)] px-6">
         {/* Search */}
         <div className="relative flex-1">
           <input
@@ -129,10 +129,10 @@ export default function AtriumPage() {
             placeholder="Search documents..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-white"
+            className="pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-[var(--background)]"
           />
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
+            <MagnifyingGlassIcon className="h-4 w-4 text-[var(--muted)]" />
           </div>
         </div>
 
@@ -141,10 +141,10 @@ export default function AtriumPage() {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <FunnelIcon className="w-4 h-4 text-gray-500" />
-            <span className="block truncate text-gray-900">Filter</span>
+            <FunnelIcon className="w-4 h-4 text-[var(--muted)]" />
+            <span className="block truncate text-[var(--foreground)]">Filter</span>
           </button>
         </div>
 
@@ -153,10 +153,10 @@ export default function AtriumPage() {
           <button
             type="button"
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-            className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <ArrowsUpDownIcon className="w-4 h-4 text-gray-500" />
-            <span className="block truncate text-gray-900">Sort</span>
+            <ArrowsUpDownIcon className="w-4 h-4 text-[var(--muted)]" />
+            <span className="block truncate text-[var(--foreground)]">Sort</span>
           </button>
         </div>
 
@@ -165,21 +165,21 @@ export default function AtriumPage() {
           <button
             type="button"
             onClick={() => setIsColumnsDropdownOpen(!isColumnsDropdownOpen)}
-            className="relative w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
             </svg>
-            <span className="block truncate text-gray-900">Columns</span>
+            <span className="block truncate text-[var(--foreground)]">Columns</span>
           </button>
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center border border-gray-300 rounded-lg">
+        <div className="flex items-center border border-[var(--border)] rounded-lg">
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-l-lg transition-colors ${
-              viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
+              viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[var(--hover)]'
             }`}
           >
             <Squares2X2Icon className="w-4 h-4" />
@@ -187,7 +187,7 @@ export default function AtriumPage() {
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-r-lg transition-colors ${
-              viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
+              viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[var(--hover)]'
             }`}
           >
             <ListBulletIcon className="w-4 h-4" />
@@ -198,7 +198,7 @@ export default function AtriumPage() {
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--panel-background)]">
           <div className="flex items-center gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -207,7 +207,7 @@ export default function AtriumPage() {
               <select
                 value={selectedDocumentType || ''}
                 onChange={(e) => setSelectedDocumentType(e.target.value || null)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">All Types</option>
                 <option value="paper">Paper</option>

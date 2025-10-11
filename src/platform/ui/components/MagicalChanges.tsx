@@ -40,7 +40,7 @@ const CHANGE_COLORS = {
 };
 
 const IMPACT_INDICATORS = {
-  low: { color: "bg-gray-100 text-gray-700", label: "Minor" },
+  low: { color: "bg-[var(--hover)] text-gray-700", label: "Minor" },
   medium: { color: "bg-blue-100 text-blue-700", label: "Helpful" },
   high: { color: "bg-purple-100 text-purple-700", label: "Game-changing" },
 };
@@ -91,13 +91,13 @@ export function MagicalChanges({
 
   return (
     <div
-      className={`bg-white/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl overflow-hidden ${className}`}
+      className={`bg-[var(--background)]/95 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl overflow-hidden ${className}`}
     >
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 rounded-lg">
+            <div className="p-2 bg-[var(--background)]/20 rounded-lg">
               <SparklesIconSolid className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -113,7 +113,7 @@ export function MagicalChanges({
           {changes.length > 1 && (
             <button
               onClick={onApproveAll}
-              className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-[var(--background)]/20 text-white rounded-lg hover:bg-[var(--background)]/30 transition-colors text-sm font-medium"
             >
               Accept All ✨
             </button>
@@ -140,7 +140,7 @@ export function MagicalChanges({
                     : "scale-100 opacity-100"
               }`}
             >
-              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+              <div className="flex items-start space-x-4 p-4 bg-[var(--panel-background)] rounded-xl hover:bg-[var(--hover)] transition-colors">
                 {/* Magic Icon */}
                 <div
                   className={`p-3 rounded-lg bg-gradient-to-r ${gradient} shadow-lg flex-shrink-0 relative`}
@@ -150,7 +150,7 @@ export function MagicalChanges({
                   </span>
 
                   {/* Confidence indicator */}
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--background)] rounded-full flex items-center justify-center shadow-sm">
                     <span className="text-xs font-bold text-gray-700">
                       {Math.round(change.confidence * 100)}
                     </span>
@@ -160,7 +160,7 @@ export function MagicalChanges({
                 <div className="flex-1 min-w-0">
                   {/* Title and Impact */}
                   <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="font-semibold text-gray-900">
+                    <h4 className="font-semibold text-[var(--foreground)]">
                       {change.title}
                     </h4>
                     <span
@@ -170,16 +170,16 @@ export function MagicalChanges({
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-[var(--muted)] mb-3">
                     {change.description}
                   </p>
 
                   {/* Before/After Visual */}
                   {change['before'] && change['after'] && (
-                    <div className="bg-white rounded-lg p-3 mb-3 border border-gray-200">
+                    <div className="bg-[var(--background)] rounded-lg p-3 mb-3 border border-[var(--border)]">
                       <div className="flex items-center space-x-3">
                         <div className="flex-1">
-                          <div className="text-xs text-gray-500 mb-1">
+                          <div className="text-xs text-[var(--muted)] mb-1">
                             Before
                           </div>
                           <div className="text-sm text-gray-700 truncate">
@@ -189,13 +189,13 @@ export function MagicalChanges({
                           </div>
                         </div>
 
-                        <ArrowRightIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <ArrowRightIcon className="w-4 h-4 text-[var(--muted)] flex-shrink-0" />
 
                         <div className="flex-1">
-                          <div className="text-xs text-gray-500 mb-1">
+                          <div className="text-xs text-[var(--muted)] mb-1">
                             After
                           </div>
-                          <div className="text-sm font-medium text-gray-900 truncate">
+                          <div className="text-sm font-medium text-[var(--foreground)] truncate">
                             {typeof change['after'] === "string"
                               ? change.after
                               : JSON.stringify(change.after)}
@@ -219,7 +219,7 @@ export function MagicalChanges({
                     <button
                       onClick={() => handleReject(change.id)}
                       disabled={isAnimating || isApproved}
-                      className="flex items-center space-x-1 px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-1 px-3 py-1.5 bg-[var(--loading-bg)] text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <XMarkIcon className="w-4 h-4" />
                       <span>Not now</span>
@@ -230,7 +230,7 @@ export function MagicalChanges({
 
               {/* Magical approval animation */}
               {isAnimating && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-xl">
+                <div className="absolute inset-0 flex items-center justify-center bg-[var(--background)]/90 rounded-xl">
                   <div className="flex items-center space-x-2">
                     <SparklesIconSolid className="w-6 h-6 text-purple-500 animate-spin" />
                     <span className="text-purple-700 font-medium">
@@ -245,8 +245,8 @@ export function MagicalChanges({
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="px-4 py-3 bg-[var(--panel-background)] border-t border-[var(--border)]">
+        <p className="text-xs text-[var(--muted)] text-center">
           Adrata only suggests changes it&apos;s confident will help you win
           more deals
         </p>

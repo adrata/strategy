@@ -18,9 +18,9 @@ export function TableDataSkeleton({
   const headers = visibleColumns || defaultHeaders;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden">
       {/* Table Header - Keep Real Header Visible */}
-      <div className="flex-shrink-0 border-b border-gray-200">
+      <div className="flex-shrink-0 border-b border-[var(--border)]">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between w-full">
             {headers.map((header, index) => (
@@ -38,39 +38,39 @@ export function TableDataSkeleton({
           {Array.from({ length: rowCount }).map((_, i) => (
             <div key={i} className="flex items-center justify-between w-full py-3 border-b border-gray-100 last:border-b-0">
               {/* Rank */}
-              <div className="h-4 bg-gray-200 rounded w-8 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
               
               {/* Company */}
-              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
               
               {/* Person */}
-              <div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
               
               {/* State */}
-              <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
               
               {/* Title */}
-              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+              <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
               
               {/* Last Action */}
-              <div className="h-6 bg-gray-200 rounded w-20 animate-pulse"></div>
+              <div className="h-6 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
               
               {/* Next Action */}
-              <div className="h-6 bg-gray-200 rounded w-24 animate-pulse"></div>
+              <div className="h-6 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Pagination Skeleton */}
-      <div className="flex-shrink-0 px-6 py-3 border-t border-gray-200">
+      <div className="flex-shrink-0 px-6 py-3 border-t border-[var(--border)]">
         <div className="flex items-center justify-between">
-          <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+          <div className="h-4 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
           <div className="flex items-center space-x-2">
-            <div className="h-8 bg-gray-200 rounded w-8 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-8 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-8 animate-pulse"></div>
-            <div className="h-8 bg-gray-200 rounded w-8 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
+            <div className="h-8 bg-[var(--loading-bg)] rounded w-8 animate-pulse"></div>
           </div>
         </div>
       </div>

@@ -126,9 +126,9 @@ export function EnhancedUserProfile({
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
+    <div className="max-w-4xl mx-auto bg-[var(--background)] rounded-lg shadow-lg">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -137,8 +137,8 @@ export function EnhancedUserProfile({
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">{user?.name}</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-xl font-semibold text-[var(--foreground)]">{user?.name}</h2>
+              <p className="text-sm text-[var(--muted)]">
                 {profile.title || 'No title set'} • {currentRole?.displayName || 'No role assigned'}
               </p>
             </div>
@@ -154,7 +154,7 @@ export function EnhancedUserProfile({
             {onClose && (
               <button
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 border border-[var(--border)] text-gray-700 rounded-md hover:bg-[var(--panel-background)]"
               >
                 Close
               </button>
@@ -164,7 +164,7 @@ export function EnhancedUserProfile({
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-[var(--border)]">
         <nav className="flex space-x-8 px-6">
           {[
             { id: 'profile', label: 'Profile Information' },
@@ -178,7 +178,7 @@ export function EnhancedUserProfile({
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
               }`}
             >
               {tab.label}
@@ -246,7 +246,7 @@ function ProfileInformationTab({
             type="text"
             value={profile.title || ''}
             onChange={(e) => onUpdate('title', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., Enterprise Account Executive"
           />
         </div>
@@ -258,7 +258,7 @@ function ProfileInformationTab({
           <select
             value={profile.department || ''}
             onChange={(e) => onUpdate('department', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select Department</option>
             <option value="sales">Sales</option>
@@ -275,7 +275,7 @@ function ProfileInformationTab({
           <select
             value={profile.seniorityLevel || ''}
             onChange={(e) => onUpdate('seniorityLevel', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select Level</option>
             <option value="ic">Individual Contributor</option>
@@ -294,7 +294,7 @@ function ProfileInformationTab({
             type="text"
             value={profile.territory || ''}
             onChange={(e) => onUpdate('territory', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., West Coast Enterprise"
           />
         </div>
@@ -307,7 +307,7 @@ function ProfileInformationTab({
             type="number"
             value={profile.quota?.toString() || ''}
             onChange={(e) => onUpdate('quota', parseFloat(e.target.value) || null)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., 2500000"
           />
         </div>
@@ -320,7 +320,7 @@ function ProfileInformationTab({
             type="date"
             value={profile.startDate ? new Date(profile.startDate).toISOString().split('T')[0] : ''}
             onChange={(e) => onUpdate('startDate', e.target.value ? new Date(e.target.value) : null)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -334,7 +334,7 @@ function ProfileInformationTab({
             type="tel"
             value={profile.phoneNumber || ''}
             onChange={(e) => onUpdate('phoneNumber', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="+1 (555) 123-4567"
           />
         </div>
@@ -347,7 +347,7 @@ function ProfileInformationTab({
             type="url"
             value={profile.linkedinUrl || ''}
             onChange={(e) => onUpdate('linkedinUrl', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="https://linkedin.com/in/username"
           />
         </div>
@@ -369,7 +369,7 @@ function RolePermissionsTab({
   if (!roleConfig) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">No role configuration found</p>
+        <p className="text-[var(--muted)]">No role configuration found</p>
       </div>
     );
   }
@@ -394,14 +394,14 @@ function RolePermissionsTab({
       </div>
 
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Permissions</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Permissions</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {roleConfig.permissions.map((permission: any, index: number) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-3">
-              <div className="font-medium text-sm text-gray-900">
+            <div key={index} className="border border-[var(--border)] rounded-lg p-3">
+              <div className="font-medium text-sm text-[var(--foreground)]">
                 {permission.resource}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-[var(--muted)] mt-1">
                 {permission.actions.join(', ')} • {permission.scope}
               </div>
             </div>
@@ -410,10 +410,10 @@ function RolePermissionsTab({
       </div>
 
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Default Applications</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Default Applications</h4>
         <div className="flex flex-wrap gap-2">
           {roleConfig.defaultApps.map((app: string) => (
-            <span key={app} className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+            <span key={app} className="bg-[var(--hover)] text-gray-800 px-3 py-1 rounded-full text-sm">
               {app}
             </span>
           ))}
@@ -446,11 +446,11 @@ function PersonalizationTab({
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Communication Style</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Communication Style</h4>
         <select
           value={profile.communicationStyle || 'consultative'}
           onChange={(e) => onUpdate('communicationStyle', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="direct">Direct</option>
           <option value="consultative">Consultative</option>
@@ -460,11 +460,11 @@ function PersonalizationTab({
       </div>
 
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Preferred Detail Level</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Preferred Detail Level</h4>
         <select
           value={profile.preferredDetailLevel || 'detailed'}
           onChange={(e) => onUpdate('preferredDetailLevel', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="summary">Summary</option>
           <option value="detailed">Detailed</option>
@@ -473,7 +473,7 @@ function PersonalizationTab({
       </div>
 
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Intelligence Focus</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Intelligence Focus</h4>
         <div className="space-y-3">
           {[
             { key: 'buyingSignals', label: 'Buying Signals' },
@@ -487,7 +487,7 @@ function PersonalizationTab({
                 type="checkbox"
                 checked={(profile.intelligenceFocus as any)?.[item.key] || false}
                 onChange={(e) => updatePersonalization(item.key, e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
               />
               <span className="ml-2 text-sm text-gray-700">{item.label}</span>
             </label>
@@ -515,9 +515,9 @@ function DataAccessTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="border border-gray-200 rounded-lg p-4">
-          <h4 className="font-medium text-gray-900 mb-2">Account Access</h4>
-          <div className="text-sm text-gray-600 space-y-1">
+        <div className="border border-[var(--border)] rounded-lg p-4">
+          <h4 className="font-medium text-[var(--foreground)] mb-2">Account Access</h4>
+          <div className="text-sm text-[var(--muted)] space-y-1">
             <p>Scope: <span className="font-medium">{dataAccess.accounts.scope}</span></p>
             {dataAccess['accounts']['dealSizeLimit'] && (
               <p>Deal Limit: <span className="font-medium">${dataAccess.accounts.dealSizeLimit.toLocaleString()}</span></p>
@@ -525,9 +525,9 @@ function DataAccessTab({
           </div>
         </div>
 
-        <div className="border border-gray-200 rounded-lg p-4">
-          <h4 className="font-medium text-gray-900 mb-2">Contact Access</h4>
-          <div className="text-sm text-gray-600 space-y-1">
+        <div className="border border-[var(--border)] rounded-lg p-4">
+          <h4 className="font-medium text-[var(--foreground)] mb-2">Contact Access</h4>
+          <div className="text-sm text-[var(--muted)] space-y-1">
             <p>Scope: <span className="font-medium">{dataAccess.contacts.scope}</span></p>
             {dataAccess['contacts']['seniorityLimit'] && (
               <p>Max Level: <span className="font-medium">{dataAccess.contacts.seniorityLimit}</span></p>
@@ -535,9 +535,9 @@ function DataAccessTab({
           </div>
         </div>
 
-        <div className="border border-gray-200 rounded-lg p-4">
-          <h4 className="font-medium text-gray-900 mb-2">CoreSignal Access</h4>
-          <div className="text-sm text-gray-600 space-y-1">
+        <div className="border border-[var(--border)] rounded-lg p-4">
+          <h4 className="font-medium text-[var(--foreground)] mb-2">CoreSignal Access</h4>
+          <div className="text-sm text-[var(--muted)] space-y-1">
             <p>Status: <span className="font-medium text-green-600">Enabled</span></p>
             <p>Credits: <span className="font-medium">{dataAccess.coreSignalAccess.creditsPerMonth}/month</span></p>
             <p>Level: <span className="font-medium">{dataAccess.coreSignalAccess.enrichmentLevel}</span></p>
@@ -546,7 +546,7 @@ function DataAccessTab({
       </div>
 
       <div>
-        <h4 className="text-md font-medium text-gray-900 mb-3">Intelligence Features</h4>
+        <h4 className="text-md font-medium text-[var(--foreground)] mb-3">Intelligence Features</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.entries(dataAccess.intelligence).map(([key, enabled]) => (
             <div key={key} className="flex items-center space-x-2">

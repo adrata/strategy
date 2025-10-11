@@ -209,9 +209,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
           <div className="space-y-6">
       {/* Overview Summary */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Overview Summary</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <div className="text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">Overview Summary</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+          <div className="text-sm text-[var(--muted)]">
             {recordData.name} is a {recordData.title || 'professional'} at {recordData.company || 'their company'}. 
             {recordData.isBuyerGroupMember ? ' They are an active member of the buyer group' : ' They are not currently part of the buyer group'} 
             with {recordData.influenceLevel || 'moderate'} influence level and {recordData.decisionPower || 'some'} decision-making power. 
@@ -224,57 +224,57 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       <div className="space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Name:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.name}</span>
+                <span className="text-sm text-[var(--muted)]">Name:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Title:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.title}</span>
+                <span className="text-sm text-[var(--muted)]">Title:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.title}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.company}</span>
+                <span className="text-sm text-[var(--muted)]">Company:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.company}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.department}</span>
+                <span className="text-sm text-[var(--muted)]">Department:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.department}</span>
               </div>
             </div>
           </div>
 
           {/* Intelligence Snapshot Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Intelligence Snapshot</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligence Snapshot</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   recordData.isBuyerGroupMember 
                     ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Role:</span>
-                <span className="text-sm font-medium text-gray-900">{record.customFields?.primaryRole || 'Stakeholder'}</span>
+                <span className="text-sm text-[var(--muted)]">Role:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.primaryRole || 'Stakeholder'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.influenceLevel}</span>
+                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.influenceLevel}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Power:</span>
-                <span className="text-sm font-medium text-gray-900">{record.customFields?.decisionPower || '70'}%</span>
+                <span className="text-sm text-[var(--muted)]">Decision Power:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.decisionPower || '70'}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Level:</span>
-                <span className="text-sm font-medium text-gray-900">{record.customFields?.engagementLevel || 'Medium'}</span>
+                <span className="text-sm text-[var(--muted)]">Engagement Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.engagementLevel || 'Medium'}</span>
               </div>
             </div>
           </div>
@@ -285,12 +285,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                 <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
                 <div className="space-y-2">
               <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Email:</span>
-                <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm text-[var(--muted)]">Email:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {recordData.email !== '-' ? (
                     <a href={`mailto:${recordData.email}`} className="text-blue-600 hover:underline">
                       {recordData.email}
@@ -301,8 +301,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                     </span>
                   </div>
               <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Phone:</span>
-                <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm text-[var(--muted)]">Phone:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {recordData.phone !== '-' ? (
                     <a href={`tel:${recordData.phone}`} className="text-blue-600 hover:underline">
                       {recordData.phone}
@@ -313,8 +313,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                     </span>
                   </div>
               <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">LinkedIn:</span>
-                <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {recordData.linkedin !== '-' ? (
                     <a 
                       href={recordData.linkedin.startsWith('http') ? recordData.linkedin : `https://${recordData.linkedin}`} 
@@ -333,22 +333,22 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               </div>
 
           {/* Engagement History Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
                 <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Contact:</span>
-                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(recordData.lastContact)}</span>
+                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(recordData.lastContact)}</span>
                   </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Next Action:</span>
-                <span className="text-sm font-medium text-gray-900">{recordData.nextAction}</span>
+                <span className="text-sm text-[var(--muted)]">Next Action:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.nextAction}</span>
                   </div>
               <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Status:</span>
+                    <span className="text-sm text-[var(--muted)]">Status:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   recordData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  recordData.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                  recordData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
                   'bg-yellow-100 text-yellow-800'
                 }`}>
                   {recordData.status}
@@ -362,11 +362,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
 
       {/* Last Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Last Actions</h3>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Last Actions</h3>
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <ul className="space-y-2">
             {lastActions.map((action, index) => (
-              <li key={index} className="text-sm text-gray-600">
+              <li key={index} className="text-sm text-[var(--muted)]">
                 • {action.action} - {action.date}
               </li>
             ))}
@@ -376,19 +376,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
 
       {/* Notes on them */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               {recordData.notes && recordData.notes !== 'No notes available' && recordData.notes.trim() !== '' ? recordData.notes : 
                 `No recent notes available`
               }
                   </div>
                 </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               Focus on {(recordData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(recordData.lastContact)}. 
               Next action: {recordData.nextAction}.

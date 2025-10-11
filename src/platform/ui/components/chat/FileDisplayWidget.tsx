@@ -37,14 +37,14 @@ export function FileDisplayWidget({
   const FileIcon = getFileIcon();
   
   return (
-    <div className={`inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 ${className}`}>
-      <FileIcon className="h-4 w-4 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+    <div className={`inline-flex items-center gap-2 bg-[var(--hover)] rounded-lg px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] ${className}`}>
+      <FileIcon className="h-4 w-4 text-[var(--muted)] dark:text-[var(--muted)] flex-shrink-0" />
       
       <div className="flex flex-col min-w-0">
-        <span className="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[200px]" title={fileName}>
+        <span className="text-[var(--foreground)] dark:text-[var(--foreground)] font-medium truncate max-w-[200px]" title={fileName}>
           {fileName}
         </span>
-        <span className="text-gray-500 dark:text-gray-400 text-xs">
+        <span className="text-[var(--muted)] dark:text-[var(--muted)] text-xs">
           {formatFileSize(fileSize)}
         </span>
       </div>
@@ -52,7 +52,7 @@ export function FileDisplayWidget({
       {onRemove && (
         <button
           onClick={onRemove}
-          className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 ml-1 flex-shrink-0"
+          className="text-[var(--muted)] hover:text-red-500 dark:text-[var(--muted)] dark:hover:text-red-400 ml-1 flex-shrink-0"
           title="Remove file"
         >
           ×

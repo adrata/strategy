@@ -8,7 +8,7 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
     <div className="p-6 space-y-8">
       {/* Competitive Landscape */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Competitive Intelligence</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Competitive Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Known Competitors</label>
@@ -21,9 +21,9 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
                   </div>
                 ))
               ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <p className="text-gray-600 text-sm">No competitors mentioned yet</p>
-                  <p className="text-gray-500 text-xs mt-1">Listen for competitive intelligence</p>
+                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
+                  <p className="text-[var(--muted)] text-sm">No competitors mentioned yet</p>
+                  <p className="text-[var(--muted)] text-xs mt-1">Listen for competitive intelligence</p>
                 </div>
               )}
             </div>
@@ -59,10 +59,10 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
 
       {/* Competitive Positioning */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Our Competitive Position</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Our Competitive Position</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Our Strengths</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Our Strengths</h4>
             <div className="space-y-1 text-sm text-green-700">
               <p>• {record?.industry || 'Industry'}-specific expertise</p>
               <p>• Proven ROI and implementation success</p>
@@ -72,7 +72,7 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
           </div>
           
           <div className="bg-yellow-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Competitive Gaps</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Competitive Gaps</h4>
             <div className="space-y-1 text-sm text-yellow-700">
               <p>• Market presence in {record?.industry || 'industry'}</p>
               <p>• Brand recognition vs incumbents</p>
@@ -82,7 +82,7 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
           </div>
           
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Differentiation</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Differentiation</h4>
             <div className="space-y-1 text-sm text-blue-700">
               <p>• AI-first approach and innovation</p>
               <p>• {record?.industry || 'Industry'}-specific solutions</p>
@@ -95,10 +95,10 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
 
       {/* Battle Cards */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Battle Cards</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Battle Cards</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-red-50 to-yellow-50 border border-red-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Common Objections & Responses</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Common Objections & Responses</h4>
             <div className="space-y-3 text-sm">
               <div>
                 <p className="font-medium text-red-800">Objection: "We're happy with our current solution"</p>
@@ -112,7 +112,7 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
           </div>
 
           <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-medium text-gray-900 mb-2">Competitive Advantages</h4>
+            <h4 className="font-medium text-[var(--foreground)] mb-2">Competitive Advantages</h4>
             <div className="space-y-2 text-sm text-gray-700">
               <p>• <strong>vs. Legacy Solutions:</strong> Modern architecture, faster performance, better user experience</p>
               <p>• <strong>vs. Competitors:</strong> {record?.industry || 'Industry'}-specific features, proven ROI, superior support</p>
@@ -124,9 +124,9 @@ export function UniversalCompetitiveTab({ record, recordType }: UniversalCompeti
 
       {/* Win Strategy */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Win Strategy</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Win Strategy</h3>
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
-          <h4 className="font-medium text-gray-900 mb-3">Strategic Approach</h4>
+          <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Approach</h4>
           <div className="space-y-2 text-sm text-gray-700">
             <p>1. <strong>Lead with Value:</strong> Focus on {record?.industry || 'industry'}-specific ROI and efficiency gains</p>
             <p>2. <strong>Build Champions:</strong> Identify and enable internal advocates</p>

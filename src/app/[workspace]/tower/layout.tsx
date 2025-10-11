@@ -81,7 +81,7 @@ function TowerRightPanel() {
           </div>
           <button
             onClick={() => setSelectedMetric(null)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -92,19 +92,19 @@ function TowerRightPanel() {
         {/* Metric Details */}
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           <div className="space-y-3">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900 mb-2">Status</h3>
-              <p className="text-sm text-gray-600">Detailed information about {selectedMetric} will be displayed here.</p>
+            <div className="p-4 bg-[var(--panel-background)] rounded-lg">
+              <h3 className="font-medium text-[var(--foreground)] mb-2">Status</h3>
+              <p className="text-sm text-[var(--muted)]">Detailed information about {selectedMetric} will be displayed here.</p>
             </div>
             
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900 mb-2">History</h3>
-              <p className="text-sm text-gray-600">Historical data and trends for this metric.</p>
+            <div className="p-4 bg-[var(--panel-background)] rounded-lg">
+              <h3 className="font-medium text-[var(--foreground)] mb-2">History</h3>
+              <p className="text-sm text-[var(--muted)]">Historical data and trends for this metric.</p>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900 mb-2">Alerts</h3>
-              <p className="text-sm text-gray-600">Configure alerts and thresholds for this metric.</p>
+            <div className="p-4 bg-[var(--panel-background)] rounded-lg">
+              <h3 className="font-medium text-[var(--foreground)] mb-2">Alerts</h3>
+              <p className="text-sm text-[var(--muted)]">Configure alerts and thresholds for this metric.</p>
             </div>
           </div>
         </div>

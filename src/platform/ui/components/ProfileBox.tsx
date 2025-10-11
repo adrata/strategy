@@ -528,7 +528,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* Download Button - Show only for web users */}
         {!isDesktop && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
             onClick={handleDownloadDesktopApp}
             role="button"
             tabIndex={0}
@@ -542,7 +542,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* Demo Section - Show for Adrata users (dan and ross) */}
         {isAdrataUser && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={handleDemoWorkspaceClick}
             role="button"
             tabIndex={0}
@@ -572,7 +572,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isRtpVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -590,7 +590,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                   }`}
                 >
                   <div
-                    className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                    className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                       isSellersVisible ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
@@ -608,7 +608,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isProspectsVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -627,7 +627,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isLeadsVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -646,7 +646,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isOpportunitiesVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -665,7 +665,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isCustomersVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -684,7 +684,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${
+                      className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
                         isPartnersVisible ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -697,7 +697,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 1. Themes */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -728,7 +728,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 2. Settings */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => handleNavigation("./grand-central/profile")}
           role="button"
           tabIndex={0}
@@ -742,7 +742,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* 3. Workspaces Section - Show for users with multiple workspaces */}
         {authUser?.workspaces && authUser.workspaces.length > 1 && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => handleNavigation("/workspaces")}
             role="button"
             tabIndex={0}
@@ -754,7 +754,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 4. Olympus */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
             console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
             setIsProfileOpen(false); // Close profile popup
@@ -774,7 +774,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 5. Tower */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
             console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
             setIsProfileOpen(false); // Close profile popup
@@ -794,7 +794,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 6. Grand Central */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
             console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
             setIsProfileOpen(false); // Close profile popup
@@ -815,7 +815,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* 7. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -834,7 +834,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         
         {/* 8. Sign Out */}
         <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={handleSignOut}
           role="button"
           tabIndex={0}

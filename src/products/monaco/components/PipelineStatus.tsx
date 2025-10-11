@@ -34,7 +34,7 @@ export function PipelineStatus({
       case "failed":
         return <ExclamationCircleIcon className="w-5 h-5 text-red-500" />;
       default:
-        return <SparklesIcon className="w-5 h-5 text-gray-400" />;
+        return <SparklesIcon className="w-5 h-5 text-[var(--muted)]" />;
     }
   };
 
@@ -47,7 +47,7 @@ export function PipelineStatus({
       case "failed":
         return "border-red-200 bg-red-50 dark:bg-red-900/20";
       default:
-        return "border-gray-200 bg-gray-50 dark:bg-gray-800/20";
+        return "border-[var(--border)] bg-[var(--panel-background)]/20";
     }
   };
 
@@ -89,7 +89,7 @@ export function PipelineStatus({
       {/* Progress bar for running pipelines */}
       {status === "running" && (
         <div className="space-y-2">
-          <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+          <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
@@ -104,7 +104,7 @@ export function PipelineStatus({
 
       {/* Results summary for completed pipelines */}
       {status === "completed" && (
-        <div className="grid grid-cols-3 gap-4 text-center pt-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="grid grid-cols-3 gap-4 text-center pt-3 border-t border-[var(--border)] dark:border-[var(--border)]">
           <div>
             <p className="text-xs text-[var(--muted)]">Intelligence Score</p>
             <p className="text-sm font-semibold text-[var(--foreground)]">

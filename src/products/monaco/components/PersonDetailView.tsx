@@ -372,7 +372,7 @@ const generatePersonalNeeds = (person: Person): string => {
 
 // Get role color
 const getRoleColor = (role: string) => {
-  return "bg-gray-100 text-gray-800 border-gray-200";
+  return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
 };
 
 // Generate concise pain intelligence similar to directional intelligence format
@@ -479,7 +479,7 @@ const EmailInteractionItem: React.FC<EmailInteractionItemProps> = ({
       case 'sent': return 'bg-blue-100 text-blue-800';
       case 'replied': return 'bg-purple-100 text-purple-800';
       case 'bounced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-[var(--hover)] text-gray-800';
     }
   };
 
@@ -934,9 +934,9 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
           <>
             {/* Dynamic Pipeline Progress */}
             <div className="mb-8">
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Pipeline Progress</h3>
-                <div className="text-sm text-gray-600">
+              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Pipeline Progress</h3>
+                <div className="text-sm text-[var(--muted)]">
                   Pipeline tracking temporarily unavailable
                 </div>
               </div>
@@ -1271,7 +1271,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <span className="text-sm font-medium text-[var(--foreground)]">Direct</span>
                       <span className="text-sm font-bold text-[var(--foreground)]">85/100</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                       <div className="bg-red-500 h-2 rounded-full" style={{ width: "85%" }}></div>
                     </div>
                     <p className="text-xs text-[var(--muted)]">Efficiency-Driven Decision-Maker</p>
@@ -1283,7 +1283,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <span className="text-sm font-medium text-[var(--foreground)]">Chatty</span>
                       <span className="text-sm font-bold text-[var(--foreground)]">78/100</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                       <div className="bg-blue-500 h-2 rounded-full" style={{ width: "78%" }}></div>
                     </div>
                     <p className="text-xs text-[var(--muted)]">Engaging Relationship-Builder</p>
@@ -1295,7 +1295,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <span className="text-sm font-medium text-[var(--foreground)]">Rule-Follower</span>
                       <span className="text-sm font-bold text-[var(--foreground)]">82/100</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: "82%" }}></div>
                     </div>
                     <p className="text-xs text-[var(--muted)]">Process-Oriented Analyst</p>
@@ -1307,7 +1307,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <span className="text-sm font-medium text-[var(--foreground)]">Friendly</span>
                       <span className="text-sm font-bold text-[var(--foreground)]">35/100</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                       <div className="bg-purple-500 h-2 rounded-full" style={{ width: "35%" }}></div>
                     </div>
                     <p className="text-xs text-[var(--muted)]">Collaborative and People-Oriented</p>
@@ -1315,7 +1315,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                 </div>
 
                 {/* Persona Summary */}
-                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                <div className="bg-[var(--panel-background)]/50 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-[var(--foreground)] mb-2">Persona Summary</h4>
                   <p className="text-sm text-[var(--foreground)] leading-relaxed">
                     {enhancedPerson['buyerGroupRole'] === "Decision Maker" 
@@ -1516,7 +1516,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   {intelligence.stakeholders.map((stakeholder, index) => (
                     <div
                       key={stakeholder.id || index}
-                      className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors"
+                      className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors"
                       onClick={() => {
                         console.log(`Navigating to profile for ${stakeholder.name}`);
                         // This would navigate to the person's profile
@@ -1524,24 +1524,24 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                          <h4 className="text-lg font-semibold text-[var(--foreground)] mb-1">
                             {stakeholder.name}
                           </h4>
-                          <p className="text-sm text-gray-600 mb-2">
+                          <p className="text-sm text-[var(--muted)] mb-2">
                             {stakeholder.title}
                           </p>
                         </div>
                         <div className="text-right">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
                             {stakeholder.status}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[var(--hover)] text-gray-800">
                           {stakeholder.role}
                         </span>
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
@@ -1662,7 +1662,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       <label className="text-sm font-medium text-[var(--muted)] block mb-1">
                         Buyer Group Role
                       </label>
-                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
                         {enhancedPerson.buyerGroupRole || "Stakeholder"}
                       </span>
                     </div>
@@ -1686,7 +1686,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       href={enhancedPerson.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-gray-500 hover:text-gray-700 hover:underline transition-colors"
+                      className="block text-[var(--muted)] hover:text-gray-700 hover:underline transition-colors"
                     >
                       View LinkedIn Profile
                     </a>
@@ -2634,18 +2634,18 @@ Dan`}
             <div className="animate-pulse">
               <div className="flex items-center justify-between mt-2 mb-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                  <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-full"></div>
                   <div>
-                    <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    <div className="h-6 bg-[var(--loading-bg)] rounded w-48 mb-2"></div>
+                    <div className="h-4 bg-[var(--loading-bg)] rounded w-32"></div>
                   </div>
                 </div>
-                <div className="h-8 bg-gray-200 rounded w-20"></div>
+                <div className="h-8 bg-[var(--loading-bg)] rounded w-20"></div>
               </div>
               <div className="space-y-4">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-full"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/2"></div>
               </div>
             </div>
           </div>
@@ -2699,8 +2699,8 @@ Dan`}
                     disabled={currentIndex === 0}
                     className={`px-3 py-2 rounded-lg border font-medium transition-colors ${
                       currentIndex === 0 
-                        ? 'bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed' 
-                        : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200 hover:text-gray-900'
+                        ? 'bg-[var(--panel-background)] text-gray-300 border-[var(--border)] cursor-not-allowed' 
+                        : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)] hover:text-[var(--foreground)]'
                     }`}
                     title="Previous record"
                   >
@@ -2711,8 +2711,8 @@ Dan`}
                     disabled={currentIndex === totalRecords - 1}
                     className={`px-3 py-2 rounded-lg border font-medium transition-colors ${
                       currentIndex === totalRecords - 1 
-                        ? 'bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed' 
-                        : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200 hover:text-gray-900'
+                        ? 'bg-[var(--panel-background)] text-gray-300 border-[var(--border)] cursor-not-allowed' 
+                        : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)] hover:text-[var(--foreground)]'
                     }`}
                     title="Next record"
                   >
@@ -2726,7 +2726,7 @@ Dan`}
                   className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     isCompleted
                       ? 'bg-green-100 text-green-700 border-green-200'
-                      : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
+                      : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)]'
                   }`}
                   title={isCompleted ? "Completed" : createTooltipWithShortcut("Mark as completed", ['⌘+Enter', 'Ctrl+Enter'])}
                 >
@@ -2757,7 +2757,7 @@ Dan`}
                   ${
                     activeTab === tab
                       ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                      : "text-gray-400 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
+                      : "text-[var(--muted)] dark:text-[var(--muted)] hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
                   }
                 `}
                 style={{

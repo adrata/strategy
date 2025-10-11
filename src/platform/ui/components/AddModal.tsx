@@ -421,7 +421,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
 
   return (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -517,10 +517,10 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
                 Add New {activeSection === "leads" ? "Lead" : "Prospect"}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-[var(--muted)] mb-6">
                 Create a new {activeSection === "leads" ? "lead" : "prospect"} with First Name and Last Name fields, 
                 with status locked as {activeSection === "leads" ? "Lead" : "Prospect"}.
               </p>
@@ -533,7 +533,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setShowAddProspectModal(true);
                   }
                 }}
-                className="px-6 py-3 bg-white text-black border border-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg font-semibold text-sm hover:bg-[var(--panel-background)] transition-colors"
               >
                 Open {activeSection === "leads" ? "Lead" : "Prospect"} Form
               </button>
@@ -556,7 +556,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, firstName: e.target.value }))
                   }
                   placeholder="Enter first name"
-                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -579,7 +579,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, lastName: e.target.value }))
                   }
                   placeholder="Enter last name"
-                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -612,7 +612,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     ? "Enter opportunity name"
                     : `Enter ${getSectionTitle().toLowerCase()} name`
                 }
-                className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                 onFocus={(e) => {
                   e.target.style.borderColor = categoryColors.primary;
                   e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -647,7 +647,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 placeholder="Select status"
                 className="w-full"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[var(--muted)] mt-1">
                 Press 1-5 to select, press same number to cycle through options
               </p>
             </div>
@@ -675,7 +675,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={companySearchQuery}
                     onChange={(e) => setCompanySearchQuery(e.target.value)}
                     placeholder="Search for company"
-                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = categoryColors.primary;
                       e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -689,22 +689,22 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
                 {/* Search Results */}
                 {companySearchResults.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {companySearchResults.map((company) => (
                       <div
                         key={company.id}
                         onClick={() => handleCompanySelect(company)}
-                        className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                        className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
                       >
-                        <div className="font-medium text-gray-900">{company.name}</div>
+                        <div className="font-medium text-[var(--foreground)]">{company.name}</div>
                         {company.website && (
-                          <div className="text-sm text-gray-500">{company.website}</div>
+                          <div className="text-sm text-[var(--muted)]">{company.website}</div>
                         )}
                       </div>
                     ))}
                     <div
                       onClick={handleAddCompany}
-                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-blue-600 font-medium border-t border-gray-200"
+                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-blue-600 font-medium border-t border-[var(--border)]"
                     >
                       + Add New Company
                     </div>
@@ -713,9 +713,9 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
                 {/* No results message */}
                 {companySearchQuery.length >= 2 && companySearchResults.length === 0 && !isSearchingCompanies && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="px-4 py-3 text-center">
-                      <div className="text-sm text-gray-500 mb-2">No companies found</div>
+                      <div className="text-sm text-[var(--muted)] mb-2">No companies found</div>
                       <button
                         type="button"
                         onClick={handleAddCompany}
@@ -729,9 +729,9 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
                 {/* Loading state */}
                 {isSearchingCompanies && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="px-4 py-3 text-center">
-                      <div className="text-sm text-gray-500">Searching companies...</div>
+                      <div className="text-sm text-[var(--muted)]">Searching companies...</div>
                     </div>
                   </div>
                 )}
@@ -740,11 +740,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               {/* Selected Company */}
               {selectedCompany && (
                 <div className="mt-3">
-                  <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between bg-[var(--panel-background)] rounded-lg px-3 py-2">
                     <div>
-                      <div className="font-medium text-gray-900">{selectedCompany.name}</div>
+                      <div className="font-medium text-[var(--foreground)]">{selectedCompany.name}</div>
                       {selectedCompany.website && (
-                        <div className="text-sm text-gray-500">{selectedCompany.website}</div>
+                        <div className="text-sm text-[var(--muted)]">{selectedCompany.website}</div>
                       )}
                     </div>
                     <button
@@ -1038,7 +1038,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   </label>
                   <div className="relative">
                     <div className="relative">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none z-10" />
                       <input
                         type="text"
                         value={contactSearchQuery}
@@ -1050,17 +1050,17 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
                     {/* Search Results */}
                     {contactSearchResults.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {contactSearchResults.map((contact) => (
                           <div
                             key={contact.id}
                             onClick={() => handleContactSelect(contact)}
-                            className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                            className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
                           >
-                            <div className="font-medium text-gray-900">{contact.name || contact.fullName}</div>
-                            <div className="text-sm text-gray-500">{contact.email}</div>
+                            <div className="font-medium text-[var(--foreground)]">{contact.name || contact.fullName}</div>
+                            <div className="text-sm text-[var(--muted)]">{contact.email}</div>
                             {contact.jobTitle && (
-                              <div className="text-sm text-gray-500">{contact.jobTitle}</div>
+                              <div className="text-sm text-[var(--muted)]">{contact.jobTitle}</div>
                             )}
                           </div>
                         ))}
@@ -1075,11 +1075,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                       {selectedContacts.map((contact) => (
                         <div
                           key={contact.id}
-                          className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2"
+                          className="flex items-center justify-between bg-[var(--panel-background)] rounded-lg px-3 py-2"
                         >
                           <div>
-                            <div className="font-medium text-gray-900">{contact.name || contact.fullName}</div>
-                            <div className="text-sm text-gray-500">{contact.email}</div>
+                            <div className="font-medium text-[var(--foreground)]">{contact.name || contact.fullName}</div>
+                            <div className="text-sm text-[var(--muted)]">{contact.email}</div>
                           </div>
                           <button
                             type="button"
@@ -1175,7 +1175,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     setFormData((prev: any) => ({ ...prev, website: e.target.value }))
                   }
                   placeholder="https://example.com"
-                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -1197,7 +1197,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   }
                   placeholder="Additional notes about this company"
                   rows={3}
-                  className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -1218,7 +1218,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+              className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
             >
               Cancel
             </button>
@@ -1267,7 +1267,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
       {/* Add Company Modal */}
       {showAddCompanyModal && (
-        <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-60">
+        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-60">
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-lg">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-[var(--foreground)]">
@@ -1275,7 +1275,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               </h2>
               <button
                 onClick={() => setShowAddCompanyModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1436,7 +1436,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.name}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
-                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = getCategoryColors('companies').primary;
                       e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
@@ -1458,7 +1458,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                     value={addCompanyFormData.website}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                     placeholder="example.com or https://example.com"
-                    className="w-full border border-gray-300 rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = getCategoryColors('companies').primary;
                       e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
@@ -1476,7 +1476,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 <button
                   type="button"
                   onClick={() => setShowAddCompanyModal(false)}
-                  className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
                 >
                   Cancel
                 </button>

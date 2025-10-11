@@ -67,9 +67,9 @@ export function PersonDetailOverview({
   return (
     <div className="space-y-6">
       {/* Person Summary */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
         <h3 className="text-lg font-semibold mb-4">Person Summary</h3>
-        <div className="text-sm text-gray-600 leading-relaxed">
+        <div className="text-sm text-[var(--muted)] leading-relaxed">
           {fullName} is a {jobTitle} at {companyName}. 
           As a {buyerGroupRole} with {influenceLevel.toLowerCase()} influence, they play a key role in decision-making processes.
           {lastEnriched && ` Last enriched: ${formatDate(lastEnriched)} via ${enrichmentSource}.`}
@@ -78,11 +78,11 @@ export function PersonDetailOverview({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Contact Information */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
           <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-sm text-gray-500">Full Name</label>
+              <label className="text-sm text-[var(--muted)]">Full Name</label>
               <div className="font-medium">
                 <InlineEditField
                   value={fullName}
@@ -96,7 +96,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Email</label>
+              <label className="text-sm text-[var(--muted)]">Email</label>
               <div className="font-medium">
                 <InlineEditField
                   value={email}
@@ -111,7 +111,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Phone</label>
+              <label className="text-sm text-[var(--muted)]">Phone</label>
               <div className="font-medium">
                 <InlineEditField
                   value={phone}
@@ -126,7 +126,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">LinkedIn</label>
+              <label className="text-sm text-[var(--muted)]">LinkedIn</label>
               <div className="font-medium">
                 <InlineEditField
                   value={linkedinUrl}
@@ -140,7 +140,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Location</label>
+              <label className="text-sm text-[var(--muted)]">Location</label>
               <div className="font-medium">
                 <InlineEditField
                   value={location}
@@ -157,11 +157,11 @@ export function PersonDetailOverview({
         </div>
 
         {/* Professional Information */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
           <h3 className="text-lg font-semibold mb-4">Professional Details</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-sm text-gray-500">Job Title</label>
+              <label className="text-sm text-[var(--muted)]">Job Title</label>
               <div className="font-medium">
                 <InlineEditField
                   value={jobTitle}
@@ -175,7 +175,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Company</label>
+              <label className="text-sm text-[var(--muted)]">Company</label>
               <div className="font-medium">
                 <InlineEditField
                   value={companyName}
@@ -189,7 +189,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Department</label>
+              <label className="text-sm text-[var(--muted)]">Department</label>
               <div className="font-medium">
                 <InlineEditField
                   value={department}
@@ -203,7 +203,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Seniority Level</label>
+              <label className="text-sm text-[var(--muted)]">Seniority Level</label>
               <div className="font-medium">
                 <InlineEditField
                   value={seniority}
@@ -217,7 +217,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Buyer Group Role</label>
+              <label className="text-sm text-[var(--muted)]">Buyer Group Role</label>
               <div className="font-medium">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(buyerGroupRole)}`}>
                   {buyerGroupRole}
@@ -225,7 +225,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Influence Level</label>
+              <label className="text-sm text-[var(--muted)]">Influence Level</label>
               <div className="font-medium">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(influenceLevel)}`}>
                   {influenceLevel}
@@ -233,7 +233,7 @@ export function PersonDetailOverview({
               </div>
             </div>
             <div>
-              <label className="text-sm text-gray-500">Engagement Priority</label>
+              <label className="text-sm text-[var(--muted)]">Engagement Priority</label>
               <div className="font-medium">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(engagementPriority)}`}>
                   {engagementPriority}
@@ -246,21 +246,21 @@ export function PersonDetailOverview({
 
       {/* Experience History */}
       {experience.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
           <h3 className="text-lg font-semibold mb-4">Experience History</h3>
           <div className="space-y-3">
             {experience.slice(0, 3).map((exp: any, index: number) => (
               <div key={index} className="border-l-2 border-blue-200 pl-4">
                 <div className="font-medium">{exp.position_title || exp.title || 'Unknown Title'}</div>
-                <div className="text-sm text-gray-600">{exp.company_name || 'Unknown Company'}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-sm text-[var(--muted)]">{exp.company_name || 'Unknown Company'}</div>
+                <div className="text-xs text-[var(--muted)]">
                   {exp.date_from && exp.date_to 
                     ? `${exp.date_from} - ${exp.date_to}`
                     : exp.date_from || 'Current'
                   }
                 </div>
                 {exp.description && (
-                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                  <div className="text-xs text-[var(--muted)] mt-1 line-clamp-2">
                     {exp.description}
                   </div>
                 )}
@@ -272,7 +272,7 @@ export function PersonDetailOverview({
 
       {/* Skills */}
       {skills.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
           <h3 className="text-lg font-semibold mb-4">Skills</h3>
           <div className="flex flex-wrap gap-2">
             {skills.slice(0, 10).map((skill: string, index: number) => (
@@ -288,23 +288,23 @@ export function PersonDetailOverview({
       )}
 
       {/* Enrichment Status */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
         <h3 className="text-lg font-semibold mb-4">Data Enrichment Status</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm text-gray-500">Enrichment Source</label>
+            <label className="text-sm text-[var(--muted)]">Enrichment Source</label>
             <div className="font-medium">{enrichmentSource}</div>
           </div>
           <div>
-            <label className="text-sm text-gray-500">Last Enriched</label>
+            <label className="text-sm text-[var(--muted)]">Last Enriched</label>
             <div className="font-medium">{lastEnriched ? formatDate(lastEnriched) : 'Never'}</div>
           </div>
           <div>
-            <label className="text-sm text-gray-500">CoreSignal ID</label>
+            <label className="text-sm text-[var(--muted)]">CoreSignal ID</label>
             <div className="font-medium">{customFields.coresignalId || 'Not available'}</div>
           </div>
           <div>
-            <label className="text-sm text-gray-500">Data Quality</label>
+            <label className="text-sm text-[var(--muted)]">Data Quality</label>
             <div className="font-medium">
               {coresignalData.full_name ? 'High' : 'Basic'}
             </div>

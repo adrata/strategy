@@ -188,8 +188,8 @@ export function AddActionModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white border border-gray-200 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 ${section === 'speedrun' ? 'bg-green-100' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
@@ -198,51 +198,51 @@ export function AddActionModal({
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Add Action</h2>
-              <p className="text-sm text-gray-600">Log an action for a person or company</p>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">Add Action</h2>
+              <p className="text-sm text-[var(--muted)]">Log an action for a person or company</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-gray-500" />
+            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Person Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Person *
             </label>
             <div className="relative">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none z-10" />
                 <input
                   type="text"
                   value={personSearchQuery}
                   onChange={(e) => setPersonSearchQuery(e.target.value)}
                   placeholder="Search for person..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
                 />
               </div>
 
               {/* Person Search Results */}
               {personSearchResults.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                   {personSearchResults.map((person) => (
                     <div
                       key={person.id}
                       onClick={() => handlePersonSelect(person)}
-                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                      className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
                     >
-                      <div className="font-medium text-gray-900">{person.name || person.fullName}</div>
+                      <div className="font-medium text-[var(--foreground)]">{person.name || person.fullName}</div>
                       {person.title && (
-                        <div className="text-sm text-gray-500">{person.title}</div>
+                        <div className="text-sm text-[var(--muted)]">{person.title}</div>
                       )}
                       {person.company && (
-                        <div className="text-sm text-gray-500">{person.company}</div>
+                        <div className="text-sm text-[var(--muted)]">{person.company}</div>
                       )}
                     </div>
                   ))}
@@ -252,10 +252,10 @@ export function AddActionModal({
 
             {/* Selected Person Display */}
             {formData.person && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                <div className="font-medium text-gray-900">{formData.person}</div>
+              <div className="mt-2 p-3 bg-[var(--panel-background)] rounded-lg">
+                <div className="font-medium text-[var(--foreground)]">{formData.person}</div>
                 {formData.personId && (
-                  <div className="text-sm text-gray-500">ID: {formData.personId}</div>
+                  <div className="text-sm text-[var(--muted)]">ID: {formData.personId}</div>
                 )}
               </div>
             )}
@@ -263,33 +263,33 @@ export function AddActionModal({
 
           {/* Company Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Company
             </label>
             <div className="relative">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none z-10" />
                 <input
                   type="text"
                   value={companySearchQuery}
                   onChange={(e) => setCompanySearchQuery(e.target.value)}
                   placeholder="Search for company..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
                 />
               </div>
 
               {/* Company Search Results */}
               {companySearchResults.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                   {companySearchResults.map((company) => (
                     <div
                       key={company.id}
                       onClick={() => handleCompanySelect(company)}
-                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                      className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
                     >
-                      <div className="font-medium text-gray-900">{company.name}</div>
+                      <div className="font-medium text-[var(--foreground)]">{company.name}</div>
                       {company.website && (
-                        <div className="text-sm text-gray-500">{company.website}</div>
+                        <div className="text-sm text-[var(--muted)]">{company.website}</div>
                       )}
                     </div>
                   ))}
@@ -299,10 +299,10 @@ export function AddActionModal({
 
             {/* Selected Company Display */}
             {formData.company && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                <div className="font-medium text-gray-900">{formData.company}</div>
+              <div className="mt-2 p-3 bg-[var(--panel-background)] rounded-lg">
+                <div className="font-medium text-[var(--foreground)]">{formData.company}</div>
                 {formData.companyId && (
-                  <div className="text-sm text-gray-500">ID: {formData.companyId}</div>
+                  <div className="text-sm text-[var(--muted)]">ID: {formData.companyId}</div>
                 )}
               </div>
             )}
@@ -310,13 +310,13 @@ export function AddActionModal({
 
           {/* Action Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Action Type
             </label>
             <select
               value={formData.type}
               onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as any }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
             >
               <option value="LinkedIn Friend Request">LinkedIn Friend Request</option>
               <option value="LinkedIn InMail">LinkedIn InMail</option>
@@ -330,13 +330,13 @@ export function AddActionModal({
 
           {/* When */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               When
             </label>
             <select
               value={formData.time}
               onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value as any }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
             >
               <option value="Now">Now</option>
               <option value="Past">Past</option>
@@ -346,7 +346,7 @@ export function AddActionModal({
 
           {/* Action Details */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Action Details *
             </label>
             <textarea
@@ -354,14 +354,14 @@ export function AddActionModal({
               onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
               placeholder="Describe what happened or what you plan to do..."
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
               required
             />
           </div>
 
           {/* Next Action */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Next Action
             </label>
             <input
@@ -369,21 +369,21 @@ export function AddActionModal({
               value={formData.nextAction || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, nextAction: e.target.value }))}
               placeholder="What's the next step?"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
             />
           </div>
 
           {/* Next Action Date */}
           {formData.nextAction && (
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Next Action Date
               </label>
               <input
                 type="date"
                 value={formData.nextActionDate || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, nextActionDate: e.target.value }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors"
               />
             </div>
           )}
@@ -393,7 +393,7 @@ export function AddActionModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+              className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
             >
               Cancel
             </button>
@@ -405,7 +405,7 @@ export function AddActionModal({
                   ? section === 'speedrun' 
                     ? 'bg-green-600 border-green-600 text-white hover:bg-green-700'
                     : 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+                  : 'bg-[var(--hover)] border-[var(--border)] text-[var(--muted)] cursor-not-allowed'
               }`}
             >
               {isLoading ? 'Adding...' : `Add Action (${getCommonShortcut('SUBMIT')})`}
@@ -413,7 +413,7 @@ export function AddActionModal({
           </div>
 
           {/* Keyboard shortcut hint */}
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-[var(--muted)] text-center">
             Press <Kbd variant="default" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd> to submit quickly
           </div>
         </form>

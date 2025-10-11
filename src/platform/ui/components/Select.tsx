@@ -115,19 +115,19 @@ export function Select({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          w-full px-3 py-2 text-left border border-gray-300 rounded-lg 
-          bg-white text-gray-900 placeholder-gray-500 text-sm shadow-sm
+          w-full px-3 py-2 text-left border border-[var(--border)] rounded-lg 
+          bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 text-sm shadow-sm
           hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500
           transition-colors duration-200
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
       >
-        <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
+        <span className={selectedOption ? 'text-[var(--foreground)]' : 'text-[var(--muted)]'}>
           {selectedOption ? `${options.findIndex(opt => opt.value === selectedOption.value) + 1}. ${selectedOption.label}` : placeholder}
         </span>
         <ChevronDownIcon 
           className={`
-            absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400
+            absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)]
             transition-transform duration-200
             ${isOpen ? 'rotate-180' : ''}
           `} 
@@ -135,19 +135,19 @@ export function Select({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-auto">
           {options.map((option, index) => (
             <button
               key={option.value}
               type="button"
               onClick={() => handleOptionClick(option.value)}
               className={`
-                w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none
+                w-full px-4 py-2 text-left text-sm hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none
                 transition-colors duration-150
-                ${option.value === value ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-900'}
+                ${option.value === value ? 'bg-blue-50 text-blue-700 font-medium' : 'text-[var(--foreground)]'}
               `}
             >
-              <span className="inline-block w-6 text-gray-500 font-mono text-xs">
+              <span className="inline-block w-6 text-[var(--muted)] font-mono text-xs">
                 {index + 1}.
               </span>
               {option.label}

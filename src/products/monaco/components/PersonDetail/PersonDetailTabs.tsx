@@ -71,7 +71,7 @@ export function PersonDetailTabs({
               ${
                 activeTab === tab
                   ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                  : "text-gray-400 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
+                  : "text-[var(--muted)] dark:text-[var(--muted)] hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
               }
             `}
             style={{

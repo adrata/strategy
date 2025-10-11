@@ -208,7 +208,7 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                       selectedPerson.isDecisionMaker
                         ? "bg-[#9B59B6] bg-opacity-10 text-[#9B59B6]"
-                        : "bg-gray-100 text-gray-600"
+                        : "bg-[var(--hover)] text-[var(--muted)]"
                     }`}
                   >
                     {selectedPerson.isDecisionMaker ? "Yes" : "No"}
@@ -219,7 +219,7 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                     Influence Score:
                   </span>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
                       <div
                         className="bg-[#9B59B6] h-2 rounded-full"
                         style={{ width: `${selectedPerson.influenceScore}%` }}
@@ -359,8 +359,8 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                       onClick={() => setSelectedPerson(person)}
                     >
                       <td className="px-6 py-4">
-                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                          <span className="text-sm font-bold text-gray-600">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--hover)] flex items-center justify-center">
+                          <span className="text-sm font-bold text-[var(--muted)]">
                             {index + 1}
                           </span>
                         </div>
@@ -385,14 +385,14 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                             High
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-[var(--hover)] text-[var(--muted)] rounded-full text-xs font-medium">
                             Medium
                           </span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-[60px]">
+                          <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-1.5 max-w-[60px]">
                             <div
                               className="bg-[#9B59B6] h-1.5 rounded-full"
                               style={{ width: `${person.influenceScore}%` }}
@@ -410,7 +410,7 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                               ? "bg-blue-100 text-blue-800"
                               : person['status'] === "qualified"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-600"
+                                : "bg-[var(--hover)] text-[var(--muted)]"
                           }`}
                         >
                           {person.status}

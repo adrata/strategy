@@ -122,16 +122,16 @@ function GrandCentralRightPanel() {
   // Handle connection selection
   if (selectedConnection) {
     return (
-      <div className="h-full flex flex-col bg-white border-l border-gray-200">
+      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
         {/* Header with X button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
           <div>
-            <h2 className="font-semibold text-gray-900">{selectedConnection.connectionName || selectedConnection.provider}</h2>
-            <p className="text-sm text-gray-500">{selectedConnection.provider}</p>
+            <h2 className="font-semibold text-[var(--foreground)]">{selectedConnection.connectionName || selectedConnection.provider}</h2>
+            <p className="text-sm text-[var(--muted)]">{selectedConnection.provider}</p>
           </div>
           <button
             onClick={() => setSelectedConnection(null)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -162,7 +162,7 @@ function GrandCentralRightPanel() {
               <input
                 type="text"
                 value={selectedConnection.nangoConnectionId}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-sm"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)] font-mono text-sm"
                 disabled
               />
             </div>
@@ -174,7 +174,7 @@ function GrandCentralRightPanel() {
               <input
                 type="text"
                 value={new Date(selectedConnection.createdAt).toLocaleString()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)]"
                 disabled
               />
             </div>
@@ -187,7 +187,7 @@ function GrandCentralRightPanel() {
                 <input
                   type="text"
                   value={new Date(selectedConnection.lastSyncAt).toLocaleString()}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)]"
                   disabled
                 />
               </div>
@@ -210,7 +210,7 @@ function GrandCentralRightPanel() {
           </div>
           <button
             onClick={() => setSelectedNode(null)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -229,7 +229,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             
@@ -241,7 +241,7 @@ function GrandCentralRightPanel() {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
 
@@ -253,7 +253,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.provider}
                 onChange={(e) => setFormData(prev => ({ ...prev, provider: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled
               />
             </div>
@@ -266,7 +266,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.operation}
                 onChange={(e) => setFormData(prev => ({ ...prev, operation: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

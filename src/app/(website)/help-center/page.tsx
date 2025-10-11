@@ -5,34 +5,34 @@ import Link from "next/link";
 
 export default function HelpCenterPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--background)]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-[var(--background)] border-b border-[var(--border)]">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-gray-900">
+              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
                 Adrata
               </Link>
               
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+                <Link href="/company" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                   Company
                 </Link>
               </nav>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-gray-900 transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
                 Sign In
               </Link>
               <Link
@@ -47,13 +47,13 @@ export default function HelpCenterPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 bg-white">
+      <section className="pt-40 pb-20 bg-[var(--background)]">
         <div className="max-w-8xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--foreground)] mb-6">
               Help Center
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl mx-auto">
               Find answers to common questions and learn how to get the most from your buyer group intelligence platform
             </p>
             
@@ -63,10 +63,10 @@ export default function HelpCenterPage() {
                 <input
                   type="text"
                   placeholder="Search for help..."
-                  className="w-full px-6 py-4 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-6 py-4 border border-[var(--border)] rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                 />
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -77,66 +77,66 @@ export default function HelpCenterPage() {
       </section>
 
       {/* FAQ Categories */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-[var(--panel-background)]">
         <div className="max-w-8xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Getting Started</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Getting Started</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Setting up your account</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">First buyer group analysis</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Understanding stakeholder maps</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Inviting team members</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Setting up your account</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">First buyer group analysis</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Understanding stakeholder maps</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Inviting team members</Link></li>
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Platform Features</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Platform Features</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Stakeholder mapping</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Influence analysis</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Deal evolution tracking</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Pain intelligence</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Stakeholder mapping</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Influence analysis</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Deal evolution tracking</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Pain intelligence</Link></li>
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Integrations</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Integrations</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">CRM integration</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Email platforms</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Sales tools</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">API access</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">CRM integration</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Email platforms</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Sales tools</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">API access</Link></li>
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Account Management</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Account Management</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Billing and pricing</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">User permissions</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Security settings</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Data export</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Billing and pricing</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">User permissions</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Security settings</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Data export</Link></li>
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Troubleshooting</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Troubleshooting</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Common issues</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Data sync problems</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Performance optimization</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Browser compatibility</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Common issues</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Data sync problems</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Performance optimization</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Browser compatibility</Link></li>
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-xl border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Best Practices</h3>
+            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Best Practices</h3>
               <ul className="space-y-3">
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Buyer group analysis</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Team collaboration</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Data management</Link></li>
-                <li><Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Sales workflows</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Buyer group analysis</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Team collaboration</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Data management</Link></li>
+                <li><Link href="#" className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">Sales workflows</Link></li>
               </ul>
             </div>
           </div>
@@ -144,12 +144,12 @@ export default function HelpCenterPage() {
       </section>
 
       {/* Still Need Help */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[var(--background)]">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+          <h2 className="text-3xl font-semibold text-[var(--foreground)] mb-4">
             Still need help?
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-[var(--muted)] mb-8">
             Can't find what you're looking for? Our support team is here to help.
           </p>
           <Link

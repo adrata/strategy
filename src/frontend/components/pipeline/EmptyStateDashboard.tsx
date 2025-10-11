@@ -57,15 +57,15 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
   const sectionInfo = getSectionInfo();
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header matching other pipeline pages */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 capitalize">
+            <h1 className="text-2xl font-semibold text-[var(--foreground)] capitalize">
               {section}
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[var(--muted)]">
               {section === 'prospects' ? 'Cold relationships' : 
                section === 'leads' ? 'Warm relationships' :
                section === 'opportunities' ? 'Real pipeline' :
@@ -115,50 +115,50 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
       </div>
 
       {/* Stats Pills */}
-      <div className="flex-shrink-0 px-6 py-3 border-b border-gray-200">
+      <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600">Active:</span>
-            <span className="text-sm font-semibold text-gray-900">0</span>
+            <span className="text-sm font-medium text-[var(--muted)]">Active:</span>
+            <span className="text-sm font-semibold text-[var(--foreground)]">0</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600">Companies:</span>
-            <span className="text-sm font-semibold text-gray-900">0</span>
+            <span className="text-sm font-medium text-[var(--muted)]">Companies:</span>
+            <span className="text-sm font-semibold text-[var(--foreground)]">0</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600">Overdue:</span>
-            <span className="text-sm font-semibold text-gray-900">0</span>
+            <span className="text-sm font-medium text-[var(--muted)]">Overdue:</span>
+            <span className="text-sm font-semibold text-[var(--foreground)]">0</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600">Recent:</span>
+            <span className="text-sm font-medium text-[var(--muted)]">Recent:</span>
             <span className="text-sm font-semibold text-blue-600">0</span>
           </div>
         </div>
       </div>
 
       {/* Search and Filter Controls */}
-      <div className="flex-shrink-0 px-6 py-3 border-b border-gray-200">
+      <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"
               placeholder={`Search ${section.toLowerCase()}...`}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-4 w-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
           </div>
-          <button className="px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" disabled>
+          <button className="px-3 py-2 text-sm text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] disabled:opacity-50" disabled>
             Filter
           </button>
-          <button className="px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" disabled>
+          <button className="px-3 py-2 text-sm text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] disabled:opacity-50" disabled>
             Sort
           </button>
-          <button className="px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" disabled>
+          <button className="px-3 py-2 text-sm text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] disabled:opacity-50" disabled>
             Columns
           </button>
         </div>
@@ -169,10 +169,10 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
         <div className="text-center max-w-md">
           
           {/* Title and Subtitle */}
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
             {sectionInfo.title}
           </h3>
-          <p className="text-gray-600 mb-8">
+          <p className="text-[var(--muted)] mb-8">
             {sectionInfo.subtitle}
           </p>
           
@@ -187,10 +187,10 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
           
           {/* Suggestions */}
           <div className="mt-8 text-left">
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Quick Start Ideas:</h4>
+            <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Quick Start Ideas:</h4>
             <ul className="space-y-2">
               {sectionInfo.suggestions.map((suggestion, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                <li key={index} className="flex items-start gap-2 text-sm text-[var(--muted)]">
                   <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                   {suggestion}
                 </li>

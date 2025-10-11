@@ -35,7 +35,7 @@ export const PendingActionBar: React.FC<PendingActionBarProps> = ({
           </button>
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+            className="px-4 py-2 bg-[var(--panel-background)]0 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
           >
             ❌ Cancel
           </button>

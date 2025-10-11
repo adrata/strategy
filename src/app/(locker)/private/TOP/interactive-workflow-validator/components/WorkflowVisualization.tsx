@@ -323,15 +323,15 @@ export const WorkflowVisualization: React.FC<WorkflowVisualizationProps> = ({
   }, [steps, selectedStep, onStepSelect]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Workflow Visualization</h3>
+    <div className="bg-[var(--background)] rounded-lg shadow-sm p-6">
+      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Workflow Visualization</h3>
       <div className="overflow-auto">
         <svg
           ref={svgRef}
           width="800"
           height="600"
           viewBox="0 0 800 600"
-          className="border border-gray-200 rounded-lg"
+          className="border border-[var(--border)] rounded-lg"
         />
       </div>
       <div className="mt-4 flex flex-wrap gap-4 text-sm">

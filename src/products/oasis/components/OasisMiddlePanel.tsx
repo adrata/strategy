@@ -215,25 +215,25 @@ export function OasisMiddlePanel({
 
   if (activeSection === 'channels') {
     return (
-      <div className="flex-1 flex flex-col bg-white">
+      <div className="flex-1 flex flex-col bg-[var(--background)]">
         {/* Header */}
-        <div className="flex-shrink-0 p-4 border-b border-gray-200">
+        <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-semibold text-gray-900">Channels</h1>
-            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <h1 className="text-xl font-semibold text-[var(--foreground)]">Channels</h1>
+            <button className="p-2 text-[var(--muted)] hover:text-[var(--muted)] hover:bg-[var(--hover)] rounded-lg transition-colors">
               <PlusIcon className="w-5 h-5" />
             </button>
           </div>
           
           {/* Search */}
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search channels..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -248,13 +248,13 @@ export function OasisMiddlePanel({
                 className={`w-full p-4 rounded-lg border transition-colors text-left ${
                   selectedChannel?.id === channel.id
                     ? 'border-blue-200 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    : 'border-[var(--border)] hover:border-[var(--border)] hover:bg-[var(--panel-background)]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <span className="text-blue-600 font-medium">#{channel.name}</span>
-                    <span className="text-sm text-gray-500">{channel.members} members</span>
+                    <span className="text-sm text-[var(--muted)]">{channel.members} members</span>
                   </div>
                   {channel.unreadCount > 0 && (
                     <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
@@ -264,10 +264,10 @@ export function OasisMiddlePanel({
                 </div>
                 
                 {channel.lastMessage && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
                     <span className="font-medium">{channel.lastMessage.author.name}:</span>
                     <span className="truncate">{channel.lastMessage.content}</span>
-                    <span className="text-xs text-gray-400 ml-auto">{channel.lastMessage.timestamp}</span>
+                    <span className="text-xs text-[var(--muted)] ml-auto">{channel.lastMessage.timestamp}</span>
                   </div>
                 )}
               </button>
@@ -281,15 +281,15 @@ export function OasisMiddlePanel({
   // Channel view
   if (selectedChannel) {
     return (
-      <div className="flex-1 flex flex-col bg-white">
+      <div className="flex-1 flex flex-col bg-[var(--background)]">
         {/* Channel Header */}
-        <div className="flex-shrink-0 p-4 border-b border-gray-200">
+        <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-lg font-semibold text-gray-900">#{selectedChannel.name}</span>
-              <span className="text-sm text-gray-500">{selectedChannel.members} members</span>
+              <span className="text-lg font-semibold text-[var(--foreground)]">#{selectedChannel.name}</span>
+              <span className="text-sm text-[var(--muted)]">{selectedChannel.members} members</span>
             </div>
-            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="p-2 text-[var(--muted)] hover:text-[var(--muted)] hover:bg-[var(--hover)] rounded-lg transition-colors">
               <EllipsisHorizontalIcon className="w-5 h-5" />
             </button>
           </div>
@@ -310,8 +310,8 @@ export function OasisMiddlePanel({
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-gray-900">{message.author.name}</span>
-                  <span className="text-sm text-gray-500">{message.timestamp}</span>
+                  <span className="font-medium text-[var(--foreground)]">{message.author.name}</span>
+                  <span className="text-sm text-[var(--muted)]">{message.timestamp}</span>
                   {message.isRead && (
                     <CheckIcon className="w-4 h-4 text-blue-500" />
                   )}
@@ -325,10 +325,10 @@ export function OasisMiddlePanel({
                     {message.reactions.map((reaction, index) => (
                       <button
                         key={index}
-                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-sm transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-full text-sm transition-colors"
                       >
                         <span>{reaction.emoji}</span>
-                        <span className="text-gray-600">{reaction.count}</span>
+                        <span className="text-[var(--muted)]">{reaction.count}</span>
                       </button>
                     ))}
                   </div>
@@ -346,7 +346,7 @@ export function OasisMiddlePanel({
         </div>
 
         {/* Message Input */}
-        <div className="flex-shrink-0 p-4 border-t border-gray-200">
+        <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <div className="flex-1 relative">
               <input
@@ -354,18 +354,18 @@ export function OasisMiddlePanel({
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 placeholder={`Message #${selectedChannel.name}`}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
                 <button
                   type="button"
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-1 text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
                 >
                   <PaperClipIcon className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="p-1 text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
                 >
                   <FaceSmileIcon className="w-4 h-4" />
                 </button>
@@ -386,13 +386,13 @@ export function OasisMiddlePanel({
 
   // Default view
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50">
+    <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
       <div className="text-center">
-        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-          <ChatBubbleLeftRightIcon className="w-8 h-8 text-gray-400" />
+        <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
+          <ChatBubbleLeftRightIcon className="w-8 h-8 text-[var(--muted)]" />
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Welcome to Oasis</h3>
-        <p className="text-gray-500">Select a channel to start communicating</p>
+        <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Welcome to Oasis</h3>
+        <p className="text-[var(--muted)]">Select a channel to start communicating</p>
       </div>
     </div>
   );

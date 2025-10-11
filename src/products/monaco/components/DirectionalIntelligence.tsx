@@ -36,24 +36,24 @@ export function DirectionalIntelligenceComponent({
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "critical":
-        return <ExclamationTriangleIcon className="w-5 h-5 text-gray-600" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-[var(--muted)]" />;
       case "high":
-        return <InformationCircleIcon className="w-5 h-5 text-gray-600" />;
+        return <InformationCircleIcon className="w-5 h-5 text-[var(--muted)]" />;
       case "medium":
-        return <LightBulbIcon className="w-5 h-5 text-gray-600" />;
+        return <LightBulbIcon className="w-5 h-5 text-[var(--muted)]" />;
       default:
-        return <InformationCircleIcon className="w-5 h-5 text-gray-600" />;
+        return <InformationCircleIcon className="w-5 h-5 text-[var(--muted)]" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     // Neutral colors for all priorities
-    return "border-l-gray-400 bg-gray-50 dark:bg-gray-900/20";
+    return "border-l-gray-400 bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20";
   };
 
   const getPersonalityColor = (trait: string) => {
     // Neutral colors for all personality traits
-    return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300";
+    return "bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300";
   };
 
   const getConfidenceText = (confidence: number) => {
@@ -160,10 +160,10 @@ Provide a professional, actionable description that explains what this insight m
                       <span className="text-xs px-2 py-1 rounded-full bg-[var(--background)] border border-[var(--border)]">
                         {insight.priority} priority
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
                         {Math.round(insight.confidence * 100)}% confidence
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
                         {insight.uniquenessScore}% unique
                       </span>
                     </div>
@@ -177,7 +177,7 @@ Provide a professional, actionable description that explains what this insight m
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs font-medium text-[var(--muted)]">🤖 AI Analysis</span>
                         {loadingDescriptions.has(`${index}`) && (
-                          <div className="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                          <div className="w-3 h-3 border-2 border-[var(--border)] border-t-gray-600 rounded-full animate-spin"></div>
                         )}
                       </div>
                       {aiDescriptions[`${index}`] ? (
@@ -207,7 +207,7 @@ Provide a professional, actionable description that explains what this insight m
                           {insight.sources.map((source, sourceIndex) => (
                             <span
                               key={sourceIndex}
-                              className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300"
+                              className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300"
                             >
                               📊 {source}
                             </span>
@@ -263,7 +263,7 @@ Provide a professional, actionable description that explains what this insight m
                         <span className="font-medium text-[var(--foreground)]">
                           Person {personId.slice(-3)}
                         </span>
-                        <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+                        <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
                           {getConfidenceText(assessment.confidenceScore)}
                         </span>
                       </div>
@@ -294,7 +294,7 @@ Provide a professional, actionable description that explains what this insight m
                                 <span className="font-semibold text-[var(--foreground)]">
                                   {trait.level} {trait.trait}
                                 </span>
-                                <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+                                <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
                                   {Math.round(trait.confidence * 100)}%
                                   confidence
                                 </span>
@@ -306,7 +306,7 @@ Provide a professional, actionable description that explains what this insight m
                                 {trait.sources.map((source, sourceIndex) => (
                                   <span
                                     key={sourceIndex}
-                                    className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300"
+                                    className="text-xs px-2 py-1 rounded bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300"
                                   >
                                     {source}
                                   </span>

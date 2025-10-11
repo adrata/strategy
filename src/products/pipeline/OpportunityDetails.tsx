@@ -384,7 +384,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
             type="skeleton" 
             size="md"
             message="Loading opportunity details..."
-            className="bg-white"
+            className="bg-[var(--background)]"
           />
         )}
 
@@ -778,7 +778,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
                               Schedule technical demo with evaluation team
                             </div>
                           </div>
-                          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                          <div className="p-3 bg-[var(--panel-background)]/50 rounded-lg">
                             <div className="font-medium text-[var(--foreground)]">Next Week</div>
                             <div className="text-sm text-[var(--muted)] mt-1">
                               Follow up with economic buyer on budget timeline

@@ -28,7 +28,7 @@ const getRoleColor = (role: string) => {
     case "Stakeholder":
       return "bg-purple-100 text-purple-800 border-purple-200";
     default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
+      return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
   }
 };
 
@@ -91,7 +91,7 @@ export function OverviewTab({
             // TODO: Implement update record functionality
             console.log('Update Record clicked for:', person.name);
           }}
-          className="px-4 py-2 bg-white border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+          className="px-4 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
         >
           Update Record
         </button>
@@ -133,14 +133,14 @@ export function OverviewTab({
         <div className={`p-4 rounded-lg border ${
           activityContext?.priority === 'high' ? 'bg-red-50 border-red-200' :
           activityContext?.priority === 'medium' ? 'bg-orange-50 border-orange-200' :
-          'bg-gray-50 border-gray-200'
+          'bg-[var(--panel-background)] border-[var(--border)]'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                 activityContext?.priority === 'high' ? 'bg-red-100 text-red-800' :
                 activityContext?.priority === 'medium' ? 'bg-orange-100 text-orange-800' :
-                'bg-gray-100 text-gray-800'
+                'bg-[var(--hover)] text-gray-800'
               }`}>
                 {activityContext?.activityType === 'email' ? '📧' : 
                  activityContext?.activityType === 'call' ? '📞' : 
@@ -182,7 +182,7 @@ export function OverviewTab({
         </div>
         
         <div className="flex flex-wrap gap-4">
-          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">Role</div>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getRoleColor(person.customFields?.monacoEnrichment?.buyerGroupAnalysis?.role || person.relationship || "Contact")}`}
@@ -193,7 +193,7 @@ export function OverviewTab({
                 "Contact"}
             </span>
           </div>
-          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">
               Last Engagement
             </div>
@@ -210,7 +210,7 @@ export function OverviewTab({
               })()}
             </div>
           </div>
-          <div className="bg-white border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
             <div className="font-semibold text-[var(--muted)] mb-1">
               Next Step
             </div>
@@ -456,7 +456,7 @@ export function OverviewTab({
                         ? "bg-blue-100 text-blue-800"
                         : person['status'] === "New"
                           ? "bg-amber-100 text-amber-800"
-                          : "bg-gray-100 text-gray-800"
+                          : "bg-[var(--hover)] text-gray-800"
                 }`}
               >
                 {person.status || "Lead"}
@@ -513,7 +513,7 @@ export function OverviewTab({
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
               Wants
             </div>
-            <div className="text-[var(--foreground)] bg-white border border-[var(--border)] rounded-lg p-4">
+            <div className="text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
               {generatePersonalWants(person)}
             </div>
           </div>
@@ -522,7 +522,7 @@ export function OverviewTab({
               <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
               Needs
             </div>
-            <div className="text-[var(--foreground)] bg-white border border-[var(--border)] rounded-lg p-4">
+            <div className="text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
               {generatePersonalNeeds(person)}
             </div>
           </div>

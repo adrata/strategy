@@ -53,7 +53,7 @@ export function SpeedrunSettings({
       {/* Settings Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-6 h-6 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md flex items-center justify-center text-xs font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        className="w-6 h-6 bg-[var(--loading-bg)] text-[var(--muted)] dark:text-gray-300 rounded-md flex items-center justify-center text-xs font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         title="Speedrun Settings"
       >
         <Cog6ToothIcon className="w-4 h-4" />

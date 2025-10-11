@@ -145,13 +145,13 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   };
 
   return (
-    <div className="group flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-gray-50 transition-colors">
-      <span className={`${className} ${!value ? 'text-gray-400 italic' : ''}`}>
+    <div className="group flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors">
+      <span className={`${className} ${!value ? 'text-[var(--muted)] italic' : ''}`}>
         {getDisplayValue()}
       </span>
       <button
         onClick={handleEditStart}
-        className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-blue-600 transition-all duration-200 hover:bg-blue-50 rounded"
+        className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-blue-600 transition-all duration-200 hover:bg-blue-50 rounded"
         title="Click to edit"
       >
         <PencilIcon className="w-4 h-4" />

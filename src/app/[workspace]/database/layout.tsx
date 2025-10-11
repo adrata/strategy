@@ -91,7 +91,7 @@ function DatabaseRightPanel() {
           </div>
           <button
             onClick={() => setSelectedRecord(null)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -103,9 +103,9 @@ function DatabaseRightPanel() {
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           <div className="space-y-3">
             {Object.entries(selectedRecord).map(([key, value]) => (
-              <div key={key} className="p-3 bg-gray-50 rounded-lg">
-                <h3 className="font-medium text-gray-900 mb-1">{key}</h3>
-                <p className="text-sm text-gray-600 break-all">
+              <div key={key} className="p-3 bg-[var(--panel-background)] rounded-lg">
+                <h3 className="font-medium text-[var(--foreground)] mb-1">{key}</h3>
+                <p className="text-sm text-[var(--muted)] break-all">
                   {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
                 </p>
               </div>

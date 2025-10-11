@@ -39,16 +39,16 @@ export const Loader: React.FC<LoaderProps> = ({
   };
 
   const containerClasses = fullScreen 
-    ? `fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center ${className}`
+    ? `fixed inset-0 bg-[var(--background)]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center ${className}`
     : `flex flex-col items-center justify-center p-8 ${className}`;
 
   return (
     <div className={containerClasses}>
       {/* Beautiful spinning loader */}
-      <div className={`${sizeClasses[size]} border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4`} />
+      <div className={`${sizeClasses[size]} border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin mb-4`} />
       
       {/* Loading message */}
-      <p className={`text-gray-600 ${textSizeClasses[size]} animate-pulse`}>
+      <p className={`text-[var(--muted)] ${textSizeClasses[size]} animate-pulse`}>
         {message}
       </p>
     </div>
@@ -72,7 +72,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
-          className="h-4 bg-gray-200 rounded animate-pulse"
+          className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"
           style={{
             width: i === lines - 1 ? '60%' : '100%'
           }}
@@ -86,35 +86,35 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 export const PanelLoader: React.FC<{ message?: string }> = ({ message }) => (
   <div className="flex items-center justify-center p-8">
     <div className="text-center">
-      <div className="h-8 w-8 bg-gray-200 rounded animate-pulse mx-auto mb-2"></div>
-      {message && <p className="text-sm text-gray-600">{message}</p>}
+      <div className="h-8 w-8 bg-[var(--loading-bg)] rounded animate-pulse mx-auto mb-2"></div>
+      {message && <p className="text-sm text-[var(--muted)]">{message}</p>}
     </div>
   </div>
 );
 
 // Pipeline skeleton (the beautiful one users love) - for full page loading
 export const PipelineSkeleton: React.FC<{ message?: string }> = ({ message }) => (
-  <div className="h-full flex flex-col bg-white">
+  <div className="h-full flex flex-col bg-[var(--background)]">
     {/* Header */}
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-8">
           <div>
-            <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mb-2"></div>
-            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
+            <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-center">
-              <div className="h-6 w-16 bg-gray-200 rounded animate-pulse mb-1"></div>
-              <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-6 w-16 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
+              <div className="h-3 w-12 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             </div>
             <div className="text-center">
-              <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mb-1"></div>
-              <div className="h-3 w-8 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-6 w-12 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
+              <div className="h-3 w-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             </div>
           </div>
         </div>
-        <div className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-10 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       </div>
     </div>
     
@@ -122,20 +122,20 @@ export const PipelineSkeleton: React.FC<{ message?: string }> = ({ message }) =>
     <div className="flex-shrink-0 px-6 pt-2 pb-1">
       <div className="flex items-center justify-between gap-4 py-2">
         <div className="flex items-center gap-4">
-          <div className="h-10 w-64 bg-gray-200 rounded animate-pulse"></div>
-          <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-10 w-64 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+          <div className="h-10 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
         </div>
-        <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       </div>
     </div>
     
     {/* Table */}
     <div className="flex-1 px-6 pb-6 min-h-0">
-      <div className="bg-white rounded-lg border border-gray-200 h-full flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col">
+        <div className="p-4 border-b border-[var(--border)]">
           <div className="grid grid-cols-5 gap-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div key={i} className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             ))}
           </div>
         </div>
@@ -143,7 +143,7 @@ export const PipelineSkeleton: React.FC<{ message?: string }> = ({ message }) =>
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="grid grid-cols-5 gap-4">
               {Array.from({ length: 5 }).map((_, j) => (
-                <div key={j} className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                <div key={j} className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
               ))}
             </div>
           ))}
@@ -156,18 +156,18 @@ export const PipelineSkeleton: React.FC<{ message?: string }> = ({ message }) =>
 
 // Company detail page skeleton - for full page loading
 export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message }) => (
-  <div className="h-full flex flex-col bg-white">
+  <div className="h-full flex flex-col bg-[var(--background)]">
     {/* Header */}
-    <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="h-6 w-6 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
           <div>
-            <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-8 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
+            <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
           </div>
         </div>
-        <div className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-10 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       </div>
     </div>
     
@@ -175,7 +175,7 @@ export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message 
     <div className="flex-shrink-0 px-6 pt-2 pb-1">
       <div className="flex items-center gap-8">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+          <div key={i} className="h-10 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
         ))}
       </div>
     </div>
@@ -185,26 +185,26 @@ export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message 
       <div className="space-y-8">
         {/* Company Summary Section */}
         <div className="space-y-4">
-          <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-6 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
           <div className="space-y-3">
-            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-4/5 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="h-4 w-3/4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="h-4 w-5/6 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="h-4 w-2/3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="h-4 w-4/5 bg-[var(--loading-bg)] rounded animate-pulse"></div>
           </div>
         </div>
         
         {/* Company Information Section */}
         <div className="space-y-4">
-          <div className="h-6 w-40 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-6 w-40 bg-[var(--loading-bg)] rounded animate-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Left Column */}
             <div className="space-y-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="space-y-2">
-                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 </div>
               ))}
             </div>
@@ -212,8 +212,8 @@ export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message 
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="space-y-2">
-                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-4 w-28 bg-[var(--loading-bg)] rounded animate-pulse"></div>
                 </div>
               ))}
             </div>

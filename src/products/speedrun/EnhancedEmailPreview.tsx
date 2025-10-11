@@ -189,7 +189,7 @@ export function EnhancedEmailPreview({
       case "breakup":
         return "text-red-600 bg-red-100 dark:bg-red-900/30";
       default:
-        return "text-gray-600 bg-gray-100 dark:bg-gray-900/30";
+        return "text-[var(--muted)] bg-[var(--hover)] dark:bg-[var(--foreground)]/30";
     }
   };
 
@@ -348,7 +348,7 @@ export function EnhancedEmailPreview({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="flex items-center gap-1 px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        className="flex items-center gap-1 px-3 py-1 text-sm bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-lg transition-colors"
                       >
                         <PencilIcon className="w-4 h-4" />
                         {isEditing ? "Preview" : "Edit"}
@@ -437,7 +437,7 @@ export function EnhancedEmailPreview({
                         <div className="text-sm font-medium text-[var(--muted)] mb-1">
                           Body:
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 h-full">
+                        <div className="bg-[var(--panel-background)] dark:bg-[var(--foreground)] rounded-lg p-4 h-full">
                           <pre className="whitespace-pre-wrap text-[var(--foreground)] font-sans">
                             {editedBody}
                           </pre>

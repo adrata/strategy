@@ -129,7 +129,7 @@ export function AutoDialerPopup({
                     <PhoneIcon className="w-3 h-3" />
                     Call tracking
                   </span>
-                  <span className="flex items-center gap-1 text-gray-600">
+                  <span className="flex items-center gap-1 text-[var(--muted)]">
                     <UserIcon className="w-3 h-3" />
                     Progress analytics
                   </span>
@@ -188,7 +188,7 @@ export function AutoDialerPopup({
                           ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                           : selectedPerson['priority'] === "Medium"
                             ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                            : "bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-[var(--muted)]"
                       }`}
                     >
                       {selectedPerson.priority} Priority
@@ -209,7 +209,7 @@ export function AutoDialerPopup({
           {/* CMD+D SHORTCUT REFERENCE TEMPORARILY HIDDEN
           <div className="text-center text-xs text-[var(--muted)] mt-1">
             Press{" "}
-            <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+            <kbd className="px-1 py-0.5 bg-[var(--hover)] rounded text-xs">
               ⌘D
             </kbd>{" "}
             to open dialer

@@ -1,11 +1,11 @@
 export default function CompetitorIntelligenceResearchReport() {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
+    <div className="max-w-4xl mx-auto p-6 bg-[var(--background)]">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           TOP Engineering Plus - Use Case #4: Competitor Intelligence Research
         </h1>
-        <p className="text-gray-600">QA Report - Real System Test</p>
+        <p className="text-[var(--muted)]">QA Report - Real System Test</p>
       </div>
 
       <div className="space-y-6">
@@ -25,11 +25,11 @@ export default function CompetitorIntelligenceResearchReport() {
           
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-gray-900">Target Company Analysis:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Target Company Analysis:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <p><strong>Tri-State Generation and Transmission Association, Inc.</strong></p>
-                <p className="text-sm text-gray-600">1100 West 116th Avenue, Westminster, CO 80234</p>
-                <p className="text-sm text-gray-600">Major power cooperative serving Colorado, Nebraska, New Mexico, and Wyoming</p>
+                <p className="text-sm text-[var(--muted)]">1100 West 116th Avenue, Westminster, CO 80234</p>
+                <p className="text-sm text-[var(--muted)]">Major power cooperative serving Colorado, Nebraska, New Mexico, and Wyoming</p>
                 
                 <div className="mt-3 pt-3 border-t">
                   <p className="text-sm font-medium mb-2">Your Existing Contacts at Tri-State:</p>
@@ -48,8 +48,8 @@ export default function CompetitorIntelligenceResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Competitive Landscape Analysis:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Competitive Landscape Analysis:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <p className="text-sm font-medium mb-3">Communications Engineering Competitors in Western Utilities:</p>
                 
                 <div className="space-y-4">
@@ -84,11 +84,11 @@ export default function CompetitorIntelligenceResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Competitive Intelligence Insights:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">Competitive Intelligence Insights:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <div className="space-y-3">
                   <div>
-                    <p className="font-medium text-gray-900">Recent Activity at Tri-State:</p>
+                    <p className="font-medium text-[var(--foreground)]">Recent Activity at Tri-State:</p>
                     <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                       <li>Multiple UTC conference attendees suggest active infrastructure planning</li>
                       <li>High engagement level (8 contacts in Opportunity stage) indicates active project</li>
@@ -97,7 +97,7 @@ export default function CompetitorIntelligenceResearchReport() {
                   </div>
 
                   <div>
-                    <p className="font-medium text-gray-900">Likely Competitors Based on Project Profile:</p>
+                    <p className="font-medium text-[var(--foreground)]">Likely Competitors Based on Project Profile:</p>
                     <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                       <li><strong>Primary Threat:</strong> Black & Veatch (strong utility comms practice)</li>
                       <li><strong>Secondary Threat:</strong> Burns & McDonnell (Colorado presence)</li>
@@ -109,8 +109,8 @@ export default function CompetitorIntelligenceResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">TOP's Competitive Advantages:</h3>
-              <div className="bg-white border rounded p-3">
+              <h3 className="font-semibold text-[var(--foreground)]">TOP's Competitive Advantages:</h3>
+              <div className="bg-[var(--background)] border rounded p-3">
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                   <li><strong>Relationship Depth:</strong> 8 contacts already engaged vs. competitors starting cold</li>
                   <li><strong>Industry Focus:</strong> Specialized in critical infrastructure communications</li>
@@ -122,7 +122,7 @@ export default function CompetitorIntelligenceResearchReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Recommended Competitive Strategy:</h3>
+              <h3 className="font-semibold text-[var(--foreground)]">Recommended Competitive Strategy:</h3>
               <ol className="list-decimal list-inside text-gray-700 space-y-1">
                 <li>Leverage existing relationships for project intelligence</li>
                 <li>Position as specialized vs. generalist competitors</li>
@@ -136,8 +136,8 @@ export default function CompetitorIntelligenceResearchReport() {
         </div>
 
         {/* System Performance */}
-        <div className="bg-gray-50 border-l-4 border-gray-400 p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">System Performance:</h2>
+        <div className="bg-[var(--panel-background)] border-l-4 border-gray-400 p-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">System Performance:</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="font-medium">Response Time:</span> 3.1 seconds

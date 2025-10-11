@@ -252,47 +252,47 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     <div className="space-y-8">
       {/* Speedrun Summary - Positioned at top like Intelligence Summary */}
       <div className="space-y-4">
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-          <h4 className="font-semibold text-gray-900 mb-4">Speedrun Summary</h4>
+        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <h4 className="font-semibold text-[var(--foreground)] mb-4">Speedrun Summary</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Current Status:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.status}</span>
+                <span className="text-sm text-[var(--muted)]">Current Status:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.status}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Level:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.engagementLevel || 'Medium'}</span>
+                <span className="text-sm text-[var(--muted)]">Engagement Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.engagementLevel || 'Medium'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.influenceLevel || 'Moderate'}</span>
+                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.influenceLevel || 'Moderate'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Decision Power:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.decisionPower || 'Limited'}</span>
+                <span className="text-sm text-[var(--muted)]">Decision Power:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.decisionPower || 'Limited'}</span>
               </div>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Contact:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.lastContact}</span>
+                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.lastContact}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Next Action:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.nextAction}</span>
+                <span className="text-sm text-[var(--muted)]">Next Action:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.nextAction}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {personData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Priority:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.priority || 'Medium'}</span>
+                <span className="text-sm text-[var(--muted)]">Priority:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.priority || 'Medium'}</span>
               </div>
             </div>
           </div>
@@ -303,59 +303,59 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Name:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.name}</span>
+                <span className="text-sm text-[var(--muted)]">Name:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Title:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.title}</span>
+                <span className="text-sm text-[var(--muted)]">Title:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.title}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Company:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.company}</span>
+                <span className="text-sm text-[var(--muted)]">Company:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.company}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Department:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.department}</span>
+                <span className="text-sm text-[var(--muted)]">Department:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.department}</span>
               </div>
             </div>
           </div>
 
           {/* Intelligence Data Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Intelligence Profile</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligence Profile</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Influence Level:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.influenceLevel}</span>
+                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.influenceLevel}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Engagement Strategy:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.engagementStrategy}</span>
+                <span className="text-sm text-[var(--muted)]">Engagement Strategy:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.engagementStrategy}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Member:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {personData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Buyer Group Optimized:</span>
+                <span className="text-sm text-[var(--muted)]">Buyer Group Optimized:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupOptimized ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  personData.buyerGroupOptimized ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {personData.buyerGroupOptimized ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Seniority:</span>
-                <span className="text-sm font-medium text-gray-900 capitalize">{personData.seniority}</span>
+                <span className="text-sm text-[var(--muted)]">Seniority:</span>
+                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.seniority}</span>
               </div>
             </div>
           </div>
@@ -366,12 +366,12 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Email:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Email:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {personData.email !== '-' ? (
                     <a href={`mailto:${personData.email}`} className="text-blue-600 hover:underline">
                       {personData.email}
@@ -382,8 +382,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Phone:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">Phone:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {personData.phone !== '-' ? (
                     <a href={`tel:${personData.phone}`} className="text-blue-600 hover:underline">
                       {personData.phone}
@@ -394,8 +394,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">LinkedIn:</span>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {personData.linkedin !== '-' ? (
                     <a 
                       href={personData.linkedin.startsWith('http') ? personData.linkedin : `https://${personData.linkedin}`} 
@@ -414,22 +414,22 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
           </div>
 
           {/* Engagement History Card */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement History</h4>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Last Contact:</span>
-                <span className="text-sm font-medium text-gray-900">{formatRelativeDate(personData.lastContact)}</span>
+                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(personData.lastContact)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Next Action:</span>
-                <span className="text-sm font-medium text-gray-900">{personData.nextAction}</span>
+                <span className="text-sm text-[var(--muted)]">Next Action:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{personData.nextAction}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Status:</span>
+                <span className="text-sm text-[var(--muted)]">Status:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   personData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  personData.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                  personData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
                   'bg-yellow-100 text-yellow-800'
                 }`}>
                   {personData.status}
@@ -445,8 +445,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
       {/* What do they care about */}
       <div className="space-y-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-3">
+        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+          <h4 className="font-medium text-[var(--foreground)] mb-3">
             Professional Insights: Based on their role as {personData.title} at {personData.company}, they likely care about:
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -454,8 +454,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
+                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <span className="text-[var(--muted)] mr-2">•</span>
                     {want}
                   </li>
                 ))}
@@ -465,8 +465,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
               <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-gray-600 flex items-start">
-                    <span className="text-gray-400 mr-2">•</span>
+                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <span className="text-[var(--muted)] mr-2">•</span>
                     {need}
                   </li>
                 ))}
@@ -478,12 +478,12 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
         {/* Last Actions */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">What did I last do</h3>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Last 3 Actions:</h4>
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Last 3 Actions:</h4>
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-gray-600">
+                <li key={index} className="text-sm text-[var(--muted)]">
                   • {action.action} - {action.date}
                 </li>
               ))}
@@ -493,19 +493,19 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
       {/* Notes on them */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               {personData.notes && personData.notes !== 'No notes available' && personData.notes.trim() !== '' ? personData.notes : 
                 `—`
               }
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-900 mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-[var(--muted)] leading-relaxed">
               Focus on {(personData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(personData.lastContact)}. 
               Next action: {personData.nextAction}.

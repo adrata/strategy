@@ -61,12 +61,12 @@ export default function DemoPage() {
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen bg-[var(--panel-background)] flex">
       {/* Left Side - Black */}
       <div className="w-1/2 bg-black text-white p-8 flex flex-col justify-center">
         <Link 
           href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-white transition-colors mb-8"
         >
           ← Back to Home
         </Link>
@@ -84,40 +84,40 @@ export default function DemoPage() {
           {/* Benefits */}
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Instant Stakeholder Mapping</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Automatically identify all decision-makers and influencers in seconds, not months.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">AI-Powered Intelligence</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Get precise insights into buyer group dynamics and influence patterns.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Proven Results</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   73% faster deal closure and 2.3x higher win rates for our clients.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Platform Access</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Learn how to use buyer group intelligence ongoing.
                 </p>
               </div>
@@ -127,7 +127,7 @@ export default function DemoPage() {
       </div>
 
       {/* Right Side - White */}
-      <div className="w-1/2 bg-white flex items-center justify-center p-8">
+      <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {submitted ? (
             <div className="text-center">
@@ -137,8 +137,8 @@ export default function DemoPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Request Submitted!</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">Request Submitted!</h3>
+                <p className="text-[var(--muted)]">
                   Thank you for your interest. We'll be in touch within 24 hours to schedule your personalized demo.
                 </p>
               </div>
@@ -146,8 +146,8 @@ export default function DemoPage() {
           ) : (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Request a Demo</h2>
-                <p className="text-gray-600">
+                <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Request a Demo</h2>
+                <p className="text-[var(--muted)]">
                   See how buyer group intelligence can transform your sales process
                 </p>
               </div>
@@ -164,7 +164,7 @@ export default function DemoPage() {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -180,7 +180,7 @@ export default function DemoPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -196,7 +196,7 @@ export default function DemoPage() {
                     value={formData.company}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                     placeholder="Enter your company name"
                   />
                 </div>
@@ -211,7 +211,7 @@ export default function DemoPage() {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
                     placeholder="What would you like to learn about buyer group intelligence?"
                   />
                 </div>
@@ -234,11 +234,11 @@ export default function DemoPage() {
                 </button>
               </form>
 
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">
+              <div className="mt-6 p-4 bg-[var(--panel-background)] rounded-lg">
+                <p className="text-sm text-[var(--muted)] mb-2">
                   <strong>What happens next:</strong>
                 </p>
-                <ol className="text-xs text-gray-500 space-y-1">
+                <ol className="text-xs text-[var(--muted)] space-y-1">
                   <li>1. We'll review your request and company profile</li>
                   <li>2. You'll receive a calendar link within 24 hours</li>
                   <li>3. We'll prepare a personalized demo for your use case</li>

@@ -239,7 +239,7 @@ export function EnrichmentStatusWidget({
       case "queued":
         return <ClockIcon className="w-4 h-4 text-yellow-500" />;
       default:
-        return <ClockIcon className="w-4 h-4 text-gray-500" />;
+        return <ClockIcon className="w-4 h-4 text-[var(--muted)]" />;
     }
   };
 
@@ -313,7 +313,7 @@ export function EnrichmentStatusWidget({
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-1">
+            <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5 mb-1">
               <div
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   execution['status'] === "completed"

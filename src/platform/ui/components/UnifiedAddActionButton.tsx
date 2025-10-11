@@ -112,18 +112,18 @@ export function UnifiedAddActionButton({
         </button>
 
         {showDropdown && (
-          <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 mt-2 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
             <button
               onClick={() => {
                 onAddAction();
                 setShowDropdown(false);
               }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 flex items-center gap-3"
+              className="w-full text-left px-4 py-3 hover:bg-[var(--panel-background)] border-b border-gray-100 flex items-center gap-3"
             >
-              <BoltIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <BoltIcon className="w-4 h-4 text-[var(--muted)] flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Add Action</div>
-                <div className="text-sm text-gray-500">Record activity with contact</div>
+                <div className="text-sm font-medium text-[var(--foreground)]">Add Action</div>
+                <div className="text-sm text-[var(--muted)]">Record activity with contact</div>
               </div>
             </button>
             
@@ -132,12 +132,12 @@ export function UnifiedAddActionButton({
                 onAddNote();
                 setShowDropdown(false);
               }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3"
+              className="w-full text-left px-4 py-3 hover:bg-[var(--panel-background)] flex items-center gap-3"
             >
-              <PlusIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <PlusIcon className="w-4 h-4 text-[var(--muted)] flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Add Note</div>
-                <div className="text-sm text-gray-500">Quick note for any contact</div>
+                <div className="text-sm font-medium text-[var(--foreground)]">Add Note</div>
+                <div className="text-sm text-[var(--muted)]">Quick note for any contact</div>
               </div>
             </button>
           </div>

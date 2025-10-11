@@ -198,10 +198,10 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     return (
       <div className="p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
             Delete {recordType === 'people' ? 'Person' : recordType === 'companies' ? 'Company' : 'Record'}
           </h3>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-sm text-[var(--muted)] mb-6">
             This action cannot be undone. This will soft delete the record and remove it from your active lists.
           </p>
         </div>
@@ -235,19 +235,19 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={deleteConfirmName}
             onChange={(e) => setDeleteConfirmName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
             placeholder={`Type "${recordName}" to confirm`}
           />
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-[var(--border)]">
           <button
             type="button"
             onClick={() => {
               setDeleteConfirmName('');
               setActiveTab(previousTab || 'overview');
             }}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Cancel
           </button>
@@ -414,7 +414,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.department || ''}
             onChange={(e) => handleInputChange('department', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter department"
           />
         </div>
@@ -425,7 +425,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.seniority || ''}
             onChange={(e) => handleInputChange('seniority', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select seniority</option>
             <option value="entry">Entry Level</option>
@@ -446,7 +446,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter city"
           />
         </div>
@@ -458,7 +458,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.state || ''}
             onChange={(e) => handleInputChange('state', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter state"
           />
         </div>
@@ -472,7 +472,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="url"
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter LinkedIn profile URL"
         />
       </div>
@@ -481,7 +481,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderInsightsTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Intelligence insights will appear here when available.</p>
       </div>
     </div>
@@ -489,7 +489,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderEngagementTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Engagement data will appear here when available.</p>
       </div>
     </div>
@@ -497,43 +497,43 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderPersonaTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Persona data is read-only in edit mode.</p>
-        <p className="text-xs text-gray-400 mt-2">Use the Overview tab to edit basic information.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">Use the Overview tab to edit basic information.</p>
       </div>
     </div>
   );
 
   const renderCareerTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Career data is read-only in edit mode.</p>
-        <p className="text-xs text-gray-400 mt-2">Use the Overview tab to edit basic information.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">Use the Overview tab to edit basic information.</p>
       </div>
     </div>
   );
 
   const renderRoleTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Role information is read-only in edit mode.</p>
-        <p className="text-xs text-gray-400 mt-2">Use the Overview tab to edit basic information.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">Use the Overview tab to edit basic information.</p>
       </div>
     </div>
   );
 
   const renderEnablersTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Enablers and reports are read-only in edit mode.</p>
-        <p className="text-xs text-gray-400 mt-2">Use the main record view to access reports and tools.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">Use the main record view to access reports and tools.</p>
       </div>
     </div>
   );
 
   const renderIntelligenceTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Intelligence data will appear here when available.</p>
       </div>
     </div>
@@ -541,7 +541,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderBuyerGroupsTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Buyer group information will appear here when available.</p>
       </div>
     </div>
@@ -549,16 +549,16 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderWorkplaceTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Workplace data is read-only in edit mode.</p>
-        <p className="text-xs text-gray-400 mt-2">Use the Overview tab to edit basic information.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">Use the Overview tab to edit basic information.</p>
       </div>
     </div>
   );
 
   const renderTimelineTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Timeline activities will appear here when available.</p>
       </div>
     </div>
@@ -567,7 +567,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   // Account-specific tab render functions
   const renderCompanyIntelTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Company intelligence will appear here when available.</p>
       </div>
     </div>
@@ -575,7 +575,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderContactsTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Account contacts will appear here when available.</p>
       </div>
     </div>
@@ -583,7 +583,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderOpportunitiesTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Account opportunities will appear here when available.</p>
       </div>
     </div>
@@ -591,7 +591,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderCompetitiveTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Competitive analysis will appear here when available.</p>
       </div>
     </div>
@@ -600,7 +600,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   // Opportunity-specific tab render functions
   const renderDealIntelTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Deal intelligence will appear here when available.</p>
       </div>
     </div>
@@ -608,7 +608,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderStakeholdersTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Stakeholder information will appear here when available.</p>
       </div>
     </div>
@@ -616,7 +616,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderClosePlanTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Close plan will appear here when available.</p>
       </div>
     </div>
@@ -762,7 +762,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.name || ''}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter full name"
             required
           />
@@ -775,7 +775,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.jobTitle || ''}
             onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter job title"
           />
         </div>
@@ -790,7 +790,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="email"
             value={formData.email || ''}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter email address"
           />
         </div>
@@ -802,7 +802,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="tel"
             value={formData.phone || ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter phone number"
           />
         </div>
@@ -816,7 +816,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.status || 'new'}
             onChange={(e) => handleInputChange('status', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="new">New</option>
             <option value="contacted">Contacted</option>
@@ -833,7 +833,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.priority || 'medium'}
             onChange={(e) => handleInputChange('priority', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -851,7 +851,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.company || ''}
             onChange={(e) => handleInputChange('company', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter company name"
           />
         </div>
@@ -862,7 +862,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.relationship || ''}
             onChange={(e) => handleInputChange('relationship', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select relationship</option>
             <option value="champion">Champion</option>
@@ -888,7 +888,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="number"
             value={formData.estimatedValue || ''}
             onChange={(e) => handleInputChange('estimatedValue', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter estimated value"
           />
         </div>
@@ -899,7 +899,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.currency || 'USD'}
             onChange={(e) => handleInputChange('currency', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
@@ -917,7 +917,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.stage || ''}
             onChange={(e) => handleInputChange('stage', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select stage</option>
             <option value="Build Rapport">Build Rapport</option>
@@ -940,7 +940,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             max="100"
             value={formData.probability || ''}
             onChange={(e) => handleInputChange('probability', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter probability"
           />
         </div>
@@ -954,7 +954,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="date"
           value={formData.expectedCloseDate || ''}
           onChange={(e) => handleInputChange('expectedCloseDate', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
     </div>
@@ -963,24 +963,24 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   const renderStrategyTab = () => (
     <div className="p-6 space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Pain Points & Challenges</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Pain Points & Challenges</h3>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Pain Point 1</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Pain Point 1</label>
             <textarea
               value={formData.painPoint1 || ''}
               onChange={(e) => handleInputChange('painPoint1', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter pain point or challenge..."
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Pain Point 2</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Pain Point 2</label>
             <textarea
               value={formData.painPoint2 || ''}
               onChange={(e) => handleInputChange('painPoint2', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter pain point or challenge..."
               rows={2}
             />
@@ -989,24 +989,24 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Value Propositions & Benefits</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Value Propositions & Benefits</h3>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Value Proposition 1</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Value Proposition 1</label>
             <textarea
               value={formData.valueProp1 || ''}
               onChange={(e) => handleInputChange('valueProp1', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter value proposition or benefit..."
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Value Proposition 2</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Value Proposition 2</label>
             <textarea
               value={formData.valueProp2 || ''}
               onChange={(e) => handleInputChange('valueProp2', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter value proposition or benefit..."
               rows={2}
             />
@@ -1015,24 +1015,24 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Positioning & Messaging</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Positioning & Messaging</h3>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Opening Line</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Opening Line</label>
             <textarea
               value={formData.openingLine || ''}
               onChange={(e) => handleInputChange('openingLine', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter compelling opening line..."
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Best Contact Method</label>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Best Contact Method</label>
             <select
               value={formData.bestContactMethod || ''}
               onChange={(e) => handleInputChange('bestContactMethod', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select Method</option>
               <option value="email">Email</option>
@@ -1057,7 +1057,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.company || ''}
             onChange={(e) => handleInputChange('company', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter company name"
           />
         </div>
@@ -1069,7 +1069,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.companyDomain || ''}
             onChange={(e) => handleInputChange('companyDomain', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter domain"
           />
         </div>
@@ -1084,7 +1084,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.industry || ''}
             onChange={(e) => handleInputChange('industry', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter industry"
           />
         </div>
@@ -1095,7 +1095,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.vertical || ''}
             onChange={(e) => handleInputChange('vertical', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select vertical</option>
             <option value="C Stores">C Stores</option>
@@ -1118,7 +1118,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <select
             value={formData.companySize || ''}
             onChange={(e) => handleInputChange('companySize', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select size</option>
             <option value="1-10">1-10 employees</option>
@@ -1137,7 +1137,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.department || ''}
             onChange={(e) => handleInputChange('department', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter department"
           />
         </div>
@@ -1151,7 +1151,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="url"
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter LinkedIn profile URL"
         />
       </div>
@@ -1165,7 +1165,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter city"
           />
         </div>
@@ -1177,7 +1177,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.state || ''}
             onChange={(e) => handleInputChange('state', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter state"
           />
         </div>
@@ -1189,7 +1189,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.country || ''}
             onChange={(e) => handleInputChange('country', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter country"
           />
         </div>
@@ -1207,7 +1207,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="text"
           value={formData.nextAction || ''}
           onChange={(e) => handleInputChange('nextAction', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="What should happen next?"
         />
       </div>
@@ -1221,7 +1221,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="date"
             value={formData.nextActionDate || ''}
             onChange={(e) => handleInputChange('nextActionDate', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         <div>
@@ -1232,19 +1232,19 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="date"
             value={formData.lastActionDate || ''}
             onChange={(e) => handleInputChange('lastActionDate', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
 
-      <div className="pt-4 border-t border-gray-200">
+      <div className="pt-4 border-t border-[var(--border)]">
         <div className="flex items-center">
           <input
             id="include-action"
             type="checkbox"
             checked={includeAction}
             onChange={(e) => setIncludeAction(e.target.checked)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[var(--border)] rounded"
           />
           <label htmlFor="include-action" className="ml-2 block text-sm text-gray-700">
             Log an action with this update
@@ -1252,7 +1252,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         </div>
 
         {includeAction && (
-          <div className="mt-4 space-y-3 p-4 bg-gray-50 rounded-lg">
+          <div className="mt-4 space-y-3 p-4 bg-[var(--panel-background)] rounded-lg">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Action Type
@@ -1260,7 +1260,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               <select
                 value={actionData.actionType}
                 onChange={(e) => setActionData(prev => ({ ...prev, actionType: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="update">Record Update</option>
                 <option value="call">Phone Call</option>
@@ -1281,7 +1281,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={actionData.notes}
                 onChange={(e) => setActionData(prev => ({ ...prev, notes: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="What happened? What was discussed?"
               />
             </div>
@@ -1294,7 +1294,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 type="text"
                 value={actionData.nextAction}
                 onChange={(e) => setActionData(prev => ({ ...prev, nextAction: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="What should happen next?"
               />
             </div>
@@ -1314,7 +1314,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.notes || ''}
           onChange={(e) => handleInputChange('notes', e.target.value)}
           rows={8}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Add any notes or comments about this prospect"
         />
       </div>
@@ -1327,7 +1327,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="text"
           value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
           onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter tags separated by commas"
         />
       </div>
@@ -1335,30 +1335,30 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   );
 
   return (
-    <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-50">
-              <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-[var(--background)] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">
               Update {getSectionTitle()}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[var(--muted)] mt-1">
               Edit the information for this {getSectionTitle().toLowerCase()}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
             >
-              <XMarkIcon className="w-5 h-5 text-gray-500" />
+              <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
             </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-[var(--border)]">
           <div className="flex items-center gap-1 px-6">
             {MODAL_TABS.map((tab) => (
               <button
@@ -1366,8 +1366,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 onClick={() => handleTabChange(tab.id)}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
                 }`}
               >
                 {tab.label}
@@ -1383,14 +1383,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
             <div>
               {onDelete && (
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-[var(--background)] border border-red-300 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <TrashIcon className="w-4 h-4" />
                   {loading ? 'Deleting...' : 'Delete'}
@@ -1401,7 +1401,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
               >
                 Cancel
               </button>
@@ -1426,31 +1426,31 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
       {/* Action Modal */}
       {showActionModal && (
-        <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-center justify-center z-60">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-60">
+          <div className="bg-[var(--background)] rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Action Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowActionModal(false)}
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Add Action</h3>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <h3 className="text-lg font-semibold text-[var(--foreground)]">Add Action</h3>
+                  <p className="text-sm text-[var(--muted)] mt-1">
                     Log an action for {record?.fullName || record?.name || 'this prospect'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowActionModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
               >
-                <XMarkIcon className="w-5 h-5 text-gray-500" />
+                <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
               </button>
             </div>
 
@@ -1463,7 +1463,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 <select
                   value={actionData.actionType}
                   onChange={(e) => setActionData(prev => ({ ...prev, actionType: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="call">Phone Call</option>
                   <option value="email">Email Sent</option>
@@ -1483,7 +1483,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={actionData.notes}
                   onChange={(e) => setActionData(prev => ({ ...prev, notes: e.target.value }))}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="What happened? What was discussed?"
                 />
               </div>
@@ -1496,7 +1496,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   type="text"
                   value={actionData.nextAction}
                   onChange={(e) => setActionData(prev => ({ ...prev, nextAction: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="What should happen next?"
                 />
               </div>
@@ -1509,17 +1509,17 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   type="date"
                   value={actionData.nextActionDate}
                   onChange={(e) => setActionData(prev => ({ ...prev, nextActionDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Action Modal Footer */}
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
               <button
                 type="button"
                 onClick={() => setShowActionModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
               >
                 Cancel
               </button>

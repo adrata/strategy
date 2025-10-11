@@ -174,7 +174,7 @@ export function ChatInput({
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
-              className={`w-full text-base rounded-md resize-none overflow-y-auto placeholder-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:border-gray-300 ${isDragOver ? 'border-blue-500 bg-blue-50' : ''}`}
+              className={`w-full text-base rounded-md resize-none overflow-y-auto placeholder-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:border-[var(--border)] ${isDragOver ? 'border-blue-500 bg-blue-50' : ''}`}
               onKeyDown={e => {
                 const isStandardShortcut = (
                   (e.metaKey || e.ctrlKey) && ['v', 'c', 'x', 'a', 'z', 'y'].includes(e.key.toLowerCase())

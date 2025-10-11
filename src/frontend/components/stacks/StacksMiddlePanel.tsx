@@ -69,10 +69,10 @@ const mockTasks: TaskItem[] = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'todo': return 'bg-gray-100 text-gray-800';
+    case 'todo': return 'bg-[var(--hover)] text-gray-800';
     case 'in-progress': return 'bg-blue-100 text-blue-800';
     case 'done': return 'bg-green-100 text-green-800';
-    default: return 'bg-gray-100 text-gray-800';
+    default: return 'bg-[var(--hover)] text-gray-800';
   }
 };
 
@@ -81,7 +81,7 @@ const getPriorityColor = (priority: string) => {
     case 'low': return 'text-green-600';
     case 'medium': return 'text-yellow-600';
     case 'high': return 'text-red-600';
-    default: return 'text-gray-600';
+    default: return 'text-[var(--muted)]';
   }
 };
 

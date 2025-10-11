@@ -175,6 +175,7 @@ body:not(.website) {
   --border: #e3e4e8;
   --muted: #666666;
   --muted-light: #999999;
+  --loading-bg: #e5e7eb;
   --hover: #f5f5f5;
   --button-text: #ffffff;
   --button-background: #000000;

@@ -201,7 +201,7 @@ Make this highly specific to TOP's actual business model and the target company'
       businessUnits.push({
         name,
         functions: unitFunctions[index] || [],
-        color: colors[index] || 'bg-gray-100 border-gray-200'
+        color: colors[index] || 'bg-[var(--hover)] border-[var(--border)]'
       });
     });
     

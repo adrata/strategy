@@ -44,10 +44,10 @@ export function BaseTable({
     return (
       <tbody>
         {Array.from({ length: loadingRows }).map((_, index) => (
-          <tr key={index} className="border-b border-gray-200 animate-pulse">
+          <tr key={index} className="border-b border-[var(--border)] animate-pulse">
             {columns.map((column) => (
               <td key={column.key} className="px-6 py-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
               </td>
             ))}
           </tr>
@@ -74,10 +74,10 @@ export function BaseTable({
       <tbody>
         <tr>
           <td colSpan={columns.length} className="px-6 py-12 text-center">
-            <div className="text-gray-500">
+            <div className="text-[var(--muted)]">
               <div className="text-4xl mb-4">📄</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No data available</h3>
-              <p className="text-gray-600">There are no records to display.</p>
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No data available</h3>
+              <p className="text-[var(--muted)]">There are no records to display.</p>
             </div>
           </td>
         </tr>
@@ -104,7 +104,7 @@ export function BaseTable({
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}>
+    <div className={`bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden ${className}`}>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <TableHeaderRefactored

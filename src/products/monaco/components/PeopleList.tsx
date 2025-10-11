@@ -95,7 +95,7 @@ export const PeopleList: React.FC<PeopleListProps> = ({
                     <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                       activityContext?.priority === 'high' ? 'bg-red-100 text-red-800 border border-red-200' :
                       activityContext?.priority === 'medium' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
-                      'bg-gray-100 text-gray-800 border border-gray-200'
+                      'bg-[var(--hover)] text-gray-800 border border-[var(--border)]'
                     }`}>
                       {contextualInsight}
                     </div>

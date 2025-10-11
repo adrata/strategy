@@ -122,7 +122,7 @@ export function TableCell({
       case 'status':
         const statusColors = {
           'active': 'bg-green-100 text-green-800',
-          'inactive': 'bg-gray-100 text-gray-800',
+          'inactive': 'bg-[var(--hover)] text-gray-800',
           'pending': 'bg-yellow-100 text-yellow-800',
           'completed': 'bg-blue-100 text-blue-800',
           'cancelled': 'bg-red-100 text-red-800',
@@ -137,7 +137,7 @@ export function TableCell({
           'closed-lost': 'bg-red-100 text-red-800'
         };
         
-        const statusClass = statusColors[formattedValue.toLowerCase()] || 'bg-gray-100 text-gray-800';
+        const statusClass = statusColors[formattedValue.toLowerCase()] || 'bg-[var(--hover)] text-gray-800';
         
         return (
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
@@ -147,7 +147,7 @@ export function TableCell({
 
       case 'badge':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
             {formattedValue}
           </span>
         );
@@ -189,7 +189,7 @@ export function TableCell({
   };
 
   return (
-    <td className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${className}`}>
+    <td className={`px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)] ${className}`}>
       {renderContent()}
     </td>
   );

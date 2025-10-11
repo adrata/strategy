@@ -79,30 +79,30 @@ export default function PricingPage() {
           
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Tailored Pricing</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Custom pricing based on your team size, usage, and specific requirements.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Enterprise Features</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Access to advanced features, dedicated support, and custom integrations.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Quick Response</h3>
-                <p className="text-gray-400">
+                <p className="text-[var(--muted)]">
                   Get your custom quote within 24 hours of submitting your information.
                 </p>
               </div>
@@ -114,11 +114,11 @@ export default function PricingPage() {
       </div>
 
       {/* Right Side - Quote Form */}
-      <div className="w-1/2 bg-white flex items-center justify-center p-8">
+      <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Request Your Quote</h3>
+              <h3 className="text-2xl font-bold text-[var(--foreground)] mb-6">Request Your Quote</h3>
             </div>
 
             <div>
@@ -131,7 +131,7 @@ export default function PricingPage() {
                 value={formData.company}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="Your company name"
               />
             </div>
@@ -146,7 +146,7 @@ export default function PricingPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="Full name"
               />
             </div>
@@ -161,7 +161,7 @@ export default function PricingPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="you@company.com"
               />
             </div>
@@ -175,7 +175,7 @@ export default function PricingPage() {
                 name="numberOfSellers"
                 value={formData.numberOfSellers}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="Enter number of sellers"
               />
             </div>
@@ -189,7 +189,7 @@ export default function PricingPage() {
                 name="averageAccountsPerSeller"
                 value={formData.averageAccountsPerSeller}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="Enter average accounts per seller"
               />
             </div>
@@ -203,7 +203,7 @@ export default function PricingPage() {
                 name="averageHeadcountTargetAccounts"
                 value={formData.averageHeadcountTargetAccounts}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 placeholder="Enter average headcount of target accounts"
               />
             </div>
@@ -216,7 +216,7 @@ export default function PricingPage() {
               {isSubmitting ? "Sending Request..." : "Get Custom Quote"}
             </button>
 
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-[var(--muted)] text-center">
               By submitting this form, you agree to our Terms of Service and Privacy Policy.
             </p>
           </form>

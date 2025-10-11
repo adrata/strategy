@@ -131,7 +131,7 @@ export function PipelineStandaloneCleanContent() {
       {/* Monaco Signal Popup - Pipeline Speedrun Version */}
       {isSlideUpVisible && (
         <div className="fixed bottom-6 right-4 z-[9999] animate-in slide-in-from-right duration-300">
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl w-[520px] p-7">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl w-[520px] p-7">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
@@ -140,13 +140,13 @@ export function PipelineStandaloneCleanContent() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">Buying Intent Detected</h3>
-                  <p className="text-gray-600 text-sm">Pipeline Speedrun Signal</p>
+                  <h3 className="font-semibold text-[var(--foreground)] text-lg">Buying Intent Detected</h3>
+                  <p className="text-[var(--muted)] text-sm">Pipeline Speedrun Signal</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsSlideUpVisible(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -155,14 +155,14 @@ export function PipelineStandaloneCleanContent() {
             </div>
             
             <div className="space-y-4">
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className="bg-[var(--panel-background)] rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-medium text-sm">
                     SM
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Sarah Mitchell</p>
-                    <p className="text-sm text-gray-600">IT Director at Retail Solutions Inc</p>
+                    <p className="font-medium text-[var(--foreground)]">Sarah Mitchell</p>
+                    <p className="text-sm text-[var(--muted)]">IT Director at Retail Solutions Inc</p>
                   </div>
                 </div>
                 <p className="text-sm text-gray-700 leading-relaxed">
@@ -171,7 +171,7 @@ export function PipelineStandaloneCleanContent() {
               </div>
               
               <p className="text-sm text-gray-700 leading-relaxed">
-                <span className="text-gray-900 font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
+                <span className="text-[var(--foreground)] font-medium">Recommendation:</span> Move to #1 on Speedrun (prime timing for outreach)
               </p>
               
               <div className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export function PipelineStandaloneCleanContent() {
                 </button>
                 <button
                   onClick={() => setIsSlideUpVisible(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
+                  className="bg-[var(--hover)] hover:bg-[var(--loading-bg)] text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
                 >
                   Dismiss
                 </button>

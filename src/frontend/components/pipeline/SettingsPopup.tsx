@@ -78,9 +78,9 @@ function SettingsSection({ title, icon: Icon, children }: {
 }) {
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-200">
-        <Icon className="w-5 h-5 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[var(--border)]">
+        <Icon className="w-5 h-5 text-[var(--muted)]" />
+        <h3 className="text-lg font-semibold text-[var(--foreground)]">{title}</h3>
       </div>
       {children}
     </div>
@@ -111,7 +111,7 @@ function SettingsField({
       <label className="block text-sm font-medium text-gray-700 mb-2">
         {label}
         {description && (
-          <span className="block text-xs text-gray-500 font-normal mt-1">
+          <span className="block text-xs text-[var(--muted)] font-normal mt-1">
             {description}
           </span>
         )}
@@ -121,7 +121,7 @@ function SettingsField({
         <select
           value={value as string}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
         >
           {options?.map(option => (
             <option key={option.value} value={option.value}>
@@ -135,7 +135,7 @@ function SettingsField({
             type="checkbox"
             checked={value as boolean}
             onChange={(e) => onChange(e.target.checked)}
-            className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            className="w-4 h-4 text-red-600 border-[var(--border)] rounded focus:ring-red-500"
           />
           <span className="text-sm text-gray-700">Enable this setting</span>
         </label>
@@ -146,12 +146,12 @@ function SettingsField({
             value={value as string}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
+            className="w-full px-3 py-2 pr-10 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--muted)]"
           >
             {showPassword ? (
               <EyeSlashIcon className="w-4 h-4" />
@@ -166,7 +166,7 @@ function SettingsField({
           value={value as string | number}
           onChange={(e) => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
         />
       )}
     </div>
@@ -413,31 +413,31 @@ export function SettingsPopup({ isOpen, onClose, anchorElement }: SettingsPopupP
       
       {/* Settings Popup */}
       <div 
-        className="bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden z-50"
+        className="bg-[var(--background)] rounded-lg shadow-2xl border border-[var(--border)] overflow-hidden z-50"
         style={popupStyle}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] bg-[var(--panel-background)]">
           <div className="flex items-center gap-2">
-            <CogIcon className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
+            <CogIcon className="w-5 h-5 text-[var(--muted)]" />
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">Settings</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-200 rounded transition-colors"
+            className="p-1 hover:bg-[var(--loading-bg)] rounded transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-gray-500" />
+            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-[var(--border)]">
           <button
             onClick={() => setActiveTab('company')}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'company'
                 ? 'text-red-600 border-b-2 border-red-600 bg-red-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
             }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -450,7 +450,7 @@ export function SettingsPopup({ isOpen, onClose, anchorElement }: SettingsPopupP
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'user'
                 ? 'text-red-600 border-b-2 border-red-600 bg-red-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
             }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -604,7 +604,7 @@ export function SettingsPopup({ isOpen, onClose, anchorElement }: SettingsPopupP
               </SettingsSection>
 
               {/* Save Button */}
-              <div className="flex justify-end pt-4 border-t border-gray-200">
+              <div className="flex justify-end pt-4 border-t border-[var(--border)]">
                 <button
                   onClick={handleSaveWorkspaceSettings}
                   disabled={loading}
@@ -765,16 +765,16 @@ export function SettingsPopup({ isOpen, onClose, anchorElement }: SettingsPopupP
                 <div className="space-y-3">
                   <button
                     onClick={() => setShowPasswordChange(!showPasswordChange)}
-                    className="w-full text-left px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="w-full text-left px-3 py-2 border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Change Password</span>
-                      <KeyIcon className="w-4 h-4 text-gray-400" />
+                      <KeyIcon className="w-4 h-4 text-[var(--muted)]" />
                     </div>
                   </button>
                   
                   {showPasswordChange && (
-                    <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div className="bg-[var(--panel-background)] p-4 rounded-lg space-y-3">
                       <SettingsField
                         label="Current Password"
                         value={passwordData.currentPassword}
@@ -850,7 +850,7 @@ export function SettingsPopup({ isOpen, onClose, anchorElement }: SettingsPopupP
               </SettingsSection>
 
               {/* Save Button */}
-              <div className="flex justify-end pt-4 border-t border-gray-200">
+              <div className="flex justify-end pt-4 border-t border-[var(--border)]">
                 <button
                   onClick={handleSaveUserSettings}
                   disabled={loading}
