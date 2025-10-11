@@ -583,10 +583,10 @@ export function initializeSafariCompatibility(): void {
     (window as any).__ADRATA_FORCE_WEB__ = true;
     (window as any).__ADRATA_SAFARI_MODE__ = true;
     
-    // Force web mode (protocol override removed - causes Safari readonly property error)
+    // Note: Cannot override protocol in Safari due to readonly property restrictions
+    // The Tauri override above should be sufficient for Safari compatibility
     if (window.location.protocol === 'tauri:') {
-      console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - forcing web mode');
-      // Note: Protocol override removed to prevent Safari readonly property error
+      console.warn('🚨 [SAFARI COMPAT] Detected tauri: protocol - using web mode fallback');
     }
   }
 
