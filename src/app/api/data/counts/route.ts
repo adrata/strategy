@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     const clientsCount = companiesCounts.CLIENT || 0;
     const partnersCount = companiesCounts.ACTIVE || 0; // Use ACTIVE as fallback for partners
     const sellersCount = peopleCounts.CLIENT || 0; // Use CLIENT status as fallback for sellers
-    const speedrunCount = peopleCount; // Use total people count as speedrun count
+    const speedrunCount = Math.min(50, peopleCount); // Speedrun is limited to top 50 people
     
     const counts = {
       leads: leadsCount,

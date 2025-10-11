@@ -121,49 +121,26 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // 🆕 FIX: Load speedrun data from leads table with speedrun tag, fallback to people if no speedrun leads
-        // In demo mode, show speedrun leads assigned to sellers too
+        // 🚀 FIX: Speedrun is top 50 people with companies, ranked by globalRank
+        console.log(`🏆 [SPEEDRUN] Loading top 50 people for speedrun for workspace: ${workspaceId}`);
         
-        let speedrunLeads = await prisma.leads.findMany({
+        const speedrunPeople = await prisma.people.findMany({
           where: {
             workspaceId,
             deletedAt: null,
-            tags: { has: 'speedrun' },
+            companyId: { not: null }, // Only people with company relationships
             ...(isDemoMode ? {} : {
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
-                ]
-              })
+              OR: [
+                { assignedUserId: userId },
+                { assignedUserId: null }
+              ]
             })
           },
           orderBy: [
+            { globalRank: 'asc' }, // Sort by rank (best prospects first)
             { updatedAt: 'desc' }
           ],
-          take: 200
-        });
-        
-        // 🆕 FALLBACK: If no speedrun-tagged leads, use people with company relationships
-        if (speedrunLeads.length === 0) {
-          console.log(`🔄 [SPEEDRUN] No speedrun-tagged leads found, falling back to people data for workspace: ${workspaceId}`);
-          
-          const speedrunPeople = await prisma.people.findMany({
-            where: {
-              workspaceId,
-              deletedAt: null,
-              companyId: { not: null }, // Only people with company relationships
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
-                ]
-              })
-            },
-            orderBy: [
-              { updatedAt: 'desc' }
-            ],
-            take: 200,
+          take: 50, // Limit to top 50 for speedrun
             select: {
               id: true,
               firstName: true,
@@ -195,7 +172,7 @@ export async function GET(request: NextRequest) {
           });
           
           // Transform people to speedrun format
-          sectionData = speedrunPeople.slice(0, limit).map((person, index) => {
+          sectionData = speedrunPeople.map((person, index) => {
             // Safe string truncation utility
             const safeString = (str: any, maxLength: number = 1000): string => {
               if (!str || typeof str !== 'string') return '';
@@ -226,47 +203,6 @@ export async function GET(request: NextRequest) {
               tags: ['speedrun'] // Add speedrun tag for consistency
             };
           });
-        } else {
-          // Transform speedrun leads to speedrun format
-          sectionData = speedrunLeads.slice(0, limit).map((lead, index) => {
-          // Safe string truncation utility
-          const safeString = (str: any, maxLength: number = 1000): string => {
-            if (!str || typeof str !== 'string') return '';
-            if (str.length <= maxLength) return str;
-            return str.substring(0, maxLength) + '...';
-          };
-
-          // 🎯 DETERMINE STAGE: Use lead status
-          let stage = lead.status || 'Prospect';
-          
-          // 🎯 BUYER GROUP ROLE: Default for speedrun leads
-          let buyerGroupRole = 'Stakeholder';
-
-          return {
-            id: lead.id,
-            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
-            name: safeString(lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown', 200),
-            company: safeString(lead.company || 'Unknown Company', 200),
-            title: safeString(lead.jobTitle || 'Unknown Title', 300),
-            role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
-            stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
-            email: safeString(lead.email || 'Unknown Email', 300),
-            phone: safeString(lead.phone || 'Unknown Phone', 50),
-            linkedin: safeString(lead.linkedinUrl || 'Unknown LinkedIn', 500),
-            status: safeString(lead.status || 'Unknown', 20),
-            lastAction: safeString(lead.lastAction || 'No action taken', 500),
-            lastActionDate: lead.lastActionDate || null,
-            nextAction: safeString(lead.nextAction || 'No next action', 500),
-            nextActionDate: lead.nextActionDate || null,
-            assignedUserId: lead.assignedUserId || null,
-            workspaceId: lead.workspaceId,
-            createdAt: lead.createdAt,
-            updatedAt: lead.updatedAt,
-            // Remove customFields to avoid large JSON data issues
-            tags: lead.tags || []
-          };
-        });
-        }
         break;
         
       case 'leads':
@@ -917,27 +853,14 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // 🆕 FIX: Count speedrun leads, fallback to people if no speedrun leads
-          const speedrunLeadsCount = await prisma.leads.count({
+          // 🚀 FIX: Speedrun count is limited to top 50 people with companies
+          totalCount = Math.min(50, await prisma.people.count({
             where: {
               workspaceId,
               deletedAt: null,
-              tags: { has: 'speedrun' }
+              companyId: { not: null }
             }
-          });
-          
-          if (speedrunLeadsCount === 0) {
-            // Fallback to people count if no speedrun leads
-            totalCount = await prisma.people.count({
-              where: {
-                workspaceId,
-                deletedAt: null,
-                companyId: { not: null }
-              }
-            });
-          } else {
-            totalCount = speedrunLeadsCount;
-          }
+          }));
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)
