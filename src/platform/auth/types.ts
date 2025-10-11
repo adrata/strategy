@@ -30,6 +30,7 @@ export interface UnifiedSession {
   platform: "web" | "desktop" | "mobile";
   deviceId: string;
   syncEnabled: boolean;
+  rememberMe?: boolean;
 }
 
 export interface AuthResult {

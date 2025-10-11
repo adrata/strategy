@@ -102,3 +102,7 @@ tests/artifacts/
 tests/results/
 playwright-report/
 test-results/
+playwright/.cache/
+test-results/
+playwright-report/
+downloads/

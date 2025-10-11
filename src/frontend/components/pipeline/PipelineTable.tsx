@@ -199,7 +199,10 @@ export function PipelineTable({
   const headerHeight = 40; // Height of table header
   const rowHeight = 64; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 220 : 500; // More conservative space reservation
+  // Account for tabs/filters section - increase space reservation for sections with tabs
+  const hasTabs = ['leads', 'prospects', 'opportunities'].includes(section);
+  const tabsHeight = hasTabs ? 60 : 0; // Extra height for tabs section
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 220 - tabsHeight : 500; // Account for tabs
   
   // Dynamic height calculation - keep table height reasonable
   let tableHeight;

@@ -45,7 +45,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/database/prisma-client';
+import { prisma } from '@/platform/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -217,7 +217,16 @@ async function handleLogin(credentials: any): Promise<any> {
   
   // Find user by email
   const user = await prisma.users.findFirst({
-    where: { email: credentials.email as string }
+    where: { email: credentials.email as string },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      name: true,
+      password: true,
+      isActive: true,
+      activeWorkspaceId: true,
+    }
   });
   
   if (!user) {
@@ -230,22 +239,31 @@ async function handleLogin(credentials: any): Promise<any> {
     throw new Error('Invalid credentials');
   }
   
-  // Generate tokens
+  // Determine token expiration based on remember me setting
+  const rememberMe = credentials.rememberMe === true;
+  const accessTokenExpiry = rememberMe ? '30d' : '1h'; // 30 days for remember me, 1 hour for normal
+  const refreshTokenExpiry = rememberMe ? '90d' : '7d'; // 90 days for remember me, 7 days for normal
+  
+  // Generate tokens with appropriate expiration
   const token = jwt.sign(
     { 
       userId: user.id, 
       email: user.email, 
-      workspaceId: user.activeWorkspaceId || null 
+      workspaceId: user.activeWorkspaceId || null,
+      rememberMe: rememberMe
     },
     process['env']['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production",
-    { expiresIn: '1h' }
+    { expiresIn: accessTokenExpiry }
   );
   
   const refreshToken = jwt.sign(
-    { userId: user.id, type: 'refresh' },
+    { userId: user.id, type: 'refresh', rememberMe: rememberMe },
     process['env']['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production",
-    { expiresIn: '7d' }
+    { expiresIn: refreshTokenExpiry }
   );
+  
+  // Calculate expiration time in milliseconds
+  const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000; // 30 days or 1 hour
   
   return {
     success: true,
@@ -260,7 +278,8 @@ async function handleLogin(credentials: any): Promise<any> {
       token,
       refreshToken,
       workspaceId: user.activeWorkspaceId || null,
-      expiresAt: new Date(Date.now() + 3600000).toISOString()
+      expiresAt: new Date(Date.now() + tokenExpiryMs).toISOString(),
+      rememberMe: rememberMe
     }
   };
 }

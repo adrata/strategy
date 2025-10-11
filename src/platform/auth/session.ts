@@ -99,11 +99,17 @@ export function createSession(
   deviceId: string,
   accessToken?: string,
   refreshToken?: string,
+  rememberMe?: boolean,
 ): UnifiedSession {
   const userWorkspaces = user.workspaces || [];
   
   // 🆕 CRITICAL FIX: Use the user's actual activeWorkspaceId from database, not hardcoded first workspace
   const activeWorkspaceId = user.activeWorkspaceId || (userWorkspaces[0] ? userWorkspaces[0].id : null);
+
+  // Determine session duration based on remember me setting
+  const sessionDuration = rememberMe 
+    ? 30 * 24 * 60 * 60 * 1000 // 30 days for remember me
+    : AUTH_CONFIG.sessionDuration; // Default 8 hours
 
   return {
     user: {
@@ -117,11 +123,12 @@ export function createSession(
     },
     accessToken,
     refreshToken,
-    expires: new Date(Date.now() + AUTH_CONFIG.sessionDuration).toISOString(),
+    expires: new Date(Date.now() + sessionDuration).toISOString(),
     lastActivity: new Date().toISOString(),
     platform,
     deviceId,
     syncEnabled: true,
+    rememberMe: rememberMe || false,
   };
 }
 

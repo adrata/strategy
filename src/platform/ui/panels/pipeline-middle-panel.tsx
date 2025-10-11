@@ -593,7 +593,7 @@ export function PipelineMiddlePanel() {
   
   if (showTableView) {
     return (
-      <div className="h-full flex flex-col bg-white">
+      <div className="h-full flex flex-col bg-white overflow-hidden">
         {renderHeader()}
         <div className="flex-1 px-6 pt-2">
           <PipelineFilters activeSection={activeSection} />
@@ -607,7 +607,7 @@ export function PipelineMiddlePanel() {
 
   // Kanban view for other sections
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
       {renderHeader()}
       <div className="flex-1 px-6 pt-2 pb-4">
         <PipelineFilters activeSection={activeSection} />

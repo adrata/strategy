@@ -141,6 +141,14 @@ export class ContextLoader {
       where: {
         userId: userId,
         workspaceId
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        isActive: true,
+        activeWorkspaceId: true,
       }
     });
     

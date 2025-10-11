@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 1000); // Cap at 1000
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000); // Cap at 1000, default 100
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
@@ -53,20 +53,39 @@ export async function GET(request: NextRequest) {
     }
 
     // Enhanced where clause for pipeline management
+    console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${context.workspaceId}, user: ${context.userId}`);
     const where: any = {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
+      OR: [
+        { assignedUserId: context.userId },
+        { assignedUserId: null }
+      ]
     };
+    console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { legalName: { contains: search, mode: 'insensitive' } },
-        { tradingName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { website: { contains: search, mode: 'insensitive' } },
-        { domain: { contains: search, mode: 'insensitive' } },
+      // Combine search with assignment filter
+      where.AND = [
+        {
+          OR: [
+            { assignedUserId: context.userId },
+            { assignedUserId: null }
+          ]
+        },
+        {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { legalName: { contains: search, mode: 'insensitive' } },
+            { tradingName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { website: { contains: search, mode: 'insensitive' } },
+            { domain: { contains: search, mode: 'insensitive' } },
+          ]
+        }
       ];
+      // Remove the top-level OR since we're using AND now
+      delete where.OR;
     }
 
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE)
@@ -102,6 +121,7 @@ export async function GET(request: NextRequest) {
       result = { success: true, data: counts };
     } else {
       // Optimized query with Prisma ORM for reliability
+      console.log(`🔍 [V1 COMPANIES API] Executing database query with where:`, where);
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,
@@ -122,10 +142,12 @@ export async function GET(request: NextRequest) {
             nextActionDate: true,
             industry: true,
             size: true
+            // Optimized for list views - removed unnecessary fields
           }
         }),
         prisma.companies.count({ where }),
       ]);
+      console.log(`🔍 [V1 COMPANIES API] Database query results:`, { companiesCount: companies.length, totalCount });
 
       result = createSuccessResponse(companies, {
         pagination: {
@@ -144,7 +166,7 @@ export async function GET(request: NextRequest) {
     responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
     
     
-    return NextResponse.json(result);
+    return result;
 
   } catch (error) {
     console.error('❌ [V1 COMPANIES API] Error:', error);
@@ -179,36 +201,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create company
-    const company = await prisma.companies.create({
-      data: {
-        name: body.name,
-        legalName: body.legalName,
-        email: body.email,
-        website: body.website,
-        phone: body.phone,
-        address: body.address,
-        city: body.city,
-        state: body.state,
-        country: body.country,
-        industry: body.industry,
-        status: body.status || 'ACTIVE',
-        priority: body.priority || 'MEDIUM',
-        workspaceId: context.workspaceId,
-        assignedUserId: body.assignedUserId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      include: {
-        assignedUser: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    // Create company and action in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create company
+      const company = await tx.companies.create({
+        data: {
+          name: body.name,
+          legalName: body.legalName,
+          email: body.email,
+          website: body.website,
+          phone: body.phone,
+          address: body.address,
+          city: body.city,
+          state: body.state,
+          country: body.country,
+          industry: body.industry,
+          status: body.status || 'ACTIVE',
+          priority: body.priority || 'MEDIUM',
+          workspaceId: context.workspaceId,
+          assignedUserId: body.assignedUserId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        include: {
+          assignedUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
         },
-      },
+      });
+
+      // Create action for company creation
+      const action = await tx.actions.create({
+        data: {
+          type: 'company_created',
+          subject: `New company added: ${company.name}`,
+          description: `System created new company record for ${company.name}`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          companyId: company.id,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return { company, action };
     });
+
+    const company = result.company;
 
     return createSuccessResponse(company, {
       message: 'Company created successfully',

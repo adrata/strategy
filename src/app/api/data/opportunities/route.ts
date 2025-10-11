@@ -54,12 +54,20 @@ export async function GET(request: NextRequest) {
       take: 2000 // Increased limit to prevent pagination issues
     });
 
-    console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);return createSuccessResponse(data, meta);
+    console.log(`✅ [DATA OPPORTUNITIES] Found ${opportunities.length} opportunities`);
+    
+    return createSuccessResponse(opportunities, {
+      count: opportunities.length,
+      workspaceId,
+      userId
+    });
 
   } catch (error) {
-    console.error('❌ Error fetching opportunities:', error);return NextResponse.json(
-      { error: 'Failed to fetch opportunities', details: error instanceof Error ? error.message : 'Unknown error' }, 
-      { status: 500 }
+    console.error('❌ Error fetching opportunities:', error);
+    return createErrorResponse(
+      'Failed to fetch opportunities',
+      'OPPORTUNITIES_FETCH_ERROR',
+      500
     );
   }
 }
@@ -69,7 +77,7 @@ export async function POST(request: NextRequest) {
     const { workspaceId, userId, name, description, currency, estimatedValue, stage } = await request.json();
 
     if (!workspaceId || !userId || !name) {
-      return createErrorResponse('$1', '$2', $3);
+      return createErrorResponse('Missing required fields', 'MISSING_FIELDS', 400);
     }
 
     console.log(`🔄 [DATA OPPORTUNITIES] Creating opportunity: ${name} for workspace: ${workspaceId}`);
@@ -105,10 +113,16 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    console.log(`✅ [DATA OPPORTUNITIES] Created opportunity: ${opportunity.id}`);return createSuccessResponse(data, meta);
+    console.log(`✅ [DATA OPPORTUNITIES] Created opportunity: ${opportunity.id}`);
+    
+    return createSuccessResponse(opportunity, {
+      workspaceId,
+      userId
+    });
 
   } catch (error) {
-    console.error('❌ Error creating opportunity:', error);return NextResponse.json(
+    console.error('❌ Error creating opportunity:', error);
+    return NextResponse.json(
       { error: 'Failed to create opportunity', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     );

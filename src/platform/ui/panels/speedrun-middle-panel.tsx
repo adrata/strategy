@@ -360,7 +360,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
     };
 
     return (
-      <div className="flex-1 overflow-hidden bg-[var(--background)] text-[var(--foreground)]">
+      <div className="h-full overflow-hidden bg-[var(--background)] text-[var(--foreground)]">
         <SpeedrunLeadDetails
           key={`lead-${convertedPerson.id}`}
           person={convertedPerson}
@@ -381,7 +381,8 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="h-full overflow-y-auto p-6">
+      <div className="max-w-full">
       {(currentView === 'now' || currentView === 'week' || currentView === 'month') && (
         <div className="space-y-4">
           {!loadingActions ? (
@@ -667,6 +668,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
             )}
           </div>
         )}
+      </div>
     </div>
   );
 }

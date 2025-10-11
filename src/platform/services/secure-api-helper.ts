@@ -167,7 +167,7 @@ export function createSuccessResponse(
   data: any,
   meta?: any
 ): NextResponse {
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     data,
     meta: {
@@ -175,6 +175,13 @@ export function createSuccessResponse(
       ...meta
     }
   });
+
+  // Add caching headers for better performance
+  response.headers.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+
+  return response;
 }
 
 /**

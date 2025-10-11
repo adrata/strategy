@@ -343,9 +343,9 @@ export function UniversalRecordTemplate({
               const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
               if (workspaceMatch) {
                 const workspaceSlug = workspaceMatch[1];
-                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+                router.push(`/${workspaceSlug}/speedrun/sprint`);
               } else {
-                window.location.href = '/speedrun/sprint';
+                router.push('/speedrun/sprint');
               }
             }
           } else {
@@ -1061,11 +1061,11 @@ export function UniversalRecordTemplate({
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/prospects/${newProspectId}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       } else {
         const newUrl = `/prospects/${newProspectId}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       }
       
     } catch (error) {
@@ -1123,11 +1123,11 @@ export function UniversalRecordTemplate({
         const workspaceSlug = workspaceMatch[1];
         const newUrl = `/${workspaceSlug}/opportunities/${opportunitySlug}`;
         console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       } else {
         const newUrl = `/opportunities/${opportunitySlug}`;
         console.log(`🔗 [ADVANCE] Navigating to opportunity: ${newUrl}`);
-        window.location.href = newUrl;
+        router.push(newUrl);
       }
       
     } catch (error) {
@@ -1520,9 +1520,9 @@ export function UniversalRecordTemplate({
               const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
               if (workspaceMatch) {
                 const workspaceSlug = workspaceMatch[1];
-                window.location.href = `/${workspaceSlug}/speedrun/sprint`;
+                router.push(`/${workspaceSlug}/speedrun/sprint`);
               } else {
-                window.location.href = '/speedrun/sprint';
+                router.push('/speedrun/sprint');
               }
             }}
             className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
@@ -1557,12 +1557,24 @@ export function UniversalRecordTemplate({
         );
       }
 
-      // Add Action button - BLUE BUTTON (matching list page style)
+      // Add Action button - CATEGORY COLORED BUTTON (matching section colors)
+      const categoryColors = getCategoryColors(recordType);
       buttons.push(
         <button
           key="add-action"
           onClick={() => setIsAddActionModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+          className="px-3 py-1.5 text-sm rounded-md transition-colors"
+          style={{
+            backgroundColor: categoryColors.bg,
+            color: categoryColors.primary,
+            border: `1px solid ${categoryColors.border}`
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = categoryColors.bgHover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = categoryColors.bg;
+          }}
         >
           Add Action ({getCommonShortcut('SUBMIT')})
         </button>

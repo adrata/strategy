@@ -626,13 +626,7 @@ export class SpeedrunDataService {
         ? `/api/speedrun/dual-ranking?workspaceId=${context.workspaceId}&vertical=${encodeURIComponent(verticalFilter)}`
         : `/api/speedrun/prospects?limit=50`;
       
-      const response = await authFetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      const data = await authFetch(url);
       
       if (data['success'] && data.data) {
         const prospects = Array.isArray(data.data) ? data.data : data.data.optimalRank || data.data;
@@ -666,13 +660,7 @@ export class SpeedrunDataService {
     const apiUrl = `/api/data/opportunities?workspaceId=${context.workspaceId}&userId=${context.userId}&includeClosed=true&t=${Date.now()}`;
     console.log(`🌐 SpeedrunDataService: Calling legacy API: ${apiUrl}`);
     
-    const response = await authFetch(apiUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Legacy API responded with status: ${response.status}`);
-    }
-    
-    const data = await response.json();
+    const data = await authFetch(apiUrl);
     console.log(`📊 SpeedrunDataService: Legacy API response:`, data);
     
     if (data['success'] && data['opportunities'] && data.opportunities.length > 0) {

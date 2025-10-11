@@ -40,7 +40,9 @@ export class ClaudeAIService {
   constructor() {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY environment variable is required');
+      console.warn('⚠️ Claude service not available - missing ANTHROPIC_API_KEY or running in client');
+      // Don't throw error during build - just log warning
+      return;
     }
     
     this.anthropic = new Anthropic({
@@ -53,6 +55,18 @@ export class ClaudeAIService {
    */
   async generateChatResponse(request: ClaudeChatRequest): Promise<ClaudeChatResponse> {
     const startTime = Date.now();
+    
+    // Check if service is properly initialized
+    if (!this.anthropic) {
+      console.warn('⚠️ Claude service not available - returning fallback response');
+      return {
+        response: this.generateFallbackResponse(request),
+        confidence: 0.3,
+        model: 'fallback',
+        tokensUsed: 0,
+        processingTime: Date.now() - startTime
+      };
+    }
     
     try {
       // Generate cache key for request
@@ -704,6 +718,10 @@ I can help with prospecting, pipeline analysis, buyer research, and closing stra
    * Test Claude API connection
    */
   async testConnection(): Promise<boolean> {
+    if (!this.anthropic) {
+      return false;
+    }
+    
     try {
       const response = await this.anthropic.messages.create({
         model: this.model,

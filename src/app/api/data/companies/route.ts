@@ -469,24 +469,48 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Create company as an Account record with entity_id
-    const newAccount = await prisma.companies.create({
-      data: {
-        id: `acc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-        entity_id: entityRecord.id, // Link to entity record
-        name: companyData.name,
-        website: companyData.domain || companyData.website || null,
-        industry: companyData.industry || null,
-        revenue: companyData.revenue
-          ? parseFloat((companyData.revenue || "").replace(/[^\d.]/g, ""))
-          : null,
-        city: companyData.location || null,
-        notes: companyData.notes || null,
-        workspaceId: workspaceId,
-        assignedUserId: userId,
-        updatedAt: new Date()
-      },
+    // Create company and action in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create company as an Account record with entity_id
+      const newAccount = await tx.companies.create({
+        data: {
+          id: `acc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+          entity_id: entityRecord.id, // Link to entity record
+          name: companyData.name,
+          website: companyData.domain || companyData.website || null,
+          industry: companyData.industry || null,
+          revenue: companyData.revenue
+            ? parseFloat((companyData.revenue || "").replace(/[^\d.]/g, ""))
+            : null,
+          city: companyData.location || null,
+          notes: companyData.notes || null,
+          workspaceId: workspaceId,
+          assignedUserId: userId,
+          updatedAt: new Date()
+        },
+      });
+
+      // Create action for company creation
+      const action = await tx.actions.create({
+        data: {
+          type: 'company_created',
+          subject: `New company added: ${newAccount.name}`,
+          description: `System created new company record for ${newAccount.name}`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: workspaceId,
+          userId: userId,
+          companyId: newAccount.id,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return { newAccount, action };
     });
+
+    const newAccount = result.newAccount;
 
     console.log(
       `✅ [COMPANIES API] Company created: ${newAccount.name} (ID: ${newAccount.id}, Entity ID: ${entityRecord.id})`,

@@ -23,6 +23,7 @@ interface SignInRequest {
   platform?: string;
   deviceId?: string;
   preferredWorkspaceId?: string;
+  rememberMe?: boolean;
 }
 
 interface AuthResponse {
@@ -109,13 +110,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.log("🔐 [AUTH API] Environment:", process.env.NODE_ENV);
     console.log("🔐 [AUTH API] Database URL exists:", !!process.env['DATABASE_URL']);
     
-    // Test database connection early
-    try {
-      await prisma.$connect();
-      console.log("🔐 [AUTH API] Database connection successful");
-    } catch (dbConnectError) {
-      console.error("❌ [AUTH API] Database connection failed:", dbConnectError);
-      throw new Error(`Database connection failed: ${dbConnectError instanceof Error ? dbConnectError.message : 'Unknown error'}`);
+    // Validate DATABASE_URL is set
+    if (!process.env['DATABASE_URL'] && !process.env['POSTGRES_URL']) {
+      console.error("❌ [AUTH API] DATABASE_URL environment variable not set");
+      throw new Error("Database configuration error - please contact support");
     }
 
     // SECURITY: Check for URL-based credential attempts
@@ -203,6 +201,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           }
         });
         console.log("🔐 [AUTH API] Database query result:", !!user);
+        if (user) {
+          console.log("🔐 [AUTH API] User found:", {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            name: user.name,
+            hasPassword: !!user.password,
+            isActive: user.isActive
+          });
+        }
       } catch (dbError) {
         console.error("❌ [AUTH API] Database query failed:", dbError);
         throw dbError;
@@ -281,48 +289,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // User check was already done above, remove duplicate check
 
-    // 🚀 PERFORMANCE: Optimized password validation with early returns
+    // Password validation - use bcrypt for all users
     let isValidPassword = false;
-    const userEmail = user.email;
-
-    // 🚀 PERFORMANCE: Use Set for O(1) password lookup instead of array includes
-    const demoUsers = new Set([
-      "dan@adrata.com", 
-      "ross@adrata.com", 
-      "demo@adrata.com", 
-      "dano@retail-products.com", 
-      "demo@zeropoint.com"
-    ]);
-
-    if (demoUsers.has(userEmail)) {
-      // 🚀 PERFORMANCE: Pre-compute valid passwords for each user
-      const passwordMap = new Map([
-        ["ross@adrata.com", new Set(["password", "rosspass", "ross", user.name?.toLowerCase()].filter(Boolean))],
-        ["dan@adrata.com", new Set(["password", "danpass", "dan", user.name?.toLowerCase()].filter(Boolean))],
-        ["demo@adrata.com", new Set(["password", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))],
-        ["dano@retail-products.com", new Set(["password", "DanoGoat23!", "danopass", "dano", user.name?.toLowerCase()].filter(Boolean))],
-        ["demo@zeropoint.com", new Set(["password", "VPGoat90!", "demopass", "demo", user.name?.toLowerCase()].filter(Boolean))]
-      ]);
-
-      const validPasswords = passwordMap.get(userEmail) || new Set(["password"]);
-
-      // Password validation for demo users
-
-      // 🚀 PERFORMANCE: O(1) password lookup with Set
-      isValidPassword = validPasswords.has(password.toLowerCase());
-
-      // Also check bcrypt password if hardcoded passwords don't match
-      if (!isValidPassword && user.password) {
-        // Hardcoded passwords failed, checking bcrypt
-        isValidPassword = await bcrypt.compare(password, user.password);
-        // Bcrypt result
-      }
-    } else if (user.password) {
-      // Regular password check
+    
+    if (user.password) {
+      // Use bcrypt to compare the provided password with the stored hash
       isValidPassword = await bcrypt.compare(password, user.password);
+      console.log("🔐 [AUTH API] Password validation result:", isValidPassword);
     } else {
-      // No password set - for demo purposes, allow any password
-      isValidPassword = true;
+      // No password set - this shouldn't happen in production
+      console.warn("⚠️ [AUTH API] User has no password set:", user.email || user.username || user.name);
+      isValidPassword = false;
     }
 
     if (!isValidPassword) {
@@ -375,6 +352,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       console.warn("⚠️ [AUTH API] Using default JWT secret - this should be changed in production");
     }
     
+    // Determine token expiration based on remember me setting
+    const rememberMe = credentials.rememberMe === true;
+    const tokenExpiry = rememberMe ? '30d' : '7d'; // 30 days for remember me, 7 days for normal
+    
     let token;
     try {
       token = jwt.sign(
@@ -386,12 +367,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           activeWorkspaceId: finalActiveWorkspaceId,
           platform,
           deviceId,
+          rememberMe: rememberMe,
           iat: Math.floor(Date.now() / 1000),
         },
         secret,
-        { expiresIn: '7d' }
+        { expiresIn: tokenExpiry }
       );
-      console.log("🔐 [AUTH API] JWT token generated successfully");
+      console.log("🔐 [AUTH API] JWT token generated successfully with expiry:", tokenExpiry);
     } catch (jwtError) {
       console.error("❌ [AUTH API] JWT generation failed:", jwtError);
       throw jwtError;
@@ -402,7 +384,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       id: user.id,
       email: user.email,
       name: user.name,
-      displayName: user.displayName || user.name,
+      displayName: user.name, // Use name as displayName since displayName column doesn't exist
       activeWorkspaceId: finalActiveWorkspaceId,
       workspaces: workspaces.map((uw) => ({
         id: uw.workspace?.id || "unknown",
@@ -490,13 +472,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       platformRoute = PlatformAccessRouter.getDemoRoute(); // Fallback
     }
 
+    // Calculate expiration time based on remember me setting
+    const tokenExpiryMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000; // 30 days or 7 days
+    const cookieMaxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60; // 30 days or 7 days
+
     // Return token and user data with platform routing
     const response = NextResponse.json({
       success: true,
       user: userData,
       accessToken: token,
       refreshToken: token, // Using same token for simplicity
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      expires: new Date(Date.now() + tokenExpiryMs).toISOString(),
+      rememberMe: rememberMe,
       message: "Authentication successful",
       platformRoute: platformRoute,
       redirectTo: platformRoute.path,
@@ -507,7 +494,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       httpOnly: true,
       secure: process['env']['NODE_ENV'] === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
+      maxAge: cookieMaxAge,
     });
 
     // Add CORS headers for production
@@ -539,6 +526,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } else if (error.message.includes("ENOTFOUND") || error.message.includes("ECONNREFUSED")) {
         errorMessage = "Database connection failed";
         console.error("❌ [AUTH API] Network error detected");
+      } else if (error.message.includes("P1001") || error.message.includes("Can't reach database server")) {
+        errorMessage = "Database server unavailable";
+        console.error("❌ [AUTH API] Database server unreachable");
+      } else if (error.message.includes("P2021") || error.message.includes("The table")) {
+        errorMessage = "Database schema error";
+        console.error("❌ [AUTH API] Database schema mismatch detected");
+      } else if (error.message.includes("P1008") || error.message.includes("Operations timed out")) {
+        errorMessage = "Database operation timeout";
+        console.error("❌ [AUTH API] Database timeout detected");
       }
     }
     

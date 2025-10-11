@@ -6,6 +6,8 @@ import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { Select } from "./Select";
 import { AddCompanyModal } from "./AddCompanyModal";
+import { AddLeadModal } from "./AddLeadModal";
+import { AddProspectModal } from "./AddProspectModal";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
 import { SuccessMessage } from "./SuccessMessage";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
@@ -39,6 +41,8 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
   const [isSearchingCompanies, setIsSearchingCompanies] = useState(false);
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [showAddProspectModal, setShowAddProspectModal] = useState(false);
   
   // Add Company modal form state
   const [addCompanyFormData, setAddCompanyFormData] = useState({
@@ -171,21 +175,43 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         
         console.log('⌨️ [AddModal] Main submit keyboard shortcut triggered');
         
-        // Only submit if form is valid
-        if (formData.name?.trim()) {
+        // Validate form based on active section
+        let isValid = false;
+        let focusSelector = 'input[type="text"]:not([readonly]):not([disabled])';
+        
+        if (activeSection === 'leads' || activeSection === 'people') {
+          // For people/leads, check firstName AND lastName
+          isValid = !!(formData.firstName?.trim() && formData.lastName?.trim());
+          if (!isValid) {
+            console.log('⌨️ [AddModal] Form not valid - firstName or lastName is empty');
+            // Focus the first empty required field
+            if (!formData.firstName?.trim()) {
+              focusSelector = 'input[placeholder*="first name" i]';
+            } else if (!formData.lastName?.trim()) {
+              focusSelector = 'input[placeholder*="last name" i]';
+            }
+          }
+        } else {
+          // For other sections, check name field
+          isValid = !!formData.name?.trim();
+          if (!isValid) {
+            console.log('⌨️ [AddModal] Form not valid - name field is empty');
+          }
+        }
+        
+        if (isValid) {
           handleCreateRecord();
         } else {
-          console.log('⌨️ [AddModal] Main form not valid - name field is empty');
-          // Focus the name input
-          const nameInput = document.querySelector('input[type="text"]:not([readonly]):not([disabled])') as HTMLInputElement;
-          nameInput?.focus();
+          // Focus the appropriate input field
+          const inputToFocus = document.querySelector(focusSelector) as HTMLInputElement;
+          inputToFocus?.focus();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown, true); // Use capture phase
     return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [isAddModalOpen, showAddCompanyModal, formData.name, handleCreateRecord]);
+  }, [isAddModalOpen, showAddCompanyModal, formData.name, formData.firstName, formData.lastName, activeSection, handleCreateRecord]);
 
   const searchContacts = async (query: string) => {
     setIsSearchingContacts(true);
@@ -339,9 +365,23 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name?.trim()) {
-      alert("Please enter a name for the record");
-      return;
+    // DEBUG: Log the activeSection value to understand routing issue
+    console.log(`[ADD MODAL] DEBUG: activeSection = "${activeSection}"`);
+    console.log(`[ADD MODAL] DEBUG: formData =`, formData);
+
+    // Validate based on section type
+    if (activeSection === "leads" || activeSection === "people") {
+      // For people/leads, check firstName and lastName
+      if (!formData.firstName?.trim() || !formData.lastName?.trim()) {
+        alert("Please enter first name and last name");
+        return;
+      }
+    } else {
+      // For other sections (companies, opportunities, etc.), check name
+      if (!formData.name?.trim()) {
+        alert("Please enter a name for the record");
+        return;
+      }
     }
 
     try {
@@ -427,7 +467,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   viewBox="0 0 24 24"
                   style={{ color: categoryColors.icon }}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                 </svg>
               ) : activeSection === "clients" ? (
                 <svg 
@@ -468,9 +508,41 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field - First for leads */}
-          {(activeSection === "leads" || activeSection === "people") ? (
+        {/* Special handling for leads and prospects - show dedicated forms */}
+        {(activeSection === "leads" || activeSection === "prospects") ? (
+          <div className="space-y-4">
+            <div className="text-center py-8">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: categoryColors.light }}>
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: categoryColors.icon }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Add New {activeSection === "leads" ? "Lead" : "Prospect"}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Create a new {activeSection === "leads" ? "lead" : "prospect"} with First Name and Last Name fields, 
+                with status locked as {activeSection === "leads" ? "Lead" : "Prospect"}.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (activeSection === "leads") {
+                    setShowAddLeadModal(true);
+                  } else if (activeSection === "prospects") {
+                    setShowAddProspectModal(true);
+                  }
+                }}
+                className="px-6 py-3 bg-white text-black border border-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
+              >
+                Open {activeSection === "leads" ? "Lead" : "Prospect"} Form
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Field - First for people */}
+            {activeSection === "people" ? (
             // Split name fields for people/leads
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -794,24 +866,6 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                 </div>
               </div>
 
-              {/* Primary Contact */}
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Primary Contact
-                </label>
-                <input
-                  type="text"
-                  value={formData.contact || ""}
-                  onChange={(e) =>
-                    setFormData((prev: any) => ({
-                      ...prev,
-                      contact: e.target.value,
-                    }))
-                  }
-                  placeholder="Contact name"
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
-                />
-              </div>
             </>
           )}
 
@@ -1042,8 +1096,8 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
               </div>
             )}
 
-          {/* Title Field - Only show for specific sections that need it */}
-          {(activeSection === "opportunities" || activeSection === "partnerships") && (
+          {/* Title Field - Only show for partnerships (removed from opportunities) */}
+          {activeSection === "partnerships" && (
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Title
@@ -1175,14 +1229,14 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   ? !formData.firstName?.trim() || !formData.lastName?.trim()
                   : !formData.name?.trim()
               }
-              className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: (
                   (activeSection === "leads" || activeSection === "people") 
                     ? (formData.firstName?.trim() && formData.lastName?.trim())
                     : formData.name?.trim()
                 ) ? categoryColors.light : categoryColors.bg,
-                borderColor: categoryColors.border,
+                border: `1px solid ${categoryColors.border}`,
                 color: categoryColors.text,
               }}
               onMouseEnter={(e) => {
@@ -1208,6 +1262,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
             </button>
           </div>
         </form>
+        )}
       </div>
 
       {/* Add Company Modal */}
@@ -1467,6 +1522,34 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           setCompanySearchQuery(company.name);
           setCompanySearchResults([]);
           setShowAddCompanyModal(false);
+        }}
+      />
+
+      {/* Add Lead Modal */}
+      <AddLeadModal
+        isOpen={showAddLeadModal}
+        onClose={() => setShowAddLeadModal(false)}
+        onLeadAdded={(lead) => {
+          setShowSuccessMessage(true);
+          setSuccessMessage(`Lead "${lead.fullName}" created successfully!`);
+          setShowAddLeadModal(false);
+          if (refreshData) {
+            refreshData();
+          }
+        }}
+      />
+
+      {/* Add Prospect Modal */}
+      <AddProspectModal
+        isOpen={showAddProspectModal}
+        onClose={() => setShowAddProspectModal(false)}
+        onProspectAdded={(prospect) => {
+          setShowSuccessMessage(true);
+          setSuccessMessage(`Prospect "${prospect.fullName}" created successfully!`);
+          setShowAddProspectModal(false);
+          if (refreshData) {
+            refreshData();
+          }
         }}
       />
     </div>

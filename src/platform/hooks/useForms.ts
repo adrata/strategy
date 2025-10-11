@@ -89,6 +89,10 @@ export function useForms(): UseFormsReturn {
         activeSubApp,
         recordName: formData.name,
       });
+      
+      // DEBUG: Log the activeSection value to understand routing issue
+      console.log(`[FORMS HOOK] DEBUG: activeSection = "${activeSection}"`);
+      console.log(`[FORMS HOOK] DEBUG: Will use ${activeSection === "leads" || activeSection === "people" ? "v1 API" : "unified API"}`);
 
       const envInfo = getDesktopEnvInfo();
       let newRecordId: string | null = null;
@@ -140,14 +144,9 @@ export function useForms(): UseFormsReturn {
                 `Successfully created person: ${fullName}`,
               );
               
-              // Navigate to people list after successful creation
-              if (typeof window !== 'undefined') {
-                const currentPath = window.location.pathname;
-                const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-                if (workspaceMatch) {
-                  const workspaceSlug = workspaceMatch[1];
-                  window.location.href = `/${workspaceSlug}/people`;
-                }
+              // Refresh data to show new person in the list
+              if (refreshData) {
+                await refreshData();
               }
             } else {
               const errorData = await createResponse.json();
@@ -167,34 +166,28 @@ export function useForms(): UseFormsReturn {
             debug("CREATE_OPPORTUNITY_API", { formData });
 
             const createResponse = await fetch(
-              "/api/data/unified",
+              "/api/v1/companies",
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  type: "opportunities",
-                  action: "create",
-                  data: {
-                    name: formData.name,
-                    amount: (formData as any).amount
-                      ? parseFloat((formData as any).amount)
-                      : 50000,
-                    expectedCloseDate:
-                      (formData as any).closeDate ||
-                      new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-                        .toISOString()
-                        .split("T")[0],
-                    probability: (formData as any).probability
-                      ? parseInt((formData as any).probability)
-                      : 25,
-                    stage: formData.stage || "Discovery",
-                    sourceType: formData.source || "Manual Entry",
-                    primaryContact: (formData as any).contact,
-                    company: formData.company,
-                    notes: (formData as any).notes || "",
-                    workspaceId: activeWorkspace?.id || "",
-                    userId: authUser?.id || "",
-                  }
+                  name: formData.name,
+                  status: "OPPORTUNITY",
+                  amount: (formData as any).amount
+                    ? parseFloat((formData as any).amount)
+                    : 50000,
+                  expectedCloseDate:
+                    (formData as any).closeDate ||
+                    new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+                      .toISOString()
+                      .split("T")[0],
+                  probability: (formData as any).probability
+                    ? parseInt((formData as any).probability)
+                    : 25,
+                  stage: formData.stage || "Discovery",
+                  sourceType: formData.source || "Manual Entry",
+                  primaryContact: (formData as any).contact,
+                  notes: (formData as any).notes || "",
                 }),
               },
               {
@@ -275,26 +268,20 @@ export function useForms(): UseFormsReturn {
           if (!envInfo.isDesktop) {
             // Create speedrun record via unified API (as a lead with high priority)
             const createResponse = await fetch(
-              "/api/data/unified",
+              "/api/v1/people",
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  type: "leads", // Speedrun creates leads with high priority
-                  action: "create",
-                  data: {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    company: formData.company,
-                    title: formData.title,
-                    source: formData.source || "Speedrun",
-                    status: "new",
-                    priority: "high", // High priority for speedrun items
-                    notes: formData.notes || "Added via Speedrun",
-                    workspaceId: activeWorkspace?.id || "",
-                    userId: authUser?.id || ""
-                  }
+                  fullName: formData.name,
+                  email: formData.email,
+                  phone: formData.phone,
+                  company: formData.company,
+                  jobTitle: formData.title,
+                  source: formData.source || "Speedrun",
+                  status: "LEAD", // Speedrun creates leads
+                  priority: "HIGH", // High priority for speedrun items
+                  notes: formData.notes || "Added via Speedrun"
                 })
               },
               {
@@ -351,34 +338,49 @@ export function useForms(): UseFormsReturn {
               recordData.contactIds = formData.contactIds || [];
             }
 
-            // Create record via unified API
+            // Create record via v1 API
+            let apiUrl = "";
+            let requestBody = recordData;
+            
+            if (activeSection === "companies") {
+              apiUrl = "/api/v1/companies";
+            } else if (activeSection === "leads" || activeSection === "prospects" || activeSection === "people") {
+              apiUrl = "/api/v1/people";
+              // Map fields for people API
+              requestBody = {
+                fullName: recordData.name,
+                email: recordData.email,
+                phone: recordData.phone,
+                jobTitle: recordData.title,
+                company: recordData.company,
+                status: activeSection === "leads" ? "LEAD" : activeSection === "prospects" ? "PROSPECT" : "LEAD",
+                source: recordData.source,
+                notes: recordData.notes
+              };
+            } else {
+              throw new Error(`No v1 API available for section: ${activeSection}`);
+            }
+            
             const createResponse = await fetch(
-              "/api/data/unified",
+              apiUrl,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  type: activeSection, // Use plural form directly (leads, prospects, etc.)
-                  action: "create",
-                  data: recordData
-                })
-              },
-              {
-                success: false,
-                data: null,
-                error: null
+                body: JSON.stringify(requestBody)
               }
             );
             
-            if (createResponse['success'] && createResponse.data) {
-              newRecordId = createResponse.data.id;
+            const responseData = await createResponse.json();
+            
+            if (createResponse.ok && responseData.success && responseData.data) {
+              newRecordId = responseData.data.id;
               const recordType = activeSection === 'speedrun' ? 'speedrun' : activeSection.slice(0, -1);
               const successMessage = activeSection === 'companies' 
                 ? `Successfully created company: ${formData.name}`
                 : `Successfully created ${recordType}: ${formData.name}`;
               onSuccess(successMessage);
             } else {
-              throw new Error(createResponse.error || "Failed to create record via unified API");
+              throw new Error(responseData.error || "Failed to create record via v1 API");
             }
           } else {
             // Desktop mode - simulate creation
@@ -472,8 +474,17 @@ export function useForms(): UseFormsReturn {
       });
 
       try {
-        // Perform soft delete via API
-        const response = await fetch(`/api/data/unified?type=${encodeURIComponent(activeSection.slice(0, -1))}&id=${encodeURIComponent(record.id)}`, {
+        // Perform soft delete via v1 API
+        let deleteUrl = "";
+        if (activeSection === "companies") {
+          deleteUrl = `/api/v1/companies/${encodeURIComponent(record.id)}`;
+        } else if (activeSection === "leads" || activeSection === "prospects" || activeSection === "people") {
+          deleteUrl = `/api/v1/people/${encodeURIComponent(record.id)}`;
+        } else {
+          throw new Error(`No v1 delete API available for section: ${activeSection}`);
+        }
+        
+        const response = await fetch(deleteUrl, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -526,42 +537,34 @@ export function useForms(): UseFormsReturn {
         if (!envInfo.isDesktop) {
           // Web mode - use API
           const createResponse = await fetch(
-            "/api/data/unified",
+            "/api/v1/companies",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                type: "opportunities",
-                action: "create",
-                data: {
-                  leadId: lead.id,
-                  name: lead.name || `Opportunity from ${lead.name}`,
-                  company: lead.company,
-                  amount: 50000, // Default amount
-                  expectedCloseDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-                  probability: 25,
-                  stage: "Discovery",
-                  sourceType: "Lead Conversion",
-                  workspaceId: activeWorkspace?.id || activeWorkspace?.workspaceId || "",
-                  userId: authUser?.id || "",
-                }
+                name: lead.name || `Opportunity from ${lead.name}`,
+                status: "OPPORTUNITY",
+                company: lead.company,
+                amount: 50000, // Default amount
+                expectedCloseDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+                probability: 25,
+                stage: "Discovery",
+                sourceType: "Lead Conversion",
+                notes: `Converted from lead: ${lead.name}`
               }),
-            },
-            {
-              success: false,
-              data: null,
-              error: null,
-            },
+            }
           );
 
-          if (createResponse['success'] && createResponse.data) {
+          const responseData = await createResponse.json();
+          
+          if (createResponse.ok && responseData.success && responseData.data) {
             debug("CONVERT_LEAD_SUCCESS_WEB", {
-              opportunityId: createResponse.data.id,
+              opportunityId: responseData.data.id,
             });
             onSuccess(`Successfully converted ${lead.name} to opportunity!`);
           } else {
             throw new Error(
-              createResponse.error || "Failed to convert lead to opportunity",
+              responseData.error || "Failed to convert lead to opportunity",
             );
           }
         } else {

@@ -20,6 +20,27 @@ export function useRecordTitle() {
 
   useEffect(() => {
     const fetchRecordTitle = async () => {
+      // Early return for auth/public pages to prevent incorrect record extraction
+      const isAuthPage = pathname === "/sign-in" || 
+                         pathname === "/sign-up" || 
+                         pathname === "/reset-password" || 
+                         pathname === "/demo" || 
+                         pathname === "/" ||
+                         pathname.startsWith("/about") ||
+                         pathname.startsWith("/pricing") ||
+                         pathname.startsWith("/contact") ||
+                         pathname.startsWith("/terms") ||
+                         pathname.startsWith("/privacy") ||
+                         pathname.startsWith("/cookies") ||
+                         pathname.startsWith("/help") ||
+                         pathname.startsWith("/support");
+      
+      if (isAuthPage) {
+        console.log('🔍 [RECORD TITLE] Skipping auth page:', pathname);
+        setRecordData(null);
+        return;
+      }
+      
       // Extract record ID from pathname
       const pathParts = pathname.split('/');
       const section = pathParts[pathParts.length - 2];

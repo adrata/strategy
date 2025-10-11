@@ -49,6 +49,28 @@ class UnifiedCache {
   static initialize() { return Promise.resolve(true); }
   static invalidate(key: string) { return true; }
 }
+
+// Helper function to generate action subjects for different record types
+function getActionSubject(type: string, record: any): string {
+  switch (type) {
+    case 'people':
+      return `New person added: ${record.fullName || 'Unknown'}`;
+    case 'companies':
+      return `New company added: ${record.name || 'Unknown'}`;
+    case 'leads':
+      return `New lead added: ${record.fullName || 'Unknown'}`;
+    case 'prospects':
+      return `New prospect added: ${record.fullName || 'Unknown'}`;
+    case 'opportunities':
+      return `New opportunity created: ${record.name || 'Unknown'}`;
+    case 'partners':
+      return `New partner added: ${record.fullName || 'Unknown'}`;
+    case 'clients':
+      return `New client added: ${record.name || 'Unknown'}`;
+    default:
+      return `New ${type.slice(0, -1)} added: ${record.name || record.fullName || 'Unknown'}`;
+  }
+}
 // 🚫 FILTER: Exclude user's own company from all lists
 function shouldExcludeCompany(companyName: string | null | undefined): boolean {
   if (!companyName) return false;
@@ -2255,12 +2277,27 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
       });
     }
     
-    // Ensure required fields have defaults - these are required by the schema
-    // Only apply person-related defaults for person-related records
+    // Validate required fields instead of creating template records
+    // Only apply person-related validation for person-related records
     if (type === 'leads' || type === 'prospects' || type === 'partners' || type === 'clients') {
-      if (!createData.firstName) createData['firstName'] = 'First';
-      if (!createData.lastName) createData['lastName'] = 'Last';
-      if (!createData.fullName) createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+      // Validate that we have meaningful data, not template values
+      const hasValidName = createData.firstName && createData.firstName !== 'First' && createData.firstName.trim().length > 0;
+      const hasValidLastName = createData.lastName && createData.lastName !== 'Last' && createData.lastName.trim().length > 0;
+      const hasValidFullName = createData.fullName && createData.fullName !== 'First Last' && createData.fullName.trim().length > 0;
+      
+      // If we don't have valid name data, throw an error instead of creating template records
+      if (!hasValidName && !hasValidLastName && !hasValidFullName) {
+        throw new Error(`Invalid record data: Missing required name fields. firstName: "${createData.firstName}", lastName: "${createData.lastName}", fullName: "${createData.fullName}"`);
+      }
+      
+      // Only set defaults if we have partial data that can be completed
+      if (!createData.firstName && createData.fullName && createData.fullName !== 'First Last') {
+        const nameParts = createData.fullName.trim().split(' ');
+        createData['firstName'] = nameParts[0] || 'Unknown';
+        createData['lastName'] = nameParts.slice(1).join(' ') || 'Unknown';
+      } else if (!createData.fullName && createData.firstName && createData.lastName) {
+        createData['fullName'] = `${createData.firstName} ${createData.lastName}`;
+      }
       
       // Remove frontend-specific fields that don't exist in database
       delete createData.name; // We've already split this into firstName/lastName/fullName
@@ -2310,6 +2347,34 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     });
     
     console.log(`✅ [CREATE] Successfully created ${type}:`, record.id);
+    
+    // Create action for record creation
+    try {
+      const actionType = `${type.slice(0, -1)}_created`; // Remove 's' and add '_created'
+      const subject = getActionSubject(type, record);
+      
+      await prisma.actions.create({
+        data: {
+          type: actionType,
+          subject: subject,
+          description: `System created new ${type.slice(0, -1)} record`,
+          status: 'COMPLETED',
+          priority: 'NORMAL',
+          workspaceId: workspaceId,
+          userId: userId,
+          personId: record.personId || null,
+          companyId: record.companyId || null,
+          completedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+      
+      console.log(`✅ [CREATE] Created action for ${type} creation`);
+    } catch (actionError) {
+      console.error(`⚠️ [CREATE] Failed to create action for ${type}:`, actionError);
+      // Don't fail the entire operation if action creation fails
+    }
     
     // Clear cache after create
     clearWorkspaceCache(workspaceId, userId, true);
@@ -4130,17 +4195,32 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       console.log(`🏢 [SPEEDRUN] Loaded ${rankedCompanies.length} ranked companies`);
       
       // Step 2: Get people for each company using hierarchical ranking (1-4000 per company)
+      // Also include people without company associations (companyId: null or companyRank: 0)
       const speedrunPeople = await prisma.people.findMany({
         where: {
           workspaceId,
           deletedAt: null,
-          companyId: {
-            in: rankedCompanies.map(c => c.id)
-          },
-          companyRank: { gte: 1, lte: 4000 } // Only people ranked 1-4000 within company
+          OR: [
+            // People with company associations and proper ranking
+            {
+              companyId: {
+                in: rankedCompanies.map(c => c.id)
+              },
+              companyRank: { gte: 1, lte: 4000 }
+            },
+            // People without company associations (fallback for standalone people)
+            {
+              OR: [
+                { companyId: null },
+                { companyRank: 0 },
+                { companyRank: null }
+              ]
+            }
+          ]
         },
         orderBy: [
-          { company: { globalRank: 'asc' } }, // First by company globalRank (1-400)
+          { globalRank: 'asc' }, // First by person globalRank (fallback for people without companies)
+          { company: { globalRank: 'asc' } }, // Then by company globalRank (1-400)
           { companyRank: 'asc' }, // Then by person companyRank within company (1-4000)
           { updatedAt: 'desc' }
         ],

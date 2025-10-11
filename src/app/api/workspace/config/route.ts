@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     
     if (existingRequest) {
       console.log(`⚡ [WORKSPACE CONFIG] Deduplicating request for workspace: ${workspaceId}`);
-      return await existingRequest;
+      const data = await existingRequest;
+      return NextResponse.json(data);
     }
 
     // 🚀 PERFORMANCE: Create promise for request deduplication
@@ -41,10 +42,10 @@ export async function POST(request: NextRequest) {
       });
 
       if (!workspace) {
-        return NextResponse.json({ 
+        return { 
           error: 'Workspace not found',
           defaultConfig: getDefaultWorkspaceConfig()
-        }, { status: 404 });
+        };
       }
 
       // Determine branding colors based on workspace name
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         secondaryColor = '#3b82f6'; // Blue as secondary
       }
 
-      return NextResponse.json({
+      return {
         id: workspace.id,
         name: workspace.name,
         timezone: 'UTC', // Default since field doesn't exist in schema
@@ -72,15 +73,18 @@ export async function POST(request: NextRequest) {
           primaryColor: primaryColor,
           secondaryColor: secondaryColor
         }
-      });
+      };
     })();
 
     // Add to pending requests for deduplication
     pendingRequests.set(requestKey, requestPromise);
     
     try {
-      const result = await requestPromise;
-      return result;
+      const data = await requestPromise;
+      if (data.error) {
+        return NextResponse.json(data, { status: 404 });
+      }
+      return NextResponse.json(data);
     } finally {
       // Clean up pending request
       pendingRequests.delete(requestKey);

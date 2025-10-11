@@ -75,14 +75,7 @@ export class DatabaseOptimizer {
           url: process.env.DATABASE_URL
         }
       },
-      log: this.config.enableQueryLogging ? ['query', 'info', 'warn', 'error'] : ['error'],
-      // 🚀 CONNECTION POOLING: Optimize for Neon.tech
-      __internal: {
-        engine: {
-          connectTimeout: this.config.connectionTimeout,
-          queryTimeout: this.config.queryTimeout
-        }
-      }
+      log: this.config.enableQueryLogging ? ['query', 'info', 'warn', 'error'] : ['error']
     });
   }
 

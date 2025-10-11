@@ -22,12 +22,7 @@ import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
-import { useLeadsData } from '@/platform/hooks/useLeadsData';
-import { useProspectsData } from '@/platform/hooks/useProspectsData';
-import { useOpportunitiesData } from '@/platform/hooks/useOpportunitiesData';
-import { usePeopleData } from '@/platform/hooks/usePeopleData';
-import { useCompaniesData } from '@/platform/hooks/useCompaniesData';
-import { useSpeedrunData } from '@/platform/hooks/useSpeedrunData';
+// Removed unused individual section data hooks to eliminate duplicate API calls
 import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
@@ -191,67 +186,9 @@ export const PipelineView = React.memo(function PipelineView({
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
-  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
-  const getCurrentWorkspaceId = useCallback(async () => {
-    try {
-      // 1. First try to get from JWT token (most reliable)
-      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
-      if (session?.accessToken) {
-        try {
-          const jwt = await import('jsonwebtoken');
-          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.default.verify(session.accessToken, secret) as any;
-          if (decoded?.workspaceId) {
-            // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
-            return decoded.workspaceId;
-          }
-        } catch (error) {
-          console.warn('⚠️ [PIPELINE VIEW] Failed to decode JWT token:', error);
-        }
-      }
-      
-      // 2. Fallback to acquisitionData
-      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
-        return acquisitionData.auth.authUser.activeWorkspaceId;
-      }
-      
-      // 3. Fallback to user activeWorkspaceId
-      if (user?.activeWorkspaceId) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
-        return user.activeWorkspaceId;
-      }
-      
-      // 4. Last resort: first workspace
-      if (user?.workspaces?.[0]?.id) {
-        // console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
-        return user.workspaces[0].id;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('❌ [PIPELINE VIEW] Error getting workspace ID:', error);
-      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
-    }
-  }, [acquisitionData, user]);
-
-  // 🆕 CRITICAL FIX: Update workspace ID when it changes
-  useEffect(() => {
-    const updateWorkspaceId = async () => {
-      const newWorkspaceId = await getCurrentWorkspaceId();
-      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
-        // console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
-        setCurrentWorkspaceId(newWorkspaceId);
-        setCurrentUserId(user?.id || null);
-      }
-    };
-    
-    updateWorkspaceId();
-  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
+  // 🆕 CRITICAL FIX: Use workspace ID directly from user object (synchronous)
+  const currentWorkspaceId = user?.activeWorkspaceId || null;
+  const currentUserId = user?.id || null;
 
   const workspaceId = currentWorkspaceId;
   
@@ -276,18 +213,11 @@ export const PipelineView = React.memo(function PipelineView({
         return user?.id;
     }
   };
-  const userId = getUserIdForWorkspace(workspaceId || '');
+  const userId = currentUserId;
   
-  // 🎯 NEW: Use dedicated hooks for each section
-  const leadsData = useLeadsData();
-  const prospectsData = useProspectsData();
-  const opportunitiesData = useOpportunitiesData();
-  const peopleData = usePeopleData();
-  const companiesData = useCompaniesData();
-  const speedrunData = useSpeedrunData(50); // Default to 50, can be made configurable
+  // 🚀 PERFORMANCE: Use only the data hook needed for the current section
+  // This eliminates 6 unnecessary API calls that were firing simultaneously
   
-  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
-  // Load all data at once for client-side pagination
   // Use higher limit for people section to ensure all records are loaded
   const limit = section === 'people' ? 10000 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
@@ -308,59 +238,45 @@ export const PipelineView = React.memo(function PipelineView({
   
   // Removed legacy getSectionData(section) relying on acquisitionData; using dedicated hooks below
   
-  // 🚀 PERFORMANCE: Use dedicated hooks for each section
+  // 🚀 PERFORMANCE: Use fast section data for all sections
+  // This eliminates duplicate API calls and uses the optimized data loading
   const getSectionData = () => {
-    switch (section) {
-      case 'leads':
-        return {
-          data: leadsData.leads || [],
-          loading: leadsData.loading,
-          error: leadsData.error,
-          count: leadsData.count
-        };
-      case 'prospects':
-        return {
-          data: prospectsData.prospects || [],
-          loading: prospectsData.loading,
-          error: prospectsData.error,
-          count: prospectsData.count
-        };
-      case 'opportunities':
-        return {
-          data: opportunitiesData.opportunities || [],
-          loading: opportunitiesData.loading,
-          error: opportunitiesData.error,
-          count: opportunitiesData.count
-        };
-      case 'people':
-        return {
-          data: peopleData.people || [],
-          loading: peopleData.loading,
-          error: peopleData.error,
-          count: peopleData.count
-        };
-      case 'companies':
-        return {
-          data: companiesData.companies || [],
-          loading: companiesData.loading,
-          error: companiesData.error,
-          count: companiesData.count
-        };
-      case 'speedrun':
-        return {
-          data: speedrunData.speedrunPeople || [],
-          loading: speedrunData.loading,
-          error: speedrunData.error,
-          count: speedrunData.count
-        };
-      default:
-        return {
-          data: fastSectionData.data || pipelineData.data || [],
-          loading: fastSectionData.loading || pipelineData.loading,
-          error: fastSectionData.error || pipelineData.error,
-          count: fastSectionData.count || 0
-        };
-    }
+    // Use fastSectionData for all sections - it handles the API calls efficiently
+    // Prioritize fastSectionData if it has data, otherwise fall back to pipelineData
+    const hasFastData = fastSectionData.data && fastSectionData.data.length > 0;
+    const hasPipelineData = pipelineData.data && pipelineData.data.length > 0;
+    
+    const data = hasFastData ? fastSectionData.data : (hasPipelineData ? pipelineData.data : []);
+    const loading = fastSectionData.loading || pipelineData.loading;
+    const error = hasFastData ? null : (fastSectionData.error || pipelineData.error);
+    const count = hasFastData ? fastSectionData.count : (hasPipelineData ? pipelineData.count : 0);
+    
+    console.log(`🔍 [PIPELINE VIEW] getSectionData for ${section}:`, {
+      fastSectionData: {
+        dataLength: fastSectionData.data?.length || 0,
+        loading: fastSectionData.loading,
+        error: fastSectionData.error,
+        count: fastSectionData.count
+      },
+      pipelineData: {
+        dataLength: pipelineData.data?.length || 0,
+        loading: pipelineData.loading,
+        error: pipelineData.error
+      },
+      finalData: {
+        dataLength: data.length,
+        loading,
+        error,
+        count,
+        firstRecord: data[0] ? {
+          id: data[0].id,
+          name: data[0].fullName || data[0].name,
+          status: data[0].status
+        } : null
+      }
+    });
+    
+    return { data, loading, error, count };
   };
 
   const sectionData = getSectionData();
@@ -398,10 +314,10 @@ export const PipelineView = React.memo(function PipelineView({
   useEffect(() => {
     if (section !== 'speedrun' && workspaceId && userId) {
       console.log('🚀 [SPEEDRUN PRELOAD] Pre-loading speedrun data in background for faster navigation');
-      // Pre-load speedrun data using v1 API
+      // Pre-load speedrun data using section API
       const preloadSpeedrunData = async () => {
         try {
-          await fetch(`/api/v1/people?limit=50`);
+          await fetch(`/api/data/section?section=speedrun&limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }
@@ -710,6 +626,17 @@ export const PipelineView = React.memo(function PipelineView({
   
   // Calculate isEmpty based on actual data
   const isEmpty = !hasData;
+  
+  console.log(`🔍 [PIPELINE VIEW] Data state for ${section}:`, {
+    hasData,
+    dataLength: Array.isArray(finalData) ? finalData.length : 0,
+    isEmpty,
+    finalLoading,
+    finalError,
+    workspaceId,
+    userId,
+    willShowEmptyState: !hasData && !finalError && workspaceId && userId
+  });
 
   // CRITICAL DEBUG: Log the final data state with source information
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
@@ -727,7 +654,31 @@ export const PipelineView = React.memo(function PipelineView({
   const filteredData = React.useMemo(() => {
     // Use finalData from v1 API hooks
     const dataToFilter = Array.isArray(finalData) ? finalData : [];
-    if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
+    
+    console.log(`🔍 [FILTERING] Starting filter for ${section}:`, {
+      originalDataLength: dataToFilter.length,
+      firstRecord: dataToFilter[0] ? {
+        id: dataToFilter[0].id,
+        name: dataToFilter[0].fullName || dataToFilter[0].name,
+        status: dataToFilter[0].status
+      } : null,
+      filters: {
+        searchQuery,
+        verticalFilter,
+        statusFilter,
+        priorityFilter,
+        revenueFilter,
+        lastContactedFilter,
+        timezoneFilter,
+        companySizeFilter,
+        locationFilter
+      }
+    });
+    
+    if (!dataToFilter || dataToFilter.length === 0) {
+      console.log(`🔍 [FILTERING] No data to filter for ${section}`);
+      return dataToFilter;
+    }
     
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = dataToFilter;
@@ -920,6 +871,16 @@ export const PipelineView = React.memo(function PipelineView({
     }
 
     // Note: Removed rank limiting logic - user wants to see all records
+
+    console.log(`🔍 [FILTERING] Filter result for ${section}:`, {
+      originalLength: dataToFilter.length,
+      filteredLength: filtered.length,
+      firstFilteredRecord: filtered[0] ? {
+        id: filtered[0].id,
+        name: filtered[0].fullName || filtered[0].name,
+        status: filtered[0].status
+      } : null
+    });
 
     return filtered;
   }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
@@ -1369,7 +1330,7 @@ export const PipelineView = React.memo(function PipelineView({
       </div>
     </div>
   ) : (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white overflow-hidden">
 
       {/* Header with metrics and actions */}
       <PipelineHeader

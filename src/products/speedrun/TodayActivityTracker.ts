@@ -23,6 +23,13 @@ export class TodayActivityTracker {
    * Record that a prospect was contacted today
    */
   static recordActivity(activity: TodayActivity): void {
+    // 🚨 SERVER-SIDE FIX: Check if we're running on server side
+    if (typeof window === 'undefined') {
+      // On server side, we can't use localStorage, so just log the activity
+      console.log(`🚨 TodayActivityTracker: [SERVER-SIDE] Recorded ${activity.activityType} to ${activity.prospectName} at ${activity.company}`);
+      return;
+    }
+    
     const today = new Date().toDateString();
     const key = `${this.STORAGE_KEY_PREFIX}-${today}`;
     

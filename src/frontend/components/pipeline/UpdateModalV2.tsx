@@ -1,0 +1,322 @@
+/**
+ * UPDATE MODAL V2 - Configuration-driven version
+ * 
+ * This version uses the tab registry instead of large switch statements
+ * while preserving the exact same interface and behavior as the original.
+ */
+
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { 
+  UserIcon, 
+  BriefcaseIcon, 
+  EnvelopeIcon, 
+  PhoneIcon, 
+  BuildingOfficeIcon,
+  TagIcon
+} from '@heroicons/react/24/solid';
+import { getTabsForRecordType, getTabComponent } from './config/tab-registry';
+
+interface UpdateModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  record: any;
+  recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners';
+  onUpdate: (updatedData: any, actionData?: ActionLogData) => Promise<void>;
+  onDelete?: (recordId: string) => Promise<void>;
+  initialTab?: string;
+  context?: 'sprint' | 'pipeline' | 'speedrun' | 'main';
+  sourceApp?: string;
+}
+
+interface ActionLogData {
+  actionType: string;
+  notes: string;
+}
+
+export function UpdateModalV2({
+  isOpen,
+  onClose,
+  record,
+  recordType,
+  onUpdate,
+  onDelete,
+  initialTab = 'overview',
+  context = 'main',
+  sourceApp = 'pipeline'
+}: UpdateModalProps) {
+  
+  // State management - identical to original
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [formData, setFormData] = useState(record || {});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState('');
+
+  // Get tabs from registry instead of switch statement
+  const tabs = getTabsForRecordType(recordType, record);
+
+  // Update form data when record changes
+  useEffect(() => {
+    setFormData(record || {});
+  }, [record]);
+
+  // Handle input changes
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await onUpdate(formData);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Update failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    if (!onDelete || !record?.id) return;
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await onDelete(record.id);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Delete failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Tab content rendering using configuration - this replaces the large switch statement
+  const renderTabContent = () => {
+    // Use configuration to get the appropriate component
+    const TabComponent = getTabComponent(activeTab, recordType);
+    
+    if (!TabComponent) {
+      // Fallback to basic form rendering
+      return renderBasicForm();
+    }
+
+    return (
+      <TabComponent 
+        record={formData} 
+        recordType={recordType}
+        onUpdate={handleInputChange}
+      />
+    );
+  };
+
+  // Basic form rendering as fallback
+  const renderBasicForm = () => (
+    <div className="p-6 space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name *
+          </label>
+          <input
+            type="text"
+            value={formData.name || ''}
+            onChange={(e) => handleInputChange('name', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            value={formData.email || ''}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Phone
+          </label>
+          <input
+            type="tel"
+            value={formData.phone || ''}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Company
+          </label>
+          <input
+            type="text"
+            value={formData.company || ''}
+            onChange={(e) => handleInputChange('company', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Title
+        </label>
+        <input
+          type="text"
+          value={formData.title || formData.jobTitle || ''}
+          onChange={(e) => handleInputChange('title', e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Notes
+        </label>
+        <textarea
+          value={formData.notes || formData.description || ''}
+          onChange={(e) => handleInputChange('notes', e.target.value)}
+          rows={4}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+    </div>
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Edit {recordType.charAt(0).toUpperCase() + recordType.slice(1)}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex-shrink-0 px-6 pt-4 pb-2">
+          <div className="flex items-center gap-8">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto">
+          {renderTabContent()}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6 border-t border-gray-200">
+          <div className="flex gap-2">
+            {onDelete && (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+
+        {/* Error message */}
+        {error && (
+          <div className="px-6 pb-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Delete confirmation */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Confirm Delete
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Are you sure you want to delete this {recordType}? This action cannot be undone.
+              </p>
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                >
+                  {isLoading ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Export with the same name for compatibility
+export const UpdateModal = UpdateModalV2;

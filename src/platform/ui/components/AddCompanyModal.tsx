@@ -55,11 +55,9 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          companyData: {
-            name: formData.name,
-            website: formData.website,
-            notes: formData.notes
-          }
+          name: formData.name,
+          website: formData.website,
+          notes: formData.notes
         }),
       });
 
@@ -68,6 +66,10 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
       }
 
       const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create company');
+      }
       
       // Call the callback with the new company
       onCompanyAdded(result.data);

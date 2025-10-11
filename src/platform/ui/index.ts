@@ -22,7 +22,6 @@ export * from "./components/EmojiPicker";
 export * from "./components/AdrataIntelligence";
 export * from "./components/MagicalChanges";
 export * from "./components/StandaloneAppFramework";
-export * from "./components/StrategicIntelligenceSystem";
 // export * from "./components/SlideViewer"; // Component not found
 // export * from "./components/DownloadSection"; // Component not found
 export * from "./components/AdrataApps";

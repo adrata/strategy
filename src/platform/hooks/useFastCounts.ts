@@ -68,56 +68,36 @@ export function useFastCounts(): UseFastCountsReturn {
     try {
       // console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
       
-      // 🚀 PERFORMANCE: Fetch all counts in parallel using v1 API
-      const [companiesResponse, peopleResponse, actionsResponse, usersResponse] = await Promise.all([
-        fetch(`/api/v1/companies?counts=true${forceRefresh ? `&t=${Date.now()}` : ''}`, {
-          credentials: 'include'
-        }),
-        fetch(`/api/v1/people?counts=true${forceRefresh ? `&t=${Date.now()}` : ''}`, {
-          credentials: 'include'
-        }),
-        fetch(`/api/v1/actions?counts=true${forceRefresh ? `&t=${Date.now()}` : ''}`, {
-          credentials: 'include'
-        }),
-        // Get users for sellers count
-        fetch(`/api/v1/users?counts=true${forceRefresh ? `&t=${Date.now()}` : ''}`, {
-          credentials: 'include'
-        }).catch(() => ({ json: () => Promise.resolve({ success: true, data: {} }) }))
-      ]);
+      // 🚀 PERFORMANCE: Use the unified counts API for all counts including speedrun
+      const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}` : ''}`, {
+        credentials: 'include'
+      });
 
-      const [companiesData, peopleData, actionsData, usersData] = await Promise.all([
-        companiesResponse.json(),
-        peopleResponse.json(),
-        actionsResponse.json(),
-        usersResponse.json()
-      ]);
+      const countsData = await countsResponse.json();
 
-      if (!companiesData.success || !peopleData.success || !actionsData.success) {
-        throw new Error('Failed to fetch counts from v1 API');
+      if (!countsData.success) {
+        throw new Error('Failed to fetch counts from counts API');
       }
 
-      // 🎯 MAP TO LEFT PANEL STRUCTURE
-      const companyCounts = companiesData.data;
-      const peopleCounts = peopleData.data;
-      const actionCounts = actionsData.data;
-      const usersCounts = usersData.success ? usersData.data : {};
+      // 🎯 MAP TO LEFT PANEL STRUCTURE using unified counts API
+      const counts = countsData.data;
 
       const newCounts: FastCounts = {
-        // Pipeline stages (corrected mappings)
-        leads: peopleCounts.LEAD || '—',                    // People with LEAD status
-        prospects: peopleCounts.PROSPECT || '—',            // People with PROSPECT status
-        opportunities: companyCounts.OPPORTUNITY || '—',    // Companies with OPPORTUNITY status
-        clients: companyCounts.CLIENT || '—',               // Companies with CLIENT status
+        // Pipeline stages (using counts API data)
+        leads: counts.leads || '—',
+        prospects: counts.prospects || '—',
+        opportunities: counts.opportunities || '—',
+        clients: counts.clients || '—',
         
         // Core entities
-        companies: Object.values(companyCounts).reduce((sum: number, count: any) => sum + (count || 0), 0) || '—',
-        people: Object.values(peopleCounts).reduce((sum: number, count: any) => sum + (count || 0), 0) || '—',
+        companies: counts.companies || '—',
+        people: counts.people || '—',
         
-        // Speedrun: Top N ranked people (configurable limit)
-        speedrun: Math.min(peopleCounts.ACTIVE || 0, SPEEDRUN_LIMIT) || '—',
+        // Speedrun: Use the speedrun count directly from counts API
+        speedrun: counts.speedrun || '—',
         
-        // Sellers: Users with SELLER role
-        sellers: usersCounts.SELLER || '—'
+        // Sellers: Use the sellers count from counts API
+        sellers: counts.sellers || '—'
       };
 
       setCounts(newCounts);

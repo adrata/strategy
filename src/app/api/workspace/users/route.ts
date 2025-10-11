@@ -69,8 +69,7 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         firstName: true,
-        lastName: true,
-        displayName: true
+        lastName: true
       },
       orderBy: {
         name: 'asc'
@@ -99,11 +98,10 @@ export async function GET(request: NextRequest) {
       const workspaceUser = workspaceUsers.find(wu => wu['userId'] === user.id);
       return {
         id: user.id,
-        name: user.name || user.displayName || user.email || 'Unknown User',
+        name: user.name || user.email || 'Unknown User',
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        displayName: user.displayName,
         role: workspaceUser?.role || 'member'
       };
     });
@@ -120,18 +118,16 @@ export async function GET(request: NextRequest) {
             email: true,
             firstName: true,
             lastName: true,
-            displayName: true
           }
         });
         
         if (currentUser) {
           usersWithRole = [{
             id: currentUser.id,
-            name: currentUser.name || currentUser.displayName || currentUser.email || 'Current User',
+            name: currentUser.name || currentUser.email || 'Current User',
             email: currentUser.email,
             firstName: currentUser.firstName,
             lastName: currentUser.lastName,
-            displayName: currentUser.displayName,
             role: 'admin' // Default to admin for current user
           }];
           console.log('✅ [API] Added current user as fallback');

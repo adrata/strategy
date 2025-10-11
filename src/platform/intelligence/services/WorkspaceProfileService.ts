@@ -121,7 +121,15 @@ export class WorkspaceProfileService {
     });
 
     const user = await prisma.users.findFirst({
-      where: { id: userId }
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        isActive: true,
+        activeWorkspaceId: true,
+      }
     });
 
     // Get opportunity data to understand what they sell

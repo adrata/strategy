@@ -16,6 +16,12 @@ export interface WorkspaceMapping {
 
 export const WORKSPACE_MAPPINGS: WorkspaceMapping[] = [
   {
+    slug: 'adrata',
+    id: '01K7464TNANHQXPCZT1FYX205V',
+    name: 'Adrata',
+    isActive: true
+  },
+  {
     slug: 'rps',
     id: '01K1VBYV8ETM2RCQA4GNN9EG72',
     name: 'Retail Product Solutions',
