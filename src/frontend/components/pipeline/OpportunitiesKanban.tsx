@@ -133,16 +133,18 @@ function getPersonMasterRank(record: any, fallbackIndex: number): number | strin
 interface Opportunity {
   id: string;
   name: string;
-  amount: number;
-  stage: string;
+  revenue?: number;  // Companies table uses revenue, not amount
+  status: string;
   account?: {
     name: string;
   };
   assignedUser?: {
     name: string;
   };
-  expectedCloseDate?: string;
-  probability?: number;
+  lastAction?: string;
+  nextAction?: string;
+  industry?: string;
+  size?: string;
 }
 
 interface OpportunitiesKanbanProps {
@@ -150,37 +152,21 @@ interface OpportunitiesKanbanProps {
   onRecordClick: (opportunity: Opportunity) => void;
 }
 
-// Dano's deal stages in order - consistent background colors
+// Simplified single column for opportunities (companies table doesn't have stage field)
 const DEAL_STAGES = [
-  { key: 'qualification', label: 'Qualification', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'discovery', label: 'Discovery', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'proposal', label: 'Proposal', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'negotiation', label: 'Negotiation', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'closed-won', label: 'Closed Won', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'closed-lost', label: 'Closed Lost', color: 'bg-[var(--background)] border-[var(--border)]' }
+  { key: 'opportunity', label: 'Opportunities', color: 'bg-[var(--background)] border-[var(--border)]' }
 ];
 
 export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanbanProps) {
   const [draggedItem, setDraggedItem] = useState<Opportunity | null>(null);
 
 
-  // Group opportunities by stage and sort by progress within each stage
+  // Simplified grouping - all opportunities in one column (no stage field in companies table)
   const groupedData = DEAL_STAGES.reduce((acc, stage) => {
-    const stageOpps = data.filter(opp => {
-      const oppStage = opp.stage?.toLowerCase().replace(/\s+/g, '-') || 'qualification';
-      return oppStage === stage.key || 
-             (stage['key'] === 'discovery' && ['needs-analysis', 'value-proposition'].includes(oppStage)) ||
-             (stage['key'] === 'proposal' && ['proposal-price-quote'].includes(oppStage)) ||
-             (stage['key'] === 'negotiation' && ['negotiation-review'].includes(oppStage)) ||
-             (stage['key'] === 'closed-won' && ['closed-won'].includes(oppStage)) ||
-             (stage['key'] === 'closed-lost' && ['closed-lost', 'closed-lost-to-competition'].includes(oppStage));
-    });
-    
-    // Sort by progress (highest first) within each stage
-    acc[stage.key] = stageOpps.sort((a, b) => {
-      const progressA = getStageProgress(a.stage, a);
-      const progressB = getStageProgress(b.stage, b);
-      return progressB - progressA; // Highest progress first
+    // Put all opportunities in the single 'opportunity' column
+    acc[stage.key] = [...data].sort((a, b) => {
+      // Sort by revenue (highest first)
+      return (b.revenue || 0) - (a.revenue || 0);
     });
     
     return acc;
@@ -188,7 +174,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
 
   // Calculate totals for each stage
   const getStageTotals = (opportunities: Opportunity[]) => {
-    const total = opportunities.reduce((sum, opp) => sum + (opp.amount || 0), 0);
+    const total = opportunities.reduce((sum, opp) => sum + (opp.revenue || 0), 0);
     return {
       count: opportunities.length,
       value: total
@@ -364,10 +350,10 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       
                       <div className="flex justify-between items-center text-sm mb-2">
                         <span className="font-semibold text-black">
-                          {formatCurrency(opportunity.amount || 0)}
+                          {formatCurrency(opportunity.revenue || 0)}
                         </span>
                         <span className="text-[var(--muted)] text-xs">
-                          {formatDate(opportunity.expectedCloseDate)}
+                          {opportunity.industry || 'No Industry'}
                         </span>
                       </div>
 
@@ -461,14 +447,11 @@ function getStageProgress(stage?: string, opportunity?: Opportunity): number {
     }
     
     // High-value deals show more progress (sales focus)
-    if (opportunity['amount'] && opportunity.amount > 100000) {
+    if (opportunity['revenue'] && opportunity.revenue > 100000) {
       progress += 5;
     }
     
-    // Probability can fine-tune progress within stage
-    if (opportunity['probability'] && opportunity.probability > progress) {
-      progress = Math.min(100, Math.max(progress, opportunity.probability));
-    }
+    // No probability field in companies table - skip this logic
   }
   
   return Math.min(100, Math.max(0, progress));
@@ -486,7 +469,7 @@ function getProgressColor(progress: number): string {
 // Get Next Action for opportunities with proper pill formatting
 function getOpportunityNextAction(opportunity: any): { timing: string; timingColor: string; action: string } {
   const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || '';
-  const amount = opportunity.amount || 0;
+  const amount = opportunity.revenue || 0;
   const closeDate = opportunity.expectedCloseDate;
   
   // Calculate days to close date for urgency
