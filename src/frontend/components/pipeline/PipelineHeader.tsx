@@ -592,14 +592,14 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Today',
             value: timeData.todayProgress,
-            target: 8, // Default target
+            target: 50, // Speedrun target - top 50 people
             isProgress: true,
             color: 'text-gray-900'
           });
           metricItems.push({
             label: 'This Week',
             value: timeData.weekProgress,
-            target: 40, // Default weekly target
+            target: 50, // Speedrun weekly target - top 50 people
             isProgress: true,
             color: 'text-gray-900'
           });
