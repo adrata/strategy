@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useDatabase } from "../layout";
 import { DatabaseTable } from "../types";
+import { DatabaseHeader } from "./DatabaseHeader";
 
 export function TableBrowser() {
   const { setSelectedTable, setViewMode } = useDatabase();
@@ -69,20 +70,16 @@ export function TableBrowser() {
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="flex-shrink-0 p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Database Tables</h1>
-            <p className="text-gray-600">Browse and explore all database tables</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-500">
-              {filteredTables.length} of {tables.length} tables
-            </div>
-          </div>
-        </div>
-
+      {/* Standardized Header */}
+      <DatabaseHeader
+        title="Database Tables"
+        subtitle="Browse and explore all database tables"
+        icon="📊"
+        stats={[
+          { label: "Showing", value: `${filteredTables.length} of ${tables.length}` },
+          { label: "Total", value: `${tables.length} tables` }
+        ]}
+      >
         {/* Filters */}
         <div className="flex items-center gap-4">
           {/* Search */}
@@ -109,7 +106,7 @@ export function TableBrowser() {
             ))}
           </select>
         </div>
-      </div>
+      </DatabaseHeader>
 
       {/* Tables Grid */}
       <div className="flex-1 p-6 overflow-y-auto">

@@ -5,6 +5,7 @@ import { useDatabase } from "../layout";
 import { DataGrid } from "./DataGrid";
 import { SchemaViewer } from "./SchemaViewer";
 import { RelationshipDiagram } from "./RelationshipDiagram";
+import { DatabaseHeader } from "./DatabaseHeader";
 import { useParams } from "next/navigation";
 
 interface TableDetailProps {
@@ -64,25 +65,26 @@ export function TableDetail({ tableName }: TableDetailProps) {
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="flex-shrink-0 p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{tableName}</h1>
-            <p className="text-gray-600">
-              {tableSchema ? `${tableSchema.columns.length} columns` : 'Loading...'}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+      {/* Standardized Header */}
+      <DatabaseHeader
+        title={tableName}
+        subtitle={tableSchema ? `${tableSchema.columns.length} columns` : 'Loading...'}
+        icon="📋"
+        stats={[
+          { label: "Columns", value: tableSchema?.columns.length || 0 },
+          { label: "Relationships", value: tableSchema?.relationships.length || 0 }
+        ]}
+        actions={
+          <>
             <button className="px-4 py-2 text-sm bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors">
               Export Data
             </button>
             <button className="px-4 py-2 text-sm bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors">
               Add Record
             </button>
-          </div>
-        </div>
-
+          </>
+        }
+      >
         {/* Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
           {tabs.map((tab) => (
@@ -100,7 +102,7 @@ export function TableDetail({ tableName }: TableDetailProps) {
             </button>
           ))}
         </div>
-      </div>
+      </DatabaseHeader>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">

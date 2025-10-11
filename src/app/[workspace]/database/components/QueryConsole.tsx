@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { QueryResult, QueryHistory } from "../types";
+import { DatabaseHeader } from "./DatabaseHeader";
 
 export function QueryConsole() {
   const [query, setQuery] = useState('');
@@ -114,14 +115,17 @@ export function QueryConsole() {
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="flex-shrink-0 p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Query Console</h1>
-            <p className="text-gray-600">Execute SQL queries against your database</p>
-          </div>
-          <div className="flex items-center gap-2">
+      {/* Standardized Header */}
+      <DatabaseHeader
+        title="Query Console"
+        subtitle="Execute SQL queries against your database"
+        icon="💻"
+        stats={[
+          { label: "History", value: history.length },
+          { label: "Last Result", value: result ? `${result.rowCount} rows` : 'None' }
+        ]}
+        actions={
+          <>
             <button
               onClick={clearQuery}
               className="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
@@ -135,9 +139,9 @@ export function QueryConsole() {
             >
               {loading ? 'Executing...' : 'Execute Query'}
             </button>
-          </div>
-        </div>
-
+          </>
+        }
+      >
         {/* Query Editor */}
         <div className="relative">
           <textarea
@@ -151,7 +155,7 @@ export function QueryConsole() {
             Cmd+Enter to execute
           </div>
         </div>
-      </div>
+      </DatabaseHeader>
 
       {/* Content */}
       <div className="flex-1 flex overflow-hidden">
