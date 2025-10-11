@@ -292,7 +292,12 @@ export const PipelineContent = React.memo(function PipelineContent({
         refresh: () => Promise.resolve([]), 
         clearCache: () => {} 
       }
-    : pipelineData;
+    : (pipelineData || { 
+        data: [], 
+        error: null, 
+        refresh: () => Promise.resolve([]), 
+        clearCache: () => {} 
+      });
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
   const metrics = section === 'metrics' 

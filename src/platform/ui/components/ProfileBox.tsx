@@ -552,6 +552,26 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
+        {/* Docs - Documentation System */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => {
+            console.log("📚 Docs clicked - navigating to documentation");
+            setIsProfileOpen(false);
+            handleNavigation("./docs");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              handleNavigation("./docs");
+            }
+          }}
+        >
+          Docs
+        </div>
+
         {/* Monaco Display Options - Show only in demo mode */}
         {isDemoMode && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
           <>
