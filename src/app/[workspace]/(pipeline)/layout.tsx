@@ -59,7 +59,7 @@ function PipelineLayoutContent({
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     if (pathname.includes('/oasis')) {
-      return <OasisLeftPanel />;
+      return <OasisLeftPanel activeSection="channels" onSectionChange={() => {}} />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel />;
     } else {
