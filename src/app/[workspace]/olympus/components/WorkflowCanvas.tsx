@@ -100,19 +100,31 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
 
   return (
     <div className="flex-1 bg-white overflow-hidden relative">
+      {/* Background layer for panning - always receives mouse events */}
       <div 
-        className={`absolute inset-0 flex items-center justify-center p-8 ${
+        className={`absolute inset-0 ${
           activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
         }`}
         style={{
           backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
           backgroundSize: '20px 20px',
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          zIndex: 0
         }}
         onWheel={onWheel}
         onMouseDown={onBackgroundMouseDown}
         onClick={onBackgroundClick}
+      />
+      
+      {/* Content layer with workflow steps */}
+      <div 
+        className="absolute inset-0 flex items-center justify-center p-8"
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: 'center center',
+          zIndex: 1
+        }}
       >
         <div className="relative w-full h-full">
           {/* Connection Lines */}

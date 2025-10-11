@@ -330,7 +330,7 @@ export default function OlympusPage() {
     handleBackgroundMouseDown,
     handleBackgroundMouseMove,
     handleBackgroundMouseUp
-  } = useZoomPan();
+  } = useZoomPan(activeTool);
 
   // Add background mouse move/up listeners
   useEffect(() => {

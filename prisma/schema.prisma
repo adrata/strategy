@@ -740,3 +740,45 @@ model grand_central_executions {
   @@index([workspaceId, status])
   @@index([startedAt])
 }
+
+// Chronicle System Models
+model ChronicleReport {
+  id              String            @id @default(cuid())
+  title           String
+  reportType      ChronicleReportType  // MONDAY_PREP, FRIDAY_RECAP
+  content         Json              // Report content
+  weekStart       DateTime          // Week this report covers
+  weekEnd         DateTime
+  
+  workspaceId     String
+  userId          String
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  shares          ChronicleShare[]
+  
+  @@index([workspaceId, weekStart])
+  @@index([userId, createdAt])
+}
+
+model ChronicleShare {
+  id              String            @id @default(cuid())
+  reportId        String
+  shareToken      String            @unique
+  shareUrl        String?
+  expiresAt       DateTime?
+  allowedEmails   String[]
+  viewCount       Int               @default(0)
+  
+  createdAt       DateTime          @default(now())
+  
+  report          ChronicleReport   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  
+  @@index([shareToken])
+}
+
+enum ChronicleReportType {
+  MONDAY_PREP
+  FRIDAY_RECAP
+}

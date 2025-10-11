@@ -33,7 +33,7 @@ export const ACQUISITION_OS_APPS: AcquisitionOSApp[] = [
     description: "Win major deals",
     icon: FunnelIcon,
     color: "#059669",
-    sections: ["speedrun", "opportunities", "leads", "prospects", "clients", "partners", "companies", "people"],
+    sections: ["speedrun", "opportunities", "leads", "prospects", "clients", "partners", "companies", "people", "metrics", "chronicle"],
   },
   {
     id: "monaco",
