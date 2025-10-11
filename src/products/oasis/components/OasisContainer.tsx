@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
+import { OasisLeftPanel } from "./OasisLeftPanel";
 import { OasisChatInterface } from "./OasisChatInterface";
+import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { useOasis } from "../context/OasisProvider";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
@@ -83,32 +86,44 @@ export function OasisContainer() {
   };
 
   return (
-    <OasisChatInterface
-      selectedChat={selectedChat}
-      chatInput=""
-      setChatInput={() => {}} // Handled by form submission
-      showDetail={showDetail}
-      setShowDetail={setShowDetail}
-      chats={chats}
-      messages={messages}
-      currentUser={currentUser}
-      typingUsers={typingUsers}
-      loading={loading}
-      messagesLoading={messagesLoading}
-      sending={sending}
-      onSendMessage={handleSendMessage}
-      onChatSelect={handleChatSelect}
-      getInitials={getInitials}
-      getDirectMessages={getDirectMessages}
-      getOrderedChannels={getOrderedChannels}
-      getChatDisplayName={getChatDisplayName}
-      getMessageSenderDisplayName={getMessageSenderDisplayName}
-      isUserOnline={isUserOnline}
-      startTyping={startTyping}
-      stopTyping={stopTyping}
-      editMessage={editMessage}
-      addReaction={addReaction}
-      removeReaction={removeReaction}
+    <PanelLayout
+      thinLeftPanel={null}
+      leftPanel={<OasisLeftPanel />}
+      middlePanel={
+        <OasisChatInterface
+          selectedChat={selectedChat}
+          chatInput=""
+          setChatInput={() => {}} // Handled by form submission
+          showDetail={showDetail}
+          setShowDetail={setShowDetail}
+          chats={chats}
+          messages={messages}
+          currentUser={currentUser}
+          typingUsers={typingUsers}
+          loading={loading}
+          messagesLoading={messagesLoading}
+          sending={sending}
+          onSendMessage={handleSendMessage}
+          onChatSelect={handleChatSelect}
+          getInitials={getInitials}
+          getDirectMessages={getDirectMessages}
+          getOrderedChannels={getOrderedChannels}
+          getChatDisplayName={getChatDisplayName}
+          getMessageSenderDisplayName={getMessageSenderDisplayName}
+          isUserOnline={isUserOnline}
+          startTyping={startTyping}
+          stopTyping={stopTyping}
+          editMessage={editMessage}
+          addReaction={addReaction}
+          removeReaction={removeReaction}
+        />
+      }
+      rightPanel={<RightPanel />}
+      zoom={100}
+      isLeftPanelVisible={ui.isLeftPanelVisible}
+      isRightPanelVisible={ui.isRightPanelVisible}
+      onToggleLeftPanel={ui.toggleLeftPanel}
+      onToggleRightPanel={ui.toggleRightPanel}
     />
   );
 }

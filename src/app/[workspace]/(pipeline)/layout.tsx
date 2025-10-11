@@ -9,10 +9,7 @@ import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/A
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
-import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
-import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
 
 interface PipelineLayoutProps {
   children: React.ReactNode;
@@ -55,21 +52,14 @@ function PipelineLayoutContent({
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
   const pathname = usePathname();
-  
-  // Get Stacks context if we're in the stacks route
-  let stacksContext = null;
-  try {
-    stacksContext = useStacks();
-  } catch (error) {
-    // Stacks context not available, that's fine
-  }
 
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     if (pathname.includes('/oasis')) {
-      return <OasisLeftPanel />;
+      return null; // Oasis handles its own left panel
     } else if (pathname.includes('/stacks')) {
-      return <StacksLeftPanel />;
+      // Stacks handles its own left panel
+      return null;
     } else {
       // Default to Speedrun left panel for other routes
       return (
@@ -96,8 +86,10 @@ function PipelineLayoutContent({
 
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
-    if (pathname.includes('/stacks') && stacksContext?.selectedItem) {
-      return <StacksDetailPanel item={stacksContext.selectedItem} />;
+    if (pathname.includes('/oasis')) {
+      return null; // Oasis handles its own right panel
+    } else if (pathname.includes('/stacks')) {
+      return null; // Stacks handles its own right panel
     } else {
       return <RightPanel />;
     }
@@ -170,28 +162,26 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     <AcquisitionOSProvider>
       <ZoomProvider>
         <PipelineProvider>
-          <StacksProvider>
-            <ProfilePopupProvider>
-              <PipelineLayoutContent
-                currentSection={currentSection}
-                onSectionChange={handleSectionChange}
-                isSpeedrunVisible={isSpeedrunVisible}
-                setIsSpeedrunVisible={setIsSpeedrunVisible}
-                isOpportunitiesVisible={isOpportunitiesVisible}
-                setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                isProspectsVisible={isProspectsVisible}
-                setIsProspectsVisible={setIsProspectsVisible}
-                isLeadsVisible={isLeadsVisible}
-                setIsLeadsVisible={setIsLeadsVisible}
-                isCustomersVisible={isCustomersVisible}
-                setIsCustomersVisible={setIsCustomersVisible}
-                isPartnersVisible={isPartnersVisible}
-                setIsPartnersVisible={setIsPartnersVisible}
-              >
-                {children}
-              </PipelineLayoutContent>
-            </ProfilePopupProvider>
-          </StacksProvider>
+          <ProfilePopupProvider>
+            <PipelineLayoutContent
+              currentSection={currentSection}
+              onSectionChange={handleSectionChange}
+              isSpeedrunVisible={isSpeedrunVisible}
+              setIsSpeedrunVisible={setIsSpeedrunVisible}
+              isOpportunitiesVisible={isOpportunitiesVisible}
+              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+              isProspectsVisible={isProspectsVisible}
+              setIsProspectsVisible={setIsProspectsVisible}
+              isLeadsVisible={isLeadsVisible}
+              setIsLeadsVisible={setIsLeadsVisible}
+              isCustomersVisible={isCustomersVisible}
+              setIsCustomersVisible={setIsCustomersVisible}
+              isPartnersVisible={isPartnersVisible}
+              setIsPartnersVisible={setIsPartnersVisible}
+            >
+              {children}
+            </PipelineLayoutContent>
+          </ProfilePopupProvider>
         </PipelineProvider>
       </ZoomProvider>
     </AcquisitionOSProvider>

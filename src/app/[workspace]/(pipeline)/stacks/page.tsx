@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { StacksContent } from "@/frontend/components/stacks/StacksContent";
+import { StacksContainer } from "@/products/stacks/components/StacksContainer";
+import { StacksProvider } from "@/products/stacks/context/StacksProvider";
 
 export const metadata: Metadata = {
   title: "Stacks",
@@ -7,7 +8,13 @@ export const metadata: Metadata = {
 };
 
 export default function WorkspaceStacksPage() {
-  return <StacksContent section="stacks" />;
+  return (
+    <StacksProvider>
+      <div className="h-full">
+        <StacksContainer />
+      </div>
+    </StacksProvider>
+  );
 }
 
 

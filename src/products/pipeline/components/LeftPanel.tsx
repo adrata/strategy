@@ -1137,7 +1137,7 @@ export function PipelineLeftPanelStandalone({
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
           onClick={handleProfileClick}
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           title="Profile"
         >
           <div className="w-8 h-8 bg-gray-200 rounded-xl flex items-center justify-center">
