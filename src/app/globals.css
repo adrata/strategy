@@ -212,34 +212,8 @@ body:not(.website) {
     box-shadow var(--theme-transition-duration) ease;
 }
 
-/* Legacy dark theme support - will be overridden by theme system */
-[data-theme="dark"] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --border: #2d2e36;
-  --muted: #bbbbbb;
-  --muted-light: #444444;
-  --accent: #ffffff;
-  --accent-hover: #cccccc;
-  --button-text: #171717;
-  --hover-bg: #232326;
-  --badge-new-bg: #374151;
-  --badge-new-text: #e5e7eb;
-  --badge-contacted-bg: #4b5563;
-  --badge-contacted-text: #f9fafb;
-  --badge-qualified-bg: #6b7280;
-  --badge-qualified-text: #ffffff;
-  --badge-lost-bg: #374151;
-  --badge-lost-text: #d1d5db;
-  --active-app-border: #fff;
-  --panel-background: #18181b;
-  --scrollbar-thumb: #444444;
-  --focus-ring: #60a5fa;
-  --high-contrast-bg: #000000;
-  --high-contrast-fg: #ffffff;
-  --high-contrast-border: #ffffff;
-  --high-contrast-accent: #ffffff;
-}
+/* Theme system will override these with data-theme attributes */
+/* This is just a fallback for legacy support */
 
 /* HIGH CONTRAST MODE - Activated via prefers-contrast: high */
 @media (prefers-contrast: high) {

@@ -44,7 +44,9 @@ export function useFastCounts(): UseFastCountsReturn {
     people: '—',
     clients: '—',
     sellers: '—',
-    speedrun: '—'
+    speedrun: '—',
+    metrics: '—',
+    chronicle: '—'
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

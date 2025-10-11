@@ -9,7 +9,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { 
-  Search, 
   X, 
   Check, 
   Sun, 
@@ -17,11 +16,10 @@ import {
   Eye,
   Palette,
   Sparkles,
-  ArrowUp,
-  ArrowDown,
 } from 'lucide-react';
 import { useTheme } from '@/platform/ui/components/ThemeProvider';
-import { allThemes, getThemeById, getThemesByCategory, searchThemes, type Theme, type ThemeCategory } from '@/platform/ui/themes/theme-definitions';
+import { allThemes, getThemeById, getThemesByCategory, type Theme, type ThemeCategory } from '@/platform/ui/themes/theme-definitions';
+import { themeApplier } from '@/platform/ui/themes/theme-applier-2025';
 import { getPlatform } from '@/platform/platform-detection';
 
 // ==================== TYPES ====================
@@ -155,39 +153,30 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
   console.log('🎨 ThemePickerModal props - isOpen:', isOpen);
   const { themeMode, setThemeMode, setLightTheme, setDarkTheme, currentTheme, isDarkMode } = useTheme();
   
-  // Local state for search and filtering
-  const [searchQuery, setSearchQuery] = useState('');
+  // Local state for filtering
   const [selectedCategory, setSelectedCategory] = useState<ThemeCategory | 'all'>('all');
   const [filteredThemes, setFilteredThemes] = useState<Theme[]>(allThemes);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isKeyboardNavigating, setIsKeyboardNavigating] = useState(false);
   
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const themeGridRef = useRef<HTMLDivElement>(null);
 
   const platform = getPlatform();
 
-  // ==================== SEARCH AND FILTERING ====================
+  // ==================== FILTERING ====================
 
-  // Update filtered themes when search or category changes
+  // Update filtered themes when category changes
   useEffect(() => {
     let filtered = allThemes;
     
-    if (searchQuery.trim()) {
-      filtered = searchThemes(searchQuery);
-    } else if (selectedCategory !== 'all') {
+    if (selectedCategory !== 'all') {
       filtered = getThemesByCategory(selectedCategory);
     }
     
     setFilteredThemes(filtered);
-  }, [searchQuery, selectedCategory]);
-
-  const clearSearch = useCallback(() => {
-    setSearchQuery('');
-    setSelectedCategory('all');
-  }, []);
+  }, [selectedCategory]);
 
   // ==================== THEME APPLICATION ====================
 
@@ -199,14 +188,27 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
         return;
       }
 
-      // Apply theme based on category
-      if (theme.category === 'light') {
-        setLightTheme(themeId);
-      } else if (theme.category === 'dark') {
-        setDarkTheme(themeId);
-      }
+      // Apply theme using 2025 theme applier
+      const success = await themeApplier.applyTheme(themeId, {
+        enableTransitions: true,
+        transitionDuration: 200,
+        persistToStorage: false, // ThemeProvider handles persistence
+        updateSystemTheme: true
+      });
 
-      onThemeSelect?.(theme);
+      if (success) {
+        // Update ThemeProvider state
+        if (theme.category === 'light') {
+          setLightTheme(themeId);
+        } else if (theme.category === 'dark') {
+          setDarkTheme(themeId);
+        }
+
+        onThemeSelect?.(theme);
+        console.log(`🎨 Theme applied successfully: ${theme.displayName}`);
+      } else {
+        console.error('Failed to apply theme using theme applier');
+      }
     } catch (error) {
       console.error('Failed to apply theme:', error);
     }
@@ -242,12 +244,6 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
         }
         break;
       
-      case '/':
-        if (e.target !== searchInputRef.current) {
-          e.preventDefault();
-          searchInputRef.current?.focus();
-        }
-        break;
       
       case '1':
         if (e.metaKey || e.ctrlKey) {
@@ -291,12 +287,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
         }
       }, [applyTheme]);
 
-  // ==================== SEARCH AND FILTERING ====================
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setSelectedIndex(0); // Reset selection when searching
-  }, []);
+  // ==================== FILTERING ====================
 
       const handleCategoryChange = useCallback(async (category: ThemeCategory | 'all') => {
         setSelectedCategory(category);
@@ -318,17 +309,17 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
   // Focus management
   useEffect(() => {
     if (isOpen) {
-      // Focus search input when modal opens
+      // Focus modal when it opens
       setTimeout(() => {
-        searchInputRef.current?.focus();
+        modalRef.current?.focus();
       }, 100);
     } else {
       // Reset state when modal closes
       setSelectedIndex(0);
       setIsKeyboardNavigating(false);
-      clearSearch();
+      setSelectedCategory('all');
     }
-  }, [isOpen, clearSearch]);
+  }, [isOpen]);
 
   // Keyboard event listeners
   useEffect(() => {
@@ -392,31 +383,8 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
             </button>
           </div>
 
-          {/* Search and Categories */}
+          {/* Categories */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            {/* Search Input */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search themes..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                aria-label="Search themes"
-              />
-              {searchQuery && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                  aria-label="Clear search"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
             {/* Category Tabs */}
             <div className="flex gap-2 overflow-x-auto">
               {categories.map((category) => {

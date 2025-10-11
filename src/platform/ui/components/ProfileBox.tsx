@@ -18,9 +18,9 @@ import {
   QuestionMarkCircleIcon,
   AcademicCapIcon,
   CogIcon,
-  ComputerDesktopIcon,
   DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
+import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 // import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher"; // Removed - no longer using demo scenarios popup
 import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
@@ -464,7 +464,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
   // Platform detection for appropriate icon
   const getPlatformIcon = () => {
-    if (typeof window === 'undefined') return ComputerDesktopIcon;
+    if (typeof window === 'undefined') return WindowsIcon;
     
     const platform = navigator.platform.toLowerCase();
     const userAgent = navigator.userAgent.toLowerCase();
@@ -476,11 +476,16 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
     
     // Check if Mac
     if (platform.includes('mac') || userAgent.includes('mac')) {
-      return ComputerDesktopIcon; // Mac desktop
+      return AppleIcon;
     }
     
-    // Default to PC desktop icon
-    return ComputerDesktopIcon;
+    // Check if Linux
+    if (platform.includes('linux') || userAgent.includes('linux')) {
+      return LinuxIcon;
+    }
+    
+    // Default to Windows icon
+    return WindowsIcon;
   };
 
   const PlatformIcon = getPlatformIcon();

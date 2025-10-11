@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import {
   Search,
   Zap,
@@ -72,7 +73,7 @@ export default function UniversalCommandPalette({
           navigateToAOS();
         },
         keywords: ["action", "platform", "strategy", "execution"],
-        shortcut: "⌘1",
+        shortcut: formatShortcutForDisplay(['⌘+1', 'Ctrl+1']),
         priority: 10,
       },
       {

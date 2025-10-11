@@ -199,7 +199,7 @@ const buildConfig = {
             },
             // UI components separation
             ui: {
-              test: /[\\/]node_modules[\\/](@radix-ui|@heroicons|lucide-react)[\\/]/,
+              test: /[\\/]node_modules[\\/](@radix-ui|@heroicons|lucide-react|react-icons)[\\/]/,
               name: 'ui-components',
               chunks: 'all',
               priority: 12,

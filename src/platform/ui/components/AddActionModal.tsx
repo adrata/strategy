@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/api-fetch';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
@@ -413,7 +414,7 @@ export function AddActionModal({
 
           {/* Keyboard shortcut hint */}
           <div className="text-xs text-gray-500 text-center">
-            Press <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">⌘↵</kbd> to submit quickly
+            Press <Kbd variant="default" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd> to submit quickly
           </div>
         </form>
       </div>

@@ -95,42 +95,54 @@ export async function GET(request: NextRequest) {
                       userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
-    // 🚀 PERFORMANCE: Use v1 APIs for counts instead of direct Prisma queries
-    const [peopleCountsResponse, companiesCountsResponse] = await Promise.all([
-      // Get people counts by status from v1 API
-      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/people?counts=true`, {
-        headers: {
-          'Cookie': request.headers.get('cookie') || '',
-          'Authorization': request.headers.get('authorization') || ''
-        }
+    // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability
+    const [peopleCounts, companiesCounts] = await Promise.all([
+      // Get people counts by status
+      prisma.people.groupBy({
+        by: ['status'],
+        where: {
+          workspaceId,
+          deletedAt: null
+        },
+        _count: { id: true }
       }),
-      // Get companies counts by status from v1 API  
-      fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/companies?counts=true`, {
-        headers: {
-          'Cookie': request.headers.get('cookie') || '',
-          'Authorization': request.headers.get('authorization') || ''
-        }
+      // Get companies counts by status
+      prisma.companies.groupBy({
+        by: ['status'],
+        where: {
+          workspaceId,
+          deletedAt: null,
+          ...(isDemoMode ? {} : {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          })
+        },
+        _count: { id: true }
       })
     ]);
 
-    const [peopleCountsData, companiesCountsData] = await Promise.all([
-      peopleCountsResponse.json(),
-      companiesCountsResponse.json()
-    ]);
+    // Convert groupBy results to count objects
+    const peopleCountsMap = peopleCounts.reduce((acc, stat) => {
+      acc[stat.status || 'ACTIVE'] = stat._count.id;
+      return acc;
+    }, {} as Record<string, number>);
 
-    // Extract counts from v1 API responses
-    const peopleCounts = peopleCountsData.success ? peopleCountsData.data : {};
-    const companiesCounts = companiesCountsData.success ? companiesCountsData.data : {};
+    const companiesCountsMap = companiesCounts.reduce((acc, stat) => {
+      acc[stat.status || 'ACTIVE'] = stat._count.id;
+      return acc;
+    }, {} as Record<string, number>);
 
-    // Map v1 API counts to our expected format
-    const leadsCount = peopleCounts.LEAD || 0;
-    const prospectsCount = peopleCounts.PROSPECT || 0;
-    const opportunitiesCount = companiesCounts.OPPORTUNITY || 0;
-    const companiesCount = Object.values(companiesCounts).reduce((sum: number, count: any) => sum + count, 0);
-    const peopleCount = Object.values(peopleCounts).reduce((sum: number, count: any) => sum + count, 0);
-    const clientsCount = companiesCounts.CLIENT || 0;
-    const partnersCount = companiesCounts.ACTIVE || 0; // Use ACTIVE as fallback for partners
-    const sellersCount = peopleCounts.CLIENT || 0; // Use CLIENT status as fallback for sellers
+    // Map counts to our expected format
+    const leadsCount = peopleCountsMap.LEAD || 0;
+    const prospectsCount = peopleCountsMap.PROSPECT || 0;
+    const opportunitiesCount = companiesCountsMap.OPPORTUNITY || 0;
+    const companiesCount = Object.values(companiesCountsMap).reduce((sum: number, count: any) => sum + count, 0);
+    const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
+    const clientsCount = companiesCountsMap.CLIENT || 0;
+    const partnersCount = companiesCountsMap.ACTIVE || 0; // Use ACTIVE as fallback for partners
+    const sellersCount = peopleCountsMap.CLIENT || 0; // Use CLIENT status as fallback for sellers
     const speedrunCount = Math.min(50, peopleCount); // Speedrun is limited to top 50 people
     
     const counts = {

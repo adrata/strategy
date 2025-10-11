@@ -321,7 +321,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     }
   }, [isOpen, record, initialTab]);
 
-  // Keyboard shortcut for Update Record (⌘⏎) when modal is open
+  // Keyboard shortcut for Update Record when modal is open
   useEffect(() => {
     if (!isOpen) return;
 

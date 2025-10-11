@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Kbd, formatShortcutForDisplay, createTooltipWithShortcut } from '@/platform/utils/keyboard-shortcut-display';
 import {
   ChevronLeftIcon,
   PlusIcon,
@@ -2727,12 +2728,12 @@ Dan`}
                       ? 'bg-green-100 text-green-700 border-green-200'
                       : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
                   }`}
-                  title={isCompleted ? "Completed" : "Mark as completed (⌘+Enter)"}
+                  title={isCompleted ? "Completed" : createTooltipWithShortcut("Mark as completed", ['⌘+Enter', 'Ctrl+Enter'])}
                 >
                   <div className="flex items-center gap-2">
                     <span>{isCompleted ? 'Completed' : 'Complete'}</span>
                     {!isCompleted && (
-                      <kbd className="px-1.5 py-0.5 bg-gray-200 text-gray-600 rounded text-xs font-mono">⌘↵</kbd>
+                      <Kbd variant="gray" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd>
                     )}
                   </div>
                 </button>

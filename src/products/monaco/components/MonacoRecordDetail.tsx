@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { MonacoRecord, Company, Person } from "../types";
 import { DirectionalIntelligenceComponent } from "./DirectionalIntelligence";
@@ -327,7 +328,7 @@ export function MonacoRecordDetail({
           <div className="w-4 h-4 bg-[#2563EB] rounded flex items-center justify-center">
             <span className="text-white text-sm font-bold">+</span>
           </div>
-          Add to OS ⌘↵
+          Add to OS {formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}
         </button>
       </div>
 

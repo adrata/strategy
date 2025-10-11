@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { useRouter } from "next/navigation";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
 import { AcquisitionOSLayout } from "@/platform/ui/components/ActionPlatformLayout";
@@ -179,7 +180,7 @@ export function PipelineStandaloneCleanContent() {
                   className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-3"
                 >
                   Accept
-                  <kbd className="px-2 py-1 bg-green-200 text-green-700 rounded text-sm font-mono">⌘↵</kbd>
+                  <Kbd variant="green" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd>
                 </button>
                 <button
                   onClick={() => setIsSlideUpVisible(false)}

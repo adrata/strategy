@@ -1,4 +1,5 @@
 import React from "react";
+import { formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { PendingAction } from "../types";
 
 interface PendingActionBarProps {
@@ -30,7 +31,7 @@ export const PendingActionBar: React.FC<PendingActionBarProps> = ({
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2"
           >
             ✅ Accept Action
-            <span className="text-xs opacity-80">(⌘↵)</span>
+            <span className="text-xs opacity-80">({formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])})</span>
           </button>
           <button
             onClick={onCancel}

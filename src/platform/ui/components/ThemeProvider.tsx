@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { allThemes } from '@/platform/ui/themes/theme-definitions';
+import { themeApplier } from '@/platform/ui/themes/theme-applier-2025';
 
 // Convert theme definitions to CSS variables format for compatibility
 const themes: Record<string, { [key: string]: string }> = {};
@@ -130,8 +131,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themeMode, setThemeMode] = useState<"light" | "dark" | "auto">(
     "light",
   );
-  const [lightTheme, setLightTheme] = useState("Ghost");
-  const [darkTheme, setDarkTheme] = useState("Dark Matter");
+  const [lightTheme, setLightTheme] = useState("ghost");
+  const [darkTheme, setDarkTheme] = useState("dark-matter");
   const [zoom, setZoom] = useState(100);
 
   // Compute current theme and dark mode status
@@ -142,18 +143,30 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       window.matchMedia("(prefers-color-scheme: dark)").matches);
   const currentTheme = isDarkMode ? darkTheme : lightTheme;
 
-  // CRITICAL: Apply theme CSS variables when theme changes
+  // CRITICAL: Apply theme using 2025 theme applier
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const themeVars = themes[currentTheme];
-    if (themeVars) {
-      initializeCSSVariables(themeVars);
-      console.log(`🎨 Applied theme: ${currentTheme}`, themeVars);
-    } else {
-      console.warn(`🎨 Theme not found: ${currentTheme}, using fallback`);
-      initializeCSSVariables();
-    }
+    // Use the modern theme applier
+    themeApplier.applyTheme(currentTheme, {
+      enableTransitions: true,
+      transitionDuration: 200,
+      persistToStorage: false, // ThemeProvider handles persistence
+      updateSystemTheme: true
+    }).then(success => {
+      if (success) {
+        console.log(`🎨 Theme applied successfully: ${currentTheme}`);
+      } else {
+        console.warn(`🎨 Failed to apply theme: ${currentTheme}`);
+        // Fallback to legacy method
+        const themeVars = themes[currentTheme];
+        if (themeVars) {
+          initializeCSSVariables(themeVars);
+        } else {
+          initializeCSSVariables();
+        }
+      }
+    });
   }, [currentTheme]);
 
   // CRITICAL: Listen to system theme changes for auto mode
