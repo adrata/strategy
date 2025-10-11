@@ -6,6 +6,7 @@ import { WorkflowCanvas } from "./components/WorkflowCanvas";
 import { CodeEditor } from "./components/CodeEditor";
 import { Toolbar } from "./components/Toolbar";
 import { ContextMenu } from "./components/ContextMenu";
+import { CommentaryPanel } from "./components/CommentaryPanel";
 import { useDrag } from "./hooks/useDrag";
 import { useZoomPan } from "./hooks/useZoomPan";
 import { 
@@ -33,6 +34,9 @@ export default function OlympusPage() {
   const [draggingConnection, setDraggingConnection] = useState<{ from: string, fromSide: string } | null>(null);
   const [connections, setConnections] = useState<WorkflowConnection[]>([]);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [showPlayPopup, setShowPlayPopup] = useState(false);
+  const [isCommentaryMode, setIsCommentaryMode] = useState(false);
+  const [commentaryLog, setCommentaryLog] = useState<string[]>([]);
   const { setSelectedStep } = useOlympus();
 
   const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([
@@ -113,17 +117,18 @@ export default function OlympusPage() {
   // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showAddPopup) {
-        const target = event.target as Element;
-        if (!target.closest('.add-popup-container')) {
-          setShowAddPopup(false);
-        }
+      const target = event.target as Element;
+      if (showAddPopup && !target.closest('.add-popup-container')) {
+        setShowAddPopup(false);
+      }
+      if (showPlayPopup && !target.closest('.play-popup-container')) {
+        setShowPlayPopup(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showAddPopup]);
+  }, [showAddPopup, showPlayPopup]);
 
   const saveToHistory = useCallback(() => {
     const newHistory = positionHistory.slice(0, historyIndex + 1);
@@ -194,6 +199,8 @@ export default function OlympusPage() {
   const handleExecute = useCallback(() => {
     setIsExecuting(true);
     setCurrentStepIndex(0);
+    setIsCommentaryMode(false);
+    setCommentaryLog([]);
     
     const interval = setInterval(() => {
       setCurrentStepIndex(prev => {
@@ -206,6 +213,41 @@ export default function OlympusPage() {
       });
     }, 1000);
   }, [workflowSteps.length]);
+
+  const handleExecuteWithCommentary = useCallback(() => {
+    setIsExecuting(true);
+    setCurrentStepIndex(0);
+    setIsCommentaryMode(true);
+    setCommentaryLog([]);
+    
+    // Add initial commentary
+    setCommentaryLog(prev => [...prev, "🚀 Starting CFO/CRO Discovery Pipeline execution..."]);
+    
+    const interval = setInterval(() => {
+      setCurrentStepIndex(prev => {
+        const currentStep = workflowSteps[prev];
+        if (currentStep) {
+          // Add detailed commentary for each step
+          const commentaries = [
+            `📊 Step ${prev + 1}: ${currentStep.title} - ${currentStep.description}`,
+            `🔍 Processing: ${currentStep.title}`,
+            `✅ Completed: ${currentStep.title} - Moving to next step`
+          ];
+          
+          setCommentaryLog(prevLog => [...prevLog, ...commentaries]);
+        }
+        
+        if (prev >= workflowSteps.length - 1) {
+          setIsExecuting(false);
+          setIsCommentaryMode(false);
+          setCommentaryLog(prevLog => [...prevLog, "🎉 Pipeline execution completed successfully!"]);
+          clearInterval(interval);
+          return -1;
+        }
+        return prev + 1;
+      });
+    }, 2000); // Slower for commentary
+  }, [workflowSteps]);
 
   const handleBackgroundClick = useCallback(() => {
     setSelectedStep(null);
@@ -346,12 +388,15 @@ export default function OlympusPage() {
           showAddPopup={showAddPopup}
           workflowCategories={workflowCategories}
           isExecuting={isExecuting}
+          showPlayPopup={showPlayPopup}
           onToolClick={handleToolClick}
           onUndo={handleUndo}
           onRedo={handleRedo}
           onToggleAddPopup={() => setShowAddPopup(!showAddPopup)}
           onAddItem={handleAddItem}
           onExecute={handleExecute}
+          onExecuteWithCommentary={handleExecuteWithCommentary}
+          onTogglePlayPopup={() => setShowPlayPopup(!showPlayPopup)}
           getTypeIcon={getTypeIcon}
         />
       )}
@@ -363,6 +408,13 @@ export default function OlympusPage() {
         setContextMenu={setContextMenu}
         setSelectedStep={setSelectedStep}
         setWorkflowSteps={setWorkflowSteps}
+      />
+
+      {/* AI Commentary Panel */}
+      <CommentaryPanel
+        isCommentaryMode={isCommentaryMode}
+        commentaryLog={commentaryLog}
+        isExecuting={isExecuting}
       />
     </div>
   );

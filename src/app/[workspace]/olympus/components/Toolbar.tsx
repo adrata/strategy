@@ -8,12 +8,15 @@ interface ToolbarProps {
   showAddPopup: boolean;
   workflowCategories: WorkflowCategory[];
   isExecuting: boolean;
+  showPlayPopup: boolean;
   onToolClick: (tool: 'cursor' | 'hand') => void;
   onUndo: () => void;
   onRedo: () => void;
   onToggleAddPopup: () => void;
   onAddItem: (item: WorkflowItem) => void;
   onExecute: () => void;
+  onExecuteWithCommentary: () => void;
+  onTogglePlayPopup: () => void;
   getTypeIcon: (id: string) => React.ComponentType<any>;
 }
 
@@ -24,12 +27,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   showAddPopup,
   workflowCategories,
   isExecuting,
+  showPlayPopup,
   onToolClick,
   onUndo,
   onRedo,
   onToggleAddPopup,
   onAddItem,
   onExecute,
+  onExecuteWithCommentary,
+  onTogglePlayPopup,
   getTypeIcon
 }) => {
   return (
@@ -136,16 +142,48 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           )}
         </div>
         
-        {/* Play Button */}
-        <button 
-          onClick={onExecute}
-          disabled={isExecuting}
-          className="p-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
+        {/* Play Button with Popup */}
+        <div className="relative play-popup-container">
+          <button 
+            onClick={onExecute}
+            disabled={isExecuting}
+            onMouseEnter={onTogglePlayPopup}
+            onMouseLeave={onTogglePlayPopup}
+            className="p-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          
+          {/* Play Options Popup */}
+          {showPlayPopup && (
+            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[200px] z-20">
+              <button
+                onClick={onExecute}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  <span>Start</span>
+                </div>
+              </button>
+              <button
+                onClick={onExecuteWithCommentary}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span>Start with AI Commentary</span>
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
