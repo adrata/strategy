@@ -134,7 +134,7 @@ function TowerLayoutContent({
       leftPanel={
         <TowerLeftPanel 
           activeSection={activeSection}
-          onSectionChange={handleSectionChange}
+          onSectionChange={onSectionChange}
         />
       }
       middlePanel={children}
