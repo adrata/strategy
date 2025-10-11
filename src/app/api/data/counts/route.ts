@@ -10,7 +10,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
 
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -89,16 +88,12 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode - ONLY for Dan and Ross
-    const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
-      userId, 
-      context.userEmail, 
-      workspaceId
-    );
-    
-    const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                       userId === 'demo-user-2025') && demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
-    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode} (Dan/Ross: ${demoAccessResult.isDanOrRoss})`);
+    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace
+    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
+                      userId === 'demo-user-2025' || 
+                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
     // 🚀 PERFORMANCE: Run all count queries in parallel
     const [
@@ -112,50 +107,39 @@ export async function GET(request: NextRequest) {
       sellersCount,
       speedrunCount
     ] = await Promise.all([
-      // Leads count - count from people table with LEAD status
-      prisma.people.count({
+      // Leads count
+      prisma.leads.count({
         where: {
           workspaceId,
-          deletedAt: null,
-          status: 'LEAD',
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
+          deletedAt: null
         }
       }),
       
-      // Prospects count - count from people table with PROSPECT status
-      prisma.people.count({
+      // Prospects count
+      prisma.prospects.count({
         where: {
           workspaceId,
-          deletedAt: null,
-          status: 'PROSPECT'
+          deletedAt: null
         }
       }),
       
-      // Opportunities count - count from companies table with OPPORTUNITY status
+      // Opportunities count
+      prisma.opportunities.count({
+        where: {
+          workspaceId,
+          deletedAt: null
+        }
+      }),
+      
+      // Companies count
       prisma.companies.count({
         where: {
           workspaceId,
-          deletedAt: null,
-          status: 'OPPORTUNITY'
+          deletedAt: null
         }
       }),
       
-      // Companies count - match section API filtering logic
-      prisma.companies.count({
-        where: {
-          workspaceId,
-          deletedAt: null,
-          OR: [
-            { assignedUserId: userId },
-            { assignedUserId: null }
-          ]
-        }
-      }),
-      
-      // People count - total people count
+      // People count
       prisma.people.count({
         where: {
           workspaceId,
@@ -163,46 +147,64 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Clients count - count from companies table with CLIENT status
-      prisma.companies.count({
+      // Clients count (with fallback)
+      prisma.clients.count({
         where: {
           workspaceId,
-          deletedAt: null,
-          status: 'CLIENT'
+          deletedAt: null
         }
-      }),
+      }).catch(() => 0),
       
-      // Partners count - count from companies table with OPPORTUNITY status (same as opportunities)
-      prisma.companies.count({
+      // Partners count (with fallback)
+      prisma.partners.count({
         where: {
           workspaceId,
-          deletedAt: null,
-          status: 'OPPORTUNITY'
+          deletedAt: null
         }
-      }),
+      }).catch(() => 0),
       
-      // Sellers count - count workspace users with SELLER role
-      prisma.workspace_users.count({
-        where: {
-          workspaceId,
-          isActive: true,
-          role: 'SELLER'
-        }
-      }),
+      // Sellers count - count from both sellers table AND people table with role 'seller'
+      Promise.all([
+        prisma.sellers.count({
+          where: {
+            workspaceId,
+            deletedAt: null
+          }
+        }).catch(() => 0),
+        prisma.people.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            role: 'seller'
+          }
+        }).catch(() => 0)
+      ]).then(([sellersTableCount, peopleTableCount]) => sellersTableCount + peopleTableCount),
       
-      // Speedrun count - count all people (same logic as speedrun section)
+      // Speedrun count - count speedrun leads, fallback to people if no speedrun leads
       (async () => {
         try {
-          // Count all people in workspace (same as speedrun section logic)
-          const allPeopleCount = await prisma.people.count({
+          // First try to count speedrun-tagged leads
+          const speedrunLeadsCount = await prisma.leads.count({
             where: {
               workspaceId,
-              deletedAt: null
+              deletedAt: null,
+              tags: { has: 'speedrun' }
             }
           });
           
-          // Return the actual count used in speedrun (limited to 50 to match section API)
-          return Math.min(allPeopleCount, 50);
+          // If no speedrun leads found, count people with company relationships as fallback
+          if (speedrunLeadsCount === 0) {
+            console.log(`🔄 [COUNTS API] No speedrun leads found, falling back to people count for workspace: ${workspaceId}`);
+            return await prisma.people.count({
+              where: {
+                workspaceId,
+                deletedAt: null,
+                companyId: { not: null }
+              }
+            });
+          }
+          
+          return speedrunLeadsCount;
         } catch (error) {
           console.error('❌ [COUNTS API] Error counting speedrun data:', error);
           return 0;

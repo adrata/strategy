@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 
 interface UseWorkspaceContextReturn {
@@ -44,7 +44,7 @@ export function useWorkspaceContext(): UseWorkspaceContextReturn {
         try {
           const jwt = await import('jsonwebtoken');
           const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.default.verify(session.accessToken, secret) as any;
+          const decoded = jwt.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
             console.log(`🔍 [WORKSPACE CONTEXT] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return { workspaceId: decoded.workspaceId, userId: decoded.userId || authUser?.id };

@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
-import { DemoAccessValidator } from '@/platform/services/demo-access-validator';
+
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
@@ -114,34 +114,56 @@ export async function GET(request: NextRequest) {
     
     // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
     // Only apply demo mode to the actual demo workspace, not production workspaces
-    // STRICT: Only allow demo mode for Dan and Ross
-    const demoAccessResult = DemoAccessValidator.validateDemoWorkspaceAccess(
-      userId, 
-      context.userEmail, 
-      workspaceId
-    );
-    const isDemoMode = (workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                       userId === 'demo-user-2025') && // Demo user only
-                       demoAccessResult.hasAccess && demoAccessResult.isDanOrRoss;
+    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
+                      userId === 'demo-user-2025'; // Demo user only
     console.log(`🎯 [SECTION API] Demo mode detected: ${isDemoMode} for workspace: ${workspaceId}, user: ${userId}`);
     
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
       case 'speedrun':
-        // 🏆 SPEEDRUN: Use EXACT same logic as people section
-        console.log(`🏆 [SPEEDRUN SECTION] Loading speedrun data (same as people) for workspace: ${workspaceId}, user: ${userId}`);
+        // 🆕 FIX: Load speedrun data from leads table with speedrun tag, fallback to people if no speedrun leads
+        // In demo mode, show speedrun leads assigned to sellers too
         
-        try {
+        let speedrunLeads = await prisma.leads.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            tags: { has: 'speedrun' },
+            ...(isDemoMode ? {} : {
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
+            })
+          },
+          orderBy: [
+            { updatedAt: 'desc' }
+          ],
+          take: 200
+        });
+        
+        // 🆕 FALLBACK: If no speedrun-tagged leads, use people with company relationships
+        if (speedrunLeads.length === 0) {
+          console.log(`🔄 [SPEEDRUN] No speedrun-tagged leads found, falling back to people data for workspace: ${workspaceId}`);
+          
           const speedrunPeople = await prisma.people.findMany({
             where: {
               workspaceId,
-              deletedAt: null
-              // 🚀 SPEEDRUN: Use EXACT same query as people section
+              deletedAt: null,
+              companyId: { not: null }, // Only people with company relationships
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             },
             orderBy: [
-              { updatedAt: 'desc' } // Order by most recent updates
+              { updatedAt: 'desc' }
             ],
-            take: 50, // Limit to top 50 people for speedrun
+            take: 200,
             select: {
               id: true,
               firstName: true,
@@ -149,10 +171,8 @@ export async function GET(request: NextRequest) {
               fullName: true,
               email: true,
               jobTitle: true,
-              companyId: true,
               phone: true,
               linkedinUrl: true,
-              tags: true,
               status: true,
               lastAction: true,
               lastActionDate: true,
@@ -162,35 +182,20 @@ export async function GET(request: NextRequest) {
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
-              // Include company relationship to get company name
               company: {
                 select: {
                   id: true,
                   name: true,
+                  industry: true,
+                  vertical: true,
+                  size: true
                 }
               }
             }
           });
           
-          console.log(`🏆 [SPEEDRUN SECTION] Found ${speedrunPeople.length} people`);
-          
-          // Apply same filtering and processing as people section
-          const filteredSpeedrunData = speedrunPeople.filter(person => 
-            !shouldExcludeCompany(person.company?.name)
-          );
-          
-          // 🎯 DEDUPLICATION: Remove duplicate people by name (keep first occurrence)
-          const seenSpeedrunNames = new Set();
-          const deduplicatedSpeedrun = filteredSpeedrunData.filter(person => {
-            const fullName = person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim();
-            if (seenSpeedrunNames.has(fullName)) {
-              return false; // Skip duplicate
-            }
-            seenSpeedrunNames.add(fullName);
-            return true;
-          });
-          
-          sectionData = deduplicatedSpeedrun.map((person, index) => {
+          // Transform people to speedrun format
+          sectionData = speedrunPeople.slice(0, limit).map((person, index) => {
             // Safe string truncation utility
             const safeString = (str: any, maxLength: number = 1000): string => {
               if (!str || typeof str !== 'string') return '';
@@ -200,12 +205,12 @@ export async function GET(request: NextRequest) {
 
             return {
               id: person.id,
-              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
+              rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
-              companyRank: person.company?.rank || 0, // Include company rank for proper ordering
-              personRank: person.rank || (index + 1), // Include person rank within company
               title: safeString(person.jobTitle || 'Unknown Title', 300),
+              role: 'Stakeholder', // Default buyer group role
+              stage: 'Prospect', // Default stage
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
               linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
@@ -218,13 +223,49 @@ export async function GET(request: NextRequest) {
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
-              tags: person.tags || []
+              tags: ['speedrun'] // Add speedrun tag for consistency
             };
           });
+        } else {
+          // Transform speedrun leads to speedrun format
+          sectionData = speedrunLeads.slice(0, limit).map((lead, index) => {
+          // Safe string truncation utility
+          const safeString = (str: any, maxLength: number = 1000): string => {
+            if (!str || typeof str !== 'string') return '';
+            if (str.length <= maxLength) return str;
+            return str.substring(0, maxLength) + '...';
+          };
+
+          // 🎯 DETERMINE STAGE: Use lead status
+          let stage = lead.status || 'Prospect';
           
-        } catch (dbError) {
-          console.error('❌ [SPEEDRUN SECTION] Database error loading speedrun people:', dbError);                                                              
-          sectionData = [];
+          // 🎯 BUYER GROUP ROLE: Default for speedrun leads
+          let buyerGroupRole = 'Stakeholder';
+
+          return {
+            id: lead.id,
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
+            name: safeString(lead.fullName || `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Unknown', 200),
+            company: safeString(lead.company || 'Unknown Company', 200),
+            title: safeString(lead.jobTitle || 'Unknown Title', 300),
+            role: safeString(buyerGroupRole, 100), // 🎯 NEW: Buyer group role
+            stage: stage, // 🎯 UPDATED: Proper stage (Prospect/Lead/Opportunity)
+            email: safeString(lead.email || 'Unknown Email', 300),
+            phone: safeString(lead.phone || 'Unknown Phone', 50),
+            linkedin: safeString(lead.linkedinUrl || 'Unknown LinkedIn', 500),
+            status: safeString(lead.status || 'Unknown', 20),
+            lastAction: safeString(lead.lastAction || 'No action taken', 500),
+            lastActionDate: lead.lastActionDate || null,
+            nextAction: safeString(lead.nextAction || 'No next action', 500),
+            nextActionDate: lead.nextActionDate || null,
+            assignedUserId: lead.assignedUserId || null,
+            workspaceId: lead.workspaceId,
+            createdAt: lead.createdAt,
+            updatedAt: lead.updatedAt,
+            // Remove customFields to avoid large JSON data issues
+            tags: lead.tags || []
+          };
+        });
         }
         break;
         
@@ -244,11 +285,21 @@ export async function GET(request: NextRequest) {
                 ]
               })
             }),
-            // Filter for people who are leads - use new schema structure
-            status: 'LEAD' // Use the new LEAD status from streamlined schema
+            // Filter for people who are leads - use specific lead filters
+            AND: [
+              {
+                OR: [
+                  { funnelStage: 'Lead' },
+                  { status: 'new' },
+                  { status: 'lead' }
+                ]
+              }
+            ]
           },
           orderBy: [
-            { updatedAt: 'desc' } // Order by most recent updates
+            { company: { rank: 'asc' } }, // Use company rank first like people
+            { rank: 'asc' }, // Then by person rank
+            { updatedAt: 'desc' }
           ],
           take: 10000, // Increased limit to ensure we get all leads (same as unified API)
           select: {
@@ -357,8 +408,8 @@ export async function GET(request: NextRequest) {
             ]
           },
           orderBy: [
-            { company: { globalRank: 'asc' } }, // Use company rank first like people
-            { globalRank: 'asc' }, // Then by person rank
+            { company: { rank: 'asc' } }, // Use company rank first like people
+            { rank: 'asc' }, // Then by person rank
             { updatedAt: 'desc' }
           ],
           take: 10000, // Increased limit to ensure we get all prospects (same as unified API)
@@ -511,7 +562,7 @@ export async function GET(request: NextRequest) {
             })
           },
           orderBy: [
-            { globalRank: 'asc' }, // Use actual company ranks first
+            { rank: 'asc' }, // Use actual company ranks first
             { updatedAt: 'desc' } // Then by update time for companies without ranks
           ],
           take: limit,
@@ -569,12 +620,18 @@ export async function GET(request: NextRequest) {
           const peopleData = await prisma.people.findMany({
             where: {
               workspaceId,
-              deletedAt: null
-              // 🚀 PEOPLE: Use EXACT same query as unified API (no additional filters)
+              deletedAt: null,
+              companyId: { not: null }, // Only people with company relationships like speedrun
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { assignedUserId: userId },
+                  { assignedUserId: null }
+                ]
+              })
             },
             orderBy: [
-              { company: { globalRank: 'asc' } }, // First by company rank (1-400) if available
-              { globalRank: 'asc' }, // Then by person rank within company (1-4000) if available
+              { company: { rank: 'asc' } }, // Use company rank first like speedrun
+              { rank: 'asc' }, // Then by person rank
               { updatedAt: 'desc' }
             ],
             take: limit || 100, // Use limit parameter instead of hardcoded 10000
@@ -591,6 +648,7 @@ export async function GET(request: NextRequest) {
               // Remove customFields to avoid large JSON data issues
               tags: true,
               status: true,
+              rank: true,
               lastAction: true,
               lastActionDate: true,
               nextAction: true,
@@ -604,6 +662,7 @@ export async function GET(request: NextRequest) {
                 select: {
                   id: true,
                   name: true,
+                  rank: true
                 }
               }
               // Remove notes and bio from select to avoid string length issues
@@ -639,11 +698,10 @@ export async function GET(request: NextRequest) {
 
             return {
               id: person.id,
-              rank: person.rank || (index + 1), // 🎯 HIERARCHICAL RANKING: Use database rank if available
+              rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
               company: safeString(person.company?.name || 'Unknown Company', 200),
               companyRank: person.company?.rank || 0, // Include company rank for proper ordering
-              personRank: person.rank || (index + 1), // Include person rank within company
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               email: safeString(person.email || 'Unknown Email', 300),
               phone: safeString(person.phone || 'Unknown Phone', 50),
@@ -847,16 +905,27 @@ export async function GET(request: NextRequest) {
           });
           break;
         case 'speedrun':
-          // Speedrun is limited to top 50 ranked people
-          totalCount = Math.min(
-            await prisma.people.count({
+          // 🆕 FIX: Count speedrun leads, fallback to people if no speedrun leads
+          const speedrunLeadsCount = await prisma.leads.count({
+            where: {
+              workspaceId,
+              deletedAt: null,
+              tags: { has: 'speedrun' }
+            }
+          });
+          
+          if (speedrunLeadsCount === 0) {
+            // Fallback to people count if no speedrun leads
+            totalCount = await prisma.people.count({
               where: {
                 workspaceId,
-                deletedAt: null
+                deletedAt: null,
+                companyId: { not: null }
               }
-            }),
-            50
-          );
+            });
+          } else {
+            totalCount = speedrunLeadsCount;
+          }
           break;
         case 'sellers':
           // Use same logic as counts API (sellers table without user filters)

@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-// Removed authFetch import - using standard fetch
+import { authFetch } from '@/platform/auth-fetch';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
-import { useUnifiedAuth } from '@/platform/auth';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
-import { extractIdFromSlug, generateSlug } from '@/platform/utils/url-utils';
-// Removed PanelLayout, LeftPanel, RightPanel imports - handled by pipeline layout
+import { extractIdFromSlug } from '@/platform/utils/url-utils';
+import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
+import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+// import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
@@ -30,32 +33,20 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const { user } = useUnifiedAuth();
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
-  
-  // Get user data from PipelineContext to match LeftPanel
-  const { user: pipelineUser, company, workspace } = usePipeline();
-  
-  // 🚀 HYDRATION FIX: Initialize all state with consistent values
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [previousRecord, setPreviousRecord] = useState<any>(null);
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
-  // Removed isLeftPanelVisible, isRightPanelVisible state - handled by pipeline layout
+  const [isLeftPanelVisible, setIsLeftPanelVisible] = useState(true);
+  const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
   const [directRecordLoading, setDirectRecordLoading] = useState(false);
   const [directRecordError, setDirectRecordError] = useState<string | null>(null);
   const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   
-  // 🚀 HYDRATION FIX: Add hydration state to prevent mismatches
-  const [isHydrated, setIsHydrated] = useState(false);
-  
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
   
-  // 🚀 HYDRATION FIX: Set hydration state after component mounts
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
   // Listen for section transitions to show unified loading state
   useEffect(() => {
     const handleSectionTransition = (event: CustomEvent) => {
@@ -95,8 +86,8 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       if (session?.accessToken) {
         try {
           const jwt = await import('jsonwebtoken');
-          const secret = process.env['NEXTAUTH_SECRET'] || "dev-secret-key-change-in-production";
-          const decoded = jwt.default.verify(session.accessToken, secret) as any;
+          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
+          const decoded = jwt.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
             console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return decoded.workspaceId;
@@ -162,11 +153,11 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
-  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30);
-  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000);
-  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500);
-  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000);
-  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000);
+  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
+  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000, workspaceId, userId);
+  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500, workspaceId, userId);
+  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000, workspaceId, userId);
+  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000, workspaceId, userId);
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -197,7 +188,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     console.log(`🔍 [DATA PIPELINE] Section ${section} data:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map((r: any) => r.id),
+      sampleIds: data.slice(0, 3).map(r => r.id),
       section: section,
       hasAcquisitionData: !!acquisitionData,
       acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data',
@@ -241,7 +232,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     console.log(`🔍 [NAVIGATION DATA] Navigation data for ${section}:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map((r: any) => r.id)
+      sampleIds: data.slice(0, 3).map(r => r.id)
     });
     
     return data;
@@ -310,9 +301,10 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     });
   }
   
-  // 🚀 HYDRATION FIX: Don't show loading/error states until hydrated to prevent flashing
-  const loading = isHydrated && (acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord));
-  const error = isHydrated ? (acquisitionData.error || directRecordError) : null;
+  // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
+  // For speedrun records, don't show loading if we have the record from speedrun data
+  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
+  const error = acquisitionData.error || directRecordError;
   
   console.log(`🔍 [LOADING STATE] Loading states:`, {
     acquisitionDataLoading: acquisitionData.isLoading,
@@ -401,23 +393,9 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // ⚡ PERFORMANCE MONITORING: Track API call timing
       const startTime = performance.now();
       
-      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first using v1 API
+      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first
       const timestamp = Date.now();
-      let response;
-      if (section === 'companies') {
-        response = await fetch(`/api/v1/companies/${recordId}`);
-      } else if (section === 'people') {
-        response = await fetch(`/api/v1/people/${recordId}`);
-      } else if (section === 'actions') {
-        response = await fetch(`/api/v1/actions/${recordId}`);
-      } else if (section === 'speedrun') {
-        // Speedrun records are people records, so use people API
-        response = await fetch(`/api/v1/people/${recordId}`);
-      } else {
-        // No v1 API available for this section yet
-        console.warn(`⚠️ [PIPELINE DETAIL] No v1 API available for section: ${section}`);
-        throw new Error(`No API available for section: ${section}`);
-      }
+      const response = await authFetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       
@@ -425,44 +403,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       
       if (!response.ok) {
         if (response['status'] === 404) {
-          // 🚀 ID MISMATCH FIX: Try to find record by name when ID doesn't exist
-          console.log(`🔄 [ID MISMATCH] Record with ID ${recordId} not found, trying to find by name...`);
-          
-          // Extract name from slug for fallback search
-          const nameFromSlug = slug.split('-').slice(0, -1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
-          console.log(`🔍 [FALLBACK SEARCH] Searching for record with name: "${nameFromSlug}"`);
-          
-          // Try to find record by name in the section data
-          const fallbackRecord = sectionData.find((record: any) => {
-            const recordName = record.fullName || record.name || '';
-            return recordName.toLowerCase().includes(nameFromSlug.toLowerCase()) ||
-                   nameFromSlug.toLowerCase().includes(recordName.toLowerCase());
-          });
-          
-          if (fallbackRecord) {
-            console.log(`✅ [FALLBACK SUCCESS] Found record by name: ${fallbackRecord.fullName || fallbackRecord.name} (ID: ${fallbackRecord.id})`);
-            
-            // 🚀 URL CORRECTION: Update the URL to use the correct record ID
-            const correctSlug = generateSlug(fallbackRecord.fullName || fallbackRecord.name || 'record', fallbackRecord.id);
-            const currentPath = window.location.pathname;
-            const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-            
-            if (workspaceMatch) {
-              const workspaceSlug = workspaceMatch[1];
-              const correctUrl = `/${workspaceSlug}/${section}/${correctSlug}`;
-              
-              // Only update URL if it's different from current
-              if (currentPath !== correctUrl) {
-                console.log(`🔧 [URL CORRECTION] Updating URL from ${currentPath} to ${correctUrl}`);
-                window.history.replaceState({}, '', correctUrl);
-              }
-            }
-            
-            setSelectedRecord(fallbackRecord);
-            return;
-          } else {
-            throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
-          }
+          throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
         }
         throw new Error(`Failed to load ${section} record: ${response.status}`);
       }
@@ -533,7 +474,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // If we have data loaded, try to find the record in it
       if (data.length > 0) {
         console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
-        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map((r: any) => ({ id: r.id, name: r.name })));
+        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
         console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
         
         // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
@@ -541,7 +482,7 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         
         console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
         console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
-        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name })));
+        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
         
         if (record) {
           console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
@@ -698,193 +639,149 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     }
   }, [data, selectedRecord, section, navigateToPipelineItem]);
 
-  // 🚀 HYDRATION FIX: Show loading skeleton during hydration to prevent flashing
-  if (!isHydrated) {
-    return (
-      <div className="h-full flex flex-col bg-white">
-        {/* Hydration Loading Skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-              <div>
-                <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Tabs Skeleton */}
-        <div className="flex-shrink-0 px-6 pt-2 pb-1">
-          <div className="flex items-center gap-8">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="space-y-2">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="flex justify-between">
-                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="space-y-2">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column */}
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="grid grid-cols-2 gap-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="text-center">
-                      <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="flex flex-wrap gap-2">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Loading state - Only show loading for direct record loading, not general data loading
   if (directRecordLoading) {
     return (
-      <div className="h-full flex flex-col bg-white">
-        {/* Person Detail Loading Skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-              <div>
-                <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-              <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Tabs Skeleton */}
-        <div className="flex-shrink-0 px-6 pt-2 pb-1">
-          <div className="flex items-center gap-8">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Content Skeleton */}
-        <div className="flex-1 p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="space-y-2">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="flex justify-between">
-                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  ))}
+      <PanelLayout
+        thinLeftPanel={null}
+        leftPanel={
+          <PipelineLeftPanelStandalone 
+            activeSection={section}
+            onSectionChange={handleSectionChange}
+            isSpeedrunVisible={isSpeedrunVisible}
+            setIsSpeedrunVisible={setIsSpeedrunVisible}
+            isOpportunitiesVisible={isOpportunitiesVisible}
+            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+          />
+        }
+        middlePanel={
+          <div className="h-full flex flex-col bg-white">
+            {/* Person Detail Loading Skeleton */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div>
+                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="space-y-2">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                  ))}
+                <div className="flex gap-2">
+                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
             
-            {/* Right Column */}
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="grid grid-cols-2 gap-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="text-center">
-                      <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                      <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
-                    </div>
-                  ))}
-                </div>
+            {/* Tabs Skeleton */}
+            <div className="flex-shrink-0 px-6 pt-2 pb-1">
+              <div className="flex items-center gap-8">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+                ))}
               </div>
-              
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-                <div className="flex flex-wrap gap-2">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                  ))}
+            </div>
+            
+            {/* Content Skeleton */}
+            <div className="flex-1 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex justify-between">
+                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="text-center">
+                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        }
+        rightPanel={<AIRightPanel />}
+        zoom={zoom}
+        isLeftPanelVisible={isLeftPanelVisible}
+        isRightPanelVisible={isRightPanelVisible}
+        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+      />
     );
   }
 
-  // Error state - Just show error content
+  // Error state - Maintain layout
   if (error || directRecordError) {
     return (
-      <div className="h-full flex items-center justify-center bg-white">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading {section}</h3>
-          <p className="text-gray-600 mb-4">{directRecordError || error}</p>
-          <button
-            onClick={handleBack}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Back to {section.charAt(0).toUpperCase() + section.slice(1)}
-          </button>
-        </div>
-      </div>
+      <PanelLayout
+        thinLeftPanel={null}
+        leftPanel={
+          <PipelineLeftPanelStandalone 
+            activeSection={section}
+            onSectionChange={handleSectionChange}
+            isSpeedrunVisible={isSpeedrunVisible}
+            setIsSpeedrunVisible={setIsSpeedrunVisible}
+            isOpportunitiesVisible={isOpportunitiesVisible}
+            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+          />
+        }
+        middlePanel={
+          <div className="h-full flex items-center justify-center bg-white">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading {section}</h3>
+              <p className="text-gray-600 mb-4">{directRecordError || error}</p>
+              <button
+                onClick={handleBack}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Back to {section.charAt(0).toUpperCase() + section.slice(1)}
+              </button>
+            </div>
+          </div>
+        }
+        rightPanel={<AIRightPanel />}
+        zoom={zoom}
+        isLeftPanelVisible={isLeftPanelVisible}
+        isRightPanelVisible={isRightPanelVisible}
+        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+      />
     );
   }
 
@@ -893,60 +790,84 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   if (selectedRecord || (previousRecord && slug)) {
     const recordToShow = selectedRecord || previousRecord;
     
+    // Get user data from PipelineContext to match PipelineLeftPanelStandalone
+    const { user: pipelineUser, company, workspace } = usePipeline();
+    
     return (
       <>
-        {/* Use UniversalRecordTemplate for ALL sections including leads for consistency */}
-        <UniversalRecordTemplate
-          record={recordToShow}
-          recordType={section as any}
-          recordIndex={(() => {
-            // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
-            // instead of database rank to ensure navigation works correctly
-            if (section === 'speedrun') {
-              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-              const recordIndex = index >= 0 ? index + 1 : 1;
-              console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
-                recordId: recordToShow?.id,
-                recordName: recordToShow?.name,
-                dataLength: data.length,
-                foundIndex: index,
-                calculatedRecordIndex: recordIndex,
-                dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name, rank: r.rank }))
-              });
-              return recordIndex;
-            } else {
-              // For other sections, always use sequential position like speedrun for consistent navigation
-              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-              const recordIndex = index >= 0 ? index + 1 : 1;
-              console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
-                recordId: recordToShow?.id,
-                recordName: recordToShow?.name,
-                dataLength: data.length,
-                foundIndex: index,
-                calculatedRecordIndex: recordIndex,
-                dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name }))
-              });
-              return recordIndex;
-            }
-          })()}
-          totalRecords={data.length}
-          onBack={handleBack}
-          onNavigatePrevious={handleNavigatePrevious}
-          onNavigateNext={handleNavigateNext}
-          onComplete={() => {
-            console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
-            // TODO: Implement complete functionality
-          }}
-          onSnooze={(recordId: string, duration: string) => {
-            console.log('Snooze action for:', recordId, duration);
-            // TODO: Implement complete functionality
-          }}
-          onRecordUpdate={(updatedRecord) => {
-            console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
-            setSelectedRecord(updatedRecord);
-            
-            console.log('✅ [PIPELINE] Record updated in UI');
-          }}
+        <PanelLayout
+          thinLeftPanel={null}
+          leftPanel={
+            <PipelineLeftPanelStandalone 
+              activeSection={section}
+              onSectionChange={handleSectionChange}
+              isSpeedrunVisible={isSpeedrunVisible}
+              setIsSpeedrunVisible={setIsSpeedrunVisible}
+              isOpportunitiesVisible={isOpportunitiesVisible}
+              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+            />
+          }
+          middlePanel={
+            // Use UniversalRecordTemplate for ALL sections including leads for consistency
+            <UniversalRecordTemplate
+              record={recordToShow}
+              recordType={section as any}
+              recordIndex={(() => {
+                // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
+                // instead of database rank to ensure navigation works correctly
+                if (section === 'speedrun') {
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  const recordIndex = index >= 0 ? index + 1 : 1;
+                  console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: recordIndex,
+                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+                  });
+                  return recordIndex;
+                } else {
+                  // For other sections, always use sequential position like speedrun for consistent navigation
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  const recordIndex = index >= 0 ? index + 1 : 1;
+                  console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: recordIndex,
+                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+                  });
+                  return recordIndex;
+                }
+              })()}
+              totalRecords={data.length}
+              onBack={handleBack}
+              onNavigatePrevious={handleNavigatePrevious}
+              onNavigateNext={handleNavigateNext}
+              onComplete={() => {
+                console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
+                // TODO: Implement complete functionality
+              }}
+              onSnooze={(recordId: string, duration: string) => {
+                console.log('Snooze action for:', recordId, duration);
+                // TODO: Implement complete functionality
+              }}
+              onRecordUpdate={(updatedRecord) => {
+                console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
+                setSelectedRecord(updatedRecord);
+                
+                console.log('✅ [PIPELINE] Record updated in UI');
+              }}
+            />
+          }
+          rightPanel={<AIRightPanel />}
+          zoom={zoom}
+          isLeftPanelVisible={isLeftPanelVisible}
+          isRightPanelVisible={isRightPanelVisible}
+          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
         />
 
         {/* Profile Popup - Pipeline Detail Implementation */}
@@ -1015,30 +936,54 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     return <PipelineView section={section} />;
   }
 
+  // Get user data from PipelineContext to match PipelineLeftPanelStandalone
+  const { user: pipelineUser, company, workspace } = usePipeline();
+
   // If we have a selected record, show it immediately
   if (selectedRecord) {
     return (
       <>
         <RecordContextProvider>
-          <UniversalRecordTemplate
-            record={selectedRecord}
-            recordType={section}
-            recordIndex={(() => {
-              // Use rank from database if available, otherwise calculate from index
-              const dbRank = selectedRecord?.rank;
-              if (dbRank && dbRank > 0) {
-                return dbRank;
-              } else {
-                const index = data.findIndex((r: any) => r['id'] === selectedRecord.id);
-                return index >= 0 ? index + 1 : 1;
-              }
-            })()}
-            totalRecords={data.length}
-            onBack={() => navigateToPipeline(section)}
-            onNavigatePrevious={handleNavigatePrevious}
-            onNavigateNext={handleNavigateNext}
-            onComplete={() => setIsSpeedrunEngineModalOpen(true)}
-          />
+          <PanelLayout
+            thinLeftPanel={null}
+            leftPanel={
+              <PipelineLeftPanelStandalone 
+                activeSection={section}
+                onSectionChange={handleSectionChange}
+                isSpeedrunVisible={isSpeedrunVisible}
+                setIsSpeedrunVisible={setIsSpeedrunVisible}
+                isOpportunitiesVisible={isOpportunitiesVisible}
+                setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+              />
+            }
+            middlePanel={
+              <UniversalRecordTemplate
+                record={selectedRecord}
+                recordType={section}
+                recordIndex={(() => {
+                  // Use rank from database if available, otherwise calculate from index
+                  const dbRank = selectedRecord?.rank;
+                  if (dbRank && dbRank > 0) {
+                    return dbRank;
+                  } else {
+                    const index = data.findIndex(r => r['id'] === selectedRecord.id);
+                    return index >= 0 ? index + 1 : 1;
+                  }
+                })()}
+                totalRecords={data.length}
+                onBack={() => navigateToPipeline(section)}
+                onNavigatePrevious={handleNavigatePrevious}
+                onNavigateNext={handleNavigateNext}
+                onComplete={() => setIsSpeedrunEngineModalOpen(true)}
+              />
+            }
+          rightPanel={<AIRightPanel />}
+          zoom={zoom}
+          isLeftPanelVisible={isLeftPanelVisible}
+          isRightPanelVisible={isRightPanelVisible}
+          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+        />
         </RecordContextProvider>
 
       {/* Profile Popup - Pipeline Detail Implementation */}
@@ -1103,85 +1048,108 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
 
   // Fallback loading state - only show when we don't have a record and are loading
   return (
-    <div className="h-full flex flex-col bg-white">
-      {/* Person Detail Loading Skeleton */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-            <div>
-              <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-              <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Tabs Skeleton */}
-      <div className="flex-shrink-0 px-6 pt-2 pb-1">
-        <div className="flex items-center gap-8">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Content Skeleton */}
-      <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
-              <div className="space-y-2">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex justify-between">
-                    <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+    <>
+      <PanelLayout
+        thinLeftPanel={null}
+        leftPanel={
+          <PipelineLeftPanelStandalone 
+            activeSection={section}
+            onSectionChange={handleSectionChange}
+            isSpeedrunVisible={isSpeedrunVisible}
+            setIsSpeedrunVisible={setIsSpeedrunVisible}
+            isOpportunitiesVisible={isOpportunitiesVisible}
+            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+          />
+        }
+        middlePanel={
+          <div className="h-full flex flex-col bg-white">
+            {/* Person Detail Loading Skeleton */}
+            <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div>
+                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
                     <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
                   </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Tabs Skeleton */}
+            <div className="flex-shrink-0 px-6 pt-2 pb-1">
+              <div className="flex items-center gap-8">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
                 ))}
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
-              <div className="space-y-2">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          {/* Right Column */}
-          <div className="space-y-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
-              <div className="grid grid-cols-2 gap-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="text-center">
-                    <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
-                    <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+            {/* Content Skeleton */}
+            <div className="flex-1 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex justify-between">
+                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
-              <div className="flex flex-wrap gap-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                ))}
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right Column */}
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-36 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="text-center">
+                          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse mx-auto mb-1"></div>
+                          <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="h-5 w-28 bg-gray-200 rounded animate-pulse mb-3"></div>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        }
+        rightPanel={<AIRightPanel />}
+        zoom={zoom}
+        isLeftPanelVisible={isLeftPanelVisible}
+        isRightPanelVisible={isRightPanelVisible}
+        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+      />
+    </>
   );
 }

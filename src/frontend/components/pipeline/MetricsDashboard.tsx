@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-// Removed authFetch import - using standard fetch
-import { useUnifiedAuth } from '@/platform/auth';
+import { authFetch } from '@/platform/auth-fetch';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 
@@ -148,7 +148,7 @@ export function MetricsDashboard() {
         try {
           const jwt = await import('jsonwebtoken');
           const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.default.verify(session.accessToken, secret) as any;
+          const decoded = jwt.verify(session.accessToken, secret) as any;
           if (decoded?.workspaceId) {
             console.log(`🔍 [METRICS] Got workspace ID from JWT: ${decoded.workspaceId}`);
             return decoded.workspaceId;
@@ -222,7 +222,7 @@ export function MetricsDashboard() {
       console.log('📊 [METRICS DEBUG] API URL:', `/api/metrics/pipeline?workspaceId=${workspaceId}&userId=${userId}`);
       
       // Use dedicated metrics API endpoint
-      const response = await fetch(`/api/metrics/pipeline`);
+      const response = await authFetch(`/api/metrics/pipeline`);
       
       if (!response.ok) {
         const errorText = await response.text();

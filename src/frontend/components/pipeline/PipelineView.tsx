@@ -11,18 +11,17 @@ import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
-import { useUnifiedAuth } from '@/platform/auth';
+import { useUnifiedAuth } from '@/platform/auth-unified';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
-import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
+import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
+import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
 // import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
-// Removed unused individual section data hooks to eliminate duplicate API calls
 import { Pagination } from './table/Pagination';
 // import { AdrataComponent } from '@/platform/ui/components/AdrataComponent'; // Component not found
 import { AddModal } from '@/platform/ui/components/AddModal';
@@ -32,7 +31,6 @@ import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
-import { PipelineHydrationFix } from './PipelineHydrationFix';
 // Import getCurrentWorkspaceSlug from the correct location
 
 
@@ -53,7 +51,7 @@ export const PipelineView = React.memo(function PipelineView({
   title, 
   subtitle 
 }: PipelineViewProps) {
-  // console.log('🔍 [PipelineView] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
+  console.log('🔍 [PipelineView] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
   
   
   const router = useRouter();
@@ -89,7 +87,7 @@ export const PipelineView = React.memo(function PipelineView({
   const [isLeadsVisible, setIsLeadsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
   const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
-  // Panel visibility is now managed by useUI context
+  // Panel visibility is now managed by useAcquisitionOSUI context
   const [searchQuery, setSearchQuery] = useState('');
   const [verticalFilter, setVerticalFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -123,23 +121,23 @@ export const PipelineView = React.memo(function PipelineView({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
+        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'prospects':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'opportunities':
-        return ['rank', 'name', 'company', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
       case 'people':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
       case 'partners':
-        return ['rank', 'company', 'nextAction', 'lastAction', 'actions'];
+        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action', 'Actions'];
       default:
-        return ['rank', 'company', 'name', 'title', 'lastAction', 'actions'];
+        return ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Actions'];
     }
   };
   
@@ -186,18 +184,76 @@ export const PipelineView = React.memo(function PipelineView({
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use workspace ID directly from user object (synchronous)
-  const currentWorkspaceId = user?.activeWorkspaceId || null;
-  const currentUserId = user?.id || null;
+  // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
+  const getCurrentWorkspaceId = useCallback(async () => {
+    try {
+      // 1. First try to get from JWT token (most reliable)
+      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
+      if (session?.accessToken) {
+        try {
+          const jwt = await import('jsonwebtoken');
+          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
+          const decoded = jwt.verify(session.accessToken, secret) as any;
+          if (decoded?.workspaceId) {
+            console.log(`🔍 [PIPELINE VIEW] Got workspace ID from JWT: ${decoded.workspaceId}`);
+            return decoded.workspaceId;
+          }
+        } catch (error) {
+          console.warn('⚠️ [PIPELINE VIEW] Failed to decode JWT token:', error);
+        }
+      }
+      
+      // 2. Fallback to acquisitionData
+      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
+        return acquisitionData.auth.authUser.activeWorkspaceId;
+      }
+      
+      // 3. Fallback to user activeWorkspaceId
+      if (user?.activeWorkspaceId) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from user: ${user.activeWorkspaceId}`);
+        return user.activeWorkspaceId;
+      }
+      
+      // 4. Last resort: first workspace
+      if (user?.workspaces?.[0]?.id) {
+        console.log(`🔍 [PIPELINE VIEW] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
+        return user.workspaces[0].id;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('❌ [PIPELINE VIEW] Error getting workspace ID:', error);
+      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
+    }
+  }, [acquisitionData, user]);
+
+  // 🆕 CRITICAL FIX: Update workspace ID when it changes
+  useEffect(() => {
+    const updateWorkspaceId = async () => {
+      const newWorkspaceId = await getCurrentWorkspaceId();
+      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
+        console.log(`🔄 [PIPELINE VIEW] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
+        setCurrentWorkspaceId(newWorkspaceId);
+        setCurrentUserId(user?.id || null);
+      }
+    };
+    
+    updateWorkspaceId();
+  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
 
   const workspaceId = currentWorkspaceId;
   
-  // console.log('🔍 [WORKSPACE DEBUG] Using real-time workspace:', {
-  //   acquisitionDataExists: !!acquisitionData,
-  //   providerWorkspaceId: workspaceId,
-  //   userActiveWorkspaceId: user?.activeWorkspaceId,
-  //   currentWorkspaceId
-  // });
+  console.log('🔍 [WORKSPACE DEBUG] Using real-time workspace:', {
+    acquisitionDataExists: !!acquisitionData,
+    providerWorkspaceId: workspaceId,
+    userActiveWorkspaceId: user?.activeWorkspaceId,
+    currentWorkspaceId
+  });
   // Map workspace to correct user ID
   const getUserIdForWorkspace = (workspaceId: string) => {
     switch (workspaceId) {
@@ -213,11 +269,10 @@ export const PipelineView = React.memo(function PipelineView({
         return user?.id;
     }
   };
-  const userId = currentUserId;
+  const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🚀 PERFORMANCE: Use only the data hook needed for the current section
-  // This eliminates 6 unnecessary API calls that were firing simultaneously
-  
+  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
+  // Load all data at once for client-side pagination
   // Use higher limit for people section to ensure all records are loaded
   const limit = section === 'people' ? 10000 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
@@ -225,79 +280,206 @@ export const PipelineView = React.memo(function PipelineView({
   // Fallback to old pipeline data for sections not supported by fast API
   const pipelineData = usePipelineData(section, workspaceId, userId);
   
-  // console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
+  console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
   
   // AGGRESSIVE DEBUG: Log every render
-  // console.log('🔍 [PIPELINE VIEW] Component render:', {
-  //   section,
-  //   userWorkspaces: user?.workspaces?.map(w => ({ id: w.id, name: w.name })),
-  //   finalWorkspaceId: workspaceId,
-  //   finalUserId: userId,
-  //   acquisitionDataExists: !!acquisitionData
-  // });
+  console.log('🔍 [PIPELINE VIEW] Component render:', {
+    section,
+    userWorkspaces: user?.workspaces?.map(w => ({ id: w.id, name: w.name })),
+    finalWorkspaceId: workspaceId,
+    finalUserId: userId,
+    acquisitionDataExists: !!acquisitionData
+  });
   
-  // Removed legacy getSectionData(section) relying on acquisitionData; using dedicated hooks below
-  
-  // 🚀 PERFORMANCE: Use fast section data for all sections
-  // This eliminates duplicate API calls and uses the optimized data loading
-  const getSectionData = () => {
-    // Use fastSectionData for all sections - it handles the API calls efficiently
-    // Prioritize fastSectionData if it has data, otherwise fall back to pipelineData
-    const hasFastData = fastSectionData.data && fastSectionData.data.length > 0;
-    const hasPipelineData = pipelineData.data && pipelineData.data.length > 0;
+  // 🚀 PERFORMANCE: Use consistent data source with proper loading states
+  const getSectionData = (section: string) => {
+    const acquireData = acquisitionData?.acquireData || {};
     
-    const data = hasFastData ? fastSectionData.data : (hasPipelineData ? pipelineData.data : []);
-    const loading = fastSectionData.loading || pipelineData.loading;
-    const error = hasFastData ? null : (fastSectionData.error || pipelineData.error);
-    const count = hasFastData ? fastSectionData.count : (hasPipelineData ? pipelineData.count : 0);
-    
-    console.log(`🔍 [PIPELINE VIEW] getSectionData for ${section}:`, {
-      fastSectionData: {
-        dataLength: fastSectionData.data?.length || 0,
-        loading: fastSectionData.loading,
-        error: fastSectionData.error,
-        count: fastSectionData.count
-      },
-      pipelineData: {
-        dataLength: pipelineData.data?.length || 0,
-        loading: pipelineData.loading,
-        error: pipelineData.error
-      },
-      finalData: {
-        dataLength: data.length,
-        loading,
-        error,
-        count,
-        firstRecord: data[0] ? {
-          id: data[0].id,
-          name: data[0].fullName || data[0].name,
-          status: data[0].status
-        } : null
-      }
+    // 🚀 PERFORMANCE: Log data consistency for debugging
+    console.log(`🔍 [PIPELINE VIEW] Getting data for section ${section}:`, {
+      hasAcquisitionData: !!acquisitionData,
+      hasAcquireData: !!acquisitionData?.acquireData,
+      acquireDataKeys: Object.keys(acquireData),
+      sectionDataLength: acquireData[section]?.length || 0,
+      isLoading: acquisitionData?.loading?.isLoading,
+      dataSource: 'acquisitionData'
     });
     
-    return { data, loading, error, count };
+    switch (section) {
+      case 'leads': 
+      case 'prospects': 
+      case 'opportunities': 
+      case 'clients': 
+      case 'partners': 
+      case 'sellers': 
+        return acquireData[section] || [];
+      case 'companies': 
+        const companiesData = acquireData.companies || [];
+        console.log('🏢 [COMPANIES DEBUG] Companies data from API:', {
+          totalCompanies: companiesData.length,
+          sampleCompanies: companiesData.slice(0, 3).map(c => ({ id: c.id, name: c.name, rank: c.rank })),
+          ranksRange: {
+            firstRank: companiesData[0]?.rank,
+            lastRank: companiesData[companiesData.length - 1]?.rank,
+            maxRank: Math.max(...companiesData.map(c => c.rank || 0).filter(r => r > 0))
+          }
+        });
+        return companiesData;
+      case 'people': 
+        const peopleData = acquireData.people || [];
+        console.log('👥 [PEOPLE DEBUG] People data from API:', {
+          totalPeople: peopleData.length,
+          samplePeople: peopleData.slice(0, 3).map(p => ({ id: p.id, name: p.fullName || p.name, rank: p.rank })),
+          ranksRange: {
+            firstRank: peopleData[0]?.rank,
+            lastRank: peopleData[peopleData.length - 1]?.rank,
+            maxRank: Math.max(...peopleData.map(p => p.rank || 0).filter(r => r > 0))
+          }
+        });
+        return peopleData;
+      case 'speedrun': 
+        const speedrunData = acquireData.speedrunItems || [];
+        console.log('🔍 [SPEEDRUN DEBUG] Speedrun data access:', {
+          hasAcquireData: !!acquireData,
+          dataLength: speedrunData.length,
+          sampleRecord: speedrunData[0] ? {
+            id: speedrunData[0].id,
+            name: speedrunData[0].name,
+            fullName: speedrunData[0].fullName,
+            firstName: speedrunData[0].firstName,
+            lastName: speedrunData[0].lastName,
+            company: speedrunData[0].company,
+            title: speedrunData[0].title,
+            jobTitle: speedrunData[0].jobTitle
+          } : null
+        });
+        
+        // 🎯 STRATEGIC RANKING: Apply UniversalRankingEngine to speedrun data for company-based alphanumeric ranks
+        if (speedrunData.length > 0) {
+          try {
+            // Import and apply the UniversalRankingEngine
+            const { UniversalRankingEngine } = require('@/products/speedrun/UniversalRankingEngine');
+            
+            // Transform data to SpeedrunPerson format for ranking
+            const transformedData = speedrunData.map((item: any) => ({
+              id: item.id || `speedrun-${Math.random()}`,
+              name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
+              email: item.email || '',
+              company: item.company || item.companyName || '-',
+              title: item.title || item.jobTitle || '-',
+              phone: item.phone || item.phoneNumber || '',
+              location: item.location || item.city || '',
+              industry: item.industry || 'Technology',
+              status: item.status || 'active',
+              priority: item.priority || 'medium',
+              lastContact: item.lastContact || item.updatedAt,
+              notes: item.notes || '',
+              tags: item.tags || [],
+              source: item.source || 'speedrun',
+              enrichmentScore: item.enrichmentScore || 0,
+              buyerGroupRole: item.buyerGroupRole || 'unknown',
+              currentStage: item.currentStage || 'initial',
+              nextAction: item.nextAction || '',
+              nextActionDate: item.nextActionDate || '',
+              createdAt: item.createdAt || new Date().toISOString(),
+              updatedAt: item.updatedAt || new Date().toISOString(),
+              assignedUser: item.assignedUser || null,
+              workspaceId: item.workspaceId || '',
+              relationship: item.relationship || 'prospect',
+              bio: item.bio || '',
+              interests: item.interests || [],
+              recentActivity: item.recentActivity || '',
+              commission: item.commission || '50K',
+              linkedin: item.linkedin || item.linkedinUrl || '',
+              photo: item.photo || null,
+              ...item // Include any additional fields
+            }));
+            
+            // Apply strategic ranking
+            const rankedData = UniversalRankingEngine.rankProspectsForWinning(
+              transformedData,
+              workspaceName || 'workspace'
+            );
+            
+            console.log('🏆 [SPEEDRUN RANKING] Applied strategic ranking:', {
+              originalCount: speedrunData.length,
+              rankedCount: rankedData.length,
+              sampleRanks: rankedData.slice(0, 5).map(p => ({
+                name: p.name,
+                company: p.company,
+                rank: p.winningScore?.rank,
+                totalScore: p.winningScore?.totalScore
+              }))
+            });
+            
+            return rankedData;
+          } catch (error) {
+            console.error('❌ [SPEEDRUN RANKING] Failed to apply strategic ranking:', error);
+            return speedrunData; // Fallback to original data
+          }
+        }
+        
+        return speedrunData;
+      default: return [];
+    }
   };
-
-  const sectionData = getSectionData();
-  const finalData = sectionData.data;
-  const finalLoading = sectionData.loading;
-  const finalError = sectionData.error;
-  const finalIsEmpty = finalData.length === 0;
+  
+  const sectionData = getSectionData(section);
+  
+  // DEBUG: Log the data loading
+  console.log(`🔍 [PIPELINE VIEW DEBUG] Section: ${section}`, {
+    hasAcquisitionData: !!acquisitionData,
+    hasAcquireData: !!acquisitionData?.acquireData,
+    sectionDataLength: sectionData?.length || 0,
+    sectionDataSample: sectionData?.slice(0, 2) || [],
+    acquisitionDataKeys: acquisitionData?.acquireData ? Object.keys(acquisitionData.acquireData) : [],
+    rawAcquisitionData: acquisitionData,
+    // Specific debugging for companies and people
+    companiesData: acquisitionData?.acquireData?.companies || [],
+    peopleData: acquisitionData?.acquireData?.people || [],
+    companiesLength: acquisitionData?.acquireData?.companies?.length || 0,
+    peopleLength: acquisitionData?.acquireData?.people?.length || 0
+  });
+  
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
+  const finalData = fastSectionData.data || pipelineData.data || [];
+  const finalLoading = fastSectionData.loading || pipelineData.loading;
+  const finalError = fastSectionData.error || pipelineData.error;
+  const finalIsEmpty = (fastSectionData.data || []).length === 0;
   
   // 🔍 DEBUG: Log data sources for People section
   if (section === 'people') {
     console.log('🔍 [PEOPLE DEBUG] Data sources:', {
       section,
-      v1ApiData: {
+      fastSectionData: {
+        hasData: !!fastSectionData.data,
+        dataLength: fastSectionData.data?.length || 0,
+        loading: fastSectionData.loading,
+        error: fastSectionData.error,
+        firstPerson: fastSectionData.data?.[0] ? {
+          rank: fastSectionData.data[0].rank,
+          name: fastSectionData.data[0].name,
+          company: fastSectionData.data[0].company?.name || fastSectionData.data[0].company
+        } : null
+      },
+      pipelineData: {
+        hasData: !!pipelineData.data,
+        dataLength: pipelineData.data?.length || 0,
+        loading: pipelineData.loading,
+        error: pipelineData.error,
+        firstPerson: pipelineData.data?.[0] ? {
+          rank: pipelineData.data[0].rank,
+          name: pipelineData.data[0].name,
+          company: pipelineData.data[0].company?.name || pipelineData.data[0].company
+        } : null
+      },
+      finalData: {
         hasData: !!finalData,
         dataLength: finalData?.length || 0,
-        loading: finalLoading,
-        error: finalError,
         firstPerson: finalData?.[0] ? {
-          id: finalData[0].id,
+          rank: finalData[0].rank,
           name: finalData[0].name,
-          company: finalData[0].company
+          company: finalData[0].company?.name || finalData[0].company
         } : null
       }
     });
@@ -314,10 +496,11 @@ export const PipelineView = React.memo(function PipelineView({
   useEffect(() => {
     if (section !== 'speedrun' && workspaceId && userId) {
       console.log('🚀 [SPEEDRUN PRELOAD] Pre-loading speedrun data in background for faster navigation');
-      // Pre-load speedrun data using section API
+      // Pre-load speedrun data using the fast section data hook
       const preloadSpeedrunData = async () => {
         try {
-          await fetch(`/api/data/section?section=speedrun&limit=50`);
+          const { authFetch } = await import('@/platform/auth-fetch');
+          await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }
@@ -621,64 +804,36 @@ export const PipelineView = React.memo(function PipelineView({
     }
   }, []);
 
-  // 🚀 PERFORMANCE: Use dedicated hooks data for instant loading
-  const hasData = Array.isArray(finalData) && finalData.length > 0;
+  // CRITICAL FIX: Define sectionDataArray before using it in filteredData
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
+  const sectionDataArray = finalData;
+  const hasData = Array.isArray(sectionDataArray) && sectionDataArray.length > 0;
   
   // Calculate isEmpty based on actual data
   const isEmpty = !hasData;
-  
-  console.log(`🔍 [PIPELINE VIEW] Data state for ${section}:`, {
-    hasData,
-    dataLength: Array.isArray(finalData) ? finalData.length : 0,
-    isEmpty,
-    finalLoading,
-    finalError,
-    workspaceId,
-    userId,
-    willShowEmptyState: !hasData && !finalError && workspaceId && userId
-  });
 
   // CRITICAL DEBUG: Log the final data state with source information
   console.log(`🚨 [CRITICAL DEBUG] Final data state for section ${section}:`, {
     hasData,
-    dataLength: Array.isArray(finalData) ? finalData.length : 0,
-    data: Array.isArray(finalData) ? finalData.slice(0, 3) : [],
-    error: finalError,
+    dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
+    data: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 3) : [],
+    error,
     isEmpty,
     workspaceId,
     userId,
-    dataSource: 'v1-api-hooks'
+    dataSource: {
+      fastSectionDataLength: fastSectionData.data?.length || 0,
+      pipelineDataLength: pipelineData.data?.length || 0,
+      usingFastSectionData: (fastSectionData.data && fastSectionData.data.length > 0),
+      usingPipelineData: !(fastSectionData.data && fastSectionData.data.length > 0)
+    }
   });
 
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
-    // Use finalData from v1 API hooks
-    const dataToFilter = Array.isArray(finalData) ? finalData : [];
-    
-    console.log(`🔍 [FILTERING] Starting filter for ${section}:`, {
-      originalDataLength: dataToFilter.length,
-      firstRecord: dataToFilter[0] ? {
-        id: dataToFilter[0].id,
-        name: dataToFilter[0].fullName || dataToFilter[0].name,
-        status: dataToFilter[0].status
-      } : null,
-      filters: {
-        searchQuery,
-        verticalFilter,
-        statusFilter,
-        priorityFilter,
-        revenueFilter,
-        lastContactedFilter,
-        timezoneFilter,
-        companySizeFilter,
-        locationFilter
-      }
-    });
-    
-    if (!dataToFilter || dataToFilter.length === 0) {
-      console.log(`🔍 [FILTERING] No data to filter for ${section}`);
-      return dataToFilter;
-    }
+    // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of pipelineData.data
+    const dataToFilter = Array.isArray(sectionDataArray) ? sectionDataArray : [];
+    if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
     // Apply timeframe filtering for speedrun section
     let timeframeFilteredData = dataToFilter;
@@ -872,18 +1027,8 @@ export const PipelineView = React.memo(function PipelineView({
 
     // Note: Removed rank limiting logic - user wants to see all records
 
-    console.log(`🔍 [FILTERING] Filter result for ${section}:`, {
-      originalLength: dataToFilter.length,
-      filteredLength: filtered.length,
-      firstFilteredRecord: filtered[0] ? {
-        id: filtered[0].id,
-        name: filtered[0].fullName || filtered[0].name,
-        status: filtered[0].status
-      } : null
-    });
-
     return filtered;
-  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
+  }, [sectionDataArray, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, lastContactedFilter, sortField, sortDirection, timeframeFilter, section, timezoneFilter, companySizeFilter, locationFilter]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
@@ -1224,17 +1369,17 @@ export const PipelineView = React.memo(function PipelineView({
       workspaceId,
       userId,
       error,
-      dataExists: Array.isArray(finalData),
-      dataLength: Array.isArray(finalData) ? finalData.length : 0,
-      rawData: Array.isArray(finalData) ? finalData.slice(0, 2) : [], // Show first 2 records for debugging
+      dataExists: Array.isArray(sectionDataArray),
+      dataLength: Array.isArray(sectionDataArray) ? sectionDataArray.length : 0,
+      rawData: Array.isArray(sectionDataArray) ? sectionDataArray.slice(0, 2) : [], // Show first 2 records for debugging
       filteredDataLength: filteredData?.length || 0,
       isEmpty
     });
   }
   
 
-  // 🚀 CACHE ERROR FIX: Only show error state for persistent errors, not during loading
-  if (error && !finalLoading && finalData.length === 0) {
+  // Error state
+  if (error) {
     return (
       <div className="h-full flex items-center justify-center bg-white">
         <div className="text-center max-w-md">
@@ -1330,7 +1475,7 @@ export const PipelineView = React.memo(function PipelineView({
       </div>
     </div>
   ) : (
-    <div className="h-full flex flex-col bg-white overflow-hidden">
+    <div className="h-full flex flex-col bg-white">
 
       {/* Header with metrics and actions */}
       <PipelineHeader
@@ -1342,40 +1487,58 @@ export const PipelineView = React.memo(function PipelineView({
         onAddRecord={handleAddRecord}
         title={title}
         subtitle={subtitle}
-        recordCount={sectionData.count}
+        recordCount={(() => {
+          const fastCount = fastSectionData.count;
+          const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;
+          const finalCount = fastCount || arrayCount;
+          
+          // Debug logging for sellers section
+          if (section === 'sellers') {
+            console.log('🔍 [SELLERS DEBUG] Record count calculation:', {
+              section,
+              fastSectionDataCount: fastCount,
+              sectionDataArrayLength: arrayCount,
+              finalCount,
+              fastSectionDataExists: !!fastSectionData,
+              sectionDataArrayExists: !!sectionDataArray
+            });
+          }
+          
+          return finalCount;
+        })()}
       />
 
-      {/* Filters - Hide search/filter/sort/columns when there is no data */}
-      {finalData.length > 0 && (
-        <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
-          <PipelineFilters 
-            section={section}
-            totalCount={sectionData.count}
-            onSearchChange={setSearchQuery}
-            onVerticalChange={setVerticalFilter}
-            onStatusChange={setStatusFilter}
-            onPriorityChange={setPriorityFilter}
-            onRevenueChange={setRevenueFilter}
-            onLastContactedChange={setLastContactedFilter}
-            onTimezoneChange={setTimezoneFilter}
-            onSortChange={handleDropdownSortChange}
-            onAddRecord={handleAddRecord}
-            onColumnVisibilityChange={handleColumnVisibilityChange}
-            visibleColumns={visibleColumns}
-            // 🎯 NEW SELLER FILTERS
-            onCompanySizeChange={setCompanySizeFilter}
+      {/* Filters */}
+      <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
+        <PipelineFilters 
+          section={section}
+          totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
+          onSearchChange={setSearchQuery}
+          onVerticalChange={setVerticalFilter}
+          onStatusChange={setStatusFilter}
+          onPriorityChange={setPriorityFilter}
+          onRevenueChange={setRevenueFilter}
+          onLastContactedChange={setLastContactedFilter}
+          onTimezoneChange={setTimezoneFilter}
+          onSortChange={handleDropdownSortChange}
+          onAddRecord={handleAddRecord}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
+          visibleColumns={visibleColumns}
+          // 🎯 NEW SELLER FILTERS
+          onCompanySizeChange={setCompanySizeFilter}
           onLocationChange={setLocationFilter}
         />
-        </div>
-      )}
+      </div>
 
       {/* Main content */}
-      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
+      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'} overflow-auto middle-panel-scroll`} style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#cbd5e1 #f1f5f9',
         minHeight: 'calc(100vh - 150px)', // Extend table height further down
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>
-        {Array.isArray(finalData) && finalData.length > 0 && (filteredData?.length === 0) ? (
+        {Array.isArray(sectionDataArray) && sectionDataArray.length > 0 && (filteredData?.length === 0) ? (
           // Filtered empty state (data exists but filters hide it)
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-500 p-6">
@@ -1387,14 +1550,14 @@ export const PipelineView = React.memo(function PipelineView({
               </p>
             </div>
           </div>
-        ) : !hasData && !error && workspaceId && userId ? (
+        ) : !hasData && !error && section !== 'opportunities' && workspaceId && userId ? (
           // Show simple centered empty state instead of table with placeholder
           <div className="h-full flex items-center justify-center">
             <div className="text-center p-6" style={{ marginTop: '-40px' }}>
               <h4 className="text-lg font-medium text-black mb-2">
                 No {section} yet
               </h4>
-              <p className="text-sm text-black max-w-sm">
+              <p className="text-sm text-black max-w-sm mb-4">
                 {section === 'leads' ? 'Start building your warm relationships by adding your first lead.' :
                  section === 'prospects' ? 'Begin your outreach by adding prospects to your pipeline.' :
                  section === 'clients' ? 'Track your successful relationships and client success.' :
@@ -1403,6 +1566,12 @@ export const PipelineView = React.memo(function PipelineView({
                  section === 'speedrun' ? 'Add your first speedrun to get started.' :
                  `Add your first ${section.slice(0, -1)} to get started.`}
               </p>
+              <button
+                onClick={handleAddRecord}
+                className="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+              >
+                Add {section === 'people' ? 'Person' : section === 'companies' ? 'Company' : section === 'speedrun' ? 'Speedrun' : section.slice(0, -1)}
+              </button>
             </div>
           </div>
         ) : (
@@ -1426,7 +1595,7 @@ export const PipelineView = React.memo(function PipelineView({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
-                totalCount={sectionData.count} // Pass total count for correct pagination
+                totalCount={fastSectionData.count} // Pass total count for correct pagination
               />
               ) : section === 'prospects' ? (
                 // Prospects table with same design as other sections
@@ -1440,8 +1609,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'leads' ? (
                 // Leads table with same design as prospects
@@ -1455,8 +1624,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
@@ -1470,8 +1639,8 @@ export const PipelineView = React.memo(function PipelineView({
                   sortDirection={sortDirection}
                   visibleColumns={visibleColumns}
                   pageSize={100}
-                  isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  isLoading={isLoading}
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'companies' ? (
                 // Companies table with same design as prospects
@@ -1487,7 +1656,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={sectionData.count} // Pass total count for correct pagination
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
                 // Sellers table with same design as people and companies
@@ -1503,7 +1672,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={sectionData.count} // Pass total count for correct pagination
+                  totalCount={fastSectionData.count} // Pass total count for correct pagination
                 />
           ) : (
             <PipelineTable
@@ -1527,26 +1696,25 @@ export const PipelineView = React.memo(function PipelineView({
   );
 
   return (
-    <PipelineHydrationFix>
-      <>
-        {/* Success Message */}
-        {successMessage && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-2">
-            <div className="flex items-center">
-              <svg className="h-4 w-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <p className="text-sm text-green-700 font-medium">{successMessage}</p>
-            </div>
+    <>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-2">
+          <div className="flex items-center">
+            <svg className="h-4 w-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-green-700 font-medium">{successMessage}</p>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Navigation Transition Overlay */}
-        
-        <PanelLayout
+      {/* Navigation Transition Overlay */}
+      
+      <PanelLayout
         thinLeftPanel={null}
         leftPanel={
-          <LeftPanel 
+          <PipelineLeftPanelStandalone 
             activeSection={section}
             onSectionChange={handleSectionChange}
             isSpeedrunVisible={isSpeedrunVisible}
@@ -1564,7 +1732,7 @@ export const PipelineView = React.memo(function PipelineView({
           />
         }
         middlePanel={middlePanel}
-        rightPanel={<RightPanel />}
+        rightPanel={<AIRightPanel />}
         zoom={zoom}
         isLeftPanelVisible={ui.isLeftPanelVisible}
         isRightPanelVisible={ui.isRightPanelVisible}
@@ -1761,9 +1929,8 @@ export const PipelineView = React.memo(function PipelineView({
       </div>
     )}
     
-        <AddModal refreshData={async () => { await refresh(); }} />
-      </>
-    </PipelineHydrationFix>
+    <AddModal refreshData={async () => { await refresh(); }} />
+  </>
   );
 });
 
