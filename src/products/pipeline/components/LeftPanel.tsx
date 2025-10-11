@@ -13,23 +13,6 @@ import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
 
-// Import holiday detection function
-function isFederalHoliday(date: Date): boolean {
-  const FEDERAL_HOLIDAYS_2025 = [
-    '2025-01-01', // New Year's Day
-    '2025-01-20', // Martin Luther King Jr. Day
-    '2025-02-17', // Presidents' Day
-    '2025-05-26', // Memorial Day
-    '2025-07-04', // Independence Day
-    '2025-09-01', // Labor Day
-    '2025-10-13', // Columbus Day
-    '2025-11-11', // Veterans Day
-    '2025-11-27', // Thanksgiving Day
-    '2025-12-25', // Christmas Day
-  ];
-  const dateString = date.toISOString().split('T')[0];
-  return FEDERAL_HOLIDAYS_2025.includes(dateString);
-}
 
 // Utility function to convert hex color to CSS filter for SVG recoloring
 function getColorFilter(hexColor: string): string {
@@ -626,25 +609,7 @@ function PipelineSections({
       description: "Drive revenue",
       count: loading ? (
         <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
-      ) : (() => {
-        // Check if it's weekend or holiday to show appropriate text
-        const today = new Date();
-        const isWeekend = today.getDay() === 0 || today.getDay() === 6;
-        const isHolidayToday = isFederalHoliday(today);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const isHolidayTomorrow = isFederalHoliday(tomorrow);
-        
-        // Show "Holiday" only for actual federal holidays
-        if (isHolidayToday || isHolidayTomorrow) {
-          return "Holiday";
-        }
-        // Show "Weekend" for weekends
-        if (isWeekend) {
-          return "Weekend";
-        }
-        return productionCounts.speedrun || 0;
-      })(),
+      ) : productionCounts.speedrun || 0,
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
     {

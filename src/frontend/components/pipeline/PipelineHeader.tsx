@@ -10,7 +10,6 @@ import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 // Removed deleted PipelineDataStore - using unified data system
 import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking';
-import { isWeekend, isHoliday } from '@/platform/utils/workday-utils';
 import { AddNoteModal } from './AddNoteModal';
 import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
 import { AddTaskModal } from './AddTaskModal';
@@ -576,11 +575,6 @@ export function PipelineHeader({
     
     // Special handling for Speedrun section - show different metrics based on current view
     if (section === 'speedrun') {
-      // Check if today is a weekend or holiday - hide stats if so
-      const today = new Date();
-      if (isWeekend(today) || isHoliday(today)) {
-        return []; // Return empty array to hide all stats
-      }
       
       // Use unified ranking system for dynamic goals
       const rankingSystem = RankingSystem.getInstance();
