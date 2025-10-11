@@ -97,6 +97,30 @@ export function OasisLeftPanel({ activeSection, onSectionChange }: OasisLeftPane
             </div>
           </div>
         </div>
+
+        {/* Communication Activity Dashboard */}
+        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Messages</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.reduce((sum, item) => sum + (item.count || 0), 0)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Channels</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.find(item => item.id === 'channels')?.count || 0}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Mentions</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.find(item => item.id === 'mentions')?.count || 0}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Scrollable Middle Section - Navigation */}

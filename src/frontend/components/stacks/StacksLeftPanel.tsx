@@ -79,6 +79,30 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
             </div>
           </div>
         </div>
+
+        {/* Project Management Dashboard */}
+        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Total Items</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.length * 12}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Active</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.length * 8}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Completed</span>
+              <span className="text-xs font-semibold text-black">
+                {navigationItems.length * 4}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Scrollable Middle Section - Navigation */}

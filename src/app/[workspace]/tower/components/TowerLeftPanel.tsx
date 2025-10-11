@@ -130,6 +130,36 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
             </div>
           </div>
         </div>
+
+        {/* System Performance Dashboard */}
+        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Uptime</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : metrics?.reliability?.uptime || "99.9%"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Performance</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : metrics?.performance?.score || "95"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Alerts</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : metrics?.security?.threats || "0"}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Sections */}

@@ -132,6 +132,36 @@ export function OlympusLeftPanel({ activeSection, onSectionChange }: OlympusLeft
             </div>
           </div>
         </div>
+
+        {/* Workflow Performance Dashboard */}
+        <div className="mx-2 mb-4 p-3 bg-gray-100 rounded-lg border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Workflows</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : workflowData?.workflows || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Completed</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-8 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : workflowData?.completedSteps || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium text-gray-600">Active</span>
+              <span className="text-xs font-semibold text-black">
+                {loading ? (
+                  <div className="w-6 h-3 bg-gray-200 rounded animate-pulse"></div>
+                ) : workflowData?.activeSteps || "0"}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Sections */}

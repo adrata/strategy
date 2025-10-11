@@ -35,6 +35,17 @@ export function PanelLayout({
   const rafIdRef = useRef<number | null>(null);
   const containerDimensionsRef = useRef<{ width: number; leftPanelWidth: number } | null>(null);
   
+  // Visual enhancement state
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [currentWidthPercent, setCurrentWidthPercent] = useState(35);
+  const [nearSnapPoint, setNearSnapPoint] = useState<number | null>(null);
+  
+  // Snap points configuration
+  const snapPoints = [0.25, 0.35, 0.5, 0.65]; // 25%, 35%, 50%, 65%
+  const snapThreshold = 0.05; // 5% threshold for snapping
+  
   // Fix hydration issue: always start with the same value on server and client  
   const [rightPanelFlex, setRightPanelFlex] = useState(0.35); // Only for initial render and localStorage
   const [isHydrated, setIsHydrated] = useState(false);
@@ -65,6 +76,24 @@ export function PanelLayout({
   const dividerLineWidth = 1;
   const dividerLineColor =
     dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)"; // Blue when dragging, gray when hovering
+  
+  // Enhanced divider styles with visual effects
+  const dividerStyle = {
+    position: "absolute" as const,
+    top: 0,
+    right: -(dividerHitArea / 2),
+    width: dividerHitArea,
+    height: "100%",
+    cursor: "col-resize",
+    zIndex: 30,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "transparent",
+    pointerEvents: "auto" as const,
+    transition: dragging ? "none" : "all 0.15s ease",
+    boxShadow: dragging ? "0 0 20px rgba(59, 130, 246, 0.3)" : "none",
+  };
 
   // Cache container dimensions to avoid repeated getBoundingClientRect calls
   const updateContainerDimensions = useCallback(() => {
@@ -79,18 +108,22 @@ export function PanelLayout({
   }, [isLeftPanelVisible]);
 
   // High-performance drag handlers using requestAnimationFrame and CSS transforms
-  const startDrag = useCallback((e: React.MouseEvent) => {
+  const startDrag = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     // Cache container dimensions once at start
     updateContainerDimensions();
     
-    // Store initial mouse position and panel width for cursor tracking
-    const startMouseX = e.clientX;
+    // Handle both mouse and touch events
+    const isTouch = 'touches' in e;
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    
+    // Store initial position and panel width for cursor tracking
+    const startMouseX = clientX;
     const startPanelWidth = rightPanelWidthRef.current;
     
-    // Calculate the offset of the mouse from the divider position
+    // Calculate the offset of the pointer from the divider position
     const containerRect = containerRef.current!.getBoundingClientRect();
     const leftPanelWidth = isLeftPanelVisible ? 224.357 : 0;
     const availableWidth = containerRect.width - leftPanelWidth;
@@ -115,7 +148,8 @@ export function PanelLayout({
       mouseOffsetFromDivider,
       containerRect,
       leftPanelWidth,
-      availableWidth
+      availableWidth,
+      isTouch
     };
     (window as any).__panelDragStart = dragStartData;
   }, [updateContainerDimensions, isLeftPanelVisible]);
@@ -139,6 +173,18 @@ export function PanelLayout({
     
     // Clean up drag start data
     delete (window as any).__panelDragStart;
+    
+    // Add smooth easing animation on release
+    setIsAnimating(true);
+    if (rightPanelRef.current) {
+      rightPanelRef.current.style.transition = "flex 0.2s cubic-bezier(0.4, 0, 0.2, 1)";
+      setTimeout(() => {
+        if (rightPanelRef.current) {
+          rightPanelRef.current.style.transition = "";
+        }
+        setIsAnimating(false);
+      }, 200);
+    }
     
     // Save final position to localStorage
     if (isHydrated && typeof window !== "undefined") {
@@ -177,7 +223,24 @@ export function PanelLayout({
         
         // Calculate right panel flex more smoothly
         const rightPanelRatio = Math.max(0.1, Math.min(0.9, 1 - mouseRatio));
-        const newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
+        let newRightFlex = Math.max(0.2, Math.min(1.8, rightPanelRatio * 2));
+        
+        // Check for snap points (unless Shift is held to disable snapping)
+        if (!e.shiftKey) {
+          const currentPercent = 1 - rightPanelRatio;
+          const nearestSnap = snapPoints.find(snap => 
+            Math.abs(currentPercent - snap) < snapThreshold
+          );
+          
+          if (nearestSnap) {
+            newRightFlex = Math.max(0.2, Math.min(1.8, (1 - nearestSnap) * 2));
+            setNearSnapPoint(nearestSnap);
+          } else {
+            setNearSnapPoint(null);
+          }
+        } else {
+          setNearSnapPoint(null);
+        }
         
         // Update ref (no re-render)
         rightPanelWidthRef.current = newRightFlex;
@@ -187,6 +250,11 @@ export function PanelLayout({
           const currentFlex = rightPanelWidthRef.current;
           rightPanelRef.current.style.flex = currentFlex.toString();
         }
+        
+        // Update tooltip position and percentage
+        const percent = Math.round((1 - rightPanelRatio) * 100);
+        setCurrentWidthPercent(percent);
+        setTooltipPosition({ x: e.clientX, y: e.clientY - 30 });
       });
     };
 
@@ -206,11 +274,72 @@ export function PanelLayout({
     };
   }, [dragging, endDrag]);
 
+  // Panel resize function with animation
+  const resizePanel = useCallback((newFlex: number, animate = true) => {
+    rightPanelWidthRef.current = newFlex;
+    setRightPanelFlex(newFlex);
+    
+    if (rightPanelRef.current) {
+      if (animate) {
+        setIsAnimating(true);
+        rightPanelRef.current.style.transition = "flex 0.2s cubic-bezier(0.4, 0, 0.2, 1)";
+        rightPanelRef.current.style.flex = newFlex.toString();
+        setTimeout(() => {
+          if (rightPanelRef.current) {
+            rightPanelRef.current.style.transition = "";
+          }
+          setIsAnimating(false);
+        }, 200);
+      } else {
+        rightPanelRef.current.style.flex = newFlex.toString();
+      }
+    }
+    
+    // Save to localStorage
+    if (isHydrated && typeof window !== "undefined") {
+      localStorage.setItem("adrata-panel-ratio", newFlex.toString());
+    }
+  }, [isHydrated]);
+
   // Global keyboard shortcuts (zoom handled by ZoomProvider)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput =
+        target['tagName'] === "INPUT" ||
+        target['tagName'] === "TEXTAREA" ||
+        target.isContentEditable;
+      
+      // Skip keyboard shortcuts if user is typing
+      if (isInput) return;
+      
+      const isModifierPressed = e.metaKey || e.ctrlKey;
+      
+      // Panel resize shortcuts
+      if (isModifierPressed && isRightPanelVisible) {
+        switch (e.key) {
+          case '[':
+            e.preventDefault();
+            resizePanel(Math.max(0.2, rightPanelWidthRef.current - 0.1));
+            break;
+          case ']':
+            e.preventDefault();
+            resizePanel(Math.min(1.8, rightPanelWidthRef.current + 0.1));
+            break;
+          case '0':
+            e.preventDefault();
+            resizePanel(0.35); // Default size
+            break;
+          case '=':
+          case '+':
+            e.preventDefault();
+            resizePanel(1.8); // Maximize
+            break;
+        }
+      }
+      
       // Command/Ctrl + L: Toggle right panel (AI chat)
-      if ((e.metaKey || e.ctrlKey) && e['key'] === "l") {
+      if (isModifierPressed && e['key'] === "l") {
         e.preventDefault();
         if (onToggleRightPanel) {
           onToggleRightPanel();
@@ -218,13 +347,8 @@ export function PanelLayout({
       }
 
       // Command/Ctrl + Shift + E: Toggle left panel (updated to avoid conflicts)
-      if ((e.metaKey || e.ctrlKey) && e['shiftKey'] && (e['key'] === "e" || e['key'] === "E")) {
-        const target = e.target as HTMLElement;
-        const isInput =
-          target['tagName'] === "INPUT" ||
-          target['tagName'] === "TEXTAREA" ||
-          target.isContentEditable;
-        if (!isInput && onToggleLeftPanel) {
+      if (isModifierPressed && e['shiftKey'] && (e['key'] === "e" || e['key'] === "E")) {
+        if (onToggleLeftPanel) {
           e.preventDefault();
           onToggleLeftPanel();
         }
@@ -233,7 +357,7 @@ export function PanelLayout({
 
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [onToggleRightPanel, onToggleLeftPanel]);
+  }, [onToggleRightPanel, onToggleLeftPanel, isRightPanelVisible, resizePanel]);
 
   useEffect(() => {
     const handleGlobalAppSwitch = (e: KeyboardEvent) => {
@@ -329,50 +453,100 @@ export function PanelLayout({
           {/* Draggable Divider */}
           {isRightPanelVisible && (
             <div
-              style={{
-                position: "absolute",
-                top: 0,
-                right: -(dividerHitArea / 2),
-                width: dividerHitArea,
-                height: "100%",
-                cursor: "col-resize",
-                zIndex: 30,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "transparent",
-                pointerEvents: "auto",
-              }}
+              style={dividerStyle}
               onMouseDown={startDrag}
               onDoubleClick={() => {
                 const defaultFlex = 0.35;
                 rightPanelWidthRef.current = defaultFlex;
                 setRightPanelFlex(defaultFlex);
+                setIsAnimating(true);
                 if (rightPanelRef.current) {
+                  rightPanelRef.current.style.transition = "flex 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
                   rightPanelRef.current.style.flex = defaultFlex.toString();
+                  setTimeout(() => {
+                    if (rightPanelRef.current) {
+                      rightPanelRef.current.style.transition = "";
+                    }
+                    setIsAnimating(false);
+                  }, 300);
                 }
-              }} // Reset to default ratio on double-click
+              }} // Reset to default ratio on double-click with animation
               onMouseEnter={() => {
                 setHovering(true);
+                setShowTooltip(true);
                 // Immediate cursor feedback
-                document.body['style']['cursor'] = "col-resize";
+                document.body.style.cursor = "col-resize";
               }}
               onMouseLeave={() => {
                 setHovering(false);
+                setShowTooltip(false);
                 // Reset cursor if not dragging
                 if (!dragging) {
-                  document.body['style']['cursor'] = "";
+                  document.body.style.cursor = "";
                 }
               }}
+              onMouseMove={(e) => {
+                if (hovering && !dragging) {
+                  setTooltipPosition({ x: e.clientX, y: e.clientY - 30 });
+                }
+              }}
+              role="separator"
+              aria-label="Resize right panel"
+              aria-valuenow={currentWidthPercent}
+              aria-valuemin={10}
+              aria-valuemax={90}
             >
               <div
                 style={{
                   width: dividerLineWidth,
                   height: "100%",
-                  background: dividerLineColor,
+                  background: nearSnapPoint ? "#10B981" : dividerLineColor,
                   transition: "background 0.15s",
+                  borderRadius: "1px",
+                  boxShadow: dragging ? "0 0 8px rgba(59, 130, 246, 0.4)" : "none",
+                  position: "relative",
                 }}
-              />
+              >
+                {/* Snap point indicator */}
+                {nearSnapPoint && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "-4px",
+                      width: "8px",
+                      height: "8px",
+                      background: "#10B981",
+                      borderRadius: "50%",
+                      transform: "translateY(-50%)",
+                      animation: "pulse 1s infinite",
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* Tooltip */}
+          {showTooltip && !dragging && (
+            <div
+              style={{
+                position: "fixed",
+                left: tooltipPosition.x,
+                top: tooltipPosition.y,
+                zIndex: 9999,
+                background: "rgba(0, 0, 0, 0.8)",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                pointerEvents: "none",
+                transform: "translateX(-50%)",
+                transition: "opacity 0.15s ease",
+              }}
+            >
+              {currentWidthPercent}% width
             </div>
           )}
         </div>
