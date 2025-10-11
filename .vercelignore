@@ -1,0 +1,18 @@
+# Exclude pipeline backup files from Vercel build
+src/platform/pipelines/outputs/recovery/
+src/platform/pipelines/outputs/backup/
+src/platform/pipelines/outputs/*.json
+
+# Exclude test files and temporary data
+src/platform/pipelines/tests/
+src/platform/pipelines/test-*.js
+src/platform/pipelines/*-test.js
+
+# Exclude large data files
+src/platform/pipelines/data/
+src/platform/pipelines/logs/
+src/platform/pipelines/temp/
+
+# Exclude development files
+src/platform/pipelines/archive/
+src/platform/pipelines/legacy/
