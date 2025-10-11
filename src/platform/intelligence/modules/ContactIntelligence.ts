@@ -935,7 +935,7 @@ export class ContactIntelligence {
     try {
       console.log(`     🏢 CoreSignal: Searching employees for ${companyName}...`);
       
-      // Use exact working pattern from coresignal-smoke-test.js
+      // Use exact working pattern with active employee filter
       const esQuery = {
         query: {
           bool: {
@@ -945,9 +945,16 @@ export class ContactIntelligence {
                   path: 'experience',
                   query: {
                     bool: {
-                      should: [
-                        { match: { 'experience.company_name': companyName } },
-                        { match_phrase: { 'experience.company_name': companyName } },
+                      must: [
+                        { term: { 'experience.active_experience': 1 } }, // ACTIVE only
+                        {
+                          bool: {
+                            should: [
+                              { match: { 'experience.company_name': companyName } },
+                              { match_phrase: { 'experience.company_name': companyName } },
+                            ],
+                          },
+                        },
                       ],
                     },
                   },
@@ -974,14 +981,26 @@ export class ContactIntelligence {
       console.log(`     📊 Employee search status: ${response.status}`);
       
       if (response.ok) {
-        const ids = await response.json();
+        const result = await response.json();
         
-        if (Array.isArray(ids) && ids.length > 0) {
-          console.log(`     ✅ Found ${ids.length} employees, searching for executives...`);
+        // Handle both array format (current) and Elasticsearch format (expected)
+        let employeeIds = [];
+        if (Array.isArray(result)) {
+          employeeIds = result;
+          console.log(`     📊 Response is array format: ${employeeIds.length} employee IDs`);
+        } else if (result.hits?.hits) {
+          employeeIds = result.hits.hits.map(hit => hit._source.id);
+          console.log(`     📊 Response is Elasticsearch format: ${employeeIds.length} employee IDs`);
+        } else {
+          console.log(`     ⚠️ Unknown response format: ${Object.keys(result)}`);
+        }
+        
+        if (employeeIds.length > 0) {
+          console.log(`     ✅ Found ${employeeIds.length} active employees, searching for executives...`);
           
           // Collect profiles for first few employees to find executives
-          for (let i = 0; i < Math.min(10, ids.length); i++) {
-            const employeeId = ids[i];
+          for (let i = 0; i < Math.min(10, employeeIds.length); i++) {
+            const employeeId = employeeIds[i];
             
             try {
               const collectResponse = await fetch(`https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${employeeId}`, {
@@ -1016,15 +1035,25 @@ export class ContactIntelligence {
                   };
                 }
                 
-                // Also check if this is an executive (for debugging)
-                const isExecutive = title.toLowerCase().includes('chief') || 
-                                  title.toLowerCase().includes('president') || 
-                                  title.toLowerCase().includes('cfo') ||
-                                  title.toLowerCase().includes('ceo') ||
-                                  title.toLowerCase().includes('coo');
+                // Enhanced executive detection with CFO/CRO priority
+                const executiveTitles = {
+                  cfo: /\b(cfo|chief financial officer|vp.?finance|finance.*director)\b/i,
+                  cro: /\b(cro|chief revenue officer|vp.?revenue|revenue.*director)\b/i,
+                  ceo: /\b(ceo|chief executive officer)\b/i,
+                  president: /\b(president)\b/i,
+                };
+
+                const titleLower = title.toLowerCase();
+                const isCFO = executiveTitles.cfo.test(titleLower);
+                const isCRO = executiveTitles.cro.test(titleLower);
+                const isCEO = executiveTitles.ceo.test(titleLower);
+                const isPresident = executiveTitles.president.test(titleLower);
+                const isTargetExecutive = isCFO || isCRO;
+                const isExecutive = isCFO || isCRO || isCEO || isPresident;
                 
                 if (isExecutive) {
-                  console.log(`     👔 Executive found: ${name} (${title})`);
+                  const roleType = isCFO ? 'CFO' : isCRO ? 'CRO' : isCEO ? 'CEO' : 'President';
+                  console.log(`     👔 ${roleType} found: ${name} (${title})`);
                 }
                 
               } else {
@@ -1039,12 +1068,12 @@ export class ContactIntelligence {
             await new Promise(resolve => setTimeout(resolve, 100));
           }
           
-          console.log(`     ⚠️ Target executive ${executiveName} not found in first ${Math.min(10, ids.length)} employees`);
+          console.log(`     ⚠️ Target executive ${executiveName} not found in first ${Math.min(10, employeeIds.length)} employees`);
           
         } else {
           console.log(`     ⚠️ No employee IDs returned`);
-          console.log(`     Response type: ${typeof ids}`);
-          console.log(`     Response: ${JSON.stringify(ids).substring(0, 200)}`);
+          console.log(`     Response type: ${typeof result}`);
+          console.log(`     Response: ${JSON.stringify(result).substring(0, 200)}`);
         }
         
       } else {

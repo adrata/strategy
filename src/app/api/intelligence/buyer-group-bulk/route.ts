@@ -43,61 +43,90 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🎯 [BULK BUYER GROUP] Starting REAL analysis for ${accounts.length} accounts using CoreSignal`);
+    console.log(`🎯 [BULK BUYER GROUP] Starting analysis for ${accounts.length} accounts using unified pipeline`);
 
-    // Simple CoreSignal-based buyer group analysis
-    const buyerGroups = [];
+    // Use the new unified buyer group pipeline
+    const BuyerGroupPipeline = require('@/platform/pipelines/pipelines/core/buyer-group-pipeline.js').BuyerGroupPipeline;
+    const pipeline = new BuyerGroupPipeline();
+
+    // Convert accounts to company format
+    const companies = accounts.map(accountName => ({
+      name: accountName,
+      website: null
+    }));
+
+    // Process companies using the unified pipeline
+    const results = [];
     let totalPeople = 0;
     let totalSuccessRate = 0;
-    let totalSearchTime = 0;
+    let totalProcessingTime = 0;
 
-    for (const accountName of accounts) {
+    for (let i = 0; i < companies.length; i++) {
+      const company = companies[i];
       try {
-        console.log(`🔄 [BULK BUYER GROUP] Analyzing ${accountName}...`);
+        console.log(`🔄 [BULK BUYER GROUP] Processing ${company.name} (${i + 1}/${companies.length})...`);
         const startTime = Date.now();
 
-        // Use CoreSignal API directly to get real people data
-        console.log(`🔍 [DEBUG] Calling CoreSignal for ${accountName}...`);
-        const people = await getRealPeopleFromCoreSignal(accountName);
-        console.log(`🔍 [DEBUG] CoreSignal returned ${people.length} people for ${accountName}`);
-        const searchTime = Date.now() - startTime;
+        // Process single company using unified pipeline
+        const result = await pipeline.processSingleCompany(company.name, { website: company.website });
+        const processingTime = Date.now() - startTime;
 
-        // Apply realistic role distribution based on research
-        const peopleWithRoles = assignRealisticRoles(people);
+        // Save to database
+        if (result.buyerGroup) {
+          await pipeline.saveBuyerGroupToDatabase(result, workspaceId);
+        }
 
-        const successRate = peopleWithRoles.length > 0 ? Math.round((peopleWithRoles.length / 10) * 100) : 0;
+        // Calculate success metrics
+        const memberCount = result.buyerGroup?.totalMembers || 0;
+        const confidence = result.quality?.overallConfidence || 0;
+        const successRate = confidence >= 60 ? Math.min(confidence, 100) : 0;
 
-        buyerGroups.push({
-          accountName,
-          peopleCount: peopleWithRoles.length,
-          successRate: Math.min(successRate, 100),
-          searchTime: searchTime,
-          people: peopleWithRoles
+        results.push({
+          accountName: company.name,
+          peopleCount: memberCount,
+          successRate: successRate,
+          searchTime: processingTime,
+          people: result.buyerGroup?.members || [],
+          roles: result.buyerGroup?.roles || {},
+          quality: result.quality,
+          cohesionScore: result.buyerGroup?.cohesion?.score || 0,
+          overallConfidence: confidence,
+          processingTime: processingTime,
+          cacheUtilized: result.cacheUtilized || false
         });
 
-        totalPeople += peopleWithRoles.length;
+        totalPeople += memberCount;
         totalSuccessRate += successRate;
-        totalSearchTime += searchTime;
+        totalProcessingTime += processingTime;
 
-        console.log(`✅ [BULK BUYER GROUP] ${accountName}: ${peopleWithRoles.length} people found in ${searchTime}ms`);
+        console.log(`✅ [BULK BUYER GROUP] ${company.name}: ${memberCount} members found, ${confidence}% confidence in ${processingTime}ms`);
 
       } catch (error) {
-        console.error(`❌ [BULK BUYER GROUP] Error analyzing ${accountName}:`, error);
-        console.error(`❌ [BULK BUYER GROUP] Error details:`, error instanceof Error ? error.message : String(error));
-        console.error(`❌ [BULK BUYER GROUP] Error stack:`, error instanceof Error ? error.stack : 'No stack trace');
+        console.error(`❌ [BULK BUYER GROUP] Error processing ${company.name}:`, error);
 
-        // Add empty result for failed analysis
-        buyerGroups.push({
-          accountName,
+        // Add failed result
+        results.push({
+          accountName: company.name,
           peopleCount: 0,
           successRate: 0,
           searchTime: 0,
-          people: []
+          people: [],
+          roles: {},
+          quality: { overallConfidence: 0, cohesionScore: 0 },
+          cohesionScore: 0,
+          overallConfidence: 0,
+          processingTime: 0,
+          cacheUtilized: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     }
 
+    const buyerGroups = results;
+
     const overallSuccessRate = buyerGroups.length > 0 ? Math.round(totalSuccessRate / buyerGroups.length) : 0;
+    const avgConfidence = buyerGroups.length > 0 ? Math.round(buyerGroups.reduce((sum, bg) => sum + (bg.overallConfidence || 0), 0) / buyerGroups.length) : 0;
+    const avgCohesion = buyerGroups.length > 0 ? Math.round(buyerGroups.reduce((sum, bg) => sum + (bg.cohesionScore || 0), 0) / buyerGroups.length * 10) / 10 : 0;
 
     // Step 3: Format response
     const response = {
@@ -107,16 +136,27 @@ export async function POST(request: NextRequest) {
         totalPeopleFound: totalPeople,
         overallSuccessRate: overallSuccessRate,
         avgPeoplePerAccount: Math.round(totalPeople / accounts.length * 100) / 100,
-        processingTimeMs: totalSearchTime,
-        apiCallsUsed: accounts.length * 10, // CoreSignal API calls estimate
-        costEstimate: `$${(accounts.length * 10 * 0.10).toFixed(2)}` // CoreSignal cost estimate
+        avgConfidence: avgConfidence,
+        avgCohesionScore: avgCohesion,
+        processingTimeMs: totalProcessingTime,
+        avgProcessingTimePerAccount: Math.round(totalProcessingTime / accounts.length),
+        cacheUtilization: Math.round((buyerGroups.filter(bg => bg.cacheUtilized).length / buyerGroups.length) * 100),
+        dataSource: 'Unified Buyer Group Pipeline',
+        pipelineVersion: '2.0'
       },
       buyerGroups: buyerGroups,
       context: {
         sellerProducts: ['Analytics Platform', 'Data Intelligence', 'Business Intelligence'],
         targetRoles: targetRoles || ['CEO', 'CTO', 'CFO', 'VP Data Science', 'Head of Data Engineering'],
         contextCompleteness: 95,
-        dataSource: 'CoreSignal Real Data'
+        dataSource: 'Unified Buyer Group Pipeline with CoreSignal + Contact Enrichment',
+        features: [
+          '8-12 buyer group members per company',
+          'Role assignment (decision/champion/stakeholder/blocker/introducer)',
+          'Contact enrichment (email, phone, LinkedIn)',
+          'Cohesion analysis and quality scoring',
+          'Database storage and caching'
+        ]
       }
     };
 
