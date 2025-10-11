@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Visualization Examples</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .mermaid {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .label {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        .status.running { background: #fff3cd; color: #856404; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.failed { background: #f8d7da; color: #721c24; }
+        .metrics {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .metric-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 CFO/CRO Pipeline - Visualization Examples</h1>
+    
+    <div class="section">
+        <h2>📊 Example 1: Mermaid - Simple Linear Flow</h2>
+        <p>Your current CFO/CRO pipeline as a simple flowchart:</p>
+        
+        <div class="mermaid">
+graph LR
+    A[📋 Load Companies] --> B[🏢 Resolve Company]
+    B --> C[👔 Discover Executives]
+    C --> D[✅ Verify Contacts]
+    D --> E[💾 Save Results]
+    
+    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style B fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style C fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style D fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style E fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+        </div>
+        
+        <div class="code-block">
+// Simple text input to Mermaid:
+graph LR
+    A[Load Companies] --> B[Resolve Company]
+    B --> C[Discover Executives]
+    C --> D[Verify Contacts]
+    D --> E[Save Results]
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Example 2: Mermaid - Multi-Strategy Discovery</h2>
+        <p>Shows your 3-tier discovery strategy with fallbacks:</p>
+        
+        <div class="mermaid">
+graph TB
+    Start[🏢 Company: Microsoft] --> Resolve[Resolve Company Info]
+    Resolve --> Strategy{Discovery Strategy}
+    
+    Strategy -->|Strategy 1| CS[CoreSignal API]
+    Strategy -->|Strategy 2| ER[Executive Research]
+    Strategy -->|Strategy 3| AI[AI Research Claude]
+    
+    CS -->|Found| CFO1[✅ CFO Found]
+    CS -->|Not Found| ER
+    ER -->|Found| CFO2[✅ CFO Found]
+    ER -->|Not Found| AI
+    AI -->|Found| CFO3[✅ CFO Found]
+    AI -->|Not Found| FAIL[❌ Not Found]
+    
+    CFO1 --> Verify[Verify Contacts]
+    CFO2 --> Verify
+    CFO3 --> Verify
+    
+    Verify --> Email[📧 Verify Email]
+    Verify --> Phone[📞 Verify Phone]
+    Verify --> Person[👤 Verify Person]
+    
+    Email --> Save[💾 Save Results]
+    Phone --> Save
+    Person --> Save
+    
+    style Start fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style Strategy fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style CS fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style ER fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style AI fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style CFO1 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style CFO2 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style CFO3 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style Verify fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    style Save fill:#f3e5f5,stroke:#6a1b9a,stroke-width:3px
+    style FAIL fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>⚡ Example 3: Mermaid - Parallel Processing</h2>
+        <p>Shows how contact verification happens in parallel:</p>
+        
+        <div class="mermaid">
+graph TB
+    Exec[👤 Executive Found<br/>Amy Hood - CFO] --> Parallel{Parallel Verification}
+    
+    Parallel -->|Thread 1| Email[📧 Email Verification]
+    Parallel -->|Thread 2| Phone[📞 Phone Verification]
+    Parallel -->|Thread 3| Person[👤 Person Verification]
+    
+    Email --> Lusha1[Lusha API]
+    Email --> PDL1[People Data Labs]
+    Email --> ZB[ZeroBounce]
+    
+    Phone --> Lusha2[Lusha API]
+    Phone --> PDL2[People Data Labs]
+    Phone --> Prospeo[Prospeo Mobile]
+    
+    Person --> Lusha3[Lusha API]
+    Person --> PDL3[People Data Labs]
+    
+    Lusha1 --> Merge[🔄 Merge Results]
+    PDL1 --> Merge
+    ZB --> Merge
+    Lusha2 --> Merge
+    PDL2 --> Merge
+    Prospeo --> Merge
+    Lusha3 --> Merge
+    PDL3 --> Merge
+    
+    Merge --> Final[✅ Verified Executive<br/>Email: 85% confidence<br/>Phone: 90% confidence<br/>Person: 95% confidence]
+    
+    style Exec fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style Parallel fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Final fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📈 Example 4: Real-Time Status Dashboard</h2>
+        <p>What you'd see while the pipeline is running:</p>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Progress</div>
+                <div class="metric-value">7/10</div>
+                <div class="metric-label">70% complete • ETA: 2m 30s</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="metric-label">API Cost</div>
+                <div class="metric-value">$4.20</div>
+                <div class="metric-label">CoreSignal: $2.80 | Claude: $1.40</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="metric-label">Success Rate</div>
+                <div class="metric-value">85%</div>
+                <div class="metric-label">6 success • 1 failed</div>
+            </div>
+        </div>
+        
+        <h3>Current Status:</h3>
+        <div>
+            <span class="status success">✅ Microsoft - Complete</span>
+            <span class="status success">✅ Apple - Complete</span>
+            <span class="status success">✅ Google - Complete</span>
+            <span class="status running">⏳ Amazon - Verifying contacts...</span>
+            <span class="status" style="background:#e0e0e0;color:#666;">⏸️ Meta - Pending</span>
+            <span class="status" style="background:#e0e0e0;color:#666;">⏸️ Tesla - Pending</span>
+        </div>
+        
+        <h3>Live Execution Log:</h3>
+        <div class="code-block" style="background:#1e1e1e;color:#d4d4d4;font-size:13px;">
+<span style="color:#4ec9b0;">⏳ [resolveCompany]</span> Starting...<br/>
+<span style="color:#4fc1ff;">🏢 Resolving company:</span> Amazon<br/>
+<span style="color:#ce9178;">   Domain:</span> amazon.com<br/>
+<span style="color:#ce9178;">   Company ID:</span> cs_12345<br/>
+<span style="color:#ce9178;">   Size:</span> Large (1,500,000 employees)<br/>
+<span style="color:#4ec9b0;">✅ [resolveCompany]</span> Complete (1,234ms)<br/>
+<br/>
+<span style="color:#4ec9b0;">⏳ [discoverExecutives]</span> Starting...<br/>
+<span style="color:#4fc1ff;">👔 Discovering executives for</span> Amazon...<br/>
+<span style="color:#ce9178;">   📋 Strategy 1:</span> CoreSignal Multi-Source Discovery<br/>
+<span style="color:#ce9178;">   ✅ CFO found via CoreSignal:</span> Brian Olsavsky<br/>
+<span style="color:#ce9178;">   ✅ CRO found via CoreSignal:</span> Doug Herrington<br/>
+<span style="color:#4ec9b0;">✅ [discoverExecutives]</span> Complete (3,456ms)<br/>
+<br/>
+<span style="color:#4ec9b0;">⏳ [verifyExecutive]</span> Starting...<br/>
+<span style="color:#4fc1ff;">🔍 Verifying executive:</span> Brian Olsavsky (CFO)<br/>
+<span style="color:#ce9178;">   📧 Email verification:</span> 85% confidence<br/>
+<span style="color:#ce9178;">   📞 Phone verification:</span> 90% confidence<br/>
+<span style="color:#ce9178;">   👤 Person verification:</span> 95% confidence<br/>
+<span style="color:#4ec9b0;">✅ [verifyExecutive]</span> Complete (2,789ms)<br/>
+<br/>
+<span style="color:#569cd6;">💰 Cost Update:</span> CoreSignal: $0.50 | Claude: $0.00 | Total: $0.50
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎨 Example 5: Mermaid - Cost Breakdown</h2>
+        <p>Visualize where your API credits are being spent:</p>
+        
+        <div class="mermaid">
+pie title API Cost Distribution ($4.20 total)
+    "CoreSignal" : 2.80
+    "Claude AI" : 1.40
+    "Lusha" : 0.60
+    "ZeroBounce" : 0.30
+    "People Data Labs" : 0.10
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Example 6: Timeline View</h2>
+        <p>See execution timeline with Gantt chart:</p>
+        
+        <div class="mermaid">
+gantt
+    title Pipeline Execution Timeline
+    dateFormat  HH:mm:ss
+    
+    section Company 1
+    Load & Resolve       :done, c1a, 00:00:00, 2s
+    Discover Executives  :done, c1b, after c1a, 5s
+    Verify Contacts      :done, c1c, after c1b, 3s
+    Save Results         :done, c1d, after c1c, 1s
+    
+    section Company 2
+    Load & Resolve       :done, c2a, 00:00:01, 2s
+    Discover Executives  :done, c2b, after c2a, 4s
+    Verify Contacts      :done, c2c, after c2b, 3s
+    Save Results         :done, c2d, after c2c, 1s
+    
+    section Company 3
+    Load & Resolve       :active, c3a, 00:00:02, 2s
+    Discover Executives  :c3b, after c3a, 5s
+    Verify Contacts      :c3c, after c3b, 3s
+    Save Results         :c3d, after c3c, 1s
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>💡 Summary</h2>
+        <p><strong>Mermaid</strong> is perfect for:</p>
+        <ul>
+            <li>✅ <strong>Static diagrams</strong> - Show the pipeline structure</li>
+            <li>✅ <strong>Quick visualization</strong> - Just write text, get a diagram</li>
+            <li>✅ <strong>Documentation</strong> - Embed in docs, README files</li>
+            <li>✅ <strong>Simple to implement</strong> - One script tag, done!</li>
+        </ul>
+        
+        <p><strong>React Flow</strong> (shown next) is better for:</p>
+        <ul>
+            <li>✅ <strong>Interactive diagrams</strong> - Drag, drop, reorganize nodes</li>
+            <li>✅ <strong>Real-time updates</strong> - Nodes change color as steps complete</li>
+            <li>✅ <strong>User editing</strong> - Let users build custom pipelines</li>
+            <li>✅ <strong>Complex layouts</strong> - Automatic positioning, zooming, panning</li>
+        </ul>
+        
+        <p><strong>My Recommendation:</strong> Use <strong>Mermaid for quick wins</strong> (you can add it today!), then upgrade to <strong>React Flow for interactive features</strong> later.</p>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                fontSize: '16px'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,235 +1,164 @@
-# 🧠 Adrata Intelligence Platform
+# Intelligence Platform
+
+**Single Source of Truth for all intelligence features**
 
 ## Overview
 
-The Adrata Intelligence Platform is an adaptive executive research system that intelligently discovers decision makers and buyer groups with world-class accuracy and efficiency.
+This directory contains ALL intelligence-related functionality organized by priority:
 
-## 🎯 Key Features
+1. **Buyer Group Discovery** - World-class buyer group identification
+2. **Person Research** - Deep person intelligence and enrichment
+3. **Company Discovery** - People-centric ICP matching (our unique advantage!)
+4. **Role-Based Search** - Universal role finding (CFO, CRO, CMO, etc.)
 
-### **Adaptive Research Depth**
-- **Auto Mode**: System intelligently determines optimal research depth
-- **Quick**: Fast CFO/CRO discovery (~2s, $0.15/company)
-- **Thorough**: Enhanced contact validation (~5s, $0.45/company)  
-- **Comprehensive**: Full buyer group analysis (~8s, $1.10/company)
+## Progressive Enrichment Levels
 
-### **Smart Cost Management**
-- Budget-aware API selection
-- Real-time cost tracking
-- Automatic API optimization
-- Daily budget controls
+### Level 1: IDENTIFY (Fast & Cheap)
+- **What**: Find people and basic info (name, title, company)
+- **Speed**: <5 seconds per company
+- **Cost**: ~$0.10 per company
+- **Use Case**: "Show me the buyer group members"
 
-### **Intelligent Caching**
-- Multi-layer caching (memory + Redis)
-- Automatic cache invalidation
-- Smart cache key generation
-- High hit rate optimization
+### Level 2: ENRICH (Medium)
+- **What**: Level 1 + verified contacts (email, phone, LinkedIn)
+- **Speed**: <30 seconds per company
+- **Cost**: ~$2-3 per company
+- **Use Case**: "I need to reach these people"
 
-## 🚀 Quick Start
+### Level 3: DEEP RESEARCH (Comprehensive)
+- **What**: Level 2 + full intelligence (career, relationships, signals)
+- **Speed**: <2 minutes per company
+- **Cost**: ~$5-8 per company
+- **Use Case**: "Tell me everything about this buyer group"
 
-### 1. Basic Research Request
+## Directory Structure
+
+```
+intelligence/
+├── buyer-group/        # Priority #1: Buyer Group Intelligence
+├── person/             # Priority #2: Person Research
+├── company/            # Priority #3: Company Discovery (People-Centric ICP)
+├── role/               # Priority #4: Role-Based Search
+└── shared/             # Shared types and utilities
+```
+
+## Quick Start
+
+### Buyer Group Discovery
 
 ```typescript
-import { ResearchOrchestrator } from '@/platform/intelligence/core/ResearchOrchestrator';
+import { BuyerGroupEngine } from '@/platform/intelligence/buyer-group/buyer-group-engine';
 
-const orchestrator = new ResearchOrchestrator({
-  PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
-  // ... other API keys
+const engine = new BuyerGroupEngine();
+
+// Level 1: Just identify
+const result = await engine.discover({
+  companyName: 'Salesforce',
+  enrichmentLevel: 'identify'
 });
 
-const result = await orchestrator.research({
-  accounts: [
-    { name: 'Microsoft', website: 'microsoft.com', importance: 'strategic' }
-  ],
-  targetRoles: ['CFO', 'CRO'],
-  researchDepth: 'auto', // System decides optimal depth
-  urgency: 'batch',
-  userId: 'user123',
-  workspaceId: 'workspace123'
+// Level 2: Identify + enrich contacts
+const enriched = await engine.discover({
+  companyName: 'Salesforce',
+  enrichmentLevel: 'enrich'
 });
 
-console.log(`Found ${result.executives.length} executives with ${result.confidence}% confidence`);
+// Level 3: Full intelligence
+const deepResearch = await engine.discover({
+  companyName: 'Salesforce',
+  enrichmentLevel: 'deep_research'
+});
 ```
 
-### 2. API Endpoint Usage
+### People-Centric ICP (Our Unique Advantage!)
 
-```bash
-# Test the system
-curl -X GET http://localhost:3000/api/intelligence/test
+```typescript
+import { PeopleCentricICP } from '@/platform/intelligence/company/people-centric-icp';
 
-# Get API capabilities
-curl -X GET http://localhost:3000/api/intelligence/research
+const icp = new PeopleCentricICP();
 
-# Execute research
-curl -X POST http://localhost:3000/api/intelligence/research \
-  -H "Content-Type: application/json" \
-  -H "x-user-id: user123" \
-  -H "x-workspace-id: workspace123" \
-  -d '{
-    "accounts": [
-      {"name": "Microsoft", "website": "microsoft.com"}
-    ],
-    "targetRoles": ["CFO", "CRO"],
-    "researchDepth": "auto"
-  }'
+// Score companies based on people quality, not just firmographics
+const scores = await icp.scoreCompanies({
+  companies: ['Salesforce', 'HubSpot', 'Dell'],
+  sellerProfile: {
+    targetRoles: ['CFO', 'VP Finance'],
+    solutionType: 'financial_software',
+    dealSize: 'enterprise'
+  }
+});
+
+// Get ranked recommendations
+const recommendations = await icp.recommend({
+  count: 10,
+  filters: {
+    industry: 'Technology',
+    minEmployees: 1000
+  }
+});
 ```
 
-## 📁 Architecture
+## API Endpoints (v1)
 
-```
-src/platform/intelligence/
-├── core/
-│   ├── ResearchOrchestrator.ts    # Main intelligence engine
-│   ├── AdaptiveProcessor.ts       # Smart research planning
-│   └── CostOptimizer.ts          # Budget management
-├── services/
-│   └── unified-cache.ts          # Unified caching system
-├── types/
-│   └── intelligence.ts          # TypeScript definitions
-└── modules/                      # Research modules (to be ported)
-    ├── CompanyResolver.ts
-    ├── ExecutiveResearch.ts
-    └── ContactIntelligence.ts
-```
+All intelligence APIs are versioned under `/api/v1/intelligence/`:
 
-## 🔧 Configuration
+- **Buyer Group**: `/api/v1/intelligence/buyer-group`
+- **Person**: `/api/v1/intelligence/person`
+- **Company ICP**: `/api/v1/intelligence/company/icp`
+- **Role Finder**: `/api/v1/intelligence/role`
 
-### Environment Variables
+See individual README files in each subdirectory for detailed documentation.
 
-```bash
-# Required API Keys
-PERPLEXITY_API_KEY=pplx-xxx
-LUSHA_API_KEY=xxx
-CORESIGNAL_API_KEY=xxx
-PROSPEO_API_KEY=xxx
-ZEROBOUNCE_API_KEY=xxx
-MYEMAILVERIFIER_API_KEY=xxx
+## Design Principles
 
-# Optional Configuration
-INTELLIGENCE_DAILY_BUDGET=100
-INTELLIGENCE_CACHE_TTL=3600
-INTELLIGENCE_MAX_PARALLEL=10
-```
+### 1. Progressive Enhancement
+- Start fast and cheap (Level 1)
+- Upgrade on-demand (Level 2, 3)
+- Cache aggressively
+- Background enrichment where appropriate
 
-### API Rate Limits (per minute)
-- **Perplexity**: 60 requests
-- **Lusha**: 200 requests
-- **CoreSignal**: 100 requests
-- **Prospeo**: 60 requests (primary bottleneck)
-- **ZeroBounce**: 100 requests
+### 2. People-First
+- Every company score includes people quality
+- Buyer groups are the core data primitive
+- Relationships drive recommendations
+- Focus on WHO not WHAT
 
-## 📊 Database Schema
+### 3. Modern 2025 Standards
+- TypeScript for type safety
+- Proper error handling
+- Comprehensive logging
+- Real-time streaming
+- Smart caching
 
-### Executive Contacts
+### 4. Cost Transparency
+- Clear cost per enrichment level
+- Smart API usage based on user intent
+- Aggressive caching to avoid re-enrichment
+- Batch processing for efficiency
+
+## Database Schema
+
+We use a streamlined approach - buyer group roles are stored directly in the `people` table:
+
 ```sql
-executive_contact (
-  id, account_id, name, title, role,
-  email, phone, linkedin_url,
-  confidence_score, research_methods,
-  workspace_id, created_at
-)
+people table:
+- buyerGroupRole: 'decision' | 'champion' | 'stakeholder' | 'blocker' | 'introducer'
+- buyerGroupConfidence: 0-100
+- influenceScore: 0-100
 ```
 
-### Research Sessions
-```sql
-research_session (
-  id, account_ids, target_roles, research_depth,
-  status, progress, total_cost, executives_found,
-  user_id, workspace_id, created_at
-)
-```
+**No separate buyer group tables needed!** This keeps things simple and efficient.
 
-## 🎯 Usage Examples
+## Cost Guidelines
 
-### Find Decision Makers
-```typescript
-const result = await orchestrator.research({
-  accounts: [{ name: 'Salesforce', website: 'salesforce.com' }],
-  targetRoles: ['Decision_Maker', 'Buyer', 'Influencer'],
-  researchDepth: 'thorough'
-});
-```
+| Level | CoreSignal | Lusha/Contact | AI Analysis | Total |
+|-------|-----------|---------------|-------------|-------|
+| Level 1 (Identify) | $0.10 | $0 | $0 | ~$0.10 |
+| Level 2 (Enrich) | $0.10 | $1.50 | $0 | ~$2.00 |
+| Level 3 (Deep) | $0.10 | $1.50 | $3.00 | ~$5.00 |
 
-### Bulk Account Processing
-```typescript
-const result = await orchestrator.research({
-  accounts: csvAccounts, // Array of 100+ accounts
-  targetRoles: ['CFO', 'CRO'],
-  researchDepth: 'auto',
-  maxCostPerAccount: 0.50, // Budget control
-  urgency: 'background'
-});
-```
+## Next Steps
 
-### Strategic Account Deep Dive
-```typescript
-const result = await orchestrator.research({
-  accounts: [{ name: 'Microsoft', importance: 'strategic' }],
-  targetRoles: ['CEO', 'CFO', 'CRO', 'CTO'],
-  researchDepth: 'comprehensive', // Full buyer group analysis
-  maxCostPerAccount: 2.00
-});
-```
-
-## 🚨 Error Handling
-
-The system includes comprehensive error handling:
-
-- **API Failures**: Automatic fallbacks to alternative APIs
-- **Rate Limits**: Intelligent queuing and retry logic
-- **Budget Limits**: Automatic cost controls and warnings
-- **Data Quality**: Confidence scoring and validation
-
-## 📈 Performance Metrics
-
-### Target Performance (per company)
-- **Quick Research**: <2 seconds, 92% accuracy
-- **Thorough Research**: <5 seconds, 95% accuracy  
-- **Comprehensive Research**: <8 seconds, 98% accuracy
-
-### Cost Efficiency
-- **Average Cost**: $0.15 - $1.10 per company
-- **Success Rate**: >95% executive discovery
-- **Cache Hit Rate**: >70% for repeat queries
-
-## 🔮 Roadmap
-
-### Phase 1: Foundation ✅
-- [x] Core architecture
-- [x] Adaptive processing
-- [x] Cost optimization
-- [x] Basic API endpoints
-
-### Phase 2: Research Modules (In Progress)
-- [ ] Port CompanyResolver
-- [ ] Port ExecutiveResearch  
-- [ ] Port ContactIntelligence
-- [ ] Port ValidationEngine
-
-### Phase 3: Advanced Features
-- [ ] Buyer group analysis
-- [ ] Background job processing
-- [ ] Real-time progress tracking
-- [ ] AI chat integration
-
-### Phase 4: Production Features
-- [ ] Advanced monitoring
-- [ ] Performance optimization
-- [ ] Bulk processing UI
-- [ ] Analytics dashboard
-
-## 🤝 Contributing
-
-When adding new research modules:
-
-1. Implement the module interface
-2. Add proper error handling
-3. Include cost tracking
-4. Add comprehensive tests
-5. Update documentation
-
-## 📞 Support
-
-For questions or issues with the Intelligence Platform:
-- Check the API test endpoint: `/api/intelligence/test`
-- Review error logs in research sessions
-- Monitor cost tracking for budget issues
+1. Read individual README files in each subdirectory
+2. Check out the API documentation
+3. Review the shared types in `shared/types.ts`
+4. Start with Level 1 enrichment, upgrade as needed
