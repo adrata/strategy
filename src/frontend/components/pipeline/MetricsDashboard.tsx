@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { authFetch } from '@/platform/auth-fetch';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { authFetch } from '@/platform/api-fetch';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 

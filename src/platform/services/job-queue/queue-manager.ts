@@ -1,14 +1,13 @@
 /**
  * JOB QUEUE MANAGER
  * 
- * Background job processing with BullMQ
+ * Simplified background job processing
  * Following 2025 best practices: retry logic, idempotency, monitoring
  */
 
-import { Queue, Worker, Job, QueueEvents } from 'bullmq';
-import { logger } from '../observability/logger';
-import { metrics, MetricNames } from '../observability/metrics';
-import IORedis from 'ioredis';
+import { createLogger } from '@/platform/utils/logger';
+
+const logger = createLogger('QueueManager');
 
 // Job types
 export type JobType = 
@@ -18,268 +17,148 @@ export type JobType =
   | 'webhook-process';
 
 export interface JobData {
+  [key: string]: any;
+}
+
+export interface JobOptions {
+  delay?: number;
+  attempts?: number;
+  backoff?: {
+    type: 'exponential' | 'fixed';
+    delay: number;
+  };
+}
+
+export interface Job {
+  id: string;
   type: JobType;
-  payload: any;
-  workspaceId?: string;
-  userId?: string;
-  idempotencyKey?: string;
+  data: JobData;
+  options: JobOptions;
+  attempts: number;
+  maxAttempts: number;
+  status: 'waiting' | 'active' | 'completed' | 'failed';
+  createdAt: Date;
+  processedAt?: Date;
+  completedAt?: Date;
+  error?: string;
 }
 
-export interface RefreshBuyerGroupPayload {
-  companyId: string;
-  companyName: string;
-  reason: string;
-  triggeredBy?: string;
-  enrichmentLevel?: 'identify' | 'enrich' | 'deep_research';
-}
+// Simple in-memory queue implementation
+class SimpleQueue {
+  private jobs: Map<string, Job> = new Map();
+  private processing: Set<string> = new Set();
+  private workers: Map<JobType, (job: Job) => Promise<void>> = new Map();
 
-class QueueManager {
-  private queues: Map<JobType, Queue> = new Map();
-  private workers: Map<JobType, Worker> = new Map();
-  private queueEvents: Map<JobType, QueueEvents> = new Map();
-  private connection: IORedis;
-
-  constructor() {
-    // Redis connection
-    this.connection = new IORedis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      maxRetriesPerRequest: null, // Required for BullMQ
-    });
-
-    this.initializeQueues();
-  }
-
-  /**
-   * Initialize all queues
-   */
-  private initializeQueues(): void {
-    const jobTypes: JobType[] = [
-      'refresh-buyer-group',
-      'enrich-contacts',
-      'deep-research',
-      'webhook-process'
-    ];
-
-    for (const type of jobTypes) {
-      this.createQueue(type);
-    }
-  }
-
-  /**
-   * Create a queue for a job type
-   */
-  private createQueue(type: JobType): void {
-    const queue = new Queue(type, {
-      connection: this.connection,
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 2000, // 2s, 4s, 8s
-        },
-        removeOnComplete: 100, // Keep last 100 completed
-        removeOnFail: 500, // Keep last 500 failed
-      },
-    });
-
-    this.queues.set(type, queue);
-
-    // Set up queue events for monitoring
-    const queueEvents = new QueueEvents(type, {
-      connection: this.connection,
-    });
-
-    queueEvents.on('completed', ({ jobId }) => {
-      logger.info('job.completed', { jobType: type, jobId });
-      metrics.increment(MetricNames.JOB_COMPLETED, 1, { jobType: type });
-    });
-
-    queueEvents.on('failed', ({ jobId, failedReason }) => {
-      logger.error('job.failed', undefined, { jobType: type, jobId, failedReason });
-      metrics.increment(MetricNames.JOB_FAILED, 1, { jobType: type });
-    });
-
-    this.queueEvents.set(type, queueEvents);
-
-    logger.info('queue.created', { jobType: type });
-  }
-
-  /**
-   * Enqueue a job
-   */
-  async enqueue(type: JobType, payload: any, options?: {
-    priority?: number;
-    delay?: number;
-    idempotencyKey?: string;
-  }): Promise<Job> {
-    const queue = this.queues.get(type);
-    
-    if (!queue) {
-      throw new Error(`Queue not found for type: ${type}`);
-    }
-
-    const jobData: JobData = {
+  async add(type: JobType, data: JobData, options: JobOptions = {}): Promise<Job> {
+    const job: Job = {
+      id: `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type,
-      payload,
-      idempotencyKey: options?.idempotencyKey,
+      data,
+      options: {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 1000 },
+        ...options
+      },
+      attempts: 0,
+      maxAttempts: options.attempts || 3,
+      status: 'waiting',
+      createdAt: new Date()
     };
 
-    const job = await queue.add(type, jobData, {
-      priority: options?.priority,
-      delay: options?.delay,
-      jobId: options?.idempotencyKey, // Use idempotency key as job ID
-    });
+    this.jobs.set(job.id, job);
+    logger.info(`Job added: ${job.id} (${type})`);
 
-    logger.info('job.enqueued', {
-      jobType: type,
-      jobId: job.id,
-      payload: JSON.stringify(payload),
-    });
-
-    metrics.increment(MetricNames.JOB_ENQUEUED, 1, { jobType: type });
+    // Process job immediately if no delay
+    if (!options.delay) {
+      this.processJob(job.id);
+    } else {
+      setTimeout(() => this.processJob(job.id), options.delay);
+    }
 
     return job;
   }
 
-  /**
-   * Register a worker to process jobs
-   */
-  registerWorker(
-    type: JobType,
-    processor: (job: Job<JobData>) => Promise<any>,
-    options?: {
-      concurrency?: number;
-      limiter?: {
-        max: number;
-        duration: number;
-      };
+  async processJob(jobId: string): Promise<void> {
+    const job = this.jobs.get(jobId);
+    if (!job || job.status !== 'waiting') {
+      return;
     }
-  ): void {
-    const worker = new Worker(
-      type,
-      async (job: Job<JobData>) => {
-        const startTime = Date.now();
 
-        logger.info('job.started', {
-          jobType: type,
-          jobId: job.id,
-          attemptNumber: job.attemptsMade + 1,
-        });
+    if (this.processing.has(jobId)) {
+      return;
+    }
 
-        metrics.increment(MetricNames.JOB_STARTED, 1, { jobType: type });
+    this.processing.add(jobId);
+    job.status = 'active';
+    job.processedAt = new Date();
+    job.attempts++;
 
-        try {
-          const result = await processor(job);
-          
-          const duration = Date.now() - startTime;
-          
-          logger.info('job.processing.completed', {
-            jobType: type,
-            jobId: job.id,
-            duration,
-          });
-
-          metrics.histogram(MetricNames.JOB_DURATION, duration, { jobType: type });
-
-          return result;
-        } catch (error) {
-          const duration = Date.now() - startTime;
-          
-          logger.error('job.processing.failed', error as Error, {
-            jobType: type,
-            jobId: job.id,
-            duration,
-            attemptNumber: job.attemptsMade + 1,
-          });
-
-          throw error; // Will trigger retry
-        }
-      },
-      {
-        connection: this.connection,
-        concurrency: options?.concurrency || 3,
-        limiter: options?.limiter,
+    try {
+      const worker = this.workers.get(job.type);
+      if (!worker) {
+        throw new Error(`No worker registered for job type: ${job.type}`);
       }
-    );
 
+      await worker(job);
+      
+      job.status = 'completed';
+      job.completedAt = new Date();
+      logger.info(`Job completed: ${jobId}`);
+    } catch (error) {
+      job.error = error instanceof Error ? error.message : String(error);
+      
+      if (job.attempts < job.maxAttempts) {
+        job.status = 'waiting';
+        const delay = job.options.backoff?.type === 'exponential' 
+          ? job.options.backoff.delay * Math.pow(2, job.attempts - 1)
+          : job.options.backoff?.delay || 1000;
+        
+        logger.warn(`Job failed, retrying in ${delay}ms: ${jobId} (attempt ${job.attempts}/${job.maxAttempts})`);
+        setTimeout(() => this.processJob(jobId), delay);
+      } else {
+        job.status = 'failed';
+        logger.error(`Job failed permanently: ${jobId}`, error);
+      }
+    } finally {
+      this.processing.delete(jobId);
+    }
+  }
+
+  registerWorker(type: JobType, worker: (job: Job) => Promise<void>): void {
     this.workers.set(type, worker);
-
-    logger.info('worker.registered', {
-      jobType: type,
-      concurrency: options?.concurrency || 3,
-    });
+    logger.info(`Worker registered for job type: ${type}`);
   }
 
-  /**
-   * Get queue for a job type
-   */
-  getQueue(type: JobType): Queue | undefined {
-    return this.queues.get(type);
+  getJob(jobId: string): Job | undefined {
+    return this.jobs.get(jobId);
   }
 
-  /**
-   * Get job by ID
-   */
-  async getJob(type: JobType, jobId: string): Promise<Job | undefined> {
-    const queue = this.queues.get(type);
-    
-    if (!queue) {
-      return undefined;
-    }
-
-    return await queue.getJob(jobId);
-  }
-
-  /**
-   * Get job status
-   */
-  async getJobStatus(type: JobType, jobId: string): Promise<{
-    status: 'waiting' | 'active' | 'completed' | 'failed' | 'delayed' | 'not_found';
-    progress?: number;
-    result?: any;
-    error?: string;
-  }> {
-    const job = await this.getJob(type, jobId);
-
-    if (!job) {
-      return { status: 'not_found' };
-    }
-
-    const state = await job.getState();
-
-    return {
-      status: state as any,
-      progress: job.progress as number,
-      result: job.returnvalue,
-      error: job.failedReason,
-    };
-  }
-
-  /**
-   * Close all queues and workers
-   */
-  async close(): Promise<void> {
-    for (const worker of this.workers.values()) {
-      await worker.close();
-    }
-
-    for (const queue of this.queues.values()) {
-      await queue.close();
-    }
-
-    for (const queueEvents of this.queueEvents.values()) {
-      await queueEvents.close();
-    }
-
-    await this.connection.quit();
-
-    logger.info('queue.manager.closed');
+  getJobs(status?: Job['status']): Job[] {
+    const jobs = Array.from(this.jobs.values());
+    return status ? jobs.filter(job => job.status === status) : jobs;
   }
 }
 
-// Export singleton instance
-export const queueManager = new QueueManager();
+// Global queue instance
+const queue = new SimpleQueue();
 
-export default queueManager;
+export class QueueManager {
+  static async addJob(type: JobType, data: JobData, options?: JobOptions): Promise<Job> {
+    return queue.add(type, data, options);
+  }
 
+  static registerWorker(type: JobType, worker: (job: Job) => Promise<void>): void {
+    queue.registerWorker(type, worker);
+  }
+
+  static getJob(jobId: string): Job | undefined {
+    return queue.getJob(jobId);
+  }
+
+  static getJobs(status?: Job['status']): Job[] {
+    return queue.getJobs(status);
+  }
+}
+
+// Export the queue instance for direct access if needed
+export { queue };

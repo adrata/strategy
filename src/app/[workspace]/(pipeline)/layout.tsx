@@ -14,6 +14,76 @@ interface PipelineLayoutProps {
   children: React.ReactNode;
 }
 
+// Separate component that can use the context hooks
+function PipelineLayoutContent({ 
+  children, 
+  currentSection,
+  onSectionChange,
+  isSpeedrunVisible,
+  setIsSpeedrunVisible,
+  isOpportunitiesVisible,
+  setIsOpportunitiesVisible,
+  isProspectsVisible,
+  setIsProspectsVisible,
+  isLeadsVisible,
+  setIsLeadsVisible,
+  isCustomersVisible,
+  setIsCustomersVisible,
+  isPartnersVisible,
+  setIsPartnersVisible
+}: {
+  children: React.ReactNode;
+  currentSection: string;
+  onSectionChange: (section: string) => void;
+  isSpeedrunVisible: boolean;
+  setIsSpeedrunVisible: (visible: boolean) => void;
+  isOpportunitiesVisible: boolean;
+  setIsOpportunitiesVisible: (visible: boolean) => void;
+  isProspectsVisible: boolean;
+  setIsProspectsVisible: (visible: boolean) => void;
+  isLeadsVisible: boolean;
+  setIsLeadsVisible: (visible: boolean) => void;
+  isCustomersVisible: boolean;
+  setIsCustomersVisible: (visible: boolean) => void;
+  isPartnersVisible: boolean;
+  setIsPartnersVisible: (visible: boolean) => void;
+}) {
+  // Now we can use the context hooks since we're inside the providers
+  const { ui } = useAcquisitionOS();
+
+  return (
+    <PanelLayout
+      thinLeftPanel={null}
+      leftPanel={
+        <LeftPanel 
+          key={`left-panel-${currentSection}`}
+          activeSection={currentSection}
+          onSectionChange={onSectionChange}
+          isSpeedrunVisible={isSpeedrunVisible}
+          setIsSpeedrunVisible={setIsSpeedrunVisible}
+          isOpportunitiesVisible={isOpportunitiesVisible}
+          setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+          isProspectsVisible={isProspectsVisible}
+          setIsProspectsVisible={setIsProspectsVisible}
+          isLeadsVisible={isLeadsVisible}
+          setIsLeadsVisible={setIsLeadsVisible}
+          isCustomersVisible={isCustomersVisible}
+          setIsCustomersVisible={setIsCustomersVisible}
+          isPartnersVisible={isPartnersVisible}
+          setIsPartnersVisible={setIsPartnersVisible}
+        />
+      }
+      middlePanel={children}
+      rightPanel={<RightPanel />}
+      zoom={100}
+      isLeftPanelVisible={ui.isLeftPanelVisible}
+      isRightPanelVisible={ui.isRightPanelVisible}
+      onToggleLeftPanel={ui.toggleLeftPanel}
+      onToggleRightPanel={ui.toggleRightPanel}
+    />
+  );
+}
+
 /**
  * Pipeline Layout
  * 
@@ -89,75 +159,5 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
         </PipelineProvider>
       </ZoomProvider>
     </AcquisitionOSProvider>
-  );
-}
-
-// Separate component that can use the context hooks
-function PipelineLayoutContent({ 
-  children, 
-  currentSection,
-  onSectionChange,
-  isSpeedrunVisible,
-  setIsSpeedrunVisible,
-  isOpportunitiesVisible,
-  setIsOpportunitiesVisible,
-  isProspectsVisible,
-  setIsProspectsVisible,
-  isLeadsVisible,
-  setIsLeadsVisible,
-  isCustomersVisible,
-  setIsCustomersVisible,
-  isPartnersVisible,
-  setIsPartnersVisible
-}: {
-  children: React.ReactNode;
-  currentSection: string;
-  onSectionChange: (section: string) => void;
-  isSpeedrunVisible: boolean;
-  setIsSpeedrunVisible: (visible: boolean) => void;
-  isOpportunitiesVisible: boolean;
-  setIsOpportunitiesVisible: (visible: boolean) => void;
-  isProspectsVisible: boolean;
-  setIsProspectsVisible: (visible: boolean) => void;
-  isLeadsVisible: boolean;
-  setIsLeadsVisible: (visible: boolean) => void;
-  isCustomersVisible: boolean;
-  setIsCustomersVisible: (visible: boolean) => void;
-  isPartnersVisible: boolean;
-  setIsPartnersVisible: (visible: boolean) => void;
-}) {
-  // Now we can use the context hooks since we're inside the providers
-  const { ui } = useAcquisitionOS();
-
-  return (
-    <PanelLayout
-      thinLeftPanel={null}
-      leftPanel={
-        <LeftPanel 
-          key={`left-panel-${currentSection}`}
-          activeSection={currentSection}
-          onSectionChange={onSectionChange}
-          isSpeedrunVisible={isSpeedrunVisible}
-          setIsSpeedrunVisible={setIsSpeedrunVisible}
-          isOpportunitiesVisible={isOpportunitiesVisible}
-          setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-          isProspectsVisible={isProspectsVisible}
-          setIsProspectsVisible={setIsProspectsVisible}
-          isLeadsVisible={isLeadsVisible}
-          setIsLeadsVisible={setIsLeadsVisible}
-          isCustomersVisible={isCustomersVisible}
-          setIsCustomersVisible={setIsCustomersVisible}
-          isPartnersVisible={isPartnersVisible}
-          setIsPartnersVisible={setIsPartnersVisible}
-        />
-      }
-      middlePanel={children}
-      rightPanel={<RightPanel />}
-      zoom={100}
-      isLeftPanelVisible={ui.isLeftPanelVisible}
-      isRightPanelVisible={ui.isRightPanelVisible}
-      onToggleLeftPanel={ui.toggleLeftPanel}
-      onToggleRightPanel={ui.toggleRightPanel}
-    />
   );
 }

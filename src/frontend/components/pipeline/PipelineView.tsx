@@ -11,12 +11,12 @@ import { Dashboard } from './Dashboard';
 import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/useAdrataData';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/PipelineLeftPanelStandalone';
-import { AIRightPanel } from '@/platform/ui/components/chat/AIRightPanel';
+import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/LeftPanel';
+import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 // import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
@@ -499,7 +499,7 @@ export const PipelineView = React.memo(function PipelineView({
       // Pre-load speedrun data using the fast section data hook
       const preloadSpeedrunData = async () => {
         try {
-          const { authFetch } = await import('@/platform/auth-fetch');
+          const { authFetch } = await import('@/platform/api-fetch');
           await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
@@ -1732,7 +1732,7 @@ export const PipelineView = React.memo(function PipelineView({
           />
         }
         middlePanel={middlePanel}
-        rightPanel={<AIRightPanel />}
+        rightPanel={<RightPanel />}
         zoom={zoom}
         isLeftPanelVisible={ui.isLeftPanelVisible}
         isRightPanelVisible={ui.isRightPanelVisible}

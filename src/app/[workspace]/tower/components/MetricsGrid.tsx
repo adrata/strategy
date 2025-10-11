@@ -50,7 +50,7 @@ export function MetricsGrid({ cards, onCardClick }: MetricsGridProps) {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <div className="flex-1 overflow-y-auto p-6 bg-white">
       <div className="max-w-7xl mx-auto space-y-8">
         {Object.entries(groupedCards).map(([category, categoryCards]) => (
           <div key={category} className="space-y-4">

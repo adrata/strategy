@@ -106,17 +106,6 @@ export function AcquisitionOSProvider({
     progress,
   }), [auth, ui, data, chat, forms, progress]);
 
-  // 🚨 CRITICAL FIX: ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
-  // Memoize context value to prevent unnecessary re-renders
-  const contextValue: AcquisitionOSContextType = useMemo(() => ({
-    auth,
-    ui,
-    data,
-    chat,
-    forms,
-    progress,
-  }), [auth, ui, data, chat, forms, progress]);
-
   // Auto-select workspace on successful authentication or provide development fallback
   const hasSetupWorkspace = useRef(false);
   const lastAuthUserActiveWorkspaceId = useRef<string | null>(null);

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from "next/navigation";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { usePipeline } from "@/products/pipeline/context/PipelineContext";
 import { useProfilePopup } from "@/platform/ui/components/ProfilePopupContext";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
-import { useUnifiedAuth } from "@/platform/auth-unified";
+import { useUnifiedAuth } from "@/platform/auth";
 // CRITICAL FIX: Re-enable PipelineDataStore for proper data loading
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
@@ -1155,3 +1155,6 @@ export function PipelineLeftPanelStandalone({
     </div>
   );
 }
+
+// Export alias for backward compatibility
+export const LeftPanel = PipelineLeftPanelStandalone;

@@ -13,8 +13,10 @@
  */
 
 import type { APIClients } from '../types/api-clients';
-import { DATA_QUALITY_THRESHOLDS, API_RATE_LIMITS } from '../../config/constants';
-import { pdlLogger } from '../../utils/logger';
+import { DATA_QUALITY_THRESHOLDS, API_RATE_LIMITS } from '@/platform/config/constants';
+import { createLogger } from '@/platform/utils/logger';
+
+const pdlLogger = createLogger('PDL-Service');
 
 // ============================================================================
 // TYPES

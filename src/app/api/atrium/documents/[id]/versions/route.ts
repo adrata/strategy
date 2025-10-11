@@ -170,10 +170,10 @@ export async function POST(
 }
 
 /**
- * POST /api/atrium/documents/[id]/versions/restore
+ * PUT /api/atrium/documents/[id]/versions/restore
  * Restore a document to a specific version
  */
-export async function POST(
+export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {

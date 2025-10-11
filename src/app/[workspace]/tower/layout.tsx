@@ -6,6 +6,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { TowerLeftPanel } from "./components/TowerLeftPanel";
 
 interface TowerContextType {
   selectedMetric: string | null;
@@ -35,10 +36,16 @@ interface TowerLayoutProps {
  */
 export default function TowerLayout({ children }: TowerLayoutProps) {
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('overview');
 
   const refreshMetrics = () => {
     // This will be implemented to refresh all metrics
     console.log('Refreshing Tower metrics...');
+  };
+
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    console.log(`Tower section changed to: ${section}`);
   };
 
   return (
@@ -46,7 +53,10 @@ export default function TowerLayout({ children }: TowerLayoutProps) {
       <AcquisitionOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
-            <TowerLayoutContent>
+            <TowerLayoutContent 
+              activeSection={activeSection}
+              onSectionChange={handleSectionChange}
+            >
               {children}
             </TowerLayoutContent>
           </ProfilePopupProvider>
@@ -106,18 +116,31 @@ function TowerRightPanel() {
 }
 
 // Separate component that can use the context hooks
-function TowerLayoutContent({ children }: { children: React.ReactNode }) {
+function TowerLayoutContent({ 
+  children, 
+  activeSection, 
+  onSectionChange 
+}: { 
+  children: React.ReactNode;
+  activeSection: string;
+  onSectionChange: (section: string) => void;
+}) {
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
 
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={null} // No left panel for Tower
+      leftPanel={
+        <TowerLeftPanel 
+          activeSection={activeSection}
+          onSectionChange={handleSectionChange}
+        />
+      }
       middlePanel={children}
       rightPanel={<TowerRightPanel />}
       zoom={100}
-      isLeftPanelVisible={false} // Always hide left panel
+      isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}
       onToggleLeftPanel={ui.toggleLeftPanel}
       onToggleRightPanel={ui.toggleRightPanel}

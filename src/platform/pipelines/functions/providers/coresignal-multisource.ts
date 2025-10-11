@@ -96,7 +96,7 @@ export interface LeadershipChange {
 
 export interface HistoricalEmployeeData {
   employees: MultiSourceEmployeeProfile[];
-  snapshot Date: string;
+  snapshotDate: string;
   totalCount: number;
   changes: EmployeeChange[];
 }

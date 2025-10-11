@@ -1,6 +1,3 @@
-"use client";
-
-import { Metadata } from "next";
 import { OasisContainer } from "@/products/oasis/components/OasisContainer";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";

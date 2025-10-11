@@ -8,9 +8,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUnifiedAuth } from '@/platform/auth-unified';
+import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
-import { authFetch } from '@/platform/auth-fetch';
+import { authFetch } from '@/platform/api-fetch';
 
 // 🛠️ DEVELOPMENT: Mock data generator for when API is unavailable
 function generateMockData(section: string, limit: number): any[] {

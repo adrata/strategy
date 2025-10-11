@@ -16,6 +16,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { OlympusLeftPanel } from "./components/OlympusLeftPanel";
 
 interface WorkflowStep {
   id: string;
@@ -53,6 +54,7 @@ interface OlympusLayoutProps {
  */
 export default function OlympusLayout({ children }: OlympusLayoutProps) {
   const [selectedStep, setSelectedStep] = useState<WorkflowStep | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('workflows');
   const params = useParams();
   const workspaceId = params.workspace as string;
 
@@ -101,12 +103,20 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
     console.log('Adding workflow steps:', steps);
   };
 
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    console.log(`Olympus section changed to: ${section}`);
+  };
+
   return (
     <OlympusContext.Provider value={{ selectedStep, setSelectedStep, addWorkflowSteps }}>
       <AcquisitionOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
-            <OlympusLayoutContent>
+            <OlympusLayoutContent 
+              activeSection={activeSection}
+              onSectionChange={handleSectionChange}
+            >
               {children}
             </OlympusLayoutContent>
           </ProfilePopupProvider>
@@ -278,18 +288,31 @@ function OlympusRightPanel() {
 }
 
 // Separate component that can use the context hooks
-function OlympusLayoutContent({ children }: { children: React.ReactNode }) {
+function OlympusLayoutContent({ 
+  children, 
+  activeSection, 
+  onSectionChange 
+}: { 
+  children: React.ReactNode;
+  activeSection: string;
+  onSectionChange: (section: string) => void;
+}) {
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
 
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={null} // No left panel for Olympus
+      leftPanel={
+        <OlympusLeftPanel 
+          activeSection={activeSection}
+          onSectionChange={onSectionChange}
+        />
+      }
       middlePanel={children}
       rightPanel={<OlympusRightPanel />}
       zoom={100}
-      isLeftPanelVisible={false} // Always hide left panel
+      isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}
       onToggleLeftPanel={ui.toggleLeftPanel}
       onToggleRightPanel={ui.toggleRightPanel}

@@ -1,6 +1,3 @@
-"use client";
-
-import { Metadata } from "next";
 import { StacksContainer } from "@/products/stacks/components/StacksContainer";
 import { StacksProvider } from "@/products/stacks/context/StacksProvider";
 import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
