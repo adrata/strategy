@@ -12,8 +12,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 // Lexical imports
-import { $getRoot, $getSelection, $isRangeSelection, $createLinkNode } from 'lexical';
-import { LexicalComposer, useLexicalComposerContext } from '@lexical/react/LexicalComposer';
+import { $getRoot, $getSelection, $isRangeSelection } from 'lexical';
+import { $createLinkNode } from '@lexical/link';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -21,7 +23,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { ErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
@@ -284,7 +286,7 @@ export function PaperEditorWrapper({ document, onSave, onAutoSave }: PaperEditor
                   />
                 }
                 placeholder={<Placeholder />}
-                ErrorBoundary={LexicalErrorBoundary}
+                ErrorBoundary={ErrorBoundary}
               />
               <HistoryPlugin />
               <AutoFocusPlugin />

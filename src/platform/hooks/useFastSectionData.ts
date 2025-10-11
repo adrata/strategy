@@ -100,29 +100,55 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
-      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-      // 🚨 CRITICAL FIX: Add cache-busting timestamp to prevent stale data
-      const timestamp = Date.now();
-      const url = `/api/data/section?section=${section}&limit=${limit}&t=${timestamp}`;
+      // 🚀 PERFORMANCE: Use v1 APIs for better performance and consistency
+      let url: string;
+      
+      switch (section) {
+        case 'speedrun':
+          url = `/api/v1/speedrun?limit=${limit}`;
+          break;
+        case 'leads':
+          url = `/api/v1/people?section=leads&limit=${limit}`;
+          break;
+        case 'prospects':
+          url = `/api/v1/people?section=prospects&limit=${limit}`;
+          break;
+        case 'people':
+          url = `/api/v1/people?limit=${limit}`;
+          break;
+        case 'companies':
+          url = `/api/v1/companies?limit=${limit}`;
+          break;
+        default:
+          // Fallback to old section API for unsupported sections
+          const timestamp = Date.now();
+          url = `/api/data/section?section=${section}&limit=${limit}&t=${timestamp}`;
+          break;
+      }
+      
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
       
       const result = await authFetch(url);
       
       console.log(`📡 [FAST SECTION DATA] Response received:`, result);
       
-      if (result && result.success && result.data) {
-        setData(result.data.data || []);
-        setCount(result.data.totalCount || result.data.count || 0); // Use totalCount for pagination
+      if (result && result.success) {
+        // 🚀 V1 API RESPONSE: Handle both v1 and legacy section API responses
+        const responseData = result.data || [];
+        const responseCount = result.meta?.count || result.meta?.totalCount || responseData.length;
+        
+        setData(responseData);
+        setCount(responseCount);
         setLoadedSections(prev => new Set(prev).add(section));
+        
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
-          count: result.data.count,
-          totalCount: result.data.totalCount,
-          items: result.data.data?.length,
+          count: responseCount,
+          items: responseData.length,
           responseTime: result.meta?.responseTime,
-          firstItem: result.data.data?.[0] ? {
-            rank: result.data.data[0].rank,
-            name: result.data.data[0].name,
-            company: result.data.data[0].company?.name || result.data.data[0].company
+          firstItem: responseData?.[0] ? {
+            rank: responseData[0].rank,
+            name: responseData[0].name,
+            company: responseData[0].company?.name || responseData[0].company
           } : null
         });
       } else {

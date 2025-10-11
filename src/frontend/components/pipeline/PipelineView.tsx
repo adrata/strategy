@@ -14,7 +14,7 @@ import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel'
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
-import { usePipelineData } from '@/platform/hooks/useAdrataData';
+// Removed usePipelineData import - using useFastSectionData exclusively
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/LeftPanel';
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
@@ -272,14 +272,11 @@ export const PipelineView = React.memo(function PipelineView({
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🚀 PERFORMANCE: Use fast section data hook for instant loading
+  // 🚀 PERFORMANCE: Use fast section data hook exclusively
   // Load all data at once for client-side pagination
   // Use higher limit for people section to ensure all records are loaded
   const limit = section === 'people' ? 10000 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
-  
-  // Fallback to old pipeline data for sections not supported by fast API
-  const pipelineData = usePipelineData(section, workspaceId, userId);
   
   console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
   
@@ -442,10 +439,10 @@ export const PipelineView = React.memo(function PipelineView({
     peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
-  // 🚀 PERFORMANCE: Use fast section data for instant loading
-  const finalData = fastSectionData.data || pipelineData.data || [];
-  const finalLoading = fastSectionData.loading || pipelineData.loading;
-  const finalError = fastSectionData.error || pipelineData.error;
+  // 🚀 PERFORMANCE: Use fast section data exclusively
+  const finalData = fastSectionData.data || [];
+  const finalLoading = fastSectionData.loading;
+  const finalError = fastSectionData.error;
   const finalIsEmpty = (fastSectionData.data || []).length === 0;
   
   // 🔍 DEBUG: Log data sources for People section
@@ -463,17 +460,7 @@ export const PipelineView = React.memo(function PipelineView({
           company: fastSectionData.data[0].company?.name || fastSectionData.data[0].company
         } : null
       },
-      pipelineData: {
-        hasData: !!pipelineData.data,
-        dataLength: pipelineData.data?.length || 0,
-        loading: pipelineData.loading,
-        error: pipelineData.error,
-        firstPerson: pipelineData.data?.[0] ? {
-          rank: pipelineData.data[0].rank,
-          name: pipelineData.data[0].name,
-          company: pipelineData.data[0].company?.name || pipelineData.data[0].company
-        } : null
-      },
+      // Removed pipelineData debug info - using fastSectionData exclusively
       finalData: {
         hasData: !!finalData,
         dataLength: finalData?.length || 0,
@@ -621,7 +608,7 @@ export const PipelineView = React.memo(function PipelineView({
         refresh: () => Promise.resolve([]), 
         clearCache: () => {} 
       }
-    : pipelineData;
+    : { data: [], loading: false, error: null, refresh: async () => {}, clearCache: () => {}, mutate: async () => undefined };
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
   const metrics = section === 'metrics' 
@@ -824,7 +811,7 @@ export const PipelineView = React.memo(function PipelineView({
     userId,
     dataSource: {
       fastSectionDataLength: fastSectionData.data?.length || 0,
-      pipelineDataLength: pipelineData.data?.length || 0,
+      // Removed pipelineData reference - using fastSectionData exclusively
       usingFastSectionData: (fastSectionData.data && fastSectionData.data.length > 0),
       usingPipelineData: !(fastSectionData.data && fastSectionData.data.length > 0)
     }
@@ -832,7 +819,7 @@ export const PipelineView = React.memo(function PipelineView({
 
   // Filter and sort data based on all filters and sort criteria
   const filteredData = React.useMemo(() => {
-    // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of pipelineData.data
+    // CRITICAL FIX: Use sectionDataArray (acquisition data) instead of old pipeline data
     const dataToFilter = Array.isArray(sectionDataArray) ? sectionDataArray : [];
     if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
     
