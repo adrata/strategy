@@ -330,7 +330,7 @@ export function useAcquisitionData(
     const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
       fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
       fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
-      fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
+      fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }), // Use companies table with OPPORTUNITY status
       fetch('/api/v1/companies', { credentials: 'include' }),
       fetch('/api/v1/people', { credentials: 'include' })
     ]);
@@ -343,10 +343,46 @@ export function useAcquisitionData(
       peopleResponse.json()
     ]);
 
-    return {
+    // 🔍 DEBUG: Log opportunities API response
+    console.log('🔍 [ACQUISITION DATA] Opportunities API Response:', {
+      url: '/api/v1/companies?status=OPPORTUNITY',
+      responseStatus: opportunitiesResponse.status,
+      responseOk: opportunitiesResponse.ok,
+      rawData: opportunitiesData,
+      success: opportunitiesData.success,
+      dataLength: opportunitiesData.data?.length || 0,
+      sampleData: opportunitiesData.data?.slice(0, 2) || []
+    });
+
+    // 🔄 TRANSFORM: Convert companies with OPPORTUNITY status to opportunities format
+    const transformedOpportunities = opportunitiesData.success ? opportunitiesData.data.map((company: any) => ({
+      id: company.id,
+      name: company.name || 'Unknown Opportunity',
+      company: company.name || 'Unknown Company',
+      status: company.status || 'OPPORTUNITY',
+      stage: 'qualification', // Default stage since companies table doesn't have stage field
+      amount: company.revenue || 0, // Use revenue as amount since companies table doesn't have amount field
+      expectedCloseDate: null, // Companies table doesn't have expectedCloseDate
+      probability: 0.5, // Default probability since companies table doesn't have probability field
+      account: {
+        name: company.name || 'Unknown Account'
+      },
+      assignedUser: company.assignedUser || null,
+      lastAction: company.lastAction || '-',
+      nextAction: company.nextAction || '-',
+      lastActionDate: company.lastActionDate,
+      nextActionDate: company.nextActionDate,
+      industry: company.industry || '-',
+      size: company.size || company.employeeCount || '-',
+      workspaceId: company.workspaceId,
+      createdAt: company.createdAt,
+      updatedAt: company.updatedAt
+    })) : [];
+
+    const result = {
       leads: leadsData.success ? leadsData.data : [],
       prospects: prospectsData.success ? prospectsData.data : [],
-      opportunities: opportunitiesData.success ? opportunitiesData.data : [],
+      opportunities: transformedOpportunities,
       accounts: companiesData.success ? companiesData.data : [],
       contacts: peopleData.success ? peopleData.data : [],
       partnerships: [], // Not implemented in v1 yet
@@ -358,6 +394,22 @@ export function useAcquisitionData(
       decisionMakers: [],
       speedrunItems: [],
     };
+
+    // 🔍 DEBUG: Log final opportunities data
+    console.log('🔍 [ACQUISITION DATA] Final opportunities data:', {
+      originalCount: opportunitiesData.data?.length || 0,
+      transformedCount: result.opportunities.length,
+      sampleOpportunities: result.opportunities.slice(0, 2).map(opp => ({
+        id: opp.id,
+        name: opp.name,
+        status: opp.status,
+        stage: opp.stage,
+        amount: opp.amount,
+        expectedCloseDate: opp.expectedCloseDate
+      }))
+    });
+
+    return result;
   }, [workspaceId, userId]);
 
   const cacheKey = 'acquisition-os';

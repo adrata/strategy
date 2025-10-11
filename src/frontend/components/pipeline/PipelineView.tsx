@@ -439,11 +439,13 @@ export const PipelineView = React.memo(function PipelineView({
     peopleLength: acquisitionData?.acquireData?.people?.length || 0
   });
   
-  // 🚀 PERFORMANCE: Use fast section data exclusively
-  const finalData = fastSectionData.data || [];
-  const finalLoading = fastSectionData.loading;
-  const finalError = fastSectionData.error;
-  const finalIsEmpty = (fastSectionData.data || []).length === 0;
+  // 🚀 PERFORMANCE: Use fast section data for instant loading
+  // For opportunities, use acquisition data directly since it's properly transformed
+  const sectionData = getSectionData(section);
+  const finalData = section === 'opportunities' ? sectionData : (fastSectionData.data || pipelineData.data || []);
+  const finalLoading = fastSectionData.loading || pipelineData.loading;
+  const finalError = fastSectionData.error || pipelineData.error;
+  const finalIsEmpty = (finalData || []).length === 0;
   
   // 🔍 DEBUG: Log data sources for People section
   if (section === 'people') {
@@ -468,6 +470,33 @@ export const PipelineView = React.memo(function PipelineView({
           rank: finalData[0].rank,
           name: finalData[0].name,
           company: finalData[0].company?.name || finalData[0].company
+        } : null
+      }
+    });
+  }
+
+  // 🔍 DEBUG: Log data sources for Opportunities section
+  if (section === 'opportunities') {
+    console.log('🔍 [OPPORTUNITIES DEBUG] Data sources:', {
+      section,
+      sectionData: {
+        hasData: !!sectionData,
+        dataLength: sectionData?.length || 0,
+        firstOpportunity: sectionData?.[0] ? {
+          id: sectionData[0].id,
+          name: sectionData[0].name,
+          stage: sectionData[0].stage,
+          amount: sectionData[0].amount
+        } : null
+      },
+      finalData: {
+        hasData: !!finalData,
+        dataLength: finalData?.length || 0,
+        firstOpportunity: finalData?.[0] ? {
+          id: finalData[0].id,
+          name: finalData[0].name,
+          stage: finalData[0].stage,
+          amount: finalData[0].amount
         } : null
       }
     });
@@ -1580,10 +1609,19 @@ export const PipelineView = React.memo(function PipelineView({
           // Data view - Different content types based on section
           <>
             {section === 'opportunities' ? (
-              <OpportunitiesKanban
-                data={(filteredData || []) as any[]} // Type assertion for compatibility
-                onRecordClick={handleRecordClick}
-              />
+              <>
+                {/* 🔍 DEBUG: Log opportunities data before passing to Kanban */}
+                {console.log('🔍 [PIPELINE VIEW] Opportunities data for Kanban:', {
+                  section,
+                  filteredDataLength: filteredData?.length || 0,
+                  filteredDataSample: filteredData?.slice(0, 2) || [],
+                  rawData: filteredData
+                })}
+                <OpportunitiesKanban
+                  data={(filteredData || []) as any[]} // Type assertion for compatibility
+                  onRecordClick={handleRecordClick}
+                />
+              </>
             ) : section === 'speedrun' ? (
               // Speedrun table with same design as other sections
               <PipelineTable

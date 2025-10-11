@@ -150,18 +150,27 @@ interface OpportunitiesKanbanProps {
   onRecordClick: (opportunity: Opportunity) => void;
 }
 
-// Dano's deal stages in order - minimal black/white/gray design
+// Dano's deal stages in order - consistent background colors
 const DEAL_STAGES = [
   { key: 'qualification', label: 'Qualification', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'discovery', label: 'Discovery', color: 'bg-[var(--panel-background)] border-[var(--border)]' },
+  { key: 'discovery', label: 'Discovery', color: 'bg-[var(--background)] border-[var(--border)]' },
   { key: 'proposal', label: 'Proposal', color: 'bg-[var(--background)] border-[var(--border)]' },
-  { key: 'negotiation', label: 'Negotiation', color: 'bg-[var(--panel-background)] border-[var(--border)]' },
-  { key: 'closed-won', label: 'Closed Won', color: 'bg-[var(--hover)] border-gray-400' },
-  { key: 'closed-lost', label: 'Closed Lost', color: 'bg-[var(--loading-bg)] border-gray-400' }
+  { key: 'negotiation', label: 'Negotiation', color: 'bg-[var(--background)] border-[var(--border)]' },
+  { key: 'closed-won', label: 'Closed Won', color: 'bg-[var(--background)] border-[var(--border)]' },
+  { key: 'closed-lost', label: 'Closed Lost', color: 'bg-[var(--background)] border-[var(--border)]' }
 ];
 
 export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanbanProps) {
   const [draggedItem, setDraggedItem] = useState<Opportunity | null>(null);
+
+  // 🔍 DEBUG: Log data received by Kanban component
+  console.log('🔍 [OPPORTUNITIES KANBAN] Data received:', {
+    dataLength: data?.length || 0,
+    dataType: typeof data,
+    isArray: Array.isArray(data),
+    sampleData: data?.slice(0, 2) || [],
+    allData: data
+  });
 
   // Group opportunities by stage and sort by progress within each stage
   const groupedData = DEAL_STAGES.reduce((acc, stage) => {

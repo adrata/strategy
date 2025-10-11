@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useUnifiedAuth } from "@/platform/auth";
 
 // Simple debounce utility
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
@@ -57,6 +58,28 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
   const [activeSection, setActiveSection] = useState<string>('workflows');
   const params = useParams();
   const workspaceId = params.workspace as string;
+  const { user: authUser } = useUnifiedAuth();
+  const router = useRouter();
+
+  // Access control - only ross@adrata.com can access Olympus
+  useEffect(() => {
+    if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+      console.log('🚫 Olympus: Access denied for', authUser.email, '- redirecting to dashboard');
+      router.push('/dashboard');
+    }
+  }, [authUser?.email, router]);
+
+  // Don't render if not authorized
+  if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Restricted</h2>
+          <p className="text-[var(--muted)]">This feature is currently in development.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Load selected step from Redis on mount
   useEffect(() => {

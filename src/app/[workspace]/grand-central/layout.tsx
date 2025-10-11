@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useUnifiedAuth } from "@/platform/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
@@ -49,6 +50,28 @@ export default function GrandCentralLayout({ children }: GrandCentralLayoutProps
   const [selectedNode, setSelectedNode] = useState<IntegrationNode | null>(null);
   const [activeTab, setActiveTab] = useState<'integrations' | 'data' | 'monitoring'>('integrations');
   const [selectedConnection, setSelectedConnection] = useState<any | null>(null);
+  const { user: authUser } = useUnifiedAuth();
+  const router = useRouter();
+
+  // Access control - only ross@adrata.com can access Grand Central
+  useEffect(() => {
+    if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+      console.log('🚫 Grand Central: Access denied for', authUser.email, '- redirecting to dashboard');
+      router.push('/dashboard');
+    }
+  }, [authUser?.email, router]);
+
+  // Don't render if not authorized
+  if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Restricted</h2>
+          <p className="text-[var(--muted)]">This feature is currently in development.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

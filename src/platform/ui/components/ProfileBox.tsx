@@ -125,6 +125,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const isAdrataUser = (currentUserEmail === 'dan@adrata.com' || currentUserEmail === 'ross@adrata.com') || isDemoMode;
   const shouldShowMonacoOptions = isAdrataUser;
   
+  // New features restricted to ross@adrata.com only
+  const isRossUser = currentUserEmail === 'ross@adrata.com';
+  
   console.log(`🏢 ProfileBox: Current workspace ID: ${currentWorkspaceId}, User email: ${currentUserEmail}, Workspace name: ${workspace}, isDanoUser: ${isDanoUser}, isAdrataUser: ${isAdrataUser}, isDemoMode: ${isDemoMode}`);
 
   // Use inline styles for positioning instead of fixed positioning
@@ -552,25 +555,27 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* Docs - Documentation System */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("📚 Docs clicked - navigating to documentation");
-            setIsProfileOpen(false);
-            handleNavigation("./docs");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
+        {/* Docs - Documentation System - Ross only */}
+        {isRossUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("📚 Docs clicked - navigating to documentation");
               setIsProfileOpen(false);
               handleNavigation("./docs");
-            }
-          }}
-        >
-          Docs
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./docs");
+              }
+            }}
+          >
+            Docs
+          </div>
+        )}
 
         {/* Monaco Display Options - Show only in demo mode */}
         {isDemoMode && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
@@ -715,36 +720,38 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </>
         )}
         
-        {/* 1. Themes */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🎨 Themes clicked - opening theme picker');
-            console.log('🎨 Current isThemePickerOpen:', isThemePickerOpen);
-            setIsProfileOpen(false);
-            // Use setTimeout to ensure state update happens after profile closes
-            setTimeout(() => {
-              console.log('🎨 Setting isThemePickerOpen to true after timeout');
-              setIsThemePickerOpen?.(true);
-            }, 100);
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
+        {/* 1. Themes - Ross only */}
+        {isRossUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              console.log('🎨 Themes clicked - opening theme picker');
+              console.log('🎨 Current isThemePickerOpen:', isThemePickerOpen);
               setIsProfileOpen(false);
+              // Use setTimeout to ensure state update happens after profile closes
               setTimeout(() => {
+                console.log('🎨 Setting isThemePickerOpen to true after timeout');
                 setIsThemePickerOpen?.(true);
               }, 100);
-            }
-          }}
-        >
-          Themes
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsProfileOpen(false);
+                setTimeout(() => {
+                  setIsThemePickerOpen?.(true);
+                }, 100);
+              }
+            }}
+          >
+            Themes
+          </div>
+        )}
         
         {/* 2. Settings */}
         <div
@@ -772,65 +779,71 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 4. Olympus */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
-            setIsProfileOpen(false); // Close profile popup
-            handleNavigation("./olympus");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
-              setIsProfileOpen(false);
+        {/* 4. Olympus - Ross only */}
+        {isRossUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
+              setIsProfileOpen(false); // Close profile popup
               handleNavigation("./olympus");
-            }
-          }}
-        >
-          Olympus
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./olympus");
+              }
+            }}
+          >
+            Olympus
+          </div>
+        )}
         
-        {/* 5. Tower */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
-            setIsProfileOpen(false); // Close profile popup
-            handleNavigation("./tower");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
-              setIsProfileOpen(false);
+        {/* 5. Tower - Ross only */}
+        {isRossUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
+              setIsProfileOpen(false); // Close profile popup
               handleNavigation("./tower");
-            }
-          }}
-        >
-          Tower
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./tower");
+              }
+            }}
+          >
+            Tower
+          </div>
+        )}
         
-        {/* 6. Grand Central */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
-            setIsProfileOpen(false); // Close profile popup
-            handleNavigation("./grand-central");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
-              setIsProfileOpen(false);
+        {/* 6. Grand Central - Ross only */}
+        {isRossUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
+              setIsProfileOpen(false); // Close profile popup
               handleNavigation("./grand-central");
-            }
-          }}
-        >
-          Grand Central
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./grand-central");
+              }
+            }}
+          >
+            Grand Central
+          </div>
+        )}
         
         {/* 7. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
