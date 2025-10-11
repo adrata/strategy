@@ -71,14 +71,14 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
       role="button"
       aria-label={`Select ${theme.displayName} theme`}
       aria-pressed={isActive}
-      className={`
+        className={`
         relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
         ${isActive 
           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' 
           : isSelected 
-            ? 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800' 
-            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
+            ? 'border-[var(--border)] bg-[var(--panel-background)]' 
+            : 'border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--hover)]'
         }
       `}
       onClick={onClick}
@@ -93,7 +93,7 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
 
       {/* Theme name */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+        <h3 className="font-semibold text-sm text-[var(--foreground)]">
           {theme.displayName}
         </h3>
         {theme.metadata.accessibility === 'AAA' && (
@@ -106,7 +106,7 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
         {colorSwatches.map((color, index) => (
           <div
             key={index}
-            className="w-6 h-6 rounded border border-gray-200 dark:border-gray-600"
+            className="w-6 h-6 rounded border border-[var(--border)]"
             style={{ backgroundColor: color }}
             title={`Color ${index + 1}: ${color}`}
           />
@@ -114,14 +114,14 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
       </div>
 
       {/* Theme metadata */}
-      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between text-xs text-[var(--muted)]">
         <span className="capitalize">{theme.category}</span>
         <span>{theme.metadata.contrastRatio}:1</span>
       </div>
 
       {/* Description */}
       {theme.metadata.description && (
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
+        <p className="text-xs text-[var(--muted)] mt-2 line-clamp-2">
           {theme.metadata.description}
         </p>
       )}
@@ -132,7 +132,7 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
           {theme.metadata.tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded"
+              className="px-2 py-1 text-xs bg-[var(--muted-light)] text-[var(--foreground)] rounded"
             >
               {tag}
             </span>
@@ -359,24 +359,24 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
         <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center px-4">
         <div
           ref={modalRef}
-          className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="w-full max-w-4xl bg-[var(--background)] rounded-xl shadow-2xl border border-[var(--border)] overflow-hidden"
           role="dialog"
           aria-labelledby="theme-picker-title"
           aria-describedby="theme-picker-description"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
             <div>
-              <h2 id="theme-picker-title" className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              <h2 id="theme-picker-title" className="text-xl font-semibold text-[var(--foreground)]">
                 Choose Theme
               </h2>
-              <p id="theme-picker-description" className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p id="theme-picker-description" className="text-sm text-[var(--muted)] mt-1">
                 Select a theme to customize your workspace appearance
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
               aria-label="Close theme picker"
             >
               <X className="w-5 h-5" />
@@ -384,7 +384,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
           </div>
 
           {/* Categories */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-[var(--border)]">
             {/* Category Tabs */}
             <div className="flex gap-2 overflow-x-auto">
               {categories.map((category) => {
@@ -399,13 +399,13 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({
                       flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                       ${isActive 
                         ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' 
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        : 'text-[var(--muted)] hover:bg-[var(--hover)]'
                       }
                     `}
                   >
                     <Icon className="w-4 h-4" />
                     {category.label}
-                    <span className="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded-full">
+                    <span className="px-2 py-1 text-xs bg-[var(--muted-light)] rounded-full">
                       {category.count}
                     </span>
                   </button>

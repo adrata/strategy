@@ -87,7 +87,7 @@ export default function UniversalCommandPalette({
           navigateToMonaco();
         },
         keywords: ["monaco", "intelligence", "data", "company"],
-        shortcut: "⌘2",
+        shortcut: formatShortcutForDisplay(['⌘+2', 'Ctrl+2']),
         priority: 10,
       },
       {
@@ -98,7 +98,7 @@ export default function UniversalCommandPalette({
         icon: <Users className="w-4 h-4" />,
         action: () => router.push("/oasis"),
         keywords: ["oasis", "pipeline", "clients", "relationships"],
-        shortcut: "⌘3",
+        shortcut: formatShortcutForDisplay(['⌘+3', 'Ctrl+3']),
         priority: 10,
       },
       {
@@ -109,7 +109,7 @@ export default function UniversalCommandPalette({
         icon: <FileText className="w-4 h-4" />,
         action: () => router.push("/speedrun"),
         keywords: ["Speedrun", "communication", "outreach", "email"],
-        shortcut: "⌘4",
+        shortcut: formatShortcutForDisplay(['⌘+4', 'Ctrl+4']),
         priority: 10,
       },
       {
@@ -120,7 +120,7 @@ export default function UniversalCommandPalette({
         icon: <FileText className="w-4 h-4" />,
         action: () => router.push("/briefcase"),
         keywords: ["briefcase", "documents", "files", "storage"],
-        shortcut: "⌘5",
+        shortcut: formatShortcutForDisplay(['⌘+5', 'Ctrl+5']),
         priority: 10,
       },
       {
@@ -166,7 +166,7 @@ export default function UniversalCommandPalette({
         icon: <Sparkles className="w-4 h-4" />,
         action: () => onToggleAI?.(),
         keywords: ["ai", "assistant", "help", "chat"],
-        shortcut: "⌘J",
+        shortcut: formatShortcutForDisplay(['⌘+J', 'Ctrl+J']),
         priority: 9,
       },
 
@@ -179,7 +179,7 @@ export default function UniversalCommandPalette({
         icon: <Navigation className="w-4 h-4" />,
         action: () => onToggleLeftPanel?.(),
         keywords: ["sidebar", "left", "panel", "navigation"],
-        shortcut: "⌘⇧E",
+        shortcut: formatShortcutForDisplay(['⌘+Shift+E', 'Ctrl+Shift+E']),
         priority: 7,
       },
       {
@@ -190,7 +190,7 @@ export default function UniversalCommandPalette({
         icon: <Sparkles className="w-4 h-4" />,
         action: () => onToggleRightPanel?.(),
         keywords: ["sidebar", "right", "panel", "ai", "chat"],
-        shortcut: "⌘⇧B",
+        shortcut: formatShortcutForDisplay(['⌘+Shift+B', 'Ctrl+Shift+B']),
         priority: 7,
       },
 
@@ -206,7 +206,7 @@ export default function UniversalCommandPalette({
           console.log("Creating new workspace...");
         },
         keywords: ["new", "workspace", "create"],
-        shortcut: "⌘N",
+        shortcut: formatShortcutForDisplay(['⌘+N', 'Ctrl+N']),
         priority: 6,
       },
       {
@@ -217,7 +217,7 @@ export default function UniversalCommandPalette({
         icon: <Settings className="w-4 h-4" />,
         action: () => router.push("./grand-central/profile"),
         keywords: ["preferences", "settings", "config"],
-        shortcut: "⌘,",
+        shortcut: formatShortcutForDisplay(['⌘+,', 'Ctrl+,']),
         priority: 5,
       },
     ],

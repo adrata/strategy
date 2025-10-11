@@ -156,6 +156,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }).then(success => {
       if (success) {
         console.log(`🎨 Theme applied successfully: ${currentTheme}`);
+        
+        // CRITICAL: Ensure Tailwind dark mode is synced
+        const root = document.documentElement;
+        if (isDarkMode) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
       } else {
         console.warn(`🎨 Failed to apply theme: ${currentTheme}`);
         // Fallback to legacy method
@@ -165,9 +173,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
           initializeCSSVariables();
         }
+        
+        // Ensure dark mode sync even in fallback
+        const root = document.documentElement;
+        if (isDarkMode) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
       }
     });
-  }, [currentTheme]);
+  }, [currentTheme, isDarkMode]);
 
   // CRITICAL: Listen to system theme changes for auto mode
   useEffect(() => {

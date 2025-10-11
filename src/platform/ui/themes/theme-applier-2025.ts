@@ -185,6 +185,13 @@ export class ThemeApplier2025 {
     root.classList.remove('theme-light', 'theme-dark', 'theme-high-contrast');
     root.classList.add(`theme-${theme.category}`);
 
+    // CRITICAL: Sync Tailwind dark mode with theme system
+    if (theme.category === 'dark' || theme.category === 'high-contrast') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+
     // Update meta theme-color for mobile browsers
     this.updateMetaThemeColor(theme.colors.accent);
   }

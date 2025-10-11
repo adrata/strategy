@@ -208,7 +208,7 @@
     "twilio": "^5.8.0",
     "ulid": "^3.0.1",
     "uuid": "^11.0.3",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
     "y-indexeddb": "^9.0.12",
     "y-protocols": "^1.0.6",
     "y-websocket": "^3.0.0",

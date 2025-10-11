@@ -850,9 +850,9 @@ model AtriumDocument {
   archivedAt      DateTime?
   
   // Relations
-  owner           User                  @relation(fields: [ownerId], references: [id])
-  workspace       Workspace             @relation(fields: [workspaceId], references: [id])
-  company         Company?              @relation(fields: [companyId], references: [id])
+  owner           users                 @relation(fields: [ownerId], references: [id])
+  workspace       workspaces            @relation(fields: [workspaceId], references: [id])
+  company         companies?            @relation(fields: [companyId], references: [id])
   folder          AtriumFolder?         @relation(fields: [folderId], references: [id])
   shares          AtriumShare[]
   versions        AtriumVersion[]
@@ -887,8 +887,8 @@ model AtriumFolder {
   updatedAt       DateTime          @updatedAt
   
   // Relations
-  owner           User              @relation(fields: [ownerId], references: [id])
-  workspace       Workspace         @relation(fields: [workspaceId], references: [id])
+  owner           users             @relation(fields: [ownerId], references: [id])
+  workspace       workspaces       @relation(fields: [workspaceId], references: [id])
   parent          AtriumFolder?     @relation("FolderHierarchy", fields: [parentId], references: [id])
   children        AtriumFolder[]    @relation("FolderHierarchy")
   documents       AtriumDocument[]
