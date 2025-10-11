@@ -163,14 +163,6 @@ const DEAL_STAGES = [
 export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanbanProps) {
   const [draggedItem, setDraggedItem] = useState<Opportunity | null>(null);
 
-  // 🔍 DEBUG: Log data received by Kanban component
-  console.log('🔍 [OPPORTUNITIES KANBAN] Data received:', {
-    dataLength: data?.length || 0,
-    dataType: typeof data,
-    isArray: Array.isArray(data),
-    sampleData: data?.slice(0, 2) || [],
-    allData: data
-  });
 
   // Group opportunities by stage and sort by progress within each stage
   const groupedData = DEAL_STAGES.reduce((acc, stage) => {

@@ -91,7 +91,6 @@ export async function GET(request: NextRequest) {
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
     if (status) {
       where.status = status;
-      console.log(`🔍 [V1 COMPANIES API] Filtering by status: ${status}`);
     }
 
     // Priority filtering (LOW, MEDIUM, HIGH)
@@ -122,8 +121,6 @@ export async function GET(request: NextRequest) {
       result = { success: true, data: counts };
     } else {
       // Optimized query with Prisma ORM for reliability
-      console.log(`🔍 [V1 COMPANIES API] Executing database query with where:`, where);
-      console.log(`🔍 [V1 COMPANIES API] Final where clause for status=${status}:`, JSON.stringify(where, null, 2));
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,
@@ -149,16 +146,6 @@ export async function GET(request: NextRequest) {
         }),
         prisma.companies.count({ where }),
       ]);
-      console.log(`🔍 [V1 COMPANIES API] Database query results:`, { 
-        companiesCount: companies.length, 
-        totalCount,
-        status: status,
-        sampleCompanies: companies.slice(0, 3).map(c => ({
-          id: c.id,
-          name: c.name,
-          status: c.status
-        }))
-      });
 
       result = createSuccessResponse(companies, {
         pagination: {
