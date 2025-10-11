@@ -133,10 +133,17 @@ export function useFastCounts(): UseFastCountsReturn {
       const cached = localStorage.getItem(storageKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        if (parsed?.counts) {
+        // Check if cache is less than 5 minutes old
+        const cacheAge = Date.now() - (parsed?.ts || 0);
+        const maxCacheAge = 5 * 60 * 1000; // 5 minutes
+        
+        if (parsed?.counts && cacheAge < maxCacheAge) {
           setCounts(parsed.counts as FastCounts);
           setLoading(false);
           hasCachedData = true;
+        } else {
+          // Cache is too old, clear it
+          localStorage.removeItem(storageKey);
         }
       }
     } catch (e) {
@@ -152,10 +159,19 @@ export function useFastCounts(): UseFastCountsReturn {
     fetchCounts();
   }, [workspaceId, userId, authLoading, fetchCounts]);
 
+  const forceRefresh = useCallback(async () => {
+    // Clear localStorage cache before refreshing
+    if (workspaceId) {
+      const storageKey = `adrata-fast-counts-${workspaceId}`;
+      localStorage.removeItem(storageKey);
+    }
+    await fetchCounts(true);
+  }, [fetchCounts, workspaceId]);
+
   return {
     counts,
     loading,
     error,
-    forceRefresh: () => fetchCounts(true)
+    forceRefresh
   };
 }
