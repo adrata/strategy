@@ -27,6 +27,8 @@ interface GrandCentralContextType {
   setSelectedNode: (node: IntegrationNode | null) => void;
   activeTab: 'integrations' | 'data' | 'monitoring';
   setActiveTab: (tab: 'integrations' | 'data' | 'monitoring') => void;
+  selectedConnection: any | null;
+  setSelectedConnection: (connection: any | null) => void;
 }
 
 const GrandCentralContext = createContext<GrandCentralContextType | undefined>(undefined);
@@ -46,10 +48,18 @@ interface GrandCentralLayoutProps {
 export default function GrandCentralLayout({ children }: GrandCentralLayoutProps) {
   const [selectedNode, setSelectedNode] = useState<IntegrationNode | null>(null);
   const [activeTab, setActiveTab] = useState<'integrations' | 'data' | 'monitoring'>('integrations');
+  const [selectedConnection, setSelectedConnection] = useState<any | null>(null);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GrandCentralContext.Provider value={{ selectedNode, setSelectedNode, activeTab, setActiveTab }}>
+      <GrandCentralContext.Provider value={{ 
+        selectedNode, 
+        setSelectedNode, 
+        activeTab, 
+        setActiveTab,
+        selectedConnection,
+        setSelectedConnection
+      }}>
         <AcquisitionOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
@@ -66,7 +76,7 @@ export default function GrandCentralLayout({ children }: GrandCentralLayoutProps
 
 // Custom Right Panel for Grand Central
 function GrandCentralRightPanel() {
-  const { selectedNode, setSelectedNode } = useGrandCentral();
+  const { selectedNode, setSelectedNode, selectedConnection, setSelectedConnection } = useGrandCentral();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -109,6 +119,86 @@ function GrandCentralRightPanel() {
     }
   }, [formData, selectedNode, debouncedSave]);
 
+  // Handle connection selection
+  if (selectedConnection) {
+    return (
+      <div className="h-full flex flex-col bg-white border-l border-gray-200">
+        {/* Header with X button */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+          <div>
+            <h2 className="font-semibold text-gray-900">{selectedConnection.connectionName || selectedConnection.provider}</h2>
+            <p className="text-sm text-gray-500">{selectedConnection.provider}</p>
+          </div>
+          <button
+            onClick={() => setSelectedConnection(null)}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Connection Details */}
+        <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedConnection.status === 'active' ? 'text-green-600 bg-green-100' :
+                selectedConnection.status === 'pending' ? 'text-yellow-600 bg-yellow-100' :
+                'text-red-600 bg-red-100'
+              }`}>
+                {selectedConnection.status.charAt(0).toUpperCase() + selectedConnection.status.slice(1)}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Connection ID
+              </label>
+              <input
+                type="text"
+                value={selectedConnection.nangoConnectionId}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-sm"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Created
+              </label>
+              <input
+                type="text"
+                value={new Date(selectedConnection.createdAt).toLocaleString()}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                disabled
+              />
+            </div>
+
+            {selectedConnection.lastSyncAt && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Sync
+                </label>
+                <input
+                  type="text"
+                  value={new Date(selectedConnection.lastSyncAt).toLocaleString()}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  disabled
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle node selection (workflow nodes)
   if (selectedNode) {
     return (
       <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">

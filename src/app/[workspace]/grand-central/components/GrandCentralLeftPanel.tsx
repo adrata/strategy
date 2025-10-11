@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useGrandCentral } from "../layout";
+import { useConnections } from "../hooks/useConnections";
 import { 
   LinkIcon, 
   CloudIcon, 
@@ -15,6 +16,7 @@ import {
 
 export function GrandCentralLeftPanel() {
   const { activeTab, setActiveTab } = useGrandCentral();
+  const { connections, isLoading } = useConnections();
 
   const tabs = [
     { id: 'integrations', name: 'Integrations', icon: LinkIcon },
@@ -83,37 +85,60 @@ export function GrandCentralLeftPanel() {
             Connected Integrations
           </h3>
           
-          <div className="space-y-1">
-            {/* Salesforce */}
-            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-green-50 border border-green-200">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-900">Salesforce</div>
-                <div className="text-xs text-gray-500">1,247 records</div>
-              </div>
-              <CheckCircleIcon className="w-4 h-4 text-green-600" />
+          {isLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
             </div>
-
-            {/* HubSpot */}
-            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-900">HubSpot</div>
-                <div className="text-xs text-gray-500">892 records</div>
-              </div>
-              <ArrowPathIcon className="w-4 h-4 text-blue-600 animate-spin" />
+          ) : connections.length === 0 ? (
+            <div className="px-3 py-4 text-center">
+              <CloudIcon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+              <div className="text-xs text-gray-500">No connections yet</div>
             </div>
-
-            {/* Slack */}
-            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200">
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-              <div className="flex-1">
-                <div className="text-sm font-medium text-gray-900">Slack</div>
-                <div className="text-xs text-gray-500">Token expired</div>
-              </div>
-              <ExclamationTriangleIcon className="w-4 h-4 text-red-600" />
+          ) : (
+            <div className="space-y-1">
+              {connections.slice(0, 5).map((connection) => (
+                <div 
+                  key={connection.id}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg border ${
+                    connection.status === 'active' 
+                      ? 'bg-green-50 border-green-200' 
+                      : connection.status === 'pending'
+                      ? 'bg-yellow-50 border-yellow-200'
+                      : 'bg-red-50 border-red-200'
+                  }`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${
+                    connection.status === 'active' 
+                      ? 'bg-green-500' 
+                      : connection.status === 'pending'
+                      ? 'bg-yellow-500 animate-pulse'
+                      : 'bg-red-500'
+                  }`}></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {connection.connectionName || connection.provider}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {connection.status === 'active' && connection.lastSyncAt 
+                        ? `Last sync: ${new Date(connection.lastSyncAt).toLocaleTimeString()}`
+                        : connection.status === 'pending'
+                        ? 'Connecting...'
+                        : 'Error'
+                      }
+                    </div>
+                  </div>
+                  {connection.status === 'active' && <CheckCircleIcon className="w-4 h-4 text-green-600" />}
+                  {connection.status === 'pending' && <ArrowPathIcon className="w-4 h-4 text-yellow-600 animate-spin" />}
+                  {connection.status === 'error' && <ExclamationTriangleIcon className="w-4 h-4 text-red-600" />}
+                </div>
+              ))}
+              {connections.length > 5 && (
+                <div className="px-3 py-1 text-xs text-gray-500 text-center">
+                  +{connections.length - 5} more
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
 

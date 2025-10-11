@@ -1,0 +1,347 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useAtrium } from "../layout";
+import { AtriumDocument } from "../types/document";
+import { 
+  DocumentTextIcon,
+  PresentationChartBarIcon,
+  TableCellsIcon,
+  CodeBracketIcon,
+  EllipsisVerticalIcon,
+  EyeIcon,
+  ShareIcon,
+  TrashIcon,
+  StarIcon,
+} from "@heroicons/react/24/outline";
+
+export function DocumentList() {
+  const {
+    activeTab,
+    searchQuery,
+    selectedDocumentType,
+    currentFolderId,
+    setSelectedDocument,
+  } = useAtrium();
+
+  const [documents, setDocuments] = useState<AtriumDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'date' | 'size' | 'type'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Load documents
+  useEffect(() => {
+    loadDocuments();
+  }, [activeTab, searchQuery, selectedDocumentType, currentFolderId, sortBy, sortOrder]);
+
+  const loadDocuments = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // TODO: Implement actual API call
+      // const response = await fetch('/api/atrium/documents?...');
+      // const data = await response.json();
+      
+      // Mock data for now
+      const mockDocuments: AtriumDocument[] = [
+        {
+          id: '1',
+          title: 'Project Proposal',
+          description: 'Q1 2024 project proposal document',
+          documentType: 'paper',
+          status: 'published',
+          version: '1.0',
+          isEncrypted: false,
+          classification: 'internal',
+          requiresAuth: false,
+          tags: ['proposal', 'q1-2024'],
+          isStarred: false,
+          isTemplate: false,
+          ownerId: 'user1',
+          workspaceId: 'workspace1',
+          fileType: 'application/json',
+          fileSize: 1024000,
+          viewCount: 15,
+          downloadCount: 3,
+          createdAt: new Date('2024-01-15'),
+          updatedAt: new Date('2024-01-20'),
+          owner: {
+            id: 'user1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+          _count: {
+            shares: 2,
+            versions: 3,
+            comments: 5,
+            activities: 12,
+          },
+        },
+        {
+          id: '2',
+          title: 'Sales Presentation',
+          description: 'Q1 sales results and projections',
+          documentType: 'pitch',
+          status: 'published',
+          version: '2.1',
+          isEncrypted: false,
+          classification: 'internal',
+          requiresAuth: false,
+          tags: ['sales', 'presentation'],
+          isStarred: true,
+          isTemplate: false,
+          ownerId: 'user2',
+          workspaceId: 'workspace1',
+          fileType: 'application/json',
+          fileSize: 2048000,
+          viewCount: 8,
+          downloadCount: 1,
+          createdAt: new Date('2024-01-10'),
+          updatedAt: new Date('2024-01-18'),
+          owner: {
+            id: 'user2',
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+          },
+          _count: {
+            shares: 1,
+            versions: 4,
+            comments: 2,
+            activities: 8,
+          },
+        },
+      ];
+
+      setDocuments(mockDocuments);
+    } catch (err) {
+      setError('Failed to load documents');
+      console.error('Error loading documents:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getDocumentIcon = (documentType: string) => {
+    switch (documentType) {
+      case 'paper':
+        return DocumentTextIcon;
+      case 'pitch':
+        return PresentationChartBarIcon;
+      case 'grid':
+        return TableCellsIcon;
+      case 'code':
+        return CodeBracketIcon;
+      default:
+        return DocumentTextIcon;
+    }
+  };
+
+  const getDocumentTypeColor = (documentType: string) => {
+    switch (documentType) {
+      case 'paper':
+        return 'text-blue-600 bg-blue-100';
+      case 'pitch':
+        return 'text-purple-600 bg-purple-100';
+      case 'grid':
+        return 'text-green-600 bg-green-100';
+      case 'code':
+        return 'text-gray-600 bg-gray-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return '0 B';
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+  };
+
+  const handleSort = (column: 'name' | 'date' | 'size' | 'type') => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <span className="ml-3 text-gray-600">Loading documents...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-red-600 mb-2">{error}</div>
+          <button
+            onClick={loadDocuments}
+            className="px-4 py-2 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (documents.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <DocumentTextIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No documents found</h3>
+          <p className="text-gray-500 mb-4">
+            {searchQuery 
+              ? "No documents match your search criteria."
+              : "Get started by creating or uploading your first document."
+            }
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+      {/* Table Header */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-gray-50 border-b border-gray-200">
+          <div className="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <div className="col-span-5">
+              <button
+                onClick={() => handleSort('name')}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                Name
+                {sortBy === 'name' && (
+                  <span className="text-blue-500">
+                    {sortOrder === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </button>
+            </div>
+            <div className="col-span-2">
+              <button
+                onClick={() => handleSort('type')}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                Type
+                {sortBy === 'type' && (
+                  <span className="text-blue-500">
+                    {sortOrder === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </button>
+            </div>
+            <div className="col-span-2">
+              <button
+                onClick={() => handleSort('size')}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                Size
+                {sortBy === 'size' && (
+                  <span className="text-blue-500">
+                    {sortOrder === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </button>
+            </div>
+            <div className="col-span-2">
+              <button
+                onClick={() => handleSort('date')}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                Modified
+                {sortBy === 'date' && (
+                  <span className="text-blue-500">
+                    {sortOrder === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </button>
+            </div>
+            <div className="col-span-1 text-center">Actions</div>
+          </div>
+        </div>
+
+        {/* Table Body */}
+        <div className="divide-y divide-gray-200">
+          {documents.map((document) => {
+            const Icon = getDocumentIcon(document.documentType);
+            const typeColor = getDocumentTypeColor(document.documentType);
+            
+            return (
+              <div
+                key={document.id}
+                onClick={() => setSelectedDocument(document)}
+                className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer group"
+              >
+                {/* Name */}
+                <div className="col-span-5 flex items-center gap-3">
+                  <div className={`p-1.5 rounded ${typeColor}`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-gray-900 truncate">
+                      {document.title}
+                    </div>
+                    {document.description && (
+                      <div className="text-sm text-gray-500 truncate">
+                        {document.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Type */}
+                <div className="col-span-2 flex items-center">
+                  <span className="capitalize text-sm text-gray-600">
+                    {document.documentType}
+                  </span>
+                </div>
+
+                {/* Size */}
+                <div className="col-span-2 flex items-center">
+                  <span className="text-sm text-gray-600">
+                    {formatFileSize(document.fileSize)}
+                  </span>
+                </div>
+
+                {/* Modified */}
+                <div className="col-span-2 flex items-center">
+                  <span className="text-sm text-gray-600">
+                    {new Date(document.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="p-1 hover:bg-gray-200 rounded">
+                      <EyeIcon className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-200 rounded">
+                      <ShareIcon className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-200 rounded">
+                      <EllipsisVerticalIcon className="w-4 h-4 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

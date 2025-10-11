@@ -34,6 +34,13 @@ interface ChatMessage {
     content: string;
     status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   }>;
+  sources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+  }>;
+  browserResults?: any[];
+  isBrowsing?: boolean;
 }
 
 interface Conversation {
@@ -711,12 +718,20 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         [activeSubApp]: [...(prev[activeSubApp] || []), userMessage]
       }));
 
-      // Add typing indicator
+      // Add typing indicator (check if this might be a web research query)
+      const isWebResearchQuery = input.toLowerCase().includes('search') || 
+                                input.toLowerCase().includes('find') || 
+                                input.toLowerCase().includes('look up') ||
+                                input.toLowerCase().includes('browse') ||
+                                input.toLowerCase().includes('http') ||
+                                input.toLowerCase().includes('www.');
+      
       const typingMessage: ChatMessage = {
         id: `typing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         type: 'assistant',
-        content: 'typing',
-        timestamp: new Date()
+        content: isWebResearchQuery ? 'browsing' : 'typing',
+        timestamp: new Date(),
+        isBrowsing: isWebResearchQuery
       };
       
       setConversations(prev => prev.map(conv => 
@@ -742,7 +757,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           appType: activeSubApp,
           workspaceId,
           userId,
-          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing').slice(-5), // Reduced history for speed
+          conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-5), // Reduced history for speed
           currentRecord,
           recordType,
           enableVoiceResponse: false,
@@ -807,7 +822,10 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           timestamp: new Date(),
           isTypewriter: true,
           hasTodos: !!(data['todos'] && data.todos.length > 0),
-          todos: data.todos || undefined
+          todos: data.todos || undefined,
+          sources: data.sources || undefined,
+          browserResults: data.browserResults || undefined,
+          isBrowsing: data.metadata?.hasWebResearch || false
         };
         
         messagesToAdd.push(assistantMessage);
@@ -817,7 +835,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
             ? { 
                 ...conv, 
                 messages: [
-                  ...conv.messages.filter(msg => msg.content !== 'typing'),
+                  ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
                   ...messagesToAdd
                 ]
               }
@@ -826,7 +844,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         
         chat.setChatSessions(prev => {
           const currentMessages = prev[activeSubApp] || [];
-          const withoutTyping = currentMessages.filter(msg => msg.content !== 'typing');
+          const withoutTyping = currentMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing');
           return {
             ...prev,
             [activeSubApp]: [...withoutTyping, ...messagesToAdd]
@@ -865,7 +883,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           ? { 
               ...conv, 
               messages: [
-                ...conv.messages.filter(msg => msg.content !== 'typing'),
+                ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
                 errorMessage
               ]
             }

@@ -8,6 +8,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { prisma } from '@/platform/database/prisma-client';
 import { EnhancedWorkspaceContextService } from '@/platform/ai/services/EnhancedWorkspaceContextService';
+import { BrowserTools } from '@/platform/ai/tools/browser-tools';
+import { browserAutomationService } from './BrowserAutomationService';
 
 export interface ClaudeChatRequest {
   message: string;
@@ -29,6 +31,12 @@ export interface ClaudeChatResponse {
   model: string;
   tokensUsed: number;
   processingTime: number;
+  browserResults?: any[];
+  sources?: Array<{
+    title: string;
+    url: string;
+    snippet: string;
+  }>;
 }
 
 export class ClaudeAIService {
@@ -36,6 +44,7 @@ export class ClaudeAIService {
   private model: string = 'claude-sonnet-4-5';
   private responseCache: Map<string, ClaudeChatResponse> = new Map();
   private cacheTimeout: number = 5 * 60 * 1000; // 5 minutes
+  private browserSessions: Map<string, string> = new Map(); // userId -> sessionId
 
   constructor() {
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -85,6 +94,18 @@ export class ClaudeAIService {
       // Check if this is a person search query and search database first
       const personSearchResult = await this.handlePersonSearchQuery(request);
       
+      // Check if user wants web research
+      const shouldPerformWebResearch = BrowserTools.shouldPerformWebResearch(request.message);
+      let browserResults: any[] = [];
+      let sources: any[] = [];
+
+      // Get or create browser session for user
+      let sessionId = this.browserSessions.get(request.userId || 'default');
+      if (shouldPerformWebResearch && !sessionId) {
+        sessionId = await browserAutomationService.createSession();
+        this.browserSessions.set(request.userId || 'default', sessionId);
+      }
+
       // Get comprehensive data context for the AI
       const dataContext = await this.getDataContext(request);
       
@@ -105,29 +126,72 @@ export class ClaudeAIService {
         appType: request.appType,
         conversationLength: request.conversationHistory?.length || 0,
         dataContextSize: JSON.stringify(dataContext).length,
-        hasPersonSearchResults: !!personSearchResult
+        hasPersonSearchResults: !!personSearchResult,
+        shouldPerformWebResearch,
+        hasBrowserSession: !!sessionId
       });
       
-      // Call Claude API with enhanced context
+      // Prepare tools for Claude if web research is needed
+      const tools = shouldPerformWebResearch ? BrowserTools.getTools() : undefined;
+      
+      // Call Claude API with enhanced context and tools
       const response = await this.anthropic.messages.create({
         model: this.model,
-        max_tokens: 1500, // Reduced for faster responses
+        max_tokens: 2000, // Increased for web research responses
         system: systemPrompt,
         messages: messages,
         temperature: 0.7, // Balanced creativity and consistency
+        tools: tools,
+        tool_choice: shouldPerformWebResearch ? 'auto' : undefined
       });
 
       const processingTime = Date.now() - startTime;
-      const responseText = response.content[0].type === 'text' ? response.content[0].text : '';
+      let responseText = '';
+      let finalResponse = response;
 
-      console.log(`✅ [CLAUDE AI] Enhanced response generated in ${processingTime}ms`);
+      // Handle tool calls if present
+      if (response.content.some(item => item.type === 'tool_use') && sessionId) {
+        console.log('🌐 [CLAUDE AI] Processing tool calls for web research');
+        
+        // Process tool calls
+        const toolResults = await this.processToolCalls(response.content, sessionId);
+        
+        // Add tool results to conversation
+        const toolMessages = toolResults.map(result => ({
+          role: 'user' as const,
+          content: `Tool result: ${JSON.stringify(result)}`
+        }));
+
+        // Get final response with tool results
+        const finalMessages = [...messages, ...toolMessages];
+        finalResponse = await this.anthropic.messages.create({
+          model: this.model,
+          max_tokens: 2000,
+          system: systemPrompt,
+          messages: finalMessages,
+          temperature: 0.7
+        });
+
+        // Extract browser results and sources
+        browserResults = toolResults.filter(result => result.success);
+        sources = this.extractSourcesFromResults(browserResults);
+      }
+
+      responseText = finalResponse.content[0].type === 'text' ? finalResponse.content[0].text : '';
+
+      console.log(`✅ [CLAUDE AI] Enhanced response generated in ${processingTime}ms`, {
+        hasWebResearch: browserResults.length > 0,
+        sourcesCount: sources.length
+      });
 
       const claudeResponse = {
         response: responseText,
         confidence: 0.95, // Claude responses are generally high confidence
         model: this.model,
-        tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
-        processingTime: processingTime
+        tokensUsed: finalResponse.usage.input_tokens + finalResponse.usage.output_tokens,
+        processingTime: processingTime,
+        browserResults,
+        sources
       };
 
       // Cache the response for future use
@@ -712,6 +776,138 @@ I can help with prospecting, pipeline analysis, buyer research, and closing stra
         this.responseCache.delete(key);
       }
     }
+  }
+
+  /**
+   * Process tool calls from Claude AI
+   */
+  private async processToolCalls(content: any[], sessionId: string): Promise<any[]> {
+    const toolCalls = content.filter(item => item.type === 'tool_use');
+    const results: any[] = [];
+
+    for (const toolCall of toolCalls) {
+      try {
+        const { name, input } = toolCall.function;
+        console.log(`🔧 [TOOL CALL] Executing: ${name}`, input);
+
+        let result;
+        switch (name) {
+          case 'navigate_to_url':
+            result = await browserAutomationService.navigateToUrl(
+              sessionId,
+              input.url,
+              {
+                extractText: input.extract_text !== false,
+                extractLinks: input.extract_links || false,
+                waitForSelector: input.wait_for_selector
+              }
+            );
+            break;
+
+          case 'search_web':
+            result = await browserAutomationService.searchWeb(
+              sessionId,
+              input.query,
+              {
+                maxResults: input.max_results || 10,
+                searchEngine: input.search_engine || 'google'
+              }
+            );
+            break;
+
+          case 'extract_page_content':
+            result = await browserAutomationService.extractContent(
+              sessionId,
+              input.url,
+              input.selectors,
+              input.extract_type || 'text'
+            );
+            break;
+
+          case 'take_screenshot':
+            result = await browserAutomationService.takeScreenshot(
+              sessionId,
+              input.url,
+              {
+                fullPage: input.full_page || false,
+                selector: input.selector
+              }
+            );
+            break;
+
+          default:
+            result = {
+              success: false,
+              error: `Unknown tool: ${name}`
+            };
+        }
+
+        results.push({
+          tool_call_id: toolCall.id,
+          tool_name: name,
+          ...result
+        });
+
+      } catch (error) {
+        console.error(`❌ [TOOL CALL] Error executing ${toolCall.function.name}:`, error);
+        results.push({
+          tool_call_id: toolCall.id,
+          tool_name: toolCall.function.name,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Extract sources from browser results
+   */
+  private extractSourcesFromResults(browserResults: any[]): Array<{
+    title: string;
+    url: string;
+    snippet: string;
+  }> {
+    const sources: Array<{ title: string; url: string; snippet: string }> = [];
+
+    for (const result of browserResults) {
+      if (result.success && result.url) {
+        sources.push({
+          title: result.title || 'Web Page',
+          url: result.url,
+          snippet: result.content ? result.content.substring(0, 200) + '...' : 'Content extracted from web page'
+        });
+      }
+
+      // Also extract sources from search results
+      if (result.results && Array.isArray(result.results)) {
+        for (const searchResult of result.results) {
+          sources.push({
+            title: searchResult.title || 'Search Result',
+            url: searchResult.url,
+            snippet: searchResult.snippet || 'Search result'
+          });
+        }
+      }
+    }
+
+    return sources;
+  }
+
+  /**
+   * Clean up browser sessions
+   */
+  async cleanupBrowserSessions(): Promise<void> {
+    for (const [userId, sessionId] of this.browserSessions.entries()) {
+      try {
+        await browserAutomationService.closeSession(sessionId);
+      } catch (error) {
+        console.error(`❌ Error closing session for user ${userId}:`, error);
+      }
+    }
+    this.browserSessions.clear();
   }
 
   /**

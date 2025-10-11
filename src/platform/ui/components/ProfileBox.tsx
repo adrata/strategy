@@ -426,6 +426,36 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
     }
   };
 
+  const handleDownloadDesktopApp = () => {
+    console.log('📥 ProfileBox: Download desktop app clicked');
+    setIsProfileOpen(false);
+    
+    // Detect platform
+    const platform = navigator.platform.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
+    
+    let downloadUrl = '';
+    
+    if (platform.includes('mac') || userAgent.includes('mac')) {
+      downloadUrl = '/downloads/Adrata_1.0.2_universal.dmg';
+    } else if (platform.includes('win') || userAgent.includes('windows')) {
+      downloadUrl = '/downloads/Adrata_1.0.2_x64_en-US.msi';
+    } else {
+      // Linux
+      downloadUrl = '/downloads/adrata_1.0.2_amd64.deb';
+    }
+    
+    console.log(`📥 ProfileBox: Triggering download for ${platform}: ${downloadUrl}`);
+    
+    // Trigger download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div
       className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden z-50"
@@ -461,6 +491,19 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
       {/* Profile Content - no tabs */}
       <div className="pl-4 pr-2 pt-2 pb-2">
+        {/* Download Button - Show only for web users */}
+        {!isDesktop && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+            onClick={handleDownloadDesktopApp}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
+          >
+            Download Desktop App
+          </div>
+        )}
+
         {/* Demo Section - Show for Adrata users (dan and ross) */}
         {isAdrataUser && (
           <div
@@ -661,6 +704,26 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           }}
         >
           Olympus
+        </div>
+        
+        {/* 4. Tower */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
+          onClick={() => {
+            console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
+            setIsProfileOpen(false); // Close profile popup
+            handleNavigation("./tower");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              handleNavigation("./tower");
+            }
+          }}
+        >
+          Tower
         </div>
         
         {/* 4. Grand Central */}

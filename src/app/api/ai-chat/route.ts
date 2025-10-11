@@ -67,11 +67,15 @@ export async function POST(request: NextRequest) {
       todos: [], // Claude can generate actionable items in the response text
       navigation: null,
       voice: null,
+      sources: claudeResponse.sources || [], // Web sources from browser automation
+      browserResults: claudeResponse.browserResults || [], // Raw browser results
       metadata: {
         model: claudeResponse.model,
         confidence: claudeResponse.confidence,
         processingTime: claudeResponse.processingTime,
-        tokensUsed: claudeResponse.tokensUsed
+        tokensUsed: claudeResponse.tokensUsed,
+        hasWebResearch: (claudeResponse.browserResults?.length || 0) > 0,
+        sourcesCount: claudeResponse.sources?.length || 0
       }
     });
 

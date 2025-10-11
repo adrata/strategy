@@ -172,6 +172,13 @@ export function MessageList({
                 <CyclingDots />
               </div>
             </div>
+          ) : message['content'] === 'browsing' ? (
+            <div className="space-y-1">
+              <div className="text-base text-[var(--muted)] flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <span>Browsing the web...</span>
+              </div>
+            </div>
           ) : message.content.startsWith('FILE_WIDGET:') ? (
             <div className="my-2">
               {(() => {
@@ -317,6 +324,44 @@ export function MessageList({
                 })}
               </div>
             )
+          )}
+          
+          {/* Display web sources if available */}
+          {message.sources && message.sources.length > 0 && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-4 h-4 text-blue-600">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-blue-800">Web Sources</span>
+              </div>
+              <div className="space-y-2">
+                {message.sources.slice(0, 3).map((source, index) => (
+                  <div key={index} className="text-sm">
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                    >
+                      {source.title}
+                    </a>
+                    {source.snippet && (
+                      <p className="text-gray-600 text-xs mt-1 line-clamp-2">
+                        {source.snippet}
+                      </p>
+                    )}
+                  </div>
+                ))}
+                {message.sources.length > 3 && (
+                  <p className="text-xs text-gray-500">
+                    +{message.sources.length - 3} more sources
+                  </p>
+                )}
+              </div>
+            </div>
           )}
         </div>
       ))}
