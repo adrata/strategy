@@ -31,9 +31,13 @@ export default function OlympusPage() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [closestConnectionPoint, setClosestConnectionPoint] = useState<string | null>(null);
   const [isCodeMode, setIsCodeMode] = useState(false);
   const [draggingConnection, setDraggingConnection] = useState<{ from: string, fromSide: string } | null>(null);
   const [connections, setConnections] = useState<Array<{ from: string, to: string, fromSide: string, toSide: string }>>([]);
+  const [selectionBox, setSelectionBox] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
+  const [selectedSteps, setSelectedSteps] = useState<string[]>([]);
+  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, stepId: string } | null>(null);
   const { setSelectedStep } = useOlympus();
 
   // Load active tool from localStorage on mount
@@ -451,23 +455,35 @@ export default function OlympusPage() {
         rect
       };
       
+      let animationFrameId: number;
+      
       const handleMouseMove = (e: Event) => {
         const mouseEvent = e as MouseEvent;
         mouseEvent.preventDefault();
         if (!dragStateRef.current) return;
         
-        const { stepId: currentStepId, startX, startY } = dragStateRef.current;
-        const headerHeight = 60;
-        const minY = headerHeight + 10; // 10px padding below header
-        const newX = Math.max(0, mouseEvent.clientX - startX);
-        const newY = Math.max(minY, mouseEvent.clientY - startY);
+        // Cancel previous animation frame
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
         
-        // Use functional update to avoid dependency on workflowSteps
-        setWorkflowSteps(prev => prev.map(s => 
-          s.id === currentStepId 
-            ? { ...s, position: { x: newX, y: newY } }
-            : s
-        ));
+        // Schedule update for next frame
+        animationFrameId = requestAnimationFrame(() => {
+          if (!dragStateRef.current) return;
+          
+          const { stepId: currentStepId, startX, startY } = dragStateRef.current;
+          const headerHeight = 60;
+          const minY = headerHeight + 10; // 10px padding below header
+          const newX = Math.max(0, mouseEvent.clientX - startX);
+          const newY = Math.max(minY, mouseEvent.clientY - startY);
+          
+          // Use functional update to avoid dependency on workflowSteps
+          setWorkflowSteps(prev => prev.map(s => 
+            s.id === currentStepId 
+              ? { ...s, position: { x: newX, y: newY } }
+              : s
+          ));
+        });
       };
 
       const handleMouseUp = (e: Event) => {
@@ -475,6 +491,9 @@ export default function OlympusPage() {
         mouseEvent.preventDefault();
         setDraggingStep(null);
         dragStateRef.current = null;
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
         document.body.style.userSelect = '';
@@ -540,8 +559,8 @@ export default function OlympusPage() {
         <div className="flex-1 bg-white overflow-hidden">
           <div className="h-full flex">
             {/* Line Numbers */}
-            <div className="bg-gray-50 border-r border-gray-200 px-3 py-4 text-sm text-gray-500 font-mono">
-              {workflowSteps.map((_, index) => (
+            <div className="bg-white border-r border-gray-200 px-3 py-4 text-sm text-gray-500 font-mono">
+              {Array.from({ length: 20 }, (_, index) => (
                 <div key={index} className="leading-6">
                   {index + 1}
                 </div>
@@ -549,42 +568,41 @@ export default function OlympusPage() {
             </div>
             {/* Code Editor */}
             <div className="flex-1 p-4">
-              <div className="font-mono text-sm text-gray-800 leading-6">
-                {workflowSteps.map((step, index) => (
-                  <div key={step.id} className="mb-2">
-                    <span className="text-blue-600 font-semibold">step</span>{' '}
-                    <span className="text-green-600">"{step.id}"</span>{' '}
-                    <span className="text-gray-600">=</span>{' '}
-                    <span className="text-purple-600">&#123;</span>
-                    <div className="ml-4">
-                      <div><span className="text-blue-600">title:</span> <span className="text-green-600">"{step.title}"</span>,</div>
-                      <div><span className="text-blue-600">description:</span> <span className="text-green-600">"{step.description}"</span>,</div>
-                      <div><span className="text-blue-600">position:</span> <span className="text-purple-600">&#123;</span> <span className="text-blue-600">x:</span> <span className="text-orange-600">{step.position.x}</span>, <span className="text-blue-600">y:</span> <span className="text-orange-600">{step.position.y}</span> <span className="text-purple-600">&#125;</span>,</div>
-                      <div><span className="text-blue-600">isActive:</span> <span className="text-orange-600">{step.isActive ? 'true' : 'false'}</span></div>
-                    </div>
-                    <span className="text-purple-600">&#125;</span>
-                    {index < workflowSteps.length - 1 && <span className="text-gray-400">,</span>}
-                  </div>
-                ))}
-              </div>
+              <textarea
+                className="w-full h-full font-mono text-sm text-gray-800 leading-6 bg-transparent border-none outline-none resize-none"
+                value={JSON.stringify(workflowSteps, null, 2)}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    if (Array.isArray(parsed)) {
+                      setWorkflowSteps(parsed);
+                    }
+                  } catch (error) {
+                    // Invalid JSON, keep current value
+                    console.log('Invalid JSON:', error);
+                  }
+                }}
+                spellCheck={false}
+              />
             </div>
           </div>
         </div>
       ) : (
-        <div 
-          className={`flex-1 flex items-center justify-center p-8 bg-white overflow-hidden ${
-            activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
-          }`}
-          style={{
-            backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            transformOrigin: 'center center'
-          }}
-          onWheel={handleWheel}
-          onMouseDown={handleBackgroundMouseDown}
-          onClick={handleBackgroundClick}
-        >
+        <div className="flex-1 bg-white overflow-hidden relative">
+          <div 
+            className={`absolute inset-0 flex items-center justify-center p-8 ${
+              activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
+            }`}
+            style={{
+              backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
+              backgroundSize: '20px 20px',
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transformOrigin: 'center center'
+            }}
+            onWheel={handleWheel}
+            onMouseDown={handleBackgroundMouseDown}
+            onClick={handleBackgroundClick}
+          >
         <div 
           className="relative w-full h-full"
         >
@@ -616,80 +634,59 @@ export default function OlympusPage() {
               }}
               onMouseDown={(e) => handleStepMouseDown(e, step.id)}
               onClick={() => handleStepClick(step.id)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setContextMenu({ x: e.clientX, y: e.clientY, stepId: step.id });
+              }}
               onMouseEnter={() => setHoveredCard(step.id)}
-              onMouseLeave={() => setHoveredCard(null)}
+              onMouseLeave={() => {
+                setHoveredCard(null);
+                setClosestConnectionPoint(null);
+              }}
+              onMouseMove={(e) => {
+                if (hoveredCard === step.id) {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const mouseX = e.clientX - rect.left;
+                  const mouseY = e.clientY - rect.top;
+                  const centerX = rect.width / 2;
+                  const centerY = rect.height / 2;
+                  
+                  // Calculate distance to each edge
+                  const distances = {
+                    right: Math.abs(mouseX - rect.width),
+                    left: Math.abs(mouseX - 0),
+                    top: Math.abs(mouseY - 0),
+                    bottom: Math.abs(mouseY - rect.height)
+                  };
+                  
+                  // Find the closest edge
+                  const closestEdge = Object.entries(distances).reduce((a, b) => 
+                    distances[a[0] as keyof typeof distances] < distances[b[0] as keyof typeof distances] ? a : b
+                  )[0];
+                  
+                  setClosestConnectionPoint(`${step.id}-${closestEdge}`);
+                }
+              }}
             >
-              {/* Connection Points - Only show on hover */}
-              {hoveredCard === step.id && (
-                <>
-                  {/* Right side connection point */}
-              <div
-                className={`absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 ${
-                  hoveredConnectionPoint === `${step.id}-right` ? 'scale-125 border-blue-500 bg-blue-50' : 'hover:border-blue-400'
-                }`}
-                onMouseEnter={() => setHoveredConnectionPoint(`${step.id}-right`)}
-                onMouseLeave={() => setHoveredConnectionPoint(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleConnectionPointClick(step.id, 'right');
-                }}
-              >
-                <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-
-              {/* Left side connection point */}
-              <div
-                className={`absolute -left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 ${
-                  hoveredConnectionPoint === `${step.id}-left` ? 'scale-125 border-blue-500 bg-blue-50' : 'hover:border-blue-400'
-                }`}
-                onMouseEnter={() => setHoveredConnectionPoint(`${step.id}-left`)}
-                onMouseLeave={() => setHoveredConnectionPoint(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleConnectionPointClick(step.id, 'left');
-                }}
-              >
-                <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-
-              {/* Top side connection point */}
-              <div
-                className={`absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 ${
-                  hoveredConnectionPoint === `${step.id}-top` ? 'scale-125 border-blue-500 bg-blue-50' : 'hover:border-blue-400'
-                }`}
-                onMouseEnter={() => setHoveredConnectionPoint(`${step.id}-top`)}
-                onMouseLeave={() => setHoveredConnectionPoint(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleConnectionPointClick(step.id, 'top');
-                }}
-              >
-                <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-
-              {/* Bottom side connection point */}
-              <div
-                className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 ${
-                  hoveredConnectionPoint === `${step.id}-bottom` ? 'scale-125 border-blue-500 bg-blue-50' : 'hover:border-blue-400'
-                }`}
-                onMouseEnter={() => setHoveredConnectionPoint(`${step.id}-bottom`)}
-                onMouseLeave={() => setHoveredConnectionPoint(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleConnectionPointClick(step.id, 'bottom');
-                }}
-              >
-                <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-                </>
+              {/* Connection Points - Only show closest one on hover */}
+              {hoveredCard === step.id && closestConnectionPoint && (
+                <div
+                  className={`absolute w-4 h-4 bg-white border border-gray-300 rounded-full flex items-center justify-center transition-all duration-150 hover:border-blue-400 ${
+                    closestConnectionPoint === `${step.id}-right` ? '-right-2 top-1/2 transform -translate-y-1/2' :
+                    closestConnectionPoint === `${step.id}-left` ? '-left-2 top-1/2 transform -translate-y-1/2' :
+                    closestConnectionPoint === `${step.id}-top` ? '-top-2 left-1/2 transform -translate-x-1/2' :
+                    closestConnectionPoint === `${step.id}-bottom` ? '-bottom-2 left-1/2 transform -translate-x-1/2' : ''
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const side = closestConnectionPoint.split('-')[1];
+                    handleConnectionPointClick(step.id, side);
+                  }}
+                >
+                  <svg className="w-2 h-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
               )}
 
               <div className="flex items-center justify-between">
@@ -706,10 +703,12 @@ export default function OlympusPage() {
                   <div className="text-xs font-medium text-gray-700">{step.title}</div>
                 </div>
                 {/* Type indicator icon */}
-                {(() => {
-                  const IconComponent = getTypeIcon(step.id);
-                  return <IconComponent className="w-4 h-4 text-gray-400" />;
-                })()}
+                <div className="w-5 h-5 border border-gray-300 rounded-md flex items-center justify-center">
+                  {(() => {
+                    const IconComponent = getTypeIcon(step.id);
+                    return <IconComponent className="w-3 h-3 text-gray-400" />;
+                  })()}
+                </div>
               </div>
               <div className="text-xs text-gray-500 mt-1">{step.description}</div>
             </div>
@@ -749,47 +748,6 @@ export default function OlympusPage() {
             </svg>
           </button>
           
-          {/* Better Plus Button */}
-          <div className="relative add-popup-container">
-            <button 
-              onClick={() => setShowAddPopup(!showAddPopup)}
-              className="w-6 h-6 bg-white text-gray-600 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-            
-            {/* Add Items Popup */}
-            {showAddPopup && (
-              <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
-                {workflowCategories.map((category) => (
-                  <div key={category.category}>
-                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-                      <span className="text-sm font-semibold text-gray-800">{category.category}</span>
-                    </div>
-                    {category.items.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => handleAddItem(item)}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                      >
-                        {(() => {
-                          const IconComponent = getTypeIcon(item.id);
-                          return <IconComponent className="w-4 h-4 text-gray-400" />;
-                        })()}
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-800">{item.title}</div>
-                          <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          
           {/* Undo Button */}
           <button 
             onClick={handleUndo}
@@ -820,8 +778,97 @@ export default function OlympusPage() {
             </svg>
           </button>
           
+          {/* Plus Button */}
+          <div className="relative add-popup-container">
+            <button 
+              onClick={() => setShowAddPopup(!showAddPopup)}
+              className="p-1.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+            
+            {/* Add Items Popup */}
+            {showAddPopup && (
+              <div className="absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
+                {workflowCategories.map((category) => (
+                  <div key={category.category}>
+                    <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                      <span className="text-sm font-semibold text-gray-800">{category.category}</span>
+                    </div>
+                    {category.items.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleAddItem(item)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="w-5 h-5 border border-gray-300 rounded-md flex items-center justify-center">
+                          {(() => {
+                            const IconComponent = getTypeIcon(item.id);
+                            return <IconComponent className="w-3 h-3 text-gray-400" />;
+                          })()}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-800">{item.title}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
         </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[160px]"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onMouseLeave={() => setContextMenu(null)}
+        >
+          <button
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              const step = workflowSteps.find(s => s.id === contextMenu.stepId);
+              if (step) setSelectedStep(step);
+              setContextMenu(null);
+            }}
+          >
+            Edit
+          </button>
+          <button
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              const step = workflowSteps.find(s => s.id === contextMenu.stepId);
+              if (step) {
+                const newStep = {
+                  ...step,
+                  id: `${step.id}-copy-${Date.now()}`,
+                  position: { x: step.position.x + 20, y: step.position.y + 20 }
+                };
+                setWorkflowSteps(prev => [...prev, newStep]);
+              }
+              setContextMenu(null);
+            }}
+          >
+            Duplicate
+          </button>
+          <button
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              setWorkflowSteps(prev => prev.filter(s => s.id !== contextMenu.stepId));
+              setContextMenu(null);
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }
