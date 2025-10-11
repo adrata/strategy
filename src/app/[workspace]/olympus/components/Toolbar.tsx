@@ -1,4 +1,5 @@
 import React from 'react';
+import { PlayIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 import { WorkflowCategory, WorkflowItem } from '../types';
 
 interface ToolbarProps {
@@ -149,11 +150,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             disabled={isExecuting}
             onMouseEnter={onTogglePlayPopup}
             onMouseLeave={onTogglePlayPopup}
-            className="p-1.5 text-green-600 hover:text-green-700 hover:bg-green-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-1.5 text-gray-600 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
+            <PlayIcon className="w-4 h-4" />
           </button>
           
           {/* Play Options Popup */}
@@ -164,9 +163,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
+                  <PlayIcon className="w-4 h-4" />
                   <span>Start</span>
                 </div>
               </button>
@@ -175,10 +172,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span>Start with AI Commentary</span>
+                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
+                  <span>Start with Adrata Commentary</span>
                 </div>
               </button>
             </div>

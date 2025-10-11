@@ -170,6 +170,8 @@ model workspaces {
   people               people[]
   actions              actions[]
   audit_logs           audit_logs[]
+  grand_central_workflows grand_central_workflows[]
+  grand_central_connections grand_central_connections[]
 
   @@index([slug])
   @@index([isActive])
@@ -201,6 +203,7 @@ model users {
   assigned_people         people[]              @relation("AssignedPeople")
   assigned_actions        actions[]             @relation("AssignedActions")
   audit_logs              audit_logs[]
+  grand_central_workflows grand_central_workflows[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -462,4 +465,60 @@ model audit_logs {
   @@index([workspaceId, entityType, timestamp])
   @@index([workspaceId, action, timestamp])
   @@index([success])
+}
+
+/// Grand Central Integration Platform
+model grand_central_workflows {
+  id          String   @id @default(ulid())
+  workspaceId String   @db.VarChar(30)
+  name        String
+  description String?
+  nodes       Json     // Integration nodes config
+  connections Json     // Node connections
+  status      String   @default("active")
+  createdBy   String   @db.VarChar(30)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      users      @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  executions grand_central_executions[]
+
+  @@index([workspaceId])
+  @@index([createdBy])
+  @@index([status])
+  @@index([workspaceId, status])
+}
+
+model grand_central_executions {
+  id         String   @id @default(ulid())
+  workflowId String   @db.VarChar(30)
+  status     String   // running, completed, failed
+  startedAt  DateTime @default(now())
+  completedAt DateTime?
+  logs       Json
+  error      String?
+
+  workflow grand_central_workflows @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+model grand_central_connections {
+  id                  String   @id @default(ulid())
+  workspaceId         String   @db.VarChar(30)
+  provider            String   // salesforce, hubspot, etc.
+  nangoConnectionId   String
+  metadata            Json
+  status              String   @default("active")
+  connectedAt         DateTime @default(now())
+
+  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([provider])
+  @@index([status])
+  @@index([workspaceId, provider])
 }

@@ -8,6 +8,7 @@ export const useDrag = (
   saveToHistory: () => void
 ) => {
   const [draggingStep, setDraggingStep] = useState<string | null>(null);
+  const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
   const dragStateRef = useRef<DragState | null>(null);
 
   const handleStepMouseDown = useCallback((e: React.MouseEvent, stepId: string) => {
@@ -31,49 +32,44 @@ export const useDrag = (
         rect
       };
       
-      let animationFrameId: number;
-      
       const handleMouseMove = (e: Event) => {
         const mouseEvent = e as MouseEvent;
         mouseEvent.preventDefault();
         if (!dragStateRef.current) return;
         
-        // Cancel previous animation frame
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-        }
+        const { startX, startY } = dragStateRef.current;
+        const headerHeight = 60;
+        const minY = headerHeight + 10; // 10px padding below header
+        const newX = Math.max(0, mouseEvent.clientX - startX);
+        const newY = Math.max(minY, mouseEvent.clientY - startY);
         
-        // Schedule update for next frame
-        animationFrameId = requestAnimationFrame(() => {
-          if (!dragStateRef.current) return;
-          
-          const { stepId: currentStepId, startX, startY } = dragStateRef.current;
-          const headerHeight = 60;
-          const minY = headerHeight + 10; // 10px padding below header
-          const newX = Math.max(0, mouseEvent.clientX - startX);
-          const newY = Math.max(minY, mouseEvent.clientY - startY);
-          
-          // Use functional update to avoid dependency on workflowSteps
-          setWorkflowSteps(prev => prev.map(s => 
-            s.id === currentStepId 
-              ? { ...s, position: { x: newX, y: newY } }
-              : s
-          ));
-        });
+        // Update drag position for CSS transform (no re-renders!)
+        setDragPosition({ x: newX, y: newY });
       };
 
       const handleMouseUp = (e: Event) => {
         const mouseEvent = e as MouseEvent;
         mouseEvent.preventDefault();
-        setDraggingStep(null);
-        dragStateRef.current = null;
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
+        
+        if (dragStateRef.current && dragPosition) {
+          // Only update state on mouseup (final position)
+          const { stepId: currentStepId } = dragStateRef.current;
+          setWorkflowSteps(prev => prev.map(s => 
+            s.id === currentStepId 
+              ? { ...s, position: { x: dragPosition.x, y: dragPosition.y } }
+              : s
+          ));
         }
+        
+        setDraggingStep(null);
+        setDragPosition(null);
+        dragStateRef.current = null;
+        
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
         document.body.style.userSelect = '';
         document.body.style.cursor = '';
+        
         // Save to history after drag ends
         setTimeout(() => saveToHistory(), 0);
       };
@@ -85,10 +81,11 @@ export const useDrag = (
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-  }, [activeTool, workflowSteps, setWorkflowSteps, saveToHistory]);
+  }, [activeTool, workflowSteps, setWorkflowSteps, saveToHistory, dragPosition]);
 
   return {
     draggingStep,
+    dragPosition,
     handleStepMouseDown
   };
 };

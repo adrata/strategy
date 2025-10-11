@@ -667,16 +667,16 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover-bg)] transition-colors"
           onClick={() => {
-            console.log("🏢 ProfileBox: Grand Central clicked - navigating to integrations hub");
+            console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
             setIsProfileOpen(false); // Close profile popup
-            handleNavigation("./grand-central/integrations");
+            handleNavigation("./grand-central");
           }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e['key'] === "Enter") {
               setIsProfileOpen(false);
-              handleNavigation("./grand-central/integrations");
+              handleNavigation("./grand-central");
             }
           }}
         >

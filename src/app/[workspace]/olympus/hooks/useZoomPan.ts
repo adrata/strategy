@@ -5,6 +5,7 @@ export const useZoomPan = () => {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDraggingBackground, setIsDraggingBackground] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [tempPan, setTempPan] = useState<{ x: number; y: number } | null>(null);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
@@ -21,20 +22,27 @@ export const useZoomPan = () => {
 
   const handleBackgroundMouseMove = useCallback((e: MouseEvent) => {
     if (isDraggingBackground) {
-      setPan({
+      const newPan = {
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y
-      });
+      };
+      // Use temp pan for CSS transform (no re-renders during drag)
+      setTempPan(newPan);
     }
   }, [isDraggingBackground, dragStart]);
 
   const handleBackgroundMouseUp = useCallback(() => {
+    if (tempPan) {
+      // Only update actual pan state on mouseup
+      setPan(tempPan);
+    }
     setIsDraggingBackground(false);
-  }, []);
+    setTempPan(null);
+  }, [tempPan]);
 
   return {
     zoom,
-    pan,
+    pan: tempPan || pan, // Use temp pan during drag, actual pan otherwise
     isDraggingBackground,
     handleWheel,
     handleBackgroundMouseDown,

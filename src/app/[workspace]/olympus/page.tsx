@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useOlympus } from "./layout";
 import { WorkflowCanvas } from "./components/WorkflowCanvas";
 import { CodeEditor } from "./components/CodeEditor";
@@ -37,6 +37,8 @@ export default function OlympusPage() {
   const [showPlayPopup, setShowPlayPopup] = useState(false);
   const [isCommentaryMode, setIsCommentaryMode] = useState(false);
   const [commentaryLog, setCommentaryLog] = useState<string[]>([]);
+  const [stepStatus, setStepStatus] = useState<Record<string, 'success' | 'error' | 'pending'>>({});
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { setSelectedStep } = useOlympus();
 
   const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([
@@ -201,24 +203,39 @@ export default function OlympusPage() {
     setCurrentStepIndex(0);
     setIsCommentaryMode(false);
     setCommentaryLog([]);
+    setStepStatus({}); // Reset step statuses
     
     const interval = setInterval(() => {
       setCurrentStepIndex(prev => {
         if (prev >= workflowSteps.length - 1) {
           setIsExecuting(false);
           clearInterval(interval);
+          intervalRef.current = null;
           return -1;
         }
+        
+        // Mark current step as successful
+        const currentStep = workflowSteps[prev];
+        if (currentStep) {
+          setStepStatus(prevStatus => ({
+            ...prevStatus,
+            [currentStep.id]: 'success'
+          }));
+        }
+        
         return prev + 1;
       });
     }, 1000);
-  }, [workflowSteps.length]);
+    
+    intervalRef.current = interval;
+  }, [workflowSteps]);
 
   const handleExecuteWithCommentary = useCallback(() => {
     setIsExecuting(true);
     setCurrentStepIndex(0);
     setIsCommentaryMode(true);
     setCommentaryLog([]);
+    setStepStatus({}); // Reset step statuses
     
     // Add initial commentary
     setCommentaryLog(prev => [...prev, "🚀 Starting CFO/CRO Discovery Pipeline execution..."]);
@@ -235,6 +252,12 @@ export default function OlympusPage() {
           ];
           
           setCommentaryLog(prevLog => [...prevLog, ...commentaries]);
+          
+          // Mark current step as successful
+          setStepStatus(prevStatus => ({
+            ...prevStatus,
+            [currentStep.id]: 'success'
+          }));
         }
         
         if (prev >= workflowSteps.length - 1) {
@@ -242,11 +265,14 @@ export default function OlympusPage() {
           setIsCommentaryMode(false);
           setCommentaryLog(prevLog => [...prevLog, "🎉 Pipeline execution completed successfully!"]);
           clearInterval(interval);
+          intervalRef.current = null;
           return -1;
         }
         return prev + 1;
       });
     }, 2000); // Slower for commentary
+    
+    intervalRef.current = interval;
   }, [workflowSteps]);
 
   const handleBackgroundClick = useCallback(() => {
@@ -290,7 +316,7 @@ export default function OlympusPage() {
   }, []);
 
   // Custom hooks
-  const { draggingStep, handleStepMouseDown } = useDrag(
+  const { draggingStep, dragPosition, handleStepMouseDown } = useDrag(
     workflowSteps,
     setWorkflowSteps,
     activeTool,
@@ -317,6 +343,28 @@ export default function OlympusPage() {
       };
     }
   }, [handleBackgroundMouseMove, handleBackgroundMouseUp]);
+
+  // ESC key to stop execution
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setContextMenu(null);
+        setSelectedStep(null);
+        setWorkflowSteps(prev => prev.map(step => ({ ...step, isActive: false })));
+        
+        // Stop execution if running
+        if (isExecuting && intervalRef.current) {
+          setIsExecuting(false);
+          setIsCommentaryMode(false);
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [setSelectedStep, isExecuting]);
 
   return (
     <div className="h-full flex flex-col bg-white">
@@ -359,6 +407,7 @@ export default function OlympusPage() {
           workflowSteps={workflowSteps}
           setWorkflowSteps={setWorkflowSteps}
           draggingStep={draggingStep}
+          dragPosition={dragPosition}
           activeTool={activeTool}
           zoom={zoom}
           pan={pan}
@@ -366,6 +415,7 @@ export default function OlympusPage() {
           currentStepIndex={currentStepIndex}
           hoveredCard={hoveredCard}
           closestConnectionPoint={closestConnectionPoint}
+          stepStatus={stepStatus}
           onStepClick={handleStepClick}
           onStepMouseDown={handleStepMouseDown}
           onStepMouseEnter={handleStepMouseEnter}

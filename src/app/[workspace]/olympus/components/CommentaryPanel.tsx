@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ClipboardDocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface CommentaryPanelProps {
   isCommentaryMode: boolean;
@@ -11,7 +12,14 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
   commentaryLog,
   isExecuting
 }) => {
+  const [errorLog, setErrorLog] = useState<string>('');
+  const [showErrorBox, setShowErrorBox] = useState(false);
+
   if (!isCommentaryMode) return null;
+
+  const handleCopyError = () => {
+    navigator.clipboard.writeText(errorLog);
+  };
 
   return (
     <div className="absolute inset-0 bg-white z-50 flex flex-col">
@@ -25,7 +33,7 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">AI Execution Commentary</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Adrata Execution Commentary</h2>
               <p className="text-sm text-gray-600">Real-time workflow execution details</p>
             </div>
           </div>
@@ -74,6 +82,37 @@ export const CommentaryPanel: React.FC<CommentaryPanelProps> = ({
           )}
         </div>
       </div>
+
+      {/* Error Log Box */}
+      {showErrorBox && (
+        <div className="flex-shrink-0 border-t border-gray-200 bg-red-50 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-red-100 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-red-800">Error Log</h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCopyError}
+                    className="flex items-center gap-1 px-2 py-1 text-xs text-red-700 hover:text-red-800 hover:bg-red-200 rounded transition-colors"
+                  >
+                    <ClipboardDocumentIcon className="w-3 h-3" />
+                    Copy
+                  </button>
+                  <button
+                    onClick={() => setShowErrorBox(false)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <pre className="text-xs text-red-700 font-mono whitespace-pre-wrap overflow-x-auto">
+                {errorLog || 'No errors logged'}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
