@@ -1,40 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get("workspaceId");
-    const userId = searchParams.get("userId");
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!workspaceId || !userId) {
-      return NextResponse.json({ error: "workspaceId and userId are required" }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Use authenticated user's workspace and ID
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
 
     console.log(`🔍 [METRICS PIPELINE] Fetching metrics for workspace: ${workspaceId}, userId: ${userId}`);
 
     // Return empty metrics for now to prevent 404 errors
-    return NextResponse.json({
-      success: true,
-      metrics: {
-        totalOpportunities: 0,
-        openOpportunities: 0,
-        closedWon: 0,
-        closedLost: 0,
-        totalValue: 0,
-        openValue: 0,
-        winRate: 0,
-        averageDealSize: 0,
-        salesCycle: 0
-      },
-      workspaceId: workspaceId,
-      userId: userId
+    const metrics = {
+      totalOpportunities: 0,
+      openOpportunities: 0,
+      closedWon: 0,
+      closedLost: 0,
+      totalValue: 0,
+      openValue: 0,
+      winRate: 0,
+      averageDealSize: 0,
+      salesCycle: 0
+    };
+
+    return createSuccessResponse(metrics, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
     });
 
   } catch (error) {
     console.error('❌ Error fetching pipeline metrics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch pipeline metrics', details: error instanceof Error ? error.message : 'Unknown error' }, 
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to fetch pipeline metrics',
+      'METRICS_FETCH_ERROR',
+      500
     );
   }
 }

@@ -3,6 +3,14 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 // Standard error handling - no need for custom desktop error logger
 
+// Theme keys that should be preserved to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -184,9 +192,23 @@ export class DesktopErrorBoundary extends Component<Props, State> {
 
   private clearAllData = () => {
     try {
+      // Save theme preferences before clearing to prevent theme flash
+      const themeData: Record<string, string | null> = {};
+      THEME_KEYS_TO_PRESERVE.forEach(key => {
+        themeData[key] = localStorage.getItem(key);
+      });
+      
       localStorage.clear();
       sessionStorage.clear();
-      console.log("🧹 All storage cleared");
+      
+      // Restore theme preferences
+      Object.entries(themeData).forEach(([key, value]) => {
+        if (value !== null) {
+          localStorage.setItem(key, value);
+        }
+      });
+      
+      console.log("🧹 All storage cleared (theme preserved)");
       window.location.reload();
     } catch (error) {
       console.error("Failed to clear data:", error);

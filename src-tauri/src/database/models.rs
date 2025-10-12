@@ -30,7 +30,7 @@ pub struct AuthUserRow {
     pub workspace_role: Option<String>,
 }
 
-// CRM Models
+// CRM Models - Updated for streamlined schema
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DesktopUser {
     pub id: String,
@@ -44,130 +44,93 @@ pub struct DesktopUser {
     pub last_sync_at: Option<String>,
 }
 
+// Updated to match people table in streamlined schema
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DesktopLead {
-    pub id: String,
-    pub name: String,
-    pub title: Option<String>,
-    pub email: Option<String>,
-    pub phone: Option<String>,
-    pub company: Option<String>,
-    pub status: String,
-    pub source: Option<String>,
-    pub notes: Option<String>,
-    pub last_action_date: Option<String>,
-    pub next_action_date: Option<String>,
-    pub value: Option<String>,
-    pub probability: Option<i32>,
-    pub assigned_to: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
-    pub needs_sync: bool,
-    pub last_sync_at: Option<String>,
-    pub cloud_updated_at: Option<String>,
-    #[serde(rename = "buyerGroupRole")]
-    pub buyer_group_role: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct DesktopContact {
-    pub id: String,
-    pub name: String,
-    pub title: Option<String>,
-    pub email: Option<String>,
-    pub phone: Option<String>,
-    pub company: Option<String>,
-    pub department: Option<String>,
-    pub location: Option<String>,
-    pub notes: Option<String>,
-    pub relationship: Option<String>,
-    pub linkedin_url: Option<String>,
-    pub account_id: Option<String>,
-    pub assigned_to: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
-    pub needs_sync: bool,
-    pub last_sync_at: Option<String>,
-    pub cloud_updated_at: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct DesktopAccount {
-    pub id: String,
-    pub name: String,
-    pub website: Option<String>,
-    pub industry: Option<String>,
-    pub size: Option<String>,
-    pub revenue: Option<String>,
-    pub employees: Option<i32>,
-    pub description: Option<String>,
-    pub headquarters: Option<String>,
-    pub account_status: String,
-    pub primary_contact_id: Option<String>,
-    pub owner_id: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
-    pub needs_sync: bool,
-    pub last_sync_at: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct DesktopOpportunity {
-    pub id: String,
-    pub name: String,
-    pub description: Option<String>,
-    pub amount: Option<f64>,
-    pub expected_close_date: Option<String>,
-    pub probability: i32,
-    pub stage: String,
-    pub primary_contact_id: Option<String>,
-    pub account_id: Option<String>,
-    pub owner_id: Option<String>,
-    pub engagement_score: f64,
-    pub risk_score: f64,
-    pub next_best_action: Option<String>,
-    pub action_priority: String,
-    pub created_at: String,
-    pub updated_at: String,
-    pub needs_sync: bool,
-    pub last_sync_at: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct DesktopPerson {
     pub id: String,
     pub full_name: String,
     pub first_name: String,
     pub last_name: String,
+    pub job_title: Option<String>,
     pub email: Option<String>,
-    pub title: Option<String>,
-    pub company: Option<String>,
-    pub department: Option<String>,
-    pub linkedin_url: Option<String>,
     pub phone: Option<String>,
-    pub location: Option<String>,
-    pub seniority: Option<String>,
-    pub is_verified: bool,
+    pub company: Option<String>,
+    pub company_id: Option<String>,
+    pub status: String, // PersonStatus enum
+    pub priority: Option<String>, // PersonPriority enum
+    pub source: Option<String>,
+    pub notes: Option<String>,
+    pub last_action_date: Option<String>,
+    pub next_action_date: Option<String>,
+    pub assigned_user_id: Option<String>,
+    pub workspace_id: String,
+    pub created_at: String,
+    pub updated_at: String,
+    pub needs_sync: bool,
+    pub last_sync_at: Option<String>,
+    pub cloud_updated_at: Option<String>,
+    pub buyer_group_role: Option<String>,
+    pub buyer_group_confidence: Option<f64>,
+    pub influence_score: Option<f64>,
+}
+
+// DesktopContact is now the same as DesktopLead (both map to people table)
+pub type DesktopContact = DesktopLead;
+
+// Updated to match companies table in streamlined schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct DesktopAccount {
+    pub id: String,
+    pub name: String,
+    pub legal_name: Option<String>,
+    pub trading_name: Option<String>,
+    pub website: Option<String>,
+    pub industry: Option<String>,
+    pub size: Option<String>,
+    pub revenue: Option<f64>,
+    pub employee_count: Option<i32>,
+    pub description: Option<String>,
+    pub address: Option<String>,
+    pub city: Option<String>,
+    pub state: Option<String>,
+    pub country: Option<String>,
+    pub postal_code: Option<String>,
+    pub status: Option<String>, // CompanyStatus enum
+    pub priority: Option<String>, // CompanyPriority enum
+    pub assigned_user_id: Option<String>,
+    pub workspace_id: String,
     pub created_at: String,
     pub updated_at: String,
     pub needs_sync: bool,
     pub last_sync_at: Option<String>,
 }
 
-// Speedrun Models
-#[derive(Debug, Clone)]
-pub struct DesktopSpeedrunSettings {
+// DesktopOpportunity maps to actions table in streamlined schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct DesktopOpportunity {
     pub id: String,
+    pub subject: String,
+    pub description: Option<String>,
+    pub outcome: Option<String>,
+    pub scheduled_at: Option<String>,
+    pub completed_at: Option<String>,
+    pub status: String, // ActionStatus enum
+    pub priority: String, // ActionPriority enum
+    pub person_id: Option<String>,
+    pub company_id: Option<String>,
     pub user_id: String,
-    pub weekly_target: i32,
-    pub strategy: String,
-    pub role: String,
-    pub quota: Option<i32>,
-    pub pipeline_health: Option<String>,
+    pub workspace_id: String,
     pub created_at: String,
     pub updated_at: String,
     pub needs_sync: bool,
+    pub last_sync_at: Option<String>,
 }
+
+// DesktopPerson is now the same as DesktopLead (both map to people table)
+pub type DesktopPerson = DesktopLead;
+
+// Speedrun Models - Removed DesktopSpeedrunSettings as OutboxSettings table doesn't exist in streamlined schema
+// Speedrun functionality will be handled through the people and actions tables
 
 // Enrichment Models
 #[derive(Debug, Serialize, Deserialize, Clone)]

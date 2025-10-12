@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { authFetch } from '@/platform/api-fetch';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
-import { PipelineHeader } from './PipelineHeader';
+// Removed PipelineHeader import - using StandardHeader in PipelineContent instead
 
 interface MetricsData {
   // Pipeline Health
@@ -219,25 +219,19 @@ export function MetricsDashboard() {
       setLoading(true);
       setError(null);
       console.log('📊 Loading metrics via dedicated metrics API...', { workspaceId, userId });
-      console.log('📊 [METRICS DEBUG] API URL:', `/api/metrics/pipeline?workspaceId=${workspaceId}&userId=${userId}`);
+      console.log('📊 [METRICS DEBUG] API URL:', `/api/metrics/pipeline (workspaceId and userId from JWT token)`);
       
-      // Use dedicated metrics API endpoint
-      const response = await authFetch(`/api/metrics/pipeline`);
+      // Use dedicated metrics API endpoint (workspaceId and userId now come from JWT token)
+      const data = await authFetch(`/api/metrics/pipeline`);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Metrics API error:', response.status, errorText);
-        
-        // Prevent raw HTML from being displayed in error messages
-        const cleanErrorText = errorText.length > 200 ? 'Server error occurred' : errorText;
-        throw new Error(`Failed to load metrics: ${response.status} - ${cleanErrorText}`);
+      if (!data.success) {
+        console.error('❌ Metrics API error:', data.error);
+        throw new Error(`Failed to load metrics: ${data.error || 'Unknown error'}`);
       }
-
-      const data = await response.json();
       
-      if (data['success'] && data.metrics) {
+      if (data.success && data.data) {
         // Use metrics API data directly
-        const metricsData = data.metrics;
+        const metricsData = data.data;
         
         // Use metrics data directly - no fallbacks, only real data
         const transformedMetrics = {
@@ -346,28 +340,16 @@ export function MetricsDashboard() {
 
   if (error) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
-        {/* Header matching other pipeline pages */}
-        <PipelineHeader
-          section="metrics"
-          metrics={null}
-          onSectionChange={() => {}}
-          onRefresh={handleRefresh}
-          onClearCache={handleClearCache}
-          loading={false}
-        />
-        
-        <div className="flex-1 p-6">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Metrics</h3>
-            <p className="text-red-600">{error}</p>
-            <button 
-              onClick={handleRefresh}
-              className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Metrics</h3>
+          <p className="text-red-600">{error}</p>
+          <button 
+            onClick={handleRefresh}
+            className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -375,40 +357,16 @@ export function MetricsDashboard() {
 
   if (!metrics) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
-        {/* Header matching other pipeline pages */}
-        <PipelineHeader
-          section="metrics"
-          metrics={null}
-          onSectionChange={() => {}}
-          onRefresh={handleRefresh}
-          onClearCache={handleClearCache}
-          loading={false}
-        />
-        
-        <div className="flex-1 p-6">
-          <div className="text-center text-[var(--muted)]">
-            <p>No metrics data available</p>
-          </div>
+      <div className="p-6">
+        <div className="text-center text-[var(--muted)]">
+          <p>No metrics data available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
-      {/* Header matching other pipeline pages */}
-              <PipelineHeader
-          section="metrics"
-          metrics={headerMetrics}
-          onSectionChange={() => {}}
-          onRefresh={handleRefresh}
-          onClearCache={handleClearCache}
-          loading={loading}
-        />
-
-      {/* Metrics Content */}
-      <div className="flex-1 overflow-y-auto invisible-scrollbar">
+    <div className="h-full overflow-y-auto invisible-scrollbar">
         <div className="p-6 bg-[var(--panel-background)] min-h-full">
 
           {/* Pipeline Health */}
@@ -555,7 +513,6 @@ export function MetricsDashboard() {
             />
           </MetricsSection>
         </div>
-      </div>
     </div>
   );
 }

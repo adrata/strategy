@@ -6,6 +6,14 @@
 
 import { cache } from '@/platform/services';
 
+// Theme keys that should be preserved to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
+
 // Clear all caches using unified system
 export async function clearAllCaches() {
   console.log('🧹 [UNIFIED CACHE CLEANER] Clearing all caches for security...');
@@ -20,10 +28,24 @@ export async function clearAllCaches() {
   
   // Clear browser caches if available
   if (typeof window !== 'undefined') {
-    // Clear localStorage
+    // Clear localStorage (preserve theme preferences to prevent flash)
     try {
+      // Save theme preferences before clearing
+      const themeData: Record<string, string | null> = {};
+      THEME_KEYS_TO_PRESERVE.forEach(key => {
+        themeData[key] = localStorage.getItem(key);
+      });
+      
       localStorage.clear();
-      console.log('✅ [UNIFIED CACHE CLEANER] Cleared localStorage');
+      
+      // Restore theme preferences
+      Object.entries(themeData).forEach(([key, value]) => {
+        if (value !== null) {
+          localStorage.setItem(key, value);
+        }
+      });
+      
+      console.log('✅ [UNIFIED CACHE CLEANER] Cleared localStorage (theme preserved)');
     } catch (error) {
       console.warn('⚠️ [UNIFIED CACHE CLEANER] Could not clear localStorage:', error);
     }

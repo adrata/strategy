@@ -25,6 +25,13 @@ import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
 
+// Theme keys that should be preserved during sign-out to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
 
 // -------- Types & interfaces --------
 interface ProfileBoxProps {
@@ -125,8 +132,9 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const isAdrataUser = (currentUserEmail === 'dan@adrata.com' || currentUserEmail === 'ross@adrata.com') || isDemoMode;
   const shouldShowMonacoOptions = isAdrataUser;
   
-  // New features restricted to ross@adrata.com only
-  const isRossUser = currentUserEmail === 'ross@adrata.com';
+  // Admin features restricted to ross, todd, and dan@adrata.com
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const isAdminUser = ADMIN_EMAILS.includes(currentUserEmail || '');
   
   console.log(`🏢 ProfileBox: Current workspace ID: ${currentWorkspaceId}, User email: ${currentUserEmail}, Workspace name: ${workspace}, isDanoUser: ${isDanoUser}, isAdrataUser: ${isAdrataUser}, isDemoMode: ${isDemoMode}`);
 
@@ -377,11 +385,25 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
       console.error("❌ ProfileBox: Sign out error:", error);
       console.error("❌ ProfileBox: Current URL during error:", window.location.href);
 
-      // Emergency fallback - immediate clear and reload
+      // Emergency fallback - immediate clear and reload (preserve theme to prevent flash)
       if (typeof window !== "undefined") {
+        // Save theme preferences before clearing
+        const themeData: Record<string, string | null> = {};
+        THEME_KEYS_TO_PRESERVE.forEach(key => {
+          themeData[key] = localStorage.getItem(key);
+        });
+        
         localStorage.clear();
         sessionStorage.clear();
-        console.log("🔧 ProfileBox: Emergency fallback - reloading page");
+        
+        // Restore theme preferences to prevent flash
+        Object.entries(themeData).forEach(([key, value]) => {
+          if (value !== null) {
+            localStorage.setItem(key, value);
+          }
+        });
+        
+        console.log("🔧 ProfileBox: Emergency fallback - reloading page (theme preserved)");
         window.location.reload();
       }
     }
@@ -555,8 +577,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* Docs - Documentation System - Ross only */}
-        {isRossUser && (
+        {/* Docs - Documentation System - Admin only */}
+        {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {
@@ -721,7 +743,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         )}
         
         {/* 1. Themes - Ross only */}
-        {isRossUser && (
+        {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={(e) => {
@@ -780,7 +802,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         )}
         
         {/* 4. Olympus - Ross only */}
-        {isRossUser && (
+        {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {
@@ -802,7 +824,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         )}
         
         {/* 5. Tower - Ross only */}
-        {isRossUser && (
+        {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {
@@ -824,7 +846,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         )}
         
         {/* 6. Grand Central - Ross only */}
-        {isRossUser && (
+        {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {

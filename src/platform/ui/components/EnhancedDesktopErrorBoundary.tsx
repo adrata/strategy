@@ -6,6 +6,14 @@ import {
   validateDesktopEnv,
 } from "@/platform/desktop-env-check";
 
+// Theme keys that should be preserved to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -137,8 +145,20 @@ export class EnhancedDesktopErrorBoundary extends Component<Props, State> {
 
   handleRecover = () => {
     try {
-      // Clear potentially corrupted state
+      // Clear potentially corrupted state (preserve theme to prevent flash)
+      const themeData: Record<string, string | null> = {};
+      THEME_KEYS_TO_PRESERVE.forEach(key => {
+        themeData[key] = localStorage.getItem(key);
+      });
+      
       localStorage.clear();
+      
+      // Restore theme preferences
+      Object.entries(themeData).forEach(([key, value]) => {
+        if (value !== null) {
+          localStorage.setItem(key, value);
+        }
+      });
 
       // Reset error boundary
       this.setState({

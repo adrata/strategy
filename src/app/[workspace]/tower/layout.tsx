@@ -42,16 +42,19 @@ export default function TowerLayout({ children }: TowerLayoutProps) {
   const { user: authUser } = useUnifiedAuth();
   const router = useRouter();
 
-  // Access control - only ross@adrata.com can access Tower
+  // Access control - only admins can access Tower
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const isAdminUser = ADMIN_EMAILS.includes(authUser?.email || '');
+  
   useEffect(() => {
-    if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+    if (authUser?.email && !isAdminUser) {
       console.log('🚫 Tower: Access denied for', authUser.email, '- redirecting to dashboard');
       router.push('/dashboard');
     }
-  }, [authUser?.email, router]);
+  }, [authUser?.email, router, isAdminUser]);
 
   // Don't render if not authorized
-  if (authUser?.email && authUser.email !== 'ross@adrata.com') {
+  if (authUser?.email && !isAdminUser) {
     return (
       <div className="h-full flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">

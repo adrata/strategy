@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")  // For migrations
-  connection_limit = 10  // Neon.tech recommended
 }
 
 /// RBAC models for granular permission control
@@ -97,6 +96,9 @@ model workspaces {
   stacks_projects      StacksProject[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows grand_central_workflows[]
+  
+  // Particle relations
+  particle_experiments ParticleExperiment[]
 
   @@index([slug])
   @@index([isActive])
@@ -135,6 +137,9 @@ model users {
   stacks_task_assignees   StacksTask[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows grand_central_workflows[]
+  
+  // Particle relations
+  particle_experiments    ParticleExperiment[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -788,4 +793,237 @@ model ChronicleShare {
 enum ChronicleReportType {
   MONDAY_PREP
   FRIDAY_RECAP
+}
+
+/// Encode Code Editor Models
+model EncodeProject {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  workspaceId String
+  userId      String
+  files       EncodeFile[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("encode_projects")
+}
+
+model EncodeFile {
+  id          String      @id @default(cuid())
+  projectId   String
+  project     EncodeProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  path        String      // Relative path within project
+  name        String
+  content     String      @db.Text
+  language    String
+  isDirectory Boolean     @default(false)
+  parentId    String?
+  parent      EncodeFile? @relation("FileHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    EncodeFile[] @relation("FileHierarchy")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([projectId])
+  @@index([parentId])
+  @@index([path])
+  @@map("encode_files")
+}
+
+// 🧪 PARTICLE - Scientific Testing Platform
+enum ParticleExperimentType {
+  ab_test
+  multivariate
+  performance
+  conversion
+  retention
+}
+
+enum ParticleExperimentStatus {
+  draft
+  active
+  completed
+  archived
+  cancelled
+}
+
+enum ParticleTestRunStatus {
+  pending
+  running
+  completed
+  failed
+  cancelled
+}
+
+enum ParticleMetricType {
+  conversion_rate
+  cost_per_conversion
+  execution_time
+  success_rate
+  error_rate
+  throughput
+  custom
+}
+
+model ParticleExperiment {
+  id                String                    @id @default(cuid())
+  workspaceId       String                    @db.VarChar(30)
+  name              String                    @db.VarChar(200)
+  description       String?
+  hypothesis        String                    // Scientific hypothesis being tested
+  experimentType    ParticleExperimentType    // ab_test, multivariate, performance, etc.
+  status            ParticleExperimentStatus  @default(draft)
+  
+  // Configuration
+  baselineVariantId String?                   // Control group variant
+  targetSampleSize  Int?                      // Desired sample size for statistical power
+  confidenceLevel   Float                     @default(0.95) // 95% confidence by default
+  significanceLevel Float                     @default(0.05) // p < 0.05 by default
+  
+  // Metadata
+  createdById       String                    @db.VarChar(30)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  startedAt         DateTime?
+  completedAt       DateTime?
+  
+  // Relationships
+  workspace         workspaces                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdBy         users                     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  variants          ParticleVariant[]
+  testRuns          ParticleTestRun[]
+  results           ParticleResult[]
+  assertions        ParticleAssertion[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, status])
+  @@index([createdById])
+  @@index([experimentType])
+}
+
+model ParticleVariant {
+  id            String    @id @default(cuid())
+  experimentId  String
+  name          String    @db.VarChar(100)
+  description   String?
+  configuration Json      // Variant-specific configuration (JSON)
+  isControl     Boolean   @default(false) // Is this the control group?
+  weight        Float     @default(1.0)  // Traffic weight for this variant (0.0-1.0)
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relationships
+  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  testRuns      ParticleTestRun[]
+  metrics       ParticleMetric[]
+
+  @@index([experimentId])
+  @@index([experimentId, isControl])
+}
+
+model ParticleTestRun {
+  id            String                  @id @default(cuid())
+  experimentId  String
+  variantId     String
+  status        ParticleTestRunStatus   @default(pending)
+  
+  // Execution details
+  sampleSize    Int                     @default(0)
+  startTime     DateTime?
+  endTime       DateTime?
+  duration      Int?                    // Duration in milliseconds
+  
+  // Results
+  aggregatedMetrics Json?               // Aggregated metrics (JSON)
+  errors            Json?               // Error details (JSON)
+  logs              Json?               // Execution logs (JSON)
+  
+  // Metadata
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relationships
+  experiment        ParticleExperiment  @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  variant           ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  metrics           ParticleMetric[]
+
+  @@index([experimentId])
+  @@index([variantId])
+  @@index([status])
+  @@index([startTime])
+}
+
+model ParticleMetric {
+  id          String              @id @default(cuid())
+  testRunId   String
+  variantId   String
+  metricType  ParticleMetricType
+  name        String              @db.VarChar(100)
+  value       Float
+  unit        String?             @db.VarChar(20) // e.g., "ms", "%", "count"
+  timestamp   DateTime            @default(now())
+  
+  // Additional context
+  metadata    Json?               // Additional metric metadata (JSON)
+  
+  // Relationships
+  testRun     ParticleTestRun     @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  variant     ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([testRunId])
+  @@index([variantId])
+  @@index([metricType])
+  @@index([timestamp])
+}
+
+model ParticleResult {
+  id            String    @id @default(cuid())
+  experimentId  String
+  summary       Json      // Statistical summary (JSON)
+  winner        String?   // Winning variant ID
+  confidence    Float?    // Statistical confidence (0.0-1.0)
+  pValue        Float?    // Statistical significance p-value
+  recommendation String?  // AI-generated recommendation
+  
+  // Analysis details
+  statisticalTest String? // Type of statistical test used
+  effectSize      Float?  // Effect size (Cohen's d, etc.)
+  power           Float?  // Statistical power
+  
+  // Metadata
+  calculatedAt    DateTime @default(now())
+  
+  // Relationships
+  experiment      ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+  @@index([experimentId])
+  @@index([calculatedAt])
+}
+
+model ParticleAssertion {
+  id            String    @id @default(cuid())
+  experimentId  String
+  name          String    @db.VarChar(200)
+  description   String?
+  assertion     String    // Assertion logic (JSON or expression)
+  expectedValue Float?    // Expected metric value
+  tolerance     Float?    // Tolerance for comparison
+  
+  // Status
+  isPassing     Boolean?  // null = not tested, true = passing, false = failing
+  lastChecked   DateTime?
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relationships
+  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+  @@index([experimentId])
+  @@index([isPassing])
 }

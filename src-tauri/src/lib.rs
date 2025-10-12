@@ -25,7 +25,8 @@ mod email;
 mod webhooks;
 mod email_scanning;
 mod demo_scenarios;
-mod entity;
+mod encode;
+// mod entity; // Removed - entities table doesn't exist in streamlined schema
 
 // Import modules for command generation
 // (Commands are referenced as module::command in the invoke_handler)
@@ -213,7 +214,26 @@ pub fn run() {
             dynamic_os::update_client_os_modules,
             dynamic_os::get_available_modules,
             dynamic_os::switch_client_os,
-            dynamic_os::get_client_os_analytics
+            dynamic_os::get_client_os_analytics,
+
+            // Encode Code Editor - File System Commands
+            encode::encode_read_directory,
+            encode::encode_read_file,
+            encode::encode_write_file,
+            encode::encode_create_directory,
+            encode::encode_delete_path,
+            encode::encode_rename_path,
+            encode::encode_copy_path,
+            encode::encode_get_file_info,
+            encode::encode_path_exists,
+            encode::encode_get_current_dir,
+            encode::encode_set_current_dir,
+            encode::encode_get_home_dir,
+            encode::encode_get_documents_dir,
+            encode::encode_get_desktop_dir,
+            encode::encode_get_downloads_dir,
+            encode::encode_watch_directory,
+            encode::encode_unwatch_directory
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -124,10 +124,10 @@ impl HybridDatabaseManager {
 
                     // Fetch all workspaces for the user
                     let workspace_query = r#"
-                        SELECT w.id, w.name, wm.role
-                        FROM "WorkspaceMembership" wm
-                        JOIN workspaces w ON wm."workspaceId" = w.id
-                        WHERE wm."userId" = $1
+                        SELECT w.id, w.name, wu.role
+                        FROM workspace_users wu
+                        JOIN workspaces w ON wu."workspaceId" = w.id
+                        WHERE wu."userId" = $1
                     "#;
 
                     let workspace_rows = sqlx::query(workspace_query)

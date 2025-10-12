@@ -336,16 +336,22 @@ impl HybridDatabaseManager {
                     .execute(postgres)
                     .await?;
                 
+                // Split name into first and last name
+                let name_parts: Vec<&str> = lead_data.name.splitn(2, ' ').collect();
+                let first_name = name_parts.get(0).unwrap_or(&"").to_string();
+                let last_name = name_parts.get(1).unwrap_or(&"").to_string();
+                
                 let insert_sql = r#"
-                    INSERT INTO leads (id, entity_id, "fullName", "jobTitle", company, email, phone, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, 'new', 'manual', '', 'medium', $8, $9, $10, $11)
+                    INSERT INTO people (id, "fullName", "firstName", "lastName", "jobTitle", company, email, phone, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, 'LEAD', 'manual', '', 'MEDIUM', $8, $9, $10, $11)
                 "#;
                 
                 sqlx::query(insert_sql)
                     .bind(&lead_id)
-                    .bind(&entity_id) // Link to entity record
-                    .bind(&lead_data.name)
-                    .bind(&lead_data.title)
+                    .bind(&lead_data.name) // fullName
+                    .bind(&first_name) // firstName
+                    .bind(&last_name) // lastName
+                    .bind(&lead_data.title) // jobTitle
                     .bind(&lead_data.company)
                     .bind(&lead_data.email)
                     .bind(&lead_data.phone)
@@ -522,13 +528,12 @@ impl HybridDatabaseManager {
                     .await?;
                 
                 let insert_sql = r#"
-                    INSERT INTO accounts (id, entity_id, name, website, industry, size, employees, revenue, address, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+                    INSERT INTO companies (id, name, website, industry, size, "employeeCount", revenue, address, status, source, notes, priority, "workspaceId", "assignedUserId", "createdAt", "updatedAt")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
                 "#;
                 
                 sqlx::query(insert_sql)
                     .bind(&company_id)
-                    .bind(&entity_id) // Link to entity record
                     .bind(&company_data.name)
                     .bind(&company_data.domain)
                     .bind(&company_data.industry)

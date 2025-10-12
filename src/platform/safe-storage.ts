@@ -3,6 +3,14 @@
  * Prevents localStorage SSR errors across Vercel, Tauri, and Capacitor
  */
 
+// Theme keys that should be preserved during clear() to prevent theme flash
+const THEME_KEYS_TO_PRESERVE = [
+  'adrata-theme-preferences',
+  'adrata-theme-mode',
+  'adrata-light-theme',
+  'adrata-dark-theme',
+];
+
 export interface SafeStorage {
   getItem: (key: string) => string | null;
   setItem: (key: string, value: string) => void;
@@ -61,7 +69,21 @@ class UniversalStorage implements SafeStorage {
   clear(): void {
     if (this.isClient) {
       try {
+        // Save theme preferences before clearing to prevent theme flash
+        const themeData: Record<string, string | null> = {};
+        THEME_KEYS_TO_PRESERVE.forEach(key => {
+          themeData[key] = localStorage.getItem(key);
+        });
+        
         localStorage.clear();
+        
+        // Restore theme preferences
+        Object.entries(themeData).forEach(([key, value]) => {
+          if (value !== null) {
+            localStorage.setItem(key, value);
+          }
+        });
+        
         return;
       } catch (error) {
         console.warn(`Failed to clear localStorage:`, error);

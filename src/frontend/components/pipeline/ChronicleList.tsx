@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { authFetch } from '@/platform/api-fetch';
 
 interface ChronicleReport {
   id: string;
@@ -40,13 +41,7 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
     const fetchReports = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/chronicle/reports?workspaceId=${workspaceId}&limit=20`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch reports');
-        }
-
-        const data = await response.json();
+        const data = await authFetch(`/api/chronicle/reports?workspaceId=${workspaceId}&limit=20`);
         setReports(data.reports || []);
       } catch (err) {
         console.error('Error fetching Chronicle reports:', err);

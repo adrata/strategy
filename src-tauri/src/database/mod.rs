@@ -2,7 +2,7 @@ pub mod models;
 pub mod auth;
 pub mod crm;
 pub mod speedrun;
-pub mod calendar;
+// pub mod calendar; // Removed - Event table doesn't exist in streamlined schema
 
 // Re-export commonly used types
 pub use models::{

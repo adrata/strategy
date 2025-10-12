@@ -13,6 +13,7 @@ import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
+import { useUnifiedAuth } from "@/platform/auth";
 
 // Oasis Context
 interface OasisContextType {
@@ -74,7 +75,13 @@ function PipelineLayoutContent({
 }) {
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
+  const { user: authUser } = useUnifiedAuth();
   const pathname = usePathname();
+
+  // User detection for conditional left panel visibility
+  const currentUserEmail = authUser?.email;
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const isAdminUser = ADMIN_EMAILS.includes(currentUserEmail || '');
 
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
@@ -129,6 +136,10 @@ function PipelineLayoutContent({
     }
   };
 
+  // Conditional left panel visibility: Show only for admins on metrics/chronicle pages
+  const shouldShowLeftPanel = isAdminUser || !(currentSection === 'metrics' || currentSection === 'chronicle');
+  const isLeftPanelVisible = shouldShowLeftPanel && ui.isLeftPanelVisible;
+
   return (
     <PanelLayout
       thinLeftPanel={null}
@@ -136,7 +147,7 @@ function PipelineLayoutContent({
       middlePanel={children}
       rightPanel={getRightPanel()}
       zoom={100}
-      isLeftPanelVisible={ui.isLeftPanelVisible}
+      isLeftPanelVisible={isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}
       onToggleLeftPanel={ui.toggleLeftPanel}
       onToggleRightPanel={ui.toggleRightPanel}
