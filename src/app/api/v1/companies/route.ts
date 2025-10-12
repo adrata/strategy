@@ -142,8 +142,7 @@ export async function GET(request: NextRequest) {
             industry: true,
             size: true,
             revenue: true,
-            stage: true
-            // Optimized for list views - includes revenue and stage for opportunities
+            stage: true  // Re-enabled after migration
           }
         }),
         prisma.companies.count({ where }),
@@ -170,7 +169,16 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ [V1 COMPANIES API] Error:', error);
-    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500);
+    console.error('❌ [V1 COMPANIES API] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined
+    });
+    return createErrorResponse(
+      error instanceof Error ? error.message : 'Internal server error', 
+      'INTERNAL_ERROR', 
+      500
+    );
   }
 }
 
