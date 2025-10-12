@@ -639,7 +639,9 @@ function PipelineSections({
       ) : (() => {
         const opportunities = acquisitionData?.acquireData?.opportunities || [];
         const totalPeople = opportunities.reduce((sum: number, opp: any) => sum + (opp.peopleCount || 0), 0);
-        return `${productionCounts.opportunities}${totalPeople > 0 ? ` (${totalPeople})` : ''}`;
+        const formattedOpportunities = (productionCounts.opportunities || 0).toLocaleString();
+        const formattedPeople = totalPeople > 0 ? totalPeople.toLocaleString() : '';
+        return `${formattedOpportunities}${formattedPeople ? ` (${formattedPeople})` : ''}`;
       })(),
       visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
     },
@@ -768,7 +770,11 @@ function PipelineSections({
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">{section.name}</span>
-            <span className="text-sm text-[var(--muted)]">{typeof section['count'] === 'number' ? section.count.toLocaleString() : section.count}</span>
+            <span className="text-sm text-[var(--muted)]">
+              {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
+               typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
+               section.count}
+            </span>
           </div>
           <div className="text-xs text-[var(--muted)] mt-1">
             {section.description}
