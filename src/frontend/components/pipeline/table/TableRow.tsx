@@ -10,6 +10,7 @@ import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAct
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { formatDate } from '@/platform/utils/dateUtils';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
+import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -305,6 +306,49 @@ export function TableRow({
                           </>
                         );
                       })()}
+                    </div>
+                  </td>
+                );
+              case 'owner':
+                return (
+                  <td key="owner" className={textClasses}>
+                    <div className="flex items-center gap-2">
+                      {record['ownerData'] ? (
+                        <ProfileAvatar
+                          name={record['ownerData'].name}
+                          firstName={record['ownerData'].firstName}
+                          lastName={record['ownerData'].lastName}
+                          email={record['ownerData'].email}
+                          profilePictureUrl={record['ownerData'].profilePictureUrl || undefined}
+                          size="sm"
+                        />
+                      ) : null}
+                      <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                        {record['owner'] || '-'}
+                      </span>
+                    </div>
+                  </td>
+                );
+              case 'coSellers':
+                return (
+                  <td key="coSellers" className={textClasses}>
+                    <div className="flex items-center gap-2">
+                      {record['coSellersData'] && record['coSellersData'].length > 0 ? (
+                        <ProfileAvatarGroup
+                          users={record['coSellersData'].map((coSeller: any) => ({
+                            name: coSeller.user?.name,
+                            firstName: coSeller.user?.firstName,
+                            lastName: coSeller.user?.lastName,
+                            email: coSeller.user?.email,
+                            profilePictureUrl: coSeller.user?.profilePictureUrl || undefined,
+                          }))}
+                          maxVisible={2}
+                          size="sm"
+                        />
+                      ) : null}
+                      <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                        {record['coSellers'] || '-'}
+                      </span>
                     </div>
                   </td>
                 );

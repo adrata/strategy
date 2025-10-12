@@ -169,7 +169,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
               }`}
               style={{
                 transform: draggingStep === step.id && dragPosition 
-                  ? `translate3d(${dragPosition.x}px, ${dragPosition.y}px, 0)`
+                  ? `translate(${dragPosition.x}px, ${dragPosition.y}px)`
                   : `translate(${step.position.x}px, ${step.position.y}px)`,
                 willChange: draggingStep === step.id ? 'transform' : 'auto',
                 zIndex: draggingStep === step.id ? 1000 : 3,
@@ -222,23 +222,15 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                       {workflowSteps.findIndex(s => s.id === step.id) + 1}
                     </div>
                     <div className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      step.id.includes('company-resolution') ? 'bg-blue-100 text-blue-700' :
-                      step.id.includes('executive-discovery') ? 'bg-purple-100 text-purple-700' :
-                      step.id.includes('contact-enrichment') ? 'bg-green-100 text-green-700' :
-                      step.id.includes('verification') ? 'bg-yellow-100 text-yellow-700' :
-                      step.id.includes('aggregation') ? 'bg-indigo-100 text-indigo-700' :
-                      step.id.includes('tracking') ? 'bg-pink-100 text-pink-700' :
-                      step.id.includes('storage') ? 'bg-[var(--hover)] text-gray-700' :
+                      step.category === 'Data' ? 'bg-blue-100 text-blue-700' :
+                      step.category === 'Research' ? 'bg-purple-100 text-purple-700' :
+                      step.category === 'Enrichment' ? 'bg-green-100 text-green-700' :
+                      step.category === 'Verification' ? 'bg-yellow-100 text-yellow-700' :
+                      step.category === 'Aggregation' ? 'bg-indigo-100 text-indigo-700' :
+                      step.category === 'Storage' ? 'bg-[var(--hover)] text-gray-700' :
                       'bg-blue-100 text-blue-700'
                     }`}>
-                      {step.id.includes('company-resolution') ? 'Data' :
-                       step.id.includes('executive-discovery') ? 'Research' :
-                       step.id.includes('contact-enrichment') ? 'Enrichment' :
-                       step.id.includes('verification') ? 'Verification' :
-                       step.id.includes('aggregation') ? 'Aggregation' :
-                       step.id.includes('tracking') ? 'Tracking' :
-                       step.id.includes('storage') ? 'Storage' :
-                       'Step'}
+                      {step.category || 'Step'}
                     </div>
                   </div>
                   <div className="text-sm font-medium text-[var(--foreground)]">{step.title}</div>
@@ -252,37 +244,19 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{step.id.includes('company-resolution') ? '30s' :
-                         step.id.includes('executive-discovery') ? '2m' :
-                         step.id.includes('contact-enrichment') ? '45s' :
-                         step.id.includes('verification') ? '1m' :
-                         step.id.includes('aggregation') ? '15s' :
-                         step.id.includes('tracking') ? '10s' :
-                         step.id.includes('storage') ? '5s' : '30s'}</span>
+                  <span>{step.estimatedTime || '30s'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                   </svg>
-                  <span>{step.id.includes('company-resolution') ? '$0.05' :
-                         step.id.includes('executive-discovery') ? '$0.25' :
-                         step.id.includes('contact-enrichment') ? '$0.15' :
-                         step.id.includes('verification') ? '$0.20' :
-                         step.id.includes('aggregation') ? '$0.02' :
-                         step.id.includes('tracking') ? '$0.01' :
-                         step.id.includes('storage') ? '$0.01' : '$0.05'}</span>
+                  <span>{step.estimatedCost || '$0.05'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{step.id.includes('company-resolution') ? '95%' :
-                         step.id.includes('executive-discovery') ? '85%' :
-                         step.id.includes('contact-enrichment') ? '90%' :
-                         step.id.includes('verification') ? '88%' :
-                         step.id.includes('aggregation') ? '98%' :
-                         step.id.includes('tracking') ? '99%' :
-                         step.id.includes('storage') ? '100%' : '95%'}</span>
+                  <span>{step.confidence || '95%'}</span>
                 </div>
               </div>
             </div>

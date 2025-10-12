@@ -546,6 +546,27 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--foreground)] dark:text-white mb-2">
+                      Profile Photo
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
+                        <UserIcon className="w-8 h-8 text-gray-500" />
+                      </div>
+                      <div className="flex-1">
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="w-full p-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-[var(--border)] dark:focus:border-[var(--border)]"
+                        />
+                        <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+                          Upload a profile photo (JPG, PNG, max 5MB)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--foreground)] dark:text-white mb-2">
                       Display Name
                     </label>
                     <input 

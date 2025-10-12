@@ -156,9 +156,33 @@ export async function GET(request: NextRequest) {
               nextAction: true,
               nextActionDate: true,
               assignedUserId: true,
+              ownerId: true,
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
+              owner: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  name: true,
+                  email: true
+                }
+              },
+              coSellers: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                      name: true,
+                      email: true
+                    }
+                  }
+                }
+              },
               company: {
                 select: {
                   id: true,
@@ -179,6 +203,23 @@ export async function GET(request: NextRequest) {
               return str.substring(0, maxLength) + '...';
             };
 
+            // Format owner name
+            const ownerName = person.owner 
+              ? (person.owner.firstName && person.owner.lastName 
+                  ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
+                  : person.owner.name || person.owner.email || '-')
+              : '-';
+
+            // Format co-sellers names
+            const coSellersNames = person.coSellers && person.coSellers.length > 0
+              ? person.coSellers.map((coSeller: any) => {
+                  const user = coSeller.user;
+                  return user.firstName && user.lastName 
+                    ? `${user.firstName} ${user.lastName}`.trim()
+                    : user.name || user.email || 'Unknown';
+                }).join(', ')
+              : '-';
+
             return {
               id: person.id,
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
@@ -196,10 +237,16 @@ export async function GET(request: NextRequest) {
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
               assignedUserId: person.assignedUserId || null,
+              ownerId: person.ownerId,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
-              tags: ['speedrun'] // Add speedrun tag for consistency
+              tags: ['speedrun'], // Add speedrun tag for consistency
+              // Add owner and co-sellers data
+              owner: ownerName,
+              coSellers: coSellersNames,
+              ownerData: person.owner,
+              coSellersData: person.coSellers
             };
           });
         break;

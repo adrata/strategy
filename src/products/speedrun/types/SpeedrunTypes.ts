@@ -21,6 +21,12 @@ export interface SpeedrunPerson {
   commission: string;
   stableIndex?: number | undefined;
   vertical?: string; // Add vertical field for filtering
+  // Multi-player sales fields
+  owner?: string; // Owner's name or '-'
+  coSellers?: string; // Comma-separated co-sellers names or '-'
+  ownerId?: string; // Owner's user ID
+  ownerData?: any; // Full owner user object
+  coSellersData?: any[]; // Full co-sellers user objects
   // 🔥 MONACO ENRICHMENT DATA
   customFields?: {
     monacoEnrichment?: {

@@ -21,6 +21,7 @@ import {
   getTypeIcon, 
   generateWorkflowFromAI 
 } from "./utils/workflowUtils";
+import { loadCROCFOPipeline, getPipelineMetadata } from "./utils/pipelineLoader";
 
 export default function OlympusPage() {
   const [activeTool, setActiveTool] = useState<ActiveTool>('cursor');
@@ -43,57 +44,9 @@ export default function OlympusPage() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { setSelectedStep } = useOlympus();
 
-  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>([
-    {
-      id: 'company-resolution',
-      title: 'Company Resolution',
-      description: 'Input company name, resolve domain/ID, detect size',
-      position: { x: 100, y: 100 },
-      isActive: false
-    },
-    {
-      id: 'executive-discovery',
-      title: 'Multi-Strategy Executive Discovery',
-      description: '3-tier waterfall: CoreSignal → Executive Research → AI Research (Claude)',
-      position: { x: 100, y: 220 },
-      isActive: false
-    },
-    {
-      id: 'contact-enrichment',
-      title: 'Contact Enrichment',
-      description: 'Enhance and validate contact data',
-      position: { x: 100, y: 340 },
-      isActive: false
-    },
-    {
-      id: 'parallel-verification',
-      title: 'Parallel Multi-Source Verification',
-      description: 'Run 3 verification types simultaneously (Email/Phone/Person)',
-      position: { x: 100, y: 460 },
-      isActive: false
-    },
-    {
-      id: 'result-aggregation',
-      title: 'Result Aggregation',
-      description: 'Merge results with confidence scores',
-      position: { x: 100, y: 580 },
-      isActive: false
-    },
-    {
-      id: 'efficacy-tracking',
-      title: 'Efficacy Tracking',
-      description: 'Monitor performance, costs, success rates',
-      position: { x: 100, y: 700 },
-      isActive: false
-    },
-    {
-      id: 'results-storage',
-      title: 'Results Storage',
-      description: 'Save with full audit trail',
-      position: { x: 100, y: 820 },
-      isActive: false
-    }
-  ]);
+  // Load the actual CRO-CFO pipeline structure
+  const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>(() => loadCROCFOPipeline());
+  const [pipelineMetadata] = useState(() => getPipelineMetadata());
 
   // Load active tool from localStorage on mount
   useEffect(() => {
@@ -394,7 +347,8 @@ export default function OlympusPage() {
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-[var(--foreground)]">Olympus</h1>
-                <p className="text-xs text-[var(--muted)]">CFO/CRO Discovery Pipeline</p>
+                <p className="text-xs text-[var(--muted)]">{pipelineMetadata.name}</p>
+                <p className="text-xs text-[var(--muted)]">v{pipelineMetadata.version} • {pipelineMetadata.totalSteps} steps • {pipelineMetadata.estimatedTotalTime} • {pipelineMetadata.estimatedTotalCost}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

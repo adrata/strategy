@@ -259,6 +259,7 @@ model users {
   name              String
   firstName         String?
   lastName          String?
+  profilePictureUrl String?  @db.VarChar(500)
   timezone          String?  @db.VarChar(50)
   createdAt         DateTime @default(now())
   updatedAt         DateTime
@@ -272,7 +273,8 @@ model users {
   workspace_users         workspace_users[]
   user_roles              user_roles[]
   assigned_companies      companies[]           @relation("AssignedCompanies")
-  assigned_people         people[]              @relation("AssignedPeople")
+  owned_people           people[]              @relation("OwnedPeople")
+  person_co_sellers      person_co_sellers[]
   assigned_actions        actions[]             @relation("AssignedActions")
   audit_logs              audit_logs[]
   grand_central_workflows grand_central_workflows[]
@@ -429,7 +431,7 @@ model people {
   id                String    @id @default(ulid()) @db.VarChar(30)
   workspaceId       String    @db.VarChar(30)
   companyId         String?   @db.VarChar(30)
-  assignedUserId    String?   @db.VarChar(30)
+  ownerId           String?   @db.VarChar(30)
   firstName         String    @db.VarChar(100)
   lastName          String    @db.VarChar(100)
   fullName          String    @db.VarChar(200)
@@ -484,20 +486,37 @@ model people {
 
   workspace    workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   company      companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  assignedUser users?     @relation("AssignedPeople", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  owner        users?     @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
+  coSellers    person_co_sellers[]
   actions      actions[]
 
   @@index([workspaceId])
   @@index([companyId])
-  @@index([assignedUserId])
+  @@index([ownerId])
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
-  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, ownerId, status])
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([workspaceId, buyerGroupRole])
   @@index([customFields], type: Gin)
+}
+
+/// Multi-player sales: Co-seller relationships
+model person_co_sellers {
+  id        String   @id @default(ulid())
+  personId  String   @db.VarChar(30)
+  userId    String   @db.VarChar(30)
+  createdAt DateTime @default(now())
+
+  person people @relation(fields: [personId], references: [id], onDelete: Cascade)
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, userId])
+  @@index([personId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 /// Activity and task tracking

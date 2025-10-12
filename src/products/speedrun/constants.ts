@@ -9,22 +9,22 @@ export const STRATEGY_WEIGHTS = {
   revenue: { speed: 0.2, revenue: 0.8 },
 };
 
-// Role-based weekly targets
+// Role-based weekly targets (updated defaults)
 export const DEFAULT_WEEKLY_TARGETS = {
-  AE: 400,
+  AE: 250,
   SDR: 25,
   CSM: 10,
   VP: 8,
-  other: 400,
+  other: 250,
 };
 
-// Role-based daily targets (roughly weekly / 4 working days)
+// Role-based daily targets (roughly weekly / 5 working days)
 export const DEFAULT_DAILY_TARGETS = {
-  AE: 30,
+  AE: 50,
   SDR: 5,
   CSM: 2,
   VP: 2,
-  other: 30,
+  other: 50,
 };
 
 // Company size revenue multipliers
@@ -126,7 +126,7 @@ export const TIMEZONE_CALLING_PRIORITY = {
 };
 
 // Default daily target for lead generation
-export const DAILY_TARGET = 30;
+export const DAILY_TARGET = 50;
 
 // Email engagement score thresholds
 export const EMAIL_ENGAGEMENT_THRESHOLDS = {

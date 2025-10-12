@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   XMarkIcon,
   Cog6ToothIcon,
@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { SpeedrunUserSettings } from "./types";
 import { resetSpeedrunToDefaults } from "./state";
+import { useAuth } from "@/lib/auth";
 
 interface SpeedrunSettingsProps {
   settings: SpeedrunUserSettings;
@@ -20,6 +21,36 @@ export function SpeedrunSettings({
 }: SpeedrunSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [localSettings, setLocalSettings] = useState(settings);
+  const [workspaceSettings, setWorkspaceSettings] = useState({
+    dailyTarget: 50,
+    weeklyTarget: 250,
+  });
+  const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);
+  const { authUser } = useAuth();
+
+  // Load workspace settings on mount
+  useEffect(() => {
+    const loadWorkspaceSettings = async () => {
+      if (!authUser?.activeWorkspaceId) return;
+      
+      try {
+        setIsLoadingWorkspace(true);
+        const response = await fetch(
+          `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setWorkspaceSettings(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to load workspace settings:', error);
+      } finally {
+        setIsLoadingWorkspace(false);
+      }
+    };
+
+    loadWorkspaceSettings();
+  }, [authUser?.activeWorkspaceId]);
 
   const handleSave = async () => {
     try {
@@ -28,6 +59,38 @@ export function SpeedrunSettings({
     } catch (error) {
       console.error("Failed to save settings:", error);
       // Could add error UI feedback here
+    }
+  };
+
+  const handleSaveWorkspaceSettings = async () => {
+    if (!authUser?.activeWorkspaceId) return;
+    
+    try {
+      setIsLoadingWorkspace(true);
+      const response = await fetch('/api/workspace/speedrun-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workspaceId: authUser.activeWorkspaceId,
+          dailyTarget: workspaceSettings.dailyTarget,
+          weeklyTarget: workspaceSettings.weeklyTarget,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setWorkspaceSettings(data.data);
+        // Show success message
+        console.log('Workspace settings saved successfully');
+      } else {
+        console.error('Failed to save workspace settings');
+      }
+    } catch (error) {
+      console.error('Error saving workspace settings:', error);
+    } finally {
+      setIsLoadingWorkspace(false);
     }
   };
 
@@ -76,27 +139,103 @@ export function SpeedrunSettings({
             </div>
 
             <div className="space-y-6">
-              {/* Weekly Target */}
-              <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                  Weekly Contact Target
-                </label>
-                <input
-                  type="number"
-                  min="5"
-                  max="500"
-                  value={localSettings.weeklyTarget}
-                  onChange={(e) =>
-                    setLocalSettings((prev) => ({
-                      ...prev,
-                      weeklyTarget: parseInt(e.target.value) || 20,
-                    }))
-                  }
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-[var(--muted)] mt-1">
-                  How many contacts you want to reach out to each week
+              {/* Workspace Settings Section */}
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                  Workspace Settings
+                </h3>
+                <p className="text-sm text-[var(--muted)] mb-4">
+                  Configure default targets for all users in this workspace
                 </p>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Daily Target */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      Daily Target
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="1000"
+                      value={workspaceSettings.dailyTarget}
+                      onChange={(e) =>
+                        setWorkspaceSettings((prev) => ({
+                          ...prev,
+                          dailyTarget: parseInt(e.target.value) || 50,
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-[var(--muted)] mt-1">
+                      Contacts per day
+                    </p>
+                  </div>
+
+                  {/* Weekly Target */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      Weekly Target
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5000"
+                      value={workspaceSettings.weeklyTarget}
+                      onChange={(e) =>
+                        setWorkspaceSettings((prev) => ({
+                          ...prev,
+                          weeklyTarget: parseInt(e.target.value) || 250,
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-[var(--muted)] mt-1">
+                      Contacts per week
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Save Workspace Settings Button */}
+                <div className="mt-4">
+                  <button
+                    onClick={handleSaveWorkspaceSettings}
+                    disabled={isLoadingWorkspace}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isLoadingWorkspace ? 'Saving...' : 'Save Workspace Settings'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Personal Settings Section */}
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                  Personal Settings
+                </h3>
+                
+                {/* Weekly Target */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    Weekly Contact Target
+                  </label>
+                  <input
+                    type="number"
+                    min="5"
+                    max="500"
+                    value={localSettings.weeklyTarget}
+                    onChange={(e) =>
+                      setLocalSettings((prev) => ({
+                        ...prev,
+                        weeklyTarget: parseInt(e.target.value) || 20,
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-[var(--muted)] mt-1">
+                    How many contacts you want to reach out to each week
+                  </p>
+                </div>
               </div>
 
               {/* Role */}

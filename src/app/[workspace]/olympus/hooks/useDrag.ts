@@ -55,9 +55,9 @@ export const useDrag = (
         const mouseX = (mouseEvent.clientX - canvasRect.left - pan.x) / zoom;
         const mouseY = (mouseEvent.clientY - canvasRect.top - pan.y) / zoom;
         
-        // Calculate new position using step's current position as base and adding mouse delta
-        const newX = step.position.x + (mouseX - (step.position.x + startX));
-        const newY = step.position.y + (mouseY - (step.position.y + startY));
+        // Calculate new position more simply - just offset from mouse position
+        const newX = mouseX - startX;
+        const newY = mouseY - startY;
         
         // Update drag position for CSS transform (no re-renders!)
         setDragPosition({ x: newX, y: newY });

@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAtrium } from "../layout";
 import { AtriumDocument } from "../types/document";
+import { generateSlug } from "@/platform/utils/url-utils";
 import { 
   DocumentTextIcon,
   PresentationChartBarIcon,
@@ -16,12 +18,13 @@ import {
 } from "@heroicons/react/24/outline";
 
 export function DocumentList() {
+  const router = useRouter();
   const {
     activeTab,
     searchQuery,
     selectedDocumentType,
     currentFolderId,
-    setViewingDocument,
+    workspace,
   } = useAtrium();
 
   const [documents, setDocuments] = useState<AtriumDocument[]>([]);
@@ -299,7 +302,11 @@ console.log('Total:', total);
             return (
               <div
                 key={document.id}
-                onClick={() => setViewingDocument(document)}
+                onClick={() => {
+                  const slug = generateSlug(document.title, document.id);
+                  const workspaceSlug = workspace?.slug || 'default';
+                  router.push(`/${workspaceSlug}/atrium/${slug}`);
+                }}
                 className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-[var(--panel-background)] cursor-pointer group"
               >
                 {/* Name */}

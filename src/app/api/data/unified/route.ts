@@ -19,6 +19,33 @@ import * as jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { createEntityRecord } from '@/platform/services/entity/entityService';
 
+// Helper function to extract company name from email domain
+function extractCompanyFromEmail(email: string): string | null {
+  if (!email || !email.includes('@')) return null;
+  
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return null;
+  
+  // Skip personal email domains
+  const personalDomains = new Set([
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+    'icloud.com', 'me.com', 'mac.com', 'live.com', 'msn.com'
+  ]);
+  
+  if (personalDomains.has(domain)) return null;
+  
+  // Convert domain to company name
+  const companyName = domain
+    .replace(/\.(com|org|net|gov|edu|co|io|ai|tech)$/, '')
+    .replace(/[^a-z0-9]/g, ' ')
+    .split(' ')
+    .filter(word => word.length > 0)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+    
+  return companyName || null;
+}
+
 
 // Import proper secure API helper
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
@@ -3708,9 +3735,9 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           email: person.email || '',
           phone: person.phone || '',
           title: person.jobTitle || 'Title',
-          company: person.company?.name || 'Unknown Company',
+          company: person.company?.name || (person.email ? extractCompanyFromEmail(person.email) : 'Unknown Company'),
           location: person.company?.city || person.company?.state || '',
-          status: 'active',
+          status: person.status || 'Lead',
           priority: 'high',
           source: 'speedrun',
           createdAt: person.createdAt,
@@ -4241,6 +4268,30 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           customFields: true,
           companyId: true,
           globalRank: true, // Include rank field for proper ordering
+          ownerId: true,
+          owner: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              name: true,
+              email: true
+            }
+          },
+          coSellers: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  name: true,
+                  email: true
+                }
+              }
+            }
+          },
           company: {
             select: {
               id: true,
@@ -4313,9 +4364,9 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       nextActionDate: person.nextActionDate,
       customFields: person.customFields,
       companyId: person.companyId,
-      // Use database company data (same as People list) - show dash for empty companies
-      company: person.company?.name || '-',
-      companyName: person.company?.name || '-',
+      // Use database company data (same as People list) - extract from email if no company
+      company: person.company?.name || (person.email ? extractCompanyFromEmail(person.email) : '-'),
+      companyName: person.company?.name || (person.email ? extractCompanyFromEmail(person.email) : '-'),
       industry: person.company?.industry || null,
       vertical: person.company?.vertical || null,
       companySize: person.company?.size || null,
@@ -4394,6 +4445,23 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
       else if (record.status === 'qualified') currentStage = 'Qualified';
       else if (record.status === 'opportunity') currentStage = 'Opportunity';
       
+      // Format owner name
+      const ownerName = record.owner 
+        ? (record.owner.firstName && record.owner.lastName 
+            ? `${record.owner.firstName} ${record.owner.lastName}`.trim()
+            : record.owner.name || record.owner.email || '-')
+        : '-';
+
+      // Format co-sellers names
+      const coSellersNames = record.coSellers && record.coSellers.length > 0
+        ? record.coSellers.map((coSeller: any) => {
+            const user = coSeller.user;
+            return user.firstName && user.lastName 
+              ? `${user.firstName} ${user.lastName}`.trim()
+              : user.name || user.email || 'Unknown';
+          }).join(', ')
+        : '-';
+
       return {
         id: record.id,
         // Handle both prospects and people data structures
@@ -4428,7 +4496,13 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         stage: currentStage,
         state: (record as any).state || (record as any).city || 'State',
         jobTitle: record.jobTitle || record.title || 'Title',
-        companyName: (typeof record.company === 'object' && record.company?.name) || record.company || '-'
+        companyName: (typeof record.company === 'object' && record.company?.name) || record.company || '-',
+        // Add owner and co-sellers data
+        owner: ownerName,
+        coSellers: coSellersNames,
+        ownerId: record.ownerId,
+        ownerData: record.owner,
+        coSellersData: record.coSellers
       };
     });
     

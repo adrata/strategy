@@ -21,6 +21,7 @@ import { getCategoryColors } from '@/platform/config/color-palette';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
+import { useWorkspaceSpeedrunSettings } from '@/platform/hooks/useWorkspaceSpeedrunSettings';
 import { 
   ChevronDownIcon,
   CheckCircleIcon,
@@ -511,6 +512,7 @@ export function PipelineHeader({
         return {
           title: 'Speedrun',
           subtitle: 'Win more, faster',
+          actionButton: 'Add Action',
           secondaryActionButton: 'Start Speedrun',
           showStartSpeedrun: true
         };
@@ -568,6 +570,9 @@ export function PipelineHeader({
 
   const sectionInfo = getSectionInfo();
 
+  // Get workspace speedrun settings
+  const { settings: workspaceSettings } = useWorkspaceSpeedrunSettings();
+
   // Format metrics for display
   const formatMetrics = async (): Promise<MetricItem[]> => {
     const metricItems: MetricItem[] = [];
@@ -596,14 +601,14 @@ export function PipelineHeader({
           metricItems.push({
             label: 'Today',
             value: timeData.todayProgress,
-            target: 50, // Speedrun target - top 50 people
+            target: workspaceSettings.dailyTarget, // Use workspace daily target
             isProgress: true,
             color: 'text-[var(--foreground)]'
           });
           metricItems.push({
             label: 'This Week',
             value: timeData.weekProgress,
-            target: 50, // Speedrun weekly target - top 50 people
+            target: workspaceSettings.weeklyTarget, // Use workspace weekly target
             isProgress: true,
             color: 'text-[var(--foreground)]'
           });

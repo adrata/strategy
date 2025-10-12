@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { AtriumDocument } from "../types/document";
 import { PaperEditorWrapper } from "./editors/PaperEditorWrapper";
 import { CodeEditorWrapper } from "./editors/CodeEditorWrapper";
 import { MatrixEditor } from "../editors/MatrixEditor";
+import { generateSlug } from "@/platform/utils/url-utils";
 import { 
   ArrowLeftIcon,
   PencilIcon,
@@ -26,6 +28,7 @@ interface DocumentViewerProps {
 }
 
 export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode, onShare }: DocumentViewerProps) {
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = useCallback(async (content: any) => {
@@ -257,7 +260,22 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
             <ArrowLeftIcon className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
-            <span>All Files</span>
+            <button
+              onClick={() => {
+                // Navigate back to atrium main page
+                const currentPath = window.location.pathname;
+                const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+                if (workspaceMatch) {
+                  const workspaceSlug = workspaceMatch[1];
+                  router.push(`/${workspaceSlug}/atrium`);
+                } else {
+                  router.push('/atrium');
+                }
+              }}
+              className="hover:text-[var(--foreground)] transition-colors"
+            >
+              All Files
+            </button>
             <span>/</span>
             <span className="text-[var(--foreground)] font-medium">{document.title}</span>
           </div>

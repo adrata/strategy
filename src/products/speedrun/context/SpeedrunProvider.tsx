@@ -14,6 +14,7 @@ import {
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
+import { useAuth } from "@/lib/auth";
 
 export interface SpeedrunPerson {
   id: number;
@@ -122,6 +123,7 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
 
   const pathname = usePathname();
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
+  const { authUser } = useAuth();
 
   // Get authenticated user and action platform data with error handling
   let user: any = null;
@@ -173,6 +175,40 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
       };
     }
   });
+
+  // Workspace settings state
+  const [workspaceSettings, setWorkspaceSettings] = useState({
+    dailyTarget: 50,
+    weeklyTarget: 250,
+  });
+
+  // Load workspace settings on mount
+  React.useEffect(() => {
+    const loadWorkspaceSettings = async () => {
+      if (!authUser?.activeWorkspaceId) return;
+      
+      try {
+        const response = await fetch(
+          `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setWorkspaceSettings(data.data);
+          
+          // Update user settings with workspace defaults
+          setUserSettings(prev => ({
+            ...prev,
+            dailyTarget: data.data.dailyTarget,
+            weeklyTarget: data.data.weeklyTarget,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to load workspace settings:', error);
+      }
+    };
+
+    loadWorkspaceSettings();
+  }, [authUser?.activeWorkspaceId]);
 
   // Core state
   const [isSpeedrunStarted] = useState(true); // Always start Speedrun immediately

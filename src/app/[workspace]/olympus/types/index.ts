@@ -4,6 +4,13 @@ export interface WorkflowStep {
   description: string;
   position: { x: number; y: number };
   isActive: boolean;
+  category?: 'Data' | 'Research' | 'Enrichment' | 'Verification' | 'Aggregation' | 'Storage';
+  estimatedTime?: string;
+  estimatedCost?: string;
+  confidence?: string;
+  functionName?: string;
+  dependencies?: string[];
+  parallel?: boolean;
 }
 
 export interface WorkflowConnection {

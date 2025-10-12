@@ -17,6 +17,33 @@ import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 import { useUnifiedAuth } from '@/platform/auth';
 
+// Helper function to extract company name from email domain
+function extractCompanyFromEmail(email: string): string | null {
+  if (!email || !email.includes('@')) return null;
+  
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return null;
+  
+  // Skip personal email domains
+  const personalDomains = new Set([
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
+    'icloud.com', 'me.com', 'mac.com', 'live.com', 'msn.com'
+  ]);
+  
+  if (personalDomains.has(domain)) return null;
+  
+  // Convert domain to company name
+  const companyName = domain
+    .replace(/\.(com|org|net|gov|edu|co|io|ai|tech)$/, '')
+    .replace(/[^a-z0-9]/g, ' ')
+    .split(' ')
+    .filter(word => word.length > 0)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+    
+  return companyName || null;
+}
+
 // Helper function to determine vertical from prospect/lead data
 function determineVerticalFromData(data: any): string {
   const company = (data.company || data.companyName || "").toLowerCase();
@@ -117,16 +144,30 @@ export function useSpeedrunDataLoader() {
       console.log(`📊 [DATA LOADED] ${rawData.length} raw speedrun items`);
 
       // Transform and rank data
-      const transformedData: SpeedrunPerson[] = rawData.map((item: any) => ({
-        id: item.id || `speedrun-${Math.random()}`,
-        name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
-        email: item.email || '',
-        company: item.company || item.companyName || 'Unknown Company',
-        title: item.title || item.jobTitle || 'Unknown Title',
+      const transformedData: SpeedrunPerson[] = rawData.map((item: any) => {
+        // Try to get company from multiple sources
+        let company = item.company || item.companyName;
+        
+        // If no company found, try to extract from email domain
+        if (!company || company === 'Unknown Company' || company === '-') {
+          const emailCompany = extractCompanyFromEmail(item.email);
+          if (emailCompany) {
+            company = emailCompany;
+          } else {
+            company = 'Unknown Company';
+          }
+        }
+        
+        return {
+          id: item.id || `speedrun-${Math.random()}`,
+          name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
+          email: item.email || '',
+          company: company,
+          title: item.title || item.jobTitle || 'Unknown Title',
         phone: item.phone || item.phoneNumber || '',
         location: item.location || item.city || '',
         industry: item.industry || determineVerticalFromData(item),
-        status: item.status || 'active',
+        status: item.status || 'Lead',
         priority: item.priority || 'medium',
         lastContact: item.lastContact || item.updatedAt,
         notes: item.notes || '',

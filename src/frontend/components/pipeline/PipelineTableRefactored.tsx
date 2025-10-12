@@ -420,28 +420,36 @@ export function PipelineTable({
                         }
                         break;
                       case 'status':
-                        // For sellers, show online/offline status with indicator
-                        const metadata = record['metadata'] || {};
-                        const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
-                        const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
-                        
-                        if (isOnline) {
-                          cellContent = 'Online';
-                        } else if (lastSeen) {
-                          const lastSeenDate = new Date(lastSeen);
-                          const now = new Date();
-                          const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
-                          
-                          if (diffHours < 1) {
-                            cellContent = 'Online';
-                          } else if (diffHours < 24) {
-                            cellContent = `Offline (${diffHours}h ago)`;
-                          } else {
-                            const diffDays = Math.floor(diffHours / 24);
-                            cellContent = `Offline (${diffDays}d ago)`;
-                          }
+                        // Check if this is a lead/person status (LEAD, PROSPECT, OPPORTUNITY, etc.)
+                        const personStatus = record['status'];
+                        if (personStatus && typeof personStatus === 'string' && 
+                            ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client'].includes(personStatus)) {
+                          // Display lead pipeline status
+                          cellContent = personStatus;
                         } else {
-                          cellContent = 'Offline';
+                          // For sellers, show online/offline status with indicator
+                          const metadata = record['metadata'] || {};
+                          const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
+                          const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
+                          
+                          if (isOnline) {
+                            cellContent = 'Online';
+                          } else if (lastSeen) {
+                            const lastSeenDate = new Date(lastSeen);
+                            const now = new Date();
+                            const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
+                            
+                            if (diffHours < 1) {
+                              cellContent = 'Online';
+                            } else if (diffHours < 24) {
+                              cellContent = `Offline (${diffHours}h ago)`;
+                            } else {
+                              const diffDays = Math.floor(diffHours / 24);
+                              cellContent = `Offline (${diffDays}d ago)`;
+                            }
+                          } else {
+                            cellContent = 'Offline';
+                          }
                         }
                         break;
                       default:
@@ -471,34 +479,53 @@ export function PipelineTable({
                         ) : header.toLowerCase() === 'status' ? (
                           <div className="flex items-center gap-2">
                             {(() => {
-                              const metadata = record['metadata'] || {};
-                              const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
-                              const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
-                              
+                              // Check if this is a lead/person status (LEAD, PROSPECT, OPPORTUNITY, etc.)
+                              const personStatus = record['status'];
                               let statusColor = 'bg-[var(--hover)] text-gray-800';
                               let statusIcon = '●';
                               
-                              if (isOnline) {
-                                statusColor = 'bg-green-100 text-green-800';
+                              if (personStatus && typeof personStatus === 'string' && 
+                                  ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client'].includes(personStatus)) {
+                                // Apply theme colors for lead pipeline status
+                                const statusLower = personStatus.toLowerCase();
+                                if (statusLower === 'lead' || statusLower === 'new') {
+                                  statusColor = 'bg-orange-50 text-orange-700 border border-orange-200'; // Orange theme (leads)
+                                } else if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
+                                  statusColor = 'bg-blue-50 text-blue-700 border border-blue-200'; // Blue theme (prospects)
+                                } else if (statusLower === 'opportunity') {
+                                  statusColor = 'bg-indigo-50 text-indigo-700 border border-indigo-200'; // Indigo theme (opportunities)
+                                } else if (statusLower === 'customer' || statusLower === 'client') {
+                                  statusColor = 'bg-green-50 text-green-700 border border-green-200'; // Green theme (customers)
+                                }
                                 statusIcon = '●';
-                              } else if (lastSeen) {
-                                const lastSeenDate = new Date(lastSeen);
-                                const now = new Date();
-                                const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
+                              } else {
+                                // For sellers, show online/offline status with indicator
+                                const metadata = record['metadata'] || {};
+                                const isOnline = record['isOnline'] || record['status'] === 'online' || metadata['isOnline'] || metadata['status'] === 'online' || record['lastSeen'] || metadata['lastSeen'];
+                                const lastSeen = record['lastSeen'] || record['lastActivity'] || metadata['lastSeen'] || metadata['lastActivity'];
                                 
-                                if (diffHours < 1) {
+                                if (isOnline) {
                                   statusColor = 'bg-green-100 text-green-800';
                                   statusIcon = '●';
-                                } else if (diffHours < 24) {
-                                  statusColor = 'bg-yellow-100 text-yellow-800';
-                                  statusIcon = '●';
+                                } else if (lastSeen) {
+                                  const lastSeenDate = new Date(lastSeen);
+                                  const now = new Date();
+                                  const diffHours = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60));
+                                  
+                                  if (diffHours < 1) {
+                                    statusColor = 'bg-green-100 text-green-800';
+                                    statusIcon = '●';
+                                  } else if (diffHours < 24) {
+                                    statusColor = 'bg-yellow-100 text-yellow-800';
+                                    statusIcon = '●';
+                                  } else {
+                                    statusColor = 'bg-[var(--hover)] text-gray-800';
+                                    statusIcon = '●';
+                                  }
                                 } else {
                                   statusColor = 'bg-[var(--hover)] text-gray-800';
                                   statusIcon = '●';
                                 }
-                              } else {
-                                statusColor = 'bg-[var(--hover)] text-gray-800';
-                                statusIcon = '●';
                               }
                               
                               return (

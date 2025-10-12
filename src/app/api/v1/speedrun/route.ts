@@ -148,9 +148,33 @@ export async function GET(request: NextRequest) {
         nextAction: true,
         nextActionDate: true,
         assignedUserId: true,
+        ownerId: true,
         workspaceId: true,
         createdAt: true,
         updatedAt: true,
+        owner: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            name: true,
+            email: true
+          }
+        },
+        coSellers: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        },
         company: {
           select: {
             id: true,
@@ -164,34 +188,59 @@ export async function GET(request: NextRequest) {
     });
 
     // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
-    const speedrunData = speedrunPeople.map((person, index) => ({
-      id: person.id,
-      rank: index + 1, // Sequential ranking starting from 1
-      name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-      company: person.company?.name || 'Unknown Company',
-      title: person.jobTitle || 'Unknown Title',
-      email: person.email || '',
-      phone: person.phone || '',
-      linkedin: person.linkedinUrl || '',
-      status: person.status || 'Unknown',
-      globalRank: person.globalRank || 0,
-      lastAction: person.lastAction || 'No action taken',
-      lastActionDate: person.lastActionDate || null,
-      nextAction: person.nextAction || 'No next action',
-      nextActionDate: person.nextActionDate || null,
-      assignedUserId: person.assignedUserId || null,
-      workspaceId: person.workspaceId,
-      createdAt: person.createdAt,
-      updatedAt: person.updatedAt,
-      company: person.company ? {
-        id: person.company.id,
-        name: person.company.name,
-        industry: person.company.industry || '',
-        size: person.company.size || '',
-        globalRank: person.company.globalRank || 0
-      } : null,
-      tags: ['speedrun'] // Add speedrun tag for consistency
-    }));
+    const speedrunData = speedrunPeople.map((person, index) => {
+      // Format owner name
+      const ownerName = person.owner 
+        ? (person.owner.firstName && person.owner.lastName 
+            ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
+            : person.owner.name || person.owner.email || '-')
+        : '-';
+
+      // Format co-sellers names
+      const coSellersNames = person.coSellers && person.coSellers.length > 0
+        ? person.coSellers.map((coSeller: any) => {
+            const user = coSeller.user;
+            return user.firstName && user.lastName 
+              ? `${user.firstName} ${user.lastName}`.trim()
+              : user.name || user.email || 'Unknown';
+          }).join(', ')
+        : '-';
+
+      return {
+        id: person.id,
+        rank: index + 1, // Sequential ranking starting from 1
+        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+        company: person.company?.name || 'Unknown Company',
+        title: person.jobTitle || 'Unknown Title',
+        email: person.email || '',
+        phone: person.phone || '',
+        linkedin: person.linkedinUrl || '',
+        status: person.status || 'Unknown',
+        globalRank: person.globalRank || 0,
+        lastAction: person.lastAction || 'No action taken',
+        lastActionDate: person.lastActionDate || null,
+        nextAction: person.nextAction || 'No next action',
+        nextActionDate: person.nextActionDate || null,
+        assignedUserId: person.assignedUserId || null,
+        ownerId: person.ownerId,
+        workspaceId: person.workspaceId,
+        createdAt: person.createdAt,
+        updatedAt: person.updatedAt,
+        company: person.company ? {
+          id: person.company.id,
+          name: person.company.name,
+          industry: person.company.industry || '',
+          size: person.company.size || '',
+          globalRank: person.company.globalRank || 0
+        } : null,
+        tags: ['speedrun'], // Add speedrun tag for consistency
+        // Add owner and co-sellers data
+        owner: ownerName,
+        coSellers: coSellersNames,
+        ownerData: person.owner,
+        coSellersData: person.coSellers
+      };
+    });
 
     const result = {
       success: true,

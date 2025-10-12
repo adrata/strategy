@@ -449,13 +449,13 @@ export function OverviewTab({
               <span
                 className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold ${
                   person['status'] === "Opportunity"
-                    ? "bg-blue-500 text-white"
+                    ? "bg-[#EEF2FF] text-[#3730A3] border border-[#A5B4FC]"
                     : person['status'] === "Customer"
                       ? "bg-green-100 text-green-800"
                       : person['status'] === "Prospect"
-                        ? "bg-blue-100 text-blue-800"
-                        : person['status'] === "New"
-                          ? "bg-amber-100 text-amber-800"
+                        ? "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"
+                        : person['status'] === "New" || person['status'] === "Lead"
+                          ? "bg-[#FFF7ED] text-[#9A3412] border border-[#FDBA74]"
                           : "bg-[var(--hover)] text-gray-800"
                 }`}
               >

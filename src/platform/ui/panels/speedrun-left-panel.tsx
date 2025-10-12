@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-context";
+import { useWorkspaceSpeedrunSettings } from "@/platform/hooks/useWorkspaceSpeedrunSettings";
 import { 
   FireIcon,
   ChevronLeftIcon,
@@ -42,6 +43,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   const router = useRouter();
   const { navigateToPipeline } = useWorkspaceNavigation();
   const pathname = usePathname();
+  const { settings: workspaceSettings } = useWorkspaceSpeedrunSettings();
   
   // Use AcquisitionOS context for proper sync with middle panel
   const {
@@ -448,12 +450,21 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "prospect": return "bg-[var(--background)] text-gray-800 border border-[var(--border)]";
-      case "contacted": return "bg-[var(--hover)] text-[var(--foreground)] border border-[var(--border)]";
-      case "qualified": return "bg-[var(--loading-bg)] text-[var(--foreground)] border border-gray-400";
-      default: return "bg-[var(--background)] text-gray-800 border border-[var(--border)]";
+    const statusLower = status?.toLowerCase() || '';
+    
+    // Match theme colors from color-palette.ts
+    if (statusLower === 'lead' || statusLower === 'new') {
+      return "bg-[#FFF7ED] text-[#9A3412] border border-[#FDBA74]"; // Orange theme (leads)
     }
+    if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
+      return "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"; // Blue theme (prospects)
+    }
+    if (statusLower === 'opportunity') {
+      return "bg-[#EEF2FF] text-[#3730A3] border border-[#A5B4FC]"; // Indigo theme (opportunities)
+    }
+    
+    // Default fallback
+    return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
   };
 
   return (
@@ -542,7 +553,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Today's Priority</h3>
           <span className="text-xs text-[var(--muted)]">
-            {activeContacts.length >= 50 ? `50 of ${activeContacts.length}` : `${activeContacts.length}`} contacts
+            {activeContacts.length >= workspaceSettings.dailyTarget ? `${workspaceSettings.dailyTarget} of ${activeContacts.length}` : `${activeContacts.length}`} contacts
           </span>
         </div>
         
@@ -584,22 +595,22 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             <div className="mb-4 p-3 bg-[var(--panel-background)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-gray-700">Daily Progress</span>
-                <span className="text-xs text-[var(--muted)]">{doneContacts.length}/50</span>
+                <span className="text-xs text-[var(--muted)]">{doneContacts.length}/{workspaceSettings.dailyTarget}</span>
               </div>
               <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
                 <div 
                   className="bg-red-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min(100, (doneContacts.length / 50) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (doneContacts.length / workspaceSettings.dailyTarget) * 100)}%` }}
                 ></div>
               </div>
               <div className="text-xs text-[var(--muted)] mt-1">
-                {50 - doneContacts.length} contacts remaining
+                {workspaceSettings.dailyTarget - doneContacts.length} contacts remaining
               </div>
             </div>
 
             {(() => {
-              // Dynamic display logic: show 50 contacts when user has 50+, otherwise show all
-              const displayLimit = activeContacts.length >= 50 ? 50 : activeContacts.length;
+              // Dynamic display logic: show daily target contacts when user has that many+, otherwise show all
+              const displayLimit = activeContacts.length >= workspaceSettings.dailyTarget ? workspaceSettings.dailyTarget : activeContacts.length;
               const contactsToShow = activeContacts.slice(0, displayLimit);
               
               return contactsToShow.map((contact) => (
@@ -638,9 +649,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             })()}
             
             {/* Show "more contacts" indicator when displaying limited view */}
-            {activeContacts.length > 50 && (
+            {activeContacts.length > workspaceSettings.dailyTarget && (
               <div className="mt-3 p-2 text-center text-xs text-[var(--muted)] bg-[var(--panel-background)] rounded">
-                Showing 50 of {activeContacts.length} contacts
+                Showing {workspaceSettings.dailyTarget} of {activeContacts.length} contacts
                 <br />
                 <span className="text-xs font-medium">Complete contacts to see more in your daily queue</span>
               </div>
@@ -661,7 +672,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Goals</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
-                      <div className="font-bold text-[var(--foreground)]">50</div>
+                      <div className="font-bold text-[var(--foreground)]">{workspaceSettings.dailyTarget}</div>
                       <div className="text-[var(--muted)]">Contacts</div>
                     </div>
                     <div className="text-center">

@@ -83,6 +83,10 @@ model workspaces {
   updatedAt       DateTime
   isActive        Boolean           @default(true)
   deletedAt       DateTime?
+  
+  // Speedrun settings
+  speedrunDailyTarget  Int? @default(50)
+  speedrunWeeklyTarget Int? @default(250)
   actions         actions[]
   audit_logs      audit_logs[]
   auth_sessions   auth_sessions[]

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAtrium } from "../layout";
 import { AtriumDocument } from "../types/document";
+import { extractIdFromSlug } from "@/platform/utils/url-utils";
 import { PaperEditor } from "../editors/PaperEditor";
 import { CodeEditor } from "../editors/CodeEditor";
 import { MatrixEditor } from "../editors/MatrixEditor";
@@ -27,11 +28,45 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const documentId = params.id as string;
+  const slug = params.id as string;
+  const documentId = extractIdFromSlug(slug);
 
   // Load document
   useEffect(() => {
-    if (!documentId || !workspace) return;
+    if (!documentId || !workspace) {
+      // If we can't extract an ID from the slug, try using the slug directly (backward compatibility)
+      const fallbackId = slug;
+      if (!fallbackId) return;
+      
+      const loadDocumentWithFallback = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+
+          const response = await fetch(`/api/atrium/documents/${fallbackId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to load document: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          setDocument(data);
+        } catch (err) {
+          console.error('Error loading document:', err);
+          setError(err instanceof Error ? err.message : 'Failed to load document');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      loadDocumentWithFallback();
+      return;
+    }
 
     const loadDocument = async () => {
       try {
@@ -60,7 +95,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
     };
 
     loadDocument();
-  }, [documentId, workspace]);
+  }, [documentId, workspace, slug]);
 
   const handleSave = useCallback(async (content: any) => {
     if (!document) return;

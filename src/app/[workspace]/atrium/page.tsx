@@ -9,6 +9,8 @@ import { UploadModal } from "./components/UploadModal";
 import { DocumentTypeSelector } from "./components/DocumentTypeSelector";
 import { ShareModal } from "./components/ShareModal";
 import { StandardHeader } from "@/platform/ui/components/layout/StandardHeader";
+import { generateSlug } from "@/platform/utils/url-utils";
+import { useRouter } from "next/navigation";
 import { 
   PlusIcon, 
   MagnifyingGlassIcon,
@@ -21,6 +23,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function AtriumPage() {
+  const router = useRouter();
   const {
     selectedDocument,
     selectedFolder,
@@ -42,6 +45,7 @@ export default function AtriumPage() {
     setIsCreateModalOpen,
     isShareModalOpen,
     setIsShareModalOpen,
+    workspace,
   } = useAtrium();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -55,20 +59,51 @@ export default function AtriumPage() {
     document.title = "Atrium • Documents";
   }, []);
 
-  const handleCreateDocument = useCallback((documentType: string) => {
-    // Create a new document with temporary ID
-    const newDocument = {
-      id: `new-${Date.now()}`,
-      title: `New ${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
-      documentType: documentType,
-      content: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    setViewingDocument(newDocument);
-    setIsCreateModalOpen(false);
-  }, [setIsCreateModalOpen, setViewingDocument]);
+  const handleCreateDocument = useCallback(async (documentType: string) => {
+    try {
+      // Create a new document via API
+      const response = await fetch('/api/atrium/documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: `New ${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
+          documentType: documentType,
+          workspaceId: workspace?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create document');
+      }
+
+      const newDocument = await response.json();
+      
+      // Generate slug for navigation
+      const slug = generateSlug(newDocument.title, newDocument.id);
+      const workspaceSlug = workspace?.slug || 'default';
+      
+      // Navigate to the new document using slug-based URL
+      router.push(`/${workspaceSlug}/atrium/${slug}`);
+      
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error('Error creating document:', error);
+      // Fallback to old behavior if API fails
+      const newDocument = {
+        id: `new-${Date.now()}`,
+        title: `New ${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
+        documentType: documentType,
+        content: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      setViewingDocument(newDocument);
+      setIsCreateModalOpen(false);
+    }
+  }, [setIsCreateModalOpen, setViewingDocument, workspace, router]);
 
   const handleUploadFiles = useCallback(() => {
     setIsUploadModalOpen(true);

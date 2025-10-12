@@ -110,15 +110,7 @@ function onError(error: Error) {
 }
 
 function Placeholder({ hasContent }: { hasContent: boolean }) {
-  if (hasContent) {
-    return null;
-  }
-  
-  return (
-    <div className="editor-placeholder" style={{ fontFamily: 'inherit', textAlign: 'left', marginTop: 0 }}>
-      Start writing your document...
-    </div>
-  );
+  return null;
 }
 
 function ToolbarPlugin() {
