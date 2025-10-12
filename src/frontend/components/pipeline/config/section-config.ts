@@ -29,7 +29,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'leads',
     label: 'Leads',
     dataSource: 'leads',
-    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
     availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
@@ -79,7 +79,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'prospects',
     label: 'Prospects',
     dataSource: 'prospects',
-    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
     availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
@@ -217,7 +217,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'people',
     label: 'People',
     dataSource: 'people',
-    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'department', 'location', 'status'],
+    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'department', 'location', 'status'],
     availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
     sortOptions: [
       { value: 'name', label: 'Name' },
@@ -356,7 +356,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
 
 // Helper functions
 export function getSectionConfig(section: string): SectionConfig {
-  return SECTION_CONFIGURATIONS[section] || SECTION_CONFIGURATIONS.leads;
+  return SECTION_CONFIGURATIONS[section] || SECTION_CONFIGURATIONS['leads'];
 }
 
 export function getSectionDefaultColumns(section: string): string[] {

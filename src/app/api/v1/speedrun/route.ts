@@ -48,11 +48,7 @@ export async function GET(request: NextRequest) {
     const fetchSpeedrunData = async () => {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                        context.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Ross's workspace
-                        context.userId === 'demo-user-2025' || // Demo user only
-                        context.userId === '01K1VBYZMWTCT09FWEKBDMCXZM' || // Dan's user ID
-                        context.userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
+                        context.userId === 'demo-user-2025'; // Demo user only
       
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
 

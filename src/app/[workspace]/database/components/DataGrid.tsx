@@ -265,7 +265,7 @@ export function DataGrid({ tableName, workspaceId, onRecordSelect }: DataGridPro
       <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div className="text-sm text-[var(--muted)]">
-            Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, data.totalCount)} of {data.totalCount} results
+            Showing {(((page - 1) * pageSize) + 1).toLocaleString()} to {Math.min(page * pageSize, data.totalCount).toLocaleString()} of {data.totalCount.toLocaleString()} results
           </div>
           <div className="flex items-center gap-2">
             <button

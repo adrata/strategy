@@ -857,7 +857,7 @@ export const PipelineContent = React.memo(function PipelineContent({
 
       {/* Main content */}
       <div className={`flex-1 px-4 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
-        minHeight: section === 'people' ? 'calc(100vh - 160px)' : 'calc(100vh - 150px)', // People table slightly shorter
+        minHeight: section === 'people' ? 'calc(100vh - 170px)' : 'calc(100vh - 150px)', // People table shorter
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>

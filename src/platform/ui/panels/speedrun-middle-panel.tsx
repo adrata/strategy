@@ -49,21 +49,8 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
   // CRITICAL FIX: Remove duplicate data loading from SpeedrunDataProvider
   // const { prospects: contextProspects } = useSpeedrunDataContext();
   
-  // FALLBACK: If speedrun data is empty, try using leads as speedrun prospects
-  const fallbackProspects = data.acquireData?.leads?.slice(0, 50) || [];
-  
-  // Use the data source that has actual prospects, with fallback priority
-  let readyPeople: any[] = [];
-  if (speedrunProspects.length > 0) {
-    readyPeople = speedrunProspects;
-    console.log("🔥 SpeedrunMiddlePanel: Using speedrunItems data:", speedrunProspects.length);
-  } else if (fallbackProspects.length > 0) {
-    readyPeople = fallbackProspects;
-    console.log("🔥 SpeedrunMiddlePanel: Using leads as fallback prospects:", fallbackProspects.length);
-  } else {
-    readyPeople = [];
-    console.log("🔥 SpeedrunMiddlePanel: No data available from any source");
-  }
+  // Use speedrun prospects directly without fallback
+  const readyPeople = speedrunProspects;
 
   // Use selectedRecord from Action Platform context (set by left panel)
   const selectedPerson = selectedRecord;

@@ -121,11 +121,11 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
   if (!visibleColumns || visibleColumns.length === 0) {
     // Default headers based on section
     const defaultHeaders: Record<string, string[]> = {
-      'leads': ['Rank', 'Company', 'Last Action', 'Next Action'],
-      'prospects': ['Rank', 'Company', 'Last Action', 'Next Action'],
+      'leads': ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
+      'prospects': ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
       'opportunities': ['Rank', 'Company', 'Stage', 'Value', 'Last Action', 'Next Action'],
-      'companies': ['Rank', 'Company', 'Last Action', 'Next Action'],
-      'people': ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action'],
+      'companies': ['Company', 'Last Action', 'Next Action', 'Actions'],
+      'people': ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
       'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
@@ -171,7 +171,7 @@ export function PipelineTable({
   // Account for tabs/filters section - increase space reservation for sections with tabs
   const hasTabs = ['leads', 'prospects', 'opportunities'].includes(section);
   const tabsHeight = hasTabs ? 60 : 0; // Extra height for tabs section
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 228 - tabsHeight : 500; // Account for tabs
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 220 - tabsHeight : 500; // Account for tabs
   
   // Dynamic height calculation - keep table height reasonable
   let tableHeight;

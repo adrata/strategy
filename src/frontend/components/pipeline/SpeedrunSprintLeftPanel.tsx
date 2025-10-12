@@ -51,77 +51,29 @@ export function SpeedrunSprintLeftPanel({
   const dataLoading = fastSectionData.loading || false;
   const error = fastSectionData.error || null;
 
-  // 🏆 APPLY STRATEGIC RANKING: Apply the same ranking logic as PipelineView
+  // 🏆 USE DATABASE RANKING: Keep the same order as speedrun table (database globalRank)
   const allData = React.useMemo(() => {
     if (!rawData || rawData.length === 0) return [];
     
-    try {
-      // Import and apply the UniversalRankingEngine
-      const { UniversalRankingEngine } = require('@/products/speedrun/UniversalRankingEngine');
-      
-      // Transform data to SpeedrunPerson format for ranking
-      const transformedData = rawData.map((item: any) => ({
-        id: item.id || `speedrun-${Math.random()}`,
-        name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
-        email: item.email || '',
-        company: item.company?.name || item.company || item.companyName || '-',
-        title: item.title || item.jobTitle || '-',
-        phone: item.phone || item.phoneNumber || '',
-        location: item.location || item.city || '',
-        industry: item.industry || 'Technology',
-        status: item.status || 'active',
-        priority: item.priority || 'medium',
-        lastContact: item.lastContact || item.updatedAt,
-        notes: item.notes || '',
-        tags: item.tags || [],
-        source: item.source || 'speedrun',
-        enrichmentScore: item.enrichmentScore || 0,
-        buyerGroupRole: item.buyerGroupRole || 'unknown',
-        currentStage: item.currentStage || 'initial',
-        nextAction: item.nextAction || '',
-        nextActionDate: item.nextActionDate || '',
-        createdAt: item.createdAt || new Date().toISOString(),
-        updatedAt: item.updatedAt || new Date().toISOString(),
-        assignedUser: item.assignedUser || null,
-        workspaceId: item.workspaceId || '',
-        relationship: item.relationship || 'prospect',
-        bio: item.bio || '',
-        interests: item.interests || [],
-        recentActivity: item.recentActivity || '',
-        commission: item.commission || '50K',
-        linkedin: item.linkedin || item.linkedinUrl || '',
-        photo: item.photo || null,
-        ...item // Include any additional fields
-      }));
-      
-      // Apply strategic ranking
-      const rankedData = UniversalRankingEngine.rankProspectsForWinning(
-        transformedData,
-        'workspace'
-      );
-      
-      console.log('🏆 [SPEEDRUN SPRINT LEFT PANEL RANKING] Applied strategic ranking:', {
-        originalCount: rawData.length,
-        rankedCount: rankedData.length,
-        sampleRanks: rankedData.slice(0, 5).map(p => ({
-          name: p.name,
-          company: p.company,
-          rank: p.winningScore?.rank,
-          totalScore: p.winningScore?.totalScore
-        }))
-      });
-      
-      return rankedData;
-    } catch (error) {
-      console.error('❌ [SPEEDRUN SPRINT LEFT PANEL RANKING] Failed to apply strategic ranking:', error);
-      return rawData; // Fallback to original data
-    }
+    // Use raw data directly to maintain database ranking order
+    // This ensures sprint view shows the same people in the same order as the speedrun table
+    console.log('🏆 [SPEEDRUN SPRINT LEFT PANEL] Using database ranking order (same as speedrun table):', {
+      originalCount: rawData.length,
+      sampleData: rawData.slice(0, 5).map(p => ({
+        name: p.name || p.fullName,
+        company: p.company?.name || p.company,
+        rank: p.rank,
+        globalRank: p.globalRank
+      }))
+    });
+    
+    return rawData;
   }, [rawData]);
 
-  // Fixed sprint configuration: 3 sprints total, 10 people per sprint, 30 total people
+  // Fixed sprint configuration: 5 sprints total, 10 people per sprint, 50 total people
   const SPRINT_SIZE = 10; // Fixed at 10 people per sprint
-  const TOTAL_SPRINTS = 3; // Fixed at 3 sprints total
-  const TOTAL_PEOPLE = 30; // Fixed at 30 total people in speedrun
+  const TOTAL_SPRINTS = 5; // Fixed at 5 sprints total
+  const TOTAL_PEOPLE = 50; // Fixed at 50 total people in speedrun
 
   // Filter out snoozed records and organize completed records (without modifying localStorage in render)
   const filteredData = useMemo(() => {

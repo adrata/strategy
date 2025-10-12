@@ -201,7 +201,7 @@ export function InfiniteScrollTable({
           <div className="flex justify-center py-4">
             {filteredRecords.length > 0 && (
               <div className="text-center text-[var(--muted)] text-sm py-4">
-                Showing {filteredRecords.length} {section} {searchQuery ? '(filtered)' : ''}
+                Showing {filteredRecords.length.toLocaleString()} {section} {searchQuery ? '(filtered)' : ''}
               </div>
             )}
             {filteredRecords['length'] === 0 && allRecords.length > 0 && searchQuery && (

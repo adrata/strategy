@@ -124,15 +124,15 @@ export const PipelineView = React.memo(function PipelineView({
       case 'speedrun':
         return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
       case 'companies':
-        return ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'];
+        return ['Company', 'Last Action', 'Next Action', 'Actions'];
       case 'leads':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'];
       case 'prospects':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'opportunities':
         return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
       case 'people':
-        return ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
       case 'clients':
         return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
       case 'partners':
@@ -352,69 +352,17 @@ export const PipelineView = React.memo(function PipelineView({
           } : null
         });
         
-        // 🎯 STRATEGIC RANKING: Apply UniversalRankingEngine to speedrun data for company-based alphanumeric ranks
+        // 🏆 USE DATABASE RANKING: Use database globalRank directly - no additional ranking engines
         if (speedrunData.length > 0) {
-          try {
-            // Import and apply the UniversalRankingEngine
-            const { UniversalRankingEngine } = require('@/products/speedrun/UniversalRankingEngine');
-            
-            // Transform data to SpeedrunPerson format for ranking
-            const transformedData = speedrunData.map((item: any) => ({
-              id: item.id || `speedrun-${Math.random()}`,
-              name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
-              email: item.email || '',
-              company: item.company || item.companyName || '-',
-              title: item.title || item.jobTitle || '-',
-              phone: item.phone || item.phoneNumber || '',
-              location: item.location || item.city || '',
-              industry: item.industry || 'Technology',
-              status: item.status || 'active',
-              priority: item.priority || 'medium',
-              lastContact: item.lastContact || item.updatedAt,
-              notes: item.notes || '',
-              tags: item.tags || [],
-              source: item.source || 'speedrun',
-              enrichmentScore: item.enrichmentScore || 0,
-              buyerGroupRole: item.buyerGroupRole || 'unknown',
-              currentStage: item.currentStage || 'initial',
-              nextAction: item.nextAction || '',
-              nextActionDate: item.nextActionDate || '',
-              createdAt: item.createdAt || new Date().toISOString(),
-              updatedAt: item.updatedAt || new Date().toISOString(),
-              assignedUser: item.assignedUser || null,
-              workspaceId: item.workspaceId || '',
-              relationship: item.relationship || 'prospect',
-              bio: item.bio || '',
-              interests: item.interests || [],
-              recentActivity: item.recentActivity || '',
-              commission: item.commission || '50K',
-              linkedin: item.linkedin || item.linkedinUrl || '',
-              photo: item.photo || null,
-              ...item // Include any additional fields
-            }));
-            
-            // Apply strategic ranking
-            const rankedData = UniversalRankingEngine.rankProspectsForWinning(
-              transformedData,
-              workspaceName || 'workspace'
-            );
-            
-            console.log('🏆 [SPEEDRUN RANKING] Applied strategic ranking:', {
-              originalCount: speedrunData.length,
-              rankedCount: rankedData.length,
-              sampleRanks: rankedData.slice(0, 5).map(p => ({
-                name: p.name,
-                company: p.company,
-                rank: p.winningScore?.rank,
-                totalScore: p.winningScore?.totalScore
-              }))
-            });
-            
-            return rankedData;
-          } catch (error) {
-            console.error('❌ [SPEEDRUN RANKING] Failed to apply strategic ranking:', error);
-            return speedrunData; // Fallback to original data
-          }
+          console.log('🏆 [SPEEDRUN] Using database globalRank directly:', {
+            originalCount: speedrunData.length,
+            sampleData: speedrunData.slice(0, 5).map(p => ({
+              name: p.name || p.fullName,
+              company: p.company?.name || p.company,
+              rank: p.rank,
+              globalRank: p.globalRank
+            }))
+          });
         }
         
         return speedrunData;
@@ -1535,7 +1483,7 @@ export const PipelineView = React.memo(function PipelineView({
 
       {/* Main content */}
       <div className={`flex-1 px-6 min-h-0 overflow-y-auto ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
-        minHeight: 'calc(100vh - 150px)', // Extend table height further down
+        minHeight: 'calc(100vh - 220px)', // Match table height calculations
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>

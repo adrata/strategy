@@ -21,24 +21,24 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceName: 'Default',
   sections: {
     people: {
-      columns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
+      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
     },
     companies: {
-      columns: ['Rank', 'Company', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'lastAction', 'nextAction', 'actions']
+      columns: ['Company', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['company', 'lastAction', 'nextAction', 'actions']
     },
     speedrun: {
       columns: ['Rank', 'Company', 'Name', 'Status', 'MAIN-SELLER', 'CO-SELLERS', 'LAST ACTION', 'NEXT ACTION'],
       columnOrder: ['rank', 'company', 'name', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction']
     },
     prospects: {
-      columns: ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions']
+      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
     },
     leads: {
-      columns: ['Company', 'Name', 'Title', 'Email', 'Last Action', 'Next Action'],
-      columnOrder: ['company', 'name', 'title', 'email', 'lastAction', 'nextAction']
+      columns: ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'email', 'lastAction', 'nextAction']
     },
     sellers: {
       columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],

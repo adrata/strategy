@@ -4511,7 +4511,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
     
     // Use hierarchical ranking: Companies first, then people within each company
     speedrunItems = speedrunItemsWithScores.map((item: any, index: number) => {
-      const rank = index + 1; // Use sequential ranking (1, 2, 3...) based on hierarchical order
+      const rank = item.globalRank || (index + 1); // Use database globalRank, fallback to sequential
       
       return {
         id: item.id,

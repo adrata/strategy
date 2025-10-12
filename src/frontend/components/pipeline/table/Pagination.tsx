@@ -92,7 +92,7 @@ export function Pagination({
       {/* Page info - Always show results count */}
       <div className="flex items-center space-x-2">
         <span className="text-sm text-gray-700">
-          Showing {startItem} to {endItem} of {totalItems} results
+          Showing {startItem.toLocaleString()} to {endItem.toLocaleString()} of {totalItems.toLocaleString()} results
         </span>
       </div>
       
