@@ -33,7 +33,7 @@ export default function SignInPage() {
         console.log("🔄 [SIGN-IN PAGE] Redirecting to production domain: action.adrata.com");
         const correctUrl = `https://action.adrata.com/sign-in${window.location.search}`;
         console.log("🔄 [SIGN-IN PAGE] Full redirect URL:", correctUrl);
-        window['location']['href'] = correctUrl;
+        window.location.href = correctUrl;
         return;
       }
       
@@ -100,14 +100,14 @@ export default function SignInPage() {
             // Set remember me cookie for 30 days
             const expiryDate = new Date();
             expiryDate.setDate(expiryDate.getDate() + 30);
-            document['cookie'] = `adrata_remember_me=true; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`;
+            document.cookie = `adrata_remember_me=true; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict`;
             
             // Save email only for convenience (no password storage for security)
             localStorage.setItem("adrata_remembered_email", email);
             console.log("💾 [SIGN-IN PAGE] Saved email for convenience");
           } else {
             // Clear remember me data
-            document['cookie'] = "adrata_remember_me=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "adrata_remember_me=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             localStorage.removeItem("adrata_remembered_email");
             console.log("🧹 [SIGN-IN PAGE] Cleared saved email");
           }
@@ -135,7 +135,7 @@ export default function SignInPage() {
           
           // Find the workspace details
           const activeWorkspace = result.session.user.workspaces?.find(
-            (ws: any) => ws.id === activeWorkspaceId
+            (ws: { id: string; name: string; role: string }) => ws.id === activeWorkspaceId
           );
           
           if (activeWorkspace) {
@@ -145,7 +145,7 @@ export default function SignInPage() {
             console.log("🚀 [SIGN-IN PAGE] Auto-redirecting to last workspace:", activeWorkspace.name);
           } else {
             console.log("⚠️ [SIGN-IN PAGE] Active workspace not found in user's workspaces");
-            console.log("⚠️ [SIGN-IN PAGE] Available workspaces:", result.session.user.workspaces?.map((ws: any) => ({ id: ws.id, name: ws.name })));
+            console.log("⚠️ [SIGN-IN PAGE] Available workspaces:", result.session.user.workspaces?.map((ws: { id: string; name: string; role: string }) => ({ id: ws.id, name: ws.name })));
             // Fall back to workspace selection if workspace not found
             redirectUrl = "/workspaces";
           }
@@ -181,7 +181,7 @@ export default function SignInPage() {
             console.log("🔄 [SIGN-IN PAGE] Redirecting to production domain: action.adrata.com");
             const correctUrl = `https://action.adrata.com${redirectUrl}`;
             console.log("🔄 [SIGN-IN PAGE] Full redirect URL:", correctUrl);
-            window['location']['href'] = correctUrl;
+            window.location.href = correctUrl;
             return;
           }
         }

@@ -102,12 +102,9 @@ src/platform/pipelines/outputs/recovery/
 src/platform/pipelines/outputs/backup/
 src/platform/pipelines/outputs/*.json
 
-# Playwright test artifacts
-tests/artifacts/
+# Test artifacts and results
 tests/results/
+tests/artifacts/
 playwright-report/
-test-results/
 playwright/.cache/
-test-results/
-playwright-report/
 downloads/

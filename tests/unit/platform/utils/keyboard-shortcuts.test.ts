@@ -1,7 +1,7 @@
 /**
- * Unit Tests: Auth Utilities
+ * Unit Tests: Keyboard Shortcuts Utilities
  * 
- * Tests for authentication utility functions and helpers
+ * Tests for keyboard shortcut utility functions and platform detection
  */
 
 import { detectPlatform, getPlatformShortcut, getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
@@ -17,7 +17,7 @@ const mockNavigator = (platform: string, userAgent: string) => {
   });
 };
 
-describe('Auth Utilities', () => {
+describe('Keyboard Shortcuts Utilities', () => {
   describe('Platform Detection', () => {
     it('detects Mac platform correctly', () => {
       mockNavigator('MacIntel', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)');

@@ -26,6 +26,19 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/e2e/', // E2E tests are run separately with Playwright
   ],
+  // Output directory for coverage reports
+  coverageDirectory: 'tests/results/coverage',
+  // Output directory for test results
+  testResultsProcessor: undefined,
+  // Custom reporters for better organization
+  reporters: [
+    'default',
+    ['jest-html-reporters', {
+      publicPath: './tests/results/jest-report',
+      filename: 'report.html',
+      expand: true,
+    }],
+  ],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

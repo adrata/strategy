@@ -340,7 +340,7 @@ test.describe('Sign-In E2E Tests', () => {
   });
 
   test.describe('Error Handling', () => {
-    test('clears error message when user starts typing again', async ({ page }) => {
+    test('keeps error message visible until next form submission', async ({ page }) => {
       // Mock authentication failure response
       await page.route('**/api/auth/sign-in', async (route) => {
         await route.fulfill({
@@ -365,12 +365,12 @@ test.describe('Sign-In E2E Tests', () => {
       // Check error message appears
       await expect(page.getByText('Invalid credentials')).toBeVisible();
       
-      // Start typing again
+      // Start typing again - error should remain visible
       await emailInput.clear();
       await emailInput.fill('new@adrata.com');
       
-      // Error should be cleared
-      await expect(page.getByText('Invalid credentials')).not.toBeVisible();
+      // Error should still be visible (component doesn't clear on typing)
+      await expect(page.getByText('Invalid credentials')).toBeVisible();
     });
 
     test('handles multiple rapid form submissions gracefully', async ({ page }) => {

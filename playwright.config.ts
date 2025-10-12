@@ -46,6 +46,9 @@ export default defineConfig({
     // Take screenshot on failure
     screenshot: 'only-on-failure',
     
+    // Output directory for test artifacts
+    outputDir: 'tests/results/test-artifacts',
+    
     // Browser context options
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
