@@ -133,16 +133,19 @@ function getPersonMasterRank(record: any, fallbackIndex: number): number | strin
 interface Opportunity {
   id: string;
   name: string;
-  amount: number;
-  stage: string;
+  revenue?: number;  // Companies table uses revenue, not amount
+  stage?: string;
+  status: string;
   account?: {
     name: string;
   };
   assignedUser?: {
     name: string;
   };
-  expectedCloseDate?: string;
-  probability?: number;
+  lastAction?: string;
+  nextAction?: string;
+  industry?: string;
+  size?: string;
 }
 
 interface OpportunitiesKanbanProps {
@@ -188,7 +191,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
 
   // Calculate totals for each stage
   const getStageTotals = (opportunities: Opportunity[]) => {
-    const total = opportunities.reduce((sum, opp) => sum + (opp.amount || 0), 0);
+    const total = opportunities.reduce((sum, opp) => sum + (opp.revenue || 0), 0);
     return {
       count: opportunities.length,
       value: total
@@ -364,10 +367,10 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                       
                       <div className="flex justify-between items-center text-sm mb-2">
                         <span className="font-semibold text-black">
-                          {formatCurrency(opportunity.amount || 0)}
+                          {formatCurrency(opportunity.revenue || 0)}
                         </span>
                         <span className="text-[var(--muted)] text-xs">
-                          {formatDate(opportunity.expectedCloseDate)}
+                          {opportunity.industry || 'No Industry'}
                         </span>
                       </div>
 
@@ -461,14 +464,11 @@ function getStageProgress(stage?: string, opportunity?: Opportunity): number {
     }
     
     // High-value deals show more progress (sales focus)
-    if (opportunity['amount'] && opportunity.amount > 100000) {
+    if (opportunity['revenue'] && opportunity.revenue > 100000) {
       progress += 5;
     }
     
-    // Probability can fine-tune progress within stage
-    if (opportunity['probability'] && opportunity.probability > progress) {
-      progress = Math.min(100, Math.max(progress, opportunity.probability));
-    }
+    // No probability field in companies table - skip this logic
   }
   
   return Math.min(100, Math.max(0, progress));
@@ -486,7 +486,7 @@ function getProgressColor(progress: number): string {
 // Get Next Action for opportunities with proper pill formatting
 function getOpportunityNextAction(opportunity: any): { timing: string; timingColor: string; action: string } {
   const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || '';
-  const amount = opportunity.amount || 0;
+  const amount = opportunity.revenue || 0;
   const closeDate = opportunity.expectedCloseDate;
   
   // Calculate days to close date for urgency

@@ -140,8 +140,10 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextActionDate: true,
             industry: true,
-            size: true
-            // Optimized for list views - removed unnecessary fields
+            size: true,
+            revenue: true,
+            stage: true
+            // Optimized for list views - includes revenue and stage for opportunities
           }
         }),
         prisma.companies.count({ where }),
