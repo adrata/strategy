@@ -154,10 +154,97 @@ export function createErrorResponse(
     { 
       success: false, 
       error: message,
-      code 
+      code,
+      timestamp: new Date().toISOString()
     },
     { status }
   );
+}
+
+/**
+ * Environment-aware error logging and response creation
+ * Logs detailed errors in development, sanitized errors in production
+ */
+export function logAndCreateErrorResponse(
+  error: unknown,
+  context: {
+    endpoint: string;
+    userId?: string;
+    workspaceId?: string;
+    requestId?: string;
+  },
+  fallbackMessage: string = 'Internal server error',
+  fallbackCode: string = 'INTERNAL_ERROR',
+  fallbackStatus: number = 500
+): NextResponse {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  // Extract error details
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const errorStack = error instanceof Error ? error.stack : undefined;
+  const errorName = error instanceof Error ? error.name : 'UnknownError';
+  
+  // Determine error type and appropriate response
+  let responseMessage = fallbackMessage;
+  let responseCode = fallbackCode;
+  let responseStatus = fallbackStatus;
+  
+  // Handle specific error types
+  if (error instanceof Error) {
+    // Prisma errors
+    if (error.name === 'PrismaClientKnownRequestError') {
+      responseMessage = 'Database operation failed';
+      responseCode = 'DATABASE_ERROR';
+      responseStatus = 500;
+    }
+    // Validation errors
+    else if (error.name === 'ValidationError' || error.message.includes('validation')) {
+      responseMessage = 'Invalid request data';
+      responseCode = 'VALIDATION_ERROR';
+      responseStatus = 400;
+    }
+    // Authentication errors
+    else if (error.message.includes('Authentication') || error.message.includes('Unauthorized')) {
+      responseMessage = 'Authentication required';
+      responseCode = 'AUTH_REQUIRED';
+      responseStatus = 401;
+    }
+    // Authorization errors
+    else if (error.message.includes('Access denied') || error.message.includes('Permission')) {
+      responseMessage = 'Access denied';
+      responseCode = 'ACCESS_DENIED';
+      responseStatus = 403;
+    }
+  }
+  
+  // Log error with appropriate detail level
+  if (isDevelopment) {
+    console.error(`❌ [${context.endpoint}] Error:`, {
+      message: errorMessage,
+      name: errorName,
+      stack: errorStack,
+      context: {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        requestId: context.requestId,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } else {
+    // Production logging - sanitized
+    console.error(`❌ [${context.endpoint}] Error:`, {
+      message: responseMessage,
+      code: responseCode,
+      context: {
+        userId: context.userId ? '***' : undefined,
+        workspaceId: context.workspaceId ? '***' : undefined,
+        requestId: context.requestId,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+  
+  return createErrorResponse(responseMessage, responseCode, responseStatus);
 }
 
 /**

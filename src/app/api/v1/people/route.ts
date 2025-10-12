@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
-import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
@@ -77,14 +77,10 @@ export async function GET(request: NextRequest) {
     if (section) {
       switch (section) {
         case 'leads':
-          where.status = { in: ['new', 'lead', 'LEAD'] };
+          where.status = 'LEAD';
           break;
         case 'prospects':
-          where.status = { in: ['prospect', 'PROSPECT'] };
-          break;
-        case 'speedrun':
-          where.companyId = { not: null }; // Only people with companies
-          where.globalRank = { not: null }; // Only ranked people
+          where.status = 'PROSPECT';
           break;
         default:
           // No additional filtering for other sections
@@ -142,68 +138,50 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    let result;
-    
-    if (countsOnly) {
-      // Fast count query using Prisma ORM
-      const counts = await prisma.people.groupBy({
-        by: ['status'],
+    // Optimized query with Prisma ORM for reliability
+    const [people, totalCount] = await Promise.all([
+      prisma.people.findMany({
         where,
-        _count: { status: true }
-      });
-      
-      const countMap = counts.reduce((acc, item) => {
-        acc[item.status || 'ACTIVE'] = item._count.status;
-        return acc;
-      }, {} as Record<string, number>);
-      
-      result = { success: true, data: countMap };
-    } else {
-      // Optimized query with Prisma ORM for reliability
-      const [people, totalCount] = await Promise.all([
-        prisma.people.findMany({
-          where,
-          orderBy: { 
-            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-          },
-          skip: offset,
-          take: limit,
-          select: {
-            id: true,
-            fullName: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            status: true,
-            globalRank: true,
-            lastAction: true,
-            nextAction: true,
-            lastActionDate: true,
-            nextActionDate: true,
-            companyId: true,
-            // Remove company join for list views - can fetch on-demand for better performance
-            // company: {
-            //   select: {
-            //     name: true
-            //   }
-            // }
-          }
-        }),
-        prisma.people.count({ where }),
-      ]);
-
-      result = createSuccessResponse(people, {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
+        orderBy: { 
+          [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
         },
-        filters: { search, status, priority, companyId, sortBy, sortOrder },
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-      });
-    }
+        skip: offset,
+        take: limit,
+        select: {
+          id: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          status: true,
+          globalRank: true,
+          lastAction: true,
+          nextAction: true,
+          lastActionDate: true,
+          nextActionDate: true,
+          companyId: true,
+          // Remove company join for list views - can fetch on-demand for better performance
+          // company: {
+          //   select: {
+          //     name: true
+          //   }
+          // }
+        }
+      }),
+      prisma.people.count({ where }),
+    ]);
+
+    const result = createSuccessResponse(people, {
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+      filters: { search, status, priority, companyId, sortBy, sortOrder },
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+    });
 
     // 🚀 CACHE: Store in Redis for future requests
     try {
@@ -221,8 +199,18 @@ export async function GET(request: NextRequest) {
     return result;
 
   } catch (error) {
-    console.error('❌ [V1 PEOPLE API] Error:', error);
-    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500);
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'V1 PEOPLE API',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to fetch people data',
+      'PEOPLE_FETCH_ERROR',
+      500
+    );
   }
 }
 
@@ -368,8 +356,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creating person:', error);
-    
     // Handle unique constraint violations
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json(
@@ -378,6 +364,17 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500);
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'V1 PEOPLE API POST',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to create person',
+      'PERSON_CREATE_ERROR',
+      500
+    );
   }
 }

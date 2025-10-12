@@ -151,16 +151,18 @@ export async function validateWorkspaceAccess(
  */
 export async function getUserWorkspaces(userId: string): Promise<WorkspaceMembership[]> {
   try {
-    const memberships = await prisma.workspaceMembership.findMany({
+    const memberships = await prisma.workspace_users.findMany({
       where: {
         userId,
-        status: 'active'
+        isActive: true
       },
       include: {
-        role: {
+        workspace: {
           select: {
+            id: true,
             name: true,
-            permissions: true
+            createdAt: true,
+            updatedAt: true
           }
         }
       },
@@ -173,9 +175,9 @@ export async function getUserWorkspaces(userId: string): Promise<WorkspaceMember
       id: membership.id,
       userId: membership.userId,
       workspaceId: membership.workspaceId,
-      role: membership.role?.name || 'member',
-      status: membership.status as 'active' | 'suspended' | 'pending',
-      permissions: membership.role?.permissions || [],
+      role: membership.role,
+      status: membership.isActive ? 'active' : 'suspended',
+      permissions: [], // Simplified for now
       createdAt: membership.createdAt,
       updatedAt: membership.updatedAt
     }));

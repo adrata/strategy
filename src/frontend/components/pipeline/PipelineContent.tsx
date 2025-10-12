@@ -201,7 +201,8 @@ export const PipelineContent = React.memo(function PipelineContent({
   // This eliminates all duplicate API calls and uses optimized v1 APIs
   
   // Use higher limit for people section to ensure all records are loaded
-  const limit = section === 'people' ? 10000 : 1000;
+  // Speedrun should only load 50 records (Top 50 concept)
+  const limit = section === 'people' ? 10000 : section === 'speedrun' ? 50 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
 
   // 🚀 PERFORMANCE: Use fast section data exclusively

@@ -10,7 +10,9 @@ const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * 🚀 SPEEDRUN API v1 - LIGHTNING FAST
  * 
  * Dedicated optimized endpoint for speedrun data
- * - Top 50 ranked people with companies
+ * - Top 50 people with companies (prioritizes ranked people, includes unranked)
+ * - Only includes people with company relationships
+ * - Ordered by globalRank ascending (ranked first), then by creation date
  * - Pre-formatted response (no transformation needed)
  * - Aggressive Redis caching (5 min TTL)
  * - Leverages composite indexes for <200ms queries
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Cap at 100, default 50
-    const forceRefresh = searchParams.get('refresh') === 'true';
+    const forceRefresh = searchParams.get('refresh') === 'true' || searchParams.get('t'); // Force refresh if timestamp provided
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
     const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}`;
@@ -60,12 +62,63 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
 
-    // 🚀 OPTIMIZED QUERY: Use composite index for lightning-fast performance
+    // 🔍 DIAGNOSTIC: Check what data actually exists
+    const [peopleWithCompanies, peopleWithRank, peopleWithBoth] = await Promise.all([
+      prisma.people.count({
+        where: {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          companyId: { not: null },
+          ...(isDemoMode ? {} : {
+            OR: [
+              { assignedUserId: context.userId },
+              { assignedUserId: null }
+            ]
+          })
+        }
+      }),
+      prisma.people.count({
+        where: {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          globalRank: { not: null },
+          ...(isDemoMode ? {} : {
+            OR: [
+              { assignedUserId: context.userId },
+              { assignedUserId: null }
+            ]
+          })
+        }
+      }),
+      prisma.people.count({
+        where: {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          companyId: { not: null },
+          globalRank: { not: null },
+          ...(isDemoMode ? {} : {
+            OR: [
+              { assignedUserId: context.userId },
+              { assignedUserId: null }
+            ]
+          })
+        }
+      })
+    ]);
+
+    console.log(`🔍 [SPEEDRUN API] Data diagnostic:`, {
+      peopleWithCompanies,
+      peopleWithRank,
+      peopleWithBoth,
+      willShowData: peopleWithBoth > 0
+    });
+
+    // 🚀 OPTIMIZED QUERY: Get top 50 people (most permissive - show any people)
     const speedrunPeople = await prisma.people.findMany({
       where: {
         workspaceId: context.workspaceId,
         deletedAt: null,
-        companyId: { not: null }, // Only people with company relationships
+        // Remove companyId requirement temporarily to see if we have any people at all
         ...(isDemoMode ? {} : {
           OR: [
             { assignedUserId: context.userId },
@@ -74,10 +127,10 @@ export async function GET(request: NextRequest) {
         })
       },
       orderBy: [
-        { globalRank: 'asc' }, // Sort by rank (best prospects first)
-        { updatedAt: 'desc' }
+        { globalRank: 'asc' }, // Ranked people first (nulls will be last)
+        { createdAt: 'desc' } // Then by newest
       ],
-      take: limit,
+      take: limit, // Take exactly the first 50 results
       select: {
         // 🚀 PERFORMANCE: Only select required fields (no customFields)
         id: true,

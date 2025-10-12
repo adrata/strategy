@@ -24,7 +24,7 @@ const config: Config = {
         'enterprise': '-0.025em',
       },
       height: {
-        'table-row': '62px',
+        'table-row': '64px',
       },
       colors: {
         // Custom navy color scheme based on #1B3758

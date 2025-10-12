@@ -71,7 +71,11 @@ export function DynamicTitle() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-  // Early return for auth/public pages to prevent hydration mismatches
+  // Always call hooks first to maintain consistent hook order
+  const { user } = useUnifiedAuth();
+  const { recordData, isLoading } = useRecordTitle();
+  
+  // Check if this is an auth/public page after calling hooks
   const isAuthPage = pathname === "/sign-in" || 
                      pathname === "/sign-up" || 
                      pathname === "/reset-password" || 
@@ -86,15 +90,12 @@ export function DynamicTitle() {
                      pathname.startsWith("/help") ||
                      pathname.startsWith("/support");
   
-  if (isAuthPage) {
-    // Don't run any hooks on auth/public pages to prevent hydration issues
-    return null;
-  }
-  
-  const { user } = useUnifiedAuth();
-  const { recordData, isLoading } = useRecordTitle();
-  
   useEffect(() => {
+    // Check if this is an auth/public page inside the effect
+    if (isAuthPage) {
+      // Don't run any effects on auth/public pages to prevent hydration issues
+      return;
+    }
     if (user?.workspaces && user.workspaces.length > 0) {
       // Get the active workspace or the first workspace
       const activeWorkspace = user.workspaces.find(w => w['id'] === user.activeWorkspaceId) || user['workspaces'][0];
@@ -192,7 +193,7 @@ export function DynamicTitle() {
       // No workspaces available, use default title
       document['title'] = 'Adrata | Dashboard';
     }
-  }, [user?.activeWorkspaceId, user?.workspaces, pathname, recordData, isLoading, searchParams]);
+  }, [user?.activeWorkspaceId, user?.workspaces, pathname, recordData, isLoading, searchParams, isAuthPage]);
 
   // This component doesn't render anything
   return null;

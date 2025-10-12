@@ -367,7 +367,7 @@ export function MetricsDashboard() {
 
   return (
     <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-6 bg-[var(--panel-background)] min-h-full">
+        <div className="p-6 bg-white min-h-full">
 
           {/* Pipeline Health */}
           <MetricsSection title="Pipeline Health">

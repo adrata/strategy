@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
  * POST /api/chronicle/generate
@@ -9,25 +8,36 @@ import { authOptions } from '@/lib/auth-options';
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Authenticate and authorize user using unified auth system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
-    const { reportType, workspaceId } = body;
+    const { reportType } = body;
 
-    if (!reportType || !workspaceId) {
-      return NextResponse.json(
-        { error: 'Report type and workspace ID required' },
-        { status: 400 }
+    if (!reportType) {
+      return createErrorResponse(
+        'Report type required',
+        'MISSING_REPORT_TYPE',
+        400
       );
     }
 
     if (!['MONDAY_PREP', 'FRIDAY_RECAP'].includes(reportType)) {
-      return NextResponse.json(
-        { error: 'Invalid report type' },
-        { status: 400 }
+      return createErrorResponse(
+        'Invalid report type',
+        'INVALID_REPORT_TYPE',
+        400
       );
     }
 
@@ -46,8 +56,8 @@ export async function POST(request: NextRequest) {
     // Generate report content based on type
     const reportContent = await generateReportContent(
       reportType,
-      workspaceId,
-      session.user.id,
+      context.workspaceId,
+      context.userId,
       startOfWeek,
       endOfWeek
     );
@@ -59,8 +69,8 @@ export async function POST(request: NextRequest) {
     // Check if report already exists for this week and type
     const existingReport = await prisma.chronicleReport.findFirst({
       where: {
-        workspaceId,
-        userId: session.user.id,
+        workspaceId: context.workspaceId,
+        userId: context.userId,
         reportType,
         weekStart: startOfWeek,
         weekEnd: endOfWeek
@@ -81,7 +91,7 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      return NextResponse.json(updatedReport);
+      return createSuccessResponse(updatedReport);
     } else {
       // Create new report
       const newReport = await prisma.chronicleReport.create({
@@ -91,22 +101,23 @@ export async function POST(request: NextRequest) {
           content: reportContent,
           weekStart: startOfWeek,
           weekEnd: endOfWeek,
-          workspaceId,
-          userId: session.user.id
+          workspaceId: context.workspaceId,
+          userId: context.userId
         },
         include: {
           shares: true
         }
       });
 
-      return NextResponse.json(newReport);
+      return createSuccessResponse(newReport);
     }
 
   } catch (error) {
     console.error('Error generating Chronicle report:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate report' },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to generate report',
+      'CHRONICLE_GENERATE_ERROR',
+      500
     );
   }
 }

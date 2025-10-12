@@ -12,10 +12,10 @@ export function ThemePicker() {
         : "light",
   );
   const [selectedLight, setSelectedLight] = React.useState(
-    theme?.lightTheme || "Ghost",
+    theme?.lightTheme || "ghost",
   );
   const [selectedDark, setSelectedDark] = React.useState(
-    theme?.darkTheme || "Dark Matter",
+    theme?.darkTheme || "dark-matter",
   );
   const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">(
     typeof window !== "undefined" &&
@@ -43,20 +43,28 @@ export function ThemePicker() {
 
   const allThemeNames = Object.keys(theme.themes);
   const lightThemes = [
-    "Ghost",
-    "Rise",
-    "Lightening",
-    "Parchment",
-    "Snow",
-    "Horizon",
+    { id: "ghost", name: "Ghost" },
+    { id: "dawn", name: "Dawn" },
+    { id: "lightening", name: "Lightening" },
+    { id: "parchment", name: "Parchment" },
+    { id: "snow", name: "Snow" },
+    { id: "horizon", name: "Horizon" },
+    { id: "catppuccin-latte", name: "Catppuccin Latte" },
   ];
   const darkThemes = [
-    "Dark Matter",
-    "Night",
-    "Midnight Drive",
-    "Graphite Core",
-    "Eclipse",
-    "Neon Pulse",
+    { id: "dark-matter", name: "Dark Matter" },
+    { id: "night", name: "Night" },
+    { id: "midnight-drive", name: "Midnight Drive" },
+    { id: "graphite-core", name: "Graphite Core" },
+    { id: "eclipse", name: "Eclipse" },
+    { id: "neon-pulse", name: "Neon Pulse" },
+    { id: "tokyo-night", name: "Tokyo Night" },
+    { id: "tokyo-night-storm", name: "Tokyo Night Storm" },
+    { id: "catppuccin-mocha", name: "Catppuccin Mocha" },
+    { id: "nord", name: "Nord" },
+    { id: "rose-pine", name: "Rosé Pine" },
+    { id: "everforest", name: "Everforest" },
+    { id: "arc-dark", name: "Arc Dark" },
   ];
 
   const formatThemeName = (name: string) => name;
@@ -107,22 +115,22 @@ export function ThemePicker() {
                 Dark Theme (for system dark mode)
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
-                {darkThemes.map((name) => (
+                {darkThemes.map((themeOption) => (
                   <button
-                    key={name}
+                    key={themeOption.id}
                     onClick={() => {
-                      setSelectedDark(name);
-                      theme.setDarkTheme(name);
+                      setSelectedDark(themeOption.id);
+                      theme.setDarkTheme(themeOption.id);
                       theme.setThemeMode("auto");
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                      selectedDark === name && theme['themeMode'] === "auto"
+                      selectedDark === themeOption.id && theme['themeMode'] === "auto"
                         ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                         : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                     }`}
                   >
-                    {formatThemeName(name)}
-                    {selectedDark === name && theme['themeMode'] === "auto" && (
+                    {formatThemeName(themeOption.name)}
+                    {selectedDark === themeOption.id && theme['themeMode'] === "auto" && (
                       <span className="ml-2 text-xs text-[var(--accent)]">
                         (Active)
                       </span>
@@ -134,22 +142,22 @@ export function ThemePicker() {
                 Light Theme (for system light mode)
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {lightThemes.map((name) => (
+                {lightThemes.map((themeOption) => (
                   <button
-                    key={name}
+                    key={themeOption.id}
                     onClick={() => {
-                      setSelectedLight(name);
-                      theme.setLightTheme(name);
+                      setSelectedLight(themeOption.id);
+                      theme.setLightTheme(themeOption.id);
                       theme.setThemeMode("auto");
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                      selectedLight === name && theme['themeMode'] === "auto"
+                      selectedLight === themeOption.id && theme['themeMode'] === "auto"
                         ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                         : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                     }`}
                   >
-                    {formatThemeName(name)}
-                    {selectedLight === name && theme['themeMode'] === "auto" && (
+                    {formatThemeName(themeOption.name)}
+                    {selectedLight === themeOption.id && theme['themeMode'] === "auto" && (
                       <span className="ml-2 text-xs text-[var(--accent)]">
                         (Active)
                       </span>
@@ -164,22 +172,22 @@ export function ThemePicker() {
                 Light Theme (for system light mode)
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
-                {lightThemes.map((name) => (
+                {lightThemes.map((themeOption) => (
                   <button
-                    key={name}
+                    key={themeOption.id}
                     onClick={() => {
-                      setSelectedLight(name);
-                      theme.setLightTheme(name);
+                      setSelectedLight(themeOption.id);
+                      theme.setLightTheme(themeOption.id);
                       theme.setThemeMode("auto");
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                      selectedLight === name && theme['themeMode'] === "auto"
+                      selectedLight === themeOption.id && theme['themeMode'] === "auto"
                         ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                         : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                     }`}
                   >
-                    {formatThemeName(name)}
-                    {selectedLight === name && theme['themeMode'] === "auto" && (
+                    {formatThemeName(themeOption.name)}
+                    {selectedLight === themeOption.id && theme['themeMode'] === "auto" && (
                       <span className="ml-2 text-xs text-[var(--accent)]">
                         (Active)
                       </span>
@@ -191,22 +199,22 @@ export function ThemePicker() {
                 Dark Theme (for system dark mode)
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {darkThemes.map((name) => (
+                {darkThemes.map((themeOption) => (
                   <button
-                    key={name}
+                    key={themeOption.id}
                     onClick={() => {
-                      setSelectedDark(name);
-                      theme.setDarkTheme(name);
+                      setSelectedDark(themeOption.id);
+                      theme.setDarkTheme(themeOption.id);
                       theme.setThemeMode("auto");
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                      selectedDark === name && theme['themeMode'] === "auto"
+                      selectedDark === themeOption.id && theme['themeMode'] === "auto"
                         ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                         : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                     }`}
                   >
-                    {formatThemeName(name)}
-                    {selectedDark === name && theme['themeMode'] === "auto" && (
+                    {formatThemeName(themeOption.name)}
+                    {selectedDark === themeOption.id && theme['themeMode'] === "auto" && (
                       <span className="ml-2 text-xs text-[var(--accent)]">
                         (Active)
                       </span>
@@ -224,21 +232,21 @@ export function ThemePicker() {
             Light Theme
           </div>
           <div className="grid grid-cols-3 gap-3">
-            {lightThemes.map((name) => (
+            {lightThemes.map((themeOption) => (
               <button
-                key={name}
+                key={themeOption.id}
                 onClick={() => {
-                  setSelectedLight(name);
-                  theme.setLightTheme(name);
+                  setSelectedLight(themeOption.id);
+                  theme.setLightTheme(themeOption.id);
                   theme.setThemeMode("light");
                 }}
                 className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                  selectedLight === name
+                  selectedLight === themeOption.id
                     ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                     : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                 }`}
               >
-                {formatThemeName(name)}
+                {formatThemeName(themeOption.name)}
               </button>
             ))}
           </div>
@@ -250,21 +258,21 @@ export function ThemePicker() {
             Dark Theme
           </div>
           <div className="grid grid-cols-3 gap-3">
-            {darkThemes.map((name) => (
+            {darkThemes.map((themeOption) => (
               <button
-                key={name}
+                key={themeOption.id}
                 onClick={() => {
-                  setSelectedDark(name);
-                  theme.setDarkTheme(name);
+                  setSelectedDark(themeOption.id);
+                  theme.setDarkTheme(themeOption.id);
                   theme.setThemeMode("dark");
                 }}
                 className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
-                  selectedDark === name
+                  selectedDark === themeOption.id
                     ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
                     : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
                 }`}
               >
-                {formatThemeName(name)}
+                {formatThemeName(themeOption.name)}
               </button>
             ))}
           </div>

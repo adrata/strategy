@@ -92,7 +92,7 @@ export function TableCell({
           <a
             href={href || '#'}
             target={target}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
+            className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline"
             onClick={handleClick}
           >
             {formattedValue}
@@ -103,7 +103,7 @@ export function TableCell({
         return (
           <a
             href={`mailto:${value}`}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
+            className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline"
           >
             {formattedValue}
           </a>
@@ -113,7 +113,7 @@ export function TableCell({
         return (
           <a
             href={`tel:${value}`}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
+            className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline"
           >
             {formattedValue}
           </a>
@@ -121,23 +121,23 @@ export function TableCell({
 
       case 'status':
         const statusColors = {
-          'active': 'bg-green-100 text-green-800',
-          'inactive': 'bg-[var(--hover)] text-gray-800',
-          'pending': 'bg-yellow-100 text-yellow-800',
-          'completed': 'bg-blue-100 text-blue-800',
-          'cancelled': 'bg-red-100 text-red-800',
-          'qualified': 'bg-green-100 text-green-800',
-          'unqualified': 'bg-red-100 text-red-800',
-          'new': 'bg-blue-100 text-blue-800',
-          'contacted': 'bg-yellow-100 text-yellow-800',
-          'demo': 'bg-purple-100 text-purple-800',
-          'proposal': 'bg-orange-100 text-orange-800',
-          'negotiation': 'bg-indigo-100 text-indigo-800',
-          'closed-won': 'bg-green-100 text-green-800',
-          'closed-lost': 'bg-red-100 text-red-800'
+          'active': 'bg-[var(--badge-qualified-bg)] text-[var(--badge-qualified-text)]',
+          'inactive': 'bg-[var(--hover)] text-[var(--muted)]',
+          'pending': 'bg-[var(--badge-contacted-bg)] text-[var(--badge-contacted-text)]',
+          'completed': 'bg-[var(--badge-qualified-bg)] text-[var(--badge-qualified-text)]',
+          'cancelled': 'bg-[var(--badge-lost-bg)] text-[var(--badge-lost-text)]',
+          'qualified': 'bg-[var(--badge-qualified-bg)] text-[var(--badge-qualified-text)]',
+          'unqualified': 'bg-[var(--badge-lost-bg)] text-[var(--badge-lost-text)]',
+          'new': 'bg-[var(--badge-new-bg)] text-[var(--badge-new-text)]',
+          'contacted': 'bg-[var(--badge-contacted-bg)] text-[var(--badge-contacted-text)]',
+          'demo': 'bg-[var(--badge-contacted-bg)] text-[var(--badge-contacted-text)]',
+          'proposal': 'bg-[var(--badge-contacted-bg)] text-[var(--badge-contacted-text)]',
+          'negotiation': 'bg-[var(--badge-contacted-bg)] text-[var(--badge-contacted-text)]',
+          'closed-won': 'bg-[var(--badge-qualified-bg)] text-[var(--badge-qualified-text)]',
+          'closed-lost': 'bg-[var(--badge-lost-bg)] text-[var(--badge-lost-text)]'
         };
         
-        const statusClass = statusColors[formattedValue.toLowerCase()] || 'bg-[var(--hover)] text-gray-800';
+        const statusClass = statusColors[formattedValue.toLowerCase()] || 'bg-[var(--hover)] text-[var(--muted)]';
         
         return (
           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
@@ -147,7 +147,7 @@ export function TableCell({
 
       case 'badge':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--hover)] text-[var(--muted)]">
             {formattedValue}
           </span>
         );
@@ -171,7 +171,7 @@ export function TableCell({
           .slice(0, 2);
         
         return (
-          <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-700">
+          <div className="h-8 w-8 rounded-full bg-[var(--hover)] flex items-center justify-center text-xs font-medium text-[var(--muted)]">
             {initials}
           </div>
         );
@@ -179,7 +179,7 @@ export function TableCell({
       default:
         return (
           <span 
-            className={onClick ? 'cursor-pointer hover:text-blue-600' : ''}
+            className={onClick ? 'cursor-pointer hover:text-[var(--accent)]' : ''}
             onClick={handleClick}
           >
             {formattedValue}

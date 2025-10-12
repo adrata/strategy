@@ -166,7 +166,7 @@ export function PipelineTable({
   
   // Dynamic height calculation - keep table height reasonable
   const headerHeight = 40; // Height of table header
-  const rowHeight = 62; // Approximate height per row
+  const rowHeight = 66; // Approximate height per row
   const contentHeight = headerHeight + (data.length * rowHeight);
   // Account for tabs/filters section - increase space reservation for sections with tabs
   const hasTabs = ['leads', 'prospects', 'opportunities'].includes(section);
@@ -268,7 +268,7 @@ export function PipelineTable({
   if (!data || data.length === 0) {
     return (
       <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden">
-        <div className="overflow-x-auto pipeline-table-scroll" style={{ height: tableHeight }}>
+        <div className="overflow-x-auto overflow-y-auto pipeline-table-scroll" style={{ maxHeight: tableHeight }}>
           <table className="w-full">
             <TableHeader
               visibleColumns={visibleColumns}
@@ -298,7 +298,7 @@ export function PipelineTable({
   return (
     <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden">
       {/* Table */}
-      <div className="overflow-x-auto pipeline-table-scroll" style={{ height: tableHeight }}>
+      <div className="overflow-x-auto overflow-y-auto pipeline-table-scroll" style={{ maxHeight: tableHeight }}>
         <table className="w-full">
           <TableHeader
             headers={headers}

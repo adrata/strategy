@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
     // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability
-    const [peopleCounts, companiesCounts] = await Promise.all([
+    const [peopleCounts, companiesCounts, speedrunCount] = await Promise.all([
       // Get people counts by status
       prisma.people.groupBy({
         by: ['status'],
@@ -120,6 +120,20 @@ export async function GET(request: NextRequest) {
           })
         },
         _count: { id: true }
+      }),
+      // Get speedrun count using same criteria as speedrun API (top 50 people)
+      prisma.people.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          // Remove companyId requirement to match speedrun API logic
+          ...(isDemoMode ? {} : {
+            OR: [
+              { assignedUserId: userId },
+              { assignedUserId: null }
+            ]
+          })
+        }
       })
     ]);
 
@@ -143,7 +157,8 @@ export async function GET(request: NextRequest) {
     const clientsCount = companiesCountsMap.CLIENT || 0;
     const partnersCount = companiesCountsMap.ACTIVE || 0; // Use ACTIVE as fallback for partners
     const sellersCount = peopleCountsMap.CLIENT || 0; // Use CLIENT status as fallback for sellers
-    const speedrunCount = Math.min(50, peopleCount); // Speedrun is limited to top 50 people
+    // Use speedrun count limited to 50 (since speedrun shows "top 50 people to go after")
+    const actualSpeedrunCount = Math.min(50, speedrunCount);
     
     const counts = {
       leads: leadsCount,
@@ -154,7 +169,7 @@ export async function GET(request: NextRequest) {
       clients: clientsCount,
       partners: partnersCount,
       sellers: sellersCount,
-      speedrun: speedrunCount,
+      speedrun: actualSpeedrunCount,
       metrics: 16, // Fixed count for tracked metrics
       chronicle: 0 // Will be updated when Chronicle reports are created
     };

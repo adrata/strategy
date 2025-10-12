@@ -2,7 +2,20 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { 
+  BriefcaseIcon,
+  PaperAirplaneIcon,
+  FunnelIcon,
+  UserGroupIcon,
+  Cog6ToothIcon,
+  Squares2X2Icon,
+  DocumentIcon,
+  ChartBarIcon,
+  PresentationChartBarIcon,
+  SparklesIcon,
+  CommandLineIcon,
+  TableCellsIcon,
+} from "@heroicons/react/24/outline";
 import { useZoom } from "@/platform/ui/components/ZoomProvider";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { ThinLeftPanel } from "@/platform/ui/components/layout/ThinLeftPanel";
@@ -299,8 +312,41 @@ function AcquisitionOSLayoutInner({
     }
   }, [activeSubApp, activeSection]);
 
-  // Get filtered and sorted apps
+  // Get filtered and sorted apps - include all platform apps for admin users
   const getDisplayApps = (): ActionPlatformApp[] => {
+    // For admin users, show all platform apps from ThinLeftPanel
+    const isAdminUser = authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
+    
+    if (isAdminUser) {
+      // Import platformApps from ThinLeftPanel and convert to ActionPlatformApp format
+      const allPlatformApps: ActionPlatformApp[] = [
+        { id: "Speedrun", name: "Speedrun", description: "Take better action.", icon: PaperAirplaneIcon, color: "#6B7280", sections: ["inbox", "prospects", "leads", "pipeline", "analytics", "settings"] },
+        { id: "pipeline", name: "Pipeline", description: "Win major deals.", icon: FunnelIcon, color: "#059669", sections: ["speedrun", "opportunities", "leads", "prospects", "clients", "partners", "companies", "people", "metrics", "chronicle"] },
+        { id: "monaco", name: "Monaco", description: "Make connections.", icon: UserGroupIcon, color: "#7C3AED", sections: ["companies", "people", "sellers", "sequences", "analytics"] },
+        { id: "stacks", name: "Stacks", description: "Product + Engineering collaboration.", icon: Squares2X2Icon, color: "#7C3AED", sections: ["stacks", "backlog", "epics", "stories", "bugs"] },
+        { id: "atrium", name: "Atrium", description: "Document collaboration & management.", icon: DocumentIcon, color: "#10B981", sections: ["documents", "templates", "shared"] },
+        { id: "tower", name: "Tower", description: "Operations control center.", icon: ChartBarIcon, color: "#8B5CF6", sections: ["operations", "control", "optimization"] },
+        { id: "grand-central", name: "Grand Central", description: "Integration hub & workflow automation.", icon: Cog6ToothIcon, color: "#8B5CF6", sections: ["integrations", "automation", "workflows"] },
+        { id: "olympus", name: "Olympus", description: "Workflow orchestration & execution.", icon: PresentationChartBarIcon, color: "#DC2626", sections: ["workflows", "orchestration", "execution"] },
+        { id: "particle", name: "Particle", description: "A/B testing & experimentation platform.", icon: SparklesIcon, color: "#F59E0B", sections: ["testing", "experimentation", "analytics"] },
+        { id: "encode", name: "Encode", description: "Code editor & development environment.", icon: CommandLineIcon, color: "#0891B2", sections: ["code", "development", "editor"] },
+        { id: "database", name: "Database", description: "Database management & query interface.", icon: TableCellsIcon, color: "#059669", sections: ["database", "queries", "management"] },
+        { id: "settings", name: "Settings", description: "Configure your workspace.", icon: Cog6ToothIcon, color: "#6B7280", sections: ["apps", "preferences"] },
+      ];
+      
+      if (appPreferences['length'] === 0) {
+        return allPlatformApps;
+      }
+
+      // Filter out hidden apps and sort by order
+      return appPreferences
+        .filter((pref) => pref.isVisible)
+        .sort((a, b) => a.order - b.order)
+        .map((pref) => allPlatformApps.find((app) => app['id'] === pref.id))
+        .filter(Boolean) as ActionPlatformApp[];
+    }
+
+    // For non-admin users, use the original logic
     if (appPreferences['length'] === 0) {
       return ACTION_PLATFORM_APPS;
     }
@@ -450,7 +496,7 @@ function AcquisitionOSLayoutInner({
           }
           leftPanel={effectiveLeftPanelVisible ? leftPanel : null}
           middlePanel={
-            <div className="h-full flex flex-col" style={{ marginTop: "-6px" }}>
+            <div className="h-full flex flex-col">
               {middlePanel}
             </div>
           }

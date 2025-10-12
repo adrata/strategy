@@ -274,7 +274,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
     // Use appropriate navigation method for platform
     if (isDesktop) {
-      // Allow navigation to Grand Central routes, pipeline, and settings pages
+      // Allow navigation to Grand Central routes, pipeline, settings pages, and workspace apps for admin users
       const allowedDesktopRoutes = [
         "/pipeline",
         "./grand-central/dashboard",
@@ -284,6 +284,17 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         "/highway",
         "/optimization",
         "/docs/", // Allow all docs routes
+        // Workspace apps - only for admin users
+        ...(isAdminUser ? [
+          "./stacks",
+          "./atrium", 
+          "./particle",
+          "./tower",
+          "./grand-central",
+          "./olympus",
+          "./encode",
+          "./database"
+        ] : [])
       ];
 
       const isAllowedRoute = allowedDesktopRoutes.some(
@@ -599,6 +610,178 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
+        {/* Workspace Apps - Admin only */}
+        {isAdminUser && (
+          <>
+            <div className="border-t border-[var(--border)] my-2"></div>
+            <div className="px-2 py-1">
+              <div className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
+                Workspace Apps
+              </div>
+              
+              {/* Stacks */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("📦 Stacks clicked - navigating to stacks");
+                  setIsProfileOpen(false);
+                  handleNavigation("./stacks");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./stacks");
+                  }
+                }}
+              >
+                Stacks
+              </div>
+
+              {/* Atrium */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("🏛️ Atrium clicked - navigating to atrium");
+                  setIsProfileOpen(false);
+                  handleNavigation("./atrium");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./atrium");
+                  }
+                }}
+              >
+                Atrium
+              </div>
+
+              {/* Particle */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("⚛️ Particle clicked - navigating to particle");
+                  setIsProfileOpen(false);
+                  handleNavigation("./particle");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./particle");
+                  }
+                }}
+              >
+                Particle
+              </div>
+
+              {/* Tower */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("🗼 Tower clicked - navigating to tower");
+                  setIsProfileOpen(false);
+                  handleNavigation("./tower");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./tower");
+                  }
+                }}
+              >
+                Tower
+              </div>
+
+              {/* Grand Central */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("🚉 Grand Central clicked - navigating to grand-central");
+                  setIsProfileOpen(false);
+                  handleNavigation("./grand-central");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./grand-central");
+                  }
+                }}
+              >
+                Grand Central
+              </div>
+
+              {/* Olympus */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("🏔️ Olympus clicked - navigating to olympus");
+                  setIsProfileOpen(false);
+                  handleNavigation("./olympus");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./olympus");
+                  }
+                }}
+              >
+                Olympus
+              </div>
+
+              {/* Encode */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("💻 Encode clicked - navigating to encode");
+                  setIsProfileOpen(false);
+                  handleNavigation("./encode");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./encode");
+                  }
+                }}
+              >
+                Encode
+              </div>
+
+              {/* Database */}
+              <div
+                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                onClick={() => {
+                  console.log("🗄️ Database clicked - navigating to database");
+                  setIsProfileOpen(false);
+                  handleNavigation("./database");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e['key'] === "Enter") {
+                    setIsProfileOpen(false);
+                    handleNavigation("./database");
+                  }
+                }}
+              >
+                Database
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Monaco Display Options - Show only in demo mode */}
         {isDemoMode && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
           <>
@@ -801,73 +984,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 4. Olympus - Ross only */}
-        {isAdminUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-            onClick={() => {
-              console.log("🏛️ ProfileBox: Olympus clicked - navigating to olympus");
-              setIsProfileOpen(false); // Close profile popup
-              handleNavigation("./olympus");
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e['key'] === "Enter") {
-                setIsProfileOpen(false);
-                handleNavigation("./olympus");
-              }
-            }}
-          >
-            Olympus
-          </div>
-        )}
+        {/* Note: Olympus, Tower, and Grand Central are now available in the main navigation 
+             under WORKSPACE APPS section, so they have been removed from here to avoid redundancy */}
         
-        {/* 5. Tower - Ross only */}
-        {isAdminUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-            onClick={() => {
-              console.log("🗼 ProfileBox: Tower clicked - navigating to tower");
-              setIsProfileOpen(false); // Close profile popup
-              handleNavigation("./tower");
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e['key'] === "Enter") {
-                setIsProfileOpen(false);
-                handleNavigation("./tower");
-              }
-            }}
-          >
-            Tower
-          </div>
-        )}
-        
-        {/* 6. Grand Central - Ross only */}
-        {isAdminUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-            onClick={() => {
-              console.log("🏢 ProfileBox: Grand Central clicked - navigating to full-page integration platform");
-              setIsProfileOpen(false); // Close profile popup
-              handleNavigation("./grand-central");
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e['key'] === "Enter") {
-                setIsProfileOpen(false);
-                handleNavigation("./grand-central");
-              }
-            }}
-          >
-            Grand Central
-          </div>
-        )}
-        
-        {/* 7. Speedrun Engine Configuration - Available for all users */}
+        {/* 4. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
@@ -887,7 +1007,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 8. Sign Out */}
+        {/* 5. Sign Out */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={handleSignOut}

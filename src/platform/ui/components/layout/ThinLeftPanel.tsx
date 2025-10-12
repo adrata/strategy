@@ -26,6 +26,7 @@ import {
   FunnelIcon,
   MoonIcon,
   FolderOpenIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -257,6 +258,90 @@ const platformApps: AdrataPlatformApp[] = [
     tags: ["Operations", "Control", "Optimization"],
   },
   {
+    name: "Atrium",
+    slug: "atrium",
+    description: "Document collaboration & management.",
+    icon: DocumentIcon,
+    color: "#10B981",
+    shortcut: "a",
+    category: "productivity",
+    downloadSize: "0 MB",
+    rating: 4.7,
+    tags: ["Documents", "Collaboration", "Management"],
+  },
+  {
+    name: "Particle",
+    slug: "particle",
+    description: "A/B testing & experimentation platform.",
+    icon: SparklesIcon,
+    color: "#F59E0B",
+    shortcut: "p",
+    category: "analytics",
+    downloadSize: "0 MB",
+    rating: 4.6,
+    tags: ["Testing", "Experimentation", "Analytics"],
+  },
+  {
+    name: "Grand Central",
+    slug: "grand-central",
+    description: "Integration hub & workflow automation.",
+    icon: Cog6ToothIcon,
+    color: "#8B5CF6",
+    shortcut: "gc",
+    category: "productivity",
+    downloadSize: "0 MB",
+    rating: 4.8,
+    tags: ["Integrations", "Automation", "Workflows"],
+  },
+  {
+    name: "Olympus",
+    slug: "olympus",
+    description: "Workflow orchestration & execution.",
+    icon: PresentationChartBarIcon,
+    color: "#DC2626",
+    shortcut: "o",
+    category: "productivity",
+    downloadSize: "0 MB",
+    rating: 4.7,
+    tags: ["Workflows", "Orchestration", "Execution"],
+  },
+  {
+    name: "Encode",
+    slug: "encode",
+    description: "Code editor & development environment.",
+    icon: CommandLineIcon,
+    color: "#0891B2",
+    shortcut: "e",
+    category: "productivity",
+    downloadSize: "0 MB",
+    rating: 4.8,
+    tags: ["Code", "Development", "Editor"],
+  },
+  {
+    name: "Database",
+    slug: "database",
+    description: "Database management & query interface.",
+    icon: TableCellsIcon,
+    color: "#059669",
+    shortcut: "db",
+    category: "productivity",
+    downloadSize: "0 MB",
+    rating: 4.6,
+    tags: ["Database", "Queries", "Management"],
+  },
+  {
+    name: "Docs",
+    slug: "docs",
+    description: "Documentation & knowledge base.",
+    icon: BookOpenIcon,
+    color: "#7C3AED",
+    shortcut: "d",
+    category: "information",
+    downloadSize: "0 MB",
+    rating: 4.5,
+    tags: ["Documentation", "Knowledge", "Reference"],
+  },
+  {
     name: "Battleground",
     slug: "battleground",
     description: "Strategic intelligence & market warfare.",
@@ -370,8 +455,29 @@ function QuickAppSwitcher({
 }) {
   const router = useRouter();
 
-  // 5 most common apps - Updated per user request
-  const quickApps = [
+  // Get current user for admin access check
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Get user email from localStorage or auth context
+    const userEmail = localStorage.getItem('userEmail') || 
+                     (typeof window !== 'undefined' && window.location.search.includes('user=') ? 
+                      new URLSearchParams(window.location.search).get('user') : null);
+    setCurrentUserEmail(userEmail);
+  }, []);
+
+  // Check if user is admin
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const isAdminUser = currentUserEmail && ADMIN_EMAILS.includes(currentUserEmail);
+
+  // 5 most common apps - Include workspace apps for admin users
+  const quickApps = isAdminUser ? [
+    platformApps.find((app) => app['slug'] === "aos"),
+    platformApps.find((app) => app['slug'] === "stacks"),
+    platformApps.find((app) => app['slug'] === "atrium"),
+    platformApps.find((app) => app['slug'] === "tower"),
+    platformApps.find((app) => app['slug'] === "grand-central"),
+  ].filter((app): app is AdrataPlatformApp => app !== undefined) : [
     platformApps.find((app) => app['slug'] === "aos"),
     platformApps.find((app) => app['slug'] === "tower"),
     platformApps.find((app) => app['slug'] === "oasis"),

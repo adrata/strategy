@@ -41,7 +41,7 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
     const fetchReports = async () => {
       try {
         setLoading(true);
-        const data = await authFetch(`/api/chronicle/reports?workspaceId=${workspaceId}&limit=20`);
+        const data = await authFetch(`/api/chronicle/reports?limit=20`);
         setReports(data.reports || []);
       } catch (err) {
         console.error('Error fetching Chronicle reports:', err);
@@ -64,8 +64,7 @@ export function ChronicleList({ onReportSelect }: ChronicleListProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          reportType,
-          workspaceId
+          reportType
         })
       });
 

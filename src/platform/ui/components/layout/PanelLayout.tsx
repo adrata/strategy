@@ -413,7 +413,7 @@ export function PanelLayout({
         )}
         {/* Middle Panel */}
         <div
-          className="relative min-w-0 bg-[var(--background)] h-full pb-6 overflow-hidden"
+          className="relative min-w-0 bg-[var(--background)] h-full overflow-hidden"
           style={{
             flex: isRightPanelVisible ? 1 : "1 1 0%",
             background: "var(--background)",
