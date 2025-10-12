@@ -91,8 +91,10 @@ export async function GET(request: NextRequest) {
     // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace
     const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
                       workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
+                      workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Ross's workspace
                       userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM' || // Dan's user ID
+                      userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
     // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability
@@ -114,8 +116,8 @@ export async function GET(request: NextRequest) {
           deletedAt: null,
           ...(isDemoMode ? {} : {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { mainSellerId: userId },
+              { mainSellerId: null }
             ]
           })
         },
@@ -129,8 +131,8 @@ export async function GET(request: NextRequest) {
           // Remove companyId requirement to match speedrun API logic
           ...(isDemoMode ? {} : {
             OR: [
-              { ownerId: userId },
-              { ownerId: null }
+              { mainSellerId: userId },
+              { mainSellerId: null }
             ]
           })
         }

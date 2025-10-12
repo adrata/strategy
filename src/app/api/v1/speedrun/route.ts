@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/prisma';
+import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
 
@@ -48,7 +48,11 @@ export async function GET(request: NextRequest) {
     const fetchSpeedrunData = async () => {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                        context.userId === 'demo-user-2025'; // Demo user only
+                        context.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
+                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Ross's workspace
+                        context.userId === 'demo-user-2025' || // Demo user only
+                        context.userId === '01K1VBYZMWTCT09FWEKBDMCXZM' || // Dan's user ID
+                        context.userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
       
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
 
@@ -61,8 +65,8 @@ export async function GET(request: NextRequest) {
             companyId: { not: null },
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: context.userId },
-                { ownerId: null }
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
               ]
             })
           }
@@ -74,8 +78,8 @@ export async function GET(request: NextRequest) {
             globalRank: { not: null },
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: context.userId },
-                { ownerId: null }
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
               ]
             })
           }
@@ -88,8 +92,8 @@ export async function GET(request: NextRequest) {
             globalRank: { not: null },
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: context.userId },
-                { ownerId: null }
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
               ]
             })
           }
@@ -111,8 +115,8 @@ export async function GET(request: NextRequest) {
           // Remove companyId requirement temporarily to see if we have any people at all
           ...(isDemoMode ? {} : {
             OR: [
-              { ownerId: context.userId },
-              { ownerId: null }
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
             ]
           })
         },
@@ -137,11 +141,11 @@ export async function GET(request: NextRequest) {
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
-          ownerId: true,
+          mainSellerId: true,
           workspaceId: true,
           createdAt: true,
           updatedAt: true,
-          owner: {
+          mainSeller: {
             select: {
               id: true,
               firstName: true,
@@ -179,12 +183,12 @@ export async function GET(request: NextRequest) {
       // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
       const speedrunData = speedrunPeople.map((person, index) => {
         // Format owner name - show "Me" for current user
-        const ownerName = person.owner 
-          ? (person.owner.id === context.userId
+        const ownerName = person.mainSeller 
+          ? (person.mainSeller.id === context.userId
               ? 'Me'
-              : person.owner.firstName && person.owner.lastName 
-                ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
-                : person.owner.name || person.owner.email || '-')
+              : person.mainSeller.firstName && person.mainSeller.lastName 
+                ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
+                : person.mainSeller.name || person.mainSeller.email || '-')
           : '-';
 
         // Format co-sellers names - exclude current user from co-sellers list
@@ -213,7 +217,7 @@ export async function GET(request: NextRequest) {
           lastActionDate: person.lastActionDate || null,
           nextAction: person.nextAction || 'No next action',
           nextActionDate: person.nextActionDate || null,
-          mainSellerId: person.ownerId,
+          mainSellerId: person.mainSellerId,
           workspaceId: person.workspaceId,
           createdAt: person.createdAt,
           updatedAt: person.updatedAt,
@@ -228,7 +232,7 @@ export async function GET(request: NextRequest) {
           // Add main-seller and co-sellers data
           mainSeller: ownerName,
           coSellers: coSellersNames,
-          mainSellerData: person.owner,
+          mainSellerData: person.mainSeller,
           coSellersData: person.coSellers ? person.coSellers.filter((coSeller: any) => coSeller.user.id !== context.userId) : [],
           currentUserId: context.userId
         };

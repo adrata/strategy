@@ -42,9 +42,11 @@ export async function GET(
             priority: true,
           },
         },
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
+            firstName: true,
+            lastName: true,
             name: true,
             email: true,
           },
@@ -77,9 +79,23 @@ export async function GET(
       );
     }
 
+    // Transform to use mainSeller terminology like speedrun
+    const transformedPerson = {
+      ...person,
+      mainSellerId: person.mainSellerId,
+      mainSeller: person.mainSeller 
+        ? (person.mainSeller.id === authUser.id
+            ? 'Me'
+            : person.mainSeller.firstName && person.mainSeller.lastName 
+              ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
+              : person.mainSeller.name || person.mainSeller.email || '-')
+        : '-',
+      mainSellerData: person.mainSeller
+    };
+
     return NextResponse.json({
       success: true,
-      data: person,
+      data: transformedPerson,
     });
 
   } catch (error) {
@@ -144,9 +160,11 @@ export async function PUT(
             industry: true,
           },
         },
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
+            firstName: true,
+            lastName: true,
             name: true,
             email: true,
           },
@@ -161,7 +179,18 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      data: updatedPerson,
+      data: {
+        ...updatedPerson,
+        mainSellerId: updatedPerson.mainSellerId,
+        mainSeller: updatedPerson.mainSeller 
+          ? (updatedPerson.mainSeller.id === authUser.id
+              ? 'Me'
+              : updatedPerson.mainSeller.firstName && updatedPerson.mainSeller.lastName 
+                ? `${updatedPerson.mainSeller.firstName} ${updatedPerson.mainSeller.lastName}`.trim()                                                                    
+                : updatedPerson.mainSeller.name || updatedPerson.mainSeller.email || '-')
+          : '-',
+        mainSellerData: updatedPerson.mainSeller
+      },
       meta: {
         message: 'Person updated successfully',
       },
@@ -237,9 +266,11 @@ export async function PATCH(
             industry: true,
           },
         },
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
+            firstName: true,
+            lastName: true,
             name: true,
             email: true,
           },
@@ -254,7 +285,18 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      data: updatedPerson,
+      data: {
+        ...updatedPerson,
+        mainSellerId: updatedPerson.mainSellerId,
+        mainSeller: updatedPerson.mainSeller 
+          ? (updatedPerson.mainSeller.id === authUser.id
+              ? 'Me'
+              : updatedPerson.mainSeller.firstName && updatedPerson.mainSeller.lastName 
+                ? `${updatedPerson.mainSeller.firstName} ${updatedPerson.mainSeller.lastName}`.trim()                                                                    
+                : updatedPerson.mainSeller.name || updatedPerson.mainSeller.email || '-')
+          : '-',
+        mainSellerData: updatedPerson.mainSeller
+      },
       meta: {
         message: 'Person updated successfully',
       },

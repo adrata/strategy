@@ -296,10 +296,13 @@ export class DemoScenarioService {
     }
 
     try {
-      const people = await prisma.leads.findMany({
+      const people = await prisma.people.findMany({
         where: {
-          demoScenarioId: this.currentScenario,
-          isDemoData: true
+          status: 'LEAD',
+          customFields: {
+            path: ['demoScenarioId'],
+            equals: this.currentScenario
+          }
         },
         select: {
           id: true,

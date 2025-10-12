@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/prisma';
+import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 // Response cache for fast performance
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
       OR: [
-        { assignedUserId: context.userId },
-        { assignedUserId: null }
+        { mainSellerId: context.userId },
+        { mainSellerId: null }
       ]
     };
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
@@ -69,8 +69,8 @@ export async function GET(request: NextRequest) {
       where.AND = [
         {
           OR: [
-            { assignedUserId: context.userId },
-            { assignedUserId: null }
+            { mainSellerId: context.userId },
+            { mainSellerId: null }
           ]
         },
         {
@@ -154,6 +154,9 @@ export async function GET(request: NextRequest) {
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
         },
+        // Add compatibility fields for useFastSectionData hook
+        count: totalCount,
+        totalCount: totalCount,
         filters: { search, status, priority, industry, sortBy, sortOrder },
         userId: context.userId,
         workspaceId: context.workspaceId,
@@ -226,12 +229,12 @@ export async function POST(request: NextRequest) {
           status: body.status || 'ACTIVE',
           priority: body.priority || 'MEDIUM',
           workspaceId: context.workspaceId,
-          ownerId: body.ownerId,
+          mainSellerId: body.mainSellerId,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         include: {
-          assignedUser: {
+          mainSeller: {
             select: {
               id: true,
               name: true,

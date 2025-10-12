@@ -131,8 +131,8 @@ export async function GET(request: NextRequest) {
             companyId: { not: null }, // Only people with company relationships
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: userId },
-                { ownerId: null }
+                { mainSellerId: userId },
+                { mainSellerId: null }
               ]
             })
           },
@@ -155,8 +155,8 @@ export async function GET(request: NextRequest) {
               lastActionDate: true,
               nextAction: true,
               nextActionDate: true,
-              ownerId: true,
-              ownerId: true,
+              mainSellerId: true,
+              mainSellerId: true,
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
@@ -240,8 +240,8 @@ export async function GET(request: NextRequest) {
               lastActionDate: person.lastActionDate || null,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
-              ownerId: person.ownerId || null,
-              ownerId: person.ownerId,
+              mainSellerId: person.mainSellerId || null,
+              mainSellerId: person.mainSellerId,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
@@ -267,8 +267,8 @@ export async function GET(request: NextRequest) {
             ...(isDemoMode ? {} : {
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             }),
@@ -377,8 +377,8 @@ export async function GET(request: NextRequest) {
             ...(isDemoMode ? {} : {
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             }),
@@ -486,8 +486,8 @@ export async function GET(request: NextRequest) {
             status: 'OPPORTUNITY', // Filter for OPPORTUNITY status
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: userId },
-                { ownerId: null }
+                { mainSellerId: userId },
+                { mainSellerId: null }
               ]
             })
           },
@@ -506,7 +506,7 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            ownerId: true,
+            mainSellerId: true,
             createdAt: true,
             updatedAt: true
           }
@@ -538,7 +538,7 @@ export async function GET(request: NextRequest) {
           nextAction: company.nextAction || 'No action planned',
           lastActionDate: company.lastActionDate,
           nextActionDate: company.nextActionDate,
-          ownerId: company.ownerId,
+          mainSellerId: company.mainSellerId,
           createdAt: company.createdAt,
           updatedAt: company.updatedAt
         }));
@@ -552,8 +552,8 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             ...(isDemoMode ? {} : {
               OR: [
-                { ownerId: userId },
-                { ownerId: null }
+                { mainSellerId: userId },
+                { mainSellerId: null }
               ]
             })
           },
@@ -568,7 +568,7 @@ export async function GET(request: NextRequest) {
             industry: true,
             vertical: true,
             size: true,
-            ownerId: true,
+            mainSellerId: true,
             createdAt: true,
             updatedAt: true,
             globalRank: true,
@@ -600,7 +600,7 @@ export async function GET(request: NextRequest) {
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
-          ownerId: company.ownerId, // 🆕 FIX: Include ownerId for company assignment filtering
+          mainSellerId: company.mainSellerId, // 🆕 FIX: Include mainSellerId for company assignment filtering
           lastAction: company.lastAction || 'Never',
           nextAction: company.nextAction || 'No action planned',
           createdAt: company.createdAt,
@@ -620,8 +620,8 @@ export async function GET(request: NextRequest) {
               companyId: { not: null }, // Only people with company relationships like speedrun
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             },
@@ -649,7 +649,7 @@ export async function GET(request: NextRequest) {
               lastActionDate: true,
               nextAction: true,
               nextActionDate: true,
-              ownerId: true,
+              mainSellerId: true,
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
@@ -707,7 +707,7 @@ export async function GET(request: NextRequest) {
               lastActionDate: person.lastActionDate || null,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
-              ownerId: person.ownerId || null,
+              mainSellerId: person.mainSellerId || null,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
@@ -732,8 +732,8 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             },
@@ -751,7 +751,7 @@ export async function GET(request: NextRequest) {
               title: true,
               department: true,
               company: true,
-              ownerId: true,
+              mainSellerId: true,
               workspaceId: true,
               tags: true,
               metadata: true,
@@ -767,8 +767,8 @@ export async function GET(request: NextRequest) {
               role: 'seller',
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             },
@@ -786,7 +786,7 @@ export async function GET(request: NextRequest) {
               jobTitle: true,
               department: true,
               company: true,
-              ownerId: true,
+              mainSellerId: true,
               workspaceId: true,
               tags: true,
               createdAt: true,
@@ -826,7 +826,7 @@ export async function GET(request: NextRequest) {
             title: seller.title || seller.jobTitle || 'Unknown Title',
             department: seller.department || 'Unknown Department',
             company: seller.company || 'Unknown Company',
-            ownerId: seller.ownerId,
+            mainSellerId: seller.mainSellerId,
             workspaceId: seller.workspaceId,
             tags: seller.tags || [],
             status: status,
@@ -879,8 +879,8 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             }
@@ -894,8 +894,8 @@ export async function GET(request: NextRequest) {
               status: 'OPPORTUNITY',
               ...(isDemoMode ? {} : {
                 OR: [
-                  { ownerId: userId },
-                  { ownerId: null }
+                  { mainSellerId: userId },
+                  { mainSellerId: null }
                 ]
               })
             }

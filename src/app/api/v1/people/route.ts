@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/platform/prisma';
+import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
 
@@ -62,6 +62,33 @@ export async function GET(request: NextRequest) {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
       };
+
+      // 🔍 DIAGNOSTIC: Check what data actually exists
+      const [totalPeople, peopleByStatus] = await Promise.all([
+        prisma.people.count({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null
+          }
+        }),
+        prisma.people.groupBy({
+          by: ['status'],
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null
+          },
+          _count: { id: true }
+        })
+      ]);
+
+      console.log(`🔍 [V1 PEOPLE API] Data diagnostic:`, {
+        totalPeople,
+        peopleByStatus: peopleByStatus.reduce((acc, stat) => {
+          acc[stat.status || 'NULL'] = stat._count.id;
+          return acc;
+        }, {} as Record<string, number>),
+        requestedSection: section
+      });
 
       // 🚀 SECTION FILTERING: Pre-filter by section for better performance
       if (section) {
@@ -128,6 +155,8 @@ export async function GET(request: NextRequest) {
         };
       }
 
+      console.log(`🔍 [V1 PEOPLE API] Final where clause:`, JSON.stringify(where, null, 2));
+
       // Optimized query with Prisma ORM for reliability
       const [people, totalCount] = await Promise.all([
         prisma.people.findMany({
@@ -150,28 +179,73 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextActionDate: true,
             companyId: true,
-            // Remove company join for list views - can fetch on-demand for better performance
-            // company: {
-            //   select: {
-            //     name: true
-            //   }
-            // }
+            mainSellerId: true,
+            company: {
+              select: {
+                id: true,
+                name: true,
+                industry: true,
+                size: true,
+                globalRank: true
+              }
+            },
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
           }
         }),
         prisma.people.count({ where }),
       ]);
 
-      const result = createSuccessResponse(people, {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        filters: { search, status, priority, companyId, sortBy, sortOrder },
-        userId: context.userId,
-        workspaceId: context.workspaceId,
+      console.log(`🔍 [V1 PEOPLE API] Query results:`, {
+        peopleFound: people.length,
+        totalCount,
+        firstPerson: people[0] ? {
+          id: people[0].id,
+          name: people[0].fullName,
+          status: people[0].status
+        } : null
       });
+
+      // Transform to use mainSeller terminology like speedrun
+      const transformedPeople = people.map((person) => ({
+        ...person,
+        mainSellerId: person.mainSellerId,
+        mainSeller: person.mainSeller 
+          ? (person.mainSeller.id === context.userId
+              ? 'Me'
+              : person.mainSeller.firstName && person.mainSeller.lastName 
+                ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
+                : person.mainSeller.name || person.mainSeller.email || '-')
+          : '-',
+        mainSellerData: person.mainSeller
+      }));
+
+      const result = {
+        success: true,
+        data: transformedPeople,
+        meta: {
+          timestamp: new Date().toISOString(),
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          // Add compatibility fields for useFastSectionData hook
+          count: totalCount,
+          totalCount: totalCount,
+          filters: { search, status, priority, companyId, sortBy, sortOrder },
+          userId: context.userId,
+          workspaceId: context.workspaceId,
+        }
+      };
 
       return result;
     };
@@ -206,7 +280,7 @@ export async function GET(request: NextRequest) {
       console.warn('⚠️ [PEOPLE API] Cache write failed:', error);
     }
     
-    return result;
+    return NextResponse.json(result);
 
   } catch (error) {
     return logAndCreateErrorResponse(
@@ -304,7 +378,7 @@ export async function POST(request: NextRequest) {
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
-          ownerId: body.ownerId,
+          mainSellerId: body.mainSellerId,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -317,9 +391,11 @@ export async function POST(request: NextRequest) {
               industry: true,
             },
           },
-          assignedUser: {
+          mainSeller: {
             select: {
               id: true,
+              firstName: true,
+              lastName: true,
               name: true,
               email: true,
             },
@@ -350,6 +426,20 @@ export async function POST(request: NextRequest) {
 
     const person = result.person;
 
+    // Transform to use mainSeller terminology like speedrun
+    const transformedPerson = {
+      ...person,
+      mainSellerId: person.mainSellerId,
+      mainSeller: person.mainSeller 
+        ? (person.mainSeller.id === context.userId
+            ? 'Me'
+            : person.mainSeller.firstName && person.mainSeller.lastName 
+              ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
+              : person.mainSeller.name || person.mainSeller.email || '-')
+        : '-',
+      mainSellerData: person.mainSeller
+    };
+
     // 🚀 CACHE INVALIDATION: Clear people cache when new person is created
     try {
       const cachePattern = `people-${context.workspaceId}-${context.userId}-*`;
@@ -359,10 +449,15 @@ export async function POST(request: NextRequest) {
       console.warn('⚠️ [PEOPLE API] Cache invalidation failed:', error);
     }
 
-    return createSuccessResponse(person, {
-      message: 'Person created successfully',
-      userId: context.userId,
-      workspaceId: context.workspaceId,
+    return NextResponse.json({
+      success: true,
+      data: transformedPerson,
+      meta: {
+        timestamp: new Date().toISOString(),
+        message: 'Person created successfully',
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+      }
     });
 
   } catch (error) {

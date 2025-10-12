@@ -44,6 +44,7 @@ interface UseFastSectionDataReturn {
   error: string | null;
   count: number;
   refresh: () => Promise<void>;
+  clearCache: () => void;
 }
 
 /**
@@ -97,11 +98,11 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     setLoading(true);
     setError(null);
 
+    // 🚀 PERFORMANCE: Use v1 APIs for better performance and consistency
+    let url: string = '';
+    
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
-      
-      // 🚀 PERFORMANCE: Use v1 APIs for better performance and consistency
-      let url: string;
       
       switch (section) {
         case 'speedrun':
@@ -130,12 +131,90 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
       
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
+      console.log(`🔍 [FAST SECTION DATA] Request context:`, {
+        section,
+        url,
+        workspaceId,
+        userId,
+        hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0
+      });
       
-      const result = await authFetch(url);
+      // Use direct fetch with credentials instead of authFetch with problematic fallback
+      const response = await fetch(url, { credentials: 'include' });
+      
+      // Check if the response is ok before trying to parse JSON
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+      }
+      
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        console.error(`❌ [FAST SECTION DATA] JSON parsing error for ${section}:`, {
+          jsonError,
+          responseStatus: response.status,
+          responseHeaders: Object.fromEntries(response.headers.entries()),
+          responseText: await response.text()
+        });
+        throw new Error(`Failed to parse JSON response: ${jsonError}`);
+      }
       
       console.log(`📡 [FAST SECTION DATA] Response received:`, result);
+      console.log(`📡 [FAST SECTION DATA] Response status:`, response.status);
+      console.log(`📡 [FAST SECTION DATA] Response headers:`, Object.fromEntries(response.headers.entries()));
       
-      if (result && result.success) {
+      // Add detailed logging to see exact response structure
+      console.log(`📡 [FAST SECTION DATA] Full response for ${section}:`, {
+        result,
+        resultKeys: Object.keys(result || {}),
+        hasSuccess: 'success' in (result || {}),
+        successValue: result?.success,
+        hasData: 'data' in (result || {}),
+        dataValue: result?.data,
+        dataLength: result?.data?.length,
+        hasError: 'error' in (result || {}),
+        errorValue: result?.error,
+        hasCode: 'code' in (result || {}),
+        codeValue: result?.code,
+        allKeys: Object.keys(result || {}),
+        resultType: typeof result,
+        isNull: result === null,
+        isUndefined: result === undefined
+      });
+      
+      // Check if we got a valid response
+      if (!result || typeof result !== 'object') {
+        throw new Error('Invalid API response format');
+      }
+
+      // Check if we got an empty object (this indicates an API issue)
+      if (Object.keys(result).length === 0) {
+        console.error(`❌ [FAST SECTION DATA] API returned empty object for ${section}:`, {
+          url,
+          responseStatus: response.status,
+          responseHeaders: Object.fromEntries(response.headers.entries()),
+          result
+        });
+        throw new Error('API returned empty response - this may indicate a server-side error');
+      }
+
+      // V1 API returns { success: true, data: [...] }
+      // But if auth failed, we might get the fallback { success: false }
+      if (result.success === false) {
+        const errorMsg = result.error || result.message || 'API request failed';
+        console.error(`❌ [FAST SECTION DATA] API returned error for ${section}:`, {
+          url,
+          error: errorMsg,
+          code: result.code || 'No error code',
+          fullResponse: JSON.stringify(result, null, 2)
+        });
+        throw new Error(errorMsg);
+      }
+
+      // If success field is missing, check for data directly (some APIs don't use success wrapper)
+      if (result.success === true || (result.data && Array.isArray(result.data))) {
         // 🚀 V1 API RESPONSE: Handle both v1 and legacy section API responses
         const responseData = result.data || [];
         const responseCount = result.meta?.count || result.meta?.totalCount || responseData.length;
@@ -158,8 +237,40 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         throw new Error(result?.error || 'Failed to load section data');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, errorMessage);
+      // Comprehensive error debugging
+      console.log(`🔍 [FAST SECTION DATA] Raw error caught for ${section}:`, {
+        err,
+        errType: typeof err,
+        errConstructor: err?.constructor?.name,
+        errPrototype: Object.getPrototypeOf(err),
+        errOwnProps: err ? Object.getOwnPropertyNames(err) : 'no err',
+        errDescriptors: err ? Object.getOwnPropertyDescriptors(err) : 'no err',
+        errStringified: JSON.stringify(err),
+        errToString: err?.toString(),
+        errValueOf: err?.valueOf?.(),
+        stack: (err as any)?.stack
+      });
+      
+      // Better error message extraction
+      let errorMessage = 'Unknown error';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (err && typeof err === 'object') {
+        errorMessage = (err as any).message || (err as any).error || JSON.stringify(err);
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      
+      console.error(`❌ [FAST SECTION DATA] Error loading ${section}:`, {
+        error: errorMessage,
+        url,
+        workspaceId,
+        userId,
+        fullError: err,
+        errorType: typeof err,
+        errorConstructor: err?.constructor?.name,
+        errorKeys: err && typeof err === 'object' ? Object.keys(err) : 'not an object'
+      });
       
       // Don't set error for network failures - just log and continue
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
@@ -253,6 +364,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     loading,
     error,
     count,
-    refresh: fetchSectionData
+    refresh: fetchSectionData,
+    clearCache: () => {
+      setLoadedSections(new Set());
+      setData([]);
+      setCount(0);
+      setError(null);
+    }
   };
 }

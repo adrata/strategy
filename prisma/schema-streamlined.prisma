@@ -125,8 +125,8 @@ model users {
   assigned_actions          actions[]                   @relation("AssignedActions")
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
-  assigned_companies        companies[]                 @relation("AssignedCompanies")
-  owned_people              people[]                    @relation("OwnedPeople")
+  main_seller_companies     companies[]                 @relation("MainSellerCompanies")
+  main_seller_people        people[]                    @relation("MainSellerPeople")
   person_co_sellers         person_co_sellers[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
@@ -200,7 +200,7 @@ model reset_tokens {
 model companies {
   id                 String           @id @default(ulid()) @db.VarChar(30)
   workspaceId        String           @db.VarChar(30)
-  assignedUserId     String?          @db.VarChar(30)
+  mainSellerId       String?          @db.VarChar(30)
   name               String           @db.VarChar(255)
   legalName          String?          @db.VarChar(255)
   tradingName        String?          @db.VarChar(255)
@@ -243,16 +243,16 @@ model companies {
   entityId           String?          @db.VarChar(30)
   deletedAt          DateTime?
   actions            actions[]
-  assignedUser       users?           @relation("AssignedCompanies", fields: [assignedUserId], references: [id])
+  mainSeller         users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace          workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   people             people[]
 
   @@index([workspaceId])
-  @@index([assignedUserId])
+  @@index([mainSellerId])
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
-  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, mainSellerId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
   @@index([workspaceId, globalRank])
@@ -264,7 +264,7 @@ model people {
   id                String          @id @default(ulid()) @db.VarChar(30)
   workspaceId       String          @db.VarChar(30)
   companyId         String?         @db.VarChar(30)
-  ownerId           String?         @db.VarChar(30)
+  mainSellerId      String?         @db.VarChar(30)
   firstName         String          @db.VarChar(100)
   lastName          String          @db.VarChar(100)
   fullName          String          @db.VarChar(200)
@@ -314,7 +314,7 @@ model people {
   entityId          String?         @db.VarChar(30)
   deletedAt         DateTime?
   actions           actions[]
-  owner             users?          @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
+  mainSeller        users?          @relation("MainSellerPeople", fields: [mainSellerId], references: [id], onDelete: SetNull)
   coSellers         person_co_sellers[]
   company           companies?      @relation(fields: [companyId], references: [id])
   workspace         workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -327,8 +327,8 @@ model people {
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
-  @@index([ownerId])
-  @@index([workspaceId, ownerId, status])
+  @@index([mainSellerId])
+  @@index([workspaceId, mainSellerId, status])
   @@index([workspaceId, globalRank])
   @@index([workspaceId, status, globalRank])
 }

@@ -6,7 +6,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")  // For migrations
 }
 
 /// RBAC models for granular permission control
@@ -74,35 +73,28 @@ model user_roles {
 
 /// Multi-tenant workspace management
 model workspaces {
-  id              String            @id @default(ulid())
-  name            String
-  slug            String            @unique
-  timezone        String            @default("UTC") @db.VarChar(50)
-  description     String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime
-  isActive        Boolean           @default(true)
-  deletedAt       DateTime?
-  
-  // Speedrun settings
-  speedrunDailyTarget  Int? @default(50)
-  speedrunWeeklyTarget Int? @default(250)
-  actions         actions[]
-  audit_logs      audit_logs[]
-  auth_sessions   auth_sessions[]
-  companies       companies[]
-  people          people[]
-  user_roles      user_roles[]
-  users           users[]
-  workspace_users workspace_users[]
-  oasis_channels       OasisChannel[]
-  oasis_direct_messages OasisDirectMessage[]
-  stacks_projects      StacksProject[]
+  id                        String                      @id @default(ulid())
+  name                      String
+  slug                      String                      @unique
+  timezone                  String                      @default("UTC") @db.VarChar(50)
+  description               String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  isActive                  Boolean                     @default(true)
+  deletedAt                 DateTime?
+  oasis_channels            OasisChannel[]
+  oasis_direct_messages     OasisDirectMessage[]
+  stacks_projects           StacksProject[]
+  actions                   actions[]
+  audit_logs                audit_logs[]
+  auth_sessions             auth_sessions[]
+  companies                 companies[]
   grand_central_connections grand_central_connections[]
-  grand_central_workflows grand_central_workflows[]
-  
-  // Particle relations
-  particle_experiments ParticleExperiment[]
+  grand_central_workflows   grand_central_workflows[]
+  people                    people[]
+  user_roles                user_roles[]
+  users                     users[]
+  workspace_users           workspace_users[]
 
   @@index([slug])
   @@index([isActive])
@@ -111,40 +103,37 @@ model workspaces {
 
 /// User accounts and authentication
 model users {
-  id                 String            @id @default(ulid())
-  email              String            @unique
-  password           String?
-  name               String
-  firstName          String?
-  lastName           String?
-  timezone           String?           @db.VarChar(50)
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime
-  lastLoginAt        DateTime?
-  isActive           Boolean           @default(true)
-  activeWorkspaceId  String?           @db.VarChar(30)
-  username           String?           @unique @db.VarChar(50)
-  assigned_actions   actions[]         @relation("AssignedActions")
-  audit_logs         audit_logs[]
-  auth_sessions      auth_sessions[]
-  assigned_companies companies[]       @relation("AssignedCompanies")
-  owned_people       people[]          @relation("OwnedPeople")
-  person_co_sellers  person_co_sellers[]
-  reset_tokens       reset_tokens[]
-  user_roles         user_roles[]
-  workspaces         workspaces?       @relation(fields: [activeWorkspaceId], references: [id])
-  workspace_users    workspace_users[]
-  oasis_channel_members   OasisChannelMember[]
-  oasis_dm_participants   OasisDMParticipant[]
-  oasis_messages          OasisMessage[]
-  oasis_reactions         OasisReaction[]
-  stacks_story_assignees  StacksStory[]
-  stacks_task_assignees   StacksTask[]
+  id                        String                      @id @default(ulid())
+  email                     String                      @unique
+  password                  String?
+  name                      String
+  firstName                 String?
+  lastName                  String?
+  timezone                  String?                     @db.VarChar(50)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  lastLoginAt               DateTime?
+  isActive                  Boolean                     @default(true)
+  activeWorkspaceId         String?                     @db.VarChar(30)
+  username                  String?                     @unique @db.VarChar(50)
+  oasis_channel_members     OasisChannelMember[]
+  oasis_dm_participants     OasisDMParticipant[]
+  oasis_messages            OasisMessage[]
+  oasis_reactions           OasisReaction[]
+  stacks_story_assignees    StacksStory[]
+  stacks_task_assignees     StacksTask[]
+  assigned_actions          actions[]                   @relation("AssignedActions")
+  audit_logs                audit_logs[]
+  auth_sessions             auth_sessions[]
+  main_seller_companies     companies[]                 @relation("MainSellerCompanies")
+  main_seller_people        people[]                    @relation("MainSellerPeople")
+  person_co_sellers         person_co_sellers[]
   grand_central_connections grand_central_connections[]
-  grand_central_workflows grand_central_workflows[]
-  
-  // Particle relations
-  particle_experiments    ParticleExperiment[]
+  grand_central_workflows   grand_central_workflows[]
+  reset_tokens              reset_tokens[]
+  user_roles                user_roles[]
+  workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
+  workspace_users           workspace_users[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -211,7 +200,7 @@ model reset_tokens {
 model companies {
   id                 String           @id @default(ulid()) @db.VarChar(30)
   workspaceId        String           @db.VarChar(30)
-  assignedUserId     String?          @db.VarChar(30)
+  mainSellerId       String?          @db.VarChar(30)
   name               String           @db.VarChar(255)
   legalName          String?          @db.VarChar(255)
   tradingName        String?          @db.VarChar(255)
@@ -240,7 +229,6 @@ model companies {
   logoUrl            String?          @db.VarChar(500)
   status             CompanyStatus?   @default(ACTIVE)
   priority           CompanyPriority? @default(MEDIUM)
-  stage              String?          @db.VarChar(50)
   tags               String[]         @default([])
   customFields       Json?
   notes              Json?
@@ -255,20 +243,20 @@ model companies {
   entityId           String?          @db.VarChar(30)
   deletedAt          DateTime?
   actions            actions[]
-  assignedUser       users?           @relation("AssignedCompanies", fields: [assignedUserId], references: [id])
+  mainSeller         users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace          workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   people             people[]
 
   @@index([workspaceId])
-  @@index([assignedUserId])
+  @@index([mainSellerId])
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
-  @@index([workspaceId, globalRank])
-  @@index([workspaceId, status, globalRank])
-  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, mainSellerId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
+  @@index([workspaceId, globalRank])
+  @@index([workspaceId, status, globalRank])
 }
 
 /// Contact/person records
@@ -276,7 +264,7 @@ model people {
   id                String          @id @default(ulid()) @db.VarChar(30)
   workspaceId       String          @db.VarChar(30)
   companyId         String?         @db.VarChar(30)
-  ownerId           String?         @db.VarChar(30)
+  mainSellerId      String?         @db.VarChar(30)
   firstName         String          @db.VarChar(100)
   lastName          String          @db.VarChar(100)
   fullName          String          @db.VarChar(200)
@@ -326,28 +314,23 @@ model people {
   entityId          String?         @db.VarChar(30)
   deletedAt         DateTime?
   actions           actions[]
-  owner             users?          @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
+  mainSeller        users?          @relation("MainSellerPeople", fields: [mainSellerId], references: [id], onDelete: SetNull)
   coSellers         person_co_sellers[]
   company           companies?      @relation(fields: [companyId], references: [id])
   workspace         workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
   @@index([companyId])
-  @@index([ownerId])
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
-  @@index([workspaceId, globalRank])
-  @@index([workspaceId, status, globalRank])
-  @@index([workspaceId, ownerId, status])
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
-  // 🚀 PERFORMANCE: Composite indexes for fast section queries
-  @@index([workspaceId, status, globalRank, deletedAt])  // Speedrun/section queries
-  @@index([workspaceId, ownerId, status, deletedAt])  // User-assigned filtering
-  @@index([workspaceId, deletedAt, globalRank])  // Fast pagination
-  @@index([workspaceId, companyId, status, deletedAt])  // Company-filtered people
+  @@index([mainSellerId])
+  @@index([workspaceId, mainSellerId, status])
+  @@index([workspaceId, globalRank])
+  @@index([workspaceId, status, globalRank])
 }
 
 /// Multi-player sales: Co-seller relationships
@@ -426,6 +409,298 @@ model audit_logs {
   @@index([workspaceId, entityType, timestamp])
   @@index([workspaceId, action, timestamp])
   @@index([success])
+}
+
+/// Grand Central Integration Hub Models
+model grand_central_connections {
+  id                String     @id @default(ulid())
+  workspaceId       String     @db.VarChar(30)
+  userId            String     @db.VarChar(30)
+  provider          String     @db.VarChar(100)
+  providerConfigKey String     @db.VarChar(100)
+  nangoConnectionId String     @unique @db.VarChar(100)
+  connectionName    String?    @db.VarChar(255)
+  metadata          Json       @default("{}")
+  status            String     @default("active") @db.VarChar(50)
+  lastSyncAt        DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  user              users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+  @@index([userId])
+  @@index([provider])
+}
+
+model grand_central_workflows {
+  id             String     @id @default(ulid())
+  workspaceId    String     @db.VarChar(30)
+  userId         String     @db.VarChar(30)
+  name           String     @db.VarChar(255)
+  description    String?
+  nodes          Json       @default("[]")
+  connections    Json       @default("[]")
+  status         String     @default("draft") @db.VarChar(50)
+  lastExecutedAt DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  user           users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace      workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+  @@index([userId])
+}
+
+model grand_central_executions {
+  id          String    @id @default(ulid())
+  workflowId  String    @db.VarChar(30)
+  workspaceId String    @db.VarChar(30)
+  status      String    @db.VarChar(50)
+  logs        Json      @default("[]")
+  error       String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([workflowId])
+  @@index([workspaceId, status])
+  @@index([startedAt])
+}
+
+/// Oasis - Team Communication (Slack-like)
+model OasisChannel {
+  id          String               @id @default(cuid())
+  workspaceId String               @db.VarChar(30)
+  name        String               @db.VarChar(100)
+  description String?              @db.VarChar(500)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  members     OasisChannelMember[]
+  messages    OasisMessage[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model OasisChannelMember {
+  id        String       @id @default(cuid())
+  channelId String
+  userId    String       @db.VarChar(30)
+  joinedAt  DateTime     @default(now())
+  channel   OasisChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([channelId])
+  @@index([userId])
+}
+
+model OasisDirectMessage {
+  id           String               @id @default(cuid())
+  workspaceId  String               @db.VarChar(30)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  participants OasisDMParticipant[]
+  workspace    workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages     OasisMessage[]
+
+  @@index([workspaceId])
+}
+
+model OasisDMParticipant {
+  id       String             @id @default(cuid())
+  dmId     String
+  userId   String             @db.VarChar(30)
+  joinedAt DateTime           @default(now())
+  dm       OasisDirectMessage @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  user     users              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([dmId, userId])
+  @@index([dmId])
+  @@index([userId])
+}
+
+model OasisMessage {
+  id        String              @id @default(cuid())
+  content   String
+  channelId String?
+  dmId      String?
+  senderId  String              @db.VarChar(30)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  channel   OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  dm        OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  sender    users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  reactions OasisReaction[]
+
+  @@index([channelId])
+  @@index([dmId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model OasisReaction {
+  id        String       @id @default(cuid())
+  messageId String
+  userId    String       @db.VarChar(30)
+  emoji     String       @db.VarChar(10)
+  createdAt DateTime     @default(now())
+  message   OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
+}
+
+/// Stacks - Project Management (Jira-like)
+model StacksProject {
+  id          String        @id @default(cuid())
+  workspaceId String        @db.VarChar(30)
+  name        String        @db.VarChar(200)
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  epics       StacksEpic[]
+  workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  stories     StacksStory[]
+  tasks       StacksTask[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model StacksEpic {
+  id          String        @id @default(cuid())
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stories     StacksStory[]
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+
+model StacksStory {
+  id          String        @id @default(cuid())
+  epicId      String?
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  assigneeId  String?       @db.VarChar(30)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  assignee    users?        @relation(fields: [assigneeId], references: [id])
+  epic        StacksEpic?   @relation(fields: [epicId], references: [id])
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks       StacksTask[]
+
+  @@index([epicId])
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([projectId, status])
+}
+
+model StacksTask {
+  id          String        @id @default(cuid())
+  storyId     String?
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  type        String        @default("task") @db.VarChar(20)
+  assigneeId  String?       @db.VarChar(30)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  assignee    users?        @relation(fields: [assigneeId], references: [id])
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  story       StacksStory?  @relation(fields: [storyId], references: [id])
+
+  @@index([storyId])
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([projectId, status])
+  @@index([projectId, type])
+}
+
+model BuyerGroupMembers {
+  id             String         @id
+  buyerGroupId   String
+  name           String
+  title          String?
+  role           BuyerGroupRole
+  email          String?
+  phone          String?
+  linkedin       String?
+  confidence     Decimal?       @default(0) @db.Decimal(5, 2)
+  influenceScore Decimal?       @default(0) @db.Decimal(5, 2)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  BuyerGroups    BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([buyerGroupId])
+  @@index([role])
+}
+
+model BuyerGroups {
+  id                String              @id
+  companyName       String
+  website           String?
+  industry          String?
+  companySize       String?
+  workspaceId       String?
+  cohesionScore     Decimal?            @default(0) @db.Decimal(5, 2)
+  overallConfidence Decimal?            @default(0) @db.Decimal(5, 2)
+  totalMembers      Int                 @default(0)
+  processingTime    Int                 @default(0)
+  metadata          Json?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  BuyerGroupMembers BuyerGroupMembers[]
+
+  @@index([companyName])
+  @@index([createdAt])
+  @@index([workspaceId])
+}
+
+model ChronicleReport {
+  id             String              @id
+  title          String
+  reportType     ChronicleReportType
+  content        Json
+  weekStart      DateTime
+  weekEnd        DateTime
+  workspaceId    String
+  userId         String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime
+  ChronicleShare ChronicleShare[]
+
+  @@index([userId, createdAt])
+  @@index([workspaceId, weekStart])
+}
+
+model ChronicleShare {
+  id              String          @id
+  reportId        String
+  shareToken      String          @unique
+  shareUrl        String?
+  expiresAt       DateTime?
+  allowedEmails   String[]
+  viewCount       Int             @default(0)
+  createdAt       DateTime        @default(now())
+  ChronicleReport ChronicleReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([shareToken])
 }
 
 enum UserRole {
@@ -511,542 +786,7 @@ enum BuyerGroupRole {
   introducer
 }
 
-model BuyerGroups {
-  id               String   @id @default(uuid())
-  companyName      String
-  website          String?
-  industry         String?
-  companySize      String?
-  workspaceId      String?
-  cohesionScore    Decimal? @default(0) @db.Decimal(5, 2)
-  overallConfidence Decimal? @default(0) @db.Decimal(5, 2)
-  totalMembers     Int      @default(0)
-  processingTime   Int      @default(0)
-  metadata         Json?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  members BuyerGroupMembers[]
-
-  @@index([companyName])
-  @@index([workspaceId])
-  @@index([createdAt])
-}
-
-model BuyerGroupMembers {
-  id            String         @id @default(uuid())
-  buyerGroupId  String
-  name          String
-  title         String?
-  role          BuyerGroupRole
-  email         String?
-  phone         String?
-  linkedin      String?
-  confidence    Decimal?       @default(0) @db.Decimal(5, 2)
-  influenceScore Decimal?      @default(0) @db.Decimal(5, 2)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  buyerGroup BuyerGroups @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
-
-  @@index([buyerGroupId])
-  @@index([role])
-}
-
-/// Oasis - Team Communication (Slack-like)
-model OasisChannel {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  name          String    @db.VarChar(100)
-  description   String?   @db.VarChar(500)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      OasisMessage[]
-  members       OasisChannelMember[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([workspaceId, name])
-}
-
-model OasisChannelMember {
-  id          String    @id @default(cuid())
-  channelId   String
-  userId      String    @db.VarChar(30)
-  joinedAt    DateTime  @default(now())
-  channel     OasisChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user        users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([channelId, userId])
-  @@index([channelId])
-  @@index([userId])
-}
-
-model OasisDirectMessage {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      OasisMessage[]
-  participants  OasisDMParticipant[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-}
-
-model OasisDMParticipant {
-  id        String    @id @default(cuid())
-  dmId      String
-  userId    String    @db.VarChar(30)
-  joinedAt  DateTime  @default(now())
-  dm        OasisDirectMessage @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([dmId, userId])
-  @@index([dmId])
-  @@index([userId])
-}
-
-model OasisMessage {
-  id            String    @id @default(cuid())
-  content       String
-  channelId     String?
-  dmId          String?
-  senderId      String    @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  reactions     OasisReaction[]
-  channel       OasisChannel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  dm            OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  sender        users     @relation(fields: [senderId], references: [id], onDelete: Cascade)
-
-  @@index([channelId])
-  @@index([dmId])
-  @@index([senderId])
-  @@index([createdAt])
-}
-
-model OasisReaction {
-  id            String    @id @default(cuid())
-  messageId     String
-  userId        String    @db.VarChar(30)
-  emoji         String    @db.VarChar(10)
-  createdAt     DateTime  @default(now())
-  message       OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user          users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([messageId, userId, emoji])
-  @@index([messageId])
-  @@index([userId])
-}
-
-/// Stacks - Project Management (Jira-like)
-model StacksProject {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  name          String    @db.VarChar(200)
-  description   String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  epics         StacksEpic[]
-  stories       StacksStory[]
-  tasks         StacksTask[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([workspaceId, name])
-}
-
-model StacksEpic {
-  id            String    @id @default(cuid())
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  stories       StacksStory[]
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-  @@index([projectId, status])
-}
-
-model StacksStory {
-  id            String    @id @default(cuid())
-  epicId        String?
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  assigneeId    String?   @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  tasks         StacksTask[]
-  epic          StacksEpic? @relation(fields: [epicId], references: [id], onDelete: SetNull)
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee      users?    @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
-
-  @@index([epicId])
-  @@index([projectId])
-  @@index([assigneeId])
-  @@index([projectId, status])
-}
-
-model StacksTask {
-  id            String    @id @default(cuid())
-  storyId       String?
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  type          String    @default("task") @db.VarChar(20)
-  assigneeId    String?   @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  story         StacksStory? @relation(fields: [storyId], references: [id], onDelete: SetNull)
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee      users?    @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
-
-  @@index([storyId])
-  @@index([projectId])
-  @@index([assigneeId])
-  @@index([projectId, status])
-  @@index([projectId, type])
-}
-
-/// Grand Central Integration Hub Models
-model grand_central_connections {
-  id                  String   @id @default(ulid())
-  workspaceId         String   @db.VarChar(30)
-  userId              String   @db.VarChar(30)
-  provider            String   @db.VarChar(100)
-  providerConfigKey   String   @db.VarChar(100)
-  nangoConnectionId   String   @db.VarChar(100) @unique
-  connectionName      String?  @db.VarChar(255)
-  metadata            Json     @default("{}")
-  status              String   @default("active") @db.VarChar(50)
-  lastSyncAt          DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  
-  workspace           workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user                users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([workspaceId, status])
-  @@index([userId])
-  @@index([provider])
-}
-
-model grand_central_workflows {
-  id                  String   @id @default(ulid())
-  workspaceId         String   @db.VarChar(30)
-  userId              String   @db.VarChar(30)
-  name                String   @db.VarChar(255)
-  description         String?
-  nodes               Json     @default("[]")
-  connections         Json     @default("[]")
-  status              String   @default("draft") @db.VarChar(50)
-  lastExecutedAt      DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  
-  workspace           workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user                users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([workspaceId, status])
-  @@index([userId])
-}
-
-model grand_central_executions {
-  id                  String   @id @default(ulid())
-  workflowId          String   @db.VarChar(30)
-  workspaceId         String   @db.VarChar(30)
-  status              String   @db.VarChar(50)
-  logs                Json     @default("[]")
-  error               String?
-  startedAt           DateTime @default(now())
-  completedAt         DateTime?
-  
-  @@index([workflowId])
-  @@index([workspaceId, status])
-  @@index([startedAt])
-}
-
-// Chronicle System Models
-model ChronicleReport {
-  id              String            @id @default(cuid())
-  title           String
-  reportType      ChronicleReportType  // MONDAY_PREP, FRIDAY_RECAP
-  content         Json              // Report content
-  weekStart       DateTime          // Week this report covers
-  weekEnd         DateTime
-  
-  workspaceId     String
-  userId          String
-  
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  
-  shares          ChronicleShare[]
-  
-  @@index([workspaceId, weekStart])
-  @@index([userId, createdAt])
-}
-
-model ChronicleShare {
-  id              String            @id @default(cuid())
-  reportId        String
-  shareToken      String            @unique
-  shareUrl        String?
-  expiresAt       DateTime?
-  allowedEmails   String[]
-  viewCount       Int               @default(0)
-  
-  createdAt       DateTime          @default(now())
-  
-  report          ChronicleReport   @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  
-  @@index([shareToken])
-}
-
 enum ChronicleReportType {
   MONDAY_PREP
   FRIDAY_RECAP
-}
-
-/// Encode Code Editor Models
-model EncodeProject {
-  id          String      @id @default(cuid())
-  name        String
-  description String?
-  workspaceId String
-  userId      String
-  files       EncodeFile[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@index([workspaceId])
-  @@index([userId])
-  @@map("encode_projects")
-}
-
-model EncodeFile {
-  id          String      @id @default(cuid())
-  projectId   String
-  project     EncodeProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  path        String      // Relative path within project
-  name        String
-  content     String      @db.Text
-  language    String
-  isDirectory Boolean     @default(false)
-  parentId    String?
-  parent      EncodeFile? @relation("FileHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children    EncodeFile[] @relation("FileHierarchy")
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@index([projectId])
-  @@index([parentId])
-  @@index([path])
-  @@map("encode_files")
-}
-
-// 🧪 PARTICLE - Scientific Testing Platform
-enum ParticleExperimentType {
-  ab_test
-  multivariate
-  performance
-  conversion
-  retention
-}
-
-enum ParticleExperimentStatus {
-  draft
-  active
-  completed
-  archived
-  cancelled
-}
-
-enum ParticleTestRunStatus {
-  pending
-  running
-  completed
-  failed
-  cancelled
-}
-
-enum ParticleMetricType {
-  conversion_rate
-  cost_per_conversion
-  execution_time
-  success_rate
-  error_rate
-  throughput
-  custom
-}
-
-model ParticleExperiment {
-  id                String                    @id @default(cuid())
-  workspaceId       String                    @db.VarChar(30)
-  name              String                    @db.VarChar(200)
-  description       String?
-  hypothesis        String                    // Scientific hypothesis being tested
-  experimentType    ParticleExperimentType    // ab_test, multivariate, performance, etc.
-  status            ParticleExperimentStatus  @default(draft)
-  
-  // Configuration
-  baselineVariantId String?                   // Control group variant
-  targetSampleSize  Int?                      // Desired sample size for statistical power
-  confidenceLevel   Float                     @default(0.95) // 95% confidence by default
-  significanceLevel Float                     @default(0.05) // p < 0.05 by default
-  
-  // Metadata
-  createdById       String                    @db.VarChar(30)
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
-  startedAt         DateTime?
-  completedAt       DateTime?
-  
-  // Relationships
-  workspace         workspaces                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  createdBy         users                     @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  variants          ParticleVariant[]
-  testRuns          ParticleTestRun[]
-  results           ParticleResult[]
-  assertions        ParticleAssertion[]
-
-  @@index([workspaceId])
-  @@index([workspaceId, status])
-  @@index([createdById])
-  @@index([experimentType])
-}
-
-model ParticleVariant {
-  id            String    @id @default(cuid())
-  experimentId  String
-  name          String    @db.VarChar(100)
-  description   String?
-  configuration Json      // Variant-specific configuration (JSON)
-  isControl     Boolean   @default(false) // Is this the control group?
-  weight        Float     @default(1.0)  // Traffic weight for this variant (0.0-1.0)
-  
-  // Metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relationships
-  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-  testRuns      ParticleTestRun[]
-  metrics       ParticleMetric[]
-
-  @@index([experimentId])
-  @@index([experimentId, isControl])
-}
-
-model ParticleTestRun {
-  id            String                  @id @default(cuid())
-  experimentId  String
-  variantId     String
-  status        ParticleTestRunStatus   @default(pending)
-  
-  // Execution details
-  sampleSize    Int                     @default(0)
-  startTime     DateTime?
-  endTime       DateTime?
-  duration      Int?                    // Duration in milliseconds
-  
-  // Results
-  aggregatedMetrics Json?               // Aggregated metrics (JSON)
-  errors            Json?               // Error details (JSON)
-  logs              Json?               // Execution logs (JSON)
-  
-  // Metadata
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  
-  // Relationships
-  experiment        ParticleExperiment  @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-  variant           ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  metrics           ParticleMetric[]
-
-  @@index([experimentId])
-  @@index([variantId])
-  @@index([status])
-  @@index([startTime])
-}
-
-model ParticleMetric {
-  id          String              @id @default(cuid())
-  testRunId   String
-  variantId   String
-  metricType  ParticleMetricType
-  name        String              @db.VarChar(100)
-  value       Float
-  unit        String?             @db.VarChar(20) // e.g., "ms", "%", "count"
-  timestamp   DateTime            @default(now())
-  
-  // Additional context
-  metadata    Json?               // Additional metric metadata (JSON)
-  
-  // Relationships
-  testRun     ParticleTestRun     @relation(fields: [testRunId], references: [id], onDelete: Cascade)
-  variant     ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-  @@index([testRunId])
-  @@index([variantId])
-  @@index([metricType])
-  @@index([timestamp])
-}
-
-model ParticleResult {
-  id            String    @id @default(cuid())
-  experimentId  String
-  summary       Json      // Statistical summary (JSON)
-  winner        String?   // Winning variant ID
-  confidence    Float?    // Statistical confidence (0.0-1.0)
-  pValue        Float?    // Statistical significance p-value
-  recommendation String?  // AI-generated recommendation
-  
-  // Analysis details
-  statisticalTest String? // Type of statistical test used
-  effectSize      Float?  // Effect size (Cohen's d, etc.)
-  power           Float?  // Statistical power
-  
-  // Metadata
-  calculatedAt    DateTime @default(now())
-  
-  // Relationships
-  experiment      ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-
-  @@index([experimentId])
-  @@index([calculatedAt])
-}
-
-model ParticleAssertion {
-  id            String    @id @default(cuid())
-  experimentId  String
-  name          String    @db.VarChar(200)
-  description   String?
-  assertion     String    // Assertion logic (JSON or expression)
-  expectedValue Float?    // Expected metric value
-  tolerance     Float?    // Tolerance for comparison
-  
-  // Status
-  isPassing     Boolean?  // null = not tested, true = passing, false = failing
-  lastChecked   DateTime?
-  
-  // Metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relationships
-  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-
-  @@index([experimentId])
-  @@index([isPassing])
 }

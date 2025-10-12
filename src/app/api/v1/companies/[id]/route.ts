@@ -32,7 +32,7 @@ export async function GET(
     const company = await prisma.companies.findUnique({
       where: { id },
       include: {
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
             name: true,
@@ -146,7 +146,7 @@ export async function PUT(
         updatedAt: new Date(),
       },
       include: {
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
             name: true,
@@ -228,7 +228,7 @@ export async function PATCH(
         updatedAt: new Date(),
       },
       include: {
-        assignedUser: {
+        mainSeller: {
           select: {
             id: true,
             name: true,

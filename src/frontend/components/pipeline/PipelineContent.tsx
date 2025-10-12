@@ -833,7 +833,7 @@ export const PipelineContent = React.memo(function PipelineContent({
 
       {/* Filters - Hide search/filter/sort/columns when there is no data */}
       {finalData.length > 0 && (
-        <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
+        <div className={`flex-shrink-0 px-4 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
           <PipelineFilters 
             section={section}
             totalCount={sectionData.count}
@@ -856,8 +856,8 @@ export const PipelineContent = React.memo(function PipelineContent({
       )}
 
       {/* Main content */}
-      <div className={`flex-1 px-6 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
-        minHeight: 'calc(100vh - 150px)', // Extend table height further down
+      <div className={`flex-1 px-4 min-h-0 ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
+        minHeight: section === 'people' ? 'calc(100vh - 160px)' : 'calc(100vh - 150px)', // People table slightly shorter
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>

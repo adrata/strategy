@@ -199,7 +199,7 @@ export class DatabaseOptimizer {
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
-          assignedUserId: true,
+          mainSellerId: true,
           workspaceId: true
         }
       }),
@@ -241,7 +241,7 @@ export class DatabaseOptimizer {
           source: true,
           createdAt: true,
           updatedAt: true,
-          assignedUserId: true,
+          mainSellerId: true,
           workspaceId: true
         }
       }),
@@ -263,9 +263,10 @@ export class DatabaseOptimizer {
     const { limit = 1000, offset = 0, orderBy = [{ updatedAt: 'desc' }] } = options;
     
     const [data, totalCount] = await Promise.all([
-      this.prisma.prospects.findMany({
+      this.prisma.people.findMany({
         where: {
           workspaceId,
+          status: 'PROSPECT',
           deletedAt: null
         },
         orderBy,
@@ -277,19 +278,29 @@ export class DatabaseOptimizer {
           lastName: true,
           fullName: true,
           email: true,
-          company: true,
           jobTitle: true,
           status: true,
-          stage: true,
+          source: true,
+          globalRank: true,
+          mainSellerId: true,
           createdAt: true,
           updatedAt: true,
-          assignedUserId: true,
-          workspaceId: true
+          workspaceId: true,
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              size: true,
+              globalRank: true
+            }
+          }
         }
       }),
-      this.prisma.prospects.count({
+      this.prisma.people.count({
         where: {
           workspaceId,
+          status: 'PROSPECT',
           deletedAt: null
         }
       })
@@ -305,9 +316,10 @@ export class DatabaseOptimizer {
     const { limit = 1000, offset = 0, orderBy = [{ updatedAt: 'desc' }] } = options;
     
     const [data, totalCount] = await Promise.all([
-      this.prisma.opportunities.findMany({
+      this.prisma.companies.findMany({
         where: {
           workspaceId,
+          status: 'OPPORTUNITY',
           deletedAt: null
         },
         orderBy,
@@ -316,19 +328,21 @@ export class DatabaseOptimizer {
         select: {
           id: true,
           name: true,
-          stage: true,
-          value: true,
-          probability: true,
-          closeDate: true,
+          industry: true,
+          size: true,
+          revenue: true,
+          employeeCount: true,
+          globalRank: true,
+          mainSellerId: true,
           createdAt: true,
           updatedAt: true,
-          assignedUserId: true,
           workspaceId: true
         }
       }),
-      this.prisma.opportunities.count({
+      this.prisma.companies.count({
         where: {
           workspaceId,
+          status: 'OPPORTUNITY',
           deletedAt: null
         }
       })
@@ -356,9 +370,9 @@ export class DatabaseOptimizer {
           id: true,
           name: true,
           industry: true,
-          vertical: true,
           size: true,
-          rank: true,
+          globalRank: true,
+          mainSellerId: true,
           createdAt: true,
           updatedAt: true,
           workspaceId: true
@@ -389,8 +403,8 @@ export class DatabaseOptimizer {
         companyId: { not: null }
       },
       orderBy: [
-        { company: { rank: 'asc' } },
-        { rank: 'asc' },
+        { company: { globalRank: 'asc' } },
+        { globalRank: 'asc' },
         { updatedAt: 'desc' }
       ],
       take: limit,
@@ -409,7 +423,7 @@ export class DatabaseOptimizer {
         lastActionDate: true,
         nextAction: true,
         nextActionDate: true,
-        assignedUserId: true,
+        mainSellerId: true,
         createdAt: true,
         updatedAt: true,
         company: {
@@ -417,9 +431,8 @@ export class DatabaseOptimizer {
             id: true,
             name: true,
             industry: true,
-            vertical: true,
             size: true,
-            rank: true
+            globalRank: true
           }
         }
       }
