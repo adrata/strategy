@@ -905,7 +905,7 @@ model ParticleTestRun {
   // Relationships
   experiment    ParticleExperiment      @relation(fields: [experimentId], references: [id], onDelete: Cascade)
   variant       ParticleVariant         @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  metrics       ParticleMetric[]
+  metricEntries ParticleMetric[] @relation("TestRunMetrics")
 
   @@index([experimentId])
   @@index([variantId])
@@ -927,7 +927,7 @@ model ParticleMetric {
   metadata    Json?               // Additional metric metadata (JSON)
   
   // Relationships
-  testRun     ParticleTestRun     @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  testRun     ParticleTestRun     @relation("TestRunMetrics", fields: [testRunId], references: [id], onDelete: Cascade)
   variant     ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   @@index([testRunId])
