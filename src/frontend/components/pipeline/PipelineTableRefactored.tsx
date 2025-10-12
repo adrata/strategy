@@ -164,26 +164,16 @@ export function PipelineTable({
   // Get table headers
   const headers = getTableHeaders(visibleColumns, section);
   
-  // Dynamic height calculation - keep table height reasonable
-  const headerHeight = 40; // Height of table header
-  const rowHeight = 66; // Approximate height per row
-  const contentHeight = headerHeight + (data.length * rowHeight);
-  // Account for tabs/filters section - increase space reservation for sections with tabs
-  const hasTabs = ['leads', 'prospects', 'opportunities'].includes(section);
-  const tabsHeight = hasTabs ? 60 : 0; // Extra height for tabs section
-  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 220 - tabsHeight : 500; // Account for tabs
+  const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 500;
   
-  // Dynamic height calculation - keep table height reasonable
+  // Dynamic height calculation - always use full viewport height for consistency
   let tableHeight;
   if (data.length === 0) {
     // Empty state - use moderate height
     tableHeight = 200;
-  } else if (data.length <= 10) {
-    // Small to medium datasets - use content height with minimal extension
-    tableHeight = contentHeight + 20; // Minimal extension
   } else {
-    // Larger datasets - use viewport height without extension
-    tableHeight = maxViewportHeight; // No extension to keep reasonable height
+    // ALL tables use viewport height for consistency (matches Speedrun)
+    tableHeight = maxViewportHeight;
   }
   
   // Use custom hooks for data and actions
@@ -267,8 +257,8 @@ export function PipelineTable({
   // Empty state - show table with "No data. Add a lead." in first row
   if (!data || data.length === 0) {
     return (
-      <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden">
-        <div className="overflow-x-auto overflow-y-auto pipeline-table-scroll" style={{ maxHeight: tableHeight }}>
+      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative" style={{ height: `${tableHeight}px` }}>
+        <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
           <table className="w-full">
             <TableHeader
               visibleColumns={visibleColumns}
@@ -296,9 +286,9 @@ export function PipelineTable({
   }
   
   return (
-    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] overflow-hidden">
+      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative" style={{ height: `${tableHeight}px` }}>
       {/* Table */}
-      <div className="overflow-x-auto overflow-y-auto pipeline-table-scroll" style={{ maxHeight: tableHeight }}>
+      <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
         <table className="w-full">
           <TableHeader
             headers={headers}

@@ -1483,7 +1483,7 @@ export const PipelineView = React.memo(function PipelineView({
 
       {/* Main content */}
       <div className={`flex-1 px-6 min-h-0 overflow-y-auto ${section === 'speedrun' ? 'pb-4' : 'pb-2'}`} style={{
-        minHeight: 'calc(100vh - 220px)', // Match table height calculations
+        minHeight: 'calc(100vh - 180px)', // Match table height calculations
         maxWidth: '100%', // Prevent overflow into right panel
         overflowX: 'hidden' // Prevent horizontal overflow
       }}>
