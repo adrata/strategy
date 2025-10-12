@@ -34,6 +34,7 @@ interface TableRowProps {
   workspaceId: string;
   workspaceName: string;
   visibleColumns?: string[];
+  currentUserId?: string;
   onRecordClick: (record: PipelineRecord) => void;
   onEdit: (record: PipelineRecord) => void;
   onAddAction: (record: PipelineRecord) => void;
@@ -111,6 +112,7 @@ export function TableRow({
   workspaceId,
   workspaceName,
   visibleColumns,
+  currentUserId,
   onRecordClick,
   onEdit,
   onAddAction,
@@ -310,21 +312,40 @@ export function TableRow({
                   </td>
                 );
               case 'owner':
+              case 'mainSeller':
                 return (
-                  <td key="owner" className={textClasses}>
+                  <td key="mainSeller" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {record['ownerData'] ? (
-                        <ProfileAvatar
-                          name={record['ownerData'].name}
-                          firstName={record['ownerData'].firstName}
-                          lastName={record['ownerData'].lastName}
-                          email={record['ownerData'].email}
-                          profilePictureUrl={record['ownerData'].profilePictureUrl || undefined}
-                          size="sm"
-                        />
-                      ) : null}
+                      {(() => {
+                        const mainSellerData = record['mainSellerData'] || record['ownerData'];
+                        console.log('🔍 [TableRow] MainSeller data:', {
+                          hasMainSellerData: !!mainSellerData,
+                          mainSellerData,
+                          mainSellerText: record['mainSeller'] || record['owner']
+                        });
+                        
+                        return mainSellerData ? (
+                          <div>
+                            <ProfileAvatar
+                              name={mainSellerData?.name}
+                              firstName={mainSellerData?.firstName}
+                              lastName={mainSellerData?.lastName}
+                              email={mainSellerData?.email}
+                              profilePictureUrl={mainSellerData?.profilePictureUrl || undefined}
+                              size="sm"
+                              showAsMe={true}
+                              currentUserId={currentUserId}
+                              userId={mainSellerData?.id}
+                            />
+                            {/* Debug indicator */}
+                            <span className="text-xs text-red-500 ml-1">AV</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400">NO DATA</span>
+                        );
+                      })()}
                       <span className="text-sm text-[var(--foreground)] truncate max-w-24">
-                        {record['owner'] || '-'}
+                        {record['mainSeller'] || record['owner'] || '-'}
                       </span>
                     </div>
                   </td>
@@ -333,21 +354,40 @@ export function TableRow({
                 return (
                   <td key="coSellers" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {record['coSellersData'] && record['coSellersData'].length > 0 ? (
-                        <ProfileAvatarGroup
-                          users={record['coSellersData'].map((coSeller: any) => ({
-                            name: coSeller.user?.name,
-                            firstName: coSeller.user?.firstName,
-                            lastName: coSeller.user?.lastName,
-                            email: coSeller.user?.email,
-                            profilePictureUrl: coSeller.user?.profilePictureUrl || undefined,
-                          }))}
-                          maxVisible={2}
-                          size="sm"
-                        />
-                      ) : null}
+                      {(() => {
+                        const coSellersData = record['coSellersData'];
+                        console.log('🔍 [TableRow] CoSellers data:', {
+                          hasCoSellersData: !!coSellersData,
+                          coSellersDataLength: coSellersData?.length || 0,
+                          coSellersData,
+                          coSellersText: record['coSellers']
+                        });
+                        
+                        return coSellersData && coSellersData.length > 0 ? (
+                          <div>
+                            <ProfileAvatarGroup
+                              users={coSellersData.map((coSeller: any) => ({
+                                name: coSeller.user?.name,
+                                firstName: coSeller.user?.firstName,
+                                lastName: coSeller.user?.lastName,
+                                email: coSeller.user?.email,
+                                profilePictureUrl: coSeller.user?.profilePictureUrl || undefined,
+                                userId: coSeller.user?.id,
+                              }))}
+                              maxVisible={2}
+                              size="sm"
+                              showAsMe={true}
+                              currentUserId={currentUserId}
+                            />
+                            {/* Debug indicator */}
+                            <span className="text-xs text-red-500 ml-1">AVG</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400">NO COS</span>
+                        );
+                      })()}
                       <span className="text-sm text-[var(--foreground)] truncate max-w-24">
-                        {record['coSellers'] || '-'}
+                        {record['coSellers'] && record['coSellers'] !== '-' ? record['coSellers'] : '-'}
                       </span>
                     </div>
                   </td>

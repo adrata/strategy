@@ -243,7 +243,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           nextAction: true,
           nextActionDate: true,
           actionStatus: true,
-          assignedUserId: true,
+          ownerId: true,
           globalRank: true
         }
       }),
@@ -396,7 +396,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
           icpScore: Math.floor(Math.random() * 20) + 80, // 80-100 for demo
           lastUpdated: ((lead as any).lastActionDate || lead.updatedAt).toISOString(),
           status: lead.status || 'Active',
-          assignedUserId: (lead as any).assignedUserId,
+          ownerId: (lead as any).ownerId,
           workspaceId: (lead as any).workspaceId,
           createdAt: lead.createdAt,
           updatedAt: lead.updatedAt
@@ -558,7 +558,7 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         title: true,
         department: true,
         company: true,
-        assignedUserId: true,
+        ownerId: true,
         createdAt: true,
         updatedAt: true
       }
@@ -573,9 +573,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
       company: seller.company || 'Winning Variant',
       isOnline: true,
       assignedCompanies: [],
-      assignedProspects: prospects.filter(p => (p as any)['assignedUserId'] === seller.id).length,
-      assignedLeads: leads.filter(l => (l as any)['assignedUserId'] === seller.id).length,
-      assignedOpportunities: opportunities.filter(o => (o as any)['assignedUserId'] === seller.id).length,
+      assignedProspects: prospects.filter(p => (p as any)['ownerId'] === seller.id).length,
+      assignedLeads: leads.filter(l => (l as any)['ownerId'] === seller.id).length,
+      assignedOpportunities: opportunities.filter(o => (o as any)['ownerId'] === seller.id).length,
       role: 'SELLER',
       department: seller.department || 'Sales',
       seniorityLevel: 'Mid-Level'
@@ -594,9 +594,9 @@ async function loadDemoData(scenarioSlug: string = 'winning-variant') {
         company: 'Winning Variant',
         isOnline: true, // Demo users are always online
         assignedCompanies: [], // Will be populated based on actual assignments
-        assignedProspects: prospects.filter(p => (p as any)['assignedUserId'] === user.id).length,
-        assignedLeads: leads.filter(l => (l as any)['assignedUserId'] === user.id).length,
-        assignedOpportunities: opportunities.filter(o => (o as any)['assignedUserId'] === user.id).length,
+        assignedProspects: prospects.filter(p => (p as any)['ownerId'] === user.id).length,
+        assignedLeads: leads.filter(l => (l as any)['ownerId'] === user.id).length,
+        assignedOpportunities: opportunities.filter(o => (o as any)['ownerId'] === user.id).length,
         role: wu.role,
         department: user.department || 'Sales',
         seniorityLevel: user.seniorityLevel || 'Mid-Level'
@@ -1084,7 +1084,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
-          assignedUserId: true,
+          ownerId: true,
           workspaceId: true,
           // Custom fields for intelligence data
           customFields: true,
@@ -1137,7 +1137,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           nextAction: true,
           nextActionDate: true,
           actionStatus: true,
-          assignedUserId: true,
+          ownerId: true,
           // Custom fields for intelligence data
           customFields: true,
           // Additional fields for engagement history
@@ -1165,7 +1165,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           nextAction: true,
           nextActionDate: true,
           actionStatus: true,
-          assignedUserId: true,
+          ownerId: true,
           globalRank: true,
           // Essential enrichment fields only
           employeeCount: true,
@@ -1206,7 +1206,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
-          assignedUserId: true,
+          ownerId: true,
           workspaceId: true,
           // Custom fields for intelligence data
           customFields: true,
@@ -1235,7 +1235,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           nextAction: true,
           nextActionDate: true,
           workspaceId: true,
-          assignedUserId: true
+          ownerId: true
         };
       }
     } else if (type === 'sellers') {
@@ -1251,7 +1251,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           title: true,
           department: true,
           company: true,
-          assignedUserId: true,
+          ownerId: true,
           workspaceId: true,
           tags: true,
           metadata: true,
@@ -1268,7 +1268,7 @@ async function getSingleRecord(type: string, workspaceId: string, userId: string
           title: true,
           department: true,
           company: true,
-          assignedUserId: true,
+          ownerId: true,
           workspaceId: true,
           tags: true,
           createdAt: true,
@@ -1513,7 +1513,7 @@ async function getMultipleRecords(
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            assignedUserId: true,
+            ownerId: true,
             workspaceId: true
           }
         })
@@ -1583,15 +1583,15 @@ async function getMultipleRecords(
       };
       
       if (sellerId) {
-        // If sellerId is provided, filter companies by that assignedUserId directly
-        // The frontend passes the seller's assignedUserId as sellerId
-        whereClause.assignedUserId = sellerId;
-        console.log(`🔍 [COMPANIES API] Filtering companies for assignedUserId: ${sellerId}`);
+        // If sellerId is provided, filter companies by that ownerId directly
+        // The frontend passes the seller's ownerId as sellerId
+        whereClause.ownerId = sellerId;
+        console.log(`🔍 [COMPANIES API] Filtering companies for ownerId: ${sellerId}`);
       } else {
         // Default behavior: get companies assigned to user or unassigned
         whereClause.OR = [
-          { assignedUserId: userId },
-          { assignedUserId: null }
+          { ownerId: userId },
+          { ownerId: null }
         ];
         console.log(`🔍 [COMPANIES API] Getting companies for user: ${userId}`);
       }
@@ -1622,7 +1622,7 @@ async function getMultipleRecords(
           nextAction: true,
           nextActionDate: true,
           actionStatus: true,
-          assignedUserId: true,
+          ownerId: true,
           // Essential enrichment fields only
           employeeCount: true,
           foundedYear: true,
@@ -1752,8 +1752,8 @@ async function getMultipleRecords(
         workspaceId,
         deletedAt: null,
         OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
+          { ownerId: userId },
+          { ownerId: null }
         ]
       },
       orderBy: [{ updatedAt: 'desc' }],
@@ -1813,7 +1813,7 @@ async function getMultipleRecords(
         nextAction: person.nextAction,
         nextActionDate: person.nextActionDate,
         workspaceId: person.workspaceId,
-        assignedUserId: person.assignedUserId,
+        ownerId: person.ownerId,
         // Add company data for better relationships
         companyData: person.company,
         // Include Coresignal data for detail views
@@ -1842,8 +1842,8 @@ async function getMultipleRecords(
         workspaceId,
         deletedAt: null,
         OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
+          { ownerId: userId },
+          { ownerId: null }
         ]
       },
       orderBy: [{ updatedAt: 'desc' }],
@@ -1903,7 +1903,7 @@ async function getMultipleRecords(
         nextAction: person.nextAction,
         nextActionDate: person.nextActionDate,
         workspaceId: person.workspaceId,
-        assignedUserId: person.assignedUserId,
+        ownerId: person.ownerId,
         // Add company data for better relationships
         companyData: person.company,
         // Include Coresignal data for detail views
@@ -1941,11 +1941,11 @@ async function getMultipleRecords(
   // NOTE: For people, we want to show ALL people in the workspace, not just assigned ones
   if (['leads', 'prospects', 'opportunities', 'companies'].includes(type)) {
     whereClause['OR'] = [
-      { assignedUserId: userId }, // User's assigned records
-      { assignedUserId: null }    // Unassigned records in workspace
+      { ownerId: userId }, // User's assigned records
+      { ownerId: null }    // Unassigned records in workspace
     ];
   }
-  // For people, don't filter by assignedUserId - show all people in workspace
+  // For people, don't filter by ownerId - show all people in workspace
   
   // Apply additional filters
   if (filters) {
@@ -1983,7 +1983,7 @@ async function getMultipleRecords(
       createdAt: true,
       updatedAt: true,
       workspaceId: true,
-      assignedUserId: true
+      ownerId: true
     };
 
     // Add model-specific fields
@@ -2221,9 +2221,9 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
   // Remove duplicate fields that might be in the data object
   delete createData.userId; // Remove userId from data object to avoid conflicts
   
-  // Only add assignedUserId for records that have this field
+  // Only add ownerId for records that have this field
   if (type !== 'notes') {
-    createData.assignedUserId = userId;
+    createData.ownerId = userId;
   }
   
   // Only add createdAt/updatedAt for records that need them
@@ -2245,7 +2245,7 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
     delete createData.firstName; // Companies don't have firstName
     delete createData.lastName; // Companies don't have lastName
     delete createData.fullName; // Companies don't have fullName
-    delete createData.userId; // This is mapped to assignedUserId
+    delete createData.userId; // This is mapped to ownerId
   }
   
   // Handle special field requirements for leads, prospects, partners, and clients
@@ -2329,7 +2329,7 @@ async function handleCreate(type: string, workspaceId: string, userId: string, d
       // Remove frontend-specific fields that don't exist in database
       delete createData.name; // We've already split this into firstName/lastName/fullName
       delete createData.title; // We've mapped this to jobTitle
-      delete createData.userId; // This is mapped to assignedUserId
+      delete createData.userId; // This is mapped to ownerId
     }
     
     // Ensure updatedAt is set for all records
@@ -2458,7 +2458,7 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
             website: createData.companyDomain || createData.website || null,
             industry: createData.industry || null,
             size: createData.companySize || null,
-            assignedUserId: userId,
+            ownerId: userId,
             createdAt: new Date(),
             updatedAt: new Date()
           }
@@ -2487,7 +2487,7 @@ async function createPersonRelatedRecord(type: string, createData: any, workspac
       entity_id: personEntityRecord.id, // Link to entity record
       workspaceId,
       companyId,
-      assignedUserId: userId,
+      ownerId: userId,
       firstName: createData.firstName,
       lastName: createData.lastName,
       fullName: createData.fullName,
@@ -2573,7 +2573,7 @@ async function handleClientCreate(workspaceId: string, userId: string, data: any
         website: data.website || null,
         notes: data.notes || null,
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         updatedAt: new Date()
       }
     });
@@ -2703,7 +2703,7 @@ async function handleUpdate(type: string, workspaceId: string, userId: string, i
       });
       
       // Remove frontend-specific fields that don't exist in database
-      delete updateData.userId; // This is mapped to assignedUserId
+      delete updateData.userId; // This is mapped to ownerId
     }
     
     console.log(`🔄 [UPDATE] Executing update with data:`, JSON.stringify(updateData, null, 2));
@@ -2907,7 +2907,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
     // Prepare prospect data from lead data - using new schema structure
     const prospectData = {
       workspaceId: lead.workspaceId,
-      assignedUserId: lead.assignedUserId,
+      ownerId: lead.ownerId,
       personId: lead.personId, // Use the same personId from the lead
       firstName: lead.firstName,
       lastName: lead.lastName,
@@ -3003,7 +3003,7 @@ async function handleAdvanceToProspect(type: string, workspaceId: string, userId
       buyerGroup = await prisma.buyer_groups.create({
         data: {
           workspaceId,
-          assignedUserId: userId,
+          ownerId: userId,
           name: `${lead.company} Leadership`,
           description: `Decision makers for software purchases at ${lead.company}`,
           purpose: 'Evaluating CRM and sales tools',
@@ -3155,7 +3155,7 @@ async function handleAdvanceToOpportunity(type: string, workspaceId: string, use
     // Prepare opportunity data from prospect data
     const opportunityData = {
       workspaceId: prospect.workspaceId,
-      assignedUserId: prospect.assignedUserId,
+      ownerId: prospect.ownerId,
       personId: prospect.personId,
       companyId: prospect.companyId,
       firstName: prospect.firstName,
@@ -3339,7 +3339,7 @@ async function searchSpecificType(
   
   // Add user assignment filter for most types
   if (['leads', 'prospects', 'opportunities', 'people', 'companies'].includes(type)) {
-    whereClause['assignedUserId'] = userId;
+    whereClause['ownerId'] = userId;
   }
   
   const records = await model.findMany({
@@ -3405,8 +3405,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           status: 'LEAD',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           } : {})
         }
@@ -3443,7 +3443,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null,
           status: 'CLIENT',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-            assignedUserId: userId
+            ownerId: userId
           } : {})
         }
       }).catch(() => 0), // Fallback to 0 if clients table has issues
@@ -3461,7 +3461,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             workspaceId,
             deletedAt: null,
             ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-              assignedUserId: userId
+              ownerId: userId
             } : {}),
             status: {
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
@@ -3473,7 +3473,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
             workspaceId,
             deletedAt: null,
             ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-              assignedUserId: userId
+              ownerId: userId
             } : {}),
             status: {
               in: ["new", "contacted", "qualified", "follow-up", "demo-scheduled"]
@@ -3488,8 +3488,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null,
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           } : {})
         },
@@ -3532,8 +3532,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null, 
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           } : {})
         },
@@ -3556,8 +3556,8 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null, 
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           } : {})
         },
@@ -3579,7 +3579,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           nextAction: true,
           nextActionDate: true,
           actionStatus: true,
-          assignedUserId: true,
+          ownerId: true,
           globalRank: true
           // 🚫 REMOVED: description, address, customFields (large data) for better performance
         }
@@ -3670,7 +3670,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
-          assignedUserId: true,
+          ownerId: true,
           workspaceId: true
           // 🚫 REMOVED: customFields (large JSON data) for better performance
         }
@@ -3689,7 +3689,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
           deletedAt: null,
           status: 'CLIENT',
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-            assignedUserId: userId
+            ownerId: userId
           } : {})
         },
         orderBy: [{ updatedAt: 'desc' }],
@@ -3809,7 +3809,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
         nextAction: person.nextAction,
         nextActionDate: person.nextActionDate,
         workspaceId: person.workspaceId,
-        assignedUserId: person.assignedUserId,
+        ownerId: person.ownerId,
         // Add company data for better relationships
         companyData: person.company,
         // Include Coresignal data for detail views
@@ -3946,7 +3946,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       where: {
         workspaceId,
         ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-          assignedUserId: userId
+          ownerId: userId
         } : {}),
         deletedAt: null
       },
@@ -3960,7 +3960,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       where: {
         workspaceId,
         ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-          assignedUserId: userId
+          ownerId: userId
         } : {}),
         stage: { in: ['Closed Won', 'Won', 'Closed'] },
         actualCloseDate: { gte: startOfMonth },
@@ -3973,7 +3973,7 @@ async function loadDashboardData(workspaceId: string, userId: string): Promise<a
       where: {
         workspaceId,
         ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
-          assignedUserId: userId
+          ownerId: userId
         } : {}),
         stage: { in: ['Closed Won', 'Won', 'Closed'] },
         actualCloseDate: { gte: startOfYear },
@@ -4198,8 +4198,8 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
           deletedAt: null,
           ...(workspaceId !== '01K1VBYX2YERMXBFJ60RC6J194' && workspaceId !== '01K1VBYXHD0J895XAN0HGFBKJP' ? {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           } : {})
         },
@@ -4540,7 +4540,7 @@ async function loadSpeedrunData(workspaceId: string, userId: string): Promise<an
         customFields: item.customFields || {},
         companyId: item.companyId || null,
         workspaceId: item.workspaceId || workspaceId,
-        assignedUserId: item.assignedUserId || userId,
+        ownerId: item.ownerId || userId,
         tags: item.tags || ['speedrun']
       };
     });

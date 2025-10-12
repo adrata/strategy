@@ -8,6 +8,7 @@ import { Select } from "./Select";
 import { AddCompanyModal } from "./AddCompanyModal";
 import { AddLeadModal } from "./AddLeadModal";
 import { AddProspectModal } from "./AddProspectModal";
+import { AddPersonModal } from "./AddPersonModal";
 import { DEFAULT_FORM_DATA } from "@/platform/config";
 import { SuccessMessage } from "./SuccessMessage";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
@@ -43,6 +44,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [showAddLeadModal, setShowAddLeadModal] = useState(false);
   const [showAddProspectModal, setShowAddProspectModal] = useState(false);
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
   
   // Add Company modal form state
   const [addCompanyFormData, setAddCompanyFormData] = useState({
@@ -72,6 +74,25 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       }, 200); // Slightly longer delay for better reliability
     }
   }, [isAddModalOpen, setFormData]);
+
+  // Auto-open specialized modals for specific entity types
+  useEffect(() => {
+    if (isAddModalOpen) {
+      if (activeSection === "leads") {
+        setShowAddLeadModal(true);
+        setIsAddModalOpen(false);
+      } else if (activeSection === "prospects") {
+        setShowAddProspectModal(true);
+        setIsAddModalOpen(false);
+      } else if (activeSection === "companies") {
+        setShowAddCompanyModal(true);
+        setIsAddModalOpen(false);
+      } else if (activeSection === "people") {
+        setShowAddPersonModal(true);
+        setIsAddModalOpen(false);
+      }
+    }
+  }, [isAddModalOpen, activeSection]);
 
   // Search contacts as user types
   useEffect(() => {
@@ -508,38 +529,8 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           </button>
         </div>
 
-        {/* Special handling for leads and prospects - show dedicated forms */}
-        {(activeSection === "leads" || activeSection === "prospects") ? (
-          <div className="space-y-4">
-            <div className="text-center py-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: categoryColors.light }}>
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: categoryColors.icon }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-                Add New {activeSection === "leads" ? "Lead" : "Prospect"}
-              </h3>
-              <p className="text-[var(--muted)] mb-6">
-                Create a new {activeSection === "leads" ? "lead" : "prospect"} with First Name and Last Name fields, 
-                with status locked as {activeSection === "leads" ? "Lead" : "Prospect"}.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  if (activeSection === "leads") {
-                    setShowAddLeadModal(true);
-                  } else if (activeSection === "prospects") {
-                    setShowAddProspectModal(true);
-                  }
-                }}
-                className="px-6 py-3 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg font-semibold text-sm hover:bg-[var(--panel-background)] transition-colors"
-              >
-                Open {activeSection === "leads" ? "Lead" : "Prospect"} Form
-              </button>
-            </div>
-          </div>
-        ) : (
+        {/* Form for remaining sections (opportunities, partnerships, etc.) */}
+        {!["leads", "prospects", "companies", "people"].includes(activeSection) && (
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name Field - First for people */}
             {activeSection === "people" ? (
@@ -1038,13 +1029,12 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   </label>
                   <div className="relative">
                     <div className="relative">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)] pointer-events-none z-10" />
                       <input
                         type="text"
                         value={contactSearchQuery}
                         onChange={(e) => setContactSearchQuery(e.target.value)}
                         placeholder="Search contacts to add..."
-                        className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors relative z-0"
+                        className="w-full pl-3 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors relative z-0"
                       />
                     </div>
 
@@ -1547,6 +1537,20 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           setShowSuccessMessage(true);
           setSuccessMessage(`Prospect "${prospect.fullName}" created successfully!`);
           setShowAddProspectModal(false);
+          if (refreshData) {
+            refreshData();
+          }
+        }}
+      />
+
+      {/* Add Person Modal */}
+      <AddPersonModal
+        isOpen={showAddPersonModal}
+        onClose={() => setShowAddPersonModal(false)}
+        onPersonAdded={(person) => {
+          setShowSuccessMessage(true);
+          setSuccessMessage(`Person "${person.fullName}" created successfully!`);
+          setShowAddPersonModal(false);
           if (refreshData) {
             refreshData();
           }

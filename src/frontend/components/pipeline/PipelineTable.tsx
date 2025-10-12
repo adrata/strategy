@@ -17,6 +17,7 @@ import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
 import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
+import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -144,10 +145,13 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
   if (section === 'speedrun') {
     return [
       'Rank',
-      'Person',
-      'Stage',
-      'Last Action',
-      'Next Action'
+      'Company',
+      'Name',
+      'Status',
+      'MAIN-SELLER',
+      'CO-SELLERS',
+      'LAST ACTION',
+      'NEXT ACTION'
     ];
   }
   
@@ -186,6 +190,19 @@ export function PipelineTable({
 }: PipelineTableProps) {
   console.log('🔍 [PipelineTable] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
   console.log('🔍 [PipelineTable] Sample data:', data?.slice(0, 2));
+  
+  // Debug seller data specifically
+  if (section === 'speedrun' && data?.length > 0) {
+    console.log('🔍 [PipelineTable] Speedrun seller data check:', {
+      firstRecord: data[0],
+      hasMainSeller: 'mainSeller' in (data[0] || {}),
+      hasCoSellers: 'coSellers' in (data[0] || {}),
+      hasMainSellerData: 'mainSellerData' in (data[0] || {}),
+      hasCoSellersData: 'coSellersData' in (data[0] || {}),
+      mainSellerValue: data[0]?.mainSeller,
+      coSellersValue: data[0]?.coSellers
+    });
+  }
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();
@@ -438,11 +455,23 @@ export function PipelineTable({
                         // Show dash for "Unknown Title" or empty values
                         cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
                         break;
+                      case 'status':
+                        cellContent = record['status'] || '-';
+                        break;
                       case 'last action':
                         cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';
                         break;
                       case 'next action':
                         cellContent = record['nextAction'] || record['nextActionDescription'] || 'No action planned';
+                        break;
+                      case 'owner':
+                      case 'main-seller':
+                      case 'mainseller':
+                        cellContent = record['mainSeller'] || record['owner'] || '-';
+                        break;
+                      case 'co-sellers':
+                      case 'cosellers':
+                        cellContent = record['coSellers'] && record['coSellers'] !== '-' ? record['coSellers'] : '-';
                         break;
                       default:
                         const value = record[header.toLowerCase()] || record[header];
@@ -472,6 +501,47 @@ export function PipelineTable({
                                 </>
                               );
                             })()}
+                          </div>
+                        ) : header.toLowerCase() === 'owner' || header.toLowerCase() === 'main-seller' || header.toLowerCase() === 'mainseller' ? (
+                          <div className="flex items-center gap-2">
+                            {record['mainSellerData'] || record['ownerData'] ? (
+                              <ProfileAvatar
+                                name={record['mainSellerData']?.name || record['ownerData']?.name}
+                                firstName={record['mainSellerData']?.firstName || record['ownerData']?.firstName}
+                                lastName={record['mainSellerData']?.lastName || record['ownerData']?.lastName}
+                                email={record['mainSellerData']?.email || record['ownerData']?.email}
+                                profilePictureUrl={record['mainSellerData']?.profilePictureUrl || record['ownerData']?.profilePictureUrl || undefined}
+                                size="sm"
+                                showAsMe={true}
+                                currentUserId={record['currentUserId']}
+                                userId={record['mainSellerData']?.id || record['ownerData']?.id}
+                              />
+                            ) : null}
+                            <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                              {cellContent}
+                            </span>
+                          </div>
+                        ) : header.toLowerCase() === 'co-sellers' || header.toLowerCase() === 'cosellers' ? (
+                          <div className="flex items-center gap-2">
+                            {record['coSellersData'] && record['coSellersData'].length > 0 ? (
+                              <ProfileAvatarGroup
+                                users={record['coSellersData'].map((coSeller: any) => ({
+                                  name: coSeller.user?.name,
+                                  firstName: coSeller.user?.firstName,
+                                  lastName: coSeller.user?.lastName,
+                                  email: coSeller.user?.email,
+                                  profilePictureUrl: coSeller.user?.profilePictureUrl || undefined,
+                                  userId: coSeller.user?.id,
+                                }))}
+                                maxVisible={2}
+                                size="sm"
+                                showAsMe={true}
+                                currentUserId={record['currentUserId']}
+                              />
+                            ) : null}
+                            <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                              {cellContent}
+                            </span>
                           </div>
                         ) : (
                           <div className="text-sm text-[var(--foreground)] truncate">

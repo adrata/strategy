@@ -44,217 +44,229 @@ export async function GET(request: NextRequest) {
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
     const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}`;
     
+    // Define the fetch function for cache
+    const fetchSpeedrunData = async () => {
+      // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
+      const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
+                        context.userId === 'demo-user-2025'; // Demo user only
+      
+      console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
+
+      // 🔍 DIAGNOSTIC: Check what data actually exists
+      const [peopleWithCompanies, peopleWithRank, peopleWithBoth] = await Promise.all([
+        prisma.people.count({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            companyId: { not: null },
+            ...(isDemoMode ? {} : {
+              OR: [
+                { ownerId: context.userId },
+                { ownerId: null }
+              ]
+            })
+          }
+        }),
+        prisma.people.count({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            globalRank: { not: null },
+            ...(isDemoMode ? {} : {
+              OR: [
+                { ownerId: context.userId },
+                { ownerId: null }
+              ]
+            })
+          }
+        }),
+        prisma.people.count({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            companyId: { not: null },
+            globalRank: { not: null },
+            ...(isDemoMode ? {} : {
+              OR: [
+                { ownerId: context.userId },
+                { ownerId: null }
+              ]
+            })
+          }
+        })
+      ]);
+
+      console.log(`🔍 [SPEEDRUN API] Data diagnostic:`, {
+        peopleWithCompanies,
+        peopleWithRank,
+        peopleWithBoth,
+        willShowData: peopleWithBoth > 0
+      });
+
+      // 🚀 OPTIMIZED QUERY: Get top 50 people (most permissive - show any people)
+      const speedrunPeople = await prisma.people.findMany({
+        where: {
+          workspaceId: context.workspaceId,
+          deletedAt: null,
+          // Remove companyId requirement temporarily to see if we have any people at all
+          ...(isDemoMode ? {} : {
+            OR: [
+              { ownerId: context.userId },
+              { ownerId: null }
+            ]
+          })
+        },
+        orderBy: [
+          { globalRank: 'asc' }, // Ranked people first (nulls will be last)
+          { createdAt: 'desc' } // Then by newest
+        ],
+        take: limit, // Take exactly the first 50 results
+        select: {
+          // 🚀 PERFORMANCE: Only select required fields (no customFields)
+          id: true,
+          firstName: true,
+          lastName: true,
+          fullName: true,
+          email: true,
+          jobTitle: true,
+          phone: true,
+          linkedinUrl: true,
+          status: true,
+          globalRank: true,
+          lastAction: true,
+          lastActionDate: true,
+          nextAction: true,
+          nextActionDate: true,
+          ownerId: true,
+          workspaceId: true,
+          createdAt: true,
+          updatedAt: true,
+          owner: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              name: true,
+              email: true
+            }
+          },
+          coSellers: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  name: true,
+                  email: true
+                }
+              }
+            }
+          },
+          company: {
+            select: {
+              id: true,
+              name: true,
+              industry: true,
+              size: true,
+              globalRank: true
+            }
+          }
+        }
+      });
+
+      // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
+      const speedrunData = speedrunPeople.map((person, index) => {
+        // Format owner name - show "Me" for current user
+        const ownerName = person.owner 
+          ? (person.owner.id === context.userId
+              ? 'Me'
+              : person.owner.firstName && person.owner.lastName 
+                ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
+                : person.owner.name || person.owner.email || '-')
+          : '-';
+
+        // Format co-sellers names - exclude current user from co-sellers list
+        const coSellersNames = person.coSellers && person.coSellers.length > 0
+          ? person.coSellers
+              .filter((coSeller: any) => coSeller.user.id !== context.userId) // Exclude current user
+              .map((coSeller: any) => {
+                const user = coSeller.user;
+                return user.firstName && user.lastName 
+                  ? `${user.firstName} ${user.lastName}`.trim()
+                  : user.name || user.email || 'Unknown';
+              }).join(', ')
+          : '-';
+
+        return {
+          id: person.id,
+          rank: index + 1, // Sequential ranking starting from 1
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+          title: person.jobTitle || 'Unknown Title',
+          email: person.email || '',
+          phone: person.phone || '',
+          linkedin: person.linkedinUrl || '',
+          status: person.status || 'Unknown',
+          globalRank: person.globalRank || 0,
+          lastAction: person.lastAction || 'No action taken',
+          lastActionDate: person.lastActionDate || null,
+          nextAction: person.nextAction || 'No next action',
+          nextActionDate: person.nextActionDate || null,
+          mainSellerId: person.ownerId,
+          workspaceId: person.workspaceId,
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt,
+          company: person.company ? {
+            id: person.company.id,
+            name: person.company.name,
+            industry: person.company.industry || '',
+            size: person.company.size || '',
+            globalRank: person.company.globalRank || 0
+          } : null,
+          tags: ['speedrun'], // Add speedrun tag for consistency
+          // Add main-seller and co-sellers data
+          mainSeller: ownerName,
+          coSellers: coSellersNames,
+          mainSellerData: person.owner,
+          coSellersData: person.coSellers ? person.coSellers.filter((coSeller: any) => coSeller.user.id !== context.userId) : [],
+          currentUserId: context.userId
+        };
+      });
+
+      const result = {
+        success: true,
+        data: speedrunData,
+        meta: {
+          count: speedrunData.length,
+          totalCount: speedrunData.length, // For pagination compatibility
+          limit,
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          responseTime: Date.now() - startTime,
+          cached: false
+        }
+      };
+
+      return result;
+    };
+
     if (!forceRefresh) {
       try {
-        const cached = await cache.get(cacheKey);
-        if (cached) {
-          console.log(`⚡ [SPEEDRUN API] Cache hit - returning cached data in ${Date.now() - startTime}ms`);
-          return NextResponse.json(cached);
-        }
+        const result = await cache.get(cacheKey, fetchSpeedrunData, {
+          ttl: SPEEDRUN_CACHE_TTL,
+          priority: 'high',
+          tags: ['speedrun', context.workspaceId, context.userId]
+        });
+        console.log(`⚡ [SPEEDRUN API] Cache hit - returning cached data in ${Date.now() - startTime}ms`);
+        return NextResponse.json(result);
       } catch (error) {
         console.warn('⚠️ [SPEEDRUN API] Cache read failed, proceeding with database query:', error);
       }
     }
 
-    // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-    const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                      context.userId === 'demo-user-2025'; // Demo user only
-    
-    console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
-
-    // 🔍 DIAGNOSTIC: Check what data actually exists
-    const [peopleWithCompanies, peopleWithRank, peopleWithBoth] = await Promise.all([
-      prisma.people.count({
-        where: {
-          workspaceId: context.workspaceId,
-          deletedAt: null,
-          companyId: { not: null },
-          ...(isDemoMode ? {} : {
-            OR: [
-              { assignedUserId: context.userId },
-              { assignedUserId: null }
-            ]
-          })
-        }
-      }),
-      prisma.people.count({
-        where: {
-          workspaceId: context.workspaceId,
-          deletedAt: null,
-          globalRank: { not: null },
-          ...(isDemoMode ? {} : {
-            OR: [
-              { assignedUserId: context.userId },
-              { assignedUserId: null }
-            ]
-          })
-        }
-      }),
-      prisma.people.count({
-        where: {
-          workspaceId: context.workspaceId,
-          deletedAt: null,
-          companyId: { not: null },
-          globalRank: { not: null },
-          ...(isDemoMode ? {} : {
-            OR: [
-              { assignedUserId: context.userId },
-              { assignedUserId: null }
-            ]
-          })
-        }
-      })
-    ]);
-
-    console.log(`🔍 [SPEEDRUN API] Data diagnostic:`, {
-      peopleWithCompanies,
-      peopleWithRank,
-      peopleWithBoth,
-      willShowData: peopleWithBoth > 0
-    });
-
-    // 🚀 OPTIMIZED QUERY: Get top 50 people (most permissive - show any people)
-    const speedrunPeople = await prisma.people.findMany({
-      where: {
-        workspaceId: context.workspaceId,
-        deletedAt: null,
-        // Remove companyId requirement temporarily to see if we have any people at all
-        ...(isDemoMode ? {} : {
-          OR: [
-            { assignedUserId: context.userId },
-            { assignedUserId: null }
-          ]
-        })
-      },
-      orderBy: [
-        { globalRank: 'asc' }, // Ranked people first (nulls will be last)
-        { createdAt: 'desc' } // Then by newest
-      ],
-      take: limit, // Take exactly the first 50 results
-      select: {
-        // 🚀 PERFORMANCE: Only select required fields (no customFields)
-        id: true,
-        firstName: true,
-        lastName: true,
-        fullName: true,
-        email: true,
-        jobTitle: true,
-        phone: true,
-        linkedinUrl: true,
-        status: true,
-        globalRank: true,
-        lastAction: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        assignedUserId: true,
-        ownerId: true,
-        workspaceId: true,
-        createdAt: true,
-        updatedAt: true,
-        owner: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            name: true,
-            email: true
-          }
-        },
-        coSellers: {
-          select: {
-            id: true,
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                name: true,
-                email: true
-              }
-            }
-          }
-        },
-        company: {
-          select: {
-            id: true,
-            name: true,
-            industry: true,
-            size: true,
-            globalRank: true
-          }
-        }
-      }
-    });
-
-    // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
-    const speedrunData = speedrunPeople.map((person, index) => {
-      // Format owner name
-      const ownerName = person.owner 
-        ? (person.owner.firstName && person.owner.lastName 
-            ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
-            : person.owner.name || person.owner.email || '-')
-        : '-';
-
-      // Format co-sellers names
-      const coSellersNames = person.coSellers && person.coSellers.length > 0
-        ? person.coSellers.map((coSeller: any) => {
-            const user = coSeller.user;
-            return user.firstName && user.lastName 
-              ? `${user.firstName} ${user.lastName}`.trim()
-              : user.name || user.email || 'Unknown';
-          }).join(', ')
-        : '-';
-
-      return {
-        id: person.id,
-        rank: index + 1, // Sequential ranking starting from 1
-        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-        company: person.company?.name || 'Unknown Company',
-        title: person.jobTitle || 'Unknown Title',
-        email: person.email || '',
-        phone: person.phone || '',
-        linkedin: person.linkedinUrl || '',
-        status: person.status || 'Unknown',
-        globalRank: person.globalRank || 0,
-        lastAction: person.lastAction || 'No action taken',
-        lastActionDate: person.lastActionDate || null,
-        nextAction: person.nextAction || 'No next action',
-        nextActionDate: person.nextActionDate || null,
-        assignedUserId: person.assignedUserId || null,
-        ownerId: person.ownerId,
-        workspaceId: person.workspaceId,
-        createdAt: person.createdAt,
-        updatedAt: person.updatedAt,
-        company: person.company ? {
-          id: person.company.id,
-          name: person.company.name,
-          industry: person.company.industry || '',
-          size: person.company.size || '',
-          globalRank: person.company.globalRank || 0
-        } : null,
-        tags: ['speedrun'], // Add speedrun tag for consistency
-        // Add owner and co-sellers data
-        owner: ownerName,
-        coSellers: coSellersNames,
-        ownerData: person.owner,
-        coSellersData: person.coSellers
-      };
-    });
-
-    const result = {
-      success: true,
-      data: speedrunData,
-      meta: {
-        count: speedrunData.length,
-        totalCount: speedrunData.length, // For pagination compatibility
-        limit,
-        workspaceId: context.workspaceId,
-        userId: context.userId,
-        responseTime: Date.now() - startTime,
-        cached: false
-      }
-    };
+    // If force refresh or cache failed, fetch data directly
+    const result = await fetchSpeedrunData();
 
     // 🚀 CACHE: Store in Redis for future requests
     try {
@@ -269,7 +281,7 @@ export async function GET(request: NextRequest) {
     }
 
     const responseTime = Date.now() - startTime;
-    console.log(`✅ [SPEEDRUN API] Loaded ${speedrunData.length} speedrun prospects in ${responseTime}ms`);
+    console.log(`✅ [SPEEDRUN API] Loaded ${result.data.length} speedrun prospects in ${responseTime}ms`);
 
     return NextResponse.json(result);
 

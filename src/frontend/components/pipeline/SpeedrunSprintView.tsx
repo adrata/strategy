@@ -13,8 +13,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth';
-import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
-import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';
 import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
@@ -23,22 +21,18 @@ import { CompleteActionModal, ActionLogData } from '@/products/speedrun/componen
 import { AddActionModal } from '@/platform/ui/components/AddActionModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
+import { useSprint } from './SprintContext';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
   const { navigateToPipeline } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
-  const { zoom } = useZoom();
   const { ui } = useAcquisitionOS();
-  const [selectedRecord, setSelectedRecord] = useState<any>(null);
-  const [isLeftPanelVisible, setIsLeftPanelVisible] = useState(true);
-  const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
-  const [currentSprintIndex, setCurrentSprintIndex] = useState(0);
+  const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords, setCompletedRecords } = useSprint();
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [snoozedRecords, setSnoozedRecords] = useState<string[]>([]);
-  const [completedRecords, setCompletedRecords] = useState<string[]>([]);
 
   // Get workspace info
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
@@ -65,7 +59,7 @@ export function SpeedrunSprintView() {
         id: item.id || `speedrun-${Math.random()}`,
         name: item.name || item.fullName || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'Unknown',
         email: item.email || '',
-        company: item.company || item.companyName || '-',
+        company: item.company?.name || item.company || item.companyName || '-',
         title: item.title || item.jobTitle || '-',
         phone: item.phone || item.phoneNumber || '',
         location: item.location || item.city || '',
@@ -482,78 +476,29 @@ export function SpeedrunSprintView() {
   // Enhanced loading state with better skeletons
   if (loading && (!data || data['length'] === 0)) {
     return (
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={
-          <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full bg-[var(--background)] border-r border-gray-100">
-            {/* Left Panel Skeleton */}
-            <div className="p-4 border-b border-gray-100">
-              <div className="flex items-center justify-between mb-2">
-                <div className="h-6 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-5 w-12 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
-              </div>
-              <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            </div>
-            
-            {/* Sprint Cards Skeleton */}
-            <div className="flex-1 overflow-auto p-3 space-y-2">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="p-3 rounded-lg border border-gray-100 bg-[var(--background)]">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 bg-[var(--loading-bg)] rounded-xl animate-pulse"></div>
-                        <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                      </div>
-                      <div className="h-3 w-16 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
-                      <div className="h-3 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Footer Skeleton */}
-            <div className="p-3 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <div className="h-8 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-8 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-              </div>
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Middle Panel Header Skeleton */}
+        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-2">
+            <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="flex gap-2">
+              <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
             </div>
           </div>
-        }
-        middlePanel={
-          <div className="h-full flex flex-col bg-[var(--background)]">
-            {/* Middle Panel Header Skeleton */}
-            <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
-              <div className="flex items-center justify-between mb-2">
-                <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                  <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                </div>
-              </div>
-              <div className="h-4 w-48 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            </div>
-            
-            {/* Middle Panel Content Skeleton */}
-            <div className="flex-1 p-6">
-              <div className="text-center max-w-md mx-auto">
-                <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full mx-auto mb-4 animate-pulse"></div>
-                <div className="h-6 w-48 bg-[var(--loading-bg)] rounded mx-auto mb-2 animate-pulse"></div>
-                <div className="h-4 w-64 bg-[var(--loading-bg)] rounded mx-auto mb-4 animate-pulse"></div>
-                <div className="h-10 w-32 bg-[var(--loading-bg)] rounded mx-auto animate-pulse"></div>
-              </div>
-            </div>
+          <div className="h-4 w-48 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        </div>
+        
+        {/* Middle Panel Content Skeleton */}
+        <div className="flex-1 p-6">
+          <div className="text-center max-w-md mx-auto">
+            <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full mx-auto mb-4 animate-pulse"></div>
+            <div className="h-6 w-48 bg-[var(--loading-bg)] rounded mx-auto mb-2 animate-pulse"></div>
+            <div className="h-4 w-64 bg-[var(--loading-bg)] rounded mx-auto mb-4 animate-pulse"></div>
+            <div className="h-10 w-32 bg-[var(--loading-bg)] rounded mx-auto animate-pulse"></div>
           </div>
-        }
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
+        </div>
+      </div>
     );
   }
 
@@ -596,108 +541,6 @@ export function SpeedrunSprintView() {
     );
   }
 
-  // Sprint card list for left panel
-  const sprintCardList = (
-    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full flex flex-col bg-[var(--background)] border-r border-gray-100">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-100 bg-[var(--background)]">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-[var(--foreground)]">Sprint {currentSprintNumber}</h2>
-            </div>
-            <span className="text-xs font-medium text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
-          </div>
-          <div className="text-xs text-[var(--muted)]">
-            {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
-          </div>
-        </div>
-      </div>
-
-      {/* Card list */}
-      <div className="flex-1 overflow-auto p-3 space-y-2">
-        {/* Loading indicator for data refresh */}
-        {loading && data.length > 0 && (
-          <div className="flex items-center justify-center py-2">
-            <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
-              <div className="w-3 h-3 border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin"></div>
-              <span>Updating sprint data...</span>
-            </div>
-          </div>
-        )}
-        
-        {data.map((record: any, index: number) => {
-          const isSelected = selectedRecord?.id === record.id;
-          const isCompleted = completedRecords.includes(record.id);
-          const displayName = record.fullName || 
-                             (record['firstName'] && record.lastName ? `${record.firstName} ${record.lastName}` : '') ||
-                             record.name || 
-                             'Unknown';
-          
-          // Calculate the correct display number based on strategic rank
-          const actualRank = record.rank || 999999;
-          const displayNumber = isCompleted ? '✓' : actualRank;
-          
-          return (
-            <div
-              key={record.id || index}
-              onClick={() => handleRecordSelect(record)}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
-                isCompleted
-                  ? 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] opacity-60'
-                  : isSelected 
-                    ? 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)] shadow-sm' 
-                    : 'bg-[var(--background)] hover:bg-[var(--panel-background)] border-gray-100 hover:border-[var(--border)] hover:shadow-sm'
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-2xl ${
-                      isCompleted
-                        ? 'bg-green-100 text-green-800'
-                        : isSelected 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-[var(--hover)] text-[var(--muted)]'
-                    }`}>
-                      {displayNumber}
-                    </span>
-                    <h3 className={`text-sm font-semibold truncate ${
-                      isCompleted 
-                        ? 'text-[var(--muted)]' 
-                        : isSelected ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]'
-                    }`}>
-                      {displayName}
-                    </h3>
-                    {isCompleted && (
-                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                        SUCCESS
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-xs truncate mb-1 ${
-                    isCompleted 
-                      ? 'text-[var(--muted)]' 
-                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
-                  }`}>
-                    {record.title || record.jobTitle || 'No Title'}
-                  </p>
-                  <p className={`text-xs truncate ${
-                    isCompleted 
-                      ? 'text-[var(--muted)]' 
-                      : isSelected ? 'text-[var(--muted)]' : 'text-[var(--muted)]'
-                  }`}>
-                    {record.company || 'Unknown Company'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-    </div>
-  );
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
@@ -791,18 +634,8 @@ export function SpeedrunSprintView() {
   );
 
   return (
-    <SpeedrunDataProvider>
-      <PanelLayout
-        thinLeftPanel={null}
-        leftPanel={sprintCardList}
-        middlePanel={sprintDetailView}
-        rightPanel={<RightPanel />}
-        zoom={zoom}
-        isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={isRightPanelVisible}
-        onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-        onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-      />
+    <>
+      {sprintDetailView}
 
       {/* Complete Action Modal */}
       <CompleteActionModal
@@ -822,6 +655,6 @@ export function SpeedrunSprintView() {
         contextRecord={selectedRecord}
         isLoading={isSubmittingAction}
       />
-    </SpeedrunDataProvider>
+    </>
   );
 }

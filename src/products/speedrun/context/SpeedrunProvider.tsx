@@ -14,7 +14,6 @@ import {
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
-import { useAuth } from "@/lib/auth";
 
 export interface SpeedrunPerson {
   id: number;
@@ -123,7 +122,7 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
 
   const pathname = usePathname();
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
-  const { authUser } = useAuth();
+  const { user: authUser } = useUnifiedAuth();
 
   // Get authenticated user and action platform data with error handling
   let user: any = null;

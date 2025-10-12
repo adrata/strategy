@@ -131,15 +131,15 @@ export function useSpeedrunDataLoader() {
       const settings = SpeedrunEngineSettingsService.getUserSettings();
       console.log("⚙️ [SETTINGS]", settings);
 
-      // Fetch data from unified API (best practice - consistent with platform)
-      const response = await authFetch('/api/data/unified?type=speedrun&action=get');
+      // Fetch data from v1 speedrun API (best practice - consistent with platform)
+      const response = await authFetch('/api/v1/speedrun?limit=100');
       
       if (!response.ok) {
         throw new Error(`Failed to fetch speedrun data: ${response.statusText}`);
       }
 
       const result = await response.json();
-      const rawData = result.data?.speedrunItems || [];
+      const rawData = result.data || [];
 
       console.log(`📊 [DATA LOADED] ${rawData.length} raw speedrun items`);
 

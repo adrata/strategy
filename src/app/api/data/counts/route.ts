@@ -129,8 +129,8 @@ export async function GET(request: NextRequest) {
           // Remove companyId requirement to match speedrun API logic
           ...(isDemoMode ? {} : {
             OR: [
-              { assignedUserId: userId },
-              { assignedUserId: null }
+              { ownerId: userId },
+              { ownerId: null }
             ]
           })
         }

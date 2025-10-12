@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
         nextAction: null,
         workspaceId: account.workspaceId,
         createdBy: null,
-        assignedTo: account.assignedUserId,
+        assignedTo: account.ownerId,
         createdAt: account.createdAt,
         updatedAt: account.updatedAt
       }));return NextResponse.json({
@@ -389,7 +389,7 @@ async function convertProspectToLead(
       preferredLanguage: prospect.preferredLanguage,
       timezone: prospect.timezone,
       workspaceId: workspaceId,
-      assignedUserId: prospect.assignedUserId,
+      ownerId: prospect.ownerId,
       createdBy: userId,
       updatedBy: userId,
       updatedAt: new Date()

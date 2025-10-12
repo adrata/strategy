@@ -33,9 +33,33 @@ const FIELD_MAP: Record<string, string> = {
   'Phone': 'phone',
 };
 
+// Display name mapping for field names to proper display names
+const DISPLAY_NAME_MAP: Record<string, string> = {
+  'rank': 'Rank',
+  'company': 'Company',
+  'name': 'Name',
+  'title': 'Title',
+  'status': 'Status',
+  'mainSeller': 'MAIN-SELLER',
+  'coSellers': 'CO-SELLERS',
+  'lastAction': 'LAST ACTION',
+  'nextAction': 'NEXT ACTION',
+  'amount': 'Amount',
+  'stage': 'Stage',
+  'priority': 'Priority',
+  'industry': 'Industry',
+  'email': 'Email',
+  'phone': 'Phone',
+  'actions': 'Actions',
+};
+
 // -------- Helper Functions --------
 function getFieldName(header: string): string {
   return FIELD_MAP[header] || header.toLowerCase();
+}
+
+function getDisplayName(fieldName: string): string {
+  return DISPLAY_NAME_MAP[fieldName] || fieldName;
 }
 
 function getSortIcon(sortField: string, field: string, sortDirection?: 'asc' | 'desc') {
@@ -75,6 +99,7 @@ export function TableHeader({
         {headers.map((header, index) => {
           const isActionColumn = header === 'Actions';
           const field = getFieldName(header);
+          const displayName = getDisplayName(header); // Use display name for rendering
           const isCurrentSort = sortField === field;
           const sortIcon = getSortIcon(sortField || '', field, sortDirection);
           
@@ -98,7 +123,7 @@ export function TableHeader({
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
-                }}>{isActionColumn ? '' : header}</span>
+                }}>{isActionColumn ? '' : displayName}</span>
                 {!isActionColumn && onColumnSort && (
                   <div className="flex items-center ml-2">
                     {isCurrentSort ? (

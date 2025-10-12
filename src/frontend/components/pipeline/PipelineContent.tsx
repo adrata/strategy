@@ -103,15 +103,26 @@ export const PipelineContent = React.memo(function PipelineContent({
     const currentWorkspaceId = user?.activeWorkspaceId || '';
     const sectionConfig = getSectionColumns(currentWorkspaceId, section, workspaceName);
     
-    // Use workspace-specific column display names if available, otherwise use defaults
-    if (sectionConfig.columns) {
-      return sectionConfig.columns;
+    console.log(`🔍 [COLUMN CONFIG] Section: ${section}, WorkspaceId: ${currentWorkspaceId}`, {
+      sectionConfig,
+      hasColumns: !!sectionConfig.columns,
+      hasColumnOrder: !!sectionConfig.columnOrder,
+      columns: sectionConfig.columns,
+      columnOrder: sectionConfig.columnOrder
+    });
+    
+    // Use workspace-specific column order (field names) if available, otherwise use defaults
+    if (sectionConfig.columnOrder) {
+      console.log(`✅ [COLUMN CONFIG] Using workspace config for ${section}:`, sectionConfig.columnOrder);
+      return sectionConfig.columnOrder;
     }
+    
+    console.log(`⚠️ [COLUMN CONFIG] Using fallback config for ${section}`);
     
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'name', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction'];
       case 'companies':
         return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
       case 'leads':

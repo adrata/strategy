@@ -479,7 +479,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.opportunities.count({
       where: { 
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         createdAt: {
           gte: startOfWeek,
           lte: endOfWeek
@@ -492,7 +492,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.opportunities.aggregate({
       where: {
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         stage: {
           in: ['Closed Won', 'Won', 'Closed-Won', 'closed-won']
         },
@@ -511,7 +511,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.leads.count({
       where: { 
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         createdAt: {
           gte: startOfWeek,
           lte: endOfWeek
@@ -537,7 +537,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.opportunities.aggregate({
       where: {
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         stage: {
           notIn: ['Closed Won', 'Won', 'Closed-Won', 'Closed Lost', 'Lost', 'Closed-Lost', 'closed-won', 'closed-lost', 'closed-lost-to-competition']
         },
@@ -551,7 +551,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.opportunities.count({
       where: { 
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         deletedAt: null 
       }
     }),
@@ -560,7 +560,7 @@ async function loadDashboardData(workspaceId: string, userId: string) {
     prisma.leads.count({
       where: { 
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         deletedAt: null 
       }
     }),

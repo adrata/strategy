@@ -74,7 +74,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
     // Company info - Coresignal data with database fallback
-    company: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || record?.company?.name || record?.companyName || '-'),
+    company: (() => {
+      // Handle both string and object company formats
+      const coresignalCompany = coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name;
+      const recordCompany = typeof record?.company === 'string' 
+        ? record.company 
+        : (record?.company?.name || record?.companyName);
+      return String(coresignalCompany || recordCompany || '-');
+    })(),
     industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
     department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-'),
     

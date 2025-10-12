@@ -8,6 +8,701 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// RBAC models for granular permission control
+model roles {
+  id               String             @id @default(ulid())
+  name             String             @unique @db.VarChar(50)
+  description      String?            @db.VarChar(255)
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  role_permissions role_permissions[]
+  user_roles       user_roles[]
+
+  @@index([isActive])
+}
+
+model permissions {
+  id               String             @id @default(ulid())
+  name             Permission         @unique
+  description      String?            @db.VarChar(255)
+  resource         String             @db.VarChar(50)
+  action           String             @db.VarChar(50)
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  role_permissions role_permissions[]
+
+  @@index([resource, action])
+  @@index([isActive])
+}
+
+model role_permissions {
+  id           String      @id @default(ulid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime    @default(now())
+  permission   permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model user_roles {
+  id          String      @id @default(ulid())
+  userId      String      @db.VarChar(30)
+  roleId      String
+  workspaceId String?     @db.VarChar(30)
+  isActive    Boolean     @default(true)
+  assignedAt  DateTime    @default(now())
+  assignedBy  String?     @db.VarChar(30)
+  expiresAt   DateTime?
+  role        roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user        users       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId, workspaceId])
+  @@index([userId])
+  @@index([roleId])
+  @@index([workspaceId])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+/// Multi-tenant workspace management
+model workspaces {
+  id                        String                      @id @default(ulid())
+  name                      String
+  slug                      String                      @unique
+  timezone                  String                      @default("UTC") @db.VarChar(50)
+  description               String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  isActive                  Boolean                     @default(true)
+  deletedAt                 DateTime?
+  oasis_channels            OasisChannel[]
+  oasis_direct_messages     OasisDirectMessage[]
+  stacks_projects           StacksProject[]
+  actions                   actions[]
+  audit_logs                audit_logs[]
+  auth_sessions             auth_sessions[]
+  companies                 companies[]
+  grand_central_connections grand_central_connections[]
+  grand_central_workflows   grand_central_workflows[]
+  people                    people[]
+  user_roles                user_roles[]
+  users                     users[]
+  workspace_users           workspace_users[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([deletedAt])
+}
+
+/// User accounts and authentication
+model users {
+  id                        String                      @id @default(ulid())
+  email                     String                      @unique
+  password                  String?
+  name                      String
+  firstName                 String?
+  lastName                  String?
+  timezone                  String?                     @db.VarChar(50)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  lastLoginAt               DateTime?
+  isActive                  Boolean                     @default(true)
+  activeWorkspaceId         String?                     @db.VarChar(30)
+  username                  String?                     @unique @db.VarChar(50)
+  oasis_channel_members     OasisChannelMember[]
+  oasis_dm_participants     OasisDMParticipant[]
+  oasis_messages            OasisMessage[]
+  oasis_reactions           OasisReaction[]
+  stacks_story_assignees    StacksStory[]
+  stacks_task_assignees     StacksTask[]
+  assigned_actions          actions[]                   @relation("AssignedActions")
+  audit_logs                audit_logs[]
+  auth_sessions             auth_sessions[]
+  assigned_companies        companies[]                 @relation("AssignedCompanies")
+  owned_people              people[]                    @relation("OwnedPeople")
+  person_co_sellers         person_co_sellers[]
+  grand_central_connections grand_central_connections[]
+  grand_central_workflows   grand_central_workflows[]
+  reset_tokens              reset_tokens[]
+  user_roles                user_roles[]
+  workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
+  workspace_users           workspace_users[]
+
+  @@index([activeWorkspaceId])
+  @@index([username])
+}
+
+/// Workspace membership and basic roles
+model workspace_users {
+  id          String     @id @default(ulid())
+  workspaceId String     @db.VarChar(30)
+  userId      String     @db.VarChar(30)
+  role        UserRole   @default(VIEWER)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+  isActive    Boolean    @default(true)
+  joinedAt    DateTime   @default(now())
+  user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, role])
+  @@index([isActive])
+}
+
+/// JWT session management
+model auth_sessions {
+  id             String     @id @default(ulid())
+  userId         String     @db.VarChar(30)
+  workspaceId    String     @db.VarChar(30)
+  token          String     @unique @db.VarChar(500)
+  refreshToken   String     @unique @db.VarChar(500)
+  expiresAt      DateTime
+  createdAt      DateTime   @default(now())
+  lastAccessedAt DateTime   @default(now())
+  isActive       Boolean    @default(true)
+  user           users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace      workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([isActive])
+  @@index([refreshToken])
+  @@index([token])
+  @@index([userId])
+  @@index([workspaceId])
+}
+
+/// Password reset functionality
+model reset_tokens {
+  id        String   @id @default(ulid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([token])
+  @@index([used])
+  @@index([userId])
+}
+
+/// Company/organization data
+model companies {
+  id                 String           @id @default(ulid()) @db.VarChar(30)
+  workspaceId        String           @db.VarChar(30)
+  assignedUserId     String?          @db.VarChar(30)
+  name               String           @db.VarChar(255)
+  legalName          String?          @db.VarChar(255)
+  tradingName        String?          @db.VarChar(255)
+  localName          String?          @db.VarChar(255)
+  description        String?
+  website            String?          @db.VarChar(500)
+  email              String?          @db.VarChar(300)
+  phone              String?          @db.VarChar(50)
+  fax                String?          @db.VarChar(50)
+  address            String?
+  city               String?          @db.VarChar(100)
+  state              String?          @db.VarChar(100)
+  country            String?          @db.VarChar(100)
+  postalCode         String?          @db.VarChar(20)
+  industry           String?          @db.VarChar(100)
+  sector             String?          @db.VarChar(100)
+  size               String?          @db.VarChar(100)
+  revenue            Decimal?         @db.Decimal(15, 2)
+  currency           String?          @default("USD") @db.VarChar(3)
+  employeeCount      Int?
+  foundedYear        Int?
+  registrationNumber String?          @db.VarChar(100)
+  taxId              String?          @db.VarChar(100)
+  vatNumber          String?          @db.VarChar(100)
+  domain             String?          @db.VarChar(255)
+  logoUrl            String?          @db.VarChar(500)
+  status             CompanyStatus?   @default(ACTIVE)
+  priority           CompanyPriority? @default(MEDIUM)
+  tags               String[]         @default([])
+  customFields       Json?
+  notes              Json?
+  lastAction         String?
+  lastActionDate     DateTime?        @db.Timestamp(6)
+  nextAction         String?
+  nextActionDate     DateTime?        @db.Timestamp(6)
+  actionStatus       String?
+  globalRank         Int?             @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime
+  entityId           String?          @db.VarChar(30)
+  deletedAt          DateTime?
+  actions            actions[]
+  assignedUser       users?           @relation("AssignedCompanies", fields: [assignedUserId], references: [id])
+  workspace          workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  people             people[]
+
+  @@index([workspaceId])
+  @@index([assignedUserId])
+  @@index([entityId])
+  @@index([deletedAt])
+  @@index([workspaceId, status])
+  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, createdAt])
+  @@index([customFields], type: Gin)
+  @@index([workspaceId, globalRank])
+  @@index([workspaceId, status, globalRank])
+}
+
+/// Contact/person records
+model people {
+  id                String          @id @default(ulid()) @db.VarChar(30)
+  workspaceId       String          @db.VarChar(30)
+  companyId         String?         @db.VarChar(30)
+  ownerId           String?         @db.VarChar(30)
+  firstName         String          @db.VarChar(100)
+  lastName          String          @db.VarChar(100)
+  fullName          String          @db.VarChar(200)
+  displayName       String?         @db.VarChar(200)
+  salutation        String?         @db.VarChar(50)
+  suffix            String?         @db.VarChar(50)
+  jobTitle          String?         @db.VarChar(300)
+  title             String?         @db.VarChar(300)
+  department        String?         @db.VarChar(200)
+  seniority         String?         @db.VarChar(50)
+  email             String?         @db.VarChar(300)
+  workEmail         String?         @db.VarChar(300)
+  personalEmail     String?         @db.VarChar(300)
+  phone             String?         @db.VarChar(50)
+  mobilePhone       String?         @db.VarChar(50)
+  workPhone         String?         @db.VarChar(50)
+  linkedinUrl       String?         @db.VarChar(500)
+  address           String?         @db.VarChar(500)
+  city              String?         @db.VarChar(100)
+  state             String?         @db.VarChar(100)
+  country           String?         @db.VarChar(100)
+  postalCode        String?         @db.VarChar(50)
+  dateOfBirth       DateTime?       @db.Timestamp(6)
+  gender            String?         @db.VarChar(20)
+  bio               String?
+  profilePictureUrl String?         @db.VarChar(500)
+  status            PersonStatus?   @default(LEAD)
+  priority          PersonPriority? @default(MEDIUM)
+  source            String?
+  tags              String[]        @default([])
+  customFields      Json?
+  notes             Json?
+  preferredLanguage String?         @db.VarChar(10)
+  timezone          String?         @db.VarChar(50)
+  emailVerified     Boolean?        @default(false)
+  phoneVerified     Boolean?        @default(false)
+  lastAction        String?
+  lastActionDate    DateTime?       @db.Timestamp(6)
+  nextAction        String?
+  nextActionDate    DateTime?       @db.Timestamp(6)
+  actionStatus      String?
+  engagementScore   Float?          @default(0)
+  globalRank        Int?            @default(0)
+  companyRank       Int?            @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime
+  entityId          String?         @db.VarChar(30)
+  deletedAt         DateTime?
+  actions           actions[]
+  owner             users?          @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
+  coSellers         person_co_sellers[]
+  company           companies?      @relation(fields: [companyId], references: [id])
+  workspace         workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([companyId])
+  @@index([entityId])
+  @@index([deletedAt])
+  @@index([workspaceId, status])
+  @@index([workspaceId, companyId, status])
+  @@index([workspaceId, createdAt])
+  @@index([customFields], type: Gin)
+  @@index([ownerId])
+  @@index([workspaceId, ownerId, status])
+  @@index([workspaceId, globalRank])
+  @@index([workspaceId, status, globalRank])
+}
+
+/// Multi-player sales: Co-seller relationships
+model person_co_sellers {
+  id        String   @id @default(ulid())
+  personId  String   @db.VarChar(30)
+  userId    String   @db.VarChar(30)
+  createdAt DateTime @default(now())
+
+  person people @relation(fields: [personId], references: [id], onDelete: Cascade)
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, userId])
+  @@index([personId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// Activity and task tracking
+model actions {
+  id          String         @id @default(ulid())
+  workspaceId String         @db.VarChar(30)
+  userId      String         @db.VarChar(30)
+  companyId   String?        @db.VarChar(30)
+  personId    String?        @db.VarChar(30)
+  type        String         @db.VarChar(30)
+  subject     String
+  description String?
+  outcome     String?
+  scheduledAt DateTime?
+  completedAt DateTime?
+  status      ActionStatus   @default(PLANNED)
+  priority    ActionPriority @default(NORMAL)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime
+  deletedAt   DateTime?
+  company     companies?     @relation(fields: [companyId], references: [id])
+  person      people?        @relation(fields: [personId], references: [id])
+  user        users          @relation("AssignedActions", fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([companyId])
+  @@index([personId])
+  @@index([type])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([workspaceId, status])
+  @@index([workspaceId, userId, status])
+  @@index([workspaceId, scheduledAt])
+  @@index([workspaceId, createdAt])
+}
+
+/// System audit trail for compliance
+model audit_logs {
+  id          String     @id @default(ulid())
+  workspaceId String     @db.VarChar(30)
+  userId      String     @db.VarChar(30)
+  entityType  String     @db.VarChar(50)
+  entityId    String     @db.VarChar(30)
+  action      String     @db.VarChar(20)
+  oldValues   Json?
+  newValues   Json?
+  timestamp   DateTime   @default(now())
+  success     Boolean    @default(true)
+  user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([action])
+  @@index([timestamp])
+  @@index([workspaceId, entityType, timestamp])
+  @@index([workspaceId, action, timestamp])
+  @@index([success])
+}
+
+/// Grand Central Integration Hub Models
+model grand_central_connections {
+  id                String     @id @default(ulid())
+  workspaceId       String     @db.VarChar(30)
+  userId            String     @db.VarChar(30)
+  provider          String     @db.VarChar(100)
+  providerConfigKey String     @db.VarChar(100)
+  nangoConnectionId String     @unique @db.VarChar(100)
+  connectionName    String?    @db.VarChar(255)
+  metadata          Json       @default("{}")
+  status            String     @default("active") @db.VarChar(50)
+  lastSyncAt        DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  user              users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+  @@index([userId])
+  @@index([provider])
+}
+
+model grand_central_workflows {
+  id             String     @id @default(ulid())
+  workspaceId    String     @db.VarChar(30)
+  userId         String     @db.VarChar(30)
+  name           String     @db.VarChar(255)
+  description    String?
+  nodes          Json       @default("[]")
+  connections    Json       @default("[]")
+  status         String     @default("draft") @db.VarChar(50)
+  lastExecutedAt DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  user           users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace      workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status])
+  @@index([userId])
+}
+
+model grand_central_executions {
+  id          String    @id @default(ulid())
+  workflowId  String    @db.VarChar(30)
+  workspaceId String    @db.VarChar(30)
+  status      String    @db.VarChar(50)
+  logs        Json      @default("[]")
+  error       String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([workflowId])
+  @@index([workspaceId, status])
+  @@index([startedAt])
+}
+
+/// Oasis - Team Communication (Slack-like)
+model OasisChannel {
+  id          String               @id @default(cuid())
+  workspaceId String               @db.VarChar(30)
+  name        String               @db.VarChar(100)
+  description String?              @db.VarChar(500)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  members     OasisChannelMember[]
+  messages    OasisMessage[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model OasisChannelMember {
+  id        String       @id @default(cuid())
+  channelId String
+  userId    String       @db.VarChar(30)
+  joinedAt  DateTime     @default(now())
+  channel   OasisChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([channelId])
+  @@index([userId])
+}
+
+model OasisDirectMessage {
+  id           String               @id @default(cuid())
+  workspaceId  String               @db.VarChar(30)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  participants OasisDMParticipant[]
+  workspace    workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages     OasisMessage[]
+
+  @@index([workspaceId])
+}
+
+model OasisDMParticipant {
+  id       String             @id @default(cuid())
+  dmId     String
+  userId   String             @db.VarChar(30)
+  joinedAt DateTime           @default(now())
+  dm       OasisDirectMessage @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  user     users              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([dmId, userId])
+  @@index([dmId])
+  @@index([userId])
+}
+
+model OasisMessage {
+  id        String              @id @default(cuid())
+  content   String
+  channelId String?
+  dmId      String?
+  senderId  String              @db.VarChar(30)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  channel   OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  dm        OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  sender    users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  reactions OasisReaction[]
+
+  @@index([channelId])
+  @@index([dmId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model OasisReaction {
+  id        String       @id @default(cuid())
+  messageId String
+  userId    String       @db.VarChar(30)
+  emoji     String       @db.VarChar(10)
+  createdAt DateTime     @default(now())
+  message   OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
+}
+
+/// Stacks - Project Management (Jira-like)
+model StacksProject {
+  id          String        @id @default(cuid())
+  workspaceId String        @db.VarChar(30)
+  name        String        @db.VarChar(200)
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  epics       StacksEpic[]
+  workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  stories     StacksStory[]
+  tasks       StacksTask[]
+
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model StacksEpic {
+  id          String        @id @default(cuid())
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stories     StacksStory[]
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+
+model StacksStory {
+  id          String        @id @default(cuid())
+  epicId      String?
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  assigneeId  String?       @db.VarChar(30)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  assignee    users?        @relation(fields: [assigneeId], references: [id])
+  epic        StacksEpic?   @relation(fields: [epicId], references: [id])
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks       StacksTask[]
+
+  @@index([epicId])
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([projectId, status])
+}
+
+model StacksTask {
+  id          String        @id @default(cuid())
+  storyId     String?
+  projectId   String
+  title       String        @db.VarChar(200)
+  description String?
+  status      String        @default("todo") @db.VarChar(20)
+  priority    String        @default("medium") @db.VarChar(20)
+  type        String        @default("task") @db.VarChar(20)
+  assigneeId  String?       @db.VarChar(30)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  assignee    users?        @relation(fields: [assigneeId], references: [id])
+  project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  story       StacksStory?  @relation(fields: [storyId], references: [id])
+
+  @@index([storyId])
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([projectId, status])
+  @@index([projectId, type])
+}
+
+model BuyerGroupMembers {
+  id             String         @id
+  buyerGroupId   String
+  name           String
+  title          String?
+  role           BuyerGroupRole
+  email          String?
+  phone          String?
+  linkedin       String?
+  confidence     Decimal?       @default(0) @db.Decimal(5, 2)
+  influenceScore Decimal?       @default(0) @db.Decimal(5, 2)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  BuyerGroups    BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([buyerGroupId])
+  @@index([role])
+}
+
+model BuyerGroups {
+  id                String              @id
+  companyName       String
+  website           String?
+  industry          String?
+  companySize       String?
+  workspaceId       String?
+  cohesionScore     Decimal?            @default(0) @db.Decimal(5, 2)
+  overallConfidence Decimal?            @default(0) @db.Decimal(5, 2)
+  totalMembers      Int                 @default(0)
+  processingTime    Int                 @default(0)
+  metadata          Json?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  BuyerGroupMembers BuyerGroupMembers[]
+
+  @@index([companyName])
+  @@index([createdAt])
+  @@index([workspaceId])
+}
+
+model ChronicleReport {
+  id             String              @id
+  title          String
+  reportType     ChronicleReportType
+  content        Json
+  weekStart      DateTime
+  weekEnd        DateTime
+  workspaceId    String
+  userId         String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime
+  ChronicleShare ChronicleShare[]
+
+  @@index([userId, createdAt])
+  @@index([workspaceId, weekStart])
+}
+
+model ChronicleShare {
+  id              String          @id
+  reportId        String
+  shareToken      String          @unique
+  shareUrl        String?
+  expiresAt       DateTime?
+  allowedEmails   String[]
+  viewCount       Int             @default(0)
+  createdAt       DateTime        @default(now())
+  ChronicleReport ChronicleReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([shareToken])
+}
+
 enum UserRole {
   SUPER_ADMIN
   WORKSPACE_ADMIN
@@ -91,1157 +786,7 @@ enum BuyerGroupRole {
   introducer
 }
 
-// Webhook and Change Detection Models
-model WebhookEvent {
-  id               String    @id @default(cuid())
-  idempotencyKey   String    @unique // For deduplication
-  source           String    // 'coresignal', 'linkedin', 'manual', etc.
-  eventType        String    // 'person.role_change', 'company.update', etc.
-  payload          Json      // Full event payload
-  processed        Boolean   @default(false)
-  receivedAt       DateTime  @default(now())
-  processedAt      DateTime?
-  error            String?   // Error message if processing failed
-  
-  @@index([source, eventType])
-  @@index([processed, receivedAt])
-  @@index([idempotencyKey])
-  @@map("webhook_events")
-}
-
-model BuyerGroupRefreshLog {
-  id          String    @id @default(cuid())
-  companyId   String
-  workspaceId String
-  reason      String    // 'webhook', 'manual', 'scheduled', 'cdc', 'api'
-  triggeredBy String?   // personId or userId who triggered
-  status      String    // 'pending', 'processing', 'completed', 'failed'
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
-  changes     Json?     // What changed in the buyer group
-  error       String?   // Error message if failed
-  
-  @@index([companyId, startedAt])
-  @@index([workspaceId, status])
-  @@index([status, startedAt])
-  @@map("buyer_group_refresh_logs")
-}
-
-model PipelineOperation {
-  id             String    @id @default(cuid())
-  idempotencyKey String    @unique // For ensuring operations run only once
-  pipelineName   String    // 'buyer-group-discovery', 'person-enrichment', etc.
-  input          Json      // Input parameters
-  output         Json?     // Result data
-  status         String    // 'pending', 'processing', 'completed', 'failed'
-  createdAt      DateTime  @default(now())
-  completedAt    DateTime?
-  duration       Int?      // Processing time in milliseconds
-  error          String?   // Error message if failed
-  
-  @@index([idempotencyKey])
-  @@index([pipelineName, status])
-  @@index([createdAt])
-  @@map("pipeline_operations")
-}
-
-/// RBAC models for granular permission control
-model roles {
-  id          String   @id @default(ulid())
-  name        String   @unique @db.VarChar(50)
-  description String?  @db.VarChar(255)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-
-  role_permissions role_permissions[]
-  user_roles       user_roles[]
-
-  @@index([isActive])
-}
-
-model permissions {
-  id          String   @id @default(ulid())
-  name        Permission @unique
-  description String?  @db.VarChar(255)
-  resource    String   @db.VarChar(50)
-  action      String   @db.VarChar(50)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-
-  role_permissions role_permissions[]
-
-  @@index([resource, action])
-  @@index([isActive])
-}
-
-model role_permissions {
-  id           String @id @default(ulid())
-  roleId       String
-  permissionId String
-  createdAt    DateTime @default(now())
-
-  role       roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-  @@unique([roleId, permissionId])
-  @@index([roleId])
-  @@index([permissionId])
-}
-
-model user_roles {
-  id        String   @id @default(ulid())
-  userId    String   @db.VarChar(30)
-  roleId    String
-  workspaceId String? @db.VarChar(30)
-  isActive  Boolean  @default(true)
-  assignedAt DateTime @default(now())
-  assignedBy String?  @db.VarChar(30)
-  expiresAt  DateTime?
-
-  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      roles      @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  workspace workspaces? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roleId, workspaceId])
-  @@index([userId])
-  @@index([roleId])
-  @@index([workspaceId])
-  @@index([isActive])
-  @@index([expiresAt])
-}
-
-/// Multi-tenant workspace management
-model workspaces {
-  id          String   @id @default(ulid())
-  name        String
-  slug        String   @unique
-  timezone    String   @default("UTC") @db.VarChar(50)
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  isActive    Boolean  @default(true)
-  deletedAt   DateTime?
-
-  users                users[]
-  auth_sessions        auth_sessions[]
-  workspace_users      workspace_users[]
-  user_roles           user_roles[]
-  companies            companies[]
-  people               people[]
-  actions              actions[]
-  audit_logs           audit_logs[]
-  grand_central_workflows grand_central_workflows[]
-  grand_central_connections grand_central_connections[]
-  oasis_channels       OasisChannel[]
-  oasis_direct_messages OasisDirectMessage[]
-  stacks_projects      StacksProject[]
-  
-  // Atrium relations
-  atrium_documents     AtriumDocument[]
-  atrium_folders       AtriumFolder[]
-  
-  // Particle relations
-  particle_experiments ParticleExperiment[]
-
-  @@index([slug])
-  @@index([isActive])
-  @@index([deletedAt])
-}
-
-/// User accounts and authentication
-model users {
-  id                String   @id @default(ulid())
-  email             String   @unique
-  username          String?  @unique @db.VarChar(50)
-  password          String?
-  name              String
-  firstName         String?
-  lastName          String?
-  profilePictureUrl String?  @db.VarChar(500)
-  timezone          String?  @db.VarChar(50)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime
-  lastLoginAt       DateTime?
-  isActive          Boolean  @default(true)
-  activeWorkspaceId String?  @db.VarChar(30)
-
-  workspaces              workspaces?           @relation(fields: [activeWorkspaceId], references: [id], onDelete: SetNull)
-  auth_sessions           auth_sessions[]
-  reset_tokens            reset_tokens[]
-  workspace_users         workspace_users[]
-  user_roles              user_roles[]
-  assigned_companies      companies[]           @relation("AssignedCompanies")
-  owned_people           people[]              @relation("OwnedPeople")
-  person_co_sellers      person_co_sellers[]
-  assigned_actions        actions[]             @relation("AssignedActions")
-  audit_logs              audit_logs[]
-  grand_central_workflows grand_central_workflows[]
-  grand_central_connections grand_central_connections[]
-  oasis_channel_members   OasisChannelMember[]
-  oasis_dm_participants   OasisDMParticipant[]
-  oasis_messages          OasisMessage[]
-  oasis_reactions         OasisReaction[]
-  stacks_story_assignees  StacksStory[]
-  stacks_task_assignees   StacksTask[]
-  
-  // Atrium relations
-  atrium_documents        AtriumDocument[]
-  atrium_folders          AtriumFolder[]
-  atrium_versions         AtriumVersion[]
-  
-  // Particle relations
-  particle_experiments    ParticleExperiment[]
-  atrium_comments         AtriumComment[] @relation("CommentAuthor")
-  atrium_resolved_comments AtriumComment[] @relation("CommentResolver")
-  atrium_activities       AtriumActivity[]
-
-  @@index([activeWorkspaceId])
-  @@index([username])
-}
-
-/// Workspace membership and basic roles
-model workspace_users {
-  id          String   @id @default(ulid())
-  workspaceId String   @db.VarChar(30)
-  userId      String   @db.VarChar(30)
-  role        UserRole @default(VIEWER)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  isActive    Boolean  @default(true)
-  joinedAt    DateTime @default(now())
-
-  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([userId])
-  @@index([workspaceId, role])
-  @@index([isActive])
-}
-
-/// JWT session management
-model auth_sessions {
-  id             String   @id @default(ulid())
-  userId         String   @db.VarChar(30)
-  workspaceId    String   @db.VarChar(30)
-  token          String   @unique @db.VarChar(500)
-  refreshToken   String   @unique @db.VarChar(500)
-  expiresAt      DateTime
-  createdAt      DateTime @default(now())
-  lastAccessedAt DateTime @default(now())
-  isActive       Boolean  @default(true)
-
-  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([expiresAt])
-  @@index([isActive])
-  @@index([refreshToken])
-  @@index([token])
-  @@index([userId])
-  @@index([workspaceId])
-}
-
-/// Password reset functionality
-model reset_tokens {
-  id        String   @id @default(ulid())
-  token     String   @unique
-  userId    String
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([expiresAt])
-  @@index([token])
-  @@index([used])
-  @@index([userId])
-}
-
-/// Company/organization data
-model companies {
-  id                 String    @id @default(ulid()) @db.VarChar(30)
-  workspaceId        String    @db.VarChar(30)
-  assignedUserId     String?   @db.VarChar(30)
-  name               String    @db.VarChar(255)
-  legalName          String?   @db.VarChar(255)
-  tradingName        String?   @db.VarChar(255)
-  localName          String?   @db.VarChar(255)
-  description        String?
-  website            String?   @db.VarChar(500)
-  email              String?   @db.VarChar(300)
-  phone              String?   @db.VarChar(50)
-  fax                String?   @db.VarChar(50)
-  address            String?
-  city               String?   @db.VarChar(100)
-  state              String?   @db.VarChar(100)
-  country            String?   @db.VarChar(100)
-  postalCode         String?   @db.VarChar(20)
-  industry           String?   @db.VarChar(100)
-  sector             String?   @db.VarChar(100)
-  size               String?   @db.VarChar(100)
-  revenue            Decimal?  @db.Decimal(15, 2)
-  currency           String?   @default("USD") @db.VarChar(3)
-  employeeCount      Int?
-  foundedYear        Int?
-  registrationNumber String?   @db.VarChar(100)
-  taxId              String?   @db.VarChar(100)
-  vatNumber          String?   @db.VarChar(100)
-  domain             String?   @db.VarChar(255)
-  logoUrl            String?   @db.VarChar(500)
-  status             CompanyStatus? @default(ACTIVE)
-  priority           CompanyPriority? @default(MEDIUM)
-  tags               String[]  @default([])
-  customFields       Json?
-  notes              Json?
-  lastAction         String?
-  lastActionDate     DateTime? @db.Timestamp(6)
-  nextAction         String?
-  nextActionDate     DateTime? @db.Timestamp(6)
-  actionStatus       String?
-  globalRank         Int?      @default(0)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime
-  entityId           String?   @db.VarChar(30)
-  deletedAt          DateTime?
-
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  assignedUser  users?     @relation("AssignedCompanies", fields: [assignedUserId], references: [id], onDelete: SetNull)
-  people        people[]
-  actions       actions[]
-  
-  // Atrium relations
-  atrium_documents AtriumDocument[]
-
-  @@index([workspaceId])
-  @@index([assignedUserId])
-  @@index([entityId])
-  @@index([deletedAt])
-  @@index([workspaceId, status])
-  @@index([workspaceId, assignedUserId, status])
-  @@index([workspaceId, createdAt])
-  @@index([customFields], type: Gin)
-}
-
-/// Contact/person records
-model people {
-  id                String    @id @default(ulid()) @db.VarChar(30)
-  workspaceId       String    @db.VarChar(30)
-  companyId         String?   @db.VarChar(30)
-  ownerId           String?   @db.VarChar(30)
-  firstName         String    @db.VarChar(100)
-  lastName          String    @db.VarChar(100)
-  fullName          String    @db.VarChar(200)
-  displayName       String?   @db.VarChar(200)
-  salutation        String?   @db.VarChar(50)
-  suffix            String?   @db.VarChar(50)
-  jobTitle          String?   @db.VarChar(300)
-  title             String?   @db.VarChar(300)
-  department        String?   @db.VarChar(200)
-  seniority         String?   @db.VarChar(50)
-  email             String?   @db.VarChar(300)
-  workEmail         String?   @db.VarChar(300)
-  personalEmail     String?   @db.VarChar(300)
-  phone             String?   @db.VarChar(50)
-  mobilePhone       String?   @db.VarChar(50)
-  workPhone         String?   @db.VarChar(50)
-  linkedinUrl       String?   @db.VarChar(500)
-  address           String?   @db.VarChar(500)
-  city              String?   @db.VarChar(100)
-  state             String?   @db.VarChar(100)
-  country           String?   @db.VarChar(100)
-  postalCode        String?   @db.VarChar(50)
-  dateOfBirth       DateTime? @db.Timestamp(6)
-  gender            String?   @db.VarChar(20)
-  bio               String?
-  profilePictureUrl String?   @db.VarChar(500)
-  status            PersonStatus? @default(LEAD)
-  priority          PersonPriority? @default(MEDIUM)
-  source            String?
-  tags              String[]  @default([])
-  customFields      Json?
-  notes             Json?
-  preferredLanguage String?   @db.VarChar(10)
-  timezone          String?   @db.VarChar(50)
-  emailVerified     Boolean?  @default(false)
-  phoneVerified     Boolean?  @default(false)
-  lastAction        String?
-  lastActionDate    DateTime? @db.Timestamp(6)
-  nextAction        String?
-  nextActionDate    DateTime? @db.Timestamp(6)
-  actionStatus      String?
-  engagementScore   Float?    @default(0)
-  globalRank        Int?      @default(0)
-  companyRank       Int?      @default(0)
-  buyerGroupRole    BuyerGroupRole?
-  buyerGroupConfidence Float? @default(0)
-  influenceScore    Float?    @default(0)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime
-  entityId          String?   @db.VarChar(30)
-  deletedAt         DateTime?
-
-  workspace    workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  company      companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  owner        users?     @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
-  coSellers    person_co_sellers[]
-  actions      actions[]
-
-  @@index([workspaceId])
-  @@index([companyId])
-  @@index([ownerId])
-  @@index([entityId])
-  @@index([deletedAt])
-  @@index([workspaceId, status])
-  @@index([workspaceId, ownerId, status])
-  @@index([workspaceId, companyId, status])
-  @@index([workspaceId, createdAt])
-  @@index([workspaceId, buyerGroupRole])
-  @@index([customFields], type: Gin)
-}
-
-/// Multi-player sales: Co-seller relationships
-model person_co_sellers {
-  id        String   @id @default(ulid())
-  personId  String   @db.VarChar(30)
-  userId    String   @db.VarChar(30)
-  createdAt DateTime @default(now())
-
-  person people @relation(fields: [personId], references: [id], onDelete: Cascade)
-  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([personId, userId])
-  @@index([personId])
-  @@index([userId])
-  @@index([createdAt])
-}
-
-/// Activity and task tracking
-model actions {
-  id          String    @id @default(ulid())
-  workspaceId String    @db.VarChar(30)
-  userId      String    @db.VarChar(30)
-  companyId   String?   @db.VarChar(30)
-  personId    String?   @db.VarChar(30)
-  type        String    @db.VarChar(30)
-  subject     String
-  description String?
-  outcome     String?
-  scheduledAt DateTime? @db.Timestamp(3)
-  completedAt DateTime? @db.Timestamp(3)
-  status      ActionStatus @default(PLANNED)
-  priority    ActionPriority @default(NORMAL)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime
-  deletedAt   DateTime?
-
-  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user      users      @relation("AssignedActions", fields: [userId], references: [id], onDelete: Cascade)
-  company   companies? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  person    people?    @relation(fields: [personId], references: [id], onDelete: SetNull)
-
-  @@index([workspaceId])
-  @@index([userId])
-  @@index([companyId])
-  @@index([personId])
-  @@index([type])
-  @@index([status])
-  @@index([deletedAt])
-  @@index([workspaceId, status])
-  @@index([workspaceId, userId, status])
-  @@index([workspaceId, scheduledAt])
-  @@index([workspaceId, createdAt])
-}
-
-/// System audit trail for compliance
-model audit_logs {
-  id          String   @id @default(ulid())
-  workspaceId String   @db.VarChar(30)
-  userId      String   @db.VarChar(30)
-  entityType  String   @db.VarChar(50)
-  entityId    String   @db.VarChar(30)
-  action      String   @db.VarChar(20)
-  oldValues   Json?
-  newValues   Json?
-  timestamp   DateTime @default(now())
-  success     Boolean  @default(true)
-
-  workspace workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([userId])
-  @@index([entityType])
-  @@index([entityId])
-  @@index([action])
-  @@index([timestamp])
-  @@index([workspaceId, entityType, timestamp])
-  @@index([workspaceId, action, timestamp])
-  @@index([success])
-}
-
-
-/// Grand Central Integration Hub Models
-model grand_central_connections {
-  id                  String   @id @default(ulid())
-  workspaceId         String   @db.VarChar(30)
-  userId              String   @db.VarChar(30)
-  provider            String   @db.VarChar(100)
-  providerConfigKey   String   @db.VarChar(100)
-  nangoConnectionId   String   @db.VarChar(100) @unique
-  connectionName      String?  @db.VarChar(255)
-  metadata            Json     @default("{}")
-  status              String   @default("active") @db.VarChar(50)
-  lastSyncAt          DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  
-  workspace           workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user                users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([workspaceId, status])
-  @@index([userId])
-  @@index([provider])
-}
-
-model grand_central_workflows {
-  id                  String   @id @default(ulid())
-  workspaceId         String   @db.VarChar(30)
-  userId              String   @db.VarChar(30)
-  name                String   @db.VarChar(255)
-  description         String?
-  nodes               Json     @default("[]")
-  connections         Json     @default("[]")
-  status              String   @default("draft") @db.VarChar(50)
-  lastExecutedAt      DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  
-  workspace           workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user                users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([workspaceId, status])
-  @@index([userId])
-}
-
-model grand_central_executions {
-  id                  String   @id @default(ulid())
-  workflowId          String   @db.VarChar(30)
-  workspaceId         String   @db.VarChar(30)
-  status              String   @db.VarChar(50)
-  logs                Json     @default("[]")
-  error               String?
-  startedAt           DateTime @default(now())
-  completedAt         DateTime?
-  
-  @@index([workflowId])
-  @@index([workspaceId, status])
-  @@index([startedAt])
-}
-
-/// Oasis - Team Communication (Slack-like)
-model OasisChannel {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  name          String    @db.VarChar(100)
-  description   String?   @db.VarChar(500)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      OasisMessage[]
-  members       OasisChannelMember[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([workspaceId, name])
-}
-
-model OasisChannelMember {
-  id          String    @id @default(cuid())
-  channelId   String
-  userId      String    @db.VarChar(30)
-  joinedAt    DateTime  @default(now())
-  channel     OasisChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user        users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([channelId, userId])
-  @@index([channelId])
-  @@index([userId])
-}
-
-model OasisDirectMessage {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      OasisMessage[]
-  participants  OasisDMParticipant[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-}
-
-model OasisDMParticipant {
-  id        String    @id @default(cuid())
-  dmId      String
-  userId    String    @db.VarChar(30)
-  joinedAt  DateTime  @default(now())
-  dm        OasisDirectMessage @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([dmId, userId])
-  @@index([dmId])
-  @@index([userId])
-}
-
-model OasisMessage {
-  id            String    @id @default(cuid())
-  content       String
-  channelId     String?
-  dmId          String?
-  senderId      String    @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  reactions     OasisReaction[]
-  channel       OasisChannel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  dm            OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  sender        users     @relation(fields: [senderId], references: [id], onDelete: Cascade)
-
-  @@index([channelId])
-  @@index([dmId])
-  @@index([senderId])
-  @@index([createdAt])
-}
-
-model OasisReaction {
-  id            String    @id @default(cuid())
-  messageId     String
-  userId        String    @db.VarChar(30)
-  emoji         String    @db.VarChar(10)
-  createdAt     DateTime  @default(now())
-  message       OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user          users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([messageId, userId, emoji])
-  @@index([messageId])
-  @@index([userId])
-}
-
-/// Stacks - Project Management (Jira-like)
-model StacksProject {
-  id            String    @id @default(cuid())
-  workspaceId   String    @db.VarChar(30)
-  name          String    @db.VarChar(200)
-  description   String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  epics         StacksEpic[]
-  stories       StacksStory[]
-  tasks         StacksTask[]
-  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@index([workspaceId])
-  @@index([workspaceId, name])
-}
-
-model StacksEpic {
-  id            String    @id @default(cuid())
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  stories       StacksStory[]
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-  @@index([projectId, status])
-}
-
-model StacksStory {
-  id            String    @id @default(cuid())
-  epicId        String?
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  assigneeId    String?   @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  tasks         StacksTask[]
-  epic          StacksEpic? @relation(fields: [epicId], references: [id], onDelete: SetNull)
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee      users?    @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
-
-  @@index([epicId])
-  @@index([projectId])
-  @@index([assigneeId])
-  @@index([projectId, status])
-}
-
-model StacksTask {
-  id            String    @id @default(cuid())
-  storyId       String?
-  projectId     String
-  title         String    @db.VarChar(200)
-  description   String?
-  status        String    @default("todo") @db.VarChar(20)
-  priority      String    @default("medium") @db.VarChar(20)
-  type          String    @default("task") @db.VarChar(20)
-  assigneeId    String?   @db.VarChar(30)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  story         StacksStory? @relation(fields: [storyId], references: [id], onDelete: SetNull)
-  project       StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignee      users?    @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
-
-  @@index([storyId])
-  @@index([projectId])
-  @@index([assigneeId])
-  @@index([projectId, status])
-  @@index([projectId, type])
-}
-
-// 🧪 PARTICLE - Scientific Testing Platform
-enum ParticleExperimentType {
-  ab_test
-  multivariate
-  performance
-  conversion
-  retention
-}
-
-enum ParticleExperimentStatus {
-  draft
-  active
-  completed
-  archived
-  cancelled
-}
-
-enum ParticleTestRunStatus {
-  pending
-  running
-  completed
-  failed
-  cancelled
-}
-
-enum ParticleMetricType {
-  conversion_rate
-  cost_per_conversion
-  execution_time
-  success_rate
-  error_rate
-  throughput
-  custom
-}
-
-model ParticleExperiment {
-  id                String                    @id @default(cuid())
-  workspaceId       String                    @db.VarChar(30)
-  name              String                    @db.VarChar(200)
-  description       String?
-  hypothesis        String                    // Scientific hypothesis being tested
-  experimentType    ParticleExperimentType    // ab_test, multivariate, performance, etc.
-  status            ParticleExperimentStatus  @default(draft)
-  
-  // Configuration
-  baselineVariantId String?                   // Control group variant
-  targetSampleSize  Int?                      // Desired sample size for statistical power
-  confidenceLevel   Float                     @default(0.95) // 95% confidence by default
-  significanceLevel Float                     @default(0.05) // p < 0.05 by default
-  
-  // Metadata
-  createdById       String                    @db.VarChar(30)
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
-  startedAt         DateTime?
-  completedAt       DateTime?
-  
-  // Relationships
-  workspace         workspaces                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  createdBy         users                     @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  variants          ParticleVariant[]
-  testRuns          ParticleTestRun[]
-  results           ParticleResult[]
-  assertions        ParticleAssertion[]
-
-  @@index([workspaceId])
-  @@index([workspaceId, status])
-  @@index([createdById])
-  @@index([experimentType])
-}
-
-model ParticleVariant {
-  id            String    @id @default(cuid())
-  experimentId  String
-  name          String    @db.VarChar(100)
-  description   String?
-  configuration Json      // Variant-specific configuration (JSON)
-  isControl     Boolean   @default(false) // Is this the control group?
-  weight        Float     @default(1.0)  // Traffic weight for this variant (0.0-1.0)
-  
-  // Metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relationships
-  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-  testRuns      ParticleTestRun[]
-  metrics       ParticleMetric[]
-
-  @@index([experimentId])
-  @@index([experimentId, isControl])
-}
-
-model ParticleTestRun {
-  id            String                  @id @default(cuid())
-  experimentId  String
-  variantId     String
-  status        ParticleTestRunStatus   @default(pending)
-  
-  // Execution details
-  sampleSize    Int                     @default(0)
-  startTime     DateTime?
-  endTime       DateTime?
-  duration      Int?                    // Duration in milliseconds
-  
-  // Results
-  metrics       Json?                   // Aggregated metrics (JSON)
-  errors        Json?                   // Error details (JSON)
-  logs          Json?                   // Execution logs (JSON)
-  
-  // Metadata
-  createdAt     DateTime                @default(now())
-  updatedAt     DateTime                @updatedAt
-  
-  // Relationships
-  experiment    ParticleExperiment      @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-  variant       ParticleVariant         @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  metricEntries ParticleMetric[] @relation("TestRunMetrics")
-
-  @@index([experimentId])
-  @@index([variantId])
-  @@index([status])
-  @@index([startTime])
-}
-
-model ParticleMetric {
-  id          String              @id @default(cuid())
-  testRunId   String
-  variantId   String
-  metricType  ParticleMetricType
-  name        String              @db.VarChar(100)
-  value       Float
-  unit        String?             @db.VarChar(20) // e.g., "ms", "%", "count"
-  timestamp   DateTime            @default(now())
-  
-  // Additional context
-  metadata    Json?               // Additional metric metadata (JSON)
-  
-  // Relationships
-  testRun     ParticleTestRun     @relation("TestRunMetrics", fields: [testRunId], references: [id], onDelete: Cascade)
-  variant     ParticleVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-  @@index([testRunId])
-  @@index([variantId])
-  @@index([metricType])
-  @@index([timestamp])
-}
-
-model ParticleResult {
-  id            String    @id @default(cuid())
-  experimentId  String
-  summary       Json      // Statistical summary (JSON)
-  winner        String?   // Winning variant ID
-  confidence    Float?    // Statistical confidence (0.0-1.0)
-  pValue        Float?    // Statistical significance p-value
-  recommendation String?  // AI-generated recommendation
-  
-  // Analysis details
-  statisticalTest String? // Type of statistical test used
-  effectSize      Float?  // Effect size (Cohen's d, etc.)
-  power           Float?  // Statistical power
-  
-  // Metadata
-  calculatedAt    DateTime @default(now())
-  
-  // Relationships
-  experiment      ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-
-  @@index([experimentId])
-  @@index([calculatedAt])
-}
-
-model ParticleAssertion {
-  id            String    @id @default(cuid())
-  experimentId  String
-  name          String    @db.VarChar(200)
-  description   String?
-  assertion     String    // Assertion logic (JSON or expression)
-  expectedValue Float?    // Expected metric value
-  tolerance     Float?    // Tolerance for comparison
-  
-  // Status
-  isPassing     Boolean?  // null = not tested, true = passing, false = failing
-  lastChecked   DateTime?
-  
-  // Metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Relationships
-  experiment    ParticleExperiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
-
-  @@index([experimentId])
-  @@index([isPassing])
-}
-
-// 🏛️ ATRIUM - Secure Document Storage & Management
-enum AtriumDocumentType {
-  paper
-  pitch
-  grid
-  code
-  matrix
-}
-
-enum AtriumDocumentStatus {
-  draft
-  published
-  archived
-  deleted
-}
-
-enum AtriumSharePermission {
-  view
-  comment
-  edit
-  admin
-}
-
-enum AtriumShareType {
-  internal
-  external
-  public
-}
-
-model AtriumDocument {
-  id              String                @id @default(cuid())
-  title           String
-  description     String?
-  content         Json?                 // Document content (encrypted)
-  fileUrl         String?               // Encrypted file storage URL
-  fileType        String                // MIME type
-  fileSize        Int?                  // File size in bytes
-  documentType    AtriumDocumentType    // paper, pitch, grid, code
-  status          AtriumDocumentStatus  @default(draft)
-  version         String                @default("1.0")
-  
-  // Security & Classification
-  isEncrypted     Boolean               @default(true)
-  classification  String                @default("internal") // public, internal, confidential, restricted
-  requiresAuth    Boolean               @default(false)
-  
-  // Organization
-  folderId        String?
-  tags            String[]
-  isStarred       Boolean               @default(false)
-  isTemplate      Boolean               @default(false)
-  
-  // Ownership & Workspace
-  ownerId         String
-  workspaceId     String
-  companyId       String?
-  
-  // Analytics
-  viewCount       Int                   @default(0)
-  downloadCount   Int                   @default(0)
-  lastAccessedAt  DateTime?
-  
-  // Timestamps
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  publishedAt     DateTime?
-  archivedAt      DateTime?
-  
-  // Relations
-  owner           users                 @relation(fields: [ownerId], references: [id])
-  workspace       workspaces            @relation(fields: [workspaceId], references: [id])
-  company         companies?            @relation(fields: [companyId], references: [id])
-  folder          AtriumFolder?         @relation(fields: [folderId], references: [id])
-  shares          AtriumShare[]
-  versions        AtriumVersion[]
-  comments        AtriumComment[]
-  activities      AtriumActivity[]
-  
-  @@index([ownerId])
-  @@index([workspaceId])
-  @@index([folderId])
-  @@index([documentType])
-  @@index([status])
-  @@index([classification])
-  @@index([isStarred])
-  @@index([createdAt])
-  @@index([updatedAt])
-}
-
-model AtriumFolder {
-  id              String            @id @default(cuid())
-  name            String
-  description     String?
-  parentId        String?           // For hierarchical structure
-  color           String?           // Folder color for organization
-  icon            String?           // Folder icon
-  
-  // Ownership & Workspace
-  ownerId         String
-  workspaceId     String
-  
-  // Timestamps
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  
-  // Relations
-  owner           users             @relation(fields: [ownerId], references: [id])
-  workspace       workspaces       @relation(fields: [workspaceId], references: [id])
-  parent          AtriumFolder?     @relation("FolderHierarchy", fields: [parentId], references: [id])
-  children        AtriumFolder[]    @relation("FolderHierarchy")
-  documents       AtriumDocument[]
-  
-  @@index([ownerId])
-  @@index([workspaceId])
-  @@index([parentId])
-}
-
-model AtriumShare {
-  id              String              @id @default(cuid())
-  documentId      String
-  shareType       AtriumShareType     @default(internal)
-  permission      AtriumSharePermission @default(view)
-  
-  // Share Link Configuration
-  shareToken      String              @unique // Secure share token
-  shareUrl        String?             // Public share URL
-  password        String?             // Optional password protection
-  expiresAt       DateTime?           // Optional expiration
-  maxViews        Int?                // Optional view limit
-  viewCount       Int                 @default(0)
-  
-  // Access Control
-  allowedEmails   String[]            // Email whitelist
-  allowedDomains  String[]            // Domain whitelist
-  requireAuth     Boolean             @default(false)
-  
-  // Settings
-  allowDownload   Boolean             @default(true)
-  allowComments   Boolean             @default(false)
-  watermark       Boolean             @default(false)
-  
-  // Timestamps
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  lastAccessedAt  DateTime?
-  
-  // Relations
-  document        AtriumDocument      @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  
-  @@index([documentId])
-  @@index([shareToken])
-  @@index([expiresAt])
-}
-
-model AtriumVersion {
-  id              String            @id @default(cuid())
-  documentId      String
-  version         String            // Version number (e.g., "1.0", "1.1", "2.0")
-  parentVersionId String?           // Reference to parent version
-  changelog       String?           // Description of changes
-  
-  // Content
-  content         Json?             // Version content (encrypted)
-  fileUrl         String?           // Version file URL (encrypted)
-  fileSize        Int?              // Version file size
-  
-  // Metadata
-  createdById     String            // Who created this version
-  isAutoSave      Boolean           @default(false) // Auto-save vs manual save
-  
-  // Timestamps
-  createdAt       DateTime          @default(now())
-  
-  // Relations
-  document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  createdBy       users             @relation(fields: [createdById], references: [id])
-  parentVersion   AtriumVersion?    @relation("VersionHierarchy", fields: [parentVersionId], references: [id])
-  childVersions   AtriumVersion[]   @relation("VersionHierarchy")
-  
-  @@index([documentId])
-  @@index([createdById])
-  @@index([parentVersionId])
-  @@index([createdAt])
-}
-
-model AtriumComment {
-  id              String            @id @default(cuid())
-  documentId      String
-  content         String
-  parentCommentId String?           // For threaded comments
-  
-  // Position (for document comments)
-  position        Json?             // Position in document (page, line, etc.)
-  selection       Json?             // Selected text range
-  
-  // Status
-  isResolved      Boolean           @default(false)
-  resolvedAt      DateTime?
-  resolvedById    String?
-  
-  // Timestamps
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  
-  // Relations
-  document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  author          users             @relation("CommentAuthor", fields: [authorId], references: [id])
-  authorId        String
-  parentComment   AtriumComment?    @relation("CommentThread", fields: [parentCommentId], references: [id])
-  replies         AtriumComment[]   @relation("CommentThread")
-  resolvedBy      users?            @relation("CommentResolver", fields: [resolvedById], references: [id])
-  
-  @@index([documentId])
-  @@index([authorId])
-  @@index([parentCommentId])
-  @@index([createdAt])
-}
-
-model AtriumActivity {
-  id              String            @id @default(cuid())
-  documentId      String
-  activityType    String            // created, updated, shared, viewed, downloaded, commented, etc.
-  description     String            // Human-readable description
-  
-  // Metadata
-  metadata        Json?             // Additional activity data
-  ipAddress       String?
-  userAgent       String?
-  
-  // Timestamps
-  createdAt       DateTime          @default(now())
-  
-  // Relations
-  document        AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  user            users             @relation(fields: [userId], references: [id])
-  userId          String
-  
-  @@index([documentId])
-  @@index([userId])
-  @@index([activityType])
-  @@index([createdAt])
+enum ChronicleReportType {
+  MONDAY_PREP
+  FRIDAY_RECAP
 }

@@ -688,7 +688,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : "16",
-      visible: true
+      visible: false
     },
     {
       id: "chronicle",
@@ -697,7 +697,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.chronicle || 0,
-      visible: true
+      visible: false
     },
     // SELLERS: Show only for demo workspace
     {

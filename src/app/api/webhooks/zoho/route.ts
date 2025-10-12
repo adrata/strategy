@@ -239,7 +239,7 @@ async function processLeadData(leadData: any) {
           status: 'New',
           zohoId: leadData.id,
           description: description,
-          assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+          ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
           updatedAt: new Date()
         },
         update: {
@@ -383,7 +383,7 @@ async function processLeadWebhook(operation: string, data: any) {
               status: leadData.Lead_Status || 'New',
               zohoId: leadData.id,
               description: leadData.Description || '',
-              assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
               updatedAt: new Date()
             }
           });
@@ -463,7 +463,7 @@ async function processLeadWebhook(operation: string, data: any) {
               status: leadData.Lead_Status || 'New',
               zohoId: leadData.id,
               description: leadData.Description || '',
-              assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
               updatedAt: new Date()
             }
           });
@@ -605,7 +605,7 @@ async function processContactWebhook(operation: string, data: any) {
               status: 'active',
               zohoId: contactData.id,
               notes: contactData.Description || '',
-              assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
               updatedAt: new Date()
             }
           });
@@ -695,7 +695,7 @@ async function processDealWebhook(operation: string, data: any) {
             source: 'Zoho CRM',
             zohoId: dealData.id,
             description: dealData.Description || '',
-            assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+            ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
             updatedAt: new Date()
           },
           update: {
@@ -805,7 +805,7 @@ async function processAccountWebhook(operation: string, data: any) {
               accountType: accountData.Type || 'Customer',
               description: accountData.Description || '',
               zohoId: accountData.id,
-              assignedUserId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
               size: accountData.Employees ? parseInt(accountData.Employees).toString() : null,
               revenue: accountData.Annual_Revenue ? parseFloat(accountData.Annual_Revenue) : null,
               updatedAt: new Date()

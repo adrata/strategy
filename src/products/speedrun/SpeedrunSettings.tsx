@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { SpeedrunUserSettings } from "./types";
 import { resetSpeedrunToDefaults } from "./state";
-import { useAuth } from "@/lib/auth";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface SpeedrunSettingsProps {
   settings: SpeedrunUserSettings;
@@ -26,7 +26,7 @@ export function SpeedrunSettings({
     weeklyTarget: 250,
   });
   const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(false);
-  const { authUser } = useAuth();
+  const { user: authUser } = useUnifiedAuth();
 
   // Load workspace settings on mount
   useEffect(() => {

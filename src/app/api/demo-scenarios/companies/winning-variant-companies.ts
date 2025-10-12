@@ -2,7 +2,7 @@ export const winningVariantCompanies = [
   {
     id: 'company_1',
     workspaceId: 'demo-workspace-2025',
-    assignedUserId: null,
+    ownerId: null,
     name: 'Match Group',
     legalName: 'Match Group, Inc.',
     tradingName: 'Match.com',
@@ -54,7 +54,7 @@ export const winningVariantCompanies = [
   {
     id: 'company_2',
     workspaceId: 'demo-workspace-2025',
-    assignedUserId: null,
+    ownerId: null,
     name: 'Brex',
     legalName: 'Brex Inc.',
     tradingName: 'Brex',
@@ -106,7 +106,7 @@ export const winningVariantCompanies = [
   {
     id: 'company_3',
     workspaceId: 'demo-workspace-2025',
-    assignedUserId: null,
+    ownerId: null,
     name: 'First Premier Bank',
     legalName: 'First Premier Bank',
     tradingName: 'First Premier',

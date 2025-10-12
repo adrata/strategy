@@ -128,7 +128,8 @@ model users {
   audit_logs         audit_logs[]
   auth_sessions      auth_sessions[]
   assigned_companies companies[]       @relation("AssignedCompanies")
-  assigned_people    people[]          @relation("AssignedPeople")
+  owned_people       people[]          @relation("OwnedPeople")
+  person_co_sellers  person_co_sellers[]
   reset_tokens       reset_tokens[]
   user_roles         user_roles[]
   workspaces         workspaces?       @relation(fields: [activeWorkspaceId], references: [id])
@@ -275,7 +276,7 @@ model people {
   id                String          @id @default(ulid()) @db.VarChar(30)
   workspaceId       String          @db.VarChar(30)
   companyId         String?         @db.VarChar(30)
-  assignedUserId    String?         @db.VarChar(30)
+  ownerId           String?         @db.VarChar(30)
   firstName         String          @db.VarChar(100)
   lastName          String          @db.VarChar(100)
   fullName          String          @db.VarChar(200)
@@ -325,27 +326,44 @@ model people {
   entityId          String?         @db.VarChar(30)
   deletedAt         DateTime?
   actions           actions[]
-  assignedUser      users?          @relation("AssignedPeople", fields: [assignedUserId], references: [id])
+  owner             users?          @relation("OwnedPeople", fields: [ownerId], references: [id], onDelete: SetNull)
+  coSellers         person_co_sellers[]
   company           companies?      @relation(fields: [companyId], references: [id])
   workspace         workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
   @@index([companyId])
-  @@index([assignedUserId])
+  @@index([ownerId])
   @@index([entityId])
   @@index([deletedAt])
   @@index([workspaceId, status])
   @@index([workspaceId, globalRank])
   @@index([workspaceId, status, globalRank])
-  @@index([workspaceId, assignedUserId, status])
+  @@index([workspaceId, ownerId, status])
   @@index([workspaceId, companyId, status])
   @@index([workspaceId, createdAt])
   @@index([customFields], type: Gin)
   // 🚀 PERFORMANCE: Composite indexes for fast section queries
   @@index([workspaceId, status, globalRank, deletedAt])  // Speedrun/section queries
-  @@index([workspaceId, assignedUserId, status, deletedAt])  // User-assigned filtering
+  @@index([workspaceId, ownerId, status, deletedAt])  // User-assigned filtering
   @@index([workspaceId, deletedAt, globalRank])  // Fast pagination
   @@index([workspaceId, companyId, status, deletedAt])  // Company-filtered people
+}
+
+/// Multi-player sales: Co-seller relationships
+model person_co_sellers {
+  id        String   @id @default(ulid())
+  personId  String   @db.VarChar(30)
+  userId    String   @db.VarChar(30)
+  createdAt DateTime @default(now())
+
+  person people @relation(fields: [personId], references: [id], onDelete: Cascade)
+  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, userId])
+  @@index([personId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 /// Activity and task tracking

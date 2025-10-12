@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         status: 'completed',
         workspaceId,
         userId,
-        assignedUserId: actionPerformedBy || userId,
+        ownerId: actionPerformedBy || userId,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         notes: actionLog.description,
         nextAction: actionLog.outcome,
         nextActionDate: actionLog.scheduledAt,
-        actionPerformedBy: actionLog.assignedUserId,
+        actionPerformedBy: actionLog.ownerId,
         timestamp: actionLog.completedAt
       }
     });

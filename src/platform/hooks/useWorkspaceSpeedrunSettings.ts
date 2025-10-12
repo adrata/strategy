@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface WorkspaceSpeedrunSettings {
   dailyTarget: number;
@@ -12,7 +12,7 @@ export function useWorkspaceSpeedrunSettings() {
     weeklyTarget: 250,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const { authUser } = useAuth();
+  const { user: authUser } = useUnifiedAuth();
 
   useEffect(() => {
     const loadSettings = async () => {

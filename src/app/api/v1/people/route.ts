@@ -54,134 +54,144 @@ export async function GET(request: NextRequest) {
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
     const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${limit}-${page}`;
     
+    // Define the fetch function for cache
+    const fetchPeopleData = async () => {
+      // Enhanced where clause for pipeline management
+      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
+      const where: any = {
+        workspaceId: context.workspaceId, // Filter by user's workspace
+        deletedAt: null, // Only show non-deleted records
+      };
+
+      // 🚀 SECTION FILTERING: Pre-filter by section for better performance
+      if (section) {
+        switch (section) {
+          case 'leads':
+            where.status = 'LEAD';
+            break;
+          case 'prospects':
+            where.status = 'PROSPECT';
+            break;
+          default:
+            // No additional filtering for other sections
+            break;
+        }
+      }
+      
+      if (search) {
+        where.OR = [
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
+          { fullName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { workEmail: { contains: search, mode: 'insensitive' } },
+          { jobTitle: { contains: search, mode: 'insensitive' } },
+          { department: { contains: search, mode: 'insensitive' } },
+        ];
+      }
+
+      // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)
+      if (status) {
+        where.status = status;
+      }
+
+      // Priority filtering (LOW, MEDIUM, HIGH)
+      if (priority) {
+        where.priority = priority;
+      }
+
+      // Company filtering
+      if (companyId) {
+        where.companyId = companyId;
+      }
+
+      // 🚀 PERFORMANCE: If counts only, just return counts by status
+      if (countsOnly) {
+        const statusCounts = await prisma.people.groupBy({
+          by: ['status'],
+          where,
+          _count: { id: true }
+        });
+
+        const counts = statusCounts.reduce((acc, stat) => {
+          acc[stat.status || 'ACTIVE'] = stat._count.id;
+          return acc;
+        }, {} as Record<string, number>);
+
+        return {
+          success: true,
+          data: counts,
+          meta: {
+            type: 'counts',
+            filters: { search, status, priority, companyId }
+          }
+        };
+      }
+
+      // Optimized query with Prisma ORM for reliability
+      const [people, totalCount] = await Promise.all([
+        prisma.people.findMany({
+          where,
+          orderBy: { 
+            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+          },
+          skip: offset,
+          take: limit,
+          select: {
+            id: true,
+            fullName: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            status: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            companyId: true,
+            // Remove company join for list views - can fetch on-demand for better performance
+            // company: {
+            //   select: {
+            //     name: true
+            //   }
+            // }
+          }
+        }),
+        prisma.people.count({ where }),
+      ]);
+
+      const result = createSuccessResponse(people, {
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        filters: { search, status, priority, companyId, sortBy, sortOrder },
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+      });
+
+      return result;
+    };
+
     if (!forceRefresh) {
       try {
-        const cached = await cache.get(cacheKey);
-        if (cached) {
-          console.log(`⚡ [PEOPLE API] Cache hit - returning cached data`);
-          return NextResponse.json(cached);
-        }
+        const result = await cache.get(cacheKey, fetchPeopleData, {
+          ttl: section === 'speedrun' ? SPEEDRUN_CACHE_TTL : PEOPLE_CACHE_TTL,
+          priority: 'high',
+          tags: ['people', section, context.workspaceId, context.userId]
+        });
+        console.log(`⚡ [PEOPLE API] Cache hit - returning cached data`);
+        return NextResponse.json(result);
       } catch (error) {
         console.warn('⚠️ [PEOPLE API] Cache read failed, proceeding with database query:', error);
       }
     }
 
-    // Enhanced where clause for pipeline management
-    console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
-    const where: any = {
-      workspaceId: context.workspaceId, // Filter by user's workspace
-      deletedAt: null, // Only show non-deleted records
-    };
-
-    // 🚀 SECTION FILTERING: Pre-filter by section for better performance
-    if (section) {
-      switch (section) {
-        case 'leads':
-          where.status = 'LEAD';
-          break;
-        case 'prospects':
-          where.status = 'PROSPECT';
-          break;
-        default:
-          // No additional filtering for other sections
-          break;
-      }
-    }
-    
-    if (search) {
-      where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { fullName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { workEmail: { contains: search, mode: 'insensitive' } },
-        { jobTitle: { contains: search, mode: 'insensitive' } },
-        { department: { contains: search, mode: 'insensitive' } },
-      ];
-    }
-
-    // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)
-    if (status) {
-      where.status = status;
-    }
-
-    // Priority filtering (LOW, MEDIUM, HIGH)
-    if (priority) {
-      where.priority = priority;
-    }
-
-    // Company filtering
-    if (companyId) {
-      where.companyId = companyId;
-    }
-
-    // 🚀 PERFORMANCE: If counts only, just return counts by status
-    if (countsOnly) {
-      const statusCounts = await prisma.people.groupBy({
-        by: ['status'],
-        where,
-        _count: { id: true }
-      });
-
-      const counts = statusCounts.reduce((acc, stat) => {
-        acc[stat.status || 'ACTIVE'] = stat._count.id;
-        return acc;
-      }, {} as Record<string, number>);
-
-      return NextResponse.json({
-        success: true,
-        data: counts,
-        meta: {
-          type: 'counts',
-          filters: { search, status, priority, companyId }
-        }
-      });
-    }
-
-    // Optimized query with Prisma ORM for reliability
-    const [people, totalCount] = await Promise.all([
-      prisma.people.findMany({
-        where,
-        orderBy: { 
-          [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
-        },
-        skip: offset,
-        take: limit,
-        select: {
-          id: true,
-          fullName: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          status: true,
-          globalRank: true,
-          lastAction: true,
-          nextAction: true,
-          lastActionDate: true,
-          nextActionDate: true,
-          companyId: true,
-          // Remove company join for list views - can fetch on-demand for better performance
-          // company: {
-          //   select: {
-          //     name: true
-          //   }
-          // }
-        }
-      }),
-      prisma.people.count({ where }),
-    ]);
-
-    const result = createSuccessResponse(people, {
-      pagination: {
-        page,
-        limit,
-        totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-      filters: { search, status, priority, companyId, sortBy, sortOrder },
-      userId: context.userId,
-      workspaceId: context.workspaceId,
-    });
+    // If force refresh or cache failed, fetch data directly
+    const result = await fetchPeopleData();
 
     // 🚀 CACHE: Store in Redis for future requests
     try {
@@ -294,7 +304,7 @@ export async function POST(request: NextRequest) {
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
-          assignedUserId: body.assignedUserId,
+          ownerId: body.ownerId,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

@@ -43,7 +43,7 @@ function generateScenarioCompanies(scenario: string) {
     {
       id: 'company_1',
       workspaceId: 'demo-workspace-2025',
-      assignedUserId: null,
+      ownerId: null,
       name: 'TechCorp Industries',
       legalName: 'TechCorp Industries Inc.',
       tradingName: 'TechCorp',
@@ -86,7 +86,7 @@ function generateScenarioCompanies(scenario: string) {
     {
       id: 'company_2',
       workspaceId: 'demo-workspace-2025',
-      assignedUserId: null,
+      ownerId: null,
       name: 'Global Retail Inc',
       legalName: 'Global Retail Incorporated',
       tradingName: 'Global Retail',
@@ -129,7 +129,7 @@ function generateScenarioCompanies(scenario: string) {
     {
       id: 'company_3',
       workspaceId: 'demo-workspace-2025',
-      assignedUserId: null,
+      ownerId: null,
       name: 'DataCorp Solutions',
       legalName: 'DataCorp Solutions LLC',
       tradingName: 'DataCorp',
@@ -172,7 +172,7 @@ function generateScenarioCompanies(scenario: string) {
     {
       id: 'company_4',
       workspaceId: 'demo-workspace-2025',
-      assignedUserId: null,
+      ownerId: null,
       name: 'CloudFirst Technologies',
       legalName: 'CloudFirst Technologies Inc.',
       tradingName: 'CloudFirst',
@@ -215,7 +215,7 @@ function generateScenarioCompanies(scenario: string) {
     {
       id: 'company_5',
       workspaceId: 'demo-workspace-2025',
-      assignedUserId: null,
+      ownerId: null,
       name: 'FinTech Solutions',
       legalName: 'FinTech Solutions Corporation',
       tradingName: 'FinTech Solutions',

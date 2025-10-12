@@ -115,9 +115,9 @@ export default function SellerCompaniesPage() {
         console.log('🔍 Workspace:', workspace);
         console.log('🔍 User authenticated:', effectiveUser.name, effectiveUser.id);
         
-        // Load seller data using the unified API
+        // Load seller data using v1 API
         console.log('🔍 Making seller API call...');
-        const sellerResponse = await fetch(`/api/data/unified?type=sellers&action=get`);
+        const sellerResponse = await fetch(`/api/v1/people?limit=100`);
         console.log('🔍 Seller API response status:', sellerResponse.status);
         const sellerResult = await sellerResponse.json();
         

@@ -43,7 +43,7 @@ async function importToDatabase(
       const baseData = {
         ...record,
         workspaceId,
-        assignedUserId: userId,
+        ownerId: userId,
         createdAt: new Date(),
         updatedAt: new Date()
       };

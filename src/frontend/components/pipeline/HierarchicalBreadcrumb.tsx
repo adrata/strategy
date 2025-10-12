@@ -24,13 +24,16 @@ export function HierarchicalBreadcrumb({
     return record?.name || 
            record?.fullName || 
            record?.firstName + ' ' + record?.lastName ||
-           record?.company ||
+           getCompanyName() ||
            'Unknown';
   };
 
   // Get company name
   const getCompanyName = () => {
-    return record?.company || 'Unknown Company';
+    if (!record?.company) return 'Unknown Company';
+    if (typeof record.company === 'string') return record.company;
+    if (typeof record.company === 'object') return record.company.name || 'Unknown Company';
+    return 'Unknown Company';
   };
 
   // Get company ID from record

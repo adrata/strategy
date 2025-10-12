@@ -180,9 +180,6 @@ export default function AtriumPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-[var(--background)]"
           />
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-4 w-4 text-[var(--muted)]" />
-          </div>
         </div>
 
         {/* Filter Dropdown */}

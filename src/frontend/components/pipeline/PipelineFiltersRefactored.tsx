@@ -175,15 +175,12 @@ export function PipelineFiltersRefactored({
         <div className="flex items-center space-x-4 flex-1">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-[var(--muted)]" />
-            </div>
             <input
               type="text"
               placeholder={`Search ${sectionConfig?.displayName || section}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="block w-full pl-3 pr-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 

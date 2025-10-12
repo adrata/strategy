@@ -125,7 +125,7 @@ async function getRecordCreationEvent(entityType: string, entityId: string, work
         date: record.createdAt.toISOString(),
         title: `${entityName.charAt(0).toUpperCase() + entityName.slice(1)} added to pipeline`,
         description: `New ${entityName} record created in system`,
-        user: record.assignedUserId || record.createdBy || 'System',
+        user: record.ownerId || record.createdBy || 'System',
         source: 'system',
         priority: 'normal'
       };

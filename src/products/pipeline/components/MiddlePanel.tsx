@@ -10,6 +10,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
+import { useUI } from "@/platform/ui/context/UIProvider";
 
 interface MiddlePanelProps {
   activeSection: string;
@@ -37,6 +38,9 @@ export function MiddlePanel({
   
   // 🚀 PERFORMANCE: Only use fast section data - no fallback to heavy acquisition data
   const { user: authUser } = useUnifiedAuth();
+  
+  // Get UI context for modal management
+  const { setIsAddModalOpen, setActiveSection } = useUI();
   
   // 🚀 PERFORMANCE: Use fast section data hook with instant cache fallback
   const [cachedData, setCachedData] = React.useState<any[]>([]);
@@ -161,6 +165,13 @@ export function MiddlePanel({
     // TODO: Handle record navigation/details
   };
 
+  // Handle add record - open the appropriate modal
+  const handleAddRecord = () => {
+    console.log(`🔍 [MIDDLE PANEL] Add record clicked for section: ${activeSection}`);
+    setActiveSection(activeSection);
+    setIsAddModalOpen(true);
+  };
+
   console.log(`✅ [MIDDLE PANEL] Rendering PipelineTable with ${pipelineData.data.length} ${activeSection} records`);
 
   // Note: Removed special case for sellers - now uses standard PipelineTable rendering
@@ -183,7 +194,7 @@ export function MiddlePanel({
         onSectionChange={() => {}} // Not needed in 3-panel layout
         onRefresh={() => {}} // TODO: Add refresh functionality
         onClearCache={() => {}} // TODO: Add clear cache functionality
-        onAddRecord={() => console.log('Add record clicked')} // TODO: Add record functionality
+        onAddRecord={handleAddRecord}
         loading={pipelineData.loading}
         recordCount={pipelineData.data.length}
       />
@@ -200,7 +211,7 @@ export function MiddlePanel({
           onRevenueChange={() => {}}
           onLastContactedChange={() => {}}
           onSortChange={() => {}}
-          onAddRecord={() => console.log('Add record clicked')}
+          onAddRecord={handleAddRecord}
           onColumnVisibilityChange={() => {}}
           visibleColumns={['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions']}
         />

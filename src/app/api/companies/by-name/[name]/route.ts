@@ -56,7 +56,7 @@ export async function GET(
         customFields: true,
         updatedAt: true,
         rank: true,
-        assignedUserId: true,
+        ownerId: true,
         lastAction: true,
         lastActionDate: true,
         nextAction: true,

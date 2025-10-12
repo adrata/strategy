@@ -9,6 +9,9 @@ interface ProfileAvatarProps {
   profilePictureUrl?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  showAsMe?: boolean;
+  currentUserId?: string;
+  userId?: string;
 }
 
 export function ProfileAvatar({
@@ -19,6 +22,9 @@ export function ProfileAvatar({
   profilePictureUrl,
   size = 'md',
   className = '',
+  showAsMe = false,
+  currentUserId,
+  userId,
 }: ProfileAvatarProps) {
   // Generate initials from available name data
   const getInitials = () => {
@@ -62,26 +68,15 @@ export function ProfileAvatar({
 
   // Generate background color based on name/email for consistency
   const getBackgroundColor = () => {
-    const seed = name || email || 'default';
-    const colors = [
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-yellow-500',
-      'bg-red-500',
-      'bg-teal-500',
-      'bg-orange-500',
-      'bg-cyan-500',
-    ];
+    // Check if this is the current user
+    const isCurrentUser = showAsMe && currentUserId && userId && currentUserId === userId;
     
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    if (isCurrentUser) {
+      return 'bg-blue-500'; // Blue for current user
     }
     
-    return colors[Math.abs(hash) % colors.length];
+    // Light gray for others
+    return 'bg-gray-300';
   };
 
   return (
@@ -110,7 +105,7 @@ export function ProfileAvatar({
           />
         </div>
       ) : (
-        <div className={`${config.container} ${getBackgroundColor()} rounded-full flex items-center justify-center text-white ${config.text} font-semibold`}>
+        <div className={`${config.container} ${getBackgroundColor()} rounded-full flex items-center justify-center ${showAsMe && currentUserId && userId && currentUserId === userId ? 'text-white' : 'text-gray-700'} ${config.text} font-semibold`}>
           {initials}
         </div>
       )}
@@ -126,10 +121,13 @@ interface ProfileAvatarGroupProps {
     lastName?: string;
     email?: string;
     profilePictureUrl?: string;
+    userId?: string;
   }>;
   maxVisible?: number;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  showAsMe?: boolean;
+  currentUserId?: string;
 }
 
 export function ProfileAvatarGroup({
@@ -137,6 +135,8 @@ export function ProfileAvatarGroup({
   maxVisible = 3,
   size = 'sm',
   className = '',
+  showAsMe = false,
+  currentUserId,
 }: ProfileAvatarGroupProps) {
   const visibleUsers = users.slice(0, maxVisible);
   const remainingCount = users.length - maxVisible;
@@ -154,6 +154,9 @@ export function ProfileAvatarGroup({
               profilePictureUrl={user.profilePictureUrl}
               size={size}
               className="ring-2 ring-white"
+              showAsMe={showAsMe}
+              currentUserId={currentUserId}
+              userId={user.userId}
             />
           </div>
         ))}

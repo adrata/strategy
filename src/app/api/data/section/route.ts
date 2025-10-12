@@ -131,8 +131,8 @@ export async function GET(request: NextRequest) {
             companyId: { not: null }, // Only people with company relationships
             ...(isDemoMode ? {} : {
               OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
+                { ownerId: userId },
+                { ownerId: null }
               ]
             })
           },
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
               lastActionDate: true,
               nextAction: true,
               nextActionDate: true,
-              assignedUserId: true,
+              ownerId: true,
               ownerId: true,
               workspaceId: true,
               createdAt: true,
@@ -203,20 +203,24 @@ export async function GET(request: NextRequest) {
               return str.substring(0, maxLength) + '...';
             };
 
-            // Format owner name
+            // Format owner name - show "Me" for current user
             const ownerName = person.owner 
-              ? (person.owner.firstName && person.owner.lastName 
-                  ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
-                  : person.owner.name || person.owner.email || '-')
+              ? (person.owner.id === userId
+                  ? 'Me'
+                  : person.owner.firstName && person.owner.lastName 
+                    ? `${person.owner.firstName} ${person.owner.lastName}`.trim()
+                    : person.owner.name || person.owner.email || '-')
               : '-';
 
-            // Format co-sellers names
+            // Format co-sellers names - show "Me" for current user
             const coSellersNames = person.coSellers && person.coSellers.length > 0
               ? person.coSellers.map((coSeller: any) => {
                   const user = coSeller.user;
-                  return user.firstName && user.lastName 
-                    ? `${user.firstName} ${user.lastName}`.trim()
-                    : user.name || user.email || 'Unknown';
+                  return user.id === userId
+                    ? 'Me'
+                    : user.firstName && user.lastName 
+                      ? `${user.firstName} ${user.lastName}`.trim()
+                      : user.name || user.email || 'Unknown';
                 }).join(', ')
               : '-';
 
@@ -236,17 +240,18 @@ export async function GET(request: NextRequest) {
               lastActionDate: person.lastActionDate || null,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
-              assignedUserId: person.assignedUserId || null,
+              ownerId: person.ownerId || null,
               ownerId: person.ownerId,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
               tags: ['speedrun'], // Add speedrun tag for consistency
-              // Add owner and co-sellers data
-              owner: ownerName,
+              // Add main-seller and co-sellers data
+              mainSeller: ownerName,
               coSellers: coSellersNames,
-              ownerData: person.owner,
-              coSellersData: person.coSellers
+              mainSellerData: person.owner,
+              coSellersData: person.coSellers,
+              currentUserId: userId
             };
           });
         break;
@@ -262,8 +267,8 @@ export async function GET(request: NextRequest) {
             ...(isDemoMode ? {} : {
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             }),
@@ -372,8 +377,8 @@ export async function GET(request: NextRequest) {
             ...(isDemoMode ? {} : {
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             }),
@@ -481,8 +486,8 @@ export async function GET(request: NextRequest) {
             status: 'OPPORTUNITY', // Filter for OPPORTUNITY status
             ...(isDemoMode ? {} : {
               OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
+                { ownerId: userId },
+                { ownerId: null }
               ]
             })
           },
@@ -501,7 +506,7 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            assignedUserId: true,
+            ownerId: true,
             createdAt: true,
             updatedAt: true
           }
@@ -533,7 +538,7 @@ export async function GET(request: NextRequest) {
           nextAction: company.nextAction || 'No action planned',
           lastActionDate: company.lastActionDate,
           nextActionDate: company.nextActionDate,
-          assignedUserId: company.assignedUserId,
+          ownerId: company.ownerId,
           createdAt: company.createdAt,
           updatedAt: company.updatedAt
         }));
@@ -547,8 +552,8 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             ...(isDemoMode ? {} : {
               OR: [
-                { assignedUserId: userId },
-                { assignedUserId: null }
+                { ownerId: userId },
+                { ownerId: null }
               ]
             })
           },
@@ -563,7 +568,7 @@ export async function GET(request: NextRequest) {
             industry: true,
             vertical: true,
             size: true,
-            assignedUserId: true,
+            ownerId: true,
             createdAt: true,
             updatedAt: true,
             globalRank: true,
@@ -595,7 +600,7 @@ export async function GET(request: NextRequest) {
           name: company.name,
           industry: company.industry || 'Unknown',
           size: company.size || 'Unknown',
-          assignedUserId: company.assignedUserId, // 🆕 FIX: Include assignedUserId for company assignment filtering
+          ownerId: company.ownerId, // 🆕 FIX: Include ownerId for company assignment filtering
           lastAction: company.lastAction || 'Never',
           nextAction: company.nextAction || 'No action planned',
           createdAt: company.createdAt,
@@ -615,8 +620,8 @@ export async function GET(request: NextRequest) {
               companyId: { not: null }, // Only people with company relationships like speedrun
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             },
@@ -644,7 +649,7 @@ export async function GET(request: NextRequest) {
               lastActionDate: true,
               nextAction: true,
               nextActionDate: true,
-              assignedUserId: true,
+              ownerId: true,
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
@@ -702,7 +707,7 @@ export async function GET(request: NextRequest) {
               lastActionDate: person.lastActionDate || null,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
-              assignedUserId: person.assignedUserId || null,
+              ownerId: person.ownerId || null,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
@@ -727,8 +732,8 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             },
@@ -746,7 +751,7 @@ export async function GET(request: NextRequest) {
               title: true,
               department: true,
               company: true,
-              assignedUserId: true,
+              ownerId: true,
               workspaceId: true,
               tags: true,
               metadata: true,
@@ -762,8 +767,8 @@ export async function GET(request: NextRequest) {
               role: 'seller',
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             },
@@ -781,7 +786,7 @@ export async function GET(request: NextRequest) {
               jobTitle: true,
               department: true,
               company: true,
-              assignedUserId: true,
+              ownerId: true,
               workspaceId: true,
               tags: true,
               createdAt: true,
@@ -821,7 +826,7 @@ export async function GET(request: NextRequest) {
             title: seller.title || seller.jobTitle || 'Unknown Title',
             department: seller.department || 'Unknown Department',
             company: seller.company || 'Unknown Company',
-            assignedUserId: seller.assignedUserId,
+            ownerId: seller.ownerId,
             workspaceId: seller.workspaceId,
             tags: seller.tags || [],
             status: status,
@@ -874,8 +879,8 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             }
@@ -889,8 +894,8 @@ export async function GET(request: NextRequest) {
               status: 'OPPORTUNITY',
               ...(isDemoMode ? {} : {
                 OR: [
-                  { assignedUserId: userId },
-                  { assignedUserId: null }
+                  { ownerId: userId },
+                  { ownerId: null }
                 ]
               })
             }

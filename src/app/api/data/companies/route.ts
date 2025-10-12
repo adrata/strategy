@@ -51,8 +51,8 @@ export async function GET(request: NextRequest) {
         workspaceId: workspaceId,
         // Modified: Show all companies in workspace, not just assigned ones
         OR: [
-          { assignedUserId: userId }, // User's assigned companies
-          { assignedUserId: null }    // Unassigned companies in workspace
+          { ownerId: userId }, // User's assigned companies
+          { ownerId: null }    // Unassigned companies in workspace
         ],
         deletedAt: null
       },
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
         customFields: true,
         updatedAt: true,
         rank: true,
-        assignedUserId: true,
+        ownerId: true,
         lastAction: true,
         lastActionDate: true,
         nextAction: true,
@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
     const leadsWithCompanies = await prisma.leads.findMany({
       where: {
         workspaceId: workspaceId,
-        // Remove assignedUserId filter to show all companies from leads
+        // Remove ownerId filter to show all companies from leads
         company: {
           not: null,
         },
@@ -393,8 +393,8 @@ export async function GET(request: NextRequest) {
       where: {
         workspaceId: workspaceId,
         OR: [
-          { assignedUserId: userId },
-          { assignedUserId: null }
+          { ownerId: userId },
+          { ownerId: null }
         ],
         deletedAt: null
       }
@@ -485,7 +485,7 @@ export async function POST(request: NextRequest) {
           city: companyData.location || null,
           notes: companyData.notes || null,
           workspaceId: workspaceId,
-          assignedUserId: userId,
+          ownerId: userId,
           updatedAt: new Date()
         },
       });

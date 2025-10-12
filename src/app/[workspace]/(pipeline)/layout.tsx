@@ -5,10 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
+import { SpeedrunSprintLeftPanel } from "@/frontend/components/pipeline/SpeedrunSprintLeftPanel";
+import { SprintProvider, useSprint } from "@/frontend/components/pipeline/SprintContext";
 import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
@@ -34,6 +37,21 @@ export const useOasis = () => {
   }
   return context;
 };
+
+// Wrapper component for sprint left panel that uses SprintContext
+function SprintLeftPanelWrapper() {
+  const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords } = useSprint();
+  
+  return (
+    <SpeedrunSprintLeftPanel
+      selectedRecord={selectedRecord}
+      onRecordSelect={setSelectedRecord}
+      currentSprintIndex={currentSprintIndex}
+      onSprintChange={setCurrentSprintIndex}
+      completedRecords={completedRecords}
+    />
+  );
+}
 
 interface PipelineLayoutProps {
   children: React.ReactNode;
@@ -89,6 +107,9 @@ function PipelineLayoutContent({
       return <OasisLeftPanel />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel />;
+    } else if (pathname.includes('/speedrun/sprint')) {
+      // Special left panel for sprint view - use SprintContext
+      return <SprintLeftPanelWrapper />;
     } else {
       // Default to Speedrun left panel for other routes
       return (
@@ -189,6 +210,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const [isCustomersVisible, setIsCustomersVisible] = useState(false);
   const [isPartnersVisible, setIsPartnersVisible] = useState(true);
 
+
   // Oasis context state
   const [activeSection, setActiveSection] = useState<'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings'>('channels');
   const [selectedChannel, setSelectedChannel] = useState<any | null>(null);
@@ -219,28 +241,32 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
       <ZoomProvider>
         <PipelineProvider>
           <StacksProvider>
-            <OasisContext.Provider value={oasisContextValue}>
-              <ProfilePopupProvider>
-                <PipelineLayoutContent
-                  currentSection={currentSection}
-                  onSectionChange={handleSectionChange}
-                  isSpeedrunVisible={isSpeedrunVisible}
-                  setIsSpeedrunVisible={setIsSpeedrunVisible}
-                  isOpportunitiesVisible={isOpportunitiesVisible}
-                  setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                  isProspectsVisible={isProspectsVisible}
-                  setIsProspectsVisible={setIsProspectsVisible}
-                  isLeadsVisible={isLeadsVisible}
-                  setIsLeadsVisible={setIsLeadsVisible}
-                  isCustomersVisible={isCustomersVisible}
-                  setIsCustomersVisible={setIsCustomersVisible}
-                  isPartnersVisible={isPartnersVisible}
-                  setIsPartnersVisible={setIsPartnersVisible}
-                >
-                  {children}
-                </PipelineLayoutContent>
-              </ProfilePopupProvider>
-            </OasisContext.Provider>
+            <SpeedrunDataProvider>
+              <SprintProvider>
+                <OasisContext.Provider value={oasisContextValue}>
+                  <ProfilePopupProvider>
+                    <PipelineLayoutContent
+                      currentSection={currentSection}
+                      onSectionChange={handleSectionChange}
+                      isSpeedrunVisible={isSpeedrunVisible}
+                      setIsSpeedrunVisible={setIsSpeedrunVisible}
+                      isOpportunitiesVisible={isOpportunitiesVisible}
+                      setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                      isProspectsVisible={isProspectsVisible}
+                      setIsProspectsVisible={setIsProspectsVisible}
+                      isLeadsVisible={isLeadsVisible}
+                      setIsLeadsVisible={setIsLeadsVisible}
+                      isCustomersVisible={isCustomersVisible}
+                      setIsCustomersVisible={setIsCustomersVisible}
+                      isPartnersVisible={isPartnersVisible}
+                      setIsPartnersVisible={setIsPartnersVisible}
+                    >
+                      {children}
+                    </PipelineLayoutContent>
+                  </ProfilePopupProvider>
+                </OasisContext.Provider>
+              </SprintProvider>
+            </SpeedrunDataProvider>
           </StacksProvider>
         </PipelineProvider>
       </ZoomProvider>

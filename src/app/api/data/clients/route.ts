@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       name: client.company?.name || 'Client', // Use company name as primary display
       company: client.company?.name || 'Client', // Ensure company field exists
       contractValue: client.totalLifetimeValue, // For kanban display
-      assignedTo: client.company?.assignedUserId,
+      assignedTo: client.company?.ownerId,
       owner: 'Just Dano', // For kanban display
       // Include all original client data without duplication
       clientStatus: client.clientStatus,

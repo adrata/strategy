@@ -153,9 +153,8 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
                 placeholder="Search integrations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-3 pr-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <MagnifyingGlassIcon className="w-4 h-4 text-[var(--muted)] absolute left-3 top-2.5" />
             </div>
             <select
               value={selectedCategory}

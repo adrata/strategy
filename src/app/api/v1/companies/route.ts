@@ -141,8 +141,7 @@ export async function GET(request: NextRequest) {
             nextActionDate: true,
             industry: true,
             size: true,
-            revenue: true,
-            stage: true  // Re-enabled after migration
+            revenue: true
           }
         }),
         prisma.companies.count({ where }),
@@ -227,7 +226,7 @@ export async function POST(request: NextRequest) {
           status: body.status || 'ACTIVE',
           priority: body.priority || 'MEDIUM',
           workspaceId: context.workspaceId,
-          assignedUserId: body.assignedUserId,
+          ownerId: body.ownerId,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

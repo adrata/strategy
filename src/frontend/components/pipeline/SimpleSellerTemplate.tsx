@@ -19,6 +19,17 @@ export function SimpleSellerTemplate({ record, onBack }: SimpleSellerTemplatePro
     );
   }
 
+  // Helper function to safely extract company name
+  const getCompanyName = () => {
+    if (typeof record.company === 'string') {
+      return record.company;
+    }
+    if (record.company && typeof record.company === 'object') {
+      return record.company.name || record.company.companyName || '-';
+    }
+    return record.companyName || '-';
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -30,7 +41,7 @@ export function SimpleSellerTemplate({ record, onBack }: SimpleSellerTemplatePro
           ← Back
         </button>
         <h1 className="text-3xl font-bold text-[var(--foreground)]">{record.name}</h1>
-        <p className="text-[var(--muted)] mt-2">{record.title} at {record.company}</p>
+        <p className="text-[var(--muted)] mt-2">{record.title} at {getCompanyName()}</p>
       </div>
 
       {/* Seller Information */}
@@ -47,7 +58,7 @@ export function SimpleSellerTemplate({ record, onBack }: SimpleSellerTemplatePro
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--muted)] mb-1">Company</label>
-            <p className="text-[var(--foreground)]">{record.company}</p>
+            <p className="text-[var(--foreground)]">{getCompanyName()}</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--muted)] mb-1">Email</label>

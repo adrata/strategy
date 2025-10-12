@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       name: body.name || 'Test Company',
       website: body.website || 'test.com',
       workspaceId: body.workspaceId || '01K1VBYmf75hgmvmz06psnc9ug',
-      assignedUserId: body.userId || '01K1VBYYV7TRPY04NW4TW4XWRB',
+      ownerId: body.userId || '01K1VBYYV7TRPY04NW4TW4XWRB',
       createdAt: new Date(),
       updatedAt: new Date()
     };

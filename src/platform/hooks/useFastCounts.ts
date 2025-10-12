@@ -59,6 +59,12 @@ export function useFastCounts(): UseFastCountsReturn {
 
   const fetchCounts = useCallback(async (forceRefresh = false) => {
     if (!workspaceId || !userId || authLoading || !authUser) {
+      console.log('🚀 [FAST COUNTS] Skipping fetch - missing auth data:', {
+        workspaceId: !!workspaceId,
+        userId: !!userId,
+        authLoading,
+        hasAuthUser: !!authUser
+      });
       setLoading(false);
       return;
     }
@@ -76,6 +82,10 @@ export function useFastCounts(): UseFastCountsReturn {
       const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}` : ''}`, {
         credentials: 'include'
       });
+
+      if (!countsResponse.ok) {
+        throw new Error(`Counts API returned ${countsResponse.status}: ${countsResponse.statusText}`);
+      }
 
       const countsData = await countsResponse.json();
 
