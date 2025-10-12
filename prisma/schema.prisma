@@ -235,6 +235,7 @@ model companies {
   logoUrl            String?          @db.VarChar(500)
   status             CompanyStatus?   @default(ACTIVE)
   priority           CompanyPriority? @default(MEDIUM)
+  stage              String?          @db.VarChar(50)
   tags               String[]         @default([])
   customFields       Json?
   notes              Json?
