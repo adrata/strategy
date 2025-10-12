@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUnifiedAuth } from "@/platform/auth";
-import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -17,20 +16,6 @@ export default function SignInPage() {
   const { signIn: authSignIn } = useUnifiedAuth();
 
   // Optimized platform detection and logout cleanup (logging removed for performance)
-  useEffect(() => {
-    // Handle Command+Enter keyboard shortcut
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault();
-        if (!isLoading && email && password) {
-          handleSubmit(event as any);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [email, password, isLoading]);
 
   useEffect(() => {
 
@@ -300,14 +285,14 @@ export default function SignInPage() {
             disabled={isLoading}
             className="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:bg-black disabled:opacity-100"
           >
-            {isLoading ? "Starting..." : `Start (${getCommonShortcut('SUBMIT')})`}
+            {isLoading ? "Starting..." : "Start"}
           </button>
         </form>
 
         {/* Demo Link */}
         <div className="mt-6 text-center">
           <p className="text-sm text-[var(--muted)]">
-            Don't have an account yet?{" "}
+            Don&apos;t have an account yet?{" "}
             <Link
               href="/demo"
               className="text-black font-medium hover:text-gray-800 transition-colors"

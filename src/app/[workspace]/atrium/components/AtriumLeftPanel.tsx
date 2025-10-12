@@ -46,7 +46,6 @@ export function AtriumLeftPanel() {
     trash: 0,
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
   const [stats, setStats] = useState({
     totalDocuments: 0,
     storageUsed: '2.4 GB',
@@ -157,16 +156,6 @@ export function AtriumLeftPanel() {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mx-2 mb-3">
-          <input
-            type="text"
-            placeholder="Search documents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
 
         {/* Stats */}
         <div className="mx-2 mb-3 p-3 bg-[var(--panel-background)] rounded-lg">

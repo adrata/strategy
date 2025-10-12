@@ -8,10 +8,6 @@ import { QueryConsole } from "./components/QueryConsole";
 import { SchemaVisualizer } from "./components/SchemaVisualizer";
 
 export default function DatabasePage() {
-  // Set browser title
-  useEffect(() => {
-    document.title = 'Database • Records';
-  }, []);
   const { viewMode, selectedTable } = useDatabase();
 
   const renderContent = () => {

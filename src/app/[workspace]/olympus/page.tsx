@@ -23,10 +23,6 @@ import {
 } from "./utils/workflowUtils";
 
 export default function OlympusPage() {
-  // Set browser title
-  useEffect(() => {
-    document.title = 'Olympus • Workflows';
-  }, []);
   const [activeTool, setActiveTool] = useState<ActiveTool>('cursor');
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);

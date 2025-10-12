@@ -145,27 +145,29 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       case 'paper':
         return (
           <div className="h-full bg-[var(--background)] overflow-auto">
-            <div className="max-w-4xl mx-auto p-8">
-              <div className="prose prose-lg max-w-none">
-                <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">{document.title}</h1>
-                {document.description && (
-                  <p className="text-lg text-[var(--muted)] mb-8">{document.description}</p>
-                )}
-                <div className="text-gray-800 leading-relaxed">
-                  {document.content ? (
-                    typeof document.content === 'string' ? (
-                      <div dangerouslySetInnerHTML={{ __html: document.content }} />
-                    ) : document.content.content ? (
-                      <div dangerouslySetInnerHTML={{ __html: document.content.content }} />
-                    ) : (
-                      <p>Document content is available. Click "Update" to view and modify.</p>
-                    )
-                  ) : (
-                    <div className="text-center py-12">
-                      <DocumentTextIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-                      <p className="text-[var(--muted)]">This document is empty. Click "Update" to start writing.</p>
-                    </div>
+            <div className="px-6 py-6">
+              <div className="max-w-4xl mx-auto">
+                <div className="prose prose-lg max-w-none">
+                  <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">{document.title}</h1>
+                  {document.description && (
+                    <p className="text-lg text-[var(--muted)] mb-8">{document.description}</p>
                   )}
+                  <div className="text-gray-800 leading-relaxed">
+                    {document.content ? (
+                      typeof document.content === 'string' ? (
+                        <div dangerouslySetInnerHTML={{ __html: document.content }} />
+                      ) : document.content.content ? (
+                        <div dangerouslySetInnerHTML={{ __html: document.content.content }} />
+                      ) : (
+                        <p>Document content is available. Click "Update" to view and modify.</p>
+                      )
+                    ) : (
+                      <div className="text-center py-12">
+                        <DocumentTextIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
+                        <p className="text-[var(--muted)]">This document is empty. Click "Update" to start writing.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,7 +177,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       case 'code':
         return (
           <div className="h-full bg-[var(--foreground)] text-[var(--foreground)] overflow-auto">
-            <div className="p-6">
+            <div className="px-6 py-6">
               <pre className="text-sm font-mono leading-relaxed">
                 <code>
                   {document.content ? (
@@ -197,7 +199,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       case 'matrix':
         return (
           <div className="h-full bg-[var(--background)] overflow-auto">
-            <div className="p-6">
+            <div className="px-6 py-6">
               {document.content && document.content.charts ? (
                 <div className="space-y-6">
                   <h1 className="text-2xl font-bold text-[var(--foreground)]">{document.title}</h1>
@@ -254,9 +256,10 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
           >
             <ArrowLeftIcon className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-2">
-            {getDocumentIcon(document.documentType)}
-            <span className="text-sm font-medium text-[var(--foreground)]">{document.title}</span>
+          <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+            <span>All Files</span>
+            <span>/</span>
+            <span className="text-[var(--foreground)] font-medium">{document.title}</span>
           </div>
         </div>
         
@@ -266,37 +269,17 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
           )}
           <button
             onClick={onShare}
-            className="p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-blue-100 text-blue-700 hover:bg-blue-200"
             title="Share"
           >
-            <ShareIcon className="w-4 h-4" />
-          </button>
-          <button
-            onClick={onToggleEditMode}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              isEditMode
-                ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                : 'bg-[var(--hover)] text-gray-700 hover:bg-[var(--loading-bg)]'
-            }`}
-          >
-            {isEditMode ? (
-              <>
-                <EyeIcon className="w-4 h-4" />
-                View
-              </>
-            ) : (
-              <>
-                <PencilIcon className="w-4 h-4" />
-                Update
-              </>
-            )}
+            Share
           </button>
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">
-        {isEditMode ? renderEditor() : renderReadOnlyView()}
+        {renderEditor()}
       </div>
     </div>
   );

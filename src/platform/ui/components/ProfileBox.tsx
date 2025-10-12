@@ -613,171 +613,164 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* Workspace Apps - Admin only */}
         {isAdminUser && (
           <>
-            <div className="border-t border-[var(--border)] my-2"></div>
-            <div className="px-2 py-1">
-              <div className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
-                Workspace Apps
-              </div>
-              
-              {/* Stacks */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("📦 Stacks clicked - navigating to stacks");
+            {/* Stacks */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("📦 Stacks clicked - navigating to stacks");
+                setIsProfileOpen(false);
+                handleNavigation("./stacks");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./stacks");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./stacks");
-                  }
-                }}
-              >
-                Stacks
-              </div>
+                }
+              }}
+            >
+              Stacks
+            </div>
 
-              {/* Atrium */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("🏛️ Atrium clicked - navigating to atrium");
+            {/* Atrium */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("🏛️ Atrium clicked - navigating to atrium");
+                setIsProfileOpen(false);
+                handleNavigation("./atrium");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./atrium");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./atrium");
-                  }
-                }}
-              >
-                Atrium
-              </div>
+                }
+              }}
+            >
+              Atrium
+            </div>
 
-              {/* Particle */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("⚛️ Particle clicked - navigating to particle");
+            {/* Particle */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("⚛️ Particle clicked - navigating to particle");
+                setIsProfileOpen(false);
+                handleNavigation("./particle");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./particle");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./particle");
-                  }
-                }}
-              >
-                Particle
-              </div>
+                }
+              }}
+            >
+              Particle
+            </div>
 
-              {/* Tower */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("🗼 Tower clicked - navigating to tower");
+            {/* Tower */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("🗼 Tower clicked - navigating to tower");
+                setIsProfileOpen(false);
+                handleNavigation("./tower");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./tower");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./tower");
-                  }
-                }}
-              >
-                Tower
-              </div>
+                }
+              }}
+            >
+              Tower
+            </div>
 
-              {/* Grand Central */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("🚉 Grand Central clicked - navigating to grand-central");
+            {/* Grand Central */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("🚉 Grand Central clicked - navigating to grand-central");
+                setIsProfileOpen(false);
+                handleNavigation("./grand-central");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./grand-central");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./grand-central");
-                  }
-                }}
-              >
-                Grand Central
-              </div>
+                }
+              }}
+            >
+              Grand Central
+            </div>
 
-              {/* Olympus */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("🏔️ Olympus clicked - navigating to olympus");
+            {/* Olympus */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("🏔️ Olympus clicked - navigating to olympus");
+                setIsProfileOpen(false);
+                handleNavigation("./olympus");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./olympus");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./olympus");
-                  }
-                }}
-              >
-                Olympus
-              </div>
+                }
+              }}
+            >
+              Olympus
+            </div>
 
-              {/* Encode */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("💻 Encode clicked - navigating to encode");
+            {/* Encode */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("💻 Encode clicked - navigating to encode");
+                setIsProfileOpen(false);
+                handleNavigation("./encode");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./encode");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./encode");
-                  }
-                }}
-              >
-                Encode
-              </div>
+                }
+              }}
+            >
+              Encode
+            </div>
 
-              {/* Database */}
-              <div
-                className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-                onClick={() => {
-                  console.log("🗄️ Database clicked - navigating to database");
+            {/* Database */}
+            <div
+              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+              onClick={() => {
+                console.log("🗄️ Database clicked - navigating to database");
+                setIsProfileOpen(false);
+                handleNavigation("./database");
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
                   handleNavigation("./database");
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e['key'] === "Enter") {
-                    setIsProfileOpen(false);
-                    handleNavigation("./database");
-                  }
-                }}
-              >
-                Database
-              </div>
+                }
+              }}
+            >
+              Database
             </div>
           </>
         )}
@@ -785,7 +778,6 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* Monaco Display Options - Show only in demo mode */}
         {isDemoMode && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
           <>
-            <div className="border-t border-[var(--border)] my-2"></div>
             <div className="px-2 py-1">
               <div className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
                 Monaco Display Options

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { PipelineContent } from "@/frontend/components/pipeline/PipelineContent";
 
 export const metadata: Metadata = {
-  title: "Speedrun",
+  title: "Speedrun • Pipeline",
   description: "Pipeline speedrun management",
 };
 

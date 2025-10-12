@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { PipelineContent } from "@/frontend/components/pipeline/PipelineContent";
 
 export const metadata: Metadata = {
-  title: "Chronicle",
+  title: "Chronicle • Pipeline",
   description: "Weekly reports and chronicles",
 };
 

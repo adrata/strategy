@@ -29,7 +29,6 @@ export function GrandCentralLeftPanel() {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();
 
-  const [searchTerm, setSearchTerm] = useState('');
   const [stats, setStats] = useState({
     totalConnections: 0,
     activeConnections: 0,
@@ -103,16 +102,6 @@ export function GrandCentralLeftPanel() {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mx-2 mb-3">
-          <input
-            type="text"
-            placeholder="Search integrations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
 
         {/* Stats */}
         <div className="mx-2 mb-3 p-3 bg-[var(--panel-background)] rounded-lg">
@@ -199,11 +188,6 @@ export function GrandCentralLeftPanel() {
           ) : (
             <div className="space-y-1">
               {connections
-                .filter(connection => 
-                  !searchTerm || 
-                  connection.connectionName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  connection.provider.toLowerCase().includes(searchTerm.toLowerCase())
-                )
                 .slice(0, 5)
                 .map((connection) => (
                 <div 

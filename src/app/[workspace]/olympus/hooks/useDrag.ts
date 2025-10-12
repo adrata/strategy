@@ -46,7 +46,7 @@ export const useDrag = (
         if (!step) return;
         
         // Get the canvas container
-        const canvasContainer = document.querySelector('.flex-1.bg-[var(--background)].overflow-hidden.relative');
+        const canvasContainer = document.querySelector('[data-canvas-container="true"]');
         if (!canvasContainer) return;
         
         const canvasRect = canvasContainer.getBoundingClientRect();

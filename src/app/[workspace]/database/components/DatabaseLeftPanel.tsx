@@ -22,7 +22,6 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
   const [tables, setTables] = useState<DatabaseTable[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch database tables and stats
   useEffect(() => {
@@ -67,12 +66,6 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
     return acc;
   }, {} as Record<string, DatabaseTable[]>);
 
-  // Filter tables based on search
-  const filteredTables = searchTerm 
-    ? tables.filter(table => 
-        table.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : tables;
 
   const handleTableClick = (tableName: string) => {
     setSelectedTable(tableName);
@@ -149,16 +142,6 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mx-2 mb-3">
-          <input
-            type="text"
-            placeholder="Search tables..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
 
         {/* Stats */}
         {stats && (
@@ -214,11 +197,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
                   {category} ({categoryTables.length})
                 </div>
                 <div className="space-y-1">
-                  {categoryTables
-                    .filter(table => 
-                      !searchTerm || table.name.toLowerCase().includes(searchTerm.toLowerCase())
-                    )
-                    .map((table) => (
+                  {categoryTables.map((table) => (
                     <button
                       key={table.name}
                       onClick={() => handleTableClick(table.name)}

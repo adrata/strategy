@@ -50,14 +50,25 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
         setIsLoading(true);
         const response = await fetch('/api/grand-central/nango/providers');
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch providers');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+        } else {
+          // If API fails, still try to parse the response in case it contains static data
+          try {
+            const errorData = await response.json();
+            if (errorData && Array.isArray(errorData)) {
+              setCategories(errorData);
+            } else {
+              console.warn('API returned error, but no fallback data available');
+            }
+          } catch (parseError) {
+            console.warn('Could not parse error response, using empty categories');
+          }
         }
-        
-        const data = await response.json();
-        setCategories(data);
       } catch (err) {
         console.error('Error fetching providers:', err);
+        // Don't throw - just log the error and continue with empty categories
       } finally {
         setIsLoading(false);
       }

@@ -109,9 +109,13 @@ function onError(error: Error) {
   console.error(error);
 }
 
-function Placeholder() {
+function Placeholder({ hasContent }: { hasContent: boolean }) {
+  if (hasContent) {
+    return null;
+  }
+  
   return (
-    <div className="editor-placeholder">
+    <div className="editor-placeholder" style={{ fontFamily: 'inherit', textAlign: 'left', marginTop: 0 }}>
       Start writing your document...
     </div>
   );
@@ -282,10 +286,11 @@ export function PaperEditorWrapper({ document, onSave, onAutoSave }: PaperEditor
                       minHeight: '400px',
                       fontSize: '16px',
                       lineHeight: '1.6',
+                      fontFamily: 'inherit',
                     }}
                   />
                 }
-                placeholder={<Placeholder />}
+                placeholder={<Placeholder hasContent={false} />}
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <HistoryPlugin />

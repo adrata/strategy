@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { StacksContainer } from "@/products/stacks/components/StacksContainer";
 
 export const metadata: Metadata = {
-  title: "Stacks",
+  title: "Stacks • Pipeline",
   description: "Project management and task tracking",
 };
 

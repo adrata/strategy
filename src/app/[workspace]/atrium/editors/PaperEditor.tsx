@@ -16,8 +16,9 @@ import {
 } from "@heroicons/react/24/outline";
 
 // Lexical imports
-import { $getRoot, $getSelection, $isRangeSelection } from 'lexical';
+import { $getRoot, $getSelection, $isRangeSelection, $createTextNode, $createParagraphNode } from 'lexical';
 import { $createLinkNode } from '@lexical/link';
+import { $createHeadingNode } from '@lexical/rich-text';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -113,9 +114,13 @@ function onError(error: Error) {
   console.error(error);
 }
 
-function Placeholder() {
+function Placeholder({ hasContent }: { hasContent: boolean }) {
+  if (hasContent) {
+    return null;
+  }
+  
   return (
-    <div className="editor-placeholder">
+    <div className="editor-placeholder" style={{ fontFamily: 'inherit', textAlign: 'left', marginTop: 0 }}>
       Start writing your document...
     </div>
   );
@@ -155,6 +160,7 @@ function ToolbarPlugin() {
   };
 
   const insertLink = () => {
+    // TODO: Replace with a proper modal component instead of browser prompt
     const url = prompt('Enter URL:');
     if (url) {
       editor.update(() => {
@@ -246,11 +252,99 @@ function AutoSavePlugin({ onAutoSave }: { onAutoSave: (content: any) => void }) 
   return null;
 }
 
+function InitializePlugin({ document, onInitialized }: { document: AtriumDocument, onInitialized: () => void }) {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    if (!document.content) {
+      onInitialized();
+      return;
+    }
+
+    editor.update(() => {
+      const root = $getRoot();
+      root.clear();
+      
+      // Load document content
+      if (typeof document.content === 'string') {
+        // If content is HTML string, parse it
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(document.content, 'text/html');
+        const body = doc.body;
+        
+        // Convert HTML to Lexical nodes
+        const walker = window.document.createTreeWalker(
+          body,
+          NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        let node = walker.nextNode();
+        while (node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const textNode = $createTextNode(node.textContent || '');
+            root.append(textNode);
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            if (element.tagName === 'H1') {
+              const headingNode = $createHeadingNode('h1');
+              headingNode.append($createTextNode(element.textContent || ''));
+              root.append(headingNode);
+            } else if (element.tagName === 'P') {
+              const paragraphNode = $createParagraphNode();
+              paragraphNode.append($createTextNode(element.textContent || ''));
+              root.append(paragraphNode);
+            }
+          }
+          node = walker.nextNode();
+        }
+      } else if (document.content.content) {
+        // If content has nested content property
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(document.content.content, 'text/html');
+        const body = doc.body;
+        
+        // Convert HTML to Lexical nodes
+        const walker = window.document.createTreeWalker(
+          body,
+          NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        let node = walker.nextNode();
+        while (node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const textNode = $createTextNode(node.textContent || '');
+            root.append(textNode);
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            if (element.tagName === 'H1') {
+              const headingNode = $createHeadingNode('h1');
+              headingNode.append($createTextNode(element.textContent || ''));
+              root.append(headingNode);
+            } else if (element.tagName === 'P') {
+              const paragraphNode = $createParagraphNode();
+              paragraphNode.append($createTextNode(element.textContent || ''));
+              root.append(paragraphNode);
+            }
+          }
+          node = walker.nextNode();
+        }
+      }
+      
+      onInitialized();
+    });
+  }, [editor, document.content, onInitialized]);
+
+  return null;
+}
+
 export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const initialConfig = {
     namespace: 'PaperEditor',
@@ -290,6 +384,10 @@ export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) 
   const handleAutoSave = useCallback((content: any) => {
     onAutoSave(content);
   }, [onAutoSave]);
+
+  const handleInitialized = useCallback(() => {
+    setIsInitialized(true);
+  }, []);
 
   const updateCounts = useCallback(() => {
     // This will be handled by the editor context
@@ -357,15 +455,16 @@ export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) 
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable
-                    className="editor-input p-6 min-h-full focus:outline-none"
+                    className="editor-input px-6 py-6 min-h-full focus:outline-none max-w-4xl mx-auto"
                     style={{
                       minHeight: '400px',
                       fontSize: '16px',
                       lineHeight: '1.6',
+                      fontFamily: 'inherit',
                     }}
                   />
                 }
-                placeholder={<Placeholder />}
+                placeholder={<Placeholder hasContent={isInitialized && document.content} />}
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <HistoryPlugin />
@@ -374,6 +473,7 @@ export function PaperEditor({ document, onSave, onAutoSave }: PaperEditorProps) 
               <ListPlugin />
               <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
               <AutoSavePlugin onAutoSave={handleAutoSave} />
+              <InitializePlugin document={document} onInitialized={handleInitialized} />
             </div>
           </div>
         </LexicalComposer>

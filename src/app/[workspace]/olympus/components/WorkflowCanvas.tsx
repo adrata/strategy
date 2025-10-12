@@ -111,9 +111,12 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   }, [workflowSteps, getStepPosition]);
 
   return (
-    <div className={`flex-1 bg-[var(--background)] overflow-hidden relative ${
-      activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
-    }`}>
+    <div 
+      className={`flex-1 bg-[var(--background)] overflow-hidden relative ${
+        activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
+      }`}
+      data-canvas-container="true"
+    >
       {/* Background layer for panning */}
       <div 
         className="absolute inset-0"

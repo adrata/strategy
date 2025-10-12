@@ -42,14 +42,6 @@ const documentTypes = [
     examples: ['Budget sheets', 'Data analysis', 'Project tracking'],
   },
   {
-    id: 'code',
-    name: 'Code',
-    description: 'Code snippets and technical documentation',
-    icon: CodeBracketIcon,
-    color: 'text-[var(--muted)] bg-[var(--hover)]',
-    examples: ['Code snippets', 'API docs', 'Technical specs'],
-  },
-  {
     id: 'matrix',
     name: 'Matrix',
     description: 'Data visualization and analytics dashboards',

@@ -50,11 +50,25 @@ export default function AtriumPage() {
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name');
 
+  // Set page title dynamically
+  useEffect(() => {
+    document.title = "Atrium • Documents";
+  }, []);
+
   const handleCreateDocument = useCallback((documentType: string) => {
-    // TODO: Implement document creation
-    console.log('Creating document of type:', documentType);
+    // Create a new document with temporary ID
+    const newDocument = {
+      id: `new-${Date.now()}`,
+      title: `New ${documentType.charAt(0).toUpperCase() + documentType.slice(1)} Document`,
+      documentType: documentType,
+      content: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setViewingDocument(newDocument);
     setIsCreateModalOpen(false);
-  }, [setIsCreateModalOpen]);
+  }, [setIsCreateModalOpen, setViewingDocument]);
 
   const handleUploadFiles = useCallback(() => {
     setIsUploadModalOpen(true);
@@ -109,10 +123,10 @@ export default function AtriumPage() {
               </button>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
               >
                 <PlusIcon className="w-4 h-4" />
-                Create
+                Start
               </button>
             </div>
           }
