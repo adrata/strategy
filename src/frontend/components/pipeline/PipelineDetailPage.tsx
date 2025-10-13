@@ -25,9 +25,10 @@ import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 interface PipelineDetailPageProps {
   section: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'speedrun';
   slug: string;
+  standalone?: boolean; // If true, renders with PanelLayout. If false, renders only middle panel content
 }
 
-export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
+export function PipelineDetailPage({ section, slug, standalone = false }: PipelineDetailPageProps) {
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
@@ -682,89 +683,94 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     // Get user data from PipelineContext to match PipelineLeftPanelStandalone
     const { user: pipelineUser, company, workspace } = usePipeline();
     
-    return (
-      <>
-        <PanelLayout
-          thinLeftPanel={null}
-          leftPanel={
-            <PipelineLeftPanelStandalone 
-              activeSection={section}
-              onSectionChange={handleSectionChange}
-              isSpeedrunVisible={isSpeedrunVisible}
-              setIsSpeedrunVisible={setIsSpeedrunVisible}
-              isOpportunitiesVisible={isOpportunitiesVisible}
-              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-              isProspectsVisible={isProspectsVisible}
-              setIsProspectsVisible={setIsProspectsVisible}
-              isLeadsVisible={isLeadsVisible}
-              setIsLeadsVisible={setIsLeadsVisible}
-              isCustomersVisible={isCustomersVisible}
-              setIsCustomersVisible={setIsCustomersVisible}
-              isPartnersVisible={isPartnersVisible}
-              setIsPartnersVisible={setIsPartnersVisible}
-            />
+    // Create the middle panel content (record template)
+    const middlePanelContent = (
+      <UniversalRecordTemplate
+        record={recordToShow}
+        recordType={section as any}
+        recordIndex={(() => {
+          // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
+          // instead of database rank to ensure navigation works correctly
+          if (section === 'speedrun') {
+            const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+            const recordIndex = index >= 0 ? index + 1 : 1;
+            console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
+              recordId: recordToShow?.id,
+              recordName: recordToShow?.name,
+              dataLength: data.length,
+              foundIndex: index,
+              calculatedRecordIndex: recordIndex,
+              dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+            });
+            return recordIndex;
+          } else {
+            // For other sections, always use sequential position like speedrun for consistent navigation
+            const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+            const recordIndex = index >= 0 ? index + 1 : 1;
+            console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
+              recordId: recordToShow?.id,
+              recordName: recordToShow?.name,
+              dataLength: data.length,
+              foundIndex: index,
+              calculatedRecordIndex: recordIndex,
+              dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+            });
+            return recordIndex;
           }
-          middlePanel={
-            <UniversalRecordTemplate
-              record={recordToShow}
-              recordType={section as any}
-              recordIndex={(() => {
-                // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
-                // instead of database rank to ensure navigation works correctly
-                if (section === 'speedrun') {
-                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                  const recordIndex = index >= 0 ? index + 1 : 1;
-                  console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
-                    recordId: recordToShow?.id,
-                    recordName: recordToShow?.name,
-                    dataLength: data.length,
-                    foundIndex: index,
-                    calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
-                  });
-                  return recordIndex;
-                } else {
-                  // For other sections, always use sequential position like speedrun for consistent navigation
-                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-                  const recordIndex = index >= 0 ? index + 1 : 1;
-                  console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
-                    recordId: recordToShow?.id,
-                    recordName: recordToShow?.name,
-                    dataLength: data.length,
-                    foundIndex: index,
-                    calculatedRecordIndex: recordIndex,
-                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
-                  });
-                  return recordIndex;
-                }
-              })()}
-              totalRecords={data.length}
-              onBack={handleBack}
-              onNavigatePrevious={handleNavigatePrevious}
-              onNavigateNext={handleNavigateNext}
-              onComplete={() => {
-                console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
-                // TODO: Implement complete functionality
-              }}
-              onSnooze={(recordId: string, duration: string) => {
-                console.log('Snooze action for:', recordId, duration);
-                // TODO: Implement complete functionality
-              }}
-              onRecordUpdate={(updatedRecord) => {
-                console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
-                setSelectedRecord(updatedRecord);
-                
-                console.log('✅ [PIPELINE] Record updated in UI');
-              }}
-            />
-          }
-          rightPanel={<RightPanel />}
-          zoom={zoom}
-          isLeftPanelVisible={isLeftPanelVisible}
-          isRightPanelVisible={isRightPanelVisible}
-          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
-          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
-        />
+        })()}
+        totalRecords={data.length}
+        onBack={handleBack}
+        onNavigatePrevious={handleNavigatePrevious}
+        onNavigateNext={handleNavigateNext}
+        onComplete={() => {
+          console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
+          // TODO: Implement complete functionality
+        }}
+        onSnooze={(recordId: string, duration: string) => {
+          console.log('Snooze action for:', recordId, duration);
+          // TODO: Implement complete functionality
+        }}
+        onRecordUpdate={(updatedRecord) => {
+          console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
+          setSelectedRecord(updatedRecord);
+          
+          console.log('✅ [PIPELINE] Record updated in UI');
+        }}
+      />
+    );
+
+    // If standalone mode, render with full PanelLayout
+    if (standalone) {
+      return (
+        <>
+          <PanelLayout
+            thinLeftPanel={null}
+            leftPanel={
+              <PipelineLeftPanelStandalone 
+                activeSection={section}
+                onSectionChange={handleSectionChange}
+                isSpeedrunVisible={isSpeedrunVisible}
+                setIsSpeedrunVisible={setIsSpeedrunVisible}
+                isOpportunitiesVisible={isOpportunitiesVisible}
+                setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                isProspectsVisible={isProspectsVisible}
+                setIsProspectsVisible={setIsProspectsVisible}
+                isLeadsVisible={isLeadsVisible}
+                setIsLeadsVisible={setIsLeadsVisible}
+                isCustomersVisible={isCustomersVisible}
+                setIsCustomersVisible={setIsCustomersVisible}
+                isPartnersVisible={isPartnersVisible}
+                setIsPartnersVisible={setIsPartnersVisible}
+              />
+            }
+            middlePanel={middlePanelContent}
+            rightPanel={<RightPanel />}
+            zoom={zoom}
+            isLeftPanelVisible={isLeftPanelVisible}
+            isRightPanelVisible={isRightPanelVisible}
+            onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+            onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
+          />
 
         {/* Profile Popup - Pipeline Detail Implementation */}
         {(() => {
@@ -823,6 +829,72 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
         />
       </>
     );
+    } else {
+      // When used within pipeline layout, render only the middle panel content
+      return (
+        <>
+          {middlePanelContent}
+          
+          {/* Profile Popup - Pipeline Detail Implementation */}
+          {(() => {
+            const shouldRender = isProfileOpen && profileAnchor;
+            console.log('🔍 PipelineDetailPage (Record View) Profile popup render check:', { 
+              isProfileOpen, 
+              profileAnchor: !!profileAnchor,
+              profileAnchorElement: profileAnchor,
+              user: !!pipelineUser,
+              company,
+              workspace,
+              shouldRender
+            });
+            if (shouldRender) {
+              console.log('✅ PipelineDetailPage (Record View) ProfileBox SHOULD render - all conditions met');
+            } else {
+              console.log('❌ PipelineDetailPage (Record View) ProfileBox will NOT render:', {
+                missingProfileOpen: !isProfileOpen,
+                missingProfileAnchor: !profileAnchor
+              });
+            }
+            return shouldRender;
+          })() && profileAnchor && (
+            <div
+              style={{
+                position: "fixed",
+                left: profileAnchor.getBoundingClientRect().left,
+                bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
+                zIndex: 1000,
+              }}
+            >
+              <ProfileBox
+                user={pipelineUser}
+                company={company}
+                workspace={workspace}
+                isProfileOpen={isProfileOpen}
+                setIsProfileOpen={setIsProfileOpen}
+                isSellersVisible={true}
+                setIsSellersVisible={() => {}}
+                isRtpVisible={isSpeedrunVisible}
+                setIsRtpVisible={setIsSpeedrunVisible}
+                onSpeedrunEngineClick={() => {
+                  console.log("Speedrun engine clicked in PipelineDetailPage (Record View)");
+                  setIsProfileOpen(false);
+                  setIsSpeedrunEngineModalOpen(true);
+                }}
+                isProspectsVisible={isProspectsVisible}
+                setIsProspectsVisible={setIsProspectsVisible}
+                isDemoMode={typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')}
+              />
+            </div>
+          )}
+          
+          {/* Speedrun Engine Modal */}
+          <SpeedrunEngineModal
+            isOpen={isSpeedrunEngineModalOpen}
+            onClose={() => setIsSpeedrunEngineModalOpen(false)}
+          />
+        </>
+      );
+    }
   }
 
 
