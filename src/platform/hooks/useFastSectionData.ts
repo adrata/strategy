@@ -115,7 +115,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/people?section=prospects&limit=${limit}`;
           break;
         case 'opportunities':
-          url = `/api/v1/companies?status=OPPORTUNITY&limit=${limit}`;
+          url = `/api/v1/people?section=opportunities&limit=${limit}`;
           break;
         case 'people':
           url = `/api/v1/people?limit=${limit}`;

@@ -57,17 +57,17 @@ function getLastActionTiming(record: PipelineRecord) {
   const lastActionTime = record['lastActionTime'];
   
   if (lastActionTime) {
-    // Color coding for Speedrun timing
+    // All timing pills now use light gray color
     if (lastActionTime === 'Never') {
       return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime === 'Today') {
-      return { text: lastActionTime, color: 'bg-green-100 text-green-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime === 'Yesterday') {
-      return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 3) {
-      return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 7) {
-      return { text: lastActionTime, color: 'bg-yellow-100 text-yellow-800' };
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (lastActionTime.includes('weeks ago') || lastActionTime.includes('months ago')) {
       return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else {
@@ -86,17 +86,17 @@ function getNextActionTiming(record: PipelineRecord) {
   const nextActionTiming = record['nextActionTiming'];
   
   if (nextActionTiming) {
-    // Color coding for Speedrun timing
+    // All timing pills now use light gray color
     if (nextActionTiming === 'Overdue') {
-      return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Today') {
-      return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Tomorrow') {
-      return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'This week') {
-      return { text: nextActionTiming, color: 'bg-green-100 text-green-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Next week') {
-      return { text: nextActionTiming, color: 'bg-green-100 text-green-800' };
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'This month') {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Future') {

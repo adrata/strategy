@@ -107,8 +107,8 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       let activityEvents: TimelineEvent[] = [];
       let noteEvents: TimelineEvent[] = [];
 
-      // Fetch activities/actions
-      const activitiesResponse = await authFetch(`/api/data/unified`);
+      // Fetch activities/actions using v1 API
+      const activitiesResponse = await authFetch(`/api/v1/actions?personId=${record.id}&limit=50`);
       
       if (activitiesResponse.ok) {
         const activitiesData = await activitiesResponse.json();

@@ -99,6 +99,9 @@ export async function GET(request: NextRequest) {
           case 'prospects':
             where.status = 'PROSPECT';
             break;
+          case 'opportunities':
+            where.status = 'OPPORTUNITY';
+            break;
           default:
             // No additional filtering for other sections
             break;

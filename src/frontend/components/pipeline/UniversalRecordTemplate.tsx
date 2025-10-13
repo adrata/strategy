@@ -605,7 +605,7 @@ export function UniversalRecordTemplate({
       // Make API call to update the record using v1 APIs
       let response: Response;
       
-      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects') {
+      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
         // All people-related records use v1 people API
         response = await authFetch(`/api/v1/people/${record.id}`, {
           method: 'PATCH',
@@ -617,15 +617,6 @@ export function UniversalRecordTemplate({
       } else if (recordType === 'companies') {
         // Use v1 companies API
         response = await authFetch(`/api/v1/companies/${record.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatePayload),
-        });
-      } else if (recordType === 'opportunities') {
-        // Use v1 opportunities API (uses companies table)
-        response = await authFetch(`/api/v1/opportunities/${record.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -778,14 +769,34 @@ export function UniversalRecordTemplate({
     try {
       console.log(`🗑️ [UNIVERSAL] Deleting ${recordType} ${recordId}`);
       
-      // Make API call to soft delete the record using unified API
-      // 🔐 SECURITY: Use authenticated fetch instead of passing credentials in URL
-      const response = await authFetch(`/api/data/unified?type=${recordType}&id=${recordId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // Make API call to soft delete the record using v1 APIs
+      let response: Response;
+      
+      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+        // All people-related records use v1 people API
+        response = await authFetch(`/api/v1/people/${recordId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else if (recordType === 'companies') {
+        // Use v1 companies API
+        response = await authFetch(`/api/v1/companies/${recordId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        // Fallback to legacy unified API for other types
+        response = await authFetch(`/api/data/unified?type=${recordType}&id=${recordId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -1057,19 +1068,14 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('⬆️ [UNIVERSAL] Advancing to prospect:', record.id);
       
-      // Make API call to advance lead to prospect
-      const response = await authFetch('/api/data/unified', {
-        method: 'POST',
+      // Make API call to advance lead to prospect (update status in people table)
+      const response = await authFetch(`/api/v1/people/${record.id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: recordType,
-          action: 'advance_to_prospect',
-          id: record.id,
-          data: record,
-          workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+          status: 'PROSPECT' // Update status from LEAD to PROSPECT
         }),
       });
 
@@ -1114,19 +1120,14 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('⬆️ [UNIVERSAL] Advancing to opportunity:', record.id);
       
-      // Make API call to advance prospect to opportunity
-      const response = await fetch('/api/data/unified', {
-        method: 'POST',
+      // Make API call to advance prospect to opportunity (update status in people table)
+      const response = await authFetch(`/api/v1/people/${record.id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: recordType,
-          action: 'advance_to_opportunity',
-          id: record.id,
-          data: record,
-          workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+          status: 'OPPORTUNITY' // Update status from PROSPECT to OPPORTUNITY
         }),
       });
 

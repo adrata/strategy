@@ -437,7 +437,7 @@ export const PipelineView = React.memo(function PipelineView({
       const preloadSpeedrunData = async () => {
         try {
           const { authFetch } = await import('@/platform/api-fetch');
-          await authFetch(`/api/data/section?section=speedrun&workspaceId=${workspaceId}&userId=${userId}&limit=50`);
+          await authFetch(`/api/v1/speedrun?limit=50`);
         } catch (error) {
           console.warn('⚠️ [SPEEDRUN PRELOAD] Failed to pre-load speedrun data:', error);
         }
