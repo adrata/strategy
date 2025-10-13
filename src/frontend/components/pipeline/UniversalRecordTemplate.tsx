@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
@@ -248,8 +248,13 @@ export function UniversalRecordTemplate({
   profilePopupContext
 }: UniversalRecordTemplateProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
-  const [activeTab, setActiveTab] = useState((customTabs || DEFAULT_TABS)[0]?.id || 'overview');
+  
+  // Initialize active tab from URL parameter or default to first tab
+  const urlTab = searchParams.get('tab');
+  const defaultTab = (customTabs || DEFAULT_TABS)[0]?.id || 'overview';
+  const [activeTab, setActiveTab] = useState(urlTab || defaultTab);
   const [loading, setLoading] = useState(false);
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
   
@@ -277,6 +282,14 @@ export function UniversalRecordTemplate({
   const [deleteConfirmName, setDeleteConfirmName] = useState('');
 
   const tabs = customTabs || getTabsForRecordType(recordType, record);
+  
+  // Function to update URL with tab parameter
+  const updateURLTab = (tabId: string) => {
+    const currentPath = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', tabId);
+    router.replace(`${currentPath}?${params.toString()}`, { scroll: false });
+  };
   
   // Handle profile click for popup
   const handleProfileClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -316,14 +329,25 @@ export function UniversalRecordTemplate({
     }, 100);
   };
   
-  // Reset active tab when tabs change to ensure valid tab is selected
+  // Reset active tab when tabs change or URL changes to ensure valid tab is selected
   useEffect(() => {
     const validTabIds = tabs.map(tab => tab.id);
-    if (!validTabIds.includes(activeTab)) {
+    const urlTab = searchParams.get('tab');
+    
+    // If URL has a valid tab parameter, use it
+    if (urlTab && validTabIds.includes(urlTab)) {
+      if (activeTab !== urlTab) {
+        setActiveTab(urlTab);
+      }
+    } 
+    // If current active tab is not valid for this record type, reset to first tab
+    else if (!validTabIds.includes(activeTab)) {
       const newTab = tabs[0]?.id || 'overview';
       setActiveTab(newTab);
+      // Update URL to reflect the fallback tab
+      updateURLTab(newTab);
     }
-  }, [tabs, activeTab]);
+  }, [tabs, searchParams]);
 
   // Set current record context when component mounts or record changes
   useEffect(() => {
@@ -2270,6 +2294,7 @@ export function UniversalRecordTemplate({
               onClick={() => {
                 console.log(`🔄 [UNIVERSAL] Tab clicked: ${tab.id}, was: ${activeTab}`);
                 setActiveTab(tab.id);
+                updateURLTab(tab.id);
                 // Reset scroll position to top when switching tabs
                 if (contentRef.current) {
                   contentRef.current.scrollTop = 0;
