@@ -18,6 +18,7 @@ import {
   parseCSV, 
   generateImportPreview 
 } from '@/platform/services/csv-import-service';
+import { validatePhoneNumber } from '@/platform/utils/phone-validator';
 
 // Using enhanced CSV import service for better data processing
 
@@ -74,6 +75,15 @@ async function importToDatabase(
 }
 
 async function importLead(data: any, imported: number, updated: number, errors: string[]) {
+  // Validate phone number - set to null if fake/invalid
+  if (data.phone) {
+    const phoneValidation = validatePhoneNumber(data.phone);
+    if (!phoneValidation.isValid) {
+      console.log(`📞 Invalid phone number for lead ${data.fullName || data.email}: ${phoneValidation.reason}`);
+      data.phone = null;
+    }
+  }
+  
   // Check for existing lead
   if (data.email) {
     const existing = await prisma.leads.findFirst({

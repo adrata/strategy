@@ -341,6 +341,8 @@ pub async fn call_brightdata_enrichment(query: String) -> Result<serde_json::Val
 }
 
 // HELPER FUNCTIONS
+// NOTE: This function generates demo/sample data with fake phone numbers
+// It should only be used for demo purposes and not in production
 fn generate_sample_speedrun_leads(count: i32) -> Vec<serde_json::Value> {
     let companies = &[
         ("TechCorp", "Technology", "CEO"),
@@ -372,7 +374,7 @@ fn generate_sample_speedrun_leads(count: i32) -> Vec<serde_json::Value> {
                 "title": title,
                 "industry": industry,
                 "email": email,
-                "phone": format!("+1-555-{:04}", 1000 + i),
+                "phone": null, // No fake phone numbers - use real data in production
                 "status": "Active",
                 "priority": priorities[(i as usize) % priorities.len()],
                 "nextAction": actions[(i as usize) % actions.len()],
