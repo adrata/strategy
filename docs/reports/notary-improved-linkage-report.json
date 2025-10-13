@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-10-13T12:30:56.525Z",
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "results": {
+    "totalUnlinked": 175,
+    "peopleLinked": 52,
+    "companiesMatched": 13,
+    "newCompaniesCreated": 39,
+    "errors": []
+  },
+  "finalStats": {
+    "totalPeople": 394,
+    "linkedPeople": 271,
+    "linkageRate": 68.78172588832487,
+    "unlinkedPeople": 123,
+    "improvement": 52
+  }
+}

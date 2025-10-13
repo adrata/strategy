@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-13T12:18:24.055Z",
+  "timestamp": "2025-10-13T12:33:10.400Z",
   "workspace": {
     "id": "01K7DNYR5VZ7JY36KGKKN76XZ1",
     "name": "Notary Everyday",
@@ -51,17 +51,21 @@
   },
   "dataInventory": {
     "companies": {
-      "total": 3676,
+      "total": 3793,
       "statusBreakdown": [
         {
           "status": "ACTIVE",
-          "count": 3676
+          "count": 3793
         }
       ],
       "priorityBreakdown": [
         {
+          "priority": "LOW",
+          "count": 78
+        },
+        {
           "priority": "MEDIUM",
-          "count": 3676
+          "count": 3715
         }
       ]
     },
@@ -81,15 +85,15 @@
       ]
     },
     "relationships": {
-      "linkedPeople": 7,
-      "unlinkedPeople": 387,
-      "linkageRate": 1.8
+      "linkedPeople": 393,
+      "unlinkedPeople": 1,
+      "linkageRate": 99.7
     }
   },
   "intelligenceAudit": {
     "companies": {
       "stats": {
-        "total": 3676,
+        "total": 3793,
         "hasCompanyIntelligence": 0,
         "hasBusinessChallenges": 0,
         "hasBusinessPriorities": 0,
@@ -98,10 +102,10 @@
         "hasStrategicInitiatives": 0,
         "hasSuccessMetrics": 0,
         "hasMarketPosition": 3676,
-        "hasDigitalMaturity": 3676,
+        "hasDigitalMaturity": 3793,
         "hasTechStack": 0,
         "hasCompetitors": 0,
-        "hasConfidence": 3668,
+        "hasConfidence": 3785,
         "hasLastVerified": 0
       },
       "completenessScores": {
@@ -112,7 +116,7 @@
         "hasGrowthOpportunities": 0,
         "hasStrategicInitiatives": 0,
         "hasSuccessMetrics": 0,
-        "hasMarketPosition": 100,
+        "hasMarketPosition": 96.9,
         "hasDigitalMaturity": 100,
         "hasTechStack": 0,
         "hasCompetitors": 0,
@@ -120,6 +124,825 @@
         "hasLastVerified": 0
       },
       "companiesWithMissingData": [
+        {
+          "id": "01K7ERTE7YCKR7A26D5QTAHZBR",
+          "name": "reQuire",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTEQQZKGV8QN2HVW7SAMY",
+          "name": "The Tres Group | Operations Specialist | Process Optimization | Workflow Automation | KPI Development  | Efficiency Improvement | Risk Mitigation | Real Estate | Agriculture",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTF55X9T09H29TME3EX31",
+          "name": "Sunshine Signing Connection",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTFCG5K1M0225F82P3RFV",
+          "name": "Jax Title",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTFKGEF9HZ6FPCWMPFBEW",
+          "name": "SignatureXcel",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTG0K7D5X7YQ41YFD9WP1",
+          "name": "Robert Slack LLC | 2022 Employee of the Year",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTG87J52PVX5F4JZV194K",
+          "name": "The Robert Slack Group",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTGFSZGF5M98PE3W8X8BE",
+          "name": "865-317-3765 REALTOR",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTGQ28P2HVGQK1XCR4B0H",
+          "name": "Fathom Realty Elite",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTGYKEDJGH668JXQFE7AG",
+          "name": "Realty Executives Prestige Properties",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTH714D3G6VFN1J1A5RYD",
+          "name": "RE/MAX",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTHS24YZXRWGP59PHNZR8",
+          "name": "RE/MAX CHAMPIONS  FLORIDA  - MOTTO MORTGAGE CHAMPIONS - CHAMPIONS TITLE SERVICES",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTJ0F2P65GK9F3JH58AK7",
+          "name": "Verity Global Solutions",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTJ7YJ84SM4BC1V325BX5",
+          "name": "Aman Law Firm",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTJFRYJHRB2SRRVEJCJTK",
+          "name": "Liberty Title & Escrow - Tactically Executing Real Estate Transactions for Financial Lending Institutions Through The Entire Loan Life Cycle",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTJQAQ5T0CMPQHP2ZR98G",
+          "name": "HomePartners Title Services | Relocation Specialist | 2X IRONMAN Triathlete & NYC Marathon Finisher | Delivering concierge service from contract to closing!",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTJYG1W7B4VFA46P1KVMW",
+          "name": "Great American Title Agency - Surprise (ph. 623-455-3683)",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTK5X1XC1NEXD20SVVY5E",
+          "name": "Flueid Software Corporation",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTKDSQTXZQKY9G2VFR2Y1",
+          "name": "Empire West Title Agency",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTKN1CFZ2Y20G68YG107F",
+          "name": "Brightline Title/Albertelli Law",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTKWEAD9WF7R3MZZJR68X",
+          "name": "Coldwell Banker Sunstar Realty",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTMDXVFG80VHPRVEGYDVF",
+          "name": "Emerald Coast Title",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTMNE35MEFMC4AE5VX28D",
+          "name": "Stewart Title",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTMX1BBES9JQX7F504E36",
+          "name": "University of Colorado Denver",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTNEFF3A6X3X1W4BATC70",
+          "name": "Arizona Research & Retrieval",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTNNXS1K2BERJXW56JN84",
+          "name": "American Title Service Agency-Residential/Commercial",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTNX9M2E95Y48X9DV1CG1",
+          "name": "TrustPro Title",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTP4B7400EA67BJZ0FSPY",
+          "name": "TitleWave Real Estate Solutions and Mezzo-soprano",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTPBRB9A2376H4THWE4F9",
+          "name": "Title Services Of The Valley",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTPKQKWGMANQPPP9S4Y1X",
+          "name": "Title and abstract agency of americ",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTQ29K3WH373RT4QMH0PV",
+          "name": "Re/Max United",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTQETBSBCSXP4DJ8QGXAD",
+          "name": "Magnolia Title -Arkansas",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTQPMQ00Z177SE4MCVQNW",
+          "name": "Equitable National Title Group",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTQXVWJ0FJBFB4SP9X2RH",
+          "name": "ClearEdge Title (fka Meridian National Title)",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTR56ADJZT85GSBH8CYZ5",
+          "name": "Canyon Title Company",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTRV13DJA8R3GH1FW7ZGH",
+          "name": "Magnus Title Agency 602.332.3111 / Romy@Magnus Title.com",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTS6J5TT8QNFBSB8K7N2T",
+          "name": "Equitable Title of Dr. Phillips",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTSE0XCC28N1ZPRJ3CST4",
+          "name": "Michael Saunders & Company for The Residences",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERTSNCA9TJFEGG6G3DYZ93",
+          "name": "Clear Title Agency",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWMWR07NAP3PV0QPJEA9X",
+          "name": "Company YAHSPQN5",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWNDGR7F5C03TC70E3VJW",
+          "name": "Worldpropertyventures",
+          "domain": "worldpropertyventures.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWNXAZH6RHEDVXM9PA59B",
+          "name": "Votainc",
+          "domain": "votainc.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWP4QKZTVDS6N40G5KBDV",
+          "name": "Trustprotitle",
+          "domain": "trustprotitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWPC713BRP2PP6R8PDE0P",
+          "name": "Mytotaltitle",
+          "domain": "mytotaltitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWPKQA3K5FNT5HXMQ0Y87",
+          "name": "Titlewaveres",
+          "domain": "titlewaveres.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWPV8YV28YKD8TY0803JS",
+          "name": "Titlexperts",
+          "domain": "titlexperts.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWQ2KC93PCYPX17318PRV",
+          "name": "Titlesvs",
+          "domain": "titlesvs.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWQA4TAV3T4KCHJHYDBMT",
+          "name": "Tsvaz",
+          "domain": "tsvaz.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWQHGCGCE44GFS555G6QA",
+          "name": "Thetresgroup",
+          "domain": "thetresgroup.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWQRKDHFKHRC6Q3E13S0W",
+          "name": "Tieronetitle",
+          "domain": "tieronetitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWR04H6R6TPM7BMBZ0DF0",
+          "name": "Kcorealty",
+          "domain": "kcorealty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+          "name": "Company BR9V40HP",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWRDQ0WJ6RA7Z51N1FH3Y",
+          "name": "Theclosingagent",
+          "domain": "theclosingagent.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWRM10MX2XMZWKTQQA160",
+          "name": "Company BR9V40HP",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWRT7JZYZY9VFK3ESAX4X",
+          "name": "Company BR9V40HP",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWS15PA99MBKG6SMJTMBW",
+          "name": "Taylormorrison",
+          "domain": "taylormorrison.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWS8MQR7WDE5JM7DJ2MFB",
+          "name": "Suncoastone",
+          "domain": "suncoastone.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWSG4B06AHGATQW6H9PWD",
+          "name": "Southerncapitaltitle",
+          "domain": "southerncapitaltitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWSWKNXYWRBCCJGQC8QTA",
+          "name": "Scrutinyproperty",
+          "domain": "scrutinyproperty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWT41JQH59SBHCJFN7PXB",
+          "name": "Setcoservices",
+          "domain": "setcoservices.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWTB0TNVE9WG97AE1MPAZ",
+          "name": "Bocaratonrealestatefamily",
+          "domain": "bocaratonrealestatefamily.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWV1P0TKVGYTJ6T70VRG6",
+          "name": "Premiumproperties",
+          "domain": "premiumproperties.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWV8WM8Y0J0NXBDGDY4PJ",
+          "name": "Professionaltitle",
+          "domain": "professionaltitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWVZD03S4D9229YY67A3J",
+          "name": "Premiertitlepartners",
+          "domain": "premiertitlepartners.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWW6XWWCNEZQE64TV09KC",
+          "name": "Ptanow",
+          "domain": "ptanow.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWXKHPYV417MVDPRY4SKS",
+          "name": "Parksquarehomes",
+          "domain": "parksquarehomes.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWY3W4S6HT8KSWBGQYBEA",
+          "name": "Fntarizona",
+          "domain": "fntarizona.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWZ7M1V037CKWHK6FRA4Z",
+          "name": "Navititle",
+          "domain": "navititle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWZG7EKHW1JZ4J5AENHDR",
+          "name": "Magnoliatitleteam",
+          "domain": "magnoliatitleteam.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERWZSA6GPJ5T44T7AWNKVS",
+          "name": "Lutztitleandescrow",
+          "domain": "lutztitleandescrow.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX025DAD7J0B6BKSME6HZ",
+          "name": "Lennartitle",
+          "domain": "lennartitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX0ATFVFFV5WQKEXW7TJB",
+          "name": "Insured Title",
+          "domain": "insured-title.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX0NBW70NBQ8S1XSTVNVW",
+          "name": "Titlerate",
+          "domain": "titlerate.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX0Y6H79Q9AN25J26WTZE",
+          "name": "Homeprotitle",
+          "domain": "homeprotitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX16ZCQJ2EW8SZ1PESFRF",
+          "name": "Azgat",
+          "domain": "azgat.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX1FK3WA7BSTBPEFP4FCA",
+          "name": "Goldendogtitle",
+          "domain": "goldendogtitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX1ZFHM987XQARFRAK2T0",
+          "name": "Genstonerealty",
+          "domain": "genstonerealty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX2JJ8B7K2F43C3WY0AXP",
+          "name": "Yourfloridatitle",
+          "domain": "yourfloridatitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX2W13AR3F7NDEZKXADP9",
+          "name": "Firstintitle",
+          "domain": "firstintitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX3ENBBKFDPA22YCPMDG1",
+          "name": "Firstaztitle",
+          "domain": "firstaztitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX3YCPR1NZ6KD6WEGX752",
+          "name": "Fntic",
+          "domain": "fntic.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX47MVQYGTX8JGFQS1FCG",
+          "name": "Expresstitleservicesllc",
+          "domain": "expresstitleservicesllc.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX4GHK3A5WD7ZV7RVNVY4",
+          "name": "Ects",
+          "domain": "ects.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX4S77TW2K1ZAHHHW22FS",
+          "name": "Dennisrealty",
+          "domain": "dennisrealty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX594KQ5SRSE3D6ZFQ6X1",
+          "name": "Comfortableclosings",
+          "domain": "comfortableclosings.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX5JVWF1D7TRVYPMVFRN3",
+          "name": "Cbfloridahomes",
+          "domain": "cbfloridahomes.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX5VJCA2E2QSFZTX60GB8",
+          "name": "Ctctitle",
+          "domain": "ctctitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX64ARXXTRTW698BPJT0H",
+          "name": "Cetitle",
+          "domain": "cetitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX6D8Y7JM8GR0VF5858M1",
+          "name": "Cleartitleaz",
+          "domain": "cleartitleaz.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX6NWBNYXA3062Z21SAMS",
+          "name": "Chicagotitlearizona",
+          "domain": "chicagotitlearizona.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX7C6R822THX7C85XJ2F1",
+          "name": "Canyontitle",
+          "domain": "canyontitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX7N9S1V7HZRM6QB1T2KZ",
+          "name": "Joinbrokernation",
+          "domain": "joinbrokernation.net",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX84Z4P4N76SJVH7KE1KW",
+          "name": "Bosshardtrealty",
+          "domain": "bosshardtrealty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX8WMPRNNKMWXZ7RA5XGM",
+          "name": "Bhhsfloridarealty",
+          "domain": "bhhsfloridarealty.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX9BVSCGD4SZFDW528F5X",
+          "name": "Thefund",
+          "domain": "thefund.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERX9MNRMDG9ABYPQ6MBDNC",
+          "name": "Armourtitlecompany",
+          "domain": "armourtitlecompany.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXAH7SKMBH437HZ70XM7Q",
+          "name": "Theclosingsigningservice",
+          "domain": "theclosingsigningservice.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXB0KBSCS9A2A41RVNQSH",
+          "name": "Teematitle",
+          "domain": "teematitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXB9E1TQ5MGBG4VKHKQ00",
+          "name": "Skytitle",
+          "domain": "skytitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXBJ3P76JSBWBQGXKQ10D",
+          "name": "Signatureflorida",
+          "domain": "signatureflorida.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXBRB5D3Y02G173KYDW72",
+          "name": "Company 4GGCS8VA",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXC1AR5JPKF3S7K1NJNZE",
+          "name": "Realres",
+          "domain": "realres.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXCA1MP17ZG11X184JTH3",
+          "name": "Alliancegroupfl",
+          "domain": "alliancegroupfl.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXDD9BPMMERH4K0R1V94T",
+          "name": "Homepartnerstitle",
+          "domain": "homepartnerstitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXEXQX10TC6EDC1BRE3JS",
+          "name": "Driggstitle",
+          "domain": "driggstitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXFDFQGBHR1BEWM0NZ8R8",
+          "name": "Worldconnectionc21",
+          "domain": "worldconnectionc21.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXFWWW3JTBCCTBY6RYZYG",
+          "name": "Atlastitlesvc",
+          "domain": "atlastitlesvc.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXG32ECJM7KB8ZBPJMBVA",
+          "name": "Company YAHSPQN5",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXG994RMD7DE8T6EJVWAN",
+          "name": "Company H9T0B6H8",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXGFK5030ZEYM5T85X0TV",
+          "name": "Company NBWY5DHK",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXGNS16HNH9QV7CKNA12P",
+          "name": "Company JQMQ91P9",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXGY9Y3RZX4PBJ7QY0KE7",
+          "name": "Com",
+          "domain": "com.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXHDXE4J28801SR44X45K",
+          "name": "Newdawntitlegroup",
+          "domain": "newdawntitlegroup.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXHS3A3NWDV532EMSM02T",
+          "name": "Firstintegritytitle",
+          "domain": "firstintegritytitle.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXJK7NHVYND3MAX2X8NG4",
+          "name": "Company YAHSPQN5",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXK2KNV4GYCKDCBPYKQKW",
+          "name": "Titleandabstract",
+          "domain": "titleandabstract.com",
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
+        {
+          "id": "01K7ERXKFCRSS6J5B8W1NPCF15",
+          "name": "Company JQMQ91P9",
+          "domain": null,
+          "industry": "Title Insurance",
+          "status": "ACTIVE"
+        },
         {
           "id": "01K7DV7BN4MNAG04MYNNAQ5B0F",
           "name": "Research",
@@ -25859,9 +26682,9 @@
         "total": 394,
         "hasEnrichedData": 387,
         "hasCoresignalData": 387,
-        "hasBuyerGroupRole": 7,
+        "hasBuyerGroupRole": 393,
         "hasDecisionPower": 394,
-        "hasInfluenceLevel": 0,
+        "hasInfluenceLevel": 393,
         "hasEngagementLevel": 0,
         "hasCommunicationStyle": 0,
         "hasEngagementStrategy": 0,
@@ -25877,9 +26700,9 @@
       "completenessScores": {
         "hasEnrichedData": 98.2,
         "hasCoresignalData": 98.2,
-        "hasBuyerGroupRole": 1.8,
+        "hasBuyerGroupRole": 99.7,
         "hasDecisionPower": 100,
-        "hasInfluenceLevel": 0,
+        "hasInfluenceLevel": 99.7,
         "hasEngagementLevel": 0,
         "hasCommunicationStyle": 0,
         "hasEngagementStrategy": 0,
@@ -25894,45 +26717,248 @@
       },
       "peopleWithMissingData": [
         {
-          "id": "01K7DNYT6YV55FNNJJB1RNBFYR",
-          "fullName": "melanie greene",
-          "jobTitle": "Business Relations Agent",
-          "email": "mgreene@gorequire.com",
+          "id": "01K7DNZAM1J1C0Q4YBVJAY6ETQ",
+          "fullName": "Somers Title",
+          "jobTitle": "Title Insurance",
+          "email": "stitle@somerstitle.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYTDG7VJJYKQTARH3D5ZE",
-          "fullName": "Andy Edwards",
-          "jobTitle": "Owner",
-          "email": "aedwards@gorequire.com",
+          "id": "01K7DNZHFKC0MCVN803DGQTXJ3",
+          "fullName": "Patrick Emrich",
+          "jobTitle": "CEO President",
+          "email": "patrick@realres.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYTSTPHE7XMKA23R0BYJV",
-          "fullName": "Helene Brown",
-          "jobTitle": "Senior Title Curative Specialis",
-          "email": "hbrown@gorequire.com",
+          "id": "01K7DP06ANZ0DSH8RPDK58MNJX",
+          "fullName": "Janet R. Moe",
+          "jobTitle": "Unit Manager",
+          "email": "jmoe@azgat.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYV5P0T1QDT7455Y4V791",
-          "fullName": "Michael Gerrity",
-          "jobTitle": "Founder, CEO Chairman",
-          "email": "michaelgerrity@worldpropertyventures.com",
+          "id": "01K7DP0DZ0J6B2ZY31E29EJ2XN",
+          "fullName": "Marcela Navarro",
+          "jobTitle": "Escrow Officer",
+          "email": "mnavarro@fntarizona.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYVBT1HSJMXY41S7CJYBN",
-          "fullName": "Monsef Rachid",
-          "jobTitle": "Cofounder And CTO",
-          "email": "monsef@worldpropertyventures.com",
+          "id": "01K7DP0YXFNTSXJP8HT9X0WV2D",
+          "fullName": "Melissa Scaletta",
+          "jobTitle": "SVP, Deputy General Counsel And Chief Legal Operations Officer",
+          "email": "mscaletta@thefund.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYVHMCMKQHNTTQ0DA09A9",
-          "fullName": ". Gonzalez Isabel",
-          "jobTitle": "Broker Associate Sales Manager",
-          "email": "gisabel@nustarrealty.net",
+          "id": "01K7DNZQTS71TWXFHYHBQ9W7Y1",
+          "fullName": "She'rri McClellan-Doyle",
+          "jobTitle": "Realtor Property Manager Real Estate Investor",
+          "email": "smcclellan-doyle@premiumproperties.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZSABTEK96S8KV17MREG2",
+          "fullName": "Skyanne Dinnigan",
+          "jobTitle": "Escrow Administrator",
+          "email": "skyanne.dinnigan@pioneertitleagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0AS8ES4J5T1X5C63303D",
+          "fullName": "albert gonzalez",
+          "jobTitle": "Chief Executive Officer",
+          "email": "agonzalez@firstprioritytitleco.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP01T01JKG4ED6KGEKCX94",
+          "fullName": "Susan Knecht",
+          "jobTitle": "Senior Real Estate Specialist",
+          "email": "susan.knecht@simplihom.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZT7V47KZ1J8GM37R7896",
+          "fullName": "H. Brooks Norton",
+          "jobTitle": "Director Of Land Acquisition",
+          "email": "h.norton@parksquarehomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP025SEK0MBD6D7AN2MMDV",
+          "fullName": "Mohammed Younus",
+          "jobTitle": "Director Of Sales And Operations",
+          "email": "mohammed.younus@linktitleandclosing.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYYGKBX36JSPZAZC9W4EW",
+          "fullName": "Milissa Thomas Kidwell",
+          "jobTitle": "Business Development Specialist",
+          "email": "mkidwell@tridenttitlellc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP10ZPBQARVE5BWEV9R116",
+          "fullName": "Bill Cope",
+          "jobTitle": "CFO Controller",
+          "email": "bill.cope@americantitleserviceagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZCEVYK3ZM73Q8T3MT5CD",
+          "fullName": "Chuck Haney",
+          "jobTitle": "President And CEO",
+          "email": "ch@com.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ6GBN52SDY1NCH2BSX4C",
+          "fullName": "Asya LeBeau",
+          "jobTitle": "Community Sales Manager Certified Sales Coach 2021 2023",
+          "email": "alebeau@taylormorrison.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ86MNZR557VNE3MA2BWN",
+          "fullName": "Paula LeBere",
+          "jobTitle": "Escrow Assistant",
+          "email": "paula@suncoastone.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZKGJWSAZKSJ55F7TRNJV",
+          "fullName": "Bryan K. McCoy",
+          "jobTitle": "Vice President Of Commercial",
+          "email": "bmccoy@alliancegroupfl.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0M0GGGH2CEM6TV14AF7M",
+          "fullName": "Michelle Humphrey",
+          "jobTitle": "Property Manager",
+          "email": "michelle@dennisrealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0ZVEZR0Q28BHH61YZWM0",
+          "fullName": "Rebecca Raras",
+          "jobTitle": "Account Executive",
+          "email": "rebecca@armourtitlecompany.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP06W7A87EQANTTFCFRBQH",
+          "fullName": "Sherry Long",
+          "jobTitle": "Managing Member Hilliard, Ohio",
+          "email": "slong@azgat.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ99VTZF2HJCQTCPDZWN4",
+          "fullName": "Sun National Title Company",
+          "jobTitle": "Title Company",
+          "email": "scompany@closewithsun.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZNE94Z07RFR6BKWV2SQ3",
+          "fullName": "Amber Loftin",
+          "jobTitle": "Closing Officer",
+          "email": "amber.loftin@professionaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0EWHXY0NEF796C2ZVA8B",
+          "fullName": "Tina Jent-Fodor",
+          "jobTitle": "Assistant Vice President",
+          "email": "tina.jent-fodor@fntic.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0EPMFTMH0J5KA09ERG5H",
+          "fullName": "J P Ryan",
+          "jobTitle": "VP Business Development",
+          "email": "j.ry@fntic.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZA1WRGGX6VVY77SKJJGC",
+          "fullName": "Katrina McKinney",
+          "jobTitle": "Co-Owner",
+          "email": "katrina@southerncapitaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZX0CE1CZXDBC5BA631C5",
+          "fullName": "Peter Meyaart",
+          "jobTitle": "Director Of Engagement",
+          "email": "peter@newpathtitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP03FAR0WZAMGHV86YPXH8",
+          "fullName": "Matt Fendell",
+          "jobTitle": "Title Manger",
+          "email": "mfendell@insured-title.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP051DBXHAN4S34TDVPPRS",
+          "fullName": "Josh Smith",
+          "jobTitle": "Title Currative",
+          "email": "josh@homeprotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZFZNTGCY88DQEH36STKR",
+          "fullName": "Serena Orgin",
+          "jobTitle": "Title Agent",
+          "email": "serena@richr.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0V24NS19RE3GV1CGSKBR",
+          "fullName": "Brooklyn Bello",
+          "jobTitle": "Senior Escrow Officer",
+          "email": "brooklyn.bello@cadencetitleservices.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0FMAJDS60XQYJDCYC2ZZ",
+          "fullName": "Susana Grant",
+          "jobTitle": "Relationship Manager",
+          "email": "sgrant@foliotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZE4C1SMCKECCE52C7Q6Q",
+          "fullName": "Mary Riddle",
+          "jobTitle": "Escrow Officer",
+          "email": "mriddle@setcoservices.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZD6JDR3YK65B3AQBJ0DZ",
+          "fullName": "Denise Lazzaruolo",
+          "jobTitle": "Office Manager Licensed Realtor Notary",
+          "email": "denise@signatureflorida.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZYFD3MTC8FFZATXDCE56",
+          "fullName": "Simon Bacon",
+          "jobTitle": "Executive Director",
+          "email": "simonbacon@michaelsaunders.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZDYF4604PJ9BN2E2CXHF",
+          "fullName": "Mehzabin Hasan",
+          "jobTitle": "Managing Director",
+          "email": "mehzabinhasan@scrutinyproperty.com",
           "status": "LEAD"
         },
         {
@@ -25943,17 +26969,374 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYW3J5PA1053XVA1Z9NCC",
-          "fullName": "Alex Atashi",
-          "jobTitle": "Sr. Sales Executive At Anow",
-          "email": "al@voxtur.com",
+          "id": "01K7DNYVXA2E0PV164QVVP4TD3",
+          "fullName": "Lloyd San",
+          "jobTitle": "Senior Vice President, Enterprise Business Development",
+          "email": "lloyd.san@voxtur.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYW9ER6R59DHCPFRVJ7YP",
-          "fullName": "Melissa Milliron",
-          "jobTitle": "Business Analyst",
-          "email": "mmilliron@vizionx.com",
+          "id": "01K7DP0AZ57X85Z6WM98FV60MF",
+          "fullName": "Sara Luff",
+          "jobTitle": "Sales Manager",
+          "email": "sara.luff@firstintitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0BJDGJGMNV3D6JEJJB0W",
+          "fullName": "Leeanne Dempsey Sterling",
+          "jobTitle": "Account Manager, Licensed Title Agent",
+          "email": "leeanne.sterling@firstintitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYYWP6SZHZVZZTYZS7DSA",
+          "fullName": "David Ward",
+          "jobTitle": "Real Estate Title Insurance - Northern PB County, FL",
+          "email": "david.ward@tridenttitlellc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0A7FHRQ5JBZ41Q8H9M4H",
+          "fullName": "Christopher LaChance",
+          "jobTitle": "Sales Manager",
+          "email": "christopher@flagency.net",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZVQ4W7DSEX2NHRD8PQ8V",
+          "fullName": "Tracy N.",
+          "jobTitle": "Escrow Assistant",
+          "email": "tracyn@onerealtitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP093E433M50CPN7SZAPH9",
+          "fullName": "Eric Egeland",
+          "jobTitle": "Managing Broker",
+          "email": "eric.egeland@genstonerealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0WX16TVMZD6313EPX2DF",
+          "fullName": "Gene Anne McKay",
+          "jobTitle": "Retired President",
+          "email": "genemckay@bosshardtrealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZKAQDYDW3KEXANHVC5KM",
+          "fullName": "Roger Piro",
+          "jobTitle": "Managing Broker",
+          "email": "rpiro@alliancegroupfl.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP11BETJHTX4X3DARG5W71",
+          "fullName": "Helena Sutherland",
+          "jobTitle": "Account Manager",
+          "email": "helena.sutherland@americantitleserviceagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP02HJ26ZXJP7VAG7QQEAT",
+          "fullName": "Mike DiOrio",
+          "jobTitle": "Compliance Consultant",
+          "email": "m.diorio@ltae.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZRJCYE8EJ1F0CKAKDXFV",
+          "fullName": "Lori Anderson",
+          "jobTitle": "Sales Executive",
+          "email": "landerson@ptanow.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYVHMCMKQHNTTQ0DA09A9",
+          "fullName": ". Gonzalez Isabel",
+          "jobTitle": "Broker Associate Sales Manager",
+          "email": "gisabel@nustarrealty.net",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0RF74492JQZK8T0MBZXP",
+          "fullName": "Tina Erwin",
+          "jobTitle": "Escrow Officer",
+          "email": "terwin@cleartitleaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZM82PJFMJ03C68AST3BH",
+          "fullName": "Britaney Dziedzic",
+          "jobTitle": "Senior Property Analyst",
+          "email": "b.dziedzic@proplogix.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZTSBKPV42W0WBQCKET5D",
+          "fullName": "Karla-Mae E Sprau",
+          "jobTitle": "Director Of Contracts Closings",
+          "email": "karla-mae.sprau@parksquarehomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ4HJF5QVJXZRC36VGEPA",
+          "fullName": "Nina The Closing Team",
+          "jobTitle": "Title Admin",
+          "email": "ninatheclosingteam@closingteamfl.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0DD8BVGP9RZT8F6JB733",
+          "fullName": "Holly Stidham Wilson",
+          "jobTitle": "Business Developement Manager",
+          "email": "holly@firstaztitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ1GANBGAM6KRT98QF52F",
+          "fullName": "Suzy Levenda",
+          "jobTitle": "Business Development",
+          "email": "slevenda@titlesvs.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZSW2P3C2XFYB6MZW9R6W",
+          "fullName": "Trung Nguyen",
+          "jobTitle": "Title Officer",
+          "email": "trung.nguyen@pioneertitleagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0K2MY54WTXREGMRZ23P6",
+          "fullName": "Leticia Gracia",
+          "jobTitle": "Escrow Officer",
+          "email": "leticia.gracia@driggstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP06PCHT65E1M8EN28PMWR",
+          "fullName": "Bruce Beverly",
+          "jobTitle": "Chief Executive Officer",
+          "email": "bbeverly@azgat.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP004F57GQEX0EDJC5G5FW",
+          "fullName": "Markie Paquin",
+          "jobTitle": "Assistant Business Development Manager",
+          "email": "mpaquin@magnustitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0JWVR9GWR2Y2M4JS643N",
+          "fullName": "Ashley Bowen",
+          "jobTitle": "Director Of Operations",
+          "email": "ashley@ects.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP11T1KAHX80EPAEZMVF6E",
+          "fullName": "Scott Scholtz",
+          "jobTitle": "Director Of Client Experience",
+          "email": "scott@acceleratedamc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYXRQ3PCDKFEH8MYFKZ8C",
+          "fullName": "Carol L.",
+          "jobTitle": "Escrow Closer",
+          "email": "carol@trustprotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZF7VX8DSZW233XREW4JP",
+          "fullName": "Jarod Wiczen",
+          "jobTitle": "Licensed ISA Team Manager",
+          "email": "jarod.wiczen@robertslack.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYTDG7VJJYKQTARH3D5ZE",
+          "fullName": "Andy Edwards",
+          "jobTitle": "Owner",
+          "email": "aedwards@gorequire.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZKWBGBK9HCG0QCJT8AXK",
+          "fullName": "Javante Vasquez",
+          "jobTitle": "Sr. Luxury Crypto Real Estate Sales Executive",
+          "email": "j.vasquez@propy.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZQ37B4V4H7HDENM63ZEY",
+          "fullName": "Sabrina Liguori",
+          "jobTitle": "LICENSED REALTOR, PROPERTY MANAGER",
+          "email": "sabrina@premiumproperties.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZXXWPY4Q3W69TN9E2584",
+          "fullName": "Kimberly Leal",
+          "jobTitle": "Executive Assistant",
+          "email": "kleal@navititle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0RV3ZRSN5PZ4Y6WMKPN8",
+          "fullName": "Scott Pearson",
+          "jobTitle": "Vice President Of Commercial Division",
+          "email": "spearson@cleartitleaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZHNJ4ADZN2NG4JNF28Y7",
+          "fullName": "Zack Goldberg",
+          "jobTitle": "Business Relationship Manager",
+          "email": "goldbergz@realres.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZKPEHM0S0E4PT51FGPY8",
+          "fullName": "Shadd Boucher",
+          "jobTitle": "Managing Broker",
+          "email": "sboucher@alliancegroupfl.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYTKBJ2KG7SH8AHNFS7GK",
+          "fullName": "Josefina Zuniga-Velazquez",
+          "jobTitle": "Sr. Title Curative Specialist",
+          "email": "josefina@gorequire.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZH96FBWM280326SK4T3W",
+          "fullName": "Ray W.",
+          "jobTitle": "Director Of Information Technology",
+          "email": "wr@realres.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ8Y1ARCXR4TS6F1RWTXT",
+          "fullName": "Simone clacher",
+          "jobTitle": "Title Agent",
+          "email": "simone@closewithsun.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZC8ZG88691N8AV1K8VA7",
+          "fullName": "Lori Sullivan",
+          "jobTitle": "Associate Director Of Client Services",
+          "email": "lori@com.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZBBGVJXF3KB2KEF616VN",
+          "fullName": "Jack Taylor",
+          "jobTitle": "Manager",
+          "email": "jtaylor@skytitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZCMVNCKW8B185EQCZYK7",
+          "fullName": "Stephanie Crosthwait Bradshaw",
+          "jobTitle": "Vice President",
+          "email": "stephaniebradshaw@com.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZGBJMRSW26R8A5XMHQ0E",
+          "fullName": "Jeffrey B. Miller",
+          "jobTitle": "ACCOUNT EXECUTIVE",
+          "email": "jeffreymiller@realtyexecutives.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ2WA0ZVH5Y23DY7HXA9W",
+          "fullName": "Jamayal Douglas",
+          "jobTitle": "Post Closing Title Supervisor",
+          "email": "jamayal@titleandabstract.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZK4YQD89XHVVSHS2SFS2",
+          "fullName": "Christian Bennett",
+          "jobTitle": "Real Estate Broker- OWNER",
+          "email": "christian.bennett@remaxchampionsfl.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP017ZDX3FZB2ARA876P7J",
+          "fullName": "Carrie Damera",
+          "jobTitle": "Closing Manager",
+          "email": "carrie.damera@lutztitleandescrow.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP064T2DWRWJM8FJT4FE44",
+          "fullName": "Camille Lang",
+          "jobTitle": "Executive Account Manager Title Representative",
+          "email": "clang@homepartnerstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0PDJ0XRDKQAR7T8J1C34",
+          "fullName": "Ann Loewe",
+          "jobTitle": "Property Manager",
+          "email": "ann.loewe@cbfloridahomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0PM9VCZ1SZ686BM2CJY5",
+          "fullName": "Raymond Matot",
+          "jobTitle": "Vice President",
+          "email": "raymond.matot@cbfloridahomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZJD7HVQZWNQ9ENAVR1VS",
+          "fullName": "Kristin Huber",
+          "jobTitle": "Marketing Manager Buyer Manager",
+          "email": "hkristin@remax.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0GS3BE2R1EABXKTRBEKK",
+          "fullName": "Carl Fiore",
+          "jobTitle": "Compliance Director",
+          "email": "carl@equitabletitlegroup.net",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP00G7TMN1SA03B73HRHZV",
+          "fullName": "Romy Watts",
+          "jobTitle": "Asst Vice President Of Business Development",
+          "email": "romy.watts@magnustitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0S0Z2DPPQJJZJX4J2627",
+          "fullName": "Mack McDaniel",
+          "jobTitle": "AVP Of Client Relations At Clear Title Agency",
+          "email": "mmcdaniel@cleartitleaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0R9CPPSFDDRAV104FPW9",
+          "fullName": "Charles Nichols",
+          "jobTitle": "Escrow Officer",
+          "email": "cnichols@cleartitleaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYWV05FD237CGPW5XXGT9",
+          "fullName": "Patricia Telford",
+          "jobTitle": "Manager Of Developer Services",
+          "email": "ptelford@votainc.com",
           "status": "LEAD"
         },
         {
@@ -25964,59 +27347,269 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYWN4PK94Q888S853QG4R",
-          "fullName": "Meredith Lisk",
-          "jobTitle": "Vice President",
-          "email": "mlisk@votainc.com",
+          "id": "01K7DNZ0QQKKT3BYCZ83ACW89F",
+          "fullName": "Joyce Brickous",
+          "jobTitle": "Senior Closer",
+          "email": "joyce@titlexperts.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYX0W6H5XSNMK9DE7X25H",
-          "fullName": "Thomas Kozyra",
+          "id": "01K7DNZ326WJX3SH5HM3VZ8QTA",
+          "fullName": "Patricia Lawrimore",
+          "jobTitle": "Processing Manager",
+          "email": "patricia@tieronetitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ53HJ52FRKZ1P5BBJPFB",
+          "fullName": "Sandy Radzak",
+          "jobTitle": "Escrow Assistant",
+          "email": "sandy@theclosingagent.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ5NX4KFQBC9H1FCV8NCZ",
+          "fullName": "David James Hollamby",
+          "jobTitle": "Vice President - Business Development Marketing",
+          "email": "dhollamby@theclosingagent.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ67PX1AAWG1HXNDM0HFM",
+          "fullName": "Erin Draves",
+          "jobTitle": "Office Manager TM Ambassador",
+          "email": "edraves@taylormorrison.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZQ94W6RE09ZWE520F0MT",
+          "fullName": "Michelle Elkins",
+          "jobTitle": "Property Manager",
+          "email": "michelle.elkins@premiumproperties.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZQMWYZTDRJ6WYC94ZAYB",
+          "fullName": "John Sturno",
+          "jobTitle": "Property Manager",
+          "email": "johnsturno@premiumproperties.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZNZZSS31945JTPRX6248",
+          "fullName": "Weinberg Cindy",
+          "jobTitle": "Sales Executive",
+          "email": "weinberg@professionaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP03V2DZT08KKNH7DBDV3E",
+          "fullName": "Cindy Giardinelli",
+          "jobTitle": "Escrow Assistant",
+          "email": "cindy@insured-title.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP09VKQ39B99B92G0YJ0Q9",
+          "fullName": "Faith Castro",
+          "jobTitle": "Title Processor",
+          "email": "faith.castro@yourfloridatitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0P7JDNQBZJ5CH7AWG2ZG",
+          "fullName": "Cindy Struthers",
+          "jobTitle": "Property Manager Annual Rentals",
+          "email": "cindy.struthers@cbfloridahomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0QQDBE36VTH8DNRHE9J6",
+          "fullName": "Jane Barr",
+          "jobTitle": "Title Examiner",
+          "email": "jbarr@cetitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0Y02PCXB7BTHBFHQWA8T",
+          "fullName": "Lauren Tirado",
+          "jobTitle": "Marketing Director REALTOR Ani Alexander Group",
+          "email": "laurentirado@bhhsfloridarealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP10JXN4W5KPNG4C4GAXBK",
+          "fullName": "Tali Raphaely",
           "jobTitle": "President",
-          "email": "tkozyra@votainc.com",
+          "email": "tali.raphaely@armourtitlecompany.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYX6RF56VA3YRAPHB21NM",
-          "fullName": "Sharon Bartlett",
-          "jobTitle": "Executive Director Of Operations",
-          "email": "sharon.bartlett@usreop.com",
+          "id": "01K7DNZB5KPAATHGXASW4Q7T72",
+          "fullName": "Rob Stewart",
+          "jobTitle": "Chief Executive Officer",
+          "email": "rstewart@skytitle.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYXJK1T5X6PQEFS4700SC",
-          "fullName": "Jessica Lynn Pioli",
-          "jobTitle": "Title Agent",
-          "email": "jessica@trustprotitle.com",
+          "id": "01K7DNZD0Q29KAGXTAXVGYQ0YW",
+          "fullName": "Heidi Willson",
+          "jobTitle": "Executive Assistant",
+          "email": "heidi@signatureflorida.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYY4S0VXK3VSX3HA4GPSB",
-          "fullName": "Shawna Ernst",
-          "jobTitle": "Branch Manager",
-          "email": "sernst@tridenttitlellc.com",
+          "id": "01K7DP0K8FS3DSMTMW8DYDS4Q8",
+          "fullName": "Justin Gries",
+          "jobTitle": "Chief Financial Officer",
+          "email": "justing@driggstitle.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYZE7CYYVCJ807WG1E1A2",
-          "fullName": "Ryan Thompson",
-          "jobTitle": "Marketing Director",
-          "email": "ryan.thompson@mytotaltitle.com",
+          "id": "01K7DP10D3259ERBGCFV20QR3J",
+          "fullName": "Nicole Rappaport",
+          "jobTitle": "Owner - Title Agent",
+          "email": "nicole.rappaport@atlastitlesvc.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYYPMQTVPAKP3E5K9SWHQ",
-          "fullName": "Gabrielle Bryce",
-          "jobTitle": "Business Development Representative",
-          "email": "gabrielle.bryce@tridenttitlellc.com",
+          "id": "01K7DNYSX5FRZY1HA85JZ86T0X",
+          "fullName": "Tiffany Zimmerman",
+          "jobTitle": "Title Curative Specialist",
+          "email": "tzimmerman@gorequire.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYZ2GTZP9AN4NXBEQ5C1M",
-          "fullName": "Tina Townsend",
-          "jobTitle": "Title Agent",
-          "email": "tina.townsend@mytotaltitle.com",
+          "id": "01K7DNZA7R9NQTY8QAGF4ET981",
+          "fullName": "Lee Bozenhard",
+          "jobTitle": "Escrow Assistant",
+          "email": "lbozenhard@somerstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZASWGCW1BT0YV17VR4TG",
+          "fullName": "Melissa Hunt",
+          "jobTitle": "Escrow Assistant",
+          "email": "melissa@somerstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ93ZVG2C3H3NFTBQ6R79",
+          "fullName": "Shannon Egan",
+          "jobTitle": "Founder",
+          "email": "shannon@closewithsun.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZF1YXX4VNQKVSRJ91EZ0",
+          "fullName": "Ryan C. Raymond",
+          "jobTitle": "Team Lead Manager",
+          "email": "ryan@robertslack.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZN8A1B4PN5JNK90N0PRR",
+          "fullName": "Judi Carter",
+          "jobTitle": "Escrow Officer",
+          "email": "judi@professionaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ007727PMNZ7VR05VSEN",
+          "fullName": "Pam Cramer",
+          "jobTitle": "Commercial Title Examiner",
+          "email": "pam@titlewaveres.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZRC80EF5TBD78QV86AVC",
+          "fullName": "MARCELINO ARCA",
+          "jobTitle": "Title Examiner",
+          "email": "marcelino.arca@premiertitle.net",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0SJPC9Z1QBTE1HZTSQZ9",
+          "fullName": "Eric Wolfe",
+          "jobTitle": "VP, Commercial Sales Manager",
+          "email": "e.wolfe@chicagotitlearizona.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0WBM23N5ZCX5183KK8DE",
+          "fullName": "John Hammer",
+          "jobTitle": "Regional Manager",
+          "email": "jhammer@brightlinetitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYV5P0T1QDT7455Y4V791",
+          "fullName": "Michael Gerrity",
+          "jobTitle": "Founder, CEO Chairman",
+          "email": "michaelgerrity@worldpropertyventures.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZZ6WMQN005KZARSTW5KN",
+          "fullName": "Jamie DeBella",
+          "jobTitle": "Title Processor",
+          "email": "jamie.debella@floridamta.org",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZZCTCJB0GT7WAS7MH9WY",
+          "fullName": "Nydia Villafane",
+          "jobTitle": "Licence Title Agent Notary",
+          "email": "nydia.villafane@floridamta.org",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZWMKPK9EHAXMGDZA499B",
+          "fullName": "Taujhae Oladejo",
+          "jobTitle": "Manager",
+          "email": "taujhae.oladejo@newpathtitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP039FSG9NQHVCDA3SM6W8",
+          "fullName": "Leslie Steinlage",
+          "jobTitle": "Escrow Closer",
+          "email": "lsteinlage@insured-title.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP04NH1SRCZBAB4EPWGGE8",
+          "fullName": "Julie Merida",
+          "jobTitle": "Project Manager",
+          "email": "juliemerida@homeprotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0G7FZFW9GX857ZXNE9K2",
+          "fullName": "Darla H.",
+          "jobTitle": "Senior Sales Support",
+          "email": "darla.h@escrowtab.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ24Y1M4AH2B6YWQK3WAR",
+          "fullName": "Mary Warren",
+          "jobTitle": "Executive Assistant",
+          "email": "mary@titleandabstract.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ2AS30AGKSXJSSP7MZRE",
+          "fullName": "Stephanie Grosso",
+          "jobTitle": "Closing Manager",
+          "email": "stephanie@titleandabstract.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0Z9J08TFZE585DK1ACMZ",
+          "fullName": "Laura Leon",
+          "jobTitle": "Sr. Escrow Assistant",
+          "email": "lauraleon@atlastitlesvc.com",
           "status": "LEAD"
         },
         {
@@ -26027,10 +27620,423 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYZT927N93A4CQJVQ62DA",
-          "fullName": "Paul Friedlander",
-          "jobTitle": "Account Manager",
-          "email": "paul.friedlander@mytotaltitle.com",
+          "id": "01K7DP0FVJSMZFG415STFZJ6DM",
+          "fullName": "Adrianne Vidangos",
+          "jobTitle": "Title Processor Closer",
+          "email": "adrianne.vidangos@foliotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP049NG0NBDA4D70K95E5T",
+          "fullName": "Viviana Figueroa",
+          "jobTitle": "Title Processor",
+          "email": "viviana@titlerate.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYXCMV2Y75G6ZCJ34JM7V",
+          "fullName": "Christy Sexton",
+          "jobTitle": "Escrow Officer",
+          "email": "christy@turnertitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP08H91DAA4FA4YQ77XHTF",
+          "fullName": "Silvja Qirjako",
+          "jobTitle": "Title Solutions Specialist",
+          "email": "silvja.qirjako@goldendogtitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZENY3V1V126K9APKMV1W",
+          "fullName": "Denise Wood",
+          "jobTitle": "Escrow Officer",
+          "email": "denise.wood@setcoservices.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZEA6B3X8XFZ9WTZSY47Q",
+          "fullName": "Cynthia Kuhn",
+          "jobTitle": "Post Closing Manager",
+          "email": "ckuhn@setcoservices.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZDCQ7X642PF2R882891S",
+          "fullName": "Annette Calcamuggi",
+          "jobTitle": "Senior Administrator",
+          "email": "annette@signatureflorida.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP02QGK5FZ5BC9S0PHQ2T6",
+          "fullName": "Jose Ruben Arenas",
+          "jobTitle": "Title Examiner",
+          "email": "jose.arenas@lennartitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZBHBTXE9HT2SXHVP2K65",
+          "fullName": "Daniel Perets",
+          "jobTitle": "Onboarding Manager",
+          "email": "dperets@signaturerealestatecompanies.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZZ13YQDEFXN31017HXZW",
+          "fullName": "Allison Purcell",
+          "jobTitle": "Senior Copywriter Communications Specialist",
+          "email": "purcellallison@michaelsaunders.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ45WBR9881HEG60EFAZC",
+          "fullName": "Joan T Wilber",
+          "jobTitle": "Compliance Director",
+          "email": "joan@kcorealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ4BPTGNACMB893W2RADY",
+          "fullName": "Jonathon Geiger",
+          "jobTitle": "Team Leader Of Geiger Realty Group",
+          "email": "jonathongeiger@kcorealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZDJMDDHKYZQM2QAXVADW",
+          "fullName": "Samiul Islam",
+          "jobTitle": "Project Manager",
+          "email": "samiul.islam@scrutinyproperty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZHVKKCD6W75Y0Z09NM8S",
+          "fullName": "Harmoney Zsurka",
+          "jobTitle": "Director Of Finance And Operations",
+          "email": "harmoney@bocaratonrealestatefamily.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYW3J5PA1053XVA1Z9NCC",
+          "fullName": "Alex Atashi",
+          "jobTitle": "Sr. Sales Executive At Anow",
+          "email": "al@voxtur.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP07ZGC7TJM289QZEFBB5Y",
+          "fullName": "Stacia Walker",
+          "jobTitle": "Escrow Assistant",
+          "email": "stacia.walker@gcta.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP07SNE02N6SPM7Q6TG0KB",
+          "fullName": "LAURA VALENZUELA",
+          "jobTitle": "Senior Sales Executive Vice President",
+          "email": "laura.valenzuela@gcta.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP07E0M2QYEVJS8QQDDSA0",
+          "fullName": "Becky Bradford",
+          "jobTitle": "Escrow Officer",
+          "email": "bbradford@gcta.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0BRA3DE4N89JG9J3P0YW",
+          "fullName": "Kelly Newell",
+          "jobTitle": "Licensed Escrow Agent",
+          "email": "kelly.newell@firstintitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYY4S0VXK3VSX3HA4GPSB",
+          "fullName": "Shawna Ernst",
+          "jobTitle": "Branch Manager",
+          "email": "sernst@tridenttitlellc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0ADAVHPCJXSW4B1337CG",
+          "fullName": "Mike LaRosa",
+          "jobTitle": "COO",
+          "email": "mike.larosa@flagency.net",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZVX1YY13608G353GMRNK",
+          "fullName": "Carmelita Collins",
+          "jobTitle": "Escrow Officer",
+          "email": "carmelita@onerealtitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP1200MDFG5GQ8C68HKV5K",
+          "fullName": "AbstractorPro Software",
+          "jobTitle": "Chief Executive Officer",
+          "email": "abstractorprosoftware@abstractorpro.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ3KSBDSG7HP9F5N132P0",
+          "fullName": "Julio Robles",
+          "jobTitle": "Business Development Analyst",
+          "email": "julio@therealtyagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZR0M8EMD7VZ9XMGD07JT",
+          "fullName": "Ashley Cooler",
+          "jobTitle": "Escrow Assistant",
+          "email": "ashley@premiertitlepartners.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP09FDWRQS368WPGQTAGHT",
+          "fullName": "Alfred Younan",
+          "jobTitle": "Managing Broker",
+          "email": "alfred@genstonerealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZTZ6XJA56HQE5AM5EQFA",
+          "fullName": "Arogya Chethan",
+          "jobTitle": "Process Associate",
+          "email": "arogya.chethan@orchestrate.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZVGWRYYKQ112Y5ZTP3ER",
+          "fullName": "Aishwarya Ramesh",
+          "jobTitle": "Senior Process Associate",
+          "email": "aishwarya.ramesh@orchestrate.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZV57PY360N5JK9YAVJC2",
+          "fullName": "karamath ullah khan khan",
+          "jobTitle": "Process Associate",
+          "email": "karamath.khan@orchestrate.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZRYJW3CHBBM982SA2RK5",
+          "fullName": "Jerry Calley",
+          "jobTitle": "President Premier Title Agency",
+          "email": "jcalley@ptanow.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP05S3YWZPESXMDHX4FGBX",
+          "fullName": "Jamie Keeton",
+          "jobTitle": "Regional Operations Manager",
+          "email": "jkeeton@homepartnerstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0NVXQXQEKMGTYAME4MQ9",
+          "fullName": "Julie Sanders",
+          "jobTitle": "Seasonal Property Manager",
+          "email": "julie.sanders@cbfloridahomes.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZMZH9BEBFS8F3P87BFEV",
+          "fullName": "Alex Eckelberry",
+          "jobTitle": "CEO",
+          "email": "alex.eckelberry@proplogix.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0QBTNFEV6T71QDA55DAQ",
+          "fullName": "Jeff Hallam",
+          "jobTitle": "National Account Manager",
+          "email": "jhallam@ctctitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0MR3ZJ2N6HNGWX5NSSBS",
+          "fullName": "Sheri Cameron",
+          "jobTitle": "Bookkeeper Office Manager",
+          "email": "sheri.cameron@countsrealestate.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0CNNNGETH20QZDYJCAX4",
+          "fullName": "Cindy Fikel",
+          "jobTitle": "Assistant Escrow Officer",
+          "email": "cfikel@firstaztitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ19XMZP50CW4S9TKAVV1",
+          "fullName": "Kristy Tatum",
+          "jobTitle": "Business Development Manager",
+          "email": "k.tatum@titlesvs.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZS4KGZ7J0NE1N83H4R1N",
+          "fullName": "Stephanie Amperse'",
+          "jobTitle": "Escrow Officer",
+          "email": "stephanie.amperse@pioneertitleagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZSP6PN3PZTSVS5Y5MJ8F",
+          "fullName": "Steve Tate",
+          "jobTitle": "Director Of IT",
+          "email": "steve.tate@pioneertitleagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZSG8KY2F7T2399TTHJT0",
+          "fullName": "John Hayes",
+          "jobTitle": "Chief Information Officer",
+          "email": "john.hayes@pioneertitleagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0KMAEKQPEBBJMWXV2QMS",
+          "fullName": "Michelle Wilkison",
+          "jobTitle": "Escrow Area Manager",
+          "email": "michelle.wilkison@driggstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0KEAZMT4ADCKZP3ECKR8",
+          "fullName": "Adam Driggs",
+          "jobTitle": "Company Owner",
+          "email": "adamd@driggstitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0HAWDE1TW2CTRNK8CJHP",
+          "fullName": "Michelle Rodgers",
+          "jobTitle": "Senior Escrow Officer",
+          "email": "mrodgers@ewtaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0HPMBW1HM7NWBM3RZDPJ",
+          "fullName": "Lori Roberts",
+          "jobTitle": "Branch Manager Sales",
+          "email": "lroberts@ewtaz.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP125ZX6M8TSVX52F2XW15",
+          "fullName": "Ronald Quain",
+          "jobTitle": "CEO",
+          "email": "ronald.quain@americantitleserviceagency.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ9W100QGJJ0Y3K2TZQB4",
+          "fullName": "Jennifer Pereira",
+          "jobTitle": "Business Development Manager",
+          "email": "jennifer@southerncapitaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZ9FW9DNZ4PVSZS6FRDDZ",
+          "fullName": "Elizabeth Erin Lyons",
+          "jobTitle": "Agency Owner",
+          "email": "elizabeth@southerncapitaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0YHN6WBHHWTZ9162F0C7",
+          "fullName": "Stacy Wilson",
+          "jobTitle": "PMO Technology Support Manager",
+          "email": "swilson@thefund.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZP5TCM978ZTEA9C9AWNN",
+          "fullName": "Shannon Atcheson",
+          "jobTitle": "Quality Control Specialist",
+          "email": "shannona@protitleusa.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYT6YV55FNNJJB1RNBFYR",
+          "fullName": "melanie greene",
+          "jobTitle": "Business Relations Agent",
+          "email": "mgreene@gorequire.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYTSTPHE7XMKA23R0BYJV",
+          "fullName": "Helene Brown",
+          "jobTitle": "Senior Title Curative Specialis",
+          "email": "hbrown@gorequire.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYVBT1HSJMXY41S7CJYBN",
+          "fullName": "Monsef Rachid",
+          "jobTitle": "Cofounder And CTO",
+          "email": "monsef@worldpropertyventures.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYW9ER6R59DHCPFRVJ7YP",
+          "fullName": "Melissa Milliron",
+          "jobTitle": "Business Analyst",
+          "email": "mmilliron@vizionx.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYWN4PK94Q888S853QG4R",
+          "fullName": "Meredith Lisk",
+          "jobTitle": "Vice President",
+          "email": "mlisk@votainc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYXJK1T5X6PQEFS4700SC",
+          "fullName": "Jessica Lynn Pioli",
+          "jobTitle": "Title Agent",
+          "email": "jessica@trustprotitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYX6RF56VA3YRAPHB21NM",
+          "fullName": "Sharon Bartlett",
+          "jobTitle": "Executive Director Of Operations",
+          "email": "sharon.bartlett@usreop.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYX0W6H5XSNMK9DE7X25H",
+          "fullName": "Thomas Kozyra",
+          "jobTitle": "President",
+          "email": "tkozyra@votainc.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYZE7CYYVCJ807WG1E1A2",
+          "fullName": "Ryan Thompson",
+          "jobTitle": "Marketing Director",
+          "email": "ryan.thompson@mytotaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYZ2GTZP9AN4NXBEQ5C1M",
+          "fullName": "Tina Townsend",
+          "jobTitle": "Title Agent",
+          "email": "tina.townsend@mytotaltitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYYPMQTVPAKP3E5K9SWHQ",
+          "fullName": "Gabrielle Bryce",
+          "jobTitle": "Business Development Representative",
+          "email": "gabrielle.bryce@tridenttitlellc.com",
           "status": "LEAD"
         },
         {
@@ -26038,6 +28044,13 @@
           "fullName": "Ellen Kadar",
           "jobTitle": "Vendor Manager",
           "email": "ellenkadar@titlewaveres.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNYZT927N93A4CQJVQ62DA",
+          "fullName": "Paul Friedlander",
+          "jobTitle": "Account Manager",
+          "email": "paul.friedlander@mytotaltitle.com",
           "status": "LEAD"
         },
         {
@@ -26062,31 +28075,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ2AS30AGKSXJSSP7MZRE",
-          "fullName": "Stephanie Grosso",
-          "jobTitle": "Closing Manager",
-          "email": "stephanie@titleandabstract.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZ3DZ1CPAKR6SYKGR6FZS",
           "fullName": "Harold Jaramillo",
           "jobTitle": "Director De Operaciones",
           "email": "harold@thetresgroup.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ2PDD5N2W14EHDBZCBXN",
-          "fullName": "Kris Koener",
-          "jobTitle": "Escrow Officer",
-          "email": "kriskoener@titleandabstract.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ326WJX3SH5HM3VZ8QTA",
-          "fullName": "Patricia Lawrimore",
-          "jobTitle": "Processing Manager",
-          "email": "patricia@tieronetitle.com",
           "status": "LEAD"
         },
         {
@@ -26097,38 +28089,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DNZ2PDD5N2W14EHDBZCBXN",
+          "fullName": "Kris Koener",
+          "jobTitle": "Escrow Officer",
+          "email": "kriskoener@titleandabstract.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DNZ3SM2TDMNST5RPAF0EQ9",
           "fullName": "Prithviraj Desai",
           "jobTitle": "AGM - Audit And Compliance Excellence Lead - HSE (Country Lead)",
           "email": "prithviraj@kcorealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ45WBR9881HEG60EFAZC",
-          "fullName": "Joan T Wilber",
-          "jobTitle": "Compliance Director",
-          "email": "joan@kcorealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ4BPTGNACMB893W2RADY",
-          "fullName": "Jonathon Geiger",
-          "jobTitle": "Team Leader Of Geiger Realty Group",
-          "email": "jonathongeiger@kcorealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ4QC085B98YQR381AQN6",
-          "fullName": "Nicolas Robelto",
-          "jobTitle": "Title Processor",
-          "email": "nicolas@closingteamfl.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ53HJ52FRKZ1P5BBJPFB",
-          "fullName": "Sandy Radzak",
-          "jobTitle": "Escrow Assistant",
-          "email": "sandy@theclosingagent.com",
           "status": "LEAD"
         },
         {
@@ -26139,10 +28110,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ5NX4KFQBC9H1FCV8NCZ",
-          "fullName": "David James Hollamby",
-          "jobTitle": "Vice President - Business Development Marketing",
-          "email": "dhollamby@theclosingagent.com",
+          "id": "01K7DNZ4QC085B98YQR381AQN6",
+          "fullName": "Nicolas Robelto",
+          "jobTitle": "Title Processor",
+          "email": "nicolas@closingteamfl.com",
           "status": "LEAD"
         },
         {
@@ -26164,13 +28135,6 @@
           "fullName": "Matthew Mulligan",
           "jobTitle": "Vice President Finance",
           "email": "matthew@taylormorrison.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ93ZVG2C3H3NFTBQ6R79",
-          "fullName": "Shannon Egan",
-          "jobTitle": "Founder",
-          "email": "shannon@closewithsun.com",
           "status": "LEAD"
         },
         {
@@ -26202,31 +28166,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ9FW9DNZ4PVSZS6FRDDZ",
-          "fullName": "Elizabeth Erin Lyons",
-          "jobTitle": "Agency Owner",
-          "email": "elizabeth@southerncapitaltitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZ9NPQNFAXEKZHTKZ3C1M",
           "fullName": "Kaitlin Larywon",
           "jobTitle": "Escrow Officer",
           "email": "kaitlin@southerncapitaltitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ9W100QGJJ0Y3K2TZQB4",
-          "fullName": "Jennifer Pereira",
-          "jobTitle": "Business Development Manager",
-          "email": "jennifer@southerncapitaltitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZA1WRGGX6VVY77SKJJGC",
-          "fullName": "Katrina McKinney",
-          "jobTitle": "Co-Owner",
-          "email": "katrina@southerncapitaltitle.com",
           "status": "LEAD"
         },
         {
@@ -26237,17 +28180,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZASWGCW1BT0YV17VR4TG",
-          "fullName": "Melissa Hunt",
-          "jobTitle": "Escrow Assistant",
-          "email": "melissa@somerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZBBGVJXF3KB2KEF616VN",
-          "fullName": "Jack Taylor",
-          "jobTitle": "Manager",
-          "email": "jtaylor@skytitle.com",
+          "id": "01K7DNZBX7HP29M7JTG1YQKZ6S",
+          "fullName": "Jessica Zogg Jones",
+          "jobTitle": "National Account Executive",
+          "email": "jessica@com.com",
           "status": "LEAD"
         },
         {
@@ -26258,45 +28194,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZBX7HP29M7JTG1YQKZ6S",
-          "fullName": "Jessica Zogg Jones",
-          "jobTitle": "National Account Executive",
-          "email": "jessica@com.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZCMVNCKW8B185EQCZYK7",
-          "fullName": "Stephanie Crosthwait Bradshaw",
-          "jobTitle": "Vice President",
-          "email": "stephaniebradshaw@com.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZCTTW0X09GRXVPGTTW24",
           "fullName": "Carolyn Raff",
           "jobTitle": "Director, Client Services",
           "email": "carolyn@signatureflorida.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZD6JDR3YK65B3AQBJ0DZ",
-          "fullName": "Denise Lazzaruolo",
-          "jobTitle": "Office Manager Licensed Realtor Notary",
-          "email": "denise@signatureflorida.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZDCQ7X642PF2R882891S",
-          "fullName": "Annette Calcamuggi",
-          "jobTitle": "Senior Administrator",
-          "email": "annette@signatureflorida.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZDJMDDHKYZQM2QAXVADW",
-          "fullName": "Samiul Islam",
-          "jobTitle": "Project Manager",
-          "email": "samiul.islam@scrutinyproperty.com",
           "status": "LEAD"
         },
         {
@@ -26307,38 +28208,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZEA6B3X8XFZ9WTZSY47Q",
-          "fullName": "Cynthia Kuhn",
-          "jobTitle": "Post Closing Manager",
-          "email": "ckuhn@setcoservices.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZEG15YYHHNF0VZXCZAEG",
           "fullName": "Caitlin Crowder",
           "jobTitle": "Escrow Assistant",
           "email": "caitlin.crowder@setcoservices.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZENY3V1V126K9APKMV1W",
-          "fullName": "Denise Wood",
-          "jobTitle": "Escrow Officer",
-          "email": "denise.wood@setcoservices.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZF1YXX4VNQKVSRJ91EZ0",
-          "fullName": "Ryan C. Raymond",
-          "jobTitle": "Team Lead Manager",
-          "email": "ryan@robertslack.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZF7VX8DSZW233XREW4JP",
-          "fullName": "Jarod Wiczen",
-          "jobTitle": "Licensed ISA Team Manager",
-          "email": "jarod.wiczen@robertslack.com",
           "status": "LEAD"
         },
         {
@@ -26370,31 +28243,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZGBJMRSW26R8A5XMHQ0E",
-          "fullName": "Jeffrey B. Miller",
-          "jobTitle": "ACCOUNT EXECUTIVE",
-          "email": "jeffreymiller@realtyexecutives.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZGQB7YNDWWHXBP9T0A2T",
           "fullName": "Shawn Cunniff",
           "jobTitle": "President CEO",
           "email": "shawncunniff@realtyexecutives.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZH3754FVKVZ9ARC5ZT3V",
-          "fullName": "Woldine Gallini",
-          "jobTitle": "Vice President",
-          "email": "woldine.gallini@realres.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZHFKC0MCVN803DGQTXJ3",
-          "fullName": "Patrick Emrich",
-          "jobTitle": "CEO President",
-          "email": "patrick@realres.com",
           "status": "LEAD"
         },
         {
@@ -26405,17 +28257,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZHVKKCD6W75Y0Z09NM8S",
-          "fullName": "Harmoney Zsurka",
-          "jobTitle": "Director Of Finance And Operations",
-          "email": "harmoney@bocaratonrealestatefamily.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZJ1EQN2YTT1KXGMNPYEC",
-          "fullName": "Brooke Purowitz",
-          "jobTitle": "Marketing Manager",
-          "email": "brookepurowitz@bocaratonrealestatefamily.com",
+          "id": "01K7DNZH3754FVKVZ9ARC5ZT3V",
+          "fullName": "Woldine Gallini",
+          "jobTitle": "Vice President",
+          "email": "woldine.gallini@realres.com",
           "status": "LEAD"
         },
         {
@@ -26426,31 +28271,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DNZJ1EQN2YTT1KXGMNPYEC",
+          "fullName": "Brooke Purowitz",
+          "jobTitle": "Marketing Manager",
+          "email": "brookepurowitz@bocaratonrealestatefamily.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DNZJZ4Y7Q1BNEGBSVQACNN",
           "fullName": "Kayla Swinford",
           "jobTitle": "Director Of Operations",
           "email": "kayla.swinford@remaxchampionsfl.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZK4YQD89XHVVSHS2SFS2",
-          "fullName": "Christian Bennett",
-          "jobTitle": "Real Estate Broker- OWNER",
-          "email": "christian.bennett@remaxchampionsfl.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZKAQDYDW3KEXANHVC5KM",
-          "fullName": "Roger Piro",
-          "jobTitle": "Managing Broker",
-          "email": "rpiro@alliancegroupfl.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZKWBGBK9HCG0QCJT8AXK",
-          "fullName": "Javante Vasquez",
-          "jobTitle": "Sr. Luxury Crypto Real Estate Sales Executive",
-          "email": "j.vasquez@propy.com",
           "status": "LEAD"
         },
         {
@@ -26468,31 +28299,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZMSM0Y2GK6G1RYBZH46V",
-          "fullName": "Steven Craig",
-          "jobTitle": "Director Of Client Experience",
-          "email": "steven.craig@proplogix.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZN8A1B4PN5JNK90N0PRR",
-          "fullName": "Judi Carter",
-          "jobTitle": "Escrow Officer",
-          "email": "judi@professionaltitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZNE94Z07RFR6BKWV2SQ3",
-          "fullName": "Amber Loftin",
-          "jobTitle": "Closing Officer",
-          "email": "amber.loftin@professionaltitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZQEYGF10HB6316P6NRG0",
           "fullName": "Leslie Reed",
           "jobTitle": "Property Manager",
           "email": "leslie@premiumproperties.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DNZMSM0Y2GK6G1RYBZH46V",
+          "fullName": "Steven Craig",
+          "jobTitle": "Director Of Client Experience",
+          "email": "steven.craig@proplogix.com",
           "status": "LEAD"
         },
         {
@@ -26503,31 +28320,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZNZZSS31945JTPRX6248",
-          "fullName": "Weinberg Cindy",
-          "jobTitle": "Sales Executive",
-          "email": "weinberg@professionaltitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZP5TCM978ZTEA9C9AWNN",
-          "fullName": "Shannon Atcheson",
-          "jobTitle": "Quality Control Specialist",
-          "email": "shannona@protitleusa.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZPBN6QETXD2RT9DNS0XD",
           "fullName": "Yaroslav Levchenko",
           "jobTitle": "Vice President Information Technology",
           "email": "yaroslav@protitleusa.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZPQD5EYR41VHC03BGNGN",
-          "fullName": "Charles Runyon",
-          "jobTitle": "Director Of Business Development",
-          "email": "charles@protitleusa.com",
           "status": "LEAD"
         },
         {
@@ -26538,24 +28334,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZQ37B4V4H7HDENM63ZEY",
-          "fullName": "Sabrina Liguori",
-          "jobTitle": "LICENSED REALTOR, PROPERTY MANAGER",
-          "email": "sabrina@premiumproperties.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZQ94W6RE09ZWE520F0MT",
-          "fullName": "Michelle Elkins",
-          "jobTitle": "Property Manager",
-          "email": "michelle.elkins@premiumproperties.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZR0M8EMD7VZ9XMGD07JT",
-          "fullName": "Ashley Cooler",
-          "jobTitle": "Escrow Assistant",
-          "email": "ashley@premiertitlepartners.com",
+          "id": "01K7DNZPQD5EYR41VHC03BGNGN",
+          "fullName": "Charles Runyon",
+          "jobTitle": "Director Of Business Development",
+          "email": "charles@protitleusa.com",
           "status": "LEAD"
         },
         {
@@ -26566,38 +28348,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZRC80EF5TBD78QV86AVC",
-          "fullName": "MARCELINO ARCA",
-          "jobTitle": "Title Examiner",
-          "email": "marcelino.arca@premiertitle.net",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZRRDDWEWGYWC932CBRW1",
           "fullName": "Erica Cornelius",
           "jobTitle": "Executive Assistant",
           "email": "erica.cornelius@ptanow.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZRYJW3CHBBM982SA2RK5",
-          "fullName": "Jerry Calley",
-          "jobTitle": "President Premier Title Agency",
-          "email": "jcalley@ptanow.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZS4KGZ7J0NE1N83H4R1N",
-          "fullName": "Stephanie Amperse'",
-          "jobTitle": "Escrow Officer",
-          "email": "stephanie.amperse@pioneertitleagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZSP6PN3PZTSVS5Y5MJ8F",
-          "fullName": "Steve Tate",
-          "jobTitle": "Director Of IT",
-          "email": "steve.tate@pioneertitleagency.com",
           "status": "LEAD"
         },
         {
@@ -26615,59 +28369,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZTSBKPV42W0WBQCKET5D",
-          "fullName": "Karla-Mae E Sprau",
-          "jobTitle": "Director Of Contracts Closings",
-          "email": "karla-mae.sprau@parksquarehomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZTZ6XJA56HQE5AM5EQFA",
-          "fullName": "Arogya Chethan",
-          "jobTitle": "Process Associate",
-          "email": "arogya.chethan@orchestrate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZV57PY360N5JK9YAVJC2",
-          "fullName": "karamath ullah khan khan",
-          "jobTitle": "Process Associate",
-          "email": "karamath.khan@orchestrate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZVGWRYYKQ112Y5ZTP3ER",
-          "fullName": "Aishwarya Ramesh",
-          "jobTitle": "Senior Process Associate",
-          "email": "aishwarya.ramesh@orchestrate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZVQ4W7DSEX2NHRD8PQ8V",
-          "fullName": "Tracy N.",
-          "jobTitle": "Escrow Assistant",
-          "email": "tracyn@onerealtitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZVX1YY13608G353GMRNK",
-          "fullName": "Carmelita Collins",
-          "jobTitle": "Escrow Officer",
-          "email": "carmelita@onerealtitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZW317ZKQAEKHT3X64N60",
           "fullName": "Prabhu Kiren",
           "jobTitle": "Compliance Lead",
           "email": "prabhukiren@onerealtitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZWMKPK9EHAXMGDZA499B",
-          "fullName": "Taujhae Oladejo",
-          "jobTitle": "Manager",
-          "email": "taujhae.oladejo@newpathtitle.com",
           "status": "LEAD"
         },
         {
@@ -26678,13 +28383,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZXCCN0353YDJZHEGFM26",
-          "fullName": "Cookie Slingbaum",
-          "jobTitle": "New Business Development",
-          "email": "cslingbaum@newdawntitlegroup.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0E4X1PKGB5W3SBJWW8Q8",
           "fullName": "Diane Day",
           "jobTitle": "President County Manager",
@@ -26692,10 +28390,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZXXWPY4Q3W69TN9E2584",
-          "fullName": "Kimberly Leal",
-          "jobTitle": "Executive Assistant",
-          "email": "kleal@navititle.com",
+          "id": "01K7DNZXCCN0353YDJZHEGFM26",
+          "fullName": "Cookie Slingbaum",
+          "jobTitle": "New Business Development",
+          "email": "cslingbaum@newdawntitlegroup.com",
           "status": "LEAD"
         },
         {
@@ -26706,45 +28404,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZZ6WMQN005KZARSTW5KN",
-          "fullName": "Jamie DeBella",
-          "jobTitle": "Title Processor",
-          "email": "jamie.debella@floridamta.org",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZZCTCJB0GT7WAS7MH9WY",
-          "fullName": "Nydia Villafane",
-          "jobTitle": "Licence Title Agent Notary",
-          "email": "nydia.villafane@floridamta.org",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZZJTZSMPF981DKSQ0REV",
           "fullName": "Debbie Whittaker",
           "jobTitle": "Manager",
           "email": "debbie.whittaker@floridamta.org",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZZYPKE6P4YRKRCDPP73B",
-          "fullName": "Brittany Smith",
-          "jobTitle": "Escrow Officer",
-          "email": "brittany@magnustitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP004F57GQEX0EDJC5G5FW",
-          "fullName": "Markie Paquin",
-          "jobTitle": "Assistant Business Development Manager",
-          "email": "mpaquin@magnustitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP00ABHD26B7EWKE0D99WY",
-          "fullName": "Kaylee Kurtz",
-          "jobTitle": "Title Department Manager",
-          "email": "kaylee@magnustitle.com",
           "status": "LEAD"
         },
         {
@@ -26755,24 +28418,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP012452DW1DT8KEHG11CT",
-          "fullName": "Joshua Aman",
-          "jobTitle": "Title Agent",
-          "email": "joshuaaman@lutztitleandescrow.com",
+          "id": "01K7DNZZYPKE6P4YRKRCDPP73B",
+          "fullName": "Brittany Smith",
+          "jobTitle": "Escrow Officer",
+          "email": "brittany@magnustitle.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DP017ZDX3FZB2ARA876P7J",
-          "fullName": "Carrie Damera",
-          "jobTitle": "Closing Manager",
-          "email": "carrie.damera@lutztitleandescrow.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP01DTRM3G3PZK2ZWRVDGH",
-          "fullName": "Josh Aman",
-          "jobTitle": "Title Processor",
-          "email": "josh.aman@lutztitleandescrow.com",
+          "id": "01K7DP00ABHD26B7EWKE0D99WY",
+          "fullName": "Kaylee Kurtz",
+          "jobTitle": "Title Department Manager",
+          "email": "kaylee@magnustitle.com",
           "status": "LEAD"
         },
         {
@@ -26783,10 +28439,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP01ZWQVW0TNPXAMR64EZK",
-          "fullName": "Rachel Schramm",
-          "jobTitle": "Director Of Marketing And Brand Strategy",
-          "email": "rachel.schramm@simplihom.com",
+          "id": "01K7DP012452DW1DT8KEHG11CT",
+          "fullName": "Joshua Aman",
+          "jobTitle": "Title Agent",
+          "email": "joshuaaman@lutztitleandescrow.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP01DTRM3G3PZK2ZWRVDGH",
+          "fullName": "Josh Aman",
+          "jobTitle": "Title Processor",
+          "email": "josh.aman@lutztitleandescrow.com",
           "status": "LEAD"
         },
         {
@@ -26797,31 +28460,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP01ZWQVW0TNPXAMR64EZK",
+          "fullName": "Rachel Schramm",
+          "jobTitle": "Director Of Marketing And Brand Strategy",
+          "email": "rachel.schramm@simplihom.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP02XF0YDBDQ79RAYCN6BK",
           "fullName": "Tim Koenitzer",
           "jobTitle": "Software Development Manager",
           "email": "tim.koenitzer@lennartitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP039FSG9NQHVCDA3SM6W8",
-          "fullName": "Leslie Steinlage",
-          "jobTitle": "Escrow Closer",
-          "email": "lsteinlage@insured-title.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP03FAR0WZAMGHV86YPXH8",
-          "fullName": "Matt Fendell",
-          "jobTitle": "Title Manger",
-          "email": "mfendell@insured-title.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP03V2DZT08KKNH7DBDV3E",
-          "fullName": "Cindy Giardinelli",
-          "jobTitle": "Escrow Assistant",
-          "email": "cindy@insured-title.com",
           "status": "LEAD"
         },
         {
@@ -26832,24 +28481,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP049NG0NBDA4D70K95E5T",
-          "fullName": "Viviana Figueroa",
-          "jobTitle": "Title Processor",
-          "email": "viviana@titlerate.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP04FMM23XQ5K4NZ0PR31G",
           "fullName": "Kevin Tacher",
           "jobTitle": "Founder CEO",
           "email": "kevin@titlerate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP04VD007SBCS6XYSKFS3B",
-          "fullName": "Ryan Ramsey",
-          "jobTitle": "Warehouse Manager",
-          "email": "ryan.ramsey@homeprotitle.com",
           "status": "LEAD"
         },
         {
@@ -26860,31 +28495,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP04VD007SBCS6XYSKFS3B",
+          "fullName": "Ryan Ramsey",
+          "jobTitle": "Warehouse Manager",
+          "email": "ryan.ramsey@homeprotitle.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP05DE7CAAFAMY9P91WT9Z",
           "fullName": "Robert Atkins",
           "jobTitle": "Operations Manager",
           "email": "ratkins@homepartnerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP05YYFM7E565TDB4633ZK",
-          "fullName": "Rick Mueller",
-          "jobTitle": "Chief Financial Officer",
-          "email": "rmueller@homepartnerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP064T2DWRWJM8FJT4FE44",
-          "fullName": "Camille Lang",
-          "jobTitle": "Executive Account Manager Title Representative",
-          "email": "clang@homepartnerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP06ANZ0DSH8RPDK58MNJX",
-          "fullName": "Janet R. Moe",
-          "jobTitle": "Unit Manager",
-          "email": "jmoe@azgat.com",
           "status": "LEAD"
         },
         {
@@ -26895,24 +28516,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP05YYFM7E565TDB4633ZK",
+          "fullName": "Rick Mueller",
+          "jobTitle": "Chief Financial Officer",
+          "email": "rmueller@homepartnerstitle.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP0722TE532244T92S4MB4",
           "fullName": "Thomas Connaker",
           "jobTitle": "President",
           "email": "t.connaker@azgat.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP07SNE02N6SPM7Q6TG0KB",
-          "fullName": "LAURA VALENZUELA",
-          "jobTitle": "Senior Sales Executive Vice President",
-          "email": "laura.valenzuela@gcta.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP07ZGC7TJM289QZEFBB5Y",
-          "fullName": "Stacia Walker",
-          "jobTitle": "Escrow Assistant",
-          "email": "stacia.walker@gcta.com",
           "status": "LEAD"
         },
         {
@@ -26944,13 +28558,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP09NAW4Q0MD209XNBJ829",
-          "fullName": "Nikki Marie",
-          "jobTitle": "Title Processor",
-          "email": "nikki.marie@yourfloridatitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0A1KE3T4QTFCZRP84WDC",
           "fullName": "Marylou Lora",
           "jobTitle": "Director Of Operations",
@@ -26958,24 +28565,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0A7FHRQ5JBZ41Q8H9M4H",
-          "fullName": "Christopher LaChance",
-          "jobTitle": "Sales Manager",
-          "email": "christopher@flagency.net",
+          "id": "01K7DP09NAW4Q0MD209XNBJ829",
+          "fullName": "Nikki Marie",
+          "jobTitle": "Title Processor",
+          "email": "nikki.marie@yourfloridatitle.com",
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0AKA6E29YW423X9KD4CW",
-          "fullName": "Wayne Harrell",
-          "jobTitle": "Chief Financial Officer",
-          "email": "wayne.harrell@flagency.net",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0AZ57X85Z6WM98FV60MF",
-          "fullName": "Sara Luff",
-          "jobTitle": "Sales Manager",
-          "email": "sara.luff@firstintitle.com",
+          "id": "01K7DP0EAWCG9KN3S2DFDNDJED",
+          "fullName": "Mary Lou Paulk",
+          "jobTitle": "Senior Vice President Consultant",
+          "email": "mpaulk@fntarizona.com",
           "status": "LEAD"
         },
         {
@@ -26986,10 +28586,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0EAWCG9KN3S2DFDNDJED",
-          "fullName": "Mary Lou Paulk",
-          "jobTitle": "Senior Vice President Consultant",
-          "email": "mpaulk@fntarizona.com",
+          "id": "01K7DP0AKA6E29YW423X9KD4CW",
+          "fullName": "Wayne Harrell",
+          "jobTitle": "Chief Financial Officer",
+          "email": "wayne.harrell@flagency.net",
           "status": "LEAD"
         },
         {
@@ -27021,13 +28621,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0DD8BVGP9RZT8F6JB733",
-          "fullName": "Holly Stidham Wilson",
-          "jobTitle": "Business Developement Manager",
-          "email": "holly@firstaztitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0DK34JAJW3AHR0KF7N6R",
           "fullName": "Stephanie Kohlmeier",
           "jobTitle": "Marketing Director",
@@ -27039,13 +28632,6 @@
           "fullName": "Rebecca Sauers",
           "jobTitle": "Commercial Escrow Officer AVP",
           "email": "rebecca.sauers@fntarizona.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0DZ0J6B2ZY31E29EJ2XN",
-          "fullName": "Marcela Navarro",
-          "jobTitle": "Escrow Officer",
-          "email": "mnavarro@fntarizona.com",
           "status": "LEAD"
         },
         {
@@ -27063,31 +28649,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0FMAJDS60XQYJDCYC2ZZ",
-          "fullName": "Susana Grant",
-          "jobTitle": "Relationship Manager",
-          "email": "sgrant@foliotitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0G1FC1NDP4HY8A09VA3Q",
           "fullName": "Kirenia Navarro",
           "jobTitle": "Closer Account Executive",
           "email": "kirenia.navarro@expresstitleservicesllc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0G7FZFW9GX857ZXNE9K2",
-          "fullName": "Darla H.",
-          "jobTitle": "Senior Sales Support",
-          "email": "darla.h@escrowtab.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0GYZQ3E8VDA74VJXD4W8",
-          "fullName": "Lauren LePage",
-          "jobTitle": "ESCROW",
-          "email": "llepage@equitabletitlegroup.net",
           "status": "LEAD"
         },
         {
@@ -27098,17 +28663,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP0GYZQ3E8VDA74VJXD4W8",
+          "fullName": "Lauren LePage",
+          "jobTitle": "ESCROW",
+          "email": "llepage@equitabletitlegroup.net",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP0HGT7HAEBQVNE67GW18K",
           "fullName": "Rodriguez Maria",
           "jobTitle": "Escrow Officer",
           "email": "rmaria@ewtaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0HPMBW1HM7NWBM3RZDPJ",
-          "fullName": "Lori Roberts",
-          "jobTitle": "Branch Manager Sales",
-          "email": "lroberts@ewtaz.com",
           "status": "LEAD"
         },
         {
@@ -27126,45 +28691,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0JWVR9GWR2Y2M4JS643N",
-          "fullName": "Ashley Bowen",
-          "jobTitle": "Director Of Operations",
-          "email": "ashley@ects.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0K2MY54WTXREGMRZ23P6",
-          "fullName": "Leticia Gracia",
-          "jobTitle": "Escrow Officer",
-          "email": "leticia.gracia@driggstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0KEAZMT4ADCKZP3ECKR8",
-          "fullName": "Adam Driggs",
-          "jobTitle": "Company Owner",
-          "email": "adamd@driggstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0KMAEKQPEBBJMWXV2QMS",
-          "fullName": "Michelle Wilkison",
-          "jobTitle": "Escrow Area Manager",
-          "email": "michelle.wilkison@driggstitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0KT4P71VGTNTVY5DBF1R",
           "fullName": "Karla Fischer",
           "jobTitle": "Office Manager",
           "email": "kfischer@dennisrealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0MC69CNYTKA5GKRGBKHM",
-          "fullName": "Robert Kane",
-          "jobTitle": "Realtor Property Manager",
-          "email": "robert@dennisrealty.com",
           "status": "LEAD"
         },
         {
@@ -27175,10 +28705,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0MR3ZJ2N6HNGWX5NSSBS",
-          "fullName": "Sheri Cameron",
-          "jobTitle": "Bookkeeper Office Manager",
-          "email": "sheri.cameron@countsrealestate.com",
+          "id": "01K7DP0MC69CNYTKA5GKRGBKHM",
+          "fullName": "Robert Kane",
+          "jobTitle": "Realtor Property Manager",
+          "email": "robert@dennisrealty.com",
           "status": "LEAD"
         },
         {
@@ -27189,10 +28719,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0NFNC3YNHFEY4DVHA540",
-          "fullName": "Mark Cowart",
-          "jobTitle": "Director Of Sales",
-          "email": "mark.cowart@countsrealestate.com",
+          "id": "01K7DP0W5PY4C2J1T621QS1NGR",
+          "fullName": "Tara Burley",
+          "jobTitle": "Vice President Of Business Development",
+          "email": "tara.burley@brightlinetitle.com",
           "status": "LEAD"
         },
         {
@@ -27203,10 +28733,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0W5PY4C2J1T621QS1NGR",
-          "fullName": "Tara Burley",
-          "jobTitle": "Vice President Of Business Development",
-          "email": "tara.burley@brightlinetitle.com",
+          "id": "01K7DP0NFNC3YNHFEY4DVHA540",
+          "fullName": "Mark Cowart",
+          "jobTitle": "Director Of Sales",
+          "email": "mark.cowart@countsrealestate.com",
           "status": "LEAD"
         },
         {
@@ -27217,45 +28747,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0P7JDNQBZJ5CH7AWG2ZG",
-          "fullName": "Cindy Struthers",
-          "jobTitle": "Property Manager Annual Rentals",
-          "email": "cindy.struthers@cbfloridahomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0PDJ0XRDKQAR7T8J1C34",
-          "fullName": "Ann Loewe",
-          "jobTitle": "Property Manager",
-          "email": "ann.loewe@cbfloridahomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0PM9VCZ1SZ686BM2CJY5",
-          "fullName": "Raymond Matot",
-          "jobTitle": "Vice President",
-          "email": "raymond.matot@cbfloridahomes.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0PT7TX9KFPGQ21XJH722",
           "fullName": "Brandon Livingston",
           "jobTitle": "President",
           "email": "blivingston@ctctitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0Q617S5317W4FHWF6KV7",
-          "fullName": "Crystal lashbrook",
-          "jobTitle": "Office Manager",
-          "email": "clashbrook@ctctitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0QQDBE36VTH8DNRHE9J6",
-          "fullName": "Jane Barr",
-          "jobTitle": "Title Examiner",
-          "email": "jbarr@cetitle.com",
           "status": "LEAD"
         },
         {
@@ -27266,17 +28761,17 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP0Q617S5317W4FHWF6KV7",
+          "fullName": "Crystal lashbrook",
+          "jobTitle": "Office Manager",
+          "email": "clashbrook@ctctitle.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP0RN7DNVGJT2B44PVW4VJ",
           "fullName": "James Clifford",
           "jobTitle": "President Principal",
           "email": "jclifford@cleartitleaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0RV3ZRSN5PZ4Y6WMKPN8",
-          "fullName": "Scott Pearson",
-          "jobTitle": "Vice President Of Commercial Division",
-          "email": "spearson@cleartitleaz.com",
           "status": "LEAD"
         },
         {
@@ -27291,13 +28786,6 @@
           "fullName": "Deidre Krystek",
           "jobTitle": "Sales Executive",
           "email": "deidre.krystek@chicagotitlearizona.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0SJPC9Z1QBTE1HZTSQZ9",
-          "fullName": "Eric Wolfe",
-          "jobTitle": "VP, Commercial Sales Manager",
-          "email": "e.wolfe@chicagotitlearizona.com",
           "status": "LEAD"
         },
         {
@@ -27329,13 +28817,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0V7ZCF8KACY2BZHXT5EB",
-          "fullName": "Jennifer Billingsley",
-          "jobTitle": "Title And Escrow Assistant",
-          "email": "jenniferbillingsley@cadencetitleservices.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0VDXX319NYPWS9VV1DWT",
           "fullName": "Armando Romero",
           "jobTitle": "President CEO Broker",
@@ -27357,6 +28838,13 @@
           "status": "LEAD"
         },
         {
+          "id": "01K7DP0V7ZCF8KACY2BZHXT5EB",
+          "fullName": "Jennifer Billingsley",
+          "jobTitle": "Title And Escrow Assistant",
+          "email": "jenniferbillingsley@cadencetitleservices.com",
+          "status": "LEAD"
+        },
+        {
           "id": "01K7DP0WHE4FGWEGXAE9KCJGVM",
           "fullName": "Matthew Chapman",
           "jobTitle": "Sales Recruiting Manager",
@@ -27371,17 +28859,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0X2TXTR9J5MTZFJ58PT6",
-          "fullName": "Aaron Bosshardt",
-          "jobTitle": "Company Owner",
-          "email": "aaronbosshardt@bosshardtrealty.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0X8KWZCQCRPG974ZKSKF",
           "fullName": "Eric Ligman",
           "jobTitle": "Director",
           "email": "ericligman@bosshardtrealty.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0X2TXTR9J5MTZFJ58PT6",
+          "fullName": "Aaron Bosshardt",
+          "jobTitle": "Company Owner",
+          "email": "aaronbosshardt@bosshardtrealty.com",
           "status": "LEAD"
         },
         {
@@ -27399,13 +28887,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0Y5YJJNK1VK5Y5QZ1KA2",
-          "fullName": "Rei Mesa",
-          "jobTitle": "President, C.E.O.",
-          "email": "reimesa@bhhsfloridarealty.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0YBSP3Q70BDHA255M1A8",
           "fullName": "Carmen Diaz Tojeiro",
           "jobTitle": "Business Development Advisor",
@@ -27413,17 +28894,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0YQJ9MCPVNCJ6CSVA22X",
-          "fullName": "Salene Levin",
-          "jobTitle": "Title Examiner",
-          "email": "slevin@thefund.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0YXFNTSXJP8HT9X0WV2D",
-          "fullName": "Melissa Scaletta",
-          "jobTitle": "SVP, Deputy General Counsel And Chief Legal Operations Officer",
-          "email": "mscaletta@thefund.com",
+          "id": "01K7DP0Y5YJJNK1VK5Y5QZ1KA2",
+          "fullName": "Rei Mesa",
+          "jobTitle": "President, C.E.O.",
+          "email": "reimesa@bhhsfloridarealty.com",
           "status": "LEAD"
         },
         {
@@ -27434,17 +28908,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0Z9J08TFZE585DK1ACMZ",
-          "fullName": "Laura Leon",
-          "jobTitle": "Sr. Escrow Assistant",
-          "email": "lauraleon@atlastitlesvc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0ZVEZR0Q28BHH61YZWM0",
-          "fullName": "Rebecca Raras",
-          "jobTitle": "Account Executive",
-          "email": "rebecca@armourtitlecompany.com",
+          "id": "01K7DP0YQJ9MCPVNCJ6CSVA22X",
+          "fullName": "Salene Levin",
+          "jobTitle": "Title Examiner",
+          "email": "slevin@thefund.com",
           "status": "LEAD"
         },
         {
@@ -27452,13 +28919,6 @@
           "fullName": "Taylor Sosna",
           "jobTitle": "National Account Executive",
           "email": "tsosna@armourtitlecompany.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP10JXN4W5KPNG4C4GAXBK",
-          "fullName": "Tali Raphaely",
-          "jobTitle": "President",
-          "email": "tali.raphaely@armourtitlecompany.com",
           "status": "LEAD"
         },
         {
@@ -27476,17 +28936,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP11T1KAHX80EPAEZMVF6E",
-          "fullName": "Scott Scholtz",
-          "jobTitle": "Director Of Client Experience",
-          "email": "scott@acceleratedamc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP1200MDFG5GQ8C68HKV5K",
-          "fullName": "AbstractorPro Software",
-          "jobTitle": "Chief Executive Officer",
-          "email": "abstractorprosoftware@abstractorpro.com",
+          "id": "01K7DP033JGAY8N6TMEJHHVBBM",
+          "fullName": "Mandy Hunter",
+          "jobTitle": "Vice President",
+          "email": "mhunter@insured-title.com",
           "status": "LEAD"
         },
         {
@@ -27497,52 +28950,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYWV05FD237CGPW5XXGT9",
-          "fullName": "Patricia Telford",
-          "jobTitle": "Manager Of Developer Services",
-          "email": "ptelford@votainc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP033JGAY8N6TMEJHHVBBM",
-          "fullName": "Mandy Hunter",
-          "jobTitle": "Vice President",
-          "email": "mhunter@insured-title.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYXRQ3PCDKFEH8MYFKZ8C",
-          "fullName": "Carol L.",
-          "jobTitle": "Escrow Closer",
-          "email": "carol@trustprotitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNYYAP972F8R90G1G8NSAC",
           "fullName": "Christina Robaldo-Hernandez",
           "jobTitle": "Licensed Title Agent Closer",
           "email": "crobaldo-hernandez@tridenttitlellc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYYWP6SZHZVZZTYZS7DSA",
-          "fullName": "David Ward",
-          "jobTitle": "Real Estate Title Insurance - Northern PB County, FL",
-          "email": "david.ward@tridenttitlellc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYZM5XGAPKB16P61QS1JN",
-          "fullName": "Kim Creasy",
-          "jobTitle": "Licened Title Agent Manager Of Our Spring Hill Office",
-          "email": "kim.creasy@mytotaltitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ007727PMNZ7VR05VSEN",
-          "fullName": "Pam Cramer",
-          "jobTitle": "Commercial Title Examiner",
-          "email": "pam@titlewaveres.com",
           "status": "LEAD"
         },
         {
@@ -27553,17 +28964,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ1GANBGAM6KRT98QF52F",
-          "fullName": "Suzy Levenda",
-          "jobTitle": "Business Development",
-          "email": "slevenda@titlesvs.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ1PAJ9GFHXJZCJCHCW6V",
-          "fullName": "Israel Navarro",
-          "jobTitle": "Branch Manager",
-          "email": "inavarro@titlesvs.com",
+          "id": "01K7DNYZM5XGAPKB16P61QS1JN",
+          "fullName": "Kim Creasy",
+          "jobTitle": "Licened Title Agent Manager Of Our Spring Hill Office",
+          "email": "kim.creasy@mytotaltitle.com",
           "status": "LEAD"
         },
         {
@@ -27574,17 +28978,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ3KSBDSG7HP9F5N132P0",
-          "fullName": "Julio Robles",
-          "jobTitle": "Business Development Analyst",
-          "email": "julio@therealtyagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ4HJF5QVJXZRC36VGEPA",
-          "fullName": "Nina The Closing Team",
-          "jobTitle": "Title Admin",
-          "email": "ninatheclosingteam@closingteamfl.com",
+          "id": "01K7DNZ1PAJ9GFHXJZCJCHCW6V",
+          "fullName": "Israel Navarro",
+          "jobTitle": "Branch Manager",
+          "email": "inavarro@titlesvs.com",
           "status": "LEAD"
         },
         {
@@ -27595,24 +28992,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ67PX1AAWG1HXNDM0HFM",
-          "fullName": "Erin Draves",
-          "jobTitle": "Office Manager TM Ambassador",
-          "email": "edraves@taylormorrison.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZ6W63NHDSY3XJG5EZR4C",
           "fullName": "Brittaney Badger",
           "jobTitle": "Partner Development Manager",
           "email": "bbadger@teematitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ7E917THD5NN98RXBBS8",
-          "fullName": "Linda Kenney",
-          "jobTitle": "Manager",
-          "email": "lkenney@sunshinesigning.com",
           "status": "LEAD"
         },
         {
@@ -27623,31 +29006,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ99VTZF2HJCQTCPDZWN4",
-          "fullName": "Sun National Title Company",
-          "jobTitle": "Title Company",
-          "email": "scompany@closewithsun.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZAM1J1C0Q4YBVJAY6ETQ",
-          "fullName": "Somers Title",
-          "jobTitle": "Title Insurance",
-          "email": "stitle@somerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZB5KPAATHGXASW4Q7T72",
-          "fullName": "Rob Stewart",
-          "jobTitle": "Chief Executive Officer",
-          "email": "rstewart@skytitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZBHBTXE9HT2SXHVP2K65",
-          "fullName": "Daniel Perets",
-          "jobTitle": "Onboarding Manager",
-          "email": "dperets@signaturerealestatecompanies.com",
+          "id": "01K7DNZ7E917THD5NN98RXBBS8",
+          "fullName": "Linda Kenney",
+          "jobTitle": "Manager",
+          "email": "lkenney@sunshinesigning.com",
           "status": "LEAD"
         },
         {
@@ -27658,52 +29020,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZD0Q29KAGXTAXVGYQ0YW",
-          "fullName": "Heidi Willson",
-          "jobTitle": "Executive Assistant",
-          "email": "heidi@signatureflorida.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZDYF4604PJ9BN2E2CXHF",
-          "fullName": "Mehzabin Hasan",
-          "jobTitle": "Managing Director",
-          "email": "mehzabinhasan@scrutinyproperty.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZEVYXC0ZV31P22Q0CE59",
           "fullName": "Candy Colon",
           "jobTitle": "Director Of Marketing",
           "email": "candy@robertslack.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZFZNTGCY88DQEH36STKR",
-          "fullName": "Serena Orgin",
-          "jobTitle": "Title Agent",
-          "email": "serena@richr.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZGXAW2PX5VRNN964KDQD",
-          "fullName": "Mary and Bob Millard",
-          "jobTitle": "President CEO",
-          "email": "mary.millard@realtyexecutives.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZHNJ4ADZN2NG4JNF28Y7",
-          "fullName": "Zack Goldberg",
-          "jobTitle": "Business Relationship Manager",
-          "email": "goldbergz@realres.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZJD7HVQZWNQ9ENAVR1VS",
-          "fullName": "Kristin Huber",
-          "jobTitle": "Marketing Manager Buyer Manager",
-          "email": "hkristin@remax.com",
           "status": "LEAD"
         },
         {
@@ -27714,10 +29034,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZKPEHM0S0E4PT51FGPY8",
-          "fullName": "Shadd Boucher",
-          "jobTitle": "Managing Broker",
-          "email": "sboucher@alliancegroupfl.com",
+          "id": "01K7DNZGXAW2PX5VRNN964KDQD",
+          "fullName": "Mary and Bob Millard",
+          "jobTitle": "President CEO",
+          "email": "mary.millard@realtyexecutives.com",
           "status": "LEAD"
         },
         {
@@ -27742,52 +29062,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZQMWYZTDRJ6WYC94ZAYB",
-          "fullName": "John Sturno",
-          "jobTitle": "Property Manager",
-          "email": "johnsturno@premiumproperties.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZQTS71TWXFHYHBQ9W7Y1",
-          "fullName": "She'rri McClellan-Doyle",
-          "jobTitle": "Realtor Property Manager Real Estate Investor",
-          "email": "smcclellan-doyle@premiumproperties.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZSABTEK96S8KV17MREG2",
-          "fullName": "Skyanne Dinnigan",
-          "jobTitle": "Escrow Administrator",
-          "email": "skyanne.dinnigan@pioneertitleagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZSG8KY2F7T2399TTHJT0",
-          "fullName": "John Hayes",
-          "jobTitle": "Chief Information Officer",
-          "email": "john.hayes@pioneertitleagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZSW2P3C2XFYB6MZW9R6W",
-          "fullName": "Trung Nguyen",
-          "jobTitle": "Title Officer",
-          "email": "trung.nguyen@pioneertitleagency.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZTDQTABE5QQHGA86NH3V",
           "fullName": "Suresh Gupta",
           "jobTitle": "Owner",
           "email": "suresh@parksquarehomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZW8WVGDVEQ7WTAEEDC7P",
-          "fullName": "Jyoti Halankar",
-          "jobTitle": "Compliance Specialist",
-          "email": "jyoti.halankar@onerealtitle.com",
           "status": "LEAD"
         },
         {
@@ -27798,10 +29076,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZY3MKWZYX29Q9BZMBCC2",
-          "fullName": "Anthony Penna",
-          "jobTitle": "Senior Vice President",
-          "email": "apenna@navititle.com",
+          "id": "01K7DNZW8WVGDVEQ7WTAEEDC7P",
+          "fullName": "Jyoti Halankar",
+          "jobTitle": "Compliance Specialist",
+          "email": "jyoti.halankar@onerealtitle.com",
           "status": "LEAD"
         },
         {
@@ -27812,17 +29090,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP02QGK5FZ5BC9S0PHQ2T6",
-          "fullName": "Jose Ruben Arenas",
-          "jobTitle": "Title Examiner",
-          "email": "jose.arenas@lennartitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZZRTB7RKVRGKCQFJG8CG",
-          "fullName": "Cheyenne Hancock",
-          "jobTitle": "Title Processor",
-          "email": "cheyenne.hancock@floridamta.org",
+          "id": "01K7DNZY3MKWZYX29Q9BZMBCC2",
+          "fullName": "Anthony Penna",
+          "jobTitle": "Senior Vice President",
+          "email": "apenna@navititle.com",
           "status": "LEAD"
         },
         {
@@ -27833,31 +29104,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP01T01JKG4ED6KGEKCX94",
-          "fullName": "Susan Knecht",
-          "jobTitle": "Senior Real Estate Specialist",
-          "email": "susan.knecht@simplihom.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP02HJ26ZXJP7VAG7QQEAT",
-          "fullName": "Mike DiOrio",
-          "jobTitle": "Compliance Consultant",
-          "email": "m.diorio@ltae.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP04NH1SRCZBAB4EPWGGE8",
-          "fullName": "Julie Merida",
-          "jobTitle": "Project Manager",
-          "email": "juliemerida@homeprotitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP051DBXHAN4S34TDVPPRS",
-          "fullName": "Josh Smith",
-          "jobTitle": "Title Currative",
-          "email": "josh@homeprotitle.com",
+          "id": "01K7DNZZRTB7RKVRGKCQFJG8CG",
+          "fullName": "Cheyenne Hancock",
+          "jobTitle": "Title Processor",
+          "email": "cheyenne.hancock@floridamta.org",
           "status": "LEAD"
         },
         {
@@ -27868,17 +29118,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP09VKQ39B99B92G0YJ0Q9",
-          "fullName": "Faith Castro",
-          "jobTitle": "Title Processor",
-          "email": "faith.castro@yourfloridatitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP06PCHT65E1M8EN28PMWR",
-          "fullName": "Bruce Beverly",
-          "jobTitle": "Chief Executive Officer",
-          "email": "bbeverly@azgat.com",
+          "id": "01K7DP0FEJ2PT6AXZ2PR4FMP1X",
+          "fullName": "Karen Franco",
+          "jobTitle": "Business Administrator",
+          "email": "karen.franco@foliotitle.com",
           "status": "LEAD"
         },
         {
@@ -27889,13 +29132,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0FEJ2PT6AXZ2PR4FMP1X",
-          "fullName": "Karen Franco",
-          "jobTitle": "Business Administrator",
-          "email": "karen.franco@foliotitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP085D0Q62JD8P5K58AF63",
           "fullName": "Beatrice Decker",
           "jobTitle": "Licensed Title Agent",
@@ -27903,52 +29139,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP08H91DAA4FA4YQ77XHTF",
-          "fullName": "Silvja Qirjako",
-          "jobTitle": "Title Solutions Specialist",
-          "email": "silvja.qirjako@goldendogtitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP09FDWRQS368WPGQTAGHT",
-          "fullName": "Alfred Younan",
-          "jobTitle": "Managing Broker",
-          "email": "alfred@genstonerealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0AS8ES4J5T1X5C63303D",
-          "fullName": "albert gonzalez",
-          "jobTitle": "Chief Executive Officer",
-          "email": "agonzalez@firstprioritytitleco.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0BASKGVN9YCCQGT5ZTCP",
           "fullName": "Wendy Himmelsbach",
           "jobTitle": "Human Resources Director",
           "email": "wendy.himmelsbach@firstintitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0BRA3DE4N89JG9J3P0YW",
-          "fullName": "Kelly Newell",
-          "jobTitle": "Licensed Escrow Agent",
-          "email": "kelly.newell@firstintitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0FVJSMZFG415STFZJ6DM",
-          "fullName": "Adrianne Vidangos",
-          "jobTitle": "Title Processor Closer",
-          "email": "adrianne.vidangos@foliotitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0CNNNGETH20QZDYJCAX4",
-          "fullName": "Cindy Fikel",
-          "jobTitle": "Assistant Escrow Officer",
-          "email": "cfikel@firstaztitle.com",
           "status": "LEAD"
         },
         {
@@ -27966,45 +29160,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0EWHXY0NEF796C2ZVA8B",
-          "fullName": "Tina Jent-Fodor",
-          "jobTitle": "Assistant Vice President",
-          "email": "tina.jent-fodor@fntic.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K4JPQDND2YMG9CP3MXC8Y6KX",
           "fullName": "Kosta Ligris",
           "jobTitle": "CEO",
           "email": "kligris@ligris.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0GS3BE2R1EABXKTRBEKK",
-          "fullName": "Carl Fiore",
-          "jobTitle": "Compliance Director",
-          "email": "carl@equitabletitlegroup.net",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0HAWDE1TW2CTRNK8CJHP",
-          "fullName": "Michelle Rodgers",
-          "jobTitle": "Senior Escrow Officer",
-          "email": "mrodgers@ewtaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0HWKKM72NJMRXTBNZ77S",
-          "fullName": "Patti Ballmann",
-          "jobTitle": "Branch Manger",
-          "email": "pballmann@ewtaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0QXDQV2JV6Y7E0F8AS7N",
-          "fullName": "Susan Hanley",
-          "jobTitle": "Sr Vice President Of Operations",
-          "email": "shanley@cetitle.com",
           "status": "LEAD"
         },
         {
@@ -28015,10 +29174,17 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0K8FS3DSMTMW8DYDS4Q8",
-          "fullName": "Justin Gries",
-          "jobTitle": "Chief Financial Officer",
-          "email": "justing@driggstitle.com",
+          "id": "01K7DP0QXDQV2JV6Y7E0F8AS7N",
+          "fullName": "Susan Hanley",
+          "jobTitle": "Sr Vice President Of Operations",
+          "email": "shanley@cetitle.com",
+          "status": "LEAD"
+        },
+        {
+          "id": "01K7DP0HWKKM72NJMRXTBNZ77S",
+          "fullName": "Patti Ballmann",
+          "jobTitle": "Branch Manger",
+          "email": "pballmann@ewtaz.com",
           "status": "LEAD"
         },
         {
@@ -28033,20 +29199,6 @@
           "fullName": "Bob Thomas",
           "jobTitle": "Realtor Partner",
           "email": "bob.thomas@countsrealestate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0NVXQXQEKMGTYAME4MQ9",
-          "fullName": "Julie Sanders",
-          "jobTitle": "Seasonal Property Manager",
-          "email": "julie.sanders@cbfloridahomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0QBTNFEV6T71QDA55DAQ",
-          "fullName": "Jeff Hallam",
-          "jobTitle": "National Account Manager",
-          "email": "jhallam@ctctitle.com",
           "status": "LEAD"
         },
         {
@@ -28071,31 +29223,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0V24NS19RE3GV1CGSKBR",
-          "fullName": "Brooklyn Bello",
-          "jobTitle": "Senior Escrow Officer",
-          "email": "brooklyn.bello@cadencetitleservices.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0WBM23N5ZCX5183KK8DE",
-          "fullName": "John Hammer",
-          "jobTitle": "Regional Manager",
-          "email": "jhammer@brightlinetitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0XEF25FBG45BX9HAZXTC",
           "fullName": "Dore Ann Baratta",
           "jobTitle": "Managing Broker",
           "email": "doregri@bhhsfloridarealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0YHN6WBHHWTZ9162F0C7",
-          "fullName": "Stacy Wilson",
-          "jobTitle": "PMO Technology Support Manager",
-          "email": "swilson@thefund.com",
           "status": "LEAD"
         },
         {
@@ -28106,10 +29237,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP10D3259ERBGCFV20QR3J",
-          "fullName": "Nicole Rappaport",
-          "jobTitle": "Owner - Title Agent",
-          "email": "nicole.rappaport@atlastitlesvc.com",
+          "id": "01K7DNZ789V7BY5E6PCFQP0FHY",
+          "fullName": "Jhon Gaona",
+          "jobTitle": "Owner",
+          "email": "jhon.gaona@sunshinesigning.com",
           "status": "LEAD"
         },
         {
@@ -28117,20 +29248,6 @@
           "fullName": "chris hyman",
           "jobTitle": "Executive Vice President",
           "email": "chris.hyman@americantitleserviceagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP11BETJHTX4X3DARG5W71",
-          "fullName": "Helena Sutherland",
-          "jobTitle": "Account Manager",
-          "email": "helena.sutherland@americantitleserviceagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ789V7BY5E6PCFQP0FHY",
-          "fullName": "Jhon Gaona",
-          "jobTitle": "Owner",
-          "email": "jhon.gaona@sunshinesigning.com",
           "status": "LEAD"
         },
         {
@@ -28169,10 +29286,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNYTKBJ2KG7SH8AHNFS7GK",
-          "fullName": "Josefina Zuniga-Velazquez",
-          "jobTitle": "Sr. Title Curative Specialist",
-          "email": "josefina@gorequire.com",
+          "id": "01K7DNZ1W5K7QYW5FXGEJ241Q1",
+          "fullName": "Patty Durant",
+          "jobTitle": "Account Manager",
+          "email": "pdurant@titlesvs.com",
           "status": "LEAD"
         },
         {
@@ -28183,55 +29300,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ19XMZP50CW4S9TKAVV1",
-          "fullName": "Kristy Tatum",
-          "jobTitle": "Business Development Manager",
-          "email": "k.tatum@titlesvs.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ1W5K7QYW5FXGEJ241Q1",
-          "fullName": "Patty Durant",
-          "jobTitle": "Account Manager",
-          "email": "pdurant@titlesvs.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP00G7TMN1SA03B73HRHZV",
-          "fullName": "Romy Watts",
-          "jobTitle": "Asst Vice President Of Business Development",
-          "email": "romy.watts@magnustitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ8Y1ARCXR4TS6F1RWTXT",
-          "fullName": "Simone clacher",
-          "jobTitle": "Title Agent",
-          "email": "simone@closewithsun.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZAZPTD0YQNB5FTBSDT49",
-          "fullName": "Jennifer Bornick",
-          "jobTitle": "Escrow Closer",
-          "email": "jbornick@somerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZC8ZG88691N8AV1K8VA7",
-          "fullName": "Lori Sullivan",
-          "jobTitle": "Associate Director Of Client Services",
-          "email": "lori@com.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZE4C1SMCKECCE52C7Q6Q",
-          "fullName": "Mary Riddle",
-          "jobTitle": "Escrow Officer",
-          "email": "mriddle@setcoservices.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0GK8H5ZJQ2RW13VM8EBB",
           "fullName": "Suzann Dennis",
           "jobTitle": "Vice President",
@@ -28239,24 +29307,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZH96FBWM280326SK4T3W",
-          "fullName": "Ray W.",
-          "jobTitle": "Director Of Information Technology",
-          "email": "wr@realres.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZT7V47KZ1J8GM37R7896",
-          "fullName": "H. Brooks Norton",
-          "jobTitle": "Director Of Land Acquisition",
-          "email": "h.norton@parksquarehomes.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZWES8C8251A23WCVVKZH",
-          "fullName": "Nina Khani",
-          "jobTitle": "Acquisition Specialist And Construction Manager",
-          "email": "nina@niksi.com",
+          "id": "01K7DNZAZPTD0YQNB5FTBSDT49",
+          "fullName": "Jennifer Bornick",
+          "jobTitle": "Escrow Closer",
+          "email": "jbornick@somerstitle.com",
           "status": "LEAD"
         },
         {
@@ -28274,24 +29328,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP025SEK0MBD6D7AN2MMDV",
-          "fullName": "Mohammed Younus",
-          "jobTitle": "Director Of Sales And Operations",
-          "email": "mohammed.younus@linktitleandclosing.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP07E0M2QYEVJS8QQDDSA0",
-          "fullName": "Becky Bradford",
-          "jobTitle": "Escrow Officer",
-          "email": "bbradford@gcta.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0BJDGJGMNV3D6JEJJB0W",
-          "fullName": "Leeanne Dempsey Sterling",
-          "jobTitle": "Account Manager, Licensed Title Agent",
-          "email": "leeanne.sterling@firstintitle.com",
+          "id": "01K7DNZWES8C8251A23WCVVKZH",
+          "fullName": "Nina Khani",
+          "jobTitle": "Acquisition Specialist And Construction Manager",
+          "email": "nina@niksi.com",
           "status": "LEAD"
         },
         {
@@ -28302,10 +29342,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0EPMFTMH0J5KA09ERG5H",
-          "fullName": "J P Ryan",
-          "jobTitle": "VP Business Development",
-          "email": "j.ry@fntic.com",
+          "id": "01K7DP0TACYSQSGENEF8QYTZ3X",
+          "fullName": "Val Tarsa",
+          "jobTitle": "Escrow Officer",
+          "email": "vtarsa@canyontitle.com",
           "status": "LEAD"
         },
         {
@@ -28316,34 +29356,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0R9CPPSFDDRAV104FPW9",
-          "fullName": "Charles Nichols",
-          "jobTitle": "Escrow Officer",
-          "email": "cnichols@cleartitleaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0TACYSQSGENEF8QYTZ3X",
-          "fullName": "Val Tarsa",
-          "jobTitle": "Escrow Officer",
-          "email": "vtarsa@canyontitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0WX16TVMZD6313EPX2DF",
-          "fullName": "Gene Anne McKay",
-          "jobTitle": "Retired President",
-          "email": "genemckay@bosshardtrealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0Y02PCXB7BTHBFHQWA8T",
-          "fullName": "Lauren Tirado",
-          "jobTitle": "Marketing Director REALTOR Ani Alexander Group",
-          "email": "laurentirado@bhhsfloridarealty.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP1078S4GTZW2THYW703PC",
           "fullName": "Alex Cabrera",
           "jobTitle": "Senior Sales Marketing Executive",
@@ -28351,66 +29363,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP10ZPBQARVE5BWEV9R116",
-          "fullName": "Bill Cope",
-          "jobTitle": "CFO Controller",
-          "email": "bill.cope@americantitleserviceagency.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYSX5FRZY1HA85JZ86T0X",
-          "fullName": "Tiffany Zimmerman",
-          "jobTitle": "Title Curative Specialist",
-          "email": "tzimmerman@gorequire.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYVXA2E0PV164QVVP4TD3",
-          "fullName": "Lloyd San",
-          "jobTitle": "Senior Vice President, Enterprise Business Development",
-          "email": "lloyd.san@voxtur.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYXCMV2Y75G6ZCJ34JM7V",
-          "fullName": "Christy Sexton",
-          "jobTitle": "Escrow Officer",
-          "email": "christy@turnertitle.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNYXYVWEZVMBYHTZD3YNHZ",
           "fullName": "Lauren Howell",
           "jobTitle": "Funding Manager",
           "email": "laurenhowell@trustprotitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNYYGKBX36JSPZAZC9W4EW",
-          "fullName": "Milissa Thomas Kidwell",
-          "jobTitle": "Business Development Specialist",
-          "email": "mkidwell@tridenttitlellc.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ0QQKKT3BYCZ83ACW89F",
-          "fullName": "Joyce Brickous",
-          "jobTitle": "Senior Closer",
-          "email": "joyce@titlexperts.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ24Y1M4AH2B6YWQK3WAR",
-          "fullName": "Mary Warren",
-          "jobTitle": "Executive Assistant",
-          "email": "mary@titleandabstract.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ2WA0ZVH5Y23DY7HXA9W",
-          "fullName": "Jamayal Douglas",
-          "jobTitle": "Post Closing Title Supervisor",
-          "email": "jamayal@titleandabstract.com",
           "status": "LEAD"
         },
         {
@@ -28428,38 +29384,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZ6GBN52SDY1NCH2BSX4C",
-          "fullName": "Asya LeBeau",
-          "jobTitle": "Community Sales Manager Certified Sales Coach 2021 2023",
-          "email": "alebeau@taylormorrison.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZ725MVAJE9MM08AYT9A9",
           "fullName": "Arlene Bejarano",
           "jobTitle": "Branch Manager Senior Escrow Officer",
           "email": "abejarano@teematitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZ86MNZR557VNE3MA2BWN",
-          "fullName": "Paula LeBere",
-          "jobTitle": "Escrow Assistant",
-          "email": "paula@suncoastone.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZA7R9NQTY8QAGF4ET981",
-          "fullName": "Lee Bozenhard",
-          "jobTitle": "Escrow Assistant",
-          "email": "lbozenhard@somerstitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZCEVYK3ZM73Q8T3MT5CD",
-          "fullName": "Chuck Haney",
-          "jobTitle": "President And CEO",
-          "email": "ch@com.com",
           "status": "LEAD"
         },
         {
@@ -28470,52 +29398,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZKGJWSAZKSJ55F7TRNJV",
-          "fullName": "Bryan K. McCoy",
-          "jobTitle": "Vice President Of Commercial",
-          "email": "bmccoy@alliancegroupfl.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZM82PJFMJ03C68AST3BH",
-          "fullName": "Britaney Dziedzic",
-          "jobTitle": "Senior Property Analyst",
-          "email": "b.dziedzic@proplogix.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZMZH9BEBFS8F3P87BFEV",
-          "fullName": "Alex Eckelberry",
-          "jobTitle": "CEO",
-          "email": "alex.eckelberry@proplogix.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZRJCYE8EJ1F0CKAKDXFV",
-          "fullName": "Lori Anderson",
-          "jobTitle": "Sales Executive",
-          "email": "landerson@ptanow.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DNZVB5S9CPJNF2ABSVH5M0",
           "fullName": "Meghala Robinson",
           "jobTitle": "Senior Process Associate",
           "email": "mrobinson@orchestrate.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZX0CE1CZXDBC5BA631C5",
-          "fullName": "Peter Meyaart",
-          "jobTitle": "Director Of Engagement",
-          "email": "peter@newpathtitle.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP05S3YWZPESXMDHX4FGBX",
-          "fullName": "Jamie Keeton",
-          "jobTitle": "Regional Operations Manager",
-          "email": "jkeeton@homepartnerstitle.com",
           "status": "LEAD"
         },
         {
@@ -28526,31 +29412,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DNZYFD3MTC8FFZATXDCE56",
-          "fullName": "Simon Bacon",
-          "jobTitle": "Executive Director",
-          "email": "simonbacon@michaelsaunders.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DNZZ13YQDEFXN31017HXZW",
-          "fullName": "Allison Purcell",
-          "jobTitle": "Senior Copywriter Communications Specialist",
-          "email": "purcellallison@michaelsaunders.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP03N6XN5BR4ZFPDRZ8SFQ",
           "fullName": "Jennie Restrepo",
           "jobTitle": "Director Of Marketing And Business Development",
           "email": "j.restrepo@insured-title.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP06W7A87EQANTTFCFRBQH",
-          "fullName": "Sherry Long",
-          "jobTitle": "Managing Member Hilliard, Ohio",
-          "email": "slong@azgat.com",
           "status": "LEAD"
         },
         {
@@ -28561,17 +29426,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP093E433M50CPN7SZAPH9",
-          "fullName": "Eric Egeland",
-          "jobTitle": "Managing Broker",
-          "email": "eric.egeland@genstonerealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0ADAVHPCJXSW4B1337CG",
-          "fullName": "Mike LaRosa",
-          "jobTitle": "COO",
-          "email": "mike.larosa@flagency.net",
+          "id": "01K7DP0J8A2KNATF19XXP94JAA",
+          "fullName": "Rebecca Balkcom",
+          "jobTitle": "Director Of Marketing And Business Development",
+          "email": "rebecca@ects.com",
           "status": "LEAD"
         },
         {
@@ -28589,27 +29447,6 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0J8A2KNATF19XXP94JAA",
-          "fullName": "Rebecca Balkcom",
-          "jobTitle": "Director Of Marketing And Business Development",
-          "email": "rebecca@ects.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0M0GGGH2CEM6TV14AF7M",
-          "fullName": "Michelle Humphrey",
-          "jobTitle": "Property Manager",
-          "email": "michelle@dennisrealty.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0N9T4E1KHHQ2A7G8KHWA",
-          "fullName": "Christopher Pelly",
-          "jobTitle": "Partner Realtor",
-          "email": "christopher@countsrealestate.com",
-          "status": "LEAD"
-        },
-        {
           "id": "01K7DP0Q06D9QNC51PE8GGTYMM",
           "fullName": "Paul LeCouris",
           "jobTitle": "Director Of National Partner Relations",
@@ -28617,17 +29454,10 @@
           "status": "LEAD"
         },
         {
-          "id": "01K7DP0RF74492JQZK8T0MBZXP",
-          "fullName": "Tina Erwin",
-          "jobTitle": "Escrow Officer",
-          "email": "terwin@cleartitleaz.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP0S0Z2DPPQJJZJX4J2627",
-          "fullName": "Mack McDaniel",
-          "jobTitle": "AVP Of Client Relations At Clear Title Agency",
-          "email": "mmcdaniel@cleartitleaz.com",
+          "id": "01K7DP0N9T4E1KHHQ2A7G8KHWA",
+          "fullName": "Christopher Pelly",
+          "jobTitle": "Partner Realtor",
+          "email": "christopher@countsrealestate.com",
           "status": "LEAD"
         },
         {
@@ -28642,13 +29472,6 @@
           "fullName": "Noemi Vergara",
           "jobTitle": "Title Curator",
           "email": "noemi@armourtitlecompany.com",
-          "status": "LEAD"
-        },
-        {
-          "id": "01K7DP125ZX6M8TSVX52F2XW15",
-          "fullName": "Ronald Quain",
-          "jobTitle": "CEO",
-          "email": "ronald.quain@americantitleserviceagency.com",
           "status": "LEAD"
         }
       ]
