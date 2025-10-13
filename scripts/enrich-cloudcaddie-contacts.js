@@ -424,13 +424,15 @@ class CloudCaddieContactEnrichment {
       });
 
       if (!response.ok) {
-        throw new Error(`Lusha API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Lusha API error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
       
-      if (result.contacts && result.contacts.length > 0) {
-        return result.contacts[0];
+      // Lusha returns data in result.contacts.contactId format
+      if (result.contacts && result.contacts["1"] && result.contacts["1"].data) {
+        return result.contacts["1"].data;
       }
       
       return null;
@@ -442,12 +444,12 @@ class CloudCaddieContactEnrichment {
 
   async callLushaNameSearch(firstName, lastName, companyName) {
     try {
+      // Lusha name search requires fullName + companyName format
       const requestBody = {
         contacts: [
           {
             contactId: "1",
-            firstName: firstName,
-            lastName: lastName,
+            fullName: `${firstName} ${lastName}`,
             companyName: companyName
           }
         ],
@@ -467,13 +469,15 @@ class CloudCaddieContactEnrichment {
       });
 
       if (!response.ok) {
-        throw new Error(`Lusha API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Lusha API error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
       
-      if (result.contacts && result.contacts.length > 0) {
-        return result.contacts[0];
+      // Lusha returns data in result.contacts.contactId format
+      if (result.contacts && result.contacts["1"] && result.contacts["1"].data) {
+        return result.contacts["1"].data;
       }
       
       return null;
@@ -530,6 +534,16 @@ class CloudCaddieContactEnrichment {
       if (phone && !person.phone) {
         updates.phone = phone;
       }
+      
+      // Try to get mobile phone if available
+      if (lushaData.phones.length > 1 && !person.mobilePhone) {
+        updates.mobilePhone = lushaData.phones[1];
+      }
+    }
+
+    // Extract additional contact info
+    if (lushaData.fullName && !person.fullName) {
+      updates.fullName = lushaData.fullName;
     }
 
     return updates;
