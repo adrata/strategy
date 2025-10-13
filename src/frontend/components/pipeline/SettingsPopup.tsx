@@ -257,18 +257,23 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div 
-        className="bg-[var(--background)] rounded-lg shadow-xl border border-[var(--border)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+        className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {/* Header with gradient icon */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
-            <CogIcon className="w-6 h-6 text-[var(--foreground)]" />
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Settings</h2>
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <CogIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-[var(--foreground)]">Settings</h2>
+              <p className="text-sm text-[var(--muted)]">Customize your Adrata experience</p>
+            </div>
           </div>
           <button
             onClick={onClose}

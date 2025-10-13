@@ -309,7 +309,7 @@ Make this highly specific to TOP's actual business model and the target company'
 `;
 
       const response = await this.anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-5-sonnet-20241201",
         max_tokens: 4000,
         messages: [{ role: "user", content: prompt }]
       });
