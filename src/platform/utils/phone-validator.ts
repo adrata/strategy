@@ -33,6 +33,7 @@ export function validatePhoneNumber(phone: string | null | undefined): PhoneVali
     // 555 exchange numbers (fake)
     /555-\d{3}-\d{4}/,
     /\+1-555-\d{3}-\d{4}/,
+    /\+1-555-\d{4}/, // Malformed pattern missing area code
     /555\d{7}/,
     /\+1555\d{7}/,
     

@@ -343,13 +343,13 @@ class TopPeopleComprehensiveEnrichment {
       personal_email: `${person.firstName.toLowerCase()}.${person.lastName.toLowerCase()}@gmail.com`,
       phone_numbers: [
         {
-          number: person.phone || `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
+          number: person.phone || null, // No fake phone generation for production
           type: "work",
-          confidence: 85
+          confidence: person.phone ? 85 : 0
         }
       ],
-      mobile_phone: person.mobilePhone || `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
-      work_phone: person.workPhone || `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
+      mobile_phone: person.mobilePhone || null, // No fake phone generation for production
+      work_phone: person.workPhone || null, // No fake phone generation for production
       job_title: person.jobTitle || "Engineering Manager",
       department: person.department || "Engineering",
       seniority_level: person.seniority || "Senior",

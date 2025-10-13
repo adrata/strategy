@@ -255,7 +255,7 @@ class TopCompanyComprehensiveEnrichment {
           source: "LinkedIn"
         }
       ],
-      company_phone_numbers: ["+1-555-0123"],
+      company_phone_numbers: [], // No fake phone numbers for production
       company_emails: [`info@${company.website?.replace(/^https?:\/\//, '').replace(/^www\./, '') || 'company.com'}`],
       ownership_status: Math.random() > 0.7 ? "Public" : "Private",
       stock_ticker: Math.random() > 0.7 ? "TEL" : null

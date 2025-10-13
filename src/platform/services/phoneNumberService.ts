@@ -190,15 +190,21 @@ export class PhoneNumberService {
     areaCode: string,
     userId: string,
     location: { city: string; state: string; zipCode?: string },
+    workspaceId?: string,
   ): Promise<PhoneNumberProfile> {
     try {
       await this.initializeTwilio();
       
       if (!this.twilioClient) {
-        console.warn(
-          "Twilio not available - creating mock phone number profile",
-        );
-        return this.createMockPhoneNumberProfile(areaCode, userId, location);
+        // Only create mock phone numbers for demo workspaces
+        if (workspaceId && await this.isDemoWorkspace(workspaceId)) {
+          console.warn(
+            "Twilio not available - creating mock phone number profile for demo workspace",
+          );
+          return this.createMockPhoneNumberProfile(areaCode, userId, location);
+        } else {
+          throw new Error("Twilio not available and workspace is not demo - cannot provision phone number");
+        }
       }
 
       // Search for available numbers in the area code
@@ -658,6 +664,30 @@ export class PhoneNumberService {
   ): Promise<any[]> {
     // Return alternative area codes
     return [];
+  }
+
+  private async isDemoWorkspace(workspaceId: string): Promise<boolean> {
+    try {
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+      
+      const workspace = await prisma.workspaces.findUnique({
+        where: { id: workspaceId },
+        select: { slug: true, name: true }
+      });
+      
+      await prisma.$disconnect();
+      
+      if (!workspace) return false;
+      
+      // Check if it's a demo workspace
+      return workspace.slug === 'demo' || 
+             workspace.name?.toLowerCase().includes('demo') ||
+             workspaceId === 'demo-workspace-2025';
+    } catch (error) {
+      console.error('Error checking demo workspace:', error);
+      return false;
+    }
   }
 
   private createMockPhoneNumberProfile(
