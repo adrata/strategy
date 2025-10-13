@@ -307,10 +307,6 @@ model companies {
   twitterFollowers       Int?
   twitterUrl             String?          @db.VarChar(500)
   youtubeUrl             String?          @db.VarChar(500)
-  nextActionPriority     String?          @db.VarChar(20)
-  nextActionReasoning    String?
-  nextActionType         String?          @db.VarChar(50)
-  nextActionUpdatedAt    DateTime?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -378,6 +374,10 @@ model people {
   lastActionDate       DateTime?           @db.Timestamp(6)
   nextAction           String?
   nextActionDate       DateTime?           @db.Timestamp(6)
+  nextActionReasoning  String?             @db.Text
+  nextActionPriority   String?             @db.VarChar(20)
+  nextActionType       String?             @db.VarChar(50)
+  nextActionUpdatedAt  DateTime?
   actionStatus         String?
   engagementScore      Float?              @default(0)
   globalRank           Int?                @default(0)
