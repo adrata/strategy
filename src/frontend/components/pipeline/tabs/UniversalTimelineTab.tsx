@@ -100,73 +100,16 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
   };
 
   const generateTimelineFromRecord = useCallback(() => {
-    const events: TimelineEvent[] = [];
-    console.log('🔄 [TIMELINE] Generating timeline from record:', {
+    // Only show real actions from the database - no fallback data
+    console.log('🔄 [ACTIONS] Initializing actions tab for record:', {
       record: record,
       recordType: recordType,
       createdAt: record?.createdAt
     });
-
-    // Always add creation event - use createdAt if available, otherwise use current date
-    const recordTypeName = recordType === 'companies' ? 'company' : 
-                          recordType === 'people' ? 'person' : 
-                          recordType.slice(0, -1); // Handle other plurals
-    const creationDate = record?.createdAt ? new Date(record.createdAt) : new Date();
     
-    const creationEvent = {
-      id: 'created',
-      type: 'created' as const,
-      date: creationDate,
-      title: `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} added to pipeline`,
-      description: record?.createdAt 
-        ? `New ${recordTypeName} record created in system`
-        : `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} record loaded`,
-      user: getUserName(record?.assignedUserId || record?.createdBy || 'System')
-    };
-    events.push(creationEvent);
-    console.log('🔄 [TIMELINE] Added creation event:', creationEvent);
-
-    // Add last action if available
-    if (record?.lastActionDate) {
-      events.push({
-        id: 'last-action',
-        type: 'field_update',
-        date: new Date(record.lastActionDate),
-        title: record?.lastAction || 'Activity',
-        description: 'Last recorded activity',
-        user: getUserName(record?.assignedUserId || record?.lastActionBy || 'User')
-      });
-    }
-
-    // Add status changes if we can infer them
-    if (record?.status && record?.status !== 'new') {
-      events.push({
-        id: 'status-change',
-        type: 'status_change',
-        date: new Date(record?.updatedAt || record?.createdAt),
-        title: `Status changed to ${record.status}`,
-        description: `${recordType.slice(0, -1)} status updated to ${record.status}`,
-        user: getUserName(record?.assignedUserId || record?.updatedBy || 'System')
-      });
-    }
-
-    // Add next action if scheduled
-    if (record?.nextActionDate && new Date(record.nextActionDate) > new Date()) {
-      events.push({
-        id: 'next-action',
-        type: 'activity',
-        date: new Date(record.nextActionDate),
-        title: record?.nextAction || 'Scheduled activity',
-        description: 'Planned next action',
-        user: getUserName(record?.assignedUserId || record?.nextActionBy || 'User')
-      });
-    }
-
-    // Sort events by date (newest first)
-    events.sort((a, b) => b.date.getTime() - a.date.getTime());
-    console.log('🔄 [TIMELINE] Setting initial timeline events:', events);
-    setTimelineEvents(events);
-  }, [record, recordType, getUserName]);
+    // Start with empty events - only real actions will be loaded from API
+    setTimelineEvents([]);
+  }, [record, recordType]);
 
   const loadTimelineFromAPI = useCallback(async () => {
     if (!record?.id) {
@@ -230,7 +173,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
             allActivities.push(...actionsData.data.map((action: any) => ({
               ...action,
               type: 'action',
-              timestamp: action.createdAt || action.scheduledAt
+              timestamp: action.completedAt || action.createdAt || action.scheduledAt
             })));
           }
         }
@@ -259,40 +202,17 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
             activity['contactId'] === record.id ||
             activity['accountId'] === record.id ||
             activity['companyId'] === record.id ||
+            activity['personId'] === record.id || // For speedrun actions
             activity['id'] === record.id // Also check if the activity itself matches our record
           );
         });
         
         console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
 
-        // 🚫 FIX: Handle case where no activities are found
+        // Only show real actions from the database - no fallback data
         if (recordActivities.length === 0) {
-          console.log('📅 [TIMELINE] No activities found for this record, creating placeholder events');
-          
-          // Create some basic timeline events from the record itself
-          const recordEvents: TimelineEvent[] = [];
-          
-          if (record.createdAt) {
-            recordEvents.push({
-              id: `${record.id}-created`,
-              type: 'created' as const,
-              title: 'Record Created',
-              description: `${record.name || 'Record'} was created`,
-              date: new Date(record.createdAt)
-            });
-          }
-          
-          if (record.updatedAt && record.updatedAt !== record.createdAt) {
-            recordEvents.push({
-              id: `${record.id}-updated`,
-              type: 'updated' as const,
-              title: 'Record Updated',
-              description: `${record.name || 'Record'} was last updated`,
-              date: new Date(record.updatedAt)
-            });
-          }
-          
-          activityEvents = recordEvents;
+          console.log('📅 [ACTIONS] No real actions found for this record');
+          activityEvents = [];
         } else {
           // Convert activities to timeline events
           activityEvents = recordActivities.map((activity: any) => ({
@@ -322,11 +242,10 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         }));
       }
 
-      // Merge all events and sort by date
+      // Only show real actions from the database
       setTimelineEvents(prev => {
-        const combined = [...prev, ...activityEvents, ...noteEvents];
-        console.log('🔄 [TIMELINE] Merging events:', {
-          prev: prev.length,
+        const combined = [...activityEvents, ...noteEvents];
+        console.log('🔄 [ACTIONS] Setting real actions only:', {
           activities: activityEvents.length,
           notes: noteEvents.length,
           combined: combined.length
@@ -338,12 +257,12 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         );
         
         const sortedEvents = uniqueEvents.sort((a, b) => {
-          // 🚫 FIX: Handle undefined dates safely
+          // Handle undefined dates safely
           const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
           const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
           return dateB.getTime() - dateA.getTime();
         });
-        console.log('🔄 [TIMELINE] Final timeline events:', sortedEvents);
+        console.log('🔄 [ACTIONS] Final actions events:', sortedEvents);
         
         return sortedEvents;
       });
@@ -367,7 +286,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between">
-          <div className="text-lg font-medium text-[var(--foreground)]">Timeline</div>
+          <div className="text-lg font-medium text-[var(--foreground)]">Actions</div>
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
               {timelineEvents.length}
@@ -381,8 +300,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
 
       {timelineEvents['length'] === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No timeline events yet</h3>
-          <p className="text-[var(--muted)]">Activities and interactions will appear here</p>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No actions yet</h3>
+          <p className="text-[var(--muted)]">Real actions and activities will appear here when logged</p>
         </div>
       ) : (
         <div className="space-y-6">

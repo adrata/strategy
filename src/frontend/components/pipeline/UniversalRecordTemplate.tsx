@@ -115,92 +115,92 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'timeline', label: 'Actions' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
+            { id: 'notes', label: 'Notes' }
           ];
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'opportunities':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'deal-intel', label: 'Deal Intel' },
         { id: 'stakeholders', label: 'Stakeholders' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'close-plan', label: 'Close Plan' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'competitors', label: 'Competitors' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'people':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'speedrun':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'relationship', label: 'Relationship' },
         { id: 'business', label: 'Business' },
         { id: 'personal', label: 'Personal' },
         { id: 'success', label: 'Success' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'partners':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'partnership', label: 'Partnership' },
         { id: 'collaboration', label: 'Collaboration' },
         { id: 'performance', label: 'Performance' },
         { id: 'opportunities', label: 'Opportunities' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'sellers':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'companies', label: 'Companies' },
         { id: 'performance', label: 'Performance' },
         { id: 'profile', label: 'Profile' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     default:
       return [
         { id: 'overview', label: 'Home' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'company', label: companyName },
         { id: 'industry', label: 'Industry' },
         { id: 'career', label: 'Career' },
         { id: 'landmines', label: 'Landmines' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
   }
@@ -1144,30 +1144,21 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Submitting action:', actionData);
       
-      // Use different API endpoints based on record type
-      const apiEndpoint = recordType === 'speedrun' ? '/api/speedrun/action-log' : '/api/actions/add';
+      // Use v1 API for all record types
+      const apiEndpoint = '/api/v1/actions';
       
-      // Prepare request body based on record type
-      const requestBody = recordType === 'speedrun' ? {
+      // Prepare request body for v1 API
+      const requestBody = {
+        type: actionData.type,
+        subject: `${actionData.type} - ${record.name || record.fullName || 'Unknown'}`,
+        description: actionData.action || actionData.notes || actionData.actionLog,
+        outcome: actionData.nextAction,
+        scheduledAt: actionData.nextActionDate,
+        completedAt: new Date().toISOString(),
+        status: 'COMPLETED',
+        priority: 'NORMAL',
         personId: record.id,
-        personName: record.name || record.fullName || 'Unknown',
-        actionType: actionData.type,
-        notes: actionData.action || actionData.notes, // Use action field for speedrun
-        nextAction: actionData.nextAction,
-        nextActionDate: actionData.nextActionDate,
-        actionPerformedBy: actionData.actionPerformedBy
-      } : {
-        recordId: record.id,
-        recordType: recordType,
-        actionType: actionData.type,
-        actionLog: actionData.actionLog,
-        notes: actionData.notes,
-        nextAction: actionData.nextAction,
-        nextActionDate: actionData.nextActionDate,
-        actionPerformedBy: actionData.actionPerformedBy,
-        contactId: actionData.contactId,
-        workspaceId: record.workspaceId || 'default',
-        userId: record.userId || 'default'
+        companyId: record.companyId || record.company?.id
       };
       
       // Make API call to log the action
@@ -1344,37 +1335,117 @@ export function UniversalRecordTemplate({
         valueDriver: (modalElement.querySelector('input[placeholder*="What drives value"]') as HTMLInputElement)?.value || record?.valueDriver,
       };
       
-      // Make API call to update the record using unified API
-      const requestPayload = {
-        type: recordType,
-        action: 'update',
-        id: record?.id,
-        data: formData,
-        workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-        userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
-      };
+      // Make API call to update the record
+      let result: any;
       
-      console.log('🔍 [DEBUG] API Request Payload:', requestPayload);
-      
-      const response = await authFetch('/api/data/unified', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestPayload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ [DEBUG] API Error Response:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText
+      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects') {
+        // 🚀 V1 API: All people-related records (speedrun, people, leads, prospects) use v1 people API
+        console.log('🔍 [DEBUG] Using V1 People API for:', recordType);
+        
+        const response = await authFetch(`/api/v1/people/${record?.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
         });
-        throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
-      }
 
-      const result = await response.json();
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [DEBUG] V1 API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: errorText
+          });
+          throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        result = await response.json();
+        // result.data contains the updated person record
+        
+      } else if (recordType === 'companies') {
+        // 🚀 V1 API: Use modern v1 companies API with streamlined schema
+        console.log('🔍 [DEBUG] Using V1 Companies API for:', recordType);
+        
+        const response = await authFetch(`/api/v1/companies/${record?.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [DEBUG] V1 API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: errorText
+          });
+          throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        result = await response.json();
+        // result.data contains the updated company record
+        
+      } else if (recordType === 'opportunities') {
+        // 🚀 V1 API: Use v1 opportunities API (uses companies table)
+        console.log('🔍 [DEBUG] Using V1 Opportunities API for:', recordType);
+        
+        const response = await authFetch(`/api/v1/opportunities/${record?.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [DEBUG] V1 Opportunities API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: errorText
+          });
+          throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        result = await response.json();
+        // result.data contains the updated opportunity record
+        
+      } else {
+        // 🔄 LEGACY: Use unified API for other record types (will be migrated later)
+        const requestPayload = {
+          type: recordType,
+          action: 'update',
+          id: record?.id,
+          data: formData,
+          workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
+          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
+        };
+        
+        console.log('🔍 [DEBUG] Using Legacy Unified API for:', recordType, requestPayload);
+        
+        const response = await authFetch('/api/data/unified', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestPayload),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [DEBUG] API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: errorText
+          });
+          throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        result = await response.json();
+      }
       
       if (result.success) {
         showMessage('Record updated successfully!');
@@ -1384,7 +1455,9 @@ export function UniversalRecordTemplate({
         
         // Trigger record update callback if provided
         if (onRecordUpdate) {
-          onRecordUpdate(result.record);
+          // V1 API returns data in result.data, legacy API returns in result.record
+          const updatedRecord = result.data || result.record;
+          onRecordUpdate(updatedRecord);
         }
         
         // Refresh the page to show updated data

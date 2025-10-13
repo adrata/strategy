@@ -113,9 +113,15 @@ export function getNextAction(record: any): string {
 }
 
 export function getPredictiveNextAction(record: any): string {
-  // Simple predictive logic based on record data
+  // Use database nextAction if it exists, otherwise generate predictive logic
   if (!record) return 'No next action';
   
+  // If we have a nextAction from the database, use it
+  if (record.nextAction && record.nextAction !== 'No next action') {
+    return record.nextAction;
+  }
+  
+  // Fallback to predictive logic based on record data
   const status = record.status?.toLowerCase();
   const lastActionTime = record.lastActionDate;
   
@@ -210,19 +216,48 @@ export function getLeadsNextAction(record: any, recordIndex?: number): ActionDat
   const nextAction = getPredictiveNextAction(record);
   const status = record?.status?.toLowerCase();
   
-  // Leads-specific logic
+  // Calculate timing based on nextActionDate if available
   let timing: string;
   let timingColor: string;
   
-  if (status === 'new') {
-    timing = 'Today';
-    timingColor = getStandardizedActionTimingColor('today');
-  } else if (status === 'qualified') {
-    timing = 'This week';
-    timingColor = getStandardizedActionTimingColor('this week');
+  if (record.nextActionDate) {
+    // Use database nextActionDate to calculate timing
+    const now = new Date();
+    const nextDate = new Date(record.nextActionDate);
+    const diffMs = nextDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) {
+      timing = 'Overdue';
+      timingColor = getStandardizedActionTimingColor('urgent');
+    } else if (diffDays === 0) {
+      timing = 'Today';
+      timingColor = getStandardizedActionTimingColor('today');
+    } else if (diffDays === 1) {
+      timing = 'Tomorrow';
+      timingColor = getStandardizedActionTimingColor('this week');
+    } else if (diffDays <= 7) {
+      timing = 'This week';
+      timingColor = getStandardizedActionTimingColor('this week');
+    } else if (diffDays <= 14) {
+      timing = 'Next week';
+      timingColor = getStandardizedActionTimingColor('next week');
+    } else {
+      timing = 'Later';
+      timingColor = getStandardizedActionTimingColor('later');
+    }
   } else {
-    timing = 'Next week';
-    timingColor = getStandardizedActionTimingColor('next week');
+    // Fallback to status-based logic
+    if (status === 'new') {
+      timing = 'Today';
+      timingColor = getStandardizedActionTimingColor('today');
+    } else if (status === 'qualified') {
+      timing = 'This week';
+      timingColor = getStandardizedActionTimingColor('this week');
+    } else {
+      timing = 'Next week';
+      timingColor = getStandardizedActionTimingColor('next week');
+    }
   }
   
   return {

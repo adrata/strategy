@@ -150,11 +150,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
   };
 
 
-  // Generate last 3 actions based on available data
+  // Generate last actions from real database data only
   const generateLastActions = () => {
     const actions = [];
     
-    // Add the main last action if it exists and is valid
+    // Only add the main last action if it exists and is valid
     if (recordData.lastAction && 
         recordData.lastAction !== 'No action planned' && 
         recordData.lastAction.trim() !== '' && 
@@ -167,56 +167,21 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       });
     }
     
-    // Add enrichment action if available (should come before CRM addition)
-    if (record.lastEnriched) {
-      actions.push({
-        action: 'Profile enrichment completed',
-        date: formatRelativeDate(record.lastEnriched)
-      });
-    }
-    
-    // Add record creation action
-    if (record.createdAt) {
-      actions.push({
-        action: 'Added to CRM system',
-        date: formatRelativeDate(record.createdAt)
-      });
-    }
-    
-    // Fill with default actions if we don't have enough - but be more accurate
-    const defaultActions = [
-      'Added to CRM system',
-      'Profile enrichment completed',
-      'Record created'
-    ];
-    
-    let defaultIndex = 0;
-    while (actions.length < 3 && defaultIndex < defaultActions.length) {
-      // Only add default actions if we don't already have them
-      const actionText = defaultActions[defaultIndex];
-      const alreadyExists = actions.some(action => action.action === actionText);
-      
-      if (!alreadyExists) {
-        actions.push({
-          action: actionText,
-          date: defaultIndex === 0 ? formatRelativeDate(record.createdAt) : 
-                defaultIndex === 1 ? formatRelativeDate(record.lastEnriched || record.updatedAt) : 
-                formatRelativeDate(record.createdAt)
-        });
-      }
-      defaultIndex++;
-    }
-    
-    return actions.slice(0, 3);
+    // No synthetic actions - only show real actions from the database
+    return actions;
   };
 
   const lastActions = generateLastActions();
 
         return (
           <div className="space-y-6">
-      {/* Overview Summary */}
+      {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">Overview Summary</h3>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Speedrun Summary</h2>
+      </div>
+
+      {/* Overview Summary */}
+      <div className="space-y-4">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="text-sm text-[var(--muted)]">
             {recordData.name} is a {recordData.title || 'professional'} at {recordData.company || 'their company'}. 
@@ -371,13 +336,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Last Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <ul className="space-y-2">
-            {lastActions.map((action, index) => (
-              <li key={index} className="text-sm text-[var(--muted)]">
-                • {action.action} - {action.date}
-              </li>
-            ))}
-          </ul>
+          {lastActions.length > 0 ? (
+            <ul className="space-y-2">
+              {lastActions.map((action, index) => (
+                <li key={index} className="text-sm text-[var(--muted)]">
+                  • {action.action} - {action.date}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
+              <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+            </div>
+          )}
         </div>
       </div>
 

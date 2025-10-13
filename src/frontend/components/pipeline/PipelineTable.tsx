@@ -144,8 +144,8 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
   if (section === 'speedrun') {
     return [
       'Rank',
-      'Company',
       'Name',
+      'Company',
       'Status',
       'MAIN-SELLER',
       'CO-SELLERS',

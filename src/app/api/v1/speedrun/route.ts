@@ -199,6 +199,54 @@ export async function GET(request: NextRequest) {
               }).join(', ')
           : '-';
 
+        // Calculate lastActionTime for speedrun table display
+        let lastActionTime = 'Never';
+        const lastActionDate = person.lastActionDate || person.updatedAt;
+        
+        // Only show real last actions if they exist
+        if (lastActionDate && person.lastAction && person.lastAction !== 'No action taken') {
+          const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSince === 0) lastActionTime = 'Today';
+          else if (daysSince === 1) lastActionTime = 'Yesterday';
+          else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+          else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+          else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+        } else if (person.createdAt) {
+          const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSince === 0) lastActionTime = 'Today';
+          else if (daysSince === 1) lastActionTime = 'Yesterday';
+          else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+          else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+          else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+        }
+
+        // Calculate nextActionTiming for speedrun table display
+        let nextActionTiming = 'No date set';
+        const nextActionDate = person.nextActionDate;
+        
+        if (nextActionDate) {
+          const now = new Date();
+          const actionDate = new Date(nextActionDate);
+          const diffMs = actionDate.getTime() - now.getTime();
+          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          
+          if (diffDays < 0) {
+            nextActionTiming = 'Overdue';
+          } else if (diffDays === 0) {
+            nextActionTiming = 'Today';
+          } else if (diffDays === 1) {
+            nextActionTiming = 'Tomorrow';
+          } else if (diffDays <= 7) {
+            nextActionTiming = 'This week';
+          } else if (diffDays <= 14) {
+            nextActionTiming = 'Next week';
+          } else if (diffDays <= 30) {
+            nextActionTiming = 'This month';
+          } else {
+            nextActionTiming = 'Future';
+          }
+        }
+
         return {
           id: person.id,
           rank: index + 1, // Sequential ranking starting from 1
@@ -211,8 +259,10 @@ export async function GET(request: NextRequest) {
           globalRank: person.globalRank || 0,
           lastAction: person.lastAction || 'No action taken',
           lastActionDate: person.lastActionDate || null,
+          lastActionTime: lastActionTime,
           nextAction: person.nextAction || 'No next action',
           nextActionDate: person.nextActionDate || null,
+          nextActionTiming: nextActionTiming,
           mainSellerId: person.mainSellerId,
           workspaceId: person.workspaceId,
           createdAt: person.createdAt,

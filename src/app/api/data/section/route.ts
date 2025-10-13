@@ -224,6 +224,29 @@ export async function GET(request: NextRequest) {
                 }).join(', ')
               : '-';
 
+            // Calculate lastActionTime for speedrun table display
+            let lastActionTime = 'Never';
+            const lastActionDate = person.lastActionDate || person.updatedAt;
+            
+            // Only show real last actions if they exist, otherwise show when data was added
+            if (lastActionDate && person.lastAction && person.lastAction !== 'No action taken') {
+              // Real last action exists
+              const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+              if (daysSince === 0) lastActionTime = 'Today';
+              else if (daysSince === 1) lastActionTime = 'Yesterday';
+              else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+              else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+              else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+            } else if (person.createdAt) {
+              // No real last action, show when data was added
+              const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+              if (daysSince === 0) lastActionTime = 'Today';
+              else if (daysSince === 1) lastActionTime = 'Yesterday';
+              else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+              else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+              else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+            }
+
             return {
               id: person.id,
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
@@ -238,6 +261,7 @@ export async function GET(request: NextRequest) {
               status: safeString(person.status || 'Unknown', 20),
               lastAction: safeString(person.lastAction || 'No action taken', 500),
               lastActionDate: person.lastActionDate || null,
+              lastActionTime: lastActionTime,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
               mainSellerId: person.mainSellerId || null,

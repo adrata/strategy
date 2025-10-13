@@ -122,7 +122,7 @@ export const PipelineView = React.memo(function PipelineView({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action'];
+        return ['Rank', 'Person', 'Company', 'Stage', 'Last Action', 'Next Action'];
       case 'companies':
         return ['Company', 'Last Action', 'Next Action'];
       case 'leads':

@@ -348,20 +348,22 @@ export function SpeedrunSprintView() {
     setIsSubmittingAction(true);
     
     try {
-      // Save action log to backend
-      const response = await fetch('/api/speedrun/action-log', {
+      // Save action log to backend using v1 API
+      const response = await fetch('/api/v1/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          type: actionData.type,
+          subject: `${actionData.type} - ${selectedRecord.fullName || selectedRecord.name || 'Unknown'}`,
+          description: actionData.action, // Use action field for description
+          outcome: actionData.nextAction,
+          scheduledAt: actionData.nextActionDate,
+          completedAt: new Date().toISOString(),
+          status: 'COMPLETED',
+          priority: 'NORMAL',
           personId: selectedRecord.id,
-          personName: selectedRecord.fullName || selectedRecord.name || 'Unknown',
-          actionType: actionData.type,
-          notes: actionData.action, // Use action field for notes
-          nextAction: actionData.nextAction,
-          nextActionDate: actionData.nextActionDate,
-          actionPerformedBy: actionData.actionPerformedBy || userId,
         }),
       });
 

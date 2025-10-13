@@ -65,63 +65,16 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
   };
 
   const generateTimelineFromRecord = useCallback(() => {
-    const events: TimelineEvent[] = [];
-
-    // Always add creation event if we have created date
-    if (record?.createdAt) {
-      const recordTypeName = recordType === 'companies' ? 'company' : 
-                            recordType === 'people' ? 'person' : 
-                            recordType.slice(0, -1); // Handle other plurals
-      events.push({
-        id: 'created',
-        type: 'created',
-        date: new Date(record.createdAt),
-        title: `${recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1)} added to pipeline`,
-        description: `New ${recordTypeName} record created in system`,
-        user: getUserName(record?.assignedUserId || record?.createdBy || 'System')
-      });
-    }
-
-    // Add last action if available
-    if (record?.lastActionDate) {
-      events.push({
-        id: 'last-action',
-        type: 'field_update',
-        date: new Date(record.lastActionDate),
-        title: record?.lastAction || 'Activity',
-        description: 'Last recorded activity',
-        user: getUserName(record?.assignedUserId || 'System')
-      });
-    }
-
-    // Add status changes if we can infer them
-    if (record?.status && record?.status !== 'new') {
-      events.push({
-        id: 'status-change',
-        type: 'status_change',
-        date: new Date(record?.updatedAt || record?.createdAt),
-        title: `Status changed to ${record.status}`,
-        description: `${recordType === 'companies' ? 'company' : recordType.slice(0, -1)} status updated to ${record.status}`,
-        user: getUserName(record?.assignedUserId || record?.updatedBy || 'System')
-      });
-    }
-
-    // Add next action if scheduled
-    if (record?.nextActionDate && new Date(record.nextActionDate) > new Date()) {
-      events.push({
-        id: 'next-action',
-        type: 'action',
-        date: new Date(record.nextActionDate),
-        title: record?.nextAction || 'Scheduled activity',
-        description: 'Planned next action',
-        user: getUserName(record?.assignedUserId || record?.nextActionBy || 'User')
-      });
-    }
-
-    // Sort events by date (newest first)
-    events.sort((a, b) => b.date.getTime() - a.date.getTime());
-    setTimelineEvents(events);
-  }, [record, recordType, getUserName]);
+    // Only show real actions from the database - no fallback data
+    console.log('🔄 [ENHANCED ACTIONS] Initializing actions tab for record:', {
+      record: record,
+      recordType: recordType,
+      createdAt: record?.createdAt
+    });
+    
+    // Start with empty events - only real actions will be loaded from API
+    setTimelineEvents([]);
+  }, [record, recordType]);
 
   const loadTimelineFromAPI = useCallback(async () => {
     if (!record?.id) {

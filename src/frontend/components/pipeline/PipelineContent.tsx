@@ -122,7 +122,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'company', 'name', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction'];
+        return ['rank', 'name', 'company', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction'];
       case 'companies':
         return ['rank', 'company', 'lastAction', 'nextAction'];
       case 'leads':

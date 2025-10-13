@@ -126,10 +126,10 @@ model users {
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
   main_seller_companies     companies[]                 @relation("MainSellerCompanies")
-  main_seller_people        people[]                    @relation("MainSellerPeople")
-  person_co_sellers         person_co_sellers[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
+  main_seller_people        people[]                    @relation("MainSellerPeople")
+  person_co_sellers         person_co_sellers[]
   reset_tokens              reset_tokens[]
   user_roles                user_roles[]
   workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
@@ -200,7 +200,6 @@ model reset_tokens {
 model companies {
   id                 String           @id @default(ulid()) @db.VarChar(30)
   workspaceId        String           @db.VarChar(30)
-  mainSellerId       String?          @db.VarChar(30)
   name               String           @db.VarChar(255)
   legalName          String?          @db.VarChar(255)
   tradingName        String?          @db.VarChar(255)
@@ -242,6 +241,7 @@ model companies {
   updatedAt          DateTime
   entityId           String?          @db.VarChar(30)
   deletedAt          DateTime?
+  mainSellerId       String?          @db.VarChar(30)
   actions            actions[]
   mainSeller         users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace          workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -261,63 +261,63 @@ model companies {
 
 /// Contact/person records
 model people {
-  id                String          @id @default(ulid()) @db.VarChar(30)
-  workspaceId       String          @db.VarChar(30)
-  companyId         String?         @db.VarChar(30)
-  mainSellerId      String?         @db.VarChar(30)
-  firstName         String          @db.VarChar(100)
-  lastName          String          @db.VarChar(100)
-  fullName          String          @db.VarChar(200)
-  displayName       String?         @db.VarChar(200)
-  salutation        String?         @db.VarChar(50)
-  suffix            String?         @db.VarChar(50)
-  jobTitle          String?         @db.VarChar(300)
-  title             String?         @db.VarChar(300)
-  department        String?         @db.VarChar(200)
-  seniority         String?         @db.VarChar(50)
-  email             String?         @db.VarChar(300)
-  workEmail         String?         @db.VarChar(300)
-  personalEmail     String?         @db.VarChar(300)
-  phone             String?         @db.VarChar(50)
-  mobilePhone       String?         @db.VarChar(50)
-  workPhone         String?         @db.VarChar(50)
-  linkedinUrl       String?         @db.VarChar(500)
-  address           String?         @db.VarChar(500)
-  city              String?         @db.VarChar(100)
-  state             String?         @db.VarChar(100)
-  country           String?         @db.VarChar(100)
-  postalCode        String?         @db.VarChar(50)
-  dateOfBirth       DateTime?       @db.Timestamp(6)
-  gender            String?         @db.VarChar(20)
+  id                String              @id @default(ulid()) @db.VarChar(30)
+  workspaceId       String              @db.VarChar(30)
+  companyId         String?             @db.VarChar(30)
+  firstName         String              @db.VarChar(100)
+  lastName          String              @db.VarChar(100)
+  fullName          String              @db.VarChar(200)
+  displayName       String?             @db.VarChar(200)
+  salutation        String?             @db.VarChar(50)
+  suffix            String?             @db.VarChar(50)
+  jobTitle          String?             @db.VarChar(300)
+  title             String?             @db.VarChar(300)
+  department        String?             @db.VarChar(200)
+  seniority         String?             @db.VarChar(50)
+  email             String?             @db.VarChar(300)
+  workEmail         String?             @db.VarChar(300)
+  personalEmail     String?             @db.VarChar(300)
+  phone             String?             @db.VarChar(50)
+  mobilePhone       String?             @db.VarChar(50)
+  workPhone         String?             @db.VarChar(50)
+  linkedinUrl       String?             @db.VarChar(500)
+  address           String?             @db.VarChar(500)
+  city              String?             @db.VarChar(100)
+  state             String?             @db.VarChar(100)
+  country           String?             @db.VarChar(100)
+  postalCode        String?             @db.VarChar(50)
+  dateOfBirth       DateTime?           @db.Timestamp(6)
+  gender            String?             @db.VarChar(20)
   bio               String?
-  profilePictureUrl String?         @db.VarChar(500)
-  status            PersonStatus?   @default(LEAD)
-  priority          PersonPriority? @default(MEDIUM)
+  profilePictureUrl String?             @db.VarChar(500)
+  status            PersonStatus?       @default(LEAD)
+  priority          PersonPriority?     @default(MEDIUM)
   source            String?
-  tags              String[]        @default([])
+  tags              String[]            @default([])
   customFields      Json?
   notes             Json?
-  preferredLanguage String?         @db.VarChar(10)
-  timezone          String?         @db.VarChar(50)
-  emailVerified     Boolean?        @default(false)
-  phoneVerified     Boolean?        @default(false)
+  preferredLanguage String?             @db.VarChar(10)
+  timezone          String?             @db.VarChar(50)
+  emailVerified     Boolean?            @default(false)
+  phoneVerified     Boolean?            @default(false)
   lastAction        String?
-  lastActionDate    DateTime?       @db.Timestamp(6)
+  lastActionDate    DateTime?           @db.Timestamp(6)
   nextAction        String?
-  nextActionDate    DateTime?       @db.Timestamp(6)
+  nextActionDate    DateTime?           @db.Timestamp(6)
   actionStatus      String?
-  engagementScore   Float?          @default(0)
-  globalRank        Int?            @default(0)
-  companyRank       Int?            @default(0)
-  createdAt         DateTime        @default(now())
+  engagementScore   Float?              @default(0)
+  globalRank        Int?                @default(0)
+  companyRank       Int?                @default(0)
+  createdAt         DateTime            @default(now())
   updatedAt         DateTime
-  entityId          String?         @db.VarChar(30)
+  entityId          String?             @db.VarChar(30)
   deletedAt         DateTime?
+  mainSellerId      String?             @db.VarChar(30)
   actions           actions[]
-  mainSeller        users?          @relation("MainSellerPeople", fields: [mainSellerId], references: [id], onDelete: SetNull)
+  company           companies?          @relation(fields: [companyId], references: [id])
+  mainSeller        users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
+  workspace         workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   coSellers         person_co_sellers[]
-  company           companies?      @relation(fields: [companyId], references: [id])
-  workspace         workspaces      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
   @@index([companyId])
@@ -339,9 +339,8 @@ model person_co_sellers {
   personId  String   @db.VarChar(30)
   userId    String   @db.VarChar(30)
   createdAt DateTime @default(now())
-
-  person people @relation(fields: [personId], references: [id], onDelete: Cascade)
-  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  person    people   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([personId, userId])
   @@index([personId])

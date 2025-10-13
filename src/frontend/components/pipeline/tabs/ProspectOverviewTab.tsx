@@ -265,11 +265,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
 
   const { wants, needs } = generateWantsAndNeeds();
 
-  // Generate last 3 actions based on available data
+  // Generate last actions from real database data only
   const generateLastActions = () => {
     const actions = [];
     
-    // Add the main last action if it exists
+    // Only add the main last action if it exists
     if (prospectData.lastAction && prospectData.lastAction !== 'No action planned') {
       actions.push({
         action: prospectData.lastAction,
@@ -277,31 +277,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       });
     }
     
-    // Add record creation action
-    if (record.createdAt) {
-      actions.push({
-        action: 'Added to CRM system',
-        date: formatRelativeDate(record.createdAt)
-      });
-    }
-    
-    // Add enrichment action if available
-    if (record.lastEnriched) {
-      actions.push({
-        action: 'Profile enrichment completed',
-        date: formatRelativeDate(record.lastEnriched)
-      });
-    }
-    
-    // Fill with default actions if we don't have enough
-    while (actions.length < 3) {
-      actions.push({
-        action: 'Initial contact via email',
-        date: 'Invalid Date'
-      });
-    }
-    
-    return actions.slice(0, 3);
+    // No synthetic actions - only show real actions from the database
+    return actions;
   };
 
   const lastActions = generateLastActions();
@@ -480,14 +457,21 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">Last 3 Actions:</h4>
-          <ul className="space-y-2">
-            {lastActions.map((action, index) => (
-              <li key={index} className="text-sm text-[var(--muted)]">
-                • {action.action} - {action.date}
-              </li>
-            ))}
-          </ul>
+          <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
+          {lastActions.length > 0 ? (
+            <ul className="space-y-2">
+              {lastActions.map((action, index) => (
+                <li key={index} className="text-sm text-[var(--muted)]">
+                  • {action.action} - {action.date}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
+              <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+            </div>
+          )}
         </div>
       </div>
 

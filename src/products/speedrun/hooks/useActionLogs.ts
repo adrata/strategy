@@ -28,7 +28,7 @@ export function useActionLogs(personId: string, workspaceId: string) {
 
       try {
         const response = await fetch(
-          `/api/speedrun/action-log?personId=${encodeURIComponent(personId)}&workspaceId=${encodeURIComponent(workspaceId)}&limit=50`
+          `/api/v1/actions?personId=${encodeURIComponent(personId)}&limit=50`
         );
 
         if (!response.ok) {
@@ -38,11 +38,19 @@ export function useActionLogs(personId: string, workspaceId: string) {
         const result = await response.json();
         
         if (result.success) {
-          // Convert timestamp strings to Date objects
-          const logs = result.data.map((log: any) => ({
-            ...log,
-            timestamp: new Date(log.timestamp),
-            nextActionDate: log.nextActionDate ? new Date(log.nextActionDate) : null,
+          // Convert v1 API response to ActionLog format
+          const logs = result.data.map((action: any) => ({
+            id: action.id,
+            personId: action.personId,
+            personName: action.person?.fullName || 'Unknown',
+            actionLog: action.description || '',
+            type: action.type,
+            notes: action.description,
+            nextAction: action.outcome,
+            nextActionDate: action.scheduledAt ? new Date(action.scheduledAt) : null,
+            workspaceId: action.workspaceId,
+            userId: action.userId,
+            timestamp: new Date(action.completedAt || action.createdAt),
           }));
           
           setActionLogs(logs);

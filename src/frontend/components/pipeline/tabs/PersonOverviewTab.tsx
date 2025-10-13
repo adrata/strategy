@@ -214,11 +214,11 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
 
   const { wants, needs } = generateWantsAndNeeds();
 
-  // Generate last 3 actions based on available data
+  // Generate last actions from real database data only
   const generateLastActions = () => {
     const actions = [];
     
-    // Add the main last action if it exists and is valid
+    // Only add the main last action if it exists and is valid
     if (personData.lastAction && personData.lastAction !== 'No action planned' && personData.lastAction.trim() !== '') {
       actions.push({
         action: personData.lastAction,
@@ -226,84 +226,17 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
       });
     }
     
-    // Add enrichment action if available (should come before CRM addition)
-    if (record.lastEnriched) {
-      actions.push({
-        action: 'Profile enrichment completed',
-        date: formatRelativeDate(record.lastEnriched)
-      });
-    }
-    
-    // Add record creation action
-    if (record.createdAt) {
-      actions.push({
-        action: 'Added to CRM system',
-        date: formatRelativeDate(record.createdAt)
-      });
-    }
-    
-    // Fill with default actions if we don't have enough
-    while (actions.length < 3) {
-      actions.push({
-        action: 'Initial contact via email',
-        date: 'Invalid Date'
-      });
-    }
-    
-    return actions.slice(0, 3);
+    // No synthetic actions - only show real actions from the database
+    return actions;
   };
 
   const lastActions = generateLastActions();
 
   return (
-    <div className="space-y-8">
-      {/* Speedrun Summary - Positioned at top like Intelligence Summary */}
-      <div className="space-y-4">
-        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-          <h4 className="font-semibold text-[var(--foreground)] mb-4">Speedrun Summary</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Current Status:</span>
-                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.status}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Engagement Level:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.engagementLevel || 'Medium'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.influenceLevel || 'Moderate'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Decision Power:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.decisionPower || 'Limited'}</span>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.lastContact}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Next Action:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.nextAction}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Buyer Group:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
-                }`}>
-                  {personData.isBuyerGroupMember ? 'Yes' : 'No'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Priority:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.priority || 'Medium'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Speedrun Summary</h2>
       </div>
 
       {/* Who are they */}
@@ -487,14 +420,21 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Last 3 Actions:</h4>
-            <ul className="space-y-2">
-              {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--muted)]">
-                  • {action.action} - {action.date}
-                </li>
-              ))}
-            </ul>
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
+            {lastActions.length > 0 ? (
+              <ul className="space-y-2">
+                {lastActions.map((action, index) => (
+                  <li key={index} className="text-sm text-[var(--muted)]">
+                    • {action.action} - {action.date}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
+                <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+              </div>
+            )}
           </div>
         </div>
 
