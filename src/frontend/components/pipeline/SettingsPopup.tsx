@@ -45,7 +45,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'ai-context'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -59,12 +59,17 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
     timezone: 'America/New_York',
     communicationStyle: 'consultative',
     preferredDetailLevel: 'detailed',
-    emailNotifications: true,
-    pushNotifications: true,
-    weeklyReports: true,
     quota: 1000000,
     territory: '',
     dailyActivityTarget: 25
+  });
+
+  const [workspaceContext, setWorkspaceContext] = useState<WorkspaceContext>({
+    productPortfolio: [],
+    targetIndustries: [],
+    valuePropositions: [],
+    businessModel: '',
+    industry: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -123,6 +128,11 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         if (userData.success) {
           console.log('✅ SettingsPopup: Loaded user settings:', userData.settings);
           setUserSettings(userData.settings);
+          
+          // Load workspace context if available
+          if (userData.workspaceContext) {
+            setWorkspaceContext(userData.workspaceContext);
+          }
         } else {
           console.error('❌ SettingsPopup: Failed to load settings:', userData.error);
         }
