@@ -106,6 +106,15 @@ async function importLead(data: any, imported: number, updated: number, errors: 
 }
 
 async function importProspect(data: any, imported: number, updated: number, errors: string[]) {
+  // Validate phone number - set to null if fake/invalid
+  if (data.phone) {
+    const phoneValidation = validatePhoneNumber(data.phone);
+    if (!phoneValidation.isValid) {
+      console.log(`📞 Invalid phone number for prospect ${data.fullName || data.email}: ${phoneValidation.reason}`);
+      data.phone = null;
+    }
+  }
+  
   // Check for existing prospect
   if (data.email) {
     const existing = await prisma.prospects.findFirst({
@@ -140,6 +149,15 @@ async function importOpportunity(data: any, imported: number, updated: number, e
 }
 
 async function importContact(data: any, imported: number, updated: number, errors: string[]) {
+  // Validate phone number - set to null if fake/invalid
+  if (data.phone) {
+    const phoneValidation = validatePhoneNumber(data.phone);
+    if (!phoneValidation.isValid) {
+      console.log(`📞 Invalid phone number for contact ${data.fullName || data.email}: ${phoneValidation.reason}`);
+      data.phone = null;
+    }
+  }
+  
   // Import as Person record
   await prisma.people.create({ 
     data: {
