@@ -7,12 +7,12 @@ import {
   CogIcon, 
   UserIcon, 
   KeyIcon,
-  BellIcon,
   ShieldCheckIcon,
   EyeIcon,
   EyeSlashIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
 
 interface SettingsPopupProps {
@@ -30,12 +30,17 @@ interface UserSettings {
   timezone: string;
   communicationStyle: string;
   preferredDetailLevel: string;
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  weeklyReports: boolean;
   quota: number;
   territory: string;
   dailyActivityTarget: number;
+}
+
+interface WorkspaceContext {
+  productPortfolio: string[];
+  targetIndustries: string[];
+  valuePropositions: string[];
+  businessModel: string;
+  industry: string;
 }
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {

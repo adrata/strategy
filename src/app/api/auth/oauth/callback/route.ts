@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OAuthService } from "@/platform/services/oauth-service";
-import { EmailPlatformIntegrator } from "@/platform/services/email-platform-integrator";
 
 export const dynamic = "force-dynamic";
 
@@ -39,33 +38,10 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ [OAUTH CALLBACK] Token exchange successful for ${tokenResult.provider}`);
 
-    // Connect the email account to the platform
-    try {
-      const emailAccount = await EmailPlatformIntegrator.connectEmailAccount(
-        tokenResult.workspaceId!,
-        tokenResult.userId!,
-        tokenResult['provider'] === 'google' ? 'gmail' : 'outlook',
-        {
-          accessToken: tokenResult.accessToken,
-          refreshToken: tokenResult.refreshToken,
-          email: tokenResult.userEmail,
-          displayName: tokenResult.userName,
-        }
-      );
-
-      console.log(`✅ [OAUTH CALLBACK] Email account connected:`, emailAccount.email);
-
-      // Redirect to success page
-      return NextResponse.redirect(
-        new URL(`/grand-central/integrations?success=connected&provider=${tokenResult.provider}&email=${encodeURIComponent(emailAccount.email)}`, request.url)
-      );
-
-    } catch (connectionError) {
-      console.error("❌ [OAUTH CALLBACK] Failed to connect email account:", connectionError);
-      return NextResponse.redirect(
-        new URL(`/grand-central/integrations?error=connection_failed`, request.url)
-      );
-    }
+    // Redirect to success page - email connection is now handled by Nango
+    return NextResponse.redirect(
+      new URL(`/grand-central/integrations?success=connected&provider=${tokenResult.provider}`, request.url)
+    );
 
   } catch (error) {
     console.error("❌ [OAUTH CALLBACK] Unexpected error:", error);

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { emailLinkingService } from "@/platform/services/EmailLinkingService";
-
-
+import { UnifiedEmailSyncService } from "@/platform/services/UnifiedEmailSyncService";
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 export const dynamic = "force-dynamic";
 export const maxDuration = 600; // 10 minutes timeout for large linking operations
@@ -36,13 +34,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔗 [EMAIL LINKING API] Starting email linking for workspace: ${workspaceId}, user: ${userId}`);
 
-    // Execute email linking
-    const result = await emailLinkingService.linkEmails({
-      workspaceId,
-      userId,
-      dateRange,
-      linkAll
-    });
+    // Execute email linking using the new unified service
+    const result = await UnifiedEmailSyncService.syncWorkspaceEmails(workspaceId, userId);
 
     console.log(`✅ [EMAIL LINKING API] Email linking completed:`, result);
 
@@ -84,11 +77,8 @@ export async function GET(request: NextRequest) {
 
     console.log(`🔗 [EMAIL LINKING API] Getting linking status for workspace: ${workspaceId}, user: ${userId}`);
 
-    // Get linking status
-    const status = await emailLinkingService.getLinkingStatus({
-      workspaceId,
-      userId
-    });
+    // Get linking status using the new unified service
+    const status = await UnifiedEmailSyncService.getEmailStats(workspaceId);
 
     console.log(`✅ [EMAIL LINKING API] Linking status retrieved:`, status);
 

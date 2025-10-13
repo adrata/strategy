@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EmailPlatformIntegrator } from "@/platform/services/email-platform-integrator";
+import { UnifiedEmailSyncService } from "@/platform/services/UnifiedEmailSyncService";
 
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
@@ -35,47 +35,10 @@ export async function POST(request: NextRequest) {
 
     const { accountId, platform } = await request.json();
 
-    if (!accountId) {
-      return createErrorResponse('Account ID is required', 'VALIDATION_ERROR', 400);
-    }
+    console.log(`📧 [EMAIL SYNC API] Manual sync requested for workspace: ${workspaceId}`);
 
-    console.log(`📧 [EMAIL SYNC API] Manual sync requested for account: ${accountId}`);
-
-    let syncResults = [];
-
-    if (accountId) {
-      // Get account details to determine platform if not provided
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
-      
-      const account = await prisma.email_accounts.findUnique({
-        where: { id: accountId },
-        select: { platform: true, email: true }
-      });
-      
-      if (!account) {
-        return createErrorResponse('$1', '$2', $3);
-      }
-      
-      const accountPlatform = platform || account.platform;
-      console.log(`📧 [EMAIL SYNC API] Syncing ${account.email} (${accountPlatform})`);
-      
-      // Sync specific account
-      if (accountPlatform === 'outlook') {
-        const result = await EmailPlatformIntegrator.syncOutlookEmails(accountId);
-        syncResults.push({ accountId, platform: accountPlatform, result });
-      } else {
-        return createErrorResponse(
-          `Platform ${accountPlatform} not supported`,
-          'UNSUPPORTED_PLATFORM',
-          400
-        );
-      }} else if (workspaceId) {
-      // Sync all accounts in workspace
-      // TODO: Get all accounts for workspace and sync each
-      console.log(`📧 Workspace sync not yet implemented for: ${workspaceId}`);
-      return createErrorResponse('$1', '$2', $3);
-    }
+    // Use the new unified service to sync all emails for the workspace
+    const syncResults = await UnifiedEmailSyncService.syncWorkspaceEmails(workspaceId, userId);
 
     console.log(`✅ [EMAIL SYNC API] Sync completed successfully`);
 
@@ -117,14 +80,8 @@ export async function GET(request: NextRequest) {
 
     console.log(`📧 [EMAIL SYNC API] Getting sync status for workspace: ${workspaceId}, user: ${userId}`);
 
-    // Get sync status
-    const status = {
-      isSyncing: false,
-      lastSync: new Date().toISOString(),
-      totalAccounts: 0,
-      syncedAccounts: 0,
-      failedAccounts: 0
-    };
+    // Get sync status using the new unified service
+    const status = await UnifiedEmailSyncService.getEmailStats(workspaceId);
 
     console.log(`✅ [EMAIL SYNC API] Sync status retrieved:`, status);
 
