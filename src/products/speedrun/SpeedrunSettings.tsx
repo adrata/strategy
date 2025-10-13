@@ -9,6 +9,7 @@ import {
 import type { SpeedrunUserSettings } from "./types";
 import { resetSpeedrunToDefaults } from "./state";
 import { useUnifiedAuth } from "@/platform/auth";
+import { authFetch } from "@/platform/api-fetch";
 
 interface SpeedrunSettingsProps {
   settings: SpeedrunUserSettings;
@@ -35,7 +36,7 @@ export function SpeedrunSettings({
       
       try {
         setIsLoadingWorkspace(true);
-        const response = await fetch(
+        const response = await authFetch(
           `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
         );
         if (response.ok) {
@@ -67,7 +68,7 @@ export function SpeedrunSettings({
     
     try {
       setIsLoadingWorkspace(true);
-      const response = await fetch('/api/workspace/speedrun-settings', {
+      const response = await authFetch('/api/workspace/speedrun-settings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

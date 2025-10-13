@@ -620,12 +620,14 @@ export function SpeedrunSprintView() {
       />
 
       {/* Add Action Modal */}
-      <AddActionModal
+      <CompleteActionModal
         isOpen={showAddActionModal}
         onClose={() => setShowAddActionModal(false)}
         onSubmit={handleAddAction}
-        contextRecord={selectedRecord}
+        personName={selectedRecord?.name || selectedRecord?.fullName}
+        companyName={selectedRecord?.company?.name || selectedRecord?.company}
         isLoading={isSubmittingAction}
+        section="speedrun"
       />
     </>
   );

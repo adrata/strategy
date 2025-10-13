@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 const WORKSPACE_ID = '01K7DNYR5VZ7JY36KGKKN76XZ1';
 
 // Seller assignments
-const MAIN_SELLER_NAME = 'Dano';
-const SECONDARY_SELLER_NAME = 'Ryan';
+const MAIN_SELLER_EMAIL = 'dano@retail-products.com';
+const SECONDARY_SELLER_EMAIL = 'ryan@notaryeveryday.com';
 
 // Mock enrichment data generator
 function generateEnrichmentData(person) {
@@ -271,38 +271,39 @@ function weightedRandom(items, weights) {
 async function enrichAllPeopleAndAssignSellers() {
   console.log('🚀 ENRICHING ALL PEOPLE AND ASSIGNING SELLERS');
   console.log('=' .repeat(60));
-  console.log(`\n📊 Main Seller: ${MAIN_SELLER_NAME}`);
-  console.log(`📊 Secondary Seller: ${SECONDARY_SELLER_NAME}\n`);
+  console.log(`\n📊 Main Seller: ${MAIN_SELLER_EMAIL}`);
+  console.log(`📊 Secondary Seller: ${SECONDARY_SELLER_EMAIL}\n`);
   
   // Find seller user IDs
   const mainSeller = await prisma.users.findFirst({
     where: {
-      username: { contains: MAIN_SELLER_NAME, mode: 'insensitive' }
+      email: MAIN_SELLER_EMAIL
     }
   });
   
   const secondarySeller = await prisma.users.findFirst({
     where: {
-      username: { contains: SECONDARY_SELLER_NAME, mode: 'insensitive' }
+      email: SECONDARY_SELLER_EMAIL
     }
   });
   
   if (!mainSeller) {
-    throw new Error(`Main seller "${MAIN_SELLER_NAME}" not found in users table`);
+    throw new Error(`Main seller "${MAIN_SELLER_EMAIL}" not found in users table`);
   }
   
   if (!secondarySeller) {
-    throw new Error(`Secondary seller "${SECONDARY_SELLER_NAME}" not found in users table`);
+    throw new Error(`Secondary seller "${SECONDARY_SELLER_EMAIL}" not found in users table`);
   }
   
   console.log(`✅ Found main seller: ${mainSeller.username} (ID: ${mainSeller.id})`);
   console.log(`✅ Found secondary seller: ${secondarySeller.username} (ID: ${secondarySeller.id})\n`);
   
-  // Get all people in the workspace
+  // Get people in the workspace who haven't been enriched yet
   const allPeople = await prisma.people.findMany({
     where: {
       workspaceId: WORKSPACE_ID,
-      deletedAt: null
+      deletedAt: null,
+      enrichedData: null
     },
     include: {
       company: true

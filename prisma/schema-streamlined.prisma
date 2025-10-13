@@ -250,6 +250,10 @@ model companies {
   lastActionDate         DateTime?        @db.Timestamp(6)
   nextAction             String?
   nextActionDate         DateTime?        @db.Timestamp(6)
+  nextActionReasoning    String?          @db.Text
+  nextActionPriority     String?          @db.VarChar(20)
+  nextActionType         String?          @db.VarChar(50)
+  nextActionUpdatedAt    DateTime?
   actionStatus           String?
   globalRank             Int?             @default(0)
   createdAt              DateTime         @default(now())
@@ -390,6 +394,10 @@ model people {
   lastActionDate    DateTime?           @db.Timestamp(6)
   nextAction        String?
   nextActionDate    DateTime?           @db.Timestamp(6)
+  nextActionReasoning  String?          @db.Text
+  nextActionPriority   String?          @db.VarChar(20)
+  nextActionType       String?          @db.VarChar(50)
+  nextActionUpdatedAt  DateTime?
   actionStatus      String?
   engagementScore   Float?              @default(0)
   globalRank        Int?                @default(0)

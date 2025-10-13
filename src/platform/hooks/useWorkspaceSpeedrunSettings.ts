@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
+import { authFetch } from '@/platform/api-fetch';
 
 interface WorkspaceSpeedrunSettings {
   dailyTarget: number;
@@ -22,7 +23,7 @@ export function useWorkspaceSpeedrunSettings() {
       }
 
       try {
-        const response = await fetch(
+        const response = await authFetch(
           `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
         );
         

@@ -15,6 +15,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { dailyResetService } from "../services/daily-reset-service";
+import { authFetch } from "@/platform/api-fetch";
 
 export interface SpeedrunPerson {
   id: number;
@@ -189,7 +190,7 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
       if (!authUser?.activeWorkspaceId) return;
       
       try {
-        const response = await fetch(
+        const response = await authFetch(
           `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
         );
         if (response.ok) {
