@@ -124,21 +124,21 @@ export const PipelineContent = React.memo(function PipelineContent({
       case 'speedrun':
         return ['rank', 'company', 'name', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction'];
       case 'companies':
-        return ['rank', 'company', 'lastAction', 'nextAction', 'actions'];
+        return ['rank', 'company', 'lastAction', 'nextAction'];
       case 'leads':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction'];
       case 'prospects':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction'];
       case 'opportunities':
-        return ['rank', 'name', 'company', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'name', 'company', 'status', 'nextAction', 'lastAction'];
       case 'people':
-        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction'];
       case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'industry', 'status', 'nextAction', 'lastAction'];
       case 'partners':
-        return ['rank', 'company', 'nextAction', 'lastAction', 'actions'];
+        return ['rank', 'company', 'nextAction', 'lastAction'];
       default:
-        return ['rank', 'company', 'name', 'title', 'lastAction', 'actions'];
+        return ['rank', 'company', 'name', 'title', 'lastAction'];
     }
   };
   

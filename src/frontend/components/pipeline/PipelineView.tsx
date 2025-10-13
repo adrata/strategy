@@ -122,23 +122,23 @@ export const PipelineView = React.memo(function PipelineView({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action', 'Actions'];
+        return ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action'];
       case 'companies':
-        return ['Company', 'Last Action', 'Next Action', 'Actions'];
+        return ['Company', 'Last Action', 'Next Action'];
       case 'leads':
         return ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'];
       case 'prospects':
-        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
       case 'opportunities':
-        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action', 'Actions'];
+        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'];
       case 'people':
-        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'];
+        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
       case 'clients':
-        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action', 'Actions'];
+        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action'];
       case 'partners':
-        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action', 'Actions'];
+        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action'];
       default:
-        return ['Rank', 'Company', 'Name', 'Title', 'Last Action', 'Actions'];
+        return ['Rank', 'Company', 'Name', 'Title', 'Last Action'];
     }
   };
   

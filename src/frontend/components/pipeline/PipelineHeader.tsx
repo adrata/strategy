@@ -471,21 +471,21 @@ export function PipelineHeader({
       case 'opportunities':
         return {
           title: 'Opportunities',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Real pipeline',
+          subtitle: 'Real Pipeline',
           actionButton: 'Add Opportunity',
           secondaryActionButton: 'Add Action'
         };
       case 'companies':
         return {
           title: 'Companies',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Business entities',
+          subtitle: 'Business entities',
           actionButton: 'Add Company',
           secondaryActionButton: 'Add Action'
         };
       case 'people':
         return {
           title: 'People',
-          subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Individual entities',
+          subtitle: 'Individual entities',
           actionButton: 'Add Person',
           secondaryActionButton: 'Add Action'
         };

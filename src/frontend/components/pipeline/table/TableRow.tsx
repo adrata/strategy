@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { ActionMenu } from '@/platform/ui/components/ActionMenu';
 import { getStatusColor, getPriorityColor, getStageColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
@@ -36,14 +35,6 @@ interface TableRowProps {
   visibleColumns?: string[];
   currentUserId?: string;
   onRecordClick: (record: PipelineRecord) => void;
-  onEdit: (record: PipelineRecord) => void;
-  onAddAction: (record: PipelineRecord) => void;
-  onMarkComplete: (record: PipelineRecord) => void;
-  onDelete: (record: PipelineRecord) => void;
-  onCall: (record: PipelineRecord) => void;
-  onEmail: (record: PipelineRecord) => void;
-  onSchedule?: (record: PipelineRecord) => void;
-  onQuickAction?: (record: PipelineRecord) => void;
   getColumnWidth: (index: number) => string;
 }
 
@@ -114,14 +105,6 @@ export function TableRow({
   visibleColumns,
   currentUserId,
   onRecordClick,
-  onEdit,
-  onAddAction,
-  onMarkComplete,
-  onDelete,
-  onCall,
-  onEmail,
-  onSchedule,
-  onQuickAction,
   getColumnWidth,
 }: TableRowProps) {
   const handleRowClick = () => {
@@ -159,7 +142,7 @@ export function TableRow({
         {(() => {
           // Use workspace-specific column order for leads/prospects
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
-          const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction', 'actions'];
+          const logicalOrder = sectionConfig.columnOrder || ['rank', 'person', 'state', 'title', 'lastAction', 'nextAction'];
           const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
           
           console.log(`🔍 [TableRow] Column configuration for ${section}:`, {
@@ -392,25 +375,6 @@ export function TableRow({
                     </div>
                   </td>
                 );
-              case 'actions':
-                return (
-                  <td key="actions" className="px-2 py-4 whitespace-nowrap w-10 text-center">
-                    <div className="flex justify-center">
-                      <ActionMenu
-                        record={record}
-                        recordType={section === 'leads' ? 'lead' : section === 'prospects' ? 'prospect' : section as any}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        onView={(record) => onRecordClick(record)}
-                        onCall={onCall}
-                        onSchedule={onSchedule}
-                        onQuickAction={onQuickAction}
-                        onAddAction={onAddAction}
-                        className="z-10"
-                      />
-                    </div>
-                  </td>
-                );
               default:
                 return null;
             }
@@ -427,34 +391,15 @@ export function TableRow({
            onClick={handleRowClick}
          >
       {headers.map((header, index) => {
-        const isActionColumn = header === 'Actions';
-        
         return (
           <td
             key={`${record.id}-${header}`}
-            className={isActionColumn ? "px-2 py-4 whitespace-nowrap w-10 text-center" : textClasses}
+            className={textClasses}
             style={{ width: getColumnWidth(index) }}
           >
-            {isActionColumn ? (
-              <div className="flex justify-center">
-                <ActionMenu
-                  record={record}
-                  recordType={section === 'leads' ? 'lead' : section === 'prospects' ? 'prospect' : section as any}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onView={(record) => onRecordClick(record)}
-                  onCall={onCall}
-                  onSchedule={onSchedule}
-                  onQuickAction={onQuickAction}
-                  onAddAction={onAddAction}
-                  className="z-10"
-                />
-              </div>
-            ) : (
-              <div className="text-sm text-[var(--foreground)] truncate">
-                {String(record[header.toLowerCase()] || record[header] || header)}
-              </div>
-            )}
+            <div className="text-sm text-[var(--foreground)] truncate">
+              {String(record[header.toLowerCase()] || record[header] || header)}
+            </div>
           </td>
         );
       })}

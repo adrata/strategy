@@ -50,7 +50,6 @@ const DISPLAY_NAME_MAP: Record<string, string> = {
   'industry': 'Industry',
   'email': 'Email',
   'phone': 'Phone',
-  'actions': 'Actions',
 };
 
 // -------- Helper Functions --------
@@ -97,7 +96,6 @@ export function TableHeader({
     <thead className="sticky top-0 z-10">
       <tr>
         {headers.map((header, index) => {
-          const isActionColumn = header === 'Actions';
           const field = getFieldName(header);
           const displayName = getDisplayName(header); // Use display name for rendering
           const isCurrentSort = sortField === field;
@@ -107,7 +105,7 @@ export function TableHeader({
             <th 
               key={header}
               className={`px-6 py-1 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider bg-[var(--panel-background)] h-8 border-b border-[var(--border)] ${
-                !isActionColumn && onColumnSort ? 'cursor-pointer hover:bg-[var(--hover)] transition-colors group' : ''
+                onColumnSort ? 'cursor-pointer hover:bg-[var(--hover)] transition-colors group' : ''
               }`}
               style={{ 
                 width: columnWidthFn(index),
@@ -115,7 +113,7 @@ export function TableHeader({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis'
               }}
-              onClick={() => !isActionColumn && onColumnSort?.(header)}
+              onClick={() => onColumnSort?.(header)}
             >
               <div className="flex items-center justify-between">
                 <span style={{ 
@@ -123,8 +121,8 @@ export function TableHeader({
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
-                }}>{isActionColumn ? '' : displayName}</span>
-                {!isActionColumn && onColumnSort && (
+                }}>{displayName}</span>
+                {onColumnSort && (
                   <div className="flex items-center ml-2">
                     {isCurrentSort ? (
                       sortDirection === 'asc' ? (

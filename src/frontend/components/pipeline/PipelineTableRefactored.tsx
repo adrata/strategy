@@ -122,10 +122,10 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
     // Default headers based on section
     const defaultHeaders: Record<string, string[]> = {
       'leads': ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
-      'prospects': ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      'prospects': ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
       'opportunities': ['Rank', 'Company', 'Stage', 'Value', 'Last Action', 'Next Action'],
-      'companies': ['Company', 'Last Action', 'Next Action', 'Actions'],
-      'people': ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
+      'companies': ['Company', 'Last Action', 'Next Action'],
+      'people': ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
       'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],

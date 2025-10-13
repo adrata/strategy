@@ -21,28 +21,28 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceName: 'Default',
   sections: {
     people: {
-      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
+      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction']
     },
     companies: {
-      columns: ['Company', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['company', 'lastAction', 'nextAction', 'actions']
+      columns: ['Company', 'Last Action', 'Next Action'],
+      columnOrder: ['company', 'lastAction', 'nextAction']
     },
     speedrun: {
       columns: ['Rank', 'Company', 'Name', 'Status', 'MAIN-SELLER', 'CO-SELLERS', 'LAST ACTION', 'NEXT ACTION'],
       columnOrder: ['rank', 'company', 'name', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction']
     },
     prospects: {
-      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction', 'actions']
+      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction']
     },
     leads: {
       columns: ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
       columnOrder: ['name', 'company', 'title', 'email', 'lastAction', 'nextAction']
     },
     sellers: {
-      columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
-      columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions']
+      columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action'],
+      columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']
     }
   }
 };
@@ -61,8 +61,8 @@ export function getWorkspaceTableConfig(workspaceId: string, workspaceName?: str
 export function getSectionColumns(workspaceId: string, section: string, workspaceName?: string) {
   const config = getWorkspaceTableConfig(workspaceId, workspaceName);
   return config.sections[section] || DEFAULT_CONFIG.sections[section] || {
-    columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action', 'Actions'],
-    columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction', 'actions']
+    columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action'],
+    columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']
   };
 }
 

@@ -65,7 +65,6 @@ function getColumnWidth(index: number): string {
     '120px',  // Industry
     '150px',  // Email
     '120px',  // Phone
-    '80px',   // Actions
   ];
   
   return widths[index] || '120px';
