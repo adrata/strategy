@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
-
-const prisma = new PrismaClient();
 
 /**
  * Individual Person CRUD API v1
@@ -273,11 +271,52 @@ export async function PATCH(
       body.fullName = `${firstName} ${lastName}`;
     }
 
+    // Special handling for globalRank updates
+    let isRankUpdate = false;
+    let oldRank = existingPerson.globalRank;
+    let newRank = body.globalRank;
+    
+    if (body.globalRank !== undefined && body.globalRank !== existingPerson.globalRank) {
+      isRankUpdate = true;
+      console.log(`🔄 [PEOPLE API] Rank update detected: ${oldRank} → ${newRank} for person ${id}`);
+    }
+
+    // Whitelist of allowed fields for people updates
+    const ALLOWED_PEOPLE_FIELDS = [
+      'firstName', 'lastName', 'fullName', 'jobTitle', 'department', 'status',
+      'priority', 'email', 'workEmail', 'phone', 'mobilePhone', 'linkedinUrl',
+      'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',
+      'engagementScore', 'engagementLevel', 'influenceLevel', 'decisionPower',
+      'isBuyerGroupMember', 'engagementStrategy', 'buyerGroupOptimized',
+      'communicationStyle', 'decisionPowerScore', 'relationshipWarmth',
+      'yearsExperience', 'educationLevel', 'skills', 'certifications',
+      'valueDriver', 'bestContactTime', 'industry', 'globalRank', 'companyRank',
+      'vertical', 'achievements', 'budgetResponsibility', 'buyerGroupRole',
+      'buyerGroupStatus', 'careerTimeline', 'coresignalData', 'currentCompany',
+      'currentRole', 'dataCompleteness', 'decisionMaking', 'degrees',
+      'emailConfidence', 'enrichedData', 'enrichmentScore', 'enrichmentSources',
+      'fieldsOfStudy', 'graduationYears', 'industryExperience', 'industrySkills',
+      'influenceScore', 'institutions', 'languages', 'leadershipExperience',
+      'mobileVerified', 'phoneConfidence', 'preferredContact', 'previousRoles',
+      'publications', 'responseTime', 'roleHistory', 'rolePromoted',
+      'softSkills', 'speakingEngagements', 'statusReason', 'statusUpdateDate',
+      'teamSize', 'technicalSkills', 'totalExperience', 'yearsAtCompany',
+      'yearsInRole', 'address', 'state', 'country', 'postalCode', 'bio',
+      'profilePictureUrl', 'source', 'customFields', 'preferredLanguage',
+      'timezone', 'emailVerified', 'phoneVerified', 'lastAction', 'lastActionDate',
+      'actionStatus', 'entityId', 'mainSellerId'
+    ];
+
+    // Filter body to only allowed fields
+    const updateData = Object.keys(body)
+      .filter(key => ALLOWED_PEOPLE_FIELDS.includes(key))
+      .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+
     // Update person with partial data
     const updatedPerson = await prisma.people.update({
       where: { id },
       data: {
-        ...body,
+        ...updateData,
         updatedAt: new Date(),
       },
       include: {

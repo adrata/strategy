@@ -121,6 +121,81 @@ jest.mock('@prisma/client', () => ({
   })),
 }));
 
+// Mock AI Context Services
+jest.mock('@/platform/ai/services/AIContextService', () => ({
+  AIContextService: {
+    buildContext: jest.fn().mockResolvedValue({
+      userContext: 'Mock user context',
+      applicationContext: 'Mock application context',
+      dataContext: 'Mock data context',
+      recordContext: 'Mock record context',
+      listViewContext: 'Mock list view context',
+      systemContext: 'Mock system context',
+      documentContext: 'Mock document context'
+    }),
+    combineContext: jest.fn().mockReturnValue('Combined context string')
+  }
+}));
+
+jest.mock('@/platform/ai/services/EnhancedWorkspaceContextService', () => ({
+  EnhancedWorkspaceContextService: {
+    buildWorkspaceContext: jest.fn().mockResolvedValue({
+      workspace: {
+        id: 'test-workspace-id',
+        name: 'Test Workspace',
+        businessModel: 'B2B SaaS'
+      },
+      company: {
+        name: 'Test Company',
+        industryServed: ['Technology']
+      },
+      data: {
+        totalPeople: 150,
+        totalCompanies: 50
+      }
+    }),
+    buildAIContextString: jest.fn().mockReturnValue('Mock workspace context string')
+  }
+}));
+
+jest.mock('@/platform/services/ClaudeAIService', () => ({
+  ClaudeAIService: {
+    generateChatResponse: jest.fn().mockResolvedValue({
+      success: true,
+      response: 'Mock AI response',
+      confidence: 0.9,
+      model: 'claude-3-sonnet',
+      tokensUsed: 1500
+    })
+  }
+}));
+
+jest.mock('@/platform/services/OpenRouterService', () => ({
+  OpenRouterService: {
+    generateResponse: jest.fn().mockResolvedValue({
+      success: true,
+      response: 'Mock OpenRouter response',
+      confidence: 0.9,
+      model: 'claude-3-sonnet',
+      tokensUsed: 1500
+    })
+  }
+}));
+
+// Mock RecordContextProvider
+jest.mock('@/platform/ui/context/RecordContextProvider', () => ({
+  RecordContextProvider: ({ children }: { children: React.ReactNode }) => children,
+  useRecordContext: jest.fn().mockReturnValue({
+    currentRecord: null,
+    recordType: null,
+    listViewContext: null,
+    setCurrentRecord: jest.fn(),
+    clearCurrentRecord: jest.fn(),
+    setListViewContext: jest.fn(),
+    clearListViewContext: jest.fn()
+  })
+}));
+
 // Mock environment variables for tests
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
 process.env.NEXTAUTH_SECRET = 'test-secret';

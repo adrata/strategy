@@ -11,6 +11,21 @@ import { EnhancedWorkspaceContextService } from '@/platform/ai/services/Enhanced
 import { BrowserTools } from '@/platform/ai/tools/browser-tools';
 import { browserAutomationService } from './BrowserAutomationService';
 
+export interface ListViewContext {
+  visibleRecords: any[];
+  activeSection: string;
+  appliedFilters: {
+    searchQuery?: string;
+    verticalFilter?: string;
+    statusFilter?: string;
+    priorityFilter?: string;
+    sortField?: string;
+    sortDirection?: string;
+  };
+  totalCount: number;
+  lastUpdated: Date;
+}
+
 export interface ClaudeChatRequest {
   message: string;
   conversationHistory?: Array<{
@@ -20,6 +35,7 @@ export interface ClaudeChatRequest {
   }>;
   currentRecord?: any;
   recordType?: string;
+  listViewContext?: ListViewContext;
   appType?: string;
   workspaceId?: string;
   userId?: string;
@@ -112,6 +128,12 @@ export class ClaudeAIService {
       // Add person search results to context if found
       if (personSearchResult) {
         dataContext.personSearchResults = personSearchResult;
+      }
+      
+      // Validate context and log warnings
+      const validation = this.validateContext(request, dataContext);
+      if (!validation.isValid) {
+        console.warn('⚠️ [CLAUDE AI] Context validation warnings:', validation.warnings);
       }
       
       // Build the enhanced system prompt with data context
@@ -489,12 +511,55 @@ export class ClaudeAIService {
   }
 
   /**
+   * Validate context availability and provide fallback messaging
+   */
+  private validateContext(request: ClaudeChatRequest, dataContext: any): { isValid: boolean; warnings: string[] } {
+    const warnings: string[] = [];
+    
+    // Check workspace context
+    if (!dataContext.workspaceContext) {
+      warnings.push('Workspace business context not available - AI may not know what you sell or your target market');
+    }
+    
+    // Check current record context
+    if (!request.currentRecord && !request.listViewContext) {
+      warnings.push('No current record or list view context - AI cannot provide specific advice about visible records');
+    }
+    
+    // Check data freshness
+    if (request.listViewContext) {
+      const ageMinutes = (Date.now() - request.listViewContext.lastUpdated.getTime()) / (1000 * 60);
+      if (ageMinutes > 5) {
+        warnings.push('List view context is older than 5 minutes - data may be stale');
+      }
+    }
+    
+    return {
+      isValid: warnings.length === 0,
+      warnings
+    };
+  }
+
+  /**
    * Build enhanced system prompt with sales context and data access
    */
   private buildEnhancedSystemPrompt(request: ClaudeChatRequest, dataContext: any): string {
     const currentRecord = request.currentRecord;
     const recordType = request.recordType;
+    const listViewContext = request.listViewContext;
     const appType = request.appType;
+
+    // Validate context and add warnings to prompt
+    const validation = this.validateContext(request, dataContext);
+    let contextWarnings = '';
+    if (!validation.isValid) {
+      contextWarnings = `
+⚠️ CONTEXT WARNINGS:
+${validation.warnings.map(warning => `- ${warning}`).join('\n')}
+
+Please acknowledge these limitations in your response and suggest how the user can provide better context if needed.
+`;
+    }
 
     let contextInfo = '';
     
@@ -584,6 +649,50 @@ ${recentActions}`;
 `;
     }
 
+    // Add list view context
+    let listViewContextString = '';
+    if (listViewContext) {
+      const { visibleRecords, activeSection, appliedFilters, totalCount, lastUpdated } = listViewContext;
+      
+      // Limit to top 10 records for context to avoid overwhelming the AI
+      const topRecords = visibleRecords.slice(0, 10);
+      
+      listViewContextString = `
+LIST VIEW CONTEXT:
+- Active Section: ${activeSection}
+- Total Records: ${totalCount}
+- Visible Records: ${visibleRecords.length}
+- Last Updated: ${lastUpdated.toLocaleString()}
+
+APPLIED FILTERS:
+- Search: ${appliedFilters.searchQuery || 'None'}
+- Vertical: ${appliedFilters.verticalFilter || 'All'}
+- Status: ${appliedFilters.statusFilter || 'All'}
+- Priority: ${appliedFilters.priorityFilter || 'All'}
+- Sort: ${appliedFilters.sortField || 'Default'} (${appliedFilters.sortDirection || 'asc'})
+
+TOP VISIBLE RECORDS:`;
+
+      topRecords.forEach((record, index) => {
+        const name = record.fullName || record.name || record.firstName || 'Unknown';
+        const company = record.company || record.companyName || 'Unknown Company';
+        const title = record.title || record.jobTitle || 'Unknown Title';
+        const status = record.status || 'Unknown';
+        const priority = record.priority || 'Unknown';
+        
+        listViewContextString += `\n${index + 1}. ${name} at ${company}
+   - Title: ${title}
+   - Status: ${status}
+   - Priority: ${priority}`;
+      });
+
+      if (visibleRecords.length > 10) {
+        listViewContextString += `\n... and ${visibleRecords.length - 10} more records`;
+      }
+
+      listViewContextString += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}. You can reference these specific records by name when providing advice.`;
+    }
+
     return `You are Adrata, a friendly and knowledgeable sales acceleration AI assistant. You have full access to the user's CRM data and help sales professionals succeed.
 
 🎯 YOUR ROLE:
@@ -604,11 +713,13 @@ You're like a trusted sales consultant who's always available to help. You under
 - Revenue growth and deal closing
 - Sales process improvement
 
+${contextWarnings}
 ${contextInfo}
 ${workspaceContext}
 ${workspaceBusinessContext}
 ${activitiesContext}
 ${personSearchContext}
+${listViewContextString}
 
 💬 CONVERSATION STYLE:
 - Be warm, professional, and encouraging

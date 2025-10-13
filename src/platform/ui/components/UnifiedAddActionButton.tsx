@@ -106,9 +106,14 @@ export function UnifiedAddActionButton({
             e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor;
           }}
         >
-          <PlusIcon className="w-4 h-4" />
-          {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
-          <ChevronDownIcon className="w-4 h-4" />
+          <PlusIcon className="w-4 h-4 flex-shrink-0" />
+          <span className="hidden xs:inline">
+            {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
+          </span>
+          <span className="xs:hidden">
+            {section === 'speedrun' ? 'Add' : 'Add'}
+          </span>
+          <ChevronDownIcon className="w-4 h-4 flex-shrink-0" />
         </button>
 
         {showDropdown && (
@@ -146,7 +151,7 @@ export function UnifiedAddActionButton({
     );
   }
 
-  // Simple button variant
+  // Simple button variant - Responsive for 15-inch laptops
   return (
     <button
       onClick={onAddAction}
@@ -159,8 +164,13 @@ export function UnifiedAddActionButton({
         e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor;
       }}
     >
-      <PlusIcon className="w-4 h-4" />
-      {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
+      <PlusIcon className="w-4 h-4 flex-shrink-0" />
+      <span className="hidden xs:inline">
+        {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
+      </span>
+      <span className="xs:hidden">
+        {section === 'speedrun' ? 'Add' : 'Add'}
+      </span>
     </button>
   );
 }

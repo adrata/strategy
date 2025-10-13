@@ -15,10 +15,11 @@ import { AIEmailComposer } from "./AIEmailComposer";
 import { PowerDialer } from "./components/PowerDialer";
 import { sendEmail, type EmailData } from "./EmailService";
 import { useUnifiedAuth } from "@/platform/auth";
-import { CompleteActionModal, ActionLogData } from "./components/CompleteActionModal";
+import { CompleteActionModal, ActionLogData } from "@/platform/ui/components/CompleteActionModal";
 import { TodayActivityTracker } from "./TodayActivityTracker";
 import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
 import { CongratulationsModal } from "./components/CongratulationsModal";
+import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 
 // EmailData will be imported from EmailService, removing duplicate type definition
 
@@ -204,6 +205,9 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   // Success message state
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // Record context for AI
+  const { setListViewContext, clearListViewContext } = useRecordContext();
+
   let user;
   try {
     const authResult = useUnifiedAuth();
@@ -213,6 +217,30 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     console.error("❌ SpeedrunContent: useUnifiedAuth failed:", error);
     user = null;
   }
+
+  // Update list view context for AI when SpeedrunPeople changes
+  useEffect(() => {
+    if (SpeedrunPeople && SpeedrunPeople.length > 0) {
+      const listViewContext = {
+        visibleRecords: SpeedrunPeople,
+        activeSection: 'speedrun',
+        appliedFilters: {
+          searchQuery: '',
+          verticalFilter: 'all',
+          statusFilter: 'all',
+          priorityFilter: 'all',
+          sortField: 'rank',
+          sortDirection: 'asc'
+        },
+        totalCount: SpeedrunPeople.length,
+        lastUpdated: new Date()
+      };
+      
+      setListViewContext(listViewContext);
+    } else {
+      clearListViewContext();
+    }
+  }, [SpeedrunPeople, setListViewContext, clearListViewContext]);
 
   // Debug effect to track selectedPerson changes and ensure middle panel updates
   useEffect(() => {
@@ -696,7 +724,9 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           onClose={() => setShowCompleteModal(false)}
           onSubmit={handleActionLogSubmit}
           personName={selectedPerson.name}
+          companyName={selectedPerson.company}
           isLoading={isSubmittingAction}
+          section="speedrun"
           initialData={lastCompletedAction?.actionData}
         />
 

@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
-import { CompleteActionModal } from '@/products/speedrun/components/CompleteActionModal';
+import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';

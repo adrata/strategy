@@ -16,9 +16,14 @@ export interface WorkspaceContext {
     description?: string;
     industry?: string;
     businessModel?: string;
-    serviceFocus?: string[];
-    stakeholderApproach?: string;
-    projectDeliveryStyle?: string;
+    serviceOfferings?: string[];
+    productPortfolio?: string[];
+    valuePropositions?: string[];
+    targetIndustries?: string[];
+    targetCompanySize?: string[];
+    idealCustomerProfile?: string;
+    competitiveAdvantages?: string[];
+    salesMethodology?: string;
   };
   company: {
     name: string;
@@ -57,18 +62,23 @@ export class EnhancedWorkspaceContextService {
    */
   static async buildWorkspaceContext(workspaceId: string): Promise<WorkspaceContext | null> {
     try {
-      // Fetch workspace data
+      // Fetch workspace data with new business context fields
       const workspace = await prisma.workspaces.findUnique({
         where: { id: workspaceId },
         select: {
           id: true,
           name: true,
           description: true,
-          // Note: These fields would be available if our migration was applied
-          // businessModel: true,
-          // serviceFocus: true,
-          // stakeholderApproach: true,
-          // projectDeliveryStyle: true,
+          businessModel: true,
+          industry: true,
+          serviceOfferings: true,
+          productPortfolio: true,
+          valuePropositions: true,
+          targetIndustries: true,
+          targetCompanySize: true,
+          idealCustomerProfile: true,
+          competitiveAdvantages: true,
+          salesMethodology: true,
         }
       });
 
@@ -76,11 +86,10 @@ export class EnhancedWorkspaceContextService {
         return null;
       }
 
-      // Fetch the main company record for this workspace
+      // Fetch the main company record for this workspace (look for any company, not just TOP Engineers Plus)
       const company = await prisma.companies.findFirst({
         where: { 
-          workspaceId: workspaceId,
-          name: { contains: 'TOP Engineers Plus' }
+          workspaceId: workspaceId
         },
         select: {
           name: true,
@@ -93,12 +102,6 @@ export class EnhancedWorkspaceContextService {
           marketPosition: true,
           strategicInitiatives: true,
           successMetrics: true,
-          // Note: These fields would be available if our migration was applied
-          // serviceOfferings: true,
-          // technicalCapabilities: true,
-          // expertiseAreas: true,
-          // targetSegments: true,
-          // industrySpecializations: true,
         }
       });
 
@@ -140,30 +143,33 @@ export class EnhancedWorkspaceContextService {
           id: workspace.id,
           name: workspace.name,
           description: workspace.description,
-          industry: company?.industry,
-          // Enhanced fields would be here if migration was applied
-          businessModel: 'Engineering Consulting', // Hardcoded for TOP Engineering Plus
-          serviceFocus: ['Critical Infrastructure', 'Broadband Deployment', 'Communications Engineering'],
-          stakeholderApproach: 'Client-Centric',
-          projectDeliveryStyle: 'Strategic Clarity',
+          industry: workspace.industry || company?.industry,
+          businessModel: workspace.businessModel,
+          serviceOfferings: workspace.serviceOfferings || [],
+          productPortfolio: workspace.productPortfolio || [],
+          valuePropositions: workspace.valuePropositions || [],
+          targetIndustries: workspace.targetIndustries || [],
+          targetCompanySize: workspace.targetCompanySize || [],
+          idealCustomerProfile: workspace.idealCustomerProfile,
+          competitiveAdvantages: workspace.competitiveAdvantages || [],
+          salesMethodology: workspace.salesMethodology,
         },
         company: {
-          name: company?.name || 'TOP Engineers Plus',
-          industry: company?.industry || 'Communications Engineering',
+          name: company?.name || workspace.name,
+          industry: company?.industry || workspace.industry || 'Unknown',
           description: company?.description,
           businessChallenges: company?.businessChallenges || [],
           businessPriorities: company?.businessPriorities || [],
-          competitiveAdvantages: company?.competitiveAdvantages || [],
+          competitiveAdvantages: company?.competitiveAdvantages || workspace.competitiveAdvantages || [],
           growthOpportunities: company?.growthOpportunities || [],
           marketPosition: company?.marketPosition,
           strategicInitiatives: company?.strategicInitiatives || [],
           successMetrics: company?.successMetrics || [],
-          // Enhanced fields would be here if migration was applied
-          serviceOfferings: ['Technology Expertise', 'Process Development', 'Organizational Alignment'],
-          technicalCapabilities: ['Communications Technology', 'Process Development', 'Change Management'],
-          expertiseAreas: ['Critical Infrastructure', 'Broadband Deployment', 'Utility Communications'],
-          targetSegments: ['Utility Companies', 'Municipalities', 'Infrastructure Organizations'],
-          industrySpecializations: ['Communications Engineering', 'Utility Infrastructure', 'Critical Infrastructure'],
+          serviceOfferings: workspace.serviceOfferings || [],
+          technicalCapabilities: workspace.serviceOfferings || [], // Map service offerings to technical capabilities
+          expertiseAreas: workspace.serviceOfferings || [], // Map service offerings to expertise areas
+          targetSegments: workspace.targetIndustries || [], // Map target industries to target segments
+          industrySpecializations: workspace.targetIndustries || [], // Map target industries to specializations
         },
         data: {
           totalPeople: peopleCount,
@@ -224,43 +230,46 @@ export class EnhancedWorkspaceContextService {
   static buildAIContextString(context: WorkspaceContext): string {
     const { workspace, company, data } = context;
 
-    return `WORKSPACE CONTEXT - ${workspace.name}:
-- Industry: ${company.industry}
-- Business Model: ${workspace.businessModel}
-- Service Focus: ${workspace.serviceFocus?.join(', ')}
-- Stakeholder Approach: ${workspace.stakeholderApproach}
-- Project Delivery Style: ${workspace.projectDeliveryStyle}
+    return `=== YOUR BUSINESS (WHO YOU ARE) ===
+Company: ${workspace.name}
+Industry: ${workspace.industry || company.industry}
+Business Model: ${workspace.businessModel || 'Professional Services'}
+What You Sell: ${workspace.productPortfolio?.join(', ') || workspace.serviceOfferings?.join(', ') || 'Professional Services'}
+Your Value Props: ${workspace.valuePropositions?.join(', ') || 'Quality service delivery'}
+Your Ideal Customers: ${workspace.idealCustomerProfile || 'Businesses and organizations needing professional services'}
+Your Competitive Edge: ${workspace.competitiveAdvantages?.join(', ') || 'Professional expertise and service quality'}
+Your Sales Approach: ${workspace.salesMethodology || 'Consultative approach focused on client needs'}
 
-COMPANY PROFILE - ${company.name}:
-- Description: ${company.description}
-- Market Position: ${company.marketPosition}
-- Business Challenges: ${company.businessChallenges?.join(', ')}
-- Business Priorities: ${company.businessPriorities?.join(', ')}
-- Competitive Advantages: ${company.competitiveAdvantages?.join(', ')}
-- Growth Opportunities: ${company.growthOpportunities?.join(', ')}
-- Strategic Initiatives: ${company.strategicInitiatives?.join(', ')}
-- Success Metrics: ${company.successMetrics?.join(', ')}
+=== COMPANY PROFILE - ${company.name} ===
+Description: ${company.description || 'Professional services company'}
+Market Position: ${company.marketPosition || 'Established service provider'}
+Business Challenges: ${company.businessChallenges?.join(', ') || 'Market competition and client acquisition'}
+Business Priorities: ${company.businessPriorities?.join(', ') || 'Client satisfaction and growth'}
+Growth Opportunities: ${company.growthOpportunities?.join(', ') || 'Market expansion and service diversification'}
+Strategic Initiatives: ${company.strategicInitiatives?.join(', ') || 'Service excellence and client relationships'}
+Success Metrics: ${company.successMetrics?.join(', ') || 'Client satisfaction and business growth'}
 
-SERVICE CAPABILITIES:
-- Service Offerings: ${company.serviceOfferings?.join(', ')}
-- Technical Capabilities: ${company.technicalCapabilities?.join(', ')}
-- Expertise Areas: ${company.expertiseAreas?.join(', ')}
-- Target Segments: ${company.targetSegments?.join(', ')}
-- Industry Specializations: ${company.industrySpecializations?.join(', ')}
+=== SERVICE CAPABILITIES ===
+Service Offerings: ${workspace.serviceOfferings?.join(', ') || 'Professional services'}
+Technical Capabilities: ${workspace.serviceOfferings?.join(', ') || 'Professional expertise'}
+Expertise Areas: ${workspace.serviceOfferings?.join(', ') || 'Industry knowledge'}
+Target Industries: ${workspace.targetIndustries?.join(', ') || 'Various industries'}
+Target Company Sizes: ${workspace.targetCompanySize?.join(', ') || 'All sizes'}
 
-DATA INTELLIGENCE:
-- Total People: ${data.totalPeople}
-- Total Companies: ${data.totalCompanies}
-- Funnel Distribution: ${data.funnelDistribution.prospects} Prospects, ${data.funnelDistribution.leads} Leads, ${data.funnelDistribution.opportunities} Opportunities
-- Top Companies: ${data.topCompanies.join(', ')}
-- Geographic Coverage: ${data.geographicDistribution.join(', ')}
+=== DATA INTELLIGENCE ===
+Total People: ${data.totalPeople}
+Total Companies: ${data.totalCompanies}
+Funnel Distribution: ${data.funnelDistribution.prospects} Prospects, ${data.funnelDistribution.leads} Leads, ${data.funnelDistribution.opportunities} Opportunities
+Top Companies: ${data.topCompanies.join(', ')}
+Geographic Coverage: ${data.geographicDistribution.join(', ')}
 
-AI INSTRUCTIONS:
-- Provide contextually relevant advice specific to ${company.name}
-- Reference their ${company.industry} focus and ${workspace.businessModel} approach
-- Consider their target segments: ${company.targetSegments?.join(', ')}
-- Leverage their competitive advantages: ${company.competitiveAdvantages?.join(', ')}
-- Focus on their growth opportunities: ${company.growthOpportunities?.join(', ')}
-- Align recommendations with their strategic initiatives: ${company.strategicInitiatives?.join(', ')}`;
+=== AI INSTRUCTIONS ===
+- You are ${workspace.name}, speaking from their perspective
+- Provide advice specific to YOUR products/services: ${workspace.productPortfolio?.join(', ') || workspace.serviceOfferings?.join(', ')}
+- Reference YOUR value propositions: ${workspace.valuePropositions?.join(', ')}
+- Consider if records match YOUR ideal customer profile: ${workspace.idealCustomerProfile}
+- Leverage YOUR competitive advantages: ${workspace.competitiveAdvantages?.join(', ')}
+- Use YOUR sales methodology: ${workspace.salesMethodology}
+- Focus on YOUR target industries: ${workspace.targetIndustries?.join(', ')}`;
   }
 }

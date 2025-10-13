@@ -7,28 +7,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { updateTodayActivity, getTodayActivityCount, getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface ActivityTrackerProps {
   onActivityUpdate?: () => void;
 }
 
 export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
+  const { user } = useUnifiedAuth();
   const [activityCount, setActivityCount] = useState(() => getTodayActivityCount());
-  const [timeData, setTimeData] = useState(() => getTimeTrackingData());
+  const [timeData, setTimeData] = useState(() => getTimeTrackingData('America/New_York', user?.id));
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Update data when activity changes
   const handleActivityUpdate = (type: 'emails' | 'calls' | 'meetings' | 'tasks', increment: number = 1) => {
     const updated = updateTodayActivity(type, increment);
     setActivityCount(updated);
-    setTimeData(getTimeTrackingData());
+    setTimeData(getTimeTrackingData('America/New_York', user?.id));
     onActivityUpdate?.();
   };
 
   // Refresh data periodically
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeData(getTimeTrackingData());
+      setTimeData(getTimeTrackingData('America/New_York', user?.id));
     }, 60000); // Update every minute
 
     return () => clearInterval(interval);
@@ -48,7 +50,15 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
         <div className="flex items-center gap-3">
           <h3 className="text-sm font-semibold text-[var(--foreground)]">Activity Tracker</h3>
           <div className="text-xs text-[var(--muted)]">
-            {formatHours(timeData.hoursLeft)} hours left today
+            {timeData.isBeforeWorkingHours ? (
+              <>
+                Start time: {Math.round(timeData.hoursTillStart)}h
+              </>
+            ) : (
+              <>
+                {formatHours(timeData.hoursLeft)} hours left today
+              </>
+            )}
           </div>
         </div>
         <button

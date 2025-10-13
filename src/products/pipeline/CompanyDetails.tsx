@@ -30,7 +30,7 @@ interface CompanyWithDetails {
   };
 }
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { AddActionModal } from "@/frontend/components/pipeline/AddActionModal";
+import { CompleteActionModal, ActionLogData } from "@/platform/ui/components/CompleteActionModal";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
@@ -932,12 +932,13 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
       )}
 
       {/* Add Action Modal */}
-      <AddActionModal
+      <CompleteActionModal
         isOpen={showAddActionModal}
         onClose={() => setShowAddActionModal(false)}
         onSubmit={handleActionSubmit}
-        record={account}
-        recordType="account"
+        personName={account?.name || ''}
+        companyName={account?.name || ''}
+        section="companies"
         isLoading={false}
       />
     </div>

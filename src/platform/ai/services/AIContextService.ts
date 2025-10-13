@@ -8,12 +8,28 @@
 // import { WorkspaceDataRouter } from '../../services/workspace-data-router';
 
 import { authFetch } from '@/platform/api-fetch';
+export interface ListViewContext {
+  visibleRecords: any[];
+  activeSection: string;
+  appliedFilters: {
+    searchQuery?: string;
+    verticalFilter?: string;
+    statusFilter?: string;
+    priorityFilter?: string;
+    sortField?: string;
+    sortDirection?: string;
+  };
+  totalCount: number;
+  lastUpdated: Date;
+}
+
 export interface AIContextConfig {
   userId: string;
   workspaceId: string;
   appType: string;
   currentRecord?: any;
   recordType?: string;
+  listViewContext?: ListViewContext;
   conversationHistory?: any[];
   documentContext?: any; // Add document context
 }
@@ -23,6 +39,7 @@ export interface EnhancedAIContext {
   applicationContext: string;
   dataContext: string;
   recordContext: string;
+  listViewContext: string;
   systemContext: string;
   documentContext: string; // Add document context
 }
@@ -39,6 +56,7 @@ export class AIContextService {
       appType,
       currentRecord,
       recordType,
+      listViewContext,
       conversationHistory = [],
       documentContext
     } = config;
@@ -55,6 +73,9 @@ export class AIContextService {
     // Build record context
     const recordContext = this.buildRecordContext(currentRecord, recordType);
     
+    // Build list view context
+    const listViewContextString = this.buildListViewContext(listViewContext);
+    
     // Build document context
     const documentContextString = this.buildDocumentContext(documentContext);
     
@@ -66,6 +87,7 @@ export class AIContextService {
       applicationContext,
       dataContext,
       recordContext,
+      listViewContext: listViewContextString,
       documentContext: documentContextString,
       systemContext
     };
@@ -260,7 +282,7 @@ CRUD OPERATIONS CAPABILITY:
   }
 
   /**
-   * Build record-specific context
+   * Build record-specific context with structured extraction and strategic fit analysis
    */
   private static buildRecordContext(currentRecord: any, recordType: string | null): string {
     if (!currentRecord || !recordType) {
@@ -274,37 +296,75 @@ CRUD OPERATIONS CAPABILITY:
     const recordCompany = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? recordName : 'Unknown Company');
     const recordTitle = currentRecord.title || currentRecord.jobTitle || 'Unknown Title';
     
-    // Build context based on record type
+    // Build structured context based on record type
     let context;
     if (recordType === 'companies') {
-      context = `CURRENT RECORD CONTEXT:
-- CURRENTLY VIEWING: Company ${recordName}
-- Industry: ${currentRecord.industry || 'Unknown'}
-- Size: ${currentRecord.size || currentRecord.employeeCount || 'Unknown'}
-- Record Type: ${recordType}
-- This is a LIVE company record in the user's system
-- The user can see this company's complete profile on their screen
-- Provide SPECIFIC, actionable advice about engaging with THIS exact company
-- Reference their industry, size, and any visible details when giving advice
-- Focus on practical next steps for building relationships with this company
+      context = `=== CURRENT RECORD (WHO THEY ARE) ===
+Company: ${recordName}
+Industry: ${currentRecord.industry || 'Unknown'}
+Size: ${currentRecord.size || currentRecord.employeeCount || 'Unknown'} employees
+Location: ${currentRecord.city || ''} ${currentRecord.state || ''} ${currentRecord.country || ''}
+Website: ${currentRecord.website || 'Not available'}
+Founded: ${currentRecord.foundedYear || 'Unknown'}
+Revenue: ${currentRecord.revenue ? `$${currentRecord.revenue.toLocaleString()}` : 'Unknown'}
+Public/Private: ${currentRecord.isPublic ? 'Public' : 'Private'}
+Stock Symbol: ${currentRecord.stockSymbol || 'N/A'}
 
-VISIBLE RECORD DATA:
-${JSON.stringify(currentRecord, null, 2)}
+What They Do: ${currentRecord.description || 'Company description not available'}
+Tech Stack: ${currentRecord.techStack?.join(', ') || 'Not specified'}
+Technologies Used: ${currentRecord.technologiesUsed?.join(', ') || 'Not specified'}
+
+Business Intelligence:
+- Business Challenges: ${currentRecord.businessChallenges?.join(', ') || 'Not specified'}
+- Business Priorities: ${currentRecord.businessPriorities?.join(', ') || 'Not specified'}
+- Competitive Advantages: ${currentRecord.competitiveAdvantages?.join(', ') || 'Not specified'}
+- Growth Opportunities: ${currentRecord.growthOpportunities?.join(', ') || 'Not specified'}
+- Strategic Initiatives: ${currentRecord.strategicInitiatives?.join(', ') || 'Not specified'}
+- Market Position: ${currentRecord.marketPosition || 'Not specified'}
+
+Strategic Fit Analysis:
+- This company operates in ${currentRecord.industry || 'an unknown industry'}
+- Company size of ${currentRecord.employeeCount || 'unknown'} employees
+- ${currentRecord.isPublic ? 'Publicly traded' : 'Privately held'} company
+- ${currentRecord.techStack?.length ? `Uses technologies: ${currentRecord.techStack.join(', ')}` : 'Technology stack not specified'}
+- ${currentRecord.businessChallenges?.length ? `Faces challenges: ${currentRecord.businessChallenges.join(', ')}` : 'Business challenges not specified'}
 
 CRITICAL: The user is looking at company ${recordName} RIGHT NOW. Your responses should be specific to this company and its business context.`;
     } else {
-      context = `CURRENT RECORD CONTEXT:
-- CURRENTLY VIEWING: ${recordName} at ${recordCompany}
-- Title: ${recordTitle}
-- Record Type: ${recordType}
-- This is a LIVE record in the user's system
-- The user can see this record's complete profile on their screen
-- Provide SPECIFIC, actionable advice about engaging with THIS exact record
-- Reference their company, role, and any visible details when giving advice
-- Focus on practical next steps for this specific contact
+      // Enhanced person record context
+      const seniority = currentRecord.seniority || this.inferSeniority(recordTitle);
+      const department = currentRecord.department || this.inferDepartment(recordTitle);
+      const decisionPower = currentRecord.decisionPower || this.inferDecisionPower(recordTitle, seniority);
+      const buyerGroupRole = currentRecord.buyerGroupRole || this.inferBuyerGroupRole(recordTitle, department);
+      
+      context = `=== CURRENT RECORD (WHO THEY ARE) ===
+Name: ${recordName} at ${recordCompany}
+Title: ${recordTitle}
+Department: ${department}
+Seniority: ${seniority}
+Decision Authority: ${decisionPower}
+Buying Committee Role: ${buyerGroupRole}
+Email: ${currentRecord.email || currentRecord.workEmail || 'Not available'}
+Phone: ${currentRecord.phone || currentRecord.workPhone || 'Not available'}
+LinkedIn: ${currentRecord.linkedinUrl || 'Not available'}
 
-VISIBLE RECORD DATA:
-${JSON.stringify(currentRecord, null, 2)}
+Company Context:
+- Company: ${recordCompany}
+- Industry: ${currentRecord.company?.industry || 'Unknown'}
+- Size: ${currentRecord.company?.employeeCount || 'Unknown'} employees
+- Location: ${currentRecord.city || ''} ${currentRecord.state || ''} ${currentRecord.country || ''}
+
+Role Analysis:
+- This person is a ${seniority} ${recordTitle} in ${department}
+- Decision power level: ${decisionPower}
+- Likely role in buying process: ${buyerGroupRole}
+- ${this.getEngagementAdvice(decisionPower, buyerGroupRole)}
+
+Strategic Fit Analysis:
+- Person works at ${recordCompany} (${currentRecord.company?.industry || 'unknown industry'})
+- Role suggests ${this.getRoleInsights(recordTitle, department)}
+- Decision authority indicates ${this.getDecisionInsights(decisionPower)}
+- Buying role suggests ${this.getBuyingInsights(buyerGroupRole)}
 
 CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Your responses should be specific to this person and company.`;
     }
@@ -335,6 +395,132 @@ CRITICAL: The user is looking at ${recordName} at ${recordCompany} RIGHT NOW. Yo
 - Has Notes: ${currentRecord.pipelineContext.hasNotes ? 'Yes' : 'No'}
 - User expects strategic pipeline management guidance`;
     }
+
+    return context;
+  }
+
+  /**
+   * Helper methods for record analysis
+   */
+  private static inferSeniority(title: string): string {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('ceo') || titleLower.includes('president') || titleLower.includes('founder')) return 'Executive';
+    if (titleLower.includes('vp') || titleLower.includes('vice president') || titleLower.includes('director')) return 'Senior Management';
+    if (titleLower.includes('manager') || titleLower.includes('lead') || titleLower.includes('head')) return 'Management';
+    if (titleLower.includes('senior') || titleLower.includes('sr')) return 'Senior';
+    if (titleLower.includes('junior') || titleLower.includes('jr') || titleLower.includes('associate')) return 'Junior';
+    return 'Mid-level';
+  }
+
+  private static inferDepartment(title: string): string {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('engineering') || titleLower.includes('developer') || titleLower.includes('architect')) return 'Engineering';
+    if (titleLower.includes('sales') || titleLower.includes('business development')) return 'Sales';
+    if (titleLower.includes('marketing')) return 'Marketing';
+    if (titleLower.includes('finance') || titleLower.includes('accounting')) return 'Finance';
+    if (titleLower.includes('hr') || titleLower.includes('human resources')) return 'Human Resources';
+    if (titleLower.includes('operations') || titleLower.includes('ops')) return 'Operations';
+    if (titleLower.includes('it') || titleLower.includes('technology')) return 'IT';
+    return 'General';
+  }
+
+  private static inferDecisionPower(title: string, seniority: string): string {
+    if (seniority === 'Executive') return 'High - Can make final decisions';
+    if (seniority === 'Senior Management') return 'High - Influences major decisions';
+    if (seniority === 'Management') return 'Medium - Influences departmental decisions';
+    if (seniority === 'Senior') return 'Medium - Influences technical decisions';
+    return 'Low - Provides input and recommendations';
+  }
+
+  private static inferBuyerGroupRole(title: string, department: string): string {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('ceo') || titleLower.includes('president')) return 'Economic Buyer - Final decision maker';
+    if (titleLower.includes('cto') || titleLower.includes('vp engineering')) return 'Technical Buyer - Evaluates technical fit';
+    if (titleLower.includes('cfo') || titleLower.includes('vp finance')) return 'Economic Buyer - Budget authority';
+    if (titleLower.includes('procurement') || titleLower.includes('purchasing')) return 'Procurement - Handles vendor selection';
+    if (department === 'Engineering' || department === 'IT') return 'Technical Evaluator - Assesses technical requirements';
+    if (department === 'Sales' || department === 'Marketing') return 'User Buyer - Will use the solution';
+    return 'Influencer - Provides input and recommendations';
+  }
+
+  private static getEngagementAdvice(decisionPower: string, buyerGroupRole: string): string {
+    if (decisionPower.includes('High')) {
+      return 'Focus on high-level value proposition and ROI. This person can make or influence final decisions.';
+    } else if (decisionPower.includes('Medium')) {
+      return 'Provide detailed information and build strong case. This person influences decisions and can champion your solution.';
+    } else {
+      return 'Build relationship and gather intelligence. This person can provide valuable insights and introductions.';
+    }
+  }
+
+  private static getRoleInsights(title: string, department: string): string {
+    if (department === 'Engineering') return 'technical expertise and implementation focus';
+    if (department === 'Sales') return 'revenue impact and customer-facing benefits';
+    if (department === 'Finance') return 'cost-benefit analysis and budget considerations';
+    if (department === 'Operations') return 'operational efficiency and process improvement';
+    return 'general business impact and strategic value';
+  }
+
+  private static getDecisionInsights(decisionPower: string): string {
+    if (decisionPower.includes('High')) return 'this person can approve purchases and allocate budget';
+    if (decisionPower.includes('Medium')) return 'this person influences decisions and can champion your solution';
+    return 'this person provides input and can facilitate introductions to decision makers';
+  }
+
+  private static getBuyingInsights(buyerGroupRole: string): string {
+    if (buyerGroupRole.includes('Economic Buyer')) return 'focus on ROI, budget, and business impact';
+    if (buyerGroupRole.includes('Technical Buyer')) return 'emphasize technical capabilities, integration, and implementation';
+    if (buyerGroupRole.includes('User Buyer')) return 'highlight user experience, productivity, and daily workflow benefits';
+    if (buyerGroupRole.includes('Procurement')) return 'provide detailed specifications, compliance, and vendor requirements';
+    return 'build relationship and understand their specific concerns and priorities';
+  }
+
+  /**
+   * Build list view context for when user is viewing a list of records
+   */
+  private static buildListViewContext(listViewContext: ListViewContext | undefined): string {
+    if (!listViewContext) {
+      return `LIST VIEW CONTEXT: No list view context available`;
+    }
+
+    const { visibleRecords, activeSection, appliedFilters, totalCount, lastUpdated } = listViewContext;
+    
+    // Limit to top 10 records for context to avoid overwhelming the AI
+    const topRecords = visibleRecords.slice(0, 10);
+    
+    let context = `LIST VIEW CONTEXT:
+- Active Section: ${activeSection}
+- Total Records: ${totalCount}
+- Visible Records: ${visibleRecords.length}
+- Last Updated: ${lastUpdated.toLocaleString()}
+
+APPLIED FILTERS:
+- Search: ${appliedFilters.searchQuery || 'None'}
+- Vertical: ${appliedFilters.verticalFilter || 'All'}
+- Status: ${appliedFilters.statusFilter || 'All'}
+- Priority: ${appliedFilters.priorityFilter || 'All'}
+- Sort: ${appliedFilters.sortField || 'Default'} (${appliedFilters.sortDirection || 'asc'})
+
+TOP VISIBLE RECORDS:`;
+
+    topRecords.forEach((record, index) => {
+      const name = record.fullName || record.name || record.firstName || 'Unknown';
+      const company = record.company || record.companyName || 'Unknown Company';
+      const title = record.title || record.jobTitle || 'Unknown Title';
+      const status = record.status || 'Unknown';
+      const priority = record.priority || 'Unknown';
+      
+      context += `\n${index + 1}. ${name} at ${company}
+   - Title: ${title}
+   - Status: ${status}
+   - Priority: ${priority}`;
+    });
+
+    if (visibleRecords.length > 10) {
+      context += `\n... and ${visibleRecords.length - 10} more records`;
+    }
+
+    context += `\n\nIMPORTANT: The user is currently viewing a list of ${activeSection}. You can reference these specific records by name when providing advice.`;
 
     return context;
   }
@@ -516,7 +702,7 @@ IMPORTANT RULES:
   }
 
   /**
-   * Combine all context into final prompt
+   * Combine all context into final prompt with enhanced seller/buyer framing
    */
   static combineContext(context: EnhancedAIContext): string {
     // Extract personality preferences from user context
@@ -532,7 +718,7 @@ IMPORTANT RULES:
       }
     }
 
-    return `You are Adrata, an intelligent sales assistant and expert advisor.
+    return `You are an intelligent sales assistant and expert advisor, speaking as the user's business representative.
 
 Your expertise includes:
 - Sales strategy and pipeline optimization
@@ -542,13 +728,16 @@ Your expertise includes:
 - Industry trends and competitive intelligence
 - Revenue forecasting and performance tracking
 - Document analysis and data extraction from uploaded files
+- Strategic fit analysis between sellers and buyers
+- Business development and relationship building
 
 You provide:
 - Intelligent, contextual responses based on real user data and uploaded documents
-- Actionable recommendations and next steps
+- Actionable recommendations and next steps specific to the user's business
 - Professional guidance that is natural, smart, and helpful
 - Accurate information about dates, times, and current context
 - Analysis and insights from uploaded documents (CSV, Excel, PDF, Word, etc.)
+- Strategic advice tailored to the user's products/services and target market
 
 ${personalityInstructions}
 
@@ -562,6 +751,8 @@ ${context.dataContext}
 
 ${context.recordContext}
 
+${context.listViewContext}
+
 ${context.documentContext}
 
 ${context.systemContext}
@@ -569,6 +760,16 @@ ${context.systemContext}
 === CRITICAL INSTRUCTIONS ===
 ${hasPersonality ? 
   'IMPORTANT: You MUST adapt your response style to match the user\'s personality preferences listed above. Follow the tone, style, and communication approach specified in the personality instructions. This is non-negotiable.' : 
-  'Provide professional, helpful responses that align with Adrata\'s brand standards.'}`;
+  'Provide professional, helpful responses that align with the user\'s business brand and approach.'}
+
+=== RESPONSE GUIDELINES ===
+- Always speak from the perspective of the user's business (as identified in the workspace context)
+- Reference the user's specific products/services when giving advice
+- Consider strategic fit between the user's business and the current record
+- Provide actionable next steps relevant to the user's sales methodology
+- Use the user's value propositions and competitive advantages in recommendations
+- Focus on the user's target industries and ideal customer profile
+- Be specific about how the current record relates to the user's business goals
+- Suggest engagement strategies that align with the user's business model`;
   }
 }

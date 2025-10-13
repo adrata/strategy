@@ -110,7 +110,7 @@ export function RightPanel() {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
-  const { currentRecord, recordType } = useRecordContext();
+  const { currentRecord, recordType, listViewContext } = useRecordContext();
   const { user } = useUnifiedAuth();
 
   // Get workspace and user info
@@ -976,6 +976,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           conversationHistory: chatMessages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing').slice(-5), // Reduced history for speed
           currentRecord,
           recordType,
+          listViewContext,
           enableVoiceResponse: false,
           selectedVoiceId: 'default',
           useOpenRouter: true, // Enable OpenRouter intelligent routing

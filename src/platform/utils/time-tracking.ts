@@ -5,6 +5,8 @@
 
 export interface TimeTrackingData {
   hoursLeft: number;
+  hoursTillStart: number;
+  isBeforeWorkingHours: boolean;
   todayProgress: number;
   todayTarget: number;
   weekProgress: number;
@@ -24,11 +26,12 @@ export interface ActivityCount {
 }
 
 /**
- * Calculate hours left until 5pm in user's timezone
+ * Calculate hours left until end time in user's timezone
  * @param timezone - User's timezone (e.g., 'America/New_York', 'UTC')
- * @returns Hours left until 5pm (0 if past 5pm or weekend)
+ * @param endHour - End hour (default: 17 for 5pm)
+ * @returns Hours left until end time (0 if past end time or weekend)
  */
-export function calculateHoursLeft(timezone: string = 'America/New_York'): number {
+export function calculateHoursLeft(timezone: string = 'America/New_York', endHour: number = 17): number {
   try {
     const now = new Date();
     const userTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
@@ -44,13 +47,13 @@ export function calculateHoursLeft(timezone: string = 'America/New_York'): numbe
     const currentHour = userTime.getHours();
     const currentMinutes = userTime.getMinutes();
     
-    // If before 9am or after 5pm, return 0
-    if (currentHour < 9 || currentHour >= 17) {
+    // If before 9am or after end time, return 0
+    if (currentHour < 9 || currentHour >= endHour) {
       return 0;
     }
     
-    // Calculate hours left until 5pm
-    const totalMinutesLeft = (17 * 60) - (currentHour * 60 + currentMinutes);
+    // Calculate hours left until end time
+    const totalMinutesLeft = (endHour * 60) - (currentHour * 60 + currentMinutes);
     const hoursLeft = Math.max(0, Math.round(totalMinutesLeft / 60 * 10) / 10); // Round to 1 decimal
     
     return hoursLeft;
@@ -61,9 +64,78 @@ export function calculateHoursLeft(timezone: string = 'America/New_York'): numbe
 }
 
 /**
- * Check if current time is within working hours (9am-5pm, Mon-Fri)
+ * Calculate hours until start time in user's timezone
+ * @param timezone - User's timezone (e.g., 'America/New_York', 'UTC')
+ * @param startHour - Start hour (default: 9 for 9am)
+ * @returns Hours until start time (0 if past start time or weekend)
  */
-export function isWorkingHours(timezone: string = 'America/New_York'): boolean {
+export function calculateHoursTillStart(timezone: string = 'America/New_York', startHour: number = 9): number {
+  try {
+    const now = new Date();
+    const userTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+    
+    // Get current day of week (0 = Sunday, 6 = Saturday)
+    const dayOfWeek = userTime.getDay();
+    
+    // If weekend, return 0
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return 0;
+    }
+    
+    const currentHour = userTime.getHours();
+    const currentMinutes = userTime.getMinutes();
+    
+    // If after start time, return 0
+    if (currentHour >= startHour) {
+      return 0;
+    }
+    
+    // Calculate hours until start time
+    const totalMinutesTillStart = (startHour * 60) - (currentHour * 60 + currentMinutes);
+    const hoursTillStart = Math.max(0, Math.round(totalMinutesTillStart / 60 * 10) / 10); // Round to 1 decimal
+    
+    return hoursTillStart;
+  } catch (error) {
+    console.warn('Error calculating hours till start:', error);
+    return 0; // Default fallback
+  }
+}
+
+/**
+ * Check if current time is before working hours start
+ * @param timezone - User's timezone (e.g., 'America/New_York', 'UTC')
+ * @param startHour - Start hour (default: 9 for 9am)
+ */
+export function isBeforeWorkingHours(timezone: string = 'America/New_York', startHour: number = 9): boolean {
+  try {
+    const now = new Date();
+    const userTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+    
+    // Get current day of week (0 = Sunday, 6 = Saturday)
+    const dayOfWeek = userTime.getDay();
+    
+    // If weekend, return false
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return false;
+    }
+    
+    const currentHour = userTime.getHours();
+    
+    // Return true if before start time
+    return currentHour < startHour;
+  } catch (error) {
+    console.warn('Error checking if before working hours:', error);
+    return false;
+  }
+}
+
+/**
+ * Check if current time is within working hours (Mon-Fri)
+ * @param timezone - User's timezone (e.g., 'America/New_York', 'UTC')
+ * @param startHour - Start hour (default: 9 for 9am)
+ * @param endHour - End hour (default: 17 for 5pm)
+ */
+export function isWorkingHours(timezone: string = 'America/New_York', startHour: number = 9, endHour: number = 17): boolean {
   try {
     const now = new Date();
     const userTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
@@ -71,8 +143,8 @@ export function isWorkingHours(timezone: string = 'America/New_York'): boolean {
     const dayOfWeek = userTime.getDay();
     const currentHour = userTime.getHours();
     
-    // Monday-Friday, 9am-5pm
-    return dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 9 && currentHour < 17;
+    // Monday-Friday, within working hours
+    return dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= startHour && currentHour < endHour;
   } catch (error) {
     console.warn('Error checking working hours:', error);
     return true; // Default fallback
@@ -212,23 +284,109 @@ function getWeekStart(): Date {
 }
 
 /**
- * Get comprehensive time tracking data
+ * Get user working hours from settings
+ * @param userId - User ID to get settings for
+ * @returns Object with startHour and endHour, defaults to 9-17
  */
-export function getTimeTrackingData(timezone: string = 'America/New_York'): TimeTrackingData {
-  const hoursLeft = calculateHoursLeft(timezone);
-  const todayActivity = getTodayActivityCount();
-  const weekActivity = getWeekActivityCount();
-  const allTimeRecord = getAllTimeRecord();
-  const isWorking = isWorkingHours(timezone);
+export function getUserWorkingHours(userId?: string): { startHour: number; endHour: number } {
+  try {
+    if (typeof window !== 'undefined' && userId) {
+      const userSettings = localStorage.getItem(`user-settings-${userId}`);
+      if (userSettings) {
+        const settings = JSON.parse(userSettings);
+        if (settings.preferredCallTimes) {
+          const startHour = parseInt(settings.preferredCallTimes.start.split(':')[0]) || 9;
+          const endHour = parseInt(settings.preferredCallTimes.end.split(':')[0]) || 17;
+          return { startHour, endHour };
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Error getting user working hours:', error);
+  }
+  
+  // Default to 9-5
+  return { startHour: 9, endHour: 17 };
+}
+
+/**
+ * Get comprehensive time tracking data
+ * This function now integrates with speedrun progress tracking
+ */
+export function getTimeTrackingData(timezone: string = 'America/New_York', userId?: string): TimeTrackingData {
+  const { startHour, endHour } = getUserWorkingHours(userId);
+  
+  const hoursLeft = calculateHoursLeft(timezone, endHour);
+  const hoursTillStart = calculateHoursTillStart(timezone, startHour);
+  const isBeforeWorking = isBeforeWorkingHours(timezone, startHour);
+  const isWorking = isWorkingHours(timezone, startHour, endHour);
   
   const now = new Date();
   const userTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
   
+  // Try to get speedrun progress data first (preferred source)
+  let todayProgress = 0;
+  let weekProgress = 0;
+  let allTimeRecord = 0;
+  
+  try {
+    // Check for speedrun state (most accurate source)
+    const today = new Date().toDateString();
+    const speedrunState = localStorage.getItem(`speedrun-state-${today}`);
+    
+    if (speedrunState) {
+      const state = JSON.parse(speedrunState);
+      todayProgress = state.completedLeads?.length || 0;
+      
+      // Calculate weekly progress from speedrun states (Monday-Sunday)
+      const monday = new Date();
+      const daysFromMonday = monday.getDay() === 0 ? 6 : monday.getDay() - 1;
+      monday.setDate(monday.getDate() - daysFromMonday);
+      
+      let weekTotal = 0;
+      let maxDailyRecord = 0;
+      
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(monday);
+        checkDate.setDate(monday.getDate() + i);
+        const dateString = checkDate.toDateString();
+        const dayState = localStorage.getItem(`speedrun-state-${dateString}`);
+        
+        if (dayState) {
+          const parsed = JSON.parse(dayState);
+          const dayCount = parsed.completedLeads?.length || 0;
+          weekTotal += dayCount;
+          maxDailyRecord = Math.max(maxDailyRecord, dayCount);
+        }
+      }
+      
+      weekProgress = weekTotal;
+      allTimeRecord = Math.max(maxDailyRecord, getAllTimeRecord());
+    } else {
+      // Fallback to old activity tracking system
+      const todayActivity = getTodayActivityCount();
+      const weekActivity = getWeekActivityCount();
+      todayProgress = todayActivity.total;
+      weekProgress = weekActivity.total;
+      allTimeRecord = getAllTimeRecord();
+    }
+  } catch (error) {
+    console.warn('Error reading speedrun progress, falling back to activity tracking:', error);
+    // Fallback to old activity tracking system
+    const todayActivity = getTodayActivityCount();
+    const weekActivity = getWeekActivityCount();
+    todayProgress = todayActivity.total;
+    weekProgress = weekActivity.total;
+    allTimeRecord = getAllTimeRecord();
+  }
+  
   return {
     hoursLeft,
-    todayProgress: todayActivity.total,
+    hoursTillStart,
+    isBeforeWorkingHours: isBeforeWorking,
+    todayProgress,
     todayTarget: 50,
-    weekProgress: weekActivity.total,
+    weekProgress,
     weekTarget: 250,
     allTimeRecord,
     isWorkingHours: isWorking,

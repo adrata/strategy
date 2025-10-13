@@ -400,9 +400,13 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       
       // Use appropriate v1 API based on section
       if (section === 'companies') {
-        response = await authFetch(`/api/v1/companies/${recordId}`);
+        response = await fetch(`/api/v1/companies/${recordId}`, {
+          credentials: 'include'
+        });
       } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities') {
-        response = await authFetch(`/api/v1/people/${recordId}`);
+        response = await fetch(`/api/v1/people/${recordId}`, {
+          credentials: 'include'
+        });
       } else {
         // For other record types, throw error since unified API is no longer available
         throw new Error(`Record type '${section}' is not yet supported in v1 APIs. Please use companies or people records.`);
@@ -414,10 +418,19 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       console.log(`⚡ [PERFORMANCE] v1 API call took ${loadTime.toFixed(2)}ms for ${section} record: ${recordId}`);
       
       if (!response.ok) {
-        if (response['status'] === 404) {
+        if (response.status === 404) {
           throw new Error(`Record not found. It may have been deleted or moved to a different workspace.`);
         }
-        throw new Error(`Failed to load ${section} record: ${response.status}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error('❌ [DIRECT LOAD] Failed to load record:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: response.url,
+          section,
+          recordId
+        });
+        throw new Error(`Failed to load ${section} record: ${response.status} ${response.statusText || errorText}`);
       }
       
       const result = await response.json();
@@ -667,58 +680,86 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
     
     return (
       <>
-        {/* Use UniversalRecordTemplate for ALL sections including leads for consistency */}
-        <UniversalRecordTemplate
-          record={recordToShow}
-          recordType={section as any}
-          recordIndex={(() => {
-            // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
-            // instead of database rank to ensure navigation works correctly
-            if (section === 'speedrun') {
-              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-              const recordIndex = index >= 0 ? index + 1 : 1;
-              console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
-                recordId: recordToShow?.id,
-                recordName: recordToShow?.name,
-                dataLength: data.length,
-                foundIndex: index,
-                calculatedRecordIndex: recordIndex,
-                dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
-              });
-              return recordIndex;
-            } else {
-              // For other sections, always use sequential position like speedrun for consistent navigation
-              const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-              const recordIndex = index >= 0 ? index + 1 : 1;
-              console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
-                recordId: recordToShow?.id,
-                recordName: recordToShow?.name,
-                dataLength: data.length,
-                foundIndex: index,
-                calculatedRecordIndex: recordIndex,
-                dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
-              });
-              return recordIndex;
-            }
-          })()}
-          totalRecords={data.length}
-          onBack={handleBack}
-          onNavigatePrevious={handleNavigatePrevious}
-          onNavigateNext={handleNavigateNext}
-          onComplete={() => {
-            console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
-            // TODO: Implement complete functionality
-          }}
-          onSnooze={(recordId: string, duration: string) => {
-            console.log('Snooze action for:', recordId, duration);
-            // TODO: Implement complete functionality
-          }}
-          onRecordUpdate={(updatedRecord) => {
-            console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
-            setSelectedRecord(updatedRecord);
-            
-            console.log('✅ [PIPELINE] Record updated in UI');
-          }}
+        <PanelLayout
+          thinLeftPanel={null}
+          leftPanel={
+            <PipelineLeftPanelStandalone 
+              activeSection={section}
+              onSectionChange={handleSectionChange}
+              isSpeedrunVisible={isSpeedrunVisible}
+              setIsSpeedrunVisible={setIsSpeedrunVisible}
+              isOpportunitiesVisible={isOpportunitiesVisible}
+              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+              isProspectsVisible={isProspectsVisible}
+              setIsProspectsVisible={setIsProspectsVisible}
+              isLeadsVisible={isLeadsVisible}
+              setIsLeadsVisible={setIsLeadsVisible}
+              isCustomersVisible={isCustomersVisible}
+              setIsCustomersVisible={setIsCustomersVisible}
+              isPartnersVisible={isPartnersVisible}
+              setIsPartnersVisible={setIsPartnersVisible}
+            />
+          }
+          middlePanel={
+            <UniversalRecordTemplate
+              record={recordToShow}
+              recordType={section as any}
+              recordIndex={(() => {
+                // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
+                // instead of database rank to ensure navigation works correctly
+                if (section === 'speedrun') {
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  const recordIndex = index >= 0 ? index + 1 : 1;
+                  console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: recordIndex,
+                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+                  });
+                  return recordIndex;
+                } else {
+                  // For other sections, always use sequential position like speedrun for consistent navigation
+                  const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
+                  const recordIndex = index >= 0 ? index + 1 : 1;
+                  console.log(`🔍 [NAVIGATION] Using sequential position for ${section}:`, {
+                    recordId: recordToShow?.id,
+                    recordName: recordToShow?.name,
+                    dataLength: data.length,
+                    foundIndex: index,
+                    calculatedRecordIndex: recordIndex,
+                    dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+                  });
+                  return recordIndex;
+                }
+              })()}
+              totalRecords={data.length}
+              onBack={handleBack}
+              onNavigatePrevious={handleNavigatePrevious}
+              onNavigateNext={handleNavigateNext}
+              onComplete={() => {
+                console.log('Complete action for:', recordToShow?.name || recordToShow?.fullName);
+                // TODO: Implement complete functionality
+              }}
+              onSnooze={(recordId: string, duration: string) => {
+                console.log('Snooze action for:', recordId, duration);
+                // TODO: Implement complete functionality
+              }}
+              onRecordUpdate={(updatedRecord) => {
+                console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
+                setSelectedRecord(updatedRecord);
+                
+                console.log('✅ [PIPELINE] Record updated in UI');
+              }}
+            />
+          }
+          rightPanel={<RightPanel />}
+          zoom={zoom}
+          isLeftPanelVisible={isLeftPanelVisible}
+          isRightPanelVisible={isRightPanelVisible}
+          onToggleLeftPanel={() => setIsLeftPanelVisible(!isLeftPanelVisible)}
+          onToggleRightPanel={() => setIsRightPanelVisible(!isRightPanelVisible)}
         />
 
         {/* Profile Popup - Pipeline Detail Implementation */}

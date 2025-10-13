@@ -32,6 +32,7 @@ import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
+import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 // Import getCurrentWorkspaceSlug from the correct location
 
 
@@ -61,6 +62,7 @@ export const PipelineView = React.memo(function PipelineView({
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
   const { ui } = useAcquisitionOS();
+  const { setListViewContext, clearListViewContext } = useRecordContext();
   
   // Pipeline context for user data
   const { 
@@ -1151,11 +1153,49 @@ export const PipelineView = React.memo(function PipelineView({
   // 🚀 CACHE OPTIMIZATION: Removed aggressive auto-refresh that was causing unnecessary reloads
   // The cache system now handles data freshness intelligently without forcing refreshes on navigation
 
+  // Update list view context for AI when filtered data changes
+  useEffect(() => {
+    if (filteredData && filteredData.length > 0) {
+      const listViewContext = {
+        visibleRecords: filteredData,
+        activeSection: section,
+        appliedFilters: {
+          searchQuery,
+          verticalFilter,
+          statusFilter,
+          priorityFilter,
+          sortField,
+          sortDirection
+        },
+        totalCount: filteredData.length,
+        lastUpdated: new Date()
+      };
+      
+      setListViewContext(listViewContext);
+    } else {
+      clearListViewContext();
+    }
+  }, [filteredData, section, searchQuery, verticalFilter, statusFilter, priorityFilter, sortField, sortDirection, setListViewContext, clearListViewContext]);
+
   // Handle add record
   const handleAddRecord = () => {
-    // Set the active section and open the modal
-    ui.setActiveSection(section);
-    ui.setIsAddModalOpen(true);
+    try {
+      console.log(`🔧 [PipelineView] Opening add modal for section: ${section}`);
+      
+      // Set the active section and open the modal
+      ui.setActiveSection(section);
+      ui.setIsAddModalOpen(true);
+      
+      console.log(`✅ [PipelineView] Successfully opened add modal for ${section}`);
+    } catch (error) {
+      console.error(`❌ [PipelineView] Error opening add modal for ${section}:`, error);
+      // Fallback: try to open modal directly
+      try {
+        ui.setIsAddModalOpen(true);
+      } catch (fallbackError) {
+        console.error(`❌ [PipelineView] Fallback also failed:`, fallbackError);
+      }
+    }
   };
 
   const handleSortChange = useCallback((field: string) => {

@@ -1,0 +1,593 @@
+{
+  "workspace": {
+    "id": "01K75ZD7DWHG1XF16HAF2YVKCK",
+    "name": "TOP Engineering Plus",
+    "slug": "top-engineering-plus",
+    "timezone": "America/Chicago",
+    "description": "TOP Engineering Plus workspace for engineering talent management and conference tracking",
+    "createdAt": "2025-10-10T02:32:41.137Z",
+    "updatedAt": "2025-10-10T02:32:41.137Z",
+    "isActive": true,
+    "deletedAt": null,
+    "businessModel": "Engineering Consulting",
+    "competitiveAdvantages": [
+      "Decades of utility communications experience",
+      "Technology + Operations + People focus",
+      "Proven complex-to-simple methodology"
+    ],
+    "idealCustomerProfile": "Electric utilities, municipalities, and infrastructure organizations needing communications engineering expertise and process optimization.",
+    "industry": "Communications Engineering",
+    "productPortfolio": [
+      "Strategic Plan Review",
+      "Gap Analysis",
+      "Process Mapping",
+      "Technology Deployment",
+      "Infrastructure Modernization"
+    ],
+    "salesMethodology": "Strategic consultation with gap analysis, stakeholder engagement, and process alignment focus.",
+    "serviceOfferings": [
+      "Communications Engineering",
+      "Critical Infrastructure Engineering",
+      "Broadband Deployment",
+      "Process Optimization",
+      "Change Management"
+    ],
+    "targetCompanySize": [
+      "Mid-size (100-1000 employees)",
+      "Large (1000+ employees)",
+      "Enterprise (5000+ employees)"
+    ],
+    "targetIndustries": [
+      "Electric Utilities",
+      "Municipalities",
+      "Infrastructure Organizations",
+      "Broadband Providers"
+    ],
+    "valuePropositions": [
+      "Technology, Operations, and People integration",
+      "Turning complex challenges into simple solutions",
+      "Decades of experience in critical infrastructure"
+    ]
+  },
+  "companies": {
+    "total": 514,
+    "withWebsite": 450,
+    "withDomain": 0,
+    "withLinkedIn": 450,
+    "withName": 514,
+    "enrichmentReady": 450,
+    "missingPrerequisites": [
+      {
+        "id": "01K7DW2E2WKN8PXR6MCJN5PJAK",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EBPGSQQQRT8SSH41R93",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2GBV0NMTDDP6APC0M3D2",
+        "name": "Actelant",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2M21SCBSA3T6VFFSREJM",
+        "name": "5Bars Services",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2VEX2P6V2RNSFK9HRPXC",
+        "name": "Duke Energy Corporation",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW3VA1HNM8RNYQG3EF9Y0S",
+        "name": "RR Ditching Service Inc",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW3YGQE5V42DR1YKD8CHEX",
+        "name": "McKnight Utilities",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW4QP70AV5VZQVRXZ6M69Q",
+        "name": "L & B Underground Services, LLC",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW5QNY11M5JWBPBXQQJ67T",
+        "name": "Ubiik Mimomax",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW5REV3SE5QEY0C9YMKAXB",
+        "name": "Talley Inc.",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW5VHPTY3GEGAZ8DQ02DPK",
+        "name": "Coleman County Telephone Coop. Inc.",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW5YZ1Y7VRFAYGM7VMRZAH",
+        "name": "Hill Country Telephone Cooperative",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2B96149M0GA4NWQKPJDA",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BC59FVQT1YRSSR062HB",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BR5M5Y0WB090NY289V4",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2B35H3FS622AXNYXQMYN",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2B662Q4J02HJP29F1H1C",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BF6ARHHCRGFPB5W229Y",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BJ4JRFB6MAEDR3AFX3P",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BN6GDJG50TAGPSQE6Z5",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BV410W1Y4EKKDFD8DW8",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2BY2G816BB3GZ2YDY7EH",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2C12VPRK2WT4DSK9QW2K",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CA38GS1DEV8Q806FQ17",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CD0M3EMT16RJT12WCX7",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2C406RY6VW0CG4S4E7NT",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2C732KZJCTSYQ8SRF7EP",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CK0FREMRGY4AG4CRWNB",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CNZCS9B08S7YTHZJ2DT",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CRXD6RJ0ZMF23AT7B88",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2D1ZRWTSWX2YG0R5N8P8",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2D4Y6C9SJZ58MR2JCSWH",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2D7Z940F31H8GXREMMJA",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DDX9RZGKGWB0R43P9ZZ",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DGVG34N1FWWY6GCCB3G",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CFYD1V2DG1YWGV9J1EG",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CVYWEBBR9YDVP2D4Z32",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2CYXNAZ11SF1TPSS7Y4R",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DAYA62DR7D2XPG6Z1JB",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DPYGPDZAQFB1NB820DP",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DWRNNSWCRJSZM54JEDN",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DZRKE2JFQQY1FKCKWQ0",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DKTRMTWEHAYJ6K1QR8N",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2DSVV16R3F8ZBDBZ1MEN",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2E5VS7M1G8X12BP9GZP4",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2E8PT9P608BD3R1AXN7R",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EHH57P75YFS8N4SAXFA",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EN0CFPMGTG6TDDRH31R",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2GNDC9KM9PKVFB16V45C",
+        "name": "PSEG-LI",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EENW5BMEF3W29SQY58E",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EQYS9BNPYDMA4B28S5A",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2EV12NWRWXV6CZ0B20X9",
+        "name": "Unassigned Company",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2FGWRAGB74NAWBYHNAEC",
+        "name": "0",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2FKSQS22HC39ZHZRQHAH",
+        "name": "Yuba County Water Agency",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2FQ9BV2DWKQGQZ9D1S7Q",
+        "name": "Tucson Electric Power Co",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2MNR4ZRRCCMX5REC89KY",
+        "name": "Grant County PUD",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2KZ1CYP1CJXBST7XJRXV",
+        "name": "AVANGRID",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2MJ570HQQDT4NBMQXSJE",
+        "name": "SRP Communications Engineering",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW2RGEZ79230RJ58AWXR46",
+        "name": "ADB",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW30K88WD1SMWZ9G1G7WD5",
+        "name": "Eversource",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW3F6S0FCCDGNXYCHK10G3",
+        "name": "TSTCI",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW3VD11X7A8ZTBBEPX2MRN",
+        "name": "RnR Integration",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW41GKWD7740K9GY33FXVV",
+        "name": "LTS Managed Technical Services, LLC",
+        "missing": [
+          "website or domain"
+        ]
+      },
+      {
+        "id": "01K7DW5ZBNXJW4F7DJ34RDA78J",
+        "name": "Polarity Networks LLC",
+        "missing": [
+          "website or domain"
+        ]
+      }
+    ]
+  },
+  "people": {
+    "total": 2532,
+    "withEmail": 2520,
+    "withWorkEmail": 1115,
+    "withPersonalEmail": 0,
+    "withLinkedIn": 2245,
+    "withPhone": 664,
+    "withCompany": 2177,
+    "coresignalReady": 2521,
+    "lushaReady": 2392,
+    "enrichmentReady": 2524,
+    "missingPrerequisites": [
+      {
+        "id": "01K7DWA0KAPPH50D91T213FVGF",
+        "fullName": "박지환박지환대표",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWA1J73N2MRM8ZJWJ7CR0Z",
+        "fullName": "曾涛",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWA0TAJN8FJ9E8GG6DB0WR",
+        "fullName": "叶宁",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWA1348TRRAE34KHE9Q2B4",
+        "fullName": "刘聃",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWA0GB7EXAYY07E1XWDW03",
+        "fullName": "李兰花",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWA1C1174AD2AAM0XXESE8",
+        "fullName": "周莹",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "lastName"
+        ]
+      },
+      {
+        "id": "01K7DWDSYMJ39KZZ834DM3EFM1",
+        "fullName": "Luis Colvin",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "company name/domain or LinkedIn URL (for Lusha)"
+        ]
+      },
+      {
+        "id": "01K7DWK6RHH3M6G0DHD41931DY",
+        "fullName": "Luis Colvin",
+        "missing": [
+          "email or LinkedIn URL (for Coresignal)",
+          "company name/domain or LinkedIn URL (for Lusha)"
+        ]
+      }
+    ]
+  },
+  "enrichmentCapability": {
+    "companiesEnrichable": 450,
+    "peopleEnrichable": 2524,
+    "totalEnrichmentPotential": 2974
+  }
+}

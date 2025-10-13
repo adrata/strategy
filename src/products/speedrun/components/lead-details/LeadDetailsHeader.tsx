@@ -71,7 +71,7 @@ export function LeadDetailsHeader({
           Back
         </button>
         <div className="w-8 h-8 bg-blue-100 text-blue-800 rounded-xl flex items-center justify-center font-semibold text-sm">
-          {(person as any).winningScore?.rank || personIndex}
+          {(person as any).globalRank || (person as any).winningScore?.rank || personIndex}
         </div>
         <div>
           <h1 className="text-xl font-semibold text-[var(--foreground)]">

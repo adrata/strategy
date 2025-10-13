@@ -106,12 +106,12 @@ export function UniversalRecordTemplateRefactored({
   // Set current record in context
   useEffect(() => {
     if (record) {
-      setCurrentRecord(record);
+      setCurrentRecord(record, recordType || 'unknown');
     }
     return () => {
       clearCurrentRecord();
     };
-  }, [record, setCurrentRecord, clearCurrentRecord]);
+  }, [record, recordType, setCurrentRecord, clearCurrentRecord]);
 
   // Reset scroll position when tab changes
   useEffect(() => {

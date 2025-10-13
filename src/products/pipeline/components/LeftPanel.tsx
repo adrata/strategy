@@ -974,7 +974,7 @@ export function PipelineLeftPanelStandalone({
                     
                     // Special handling for TOP Engineering Plus - show truncated name
                     if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
-                      return "TOP Engi...";
+                      return "Top E...";
                     }
                     
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;

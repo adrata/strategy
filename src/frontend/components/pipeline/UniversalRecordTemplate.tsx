@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
-import { CompleteActionModal } from '@/products/speedrun/components/CompleteActionModal';
+import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
@@ -923,21 +923,23 @@ export function UniversalRecordTemplate({
       if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities' || targetModel === 'speedrun') {
         // All people-related records use v1 people API
         console.log(`🔄 [UNIVERSAL] Using v1 people API for ${targetModel} ${targetId}`);
-        response = await authFetch(`/api/v1/people/${targetId}`, {
+        response = await fetch(`/api/v1/people/${targetId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(updateData),
         });
       } else if (targetModel === 'companies') {
         // Use v1 companies API
         console.log(`🔄 [UNIVERSAL] Using v1 companies API for ${targetId}`);
-        response = await authFetch(`/api/v1/companies/${targetId}`, {
+        response = await fetch(`/api/v1/companies/${targetId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(updateData),
         });
       } else {
@@ -1003,6 +1005,26 @@ export function UniversalRecordTemplate({
       }));
       
       showMessage(`Updated ${field} successfully`);
+      
+      // 🚀 CACHE INVALIDATION: Trigger data refresh if status field was updated
+      if (field === 'status') {
+        // Determine target section based on status value
+        let targetSection = 'people'; // default
+        if (value === 'LEAD') targetSection = 'leads';
+        else if (value === 'PROSPECT') targetSection = 'prospects';
+        else if (value === 'OPPORTUNITY') targetSection = 'opportunities';
+        else if (value === 'CLIENT' || value === 'CUSTOMER') targetSection = 'clients';
+        
+        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+          detail: { 
+            section: targetSection,
+            type: 'status-update',
+            field, 
+            value, 
+            recordId 
+          }
+        }));
+      }
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error saving field:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to save changes';
@@ -1068,18 +1090,26 @@ export function UniversalRecordTemplate({
       console.log('⬆️ [UNIVERSAL] Advancing to prospect:', record.id);
       
       // Make API call to advance lead to prospect (update status in people table)
-      const response = await authFetch(`/api/v1/people/${record.id}`, {
+      const response = await fetch(`/api/v1/people/${record.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({
           status: 'PROSPECT' // Update status from LEAD to PROSPECT
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to advance to prospect: ${response.statusText}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error('❌ [UNIVERSAL] Advance to prospect failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: response.url
+        });
+        throw new Error(`Failed to advance to prospect: ${response.status} ${response.statusText || errorText}`);
       }
 
       const result = await response.json();
@@ -1087,8 +1117,25 @@ export function UniversalRecordTemplate({
       
       showMessage('Successfully advanced to prospect!');
       
-      // Update URL to prospects page
-      const newProspectId = result.newRecordId || record.id.replace('lead_', 'prospect_');
+      // 🚀 CACHE INVALIDATION: Trigger data refresh for left panel
+      window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        detail: { 
+          section: 'prospects',
+          type: 'status-change',
+          fromSection: 'leads',
+          recordId: record.id 
+        }
+      }));
+      
+      // Wait briefly for refresh to process before navigation
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Update URL to prospects page with proper slug format
+      const prospectId = result.data?.id || record.id;
+      const prospectName = result.data?.fullName || record.fullName || record.name || 'Unknown';
+      
+      // Create a proper slug: name-id (matching existing pattern)
+      const prospectSlug = `${prospectName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}-${prospectId}`;
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -1096,11 +1143,11 @@ export function UniversalRecordTemplate({
       
       if (workspaceMatch) {
         const workspaceSlug = workspaceMatch[1];
-        const newUrl = `/${workspaceSlug}/prospects/${newProspectId}`;
+        const newUrl = `/${workspaceSlug}/prospects/${prospectSlug}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
         router.push(newUrl);
       } else {
-        const newUrl = `/prospects/${newProspectId}`;
+        const newUrl = `/prospects/${prospectSlug}`;
         console.log(`🔗 [ADVANCE] Navigating to prospect: ${newUrl}`);
         router.push(newUrl);
       }
@@ -1120,18 +1167,26 @@ export function UniversalRecordTemplate({
       console.log('⬆️ [UNIVERSAL] Advancing to opportunity:', record.id);
       
       // Make API call to advance prospect to opportunity (update status in people table)
-      const response = await authFetch(`/api/v1/people/${record.id}`, {
+      const response = await fetch(`/api/v1/people/${record.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({
           status: 'OPPORTUNITY' // Update status from PROSPECT to OPPORTUNITY
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to advance to opportunity: ${response.statusText}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error('❌ [UNIVERSAL] Advance to opportunity failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: response.url
+        });
+        throw new Error(`Failed to advance to opportunity: ${response.status} ${response.statusText || errorText}`);
       }
 
       const result = await response.json();
@@ -1139,13 +1194,25 @@ export function UniversalRecordTemplate({
       
       showMessage('Successfully advanced to opportunity!');
       
-      // Update URL to opportunities page
-      const newOpportunityId = result.newRecordId || record.id.replace('prospect_', 'opportunity_');
+      // 🚀 CACHE INVALIDATION: Trigger data refresh for left panel
+      window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        detail: { 
+          section: 'opportunities',
+          type: 'status-change',
+          fromSection: 'prospects',
+          recordId: record.id 
+        }
+      }));
       
-      // Create a proper slug format: name-ulid (matching existing pattern)
-      const opportunityName = record.fullName || record.name || 'opportunity';
-      const cleanName = opportunityName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-      const opportunitySlug = `${cleanName}-${newOpportunityId}`;
+      // Wait briefly for refresh to process before navigation
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Update URL to opportunities page with proper slug format
+      const opportunityId = result.data?.id || record.id;
+      const opportunityName = result.data?.fullName || record.fullName || record.name || 'Unknown';
+      
+      // Create a proper slug: name-id (matching existing pattern)
+      const opportunitySlug = `${opportunityName.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}-${opportunityId}`;
       
       // Get current path and replace the section properly
       const currentPath = window.location.pathname;
@@ -1164,14 +1231,15 @@ export function UniversalRecordTemplate({
       
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error advancing to opportunity:', error);
-      showMessage('Failed to advance to opportunity. Please try again.', 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showMessage(`Failed to advance to opportunity: ${errorMessage}`, 'error');
     } finally {
       setLoading(false);
     }
   };
 
   // Handle action submission
-  const handleActionSubmit = async (actionData: any) => {
+  const handleActionSubmit = async (actionData: ActionLogData) => {
     try {
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Submitting action:', actionData);
@@ -1184,20 +1252,18 @@ export function UniversalRecordTemplate({
         personId: record.id,
         personName: record.name || record.fullName || 'Unknown',
         actionType: actionData.type,
-        notes: actionData.action || actionData.notes, // Use action field for speedrun
-        nextAction: actionData.nextAction,
-        nextActionDate: actionData.nextActionDate,
+        notes: actionData.action, // Use action field for speedrun
         actionPerformedBy: actionData.actionPerformedBy
       } : {
         recordId: record.id,
         recordType: recordType,
         actionType: actionData.type,
-        actionLog: actionData.actionLog,
-        notes: actionData.notes,
-        nextAction: actionData.nextAction,
-        nextActionDate: actionData.nextActionDate,
+        notes: actionData.action,
+        person: actionData.person,
+        personId: actionData.personId,
+        company: actionData.company,
+        companyId: actionData.companyId,
         actionPerformedBy: actionData.actionPerformedBy,
-        contactId: actionData.contactId,
         workspaceId: record.workspaceId || 'default',
         userId: record.userId || 'default'
       };
@@ -1584,18 +1650,19 @@ export function UniversalRecordTemplate({
       const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
       
       if (isOnSprintPage) {
-        // On sprint page: Show "Add Action" with green styling and keyboard shortcut
+        // On sprint page: Show "Add Action" with green styling and keyboard shortcut - Responsive for 15-inch laptops
         buttons.push(
           <button
             key="add-action"
             onClick={() => setIsAddActionModalOpen(true)}
-            className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors"
+            className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors flex items-center gap-1"
           >
-            Add Action ({getCommonShortcut('SUBMIT')})
+            <span className="hidden xs:inline">Add Action ({getCommonShortcut('SUBMIT')})</span>
+            <span className="xs:hidden">Add</span>
           </button>
         );
       } else {
-        // On individual record page: Show "Start Speedrun" with blue styling
+        // On individual record page: Show "Start Speedrun" with blue styling - Responsive for 15-inch laptops
         buttons.push(
           <button
             key="start-speedrun"
@@ -1610,9 +1677,10 @@ export function UniversalRecordTemplate({
                 router.push('/speedrun/sprint');
               }
             }}
-            className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors"
+            className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors flex items-center gap-1"
           >
-            Start Speedrun ({getCommonShortcut('SUBMIT')})
+            <span className="hidden xs:inline">Start Speedrun ({getCommonShortcut('SUBMIT')})</span>
+            <span className="xs:hidden">Start ({getCommonShortcut('SUBMIT')})</span>
           </button>
         );
       }
@@ -2265,6 +2333,7 @@ export function UniversalRecordTemplate({
         onClose={() => setIsAddActionModalOpen(false)}
         onSubmit={handleActionSubmit}
         personName={record?.fullName || record?.name || 'Unknown'}
+        companyName={record?.company?.name || record?.company || ''}
         section={recordType}
         isLoading={loading}
       />

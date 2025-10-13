@@ -16,7 +16,7 @@ import { Pagination } from './table/Pagination';
 import { TableSkeleton } from './table/TableSkeleton';
 import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
-import { AddActionModal, ActionLogData } from './AddActionModal';
+import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
 
 // -------- Types --------
@@ -261,6 +261,22 @@ export function PipelineTable({
   // Handle add action
   const handleAddActionClick = (record: PipelineRecord) => {
     setAddingAction(record);
+  };
+
+  // Wrapper for CompleteActionModal onSubmit
+  const handleAddActionSubmit = async (actionData: ActionLogData) => {
+    if (addingAction) {
+      // Convert ActionLogData to the format expected by usePipelineActions
+      const recordWithAction = {
+        ...addingAction,
+        actionType: actionData.type,
+        notes: actionData.action,
+        person: actionData.person,
+        company: actionData.company
+      };
+      await handleAddAction(recordWithAction);
+      setAddingAction(null);
+    }
   };
   
   // Handle view details
@@ -621,11 +637,13 @@ export function PipelineTable({
       )}
       
       {addingAction && (
-        <AddActionModal
-          contextRecord={addingAction}
-          section={section}
+        <CompleteActionModal
+          isOpen={!!addingAction}
           onClose={closeAddActionModal}
-          onSubmit={handleAddAction}
+          onSubmit={handleAddActionSubmit}
+          personName={addingAction.name || addingAction['fullName'] || ''}
+          companyName={addingAction['company']?.name || addingAction['company'] || ''}
+          section={section}
         />
       )}
       

@@ -505,7 +505,7 @@ export function PanelLayout({
             ref={rightPanelRef}
             style={{
               flex: rightPanelFlex,
-              minWidth: 0,
+              minWidth: 320, // Set minimum width to 320px for better UX on small screens
               height: "100%",
               overflow: "hidden",
               background: "var(--background)",

@@ -213,13 +213,15 @@ export function getWeeklyProgress(): WeeklyProgress {
 
   // Check if we're on the client-side
   if (typeof window !== 'undefined') {
-    // Get all days from this week (Monday to Friday)
+    // Get all days from this week (Monday to Sunday)
     const today = new Date();
     const monday = new Date(today);
-    monday.setDate(today.getDate() - (today.getDay() - 1));
+    // Calculate days back to Monday (0=Sunday, 1=Monday, etc.)
+    const daysFromMonday = today.getDay() === 0 ? 6 : today.getDay() - 1;
+    monday.setDate(today.getDate() - daysFromMonday);
 
-    for (let i = 0; i < 5; i++) {
-      // Monday to Friday
+    for (let i = 0; i < 7; i++) {
+      // Monday to Sunday (7 days)
       const checkDate = new Date(monday);
       checkDate.setDate(monday.getDate() + i);
       const dateString = checkDate.toDateString();
@@ -242,15 +244,16 @@ export function getWeeklyProgress(): WeeklyProgress {
 
 /**
  * Clear all speedrun cache and state
+ * PRESERVES progress tracking data (speedrun-state-{date} keys)
  */
 export function clearSpeedrunCache(): void {
   console.log("🧹 Clearing speedrun cache...");
 
   if (typeof window !== 'undefined') {
-    // Clear all localStorage items related to speedrun
+    // Clear all localStorage items related to speedrun EXCEPT progress tracking
     const keysToRemove = Object.keys(localStorage).filter(
       (key) =>
-        key.startsWith("speedrun-") ||
+        (key.startsWith("speedrun-") && !key.startsWith("speedrun-state-")) || // Preserve progress tracking
         key.startsWith("speedrun_") ||
         key.includes("Speedrun"),
     );
@@ -260,7 +263,7 @@ export function clearSpeedrunCache(): void {
       console.log(`🗑️ Removed cache key: ${key}`);
     });
 
-    console.log(`✅ Cleared ${keysToRemove.length} speedrun cache entries`);
+    console.log(`✅ Cleared ${keysToRemove.length} speedrun cache entries (preserved progress tracking)`);
   } else {
     console.log("⚠️ Cannot clear cache on server-side");
   }

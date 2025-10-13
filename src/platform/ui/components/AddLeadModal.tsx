@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+// Force rebuild to fix useEffect import issue
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface AddLeadModalProps {
   isOpen: boolean;
@@ -10,6 +12,14 @@ interface AddLeadModalProps {
 }
 
 export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps) {
+  // 🔍 DEBUG: Log when modal receives isOpen prop changes
+  useEffect(() => {
+    console.log('🔍 [AddLeadModal] isOpen prop changed:', {
+      isOpen,
+      timestamp: new Date().toISOString()
+    });
+  }, [isOpen]);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,6 +30,43 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  // Keyboard shortcut for Ctrl+Enter
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        // Check if we're in an input field or textarea
+        const target = event.target as HTMLElement;
+        const isInputField =
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.contentEditable === "true";
+
+        // If we're in an input field, allow the default behavior (form submission)
+        if (isInputField) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Validate form and submit if valid
+        if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
+          const form = document.querySelector('form');
+          if (form) {
+            form.requestSubmit();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, formData.firstName, formData.lastName, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +97,8 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
       }
 
       const result = await response.json();
-      onLeadAdded(result.data);
       
-      // Reset form
+      // Reset form first
       setFormData({
         firstName: "",
         lastName: "",
@@ -63,7 +109,19 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
         notes: ""
       });
       
+      // Show success message
+      setShowSuccessMessage(true);
+      
+      // Close modal first
       onClose();
+      
+      // Then call the success callback
+      onLeadAdded(result.data);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
     } catch (error) {
       console.error('Error creating lead:', error);
       alert('Failed to create lead. Please try again.');
@@ -72,10 +130,28 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('🔍 [AddLeadModal] Modal not open, returning null');
+    return null;
+  }
+
+  console.log('🔍 [AddLeadModal] Modal is open, rendering modal content');
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <>
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-2">
+          <div className="flex items-center">
+            <svg className="h-4 w-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-green-700 font-medium">Lead created successfully!</p>
+          </div>
+        </div>
+      )}
+
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
@@ -100,6 +176,13 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Status Badge - Green highlighting like speedrun */}
+          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm font-medium text-green-800">Status: Lead</span>
+            <span className="text-xs text-green-600">(Locked)</span>
+          </div>
+
           {/* Name Fields - Split like person form */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -130,33 +213,6 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
             </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="Enter email address"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
-            />
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
-            />
-          </div>
 
           {/* Job Title */}
           <div>
@@ -186,26 +242,6 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
             />
           </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Additional notes about this lead"
-              rows={3}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
-            />
-          </div>
-
-          {/* Status Badge - Green highlighting like speedrun */}
-          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-sm font-medium text-green-800">Status: Lead</span>
-            <span className="text-xs text-green-600">(Locked)</span>
-          </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 pt-4">
@@ -221,11 +257,12 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded }: AddLeadModalProps
               disabled={isLoading || !formData.firstName || !formData.lastName}
               className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Creating...' : 'Create Lead'}
+              {isLoading ? 'Creating...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>
       </div>
     </div>
+    </>
   );
 }

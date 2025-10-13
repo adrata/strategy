@@ -607,9 +607,38 @@ export const PipelineContent = React.memo(function PipelineContent({
 
   // Handle add record
   const handleAddRecord = () => {
-    // Set the active section and open the modal
-    ui.setActiveSection(section);
-    ui.setIsAddModalOpen(true);
+    try {
+      console.log(`🔧 [PipelineContent] Opening add modal for section: ${section}`);
+      console.log(`🔧 [PipelineContent] Current context state:`, {
+        activeSection: ui.activeSection,
+        isAddModalOpen: ui.isAddModalOpen,
+        timestamp: new Date().toISOString()
+      });
+      
+      // Set the active section and open the modal
+      ui.setActiveSection(section);
+      ui.setIsAddModalOpen(true);
+      
+      console.log(`✅ [PipelineContent] Successfully called context methods for ${section}`);
+      
+      // Verify the state was actually set
+      setTimeout(() => {
+        console.log(`🔍 [PipelineContent] Context state after 100ms:`, {
+          activeSection: ui.activeSection,
+          isAddModalOpen: ui.isAddModalOpen,
+          timestamp: new Date().toISOString()
+        });
+      }, 100);
+      
+    } catch (error) {
+      console.error(`❌ [PipelineContent] Error opening add modal for ${section}:`, error);
+      // Fallback: try to open modal directly
+      try {
+        ui.setIsAddModalOpen(true);
+      } catch (fallbackError) {
+        console.error(`❌ [PipelineContent] Fallback also failed:`, fallbackError);
+      }
+    }
   };
 
   const handleSortChange = useCallback((field: string) => {

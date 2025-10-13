@@ -26,6 +26,16 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     auth: { authUser },
   } = useAcquisitionOS();
 
+  // 🔍 DEBUG: Log context values whenever they change
+  useEffect(() => {
+    console.log('🔍 [AddModal] Context values changed:', {
+      isAddModalOpen,
+      activeSection,
+      activeWorkspace: activeWorkspace?.id || 'none',
+      timestamp: new Date().toISOString()
+    });
+  }, [isAddModalOpen, activeSection, activeWorkspace]);
+
   // Success message state
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -77,19 +87,30 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
   // Auto-open specialized modals for specific entity types
   useEffect(() => {
+    console.log('🔍 [AddModal] Auto-open effect triggered:', {
+      isAddModalOpen,
+      activeSection,
+      timestamp: new Date().toISOString()
+    });
+    
     if (isAddModalOpen) {
       if (activeSection === "leads") {
+        console.log('🔧 [AddModal] Opening AddLeadModal for leads section');
         setShowAddLeadModal(true);
-        setIsAddModalOpen(false);
       } else if (activeSection === "prospects") {
+        console.log('🔧 [AddModal] Opening AddProspectModal for prospects section');
         setShowAddProspectModal(true);
-        setIsAddModalOpen(false);
       } else if (activeSection === "companies") {
+        console.log('🔧 [AddModal] Opening AddCompanyModal for companies section');
         setShowAddCompanyModal(true);
-        setIsAddModalOpen(false);
       } else if (activeSection === "people") {
+        console.log('🔧 [AddModal] Opening AddPersonModal for people section');
         setShowAddPersonModal(true);
-        setIsAddModalOpen(false);
+      } else if (activeSection === "opportunities") {
+        // Opportunities use the main form, so just keep the modal open
+        console.log('🔧 [AddModal] Opening opportunities form in main modal');
+      } else {
+        console.log('🔧 [AddModal] No specialized modal for section:', activeSection, '- using main form');
       }
     }
   }, [isAddModalOpen, activeSection]);
@@ -1512,8 +1533,6 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         isOpen={showAddLeadModal}
         onClose={() => setShowAddLeadModal(false)}
         onLeadAdded={(lead) => {
-          setShowSuccessMessage(true);
-          setSuccessMessage(`Lead "${lead.fullName}" created successfully!`);
           setShowAddLeadModal(false);
           if (refreshData) {
             refreshData();
@@ -1540,8 +1559,6 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         isOpen={showAddPersonModal}
         onClose={() => setShowAddPersonModal(false)}
         onPersonAdded={(person) => {
-          setShowSuccessMessage(true);
-          setSuccessMessage(`Person "${person.fullName}" created successfully!`);
           setShowAddPersonModal(false);
           if (refreshData) {
             refreshData();

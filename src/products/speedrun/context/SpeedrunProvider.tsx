@@ -36,6 +36,7 @@ export interface SpeedrunPerson {
   recentActivity: string;
   commission: string;
   stableIndex?: number | undefined;
+  globalRank?: number; // Database rank field (primary source)
   customFields?: {
     monacoEnrichment?: {
       [key: string]: any;
@@ -45,7 +46,7 @@ export interface SpeedrunPerson {
   // 🏆 Dano's Winning Score (optional - only present after ranking)
   winningScore?: {
     totalScore: number;
-    rank: string; // 1, 2, 3, 4, 5, etc. (simple 1-30 numbering)
+    rank: string; // Display rank (fallback to globalRank) - 1, 2, 3, 4, 5, etc.
     confidence: number;
     winFactors: string[];
     urgencyLevel: "Critical" | "High" | "Medium" | "Low";

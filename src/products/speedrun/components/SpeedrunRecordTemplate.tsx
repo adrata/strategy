@@ -72,6 +72,28 @@ export function SpeedrunRecordTemplate({
     currentDialerContacts: [],
   });
 
+  // Success message state
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Show success message with auto-hide
+  const showSuccessMessage = (message: string) => {
+    setSuccessMessage(message);
+    setErrorMessage(null); // Clear any error messages
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000);
+  };
+
+  // Show error message with auto-hide
+  const showErrorMessage = (message: string) => {
+    setErrorMessage(message);
+    setSuccessMessage(null); // Clear any success messages
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
+
   // Generate reports based on person's role
   useEffect(() => {
     const role =
@@ -135,16 +157,75 @@ export function SpeedrunRecordTemplate({
     try {
       console.log(`🔄 [SPEEDRUN] Inline updating ${field} for person:`, recordId, 'to:', value);
       
-      // TODO: Implement actual speedrun inline update API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Prepare update data
+      const updateData: any = {
+        [field]: field === 'globalRank' ? parseInt(value) : value,
+        updatedAt: new Date().toISOString()
+      };
       
-      // Update the person object locally (this would normally come from state management)
-      (person as any)[field] = value;
+      // Make API call to update person
+      const response = await fetch(`/api/v1/people/${recordId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update ${field}`);
+      }
+
+      const result = await response.json();
+      console.log(`✅ [SPEEDRUN] Successfully updated ${field} for person:`, recordId, result.data);
+      
+      // If this is a rank update, trigger re-ranking
+      if (field === 'globalRank') {
+        console.log(`🔄 [SPEEDRUN] Triggering re-ranking after manual rank update`);
+        try {
+          const rerankResponse = await fetch('/api/v1/speedrun/re-rank', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              manualRankUpdate: {
+                personId: recordId,
+                newRank: parseInt(value)
+              }
+            }),
+          });
+          
+          if (rerankResponse.ok) {
+            console.log(`✅ [SPEEDRUN] Re-ranking completed successfully`);
+            showSuccessMessage(`✅ Rank updated to ${value} and other prospects re-ranked automatically!`);
+          } else {
+            console.warn(`⚠️ [SPEEDRUN] Re-ranking failed, but rank update succeeded`);
+            showSuccessMessage(`✅ Rank updated to ${value}!`);
+          }
+        } catch (rerankError) {
+          console.warn(`⚠️ [SPEEDRUN] Re-ranking failed:`, rerankError);
+          showSuccessMessage(`✅ Rank updated to ${value}!`);
+        }
+      } else {
+        // Show success message for other field updates
+        const fieldName = field === 'name' ? 'Name' : 
+                         field === 'email' ? 'Email' : 
+                         field === 'phone' ? 'Phone' : 
+                         field === 'vertical' ? 'Vertical' : field;
+        showSuccessMessage(`✅ ${fieldName} updated successfully!`);
+      }
+      
+      // Update the person object locally to reflect changes immediately
+      (person as any)[field] = field === 'globalRank' ? parseInt(value) : value;
       
       console.log(`✅ [SPEEDRUN] Inline saved ${field} for speedrun person:`, recordId);
       
     } catch (error) {
       console.error(`❌ [SPEEDRUN] Error inline saving ${field}:`, error);
+      const errorMsg = error instanceof Error ? error.message : `Failed to update ${field}`;
+      showErrorMessage(`❌ ${errorMsg}`);
       throw error;
     }
   };
@@ -238,6 +319,24 @@ export function SpeedrunRecordTemplate({
 
   return (
     <div className="h-full flex flex-col">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 mx-4 mt-2">
+          <div className="flex items-center">
+            <span className="text-sm font-medium">{successMessage}</span>
+          </div>
+        </div>
+      )}
+      
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 mx-4 mt-2">
+          <div className="flex items-center">
+            <span className="text-sm font-medium">{errorMessage}</span>
+          </div>
+        </div>
+      )}
+      
       <div
         className="flex-1 overflow-y-auto invisible-scrollbar p-4"
         style={{

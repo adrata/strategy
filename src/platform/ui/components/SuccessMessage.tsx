@@ -57,9 +57,9 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
         if (section && type === 'success') {
           const colors = getCategoryColors(section);
           return {
-            container: `bg-[${colors.bg}] border-[${colors.border}] text-[${colors.text}]`,
-            icon: `text-[${colors.primary}]`,
-            closeButton: `text-[${colors.primary}] hover:text-[${colors.dark}]`,
+            container: `bg-green-100 border-green-300 text-green-700`,
+            icon: `text-green-600`,
+            closeButton: `text-green-600 hover:text-green-800`,
             iconPath: 'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
           };
         }

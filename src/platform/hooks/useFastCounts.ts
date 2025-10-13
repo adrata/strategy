@@ -54,6 +54,9 @@ export function useFastCounts(): UseFastCountsReturn {
   const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
   const userId = authUser?.id;
   
+  // Track last workspace ID to detect workspace changes
+  const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);
+  
   // 🎯 SPEEDRUN SETTING: Configurable top N ranked people (default 50)
   const SPEEDRUN_LIMIT = 50; // This could be made configurable via settings
 
@@ -124,6 +127,7 @@ export function useFastCounts(): UseFastCountsReturn {
         const storageKey = `adrata-fast-counts-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify({
           counts: newCounts,
+          workspaceId: workspaceId, // Store workspaceId for validation
           ts: Date.now()
         }));
       } catch (e) {
@@ -144,6 +148,25 @@ export function useFastCounts(): UseFastCountsReturn {
   useEffect(() => {
     if (!workspaceId || !userId || authLoading) return;
 
+    // 🔄 WORKSPACE CHANGE DETECTION: Clear counts if workspace changed
+    if (lastWorkspaceId && lastWorkspaceId !== workspaceId) {
+      console.log(`🔄 [FAST COUNTS] Workspace changed from ${lastWorkspaceId} to ${workspaceId}, clearing counts`);
+      setCounts({
+        leads: 0,
+        prospects: 0,
+        opportunities: 0,
+        companies: 0,
+        people: 0,
+        clients: 0,
+        sellers: 0,
+        speedrun: 0,
+        metrics: 0,
+        chronicle: 0
+      });
+      setLoading(true);
+      setError(null);
+    }
+
     // Instant hydration from cache if present
     let hasCachedData = false;
     try {
@@ -151,16 +174,17 @@ export function useFastCounts(): UseFastCountsReturn {
       const cached = localStorage.getItem(storageKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        // Check if cache is less than 5 minutes old
+        // Check if cache is less than 5 minutes old AND belongs to current workspace
         const cacheAge = Date.now() - (parsed?.ts || 0);
         const maxCacheAge = 5 * 60 * 1000; // 5 minutes
+        const workspaceMatches = parsed?.workspaceId === workspaceId;
         
-        if (parsed?.counts && cacheAge < maxCacheAge) {
+        if (parsed?.counts && cacheAge < maxCacheAge && workspaceMatches) {
           setCounts(parsed.counts as FastCounts);
           setLoading(false);
           hasCachedData = true;
         } else {
-          // Cache is too old, clear it
+          // Cache is too old or workspace mismatch, clear it
           localStorage.removeItem(storageKey);
         }
       }
@@ -173,9 +197,12 @@ export function useFastCounts(): UseFastCountsReturn {
       setLoading(true);
     }
 
+    // Update last workspace ID
+    setLastWorkspaceId(workspaceId);
+
     // Always revalidate in background
     fetchCounts();
-  }, [workspaceId, userId, authLoading, fetchCounts]);
+  }, [workspaceId, userId, authLoading, fetchCounts, lastWorkspaceId]);
 
   const forceRefresh = useCallback(async () => {
     // Clear localStorage cache before refreshing
@@ -185,6 +212,56 @@ export function useFastCounts(): UseFastCountsReturn {
     }
     await fetchCounts(true);
   }, [fetchCounts, workspaceId]);
+
+  // 🚀 CACHE INVALIDATION: Listen for refresh events from advance operations
+  useEffect(() => {
+    const handleRefreshCounts = (event: CustomEvent) => {
+      console.log('🔄 [FAST COUNTS] Received refresh event:', event.detail);
+      forceRefresh();
+    };
+
+    window.addEventListener('refresh-counts', handleRefreshCounts as EventListener);
+    
+    return () => {
+      window.removeEventListener('refresh-counts', handleRefreshCounts as EventListener);
+    };
+  }, [forceRefresh]);
+
+  // 🔄 WORKSPACE SWITCH EVENTS: Listen for workspace switch events to clear cache
+  useEffect(() => {
+    const handleWorkspaceSwitch = (event: CustomEvent) => {
+      const { workspaceId: newWorkspaceId } = event.detail;
+      if (newWorkspaceId && newWorkspaceId !== workspaceId) {
+        console.log(`🔄 [FAST COUNTS] Received workspace switch event for: ${newWorkspaceId}, clearing counts`);
+        setCounts({
+          leads: 0,
+          prospects: 0,
+          opportunities: 0,
+          companies: 0,
+          people: 0,
+          clients: 0,
+          sellers: 0,
+          speedrun: 0,
+          metrics: 0,
+          chronicle: 0
+        });
+        setLoading(true);
+        setError(null);
+        // Clear cache for old workspace
+        if (workspaceId) {
+          const storageKey = `adrata-fast-counts-${workspaceId}`;
+          localStorage.removeItem(storageKey);
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      return () => {
+        window.removeEventListener('adrata-workspace-switched', handleWorkspaceSwitch as EventListener);
+      };
+    }
+  }, [workspaceId]);
 
   return {
     counts,

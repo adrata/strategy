@@ -16,7 +16,7 @@ import { Pagination } from './table/Pagination';
 import { TableSkeleton } from './table/TableSkeleton';
 import { TableDataSkeleton } from './table/TableDataSkeleton';
 import { EditRecordModal } from './EditRecordModal';
-import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
+import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { RecordDetailModal } from './RecordDetailModal';
 import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
 
@@ -576,11 +576,12 @@ export function PipelineTable({
       )}
       
       {addActionModalOpen && selectedRecord && (
-        <AddActionModal
+        <CompleteActionModal
           isOpen={addActionModalOpen}
           onClose={closeAddActionModal}
           onSubmit={handleActionSubmitWrapper}
-          contextRecord={selectedRecord}
+          personName={selectedRecord.name || selectedRecord.fullName || ''}
+          companyName={selectedRecord.company?.name || selectedRecord.company || ''}
           section={section}
           isLoading={isSubmitting}
         />

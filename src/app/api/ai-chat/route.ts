@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       conversationHistory, 
       currentRecord, 
       recordType,
+      listViewContext,
       enableVoiceResponse,
       selectedVoiceId,
       useOpenRouter = true // New parameter to control routing
@@ -36,6 +37,8 @@ export async function POST(request: NextRequest) {
       userId,
       hasCurrentRecord: !!currentRecord,
       recordType,
+      hasListViewContext: !!listViewContext,
+      listViewRecordCount: listViewContext?.visibleRecords?.length || 0,
       useOpenRouter
     });
 
@@ -66,6 +69,7 @@ export async function POST(request: NextRequest) {
           conversationHistory,
           currentRecord,
           recordType,
+          listViewContext,
           appType,
           workspaceId,
           userId,
@@ -154,6 +158,7 @@ export async function POST(request: NextRequest) {
           conversationHistory,
           currentRecord,
           recordType,
+          listViewContext,
           appType,
           workspaceId,
           userId
@@ -195,6 +200,7 @@ export async function POST(request: NextRequest) {
         conversationHistory,
         currentRecord,
         recordType,
+        listViewContext,
         appType,
         workspaceId,
         userId

@@ -6,7 +6,13 @@ import { getDefaultUserSettings } from '@/products/speedrun/state';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { completedCount, triggerAutoFetch, isDailyReset } = body;
+    const { completedCount, triggerAutoFetch, isDailyReset, manualRankUpdate } = body;
+
+    // Handle manual rank update
+    if (manualRankUpdate) {
+      console.log(`🔄 Manual rank update: Person ${manualRankUpdate.personId} to rank ${manualRankUpdate.newRank}`);
+      return await handleManualRankUpdate(request, manualRankUpdate);
+    }
 
     console.log(`🔄 Re-ranking speedrun data for user. Completed: ${completedCount}`);
 
@@ -177,6 +183,118 @@ export async function POST(request: NextRequest) {
     console.error('❌ Error in re-ranking API:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Handle manual rank updates with automatic re-ranking of other prospects
+ */
+async function handleManualRankUpdate(request: NextRequest, manualRankUpdate: { personId: string, oldRank?: number, newRank: number }) {
+  try {
+    const workspaceId = request.headers.get('x-workspace-id');
+    const userId = request.headers.get('x-user-id');
+
+    if (!workspaceId || !userId) {
+      return NextResponse.json(
+        { success: false, error: 'Missing workspace or user context' },
+        { status: 400 }
+      );
+    }
+
+    const { personId, oldRank, newRank } = manualRankUpdate;
+
+    // Get the person being updated
+    const person = await prisma.people.findUnique({
+      where: { 
+        id: personId,
+        workspaceId,
+        deletedAt: null
+      }
+    });
+
+    if (!person) {
+      return NextResponse.json(
+        { success: false, error: 'Person not found' },
+        { status: 404 }
+      );
+    }
+
+    const currentRank = person.globalRank || 0;
+    const actualOldRank = oldRank || currentRank;
+
+    console.log(`🔄 Manual rank update: ${person.fullName} from rank ${actualOldRank} to ${newRank}`);
+
+    // Get all people in the workspace that need rank adjustment
+    const allPeople = await prisma.people.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null,
+        globalRank: { not: null }
+      },
+      select: {
+        id: true,
+        fullName: true,
+        globalRank: true
+      },
+      orderBy: { globalRank: 'asc' }
+    });
+
+    // Calculate rank adjustments
+    const rankAdjustments: Array<{ id: string, newRank: number }> = [];
+    
+    if (newRank < actualOldRank) {
+      // Moving up: shift people at positions [newRank..oldRank-1] down by 1
+      allPeople.forEach(p => {
+        if (p.globalRank && p.globalRank >= newRank && p.globalRank < actualOldRank) {
+          rankAdjustments.push({ id: p.id, newRank: p.globalRank + 1 });
+        }
+      });
+    } else if (newRank > actualOldRank) {
+      // Moving down: shift people at positions [oldRank+1..newRank] up by 1
+      allPeople.forEach(p => {
+        if (p.globalRank && p.globalRank > actualOldRank && p.globalRank <= newRank) {
+          rankAdjustments.push({ id: p.id, newRank: p.globalRank - 1 });
+        }
+      });
+    }
+
+    // Add the target person's new rank
+    rankAdjustments.push({ id: personId, newRank });
+
+    console.log(`🔄 Applying ${rankAdjustments.length} rank adjustments`);
+
+    // Apply all rank updates in a transaction
+    await prisma.$transaction(async (tx) => {
+      for (const adjustment of rankAdjustments) {
+        await tx.people.update({
+          where: { id: adjustment.id },
+          data: { 
+            globalRank: adjustment.newRank,
+            updatedAt: new Date()
+          }
+        });
+      }
+    });
+
+    console.log(`✅ Successfully updated ranks for ${rankAdjustments.length} people`);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        message: `Successfully updated rank for ${person.fullName} and adjusted ${rankAdjustments.length - 1} other prospects`,
+        personId,
+        oldRank: actualOldRank,
+        newRank,
+        adjustmentsCount: rankAdjustments.length - 1
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error in manual rank update:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to update rank' },
       { status: 500 }
     );
   }

@@ -235,11 +235,29 @@ export async function PATCH(
       );
     }
 
+    // Whitelist of allowed fields for companies updates
+    const ALLOWED_COMPANY_FIELDS = [
+      'name', 'legalName', 'tradingName', 'localName', 'description', 'website', 
+      'email', 'phone', 'fax', 'address', 'city', 'state', 'country', 'postalCode', 
+      'industry', 'sector', 'size', 'revenue', 'currency', 'employeeCount', 
+      'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 
+      'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 
+      'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 
+      'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate',
+      'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 
+      'opportunityStage', 'acquisitionDate'
+    ];
+
+    // Filter body to only allowed fields
+    const updateData = Object.keys(body)
+      .filter(key => ALLOWED_COMPANY_FIELDS.includes(key))
+      .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+
     // Update company (partial update)
     const updatedCompany = await prisma.companies.update({
       where: { id },
       data: {
-        ...body,
+        ...updateData,
         updatedAt: new Date(),
       },
       include: {

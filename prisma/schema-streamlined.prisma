@@ -82,6 +82,18 @@ model workspaces {
   updatedAt                 DateTime
   isActive                  Boolean                     @default(true)
   deletedAt                 DateTime?
+  
+  // 🏢 BUSINESS CONTEXT FIELDS (for AI context engineering)
+  businessModel             String?                     @db.VarChar(100)  // e.g., "Engineering Consulting", "IT Staffing", "Notary Services"
+  industry                  String?                     @db.VarChar(100)  // Primary industry focus
+  serviceOfferings          String[]                    @default([])      // Core services provided
+  productPortfolio          String[]                    @default([])      // Products/services sold
+  valuePropositions         String[]                    @default([])      // Key value propositions
+  targetIndustries          String[]                    @default([])      // ICP industries
+  targetCompanySize         String[]                    @default([])      // ICP company sizes
+  idealCustomerProfile      String?                     @db.VarChar(2000) // Detailed ICP description
+  competitiveAdvantages     String[]                    @default([])      // What makes them unique
+  salesMethodology          String?                     @db.VarChar(200)  // How they sell
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   stacks_projects           StacksProject[]
@@ -96,6 +108,7 @@ model workspaces {
   users                     users[]
   workspace_users           workspace_users[]
   ai_conversations          ai_conversations[]
+  emails                    email_messages[]
 
   @@index([slug])
   @@index([isActive])
@@ -313,6 +326,7 @@ model companies {
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   people                 people[]
+  emails                 email_messages[]
 
   @@index([workspaceId])
   @@index([mainSellerId])
@@ -459,6 +473,7 @@ model people {
   mainSeller        users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
   workspace         workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   coSellers         person_co_sellers[]
+  emails            email_messages[]
 
   @@index([workspaceId])
   @@index([companyId])
@@ -976,4 +991,54 @@ model ai_messages {
   
   @@index([conversationId, createdAt])
   @@index([conversationId, type])
+}
+
+/// Email messages from integrated providers
+model email_messages {
+  id            String    @id @default(ulid())
+  workspaceId   String    @db.VarChar(30)
+  
+  // Provider info
+  provider      String    @db.VarChar(50)  // 'outlook', 'gmail'
+  messageId     String    // External message ID
+  threadId      String?   // Conversation thread
+  
+  // Email content
+  subject       String
+  body          String    @db.Text
+  bodyHtml      String?   @db.Text
+  
+  // Participants
+  from          String    @db.VarChar(300)
+  to            String[]  @default([])
+  cc            String[]  @default([])
+  bcc           String[]  @default([])
+  
+  // Metadata
+  sentAt        DateTime
+  receivedAt    DateTime
+  isRead        Boolean   @default(false)
+  isImportant   Boolean   @default(false)
+  
+  // Rich data (JSON)
+  attachments   Json?     // Array of attachment metadata
+  labels        String[]  @default([])
+  
+  // Relationships
+  companyId     String?   @db.VarChar(30)
+  personId      String?   @db.VarChar(30)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company       companies? @relation(fields: [companyId], references: [id])
+  person        people?    @relation(fields: [personId], references: [id])
+  
+  @@unique([provider, messageId, workspaceId])
+  @@index([workspaceId])
+  @@index([companyId])
+  @@index([personId])
+  @@index([workspaceId, receivedAt])
+  @@index([from])
 }

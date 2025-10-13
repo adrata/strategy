@@ -11,7 +11,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 // Removed deleted PipelineDataStore - using unified data system
 import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking';
 import { AddNoteModal } from './AddNoteModal';
-import { AddActionModal, ActionLogData } from '@/platform/ui/components/AddActionModal';
+import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { PanelLoader } from '@/platform/ui/components/Loader';
@@ -83,7 +83,7 @@ export function PipelineHeader({
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [timeData, setTimeData] = useState(() => {
-    const data = getTimeTrackingData();
+    const data = getTimeTrackingData('America/New_York', user?.id);
     // Provide realistic defaults if data is empty
     return {
       ...data,
@@ -265,7 +265,7 @@ export function PipelineHeader({
   // Update time data every minute
   useEffect(() => {
     const updateTimeData = () => {
-      setTimeData(getTimeTrackingData());
+      setTimeData(getTimeTrackingData('America/New_York', user?.id));
     };
 
     // Update immediately
@@ -279,12 +279,12 @@ export function PipelineHeader({
 
   // Handle action logging
   const handleActionSubmit = async (actionData: ActionLogData) => {
-    // If we have a selected record, use it; otherwise, use the contact from actionData
-    const recordId = selectedRecord?.id || actionData.contactId;
+    // If we have a selected record, use it; otherwise, we need a person name
+    const recordId = selectedRecord?.id;
     const recordType = selectedRecord ? section.slice(0, -1) : 'contact'; // Default to contact if no record
     
-    if (!recordId && !actionData.contactId) {
-      console.error('No record or contact selected for action');
+    if (!recordId && !actionData.person) {
+      console.error('No record or person selected for action');
       return;
     }
     
@@ -295,12 +295,13 @@ export function PipelineHeader({
         body: JSON.stringify({
           recordId: recordId,
           recordType: recordType,
-          actionType: actionData.actionType,
-          notes: actionData.notes,
-          nextAction: actionData.nextAction,
-          nextActionDate: actionData.nextActionDate,
+          actionType: actionData.type,
+          notes: actionData.action,
+          person: actionData.person,
+          personId: actionData.personId,
+          company: actionData.company,
+          companyId: actionData.companyId,
           actionPerformedBy: actionData.actionPerformedBy,
-          contactId: actionData.contactId,
           workspaceId: user?.activeWorkspaceId || user?.workspaces?.[0]?.id,
           userId: user?.id
         })
@@ -591,28 +592,31 @@ export function PipelineHeader({
       
       switch (currentView) {
         case 'sales_actions':
-          // Sales Actions view - show only 3 key metrics
+          // Sales Actions view - show time indicator and conditionally show targets
           metricItems.push({
-            label: 'Hours Left',
-            value: formatHours(timeData.hoursLeft),
+            label: timeData.isBeforeWorkingHours ? 'Start Time' : 'Hours Left',
+            value: timeData.isBeforeWorkingHours ? `${Math.round(timeData.hoursTillStart)}h` : formatHours(timeData.hoursLeft),
             color: 'text-[var(--foreground)]',
             isHighlight: false
           });
-          metricItems.push({
-            label: 'Today',
-            value: timeData.todayProgress,
-            target: workspaceSettings.dailyTarget, // Use workspace daily target
-            isProgress: true,
-            color: 'text-[var(--foreground)]'
-          });
-          metricItems.push({
-            label: 'This Week',
-            value: timeData.weekProgress,
-            target: workspaceSettings.weeklyTarget, // Use workspace weekly target
-            isProgress: true,
-            color: 'text-[var(--foreground)]'
-          });
-          // Removed 'All Time' to show only 3 stats
+          
+          // Only show Today/This Week targets if NOT before working hours
+          if (!timeData.isBeforeWorkingHours) {
+            metricItems.push({
+              label: 'Today',
+              value: timeData.todayProgress,
+              target: workspaceSettings.dailyTarget, // Use workspace daily target
+              isProgress: true,
+              color: 'text-[var(--foreground)]'
+            });
+            metricItems.push({
+              label: 'This Week',
+              value: timeData.weekProgress,
+              target: workspaceSettings.weeklyTarget, // Use workspace weekly target
+              isProgress: true,
+              color: 'text-[var(--foreground)]'
+            });
+          }
           break;
 
         case 'prospects':
@@ -696,8 +700,8 @@ export function PipelineHeader({
         default:
           // Fallback to original metrics
           metricItems.push({
-            label: 'Hours Left',
-            value: formatHours(timeData.hoursLeft),
+            label: timeData.isBeforeWorkingHours ? 'Start Time' : 'Hours Left',
+            value: timeData.isBeforeWorkingHours ? `${Math.round(timeData.hoursTillStart)}h` : formatHours(timeData.hoursLeft),
             color: 'text-[var(--foreground)]',
             isHighlight: false
           });
@@ -963,9 +967,10 @@ export function PipelineHeader({
                   {sectionInfo['actionButton'] && (
                     <button
                       onClick={handleAction}
-                      className="bg-[var(--background)] text-black border border-[var(--border)] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
+                      className="bg-[var(--background)] text-black border border-[var(--border)] px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-1 sm:gap-2"
                     >
-                      {sectionInfo.actionButton}
+                      <span className="hidden xs:inline">{sectionInfo.actionButton}</span>
+                      <span className="xs:hidden">Add</span>
                     </button>
                   )}
                   {(sectionInfo as any).secondaryActionButton && (
@@ -975,9 +980,10 @@ export function PipelineHeader({
                         setShowAddActionModal(true);
                       }}
                       disabled={loading}
-                      className="bg-navy-50 text-navy-900 border border-navy-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-navy-50 text-navy-900 border border-navy-200 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2"
                     >
-                      {(sectionInfo as any).secondaryActionButton}
+                      <span className="hidden xs:inline">{(sectionInfo as any).secondaryActionButton}</span>
+                      <span className="xs:hidden">Add</span>
                     </button>
                   )}
                 </>
@@ -1020,16 +1026,20 @@ export function PipelineHeader({
                       {sectionInfo['actionButton'] && (
                         <button 
                           onClick={handleAction}
-                          className="px-4 py-2 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-2"
+                          className="px-3 sm:px-4 py-2 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-1 sm:gap-2"
                         >
-                          {
-                            (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                            (section === 'prospects') ? `Add Prospect${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                            (section === 'opportunities') ? `Add Opportunity${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                            (section === 'companies') ? `Add Company${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                            (section === 'people') ? `Add Person${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                            sectionInfo.actionButton
-                          }
+                          <span className="hidden xs:inline">
+                            {
+                              (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                              (section === 'prospects') ? `Add Prospect` :
+                              (section === 'opportunities') ? `Add Opportunity${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                              (section === 'companies') ? `Add Company${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                              (section === 'people') ? `Add Person${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
+                              (section === 'speedrun') ? (timeData.isBeforeWorkingHours ? `Add Action (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton) :
+                              sectionInfo.actionButton
+                            }
+                          </span>
+                          <span className="xs:hidden">Add</span>
                         </button>
                       )}
                       {(sectionInfo as any).secondaryActionButton && (
@@ -1045,7 +1055,7 @@ export function PipelineHeader({
                             }
                           }}
                           disabled={loading}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${
+                          className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border flex items-center gap-1 sm:gap-2 ${
                             section === 'speedrun' 
                               ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200' 
                               : section === 'leads'
@@ -1061,7 +1071,12 @@ export function PipelineHeader({
                               : 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--hover)]'
                           }`}
                         >
-                          {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
+                          <span className="hidden xs:inline">
+                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
+                          </span>
+                          <span className="xs:hidden">
+                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : 'Add'}
+                          </span>
                         </button>
                       )}
                     </>
@@ -1135,14 +1150,15 @@ export function PipelineHeader({
       />
 
       {/* Add Action Modal */}
-      <AddActionModal
+      <CompleteActionModal
         isOpen={showAddActionModal}
         onClose={() => {
           setShowAddActionModal(false);
           setSelectedRecord(null);
         }}
         onSubmit={handleActionSubmit}
-        contextRecord={selectedRecord}
+        personName={selectedRecord?.name || selectedRecord?.fullName}
+        companyName={selectedRecord?.company?.name || selectedRecord?.company}
         section={section}
         isLoading={false}
       />

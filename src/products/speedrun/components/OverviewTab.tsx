@@ -223,6 +223,30 @@ export function OverviewTab({
               })()}
             </div>
           </div>
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
+            <div className="font-semibold text-[var(--muted)] mb-1">
+              Rank
+            </div>
+            <div className="mt-1">
+              <InlineEditField
+                value={(() => {
+                  // Use globalRank as primary source, fallback to winningScore.rank
+                  const globalRank = (person as any).globalRank;
+                  const winningScoreRank = person.winningScore?.rank;
+                  return globalRank ? globalRank.toString() : (winningScoreRank || '');
+                })()}
+                field="globalRank"
+                recordId={person.id?.toString() || ''}
+                recordType="speedrun"
+                inputType="number"
+                placeholder="Enter rank (1-999)"
+                onSave={handleSpeedrunInlineFieldSave}
+                className="text-lg text-[var(--foreground)] font-semibold"
+                min={1}
+                max={999}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

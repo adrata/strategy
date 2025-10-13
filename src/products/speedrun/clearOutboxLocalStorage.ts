@@ -1,15 +1,17 @@
 /**
  * Utility to clear Speedrun localStorage data that might be causing issues
  * Call this function in browser console or from component to reset progress
+ * WARNING: This will clear ALL progress tracking data!
  */
 export function clearSpeedrunLocalStorage() {
   console.log("🧹 Clearing Speedrun localStorage data...");
+  console.log("⚠️ WARNING: This will clear ALL progress tracking data!");
 
   // Get all localStorage keys
   const keys = Object.keys(localStorage);
 
-  // Clear all speedrun-related keys
-  const SpeedrunKeys = keys.filter(
+  // Clear all speedrun-related keys (including progress tracking)
+  const speedrunKeys = keys.filter(
     (key) =>
       key.startsWith("speedrun-state-") ||
       key.includes("Speedrun") ||
