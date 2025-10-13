@@ -99,13 +99,22 @@ export function useWorkspaceNavigation() {
     const slug = generateSlug(name, itemId);
     
     // Direct section navigation without pipeline prefix
-    const urlPath = `${section}/${slug}`;
+    let urlPath = `${section}/${slug}`;
+    
+    // Preserve search parameters (like active tab) during navigation
+    if (typeof window !== 'undefined') {
+      const currentParams = new URLSearchParams(window.location.search);
+      if (currentParams.toString()) {
+        urlPath += `?${currentParams.toString()}`;
+      }
+    }
     
     console.log(`🔗 [Workspace Navigation] Navigating to ${section} item:`, {
       slug,
       itemId,
       currentPathname: pathname,
-      urlPath
+      urlPath,
+      preservedParams: typeof window !== 'undefined' ? window.location.search : 'none'
     });
     
     navigateWithWorkspace(urlPath);
