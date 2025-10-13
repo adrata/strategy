@@ -88,7 +88,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     // CoreSignal intelligence - use customFields directly
     influenceLevel: String(record.customFields?.influenceLevel || '-'),
     engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
-    isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
+    isBuyerGroupMember: record.isBuyerGroupMember || !!record.buyerGroupRole, // Defensive: show Yes if has role, even if flag is false
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     
     // Experience and skills - use CoreSignal data
@@ -234,7 +234,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Role:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.primaryRole || 'Stakeholder'}</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">{record.buyerGroupRole || 'Stakeholder'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Influence Level:</span>

@@ -109,16 +109,20 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/speedrun?limit=${limit}`;
           break;
         case 'leads':
-          url = `/api/v1/people?section=leads&limit=${limit}`;
+          // For leads, always fetch all records to support proper pagination
+          url = `/api/v1/people?section=leads&limit=10000`;
           break;
         case 'prospects':
-          url = `/api/v1/people?section=prospects&limit=${limit}`;
+          // For prospects, always fetch all records to support proper pagination
+          url = `/api/v1/people?section=prospects&limit=10000`;
           break;
         case 'opportunities':
-          url = `/api/v1/people?section=opportunities&limit=${limit}`;
+          // For opportunities, always fetch all records to support proper pagination
+          url = `/api/v1/people?section=opportunities&limit=10000`;
           break;
         case 'people':
-          url = `/api/v1/people?limit=${limit}`;
+          // For people, use the limit parameter but ensure it's high enough for pagination
+          url = `/api/v1/people?limit=${Math.max(limit, 10000)}`;
           break;
         case 'companies':
           url = `/api/v1/companies?limit=${limit}`;

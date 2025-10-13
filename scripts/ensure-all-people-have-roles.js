@@ -149,6 +149,7 @@ class EnsureAllPeopleHaveRoles {
           where: { id: person.id },
           data: {
             buyerGroupRole: assignedRole,
+            isBuyerGroupMember: true, // Always set to true when assigning a role
             customFields: {
               ...person.customFields,
               buyerGroupRoleAssigned: new Date().toISOString(),

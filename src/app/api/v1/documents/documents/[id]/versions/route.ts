@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ export async function GET(
 
     // Get document to check permissions
     const document = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -42,7 +42,7 @@ export async function GET(
     // Get versions with pagination
     const [versions, total] = await Promise.all([
       prisma.atriumVersion.findMany({
-        where: { documentId: params.id },
+        where: { documentId: (await params).id },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -64,7 +64,7 @@ export async function GET(
         },
       }),
       prisma.atriumVersion.count({
-        where: { documentId: params.id },
+        where: { documentId: (await params).id },
       }),
     ]);
 
@@ -92,7 +92,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -105,7 +105,7 @@ export async function POST(
 
     // Get document to check permissions
     const document = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -124,7 +124,7 @@ export async function POST(
     // Create new version
     const version = await prisma.atriumVersion.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         version: document.version,
         content: document.content,
         fileUrl: document.fileUrl,
@@ -147,7 +147,7 @@ export async function POST(
     // Log version creation
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'version_created',
         description: `Created version ${version.version} of document "${document.title}"`,
@@ -175,7 +175,7 @@ export async function POST(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -192,7 +192,7 @@ export async function PUT(
 
     // Get document to check permissions
     const document = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -213,14 +213,14 @@ export async function PUT(
       where: { id: versionId },
     });
 
-    if (!version || version.documentId !== params.id) {
+    if (!version || version.documentId !== (await params).id) {
       return NextResponse.json({ error: 'Version not found' }, { status: 404 });
     }
 
     // Create a backup of current version before restoring
     await prisma.atriumVersion.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         version: document.version,
         content: document.content,
         fileUrl: document.fileUrl,
@@ -233,7 +233,7 @@ export async function PUT(
 
     // Restore document to the selected version
     const restoredDocument = await prisma.atriumDocument.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         content: version.content,
         fileUrl: version.fileUrl,
@@ -254,7 +254,7 @@ export async function PUT(
     // Log restoration
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'version_restored',
         description: `Restored document "${document.title}" to version ${version.version}`,

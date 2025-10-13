@@ -1330,6 +1330,7 @@ export class UnifiedEnrichmentSystem {
       where: { id: person.id },
       data: {
         buyerGroupRole: member.role,
+        isBuyerGroupMember: true, // Always set to true when assigning a role
         influenceScore: member.influenceScore || member.confidence || person.influenceScore || 0,
         authorityLevel: this.mapRoleToAuthority(member.role),
         email: member.email || person.email,

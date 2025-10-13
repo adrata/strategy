@@ -11,7 +11,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 // GET /api/v1/conversations/{id}/messages - Get messages for a conversation
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user using unified auth system
@@ -28,7 +28,7 @@ export async function GET(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     if (!conversationId) {
       return createErrorResponse('Conversation ID is required', 'INVALID_CONVERSATION_ID', 400);
@@ -104,7 +104,7 @@ export async function GET(
 // POST /api/v1/conversations/{id}/messages - Add message to conversation
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user using unified auth system
@@ -121,7 +121,7 @@ export async function POST(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     if (!conversationId) {
       return createErrorResponse('Conversation ID is required', 'INVALID_CONVERSATION_ID', 400);

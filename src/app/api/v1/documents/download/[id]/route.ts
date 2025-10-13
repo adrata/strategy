@@ -11,7 +11,7 @@ import { join } from 'path';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -22,7 +22,7 @@ export async function GET(
     // Get document
     const document = await prisma.atriumDocument.findUnique({
       where: {
-        id: params.id,
+        id: (await params).id,
         status: { not: 'deleted' },
       },
       include: {
@@ -60,7 +60,7 @@ export async function GET(
       
       // Update download count
       await prisma.atriumDocument.update({
-        where: { id: params.id },
+        where: { id: (await params).id },
         data: {
           downloadCount: { increment: 1 },
         },
@@ -69,7 +69,7 @@ export async function GET(
       // Log download activity
       await prisma.atriumActivity.create({
         data: {
-          documentId: params.id,
+          documentId: (await params).id,
           userId: session.user.id,
           activityType: 'downloaded',
           description: `Downloaded document "${document.title}"`,

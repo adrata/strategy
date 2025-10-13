@@ -13,7 +13,7 @@ import { getV1AuthUser } from '../../auth';
 // GET /api/v1/people/[id] - Get a specific person
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -25,7 +25,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     const person = await prisma.people.findUnique({
       where: { 
@@ -121,7 +121,7 @@ export async function GET(
 // PUT /api/v1/people/[id] - Update a person (full replacement)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -133,7 +133,7 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if person exists
@@ -234,7 +234,7 @@ export async function PUT(
 // PATCH /api/v1/people/[id] - Partially update a person
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -246,7 +246,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if person exists
@@ -418,7 +418,7 @@ export async function PATCH(
 // DELETE /api/v1/people/[id] - Delete a person (soft delete by default, hard delete with ?mode=hard)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -430,7 +430,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 

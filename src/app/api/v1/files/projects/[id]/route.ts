@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth-options';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function GET(
 
     const project = await prisma.encodeProject.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         userId: session.user.id,
       },
       include: {
@@ -40,7 +40,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -53,7 +53,7 @@ export async function PUT(
 
     const project = await prisma.encodeProject.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         userId: session.user.id,
       },
     });
@@ -64,7 +64,7 @@ export async function PUT(
 
     const updatedProject = await prisma.encodeProject.update({
       where: {
-        id: params.id,
+        id: (await params).id,
       },
       data: {
         ...(name && { name }),
@@ -88,7 +88,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -98,7 +98,7 @@ export async function DELETE(
 
     const project = await prisma.encodeProject.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         userId: session.user.id,
       },
     });
@@ -109,7 +109,7 @@ export async function DELETE(
 
     await prisma.encodeProject.delete({
       where: {
-        id: params.id,
+        id: (await params).id,
       },
     });
 

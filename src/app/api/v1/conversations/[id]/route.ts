@@ -12,7 +12,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 // GET /api/v1/conversations/{id} - Get conversation with messages
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user using unified auth system
@@ -29,7 +29,7 @@ export async function GET(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     if (!conversationId) {
       return createErrorResponse('Conversation ID is required', 'INVALID_CONVERSATION_ID', 400);
@@ -112,7 +112,7 @@ export async function GET(
 // PATCH /api/v1/conversations/{id} - Update conversation
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user using unified auth system
@@ -129,7 +129,7 @@ export async function PATCH(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     if (!conversationId) {
       return createErrorResponse('Conversation ID is required', 'INVALID_CONVERSATION_ID', 400);
@@ -212,7 +212,7 @@ export async function PATCH(
 // DELETE /api/v1/conversations/{id} - Soft delete conversation
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authenticate and authorize user using unified auth system
@@ -229,7 +229,7 @@ export async function DELETE(
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const conversationId = params.id;
+    const { id: conversationId } = await params;
 
     if (!conversationId) {
       return createErrorResponse('Conversation ID is required', 'INVALID_CONVERSATION_ID', 400);

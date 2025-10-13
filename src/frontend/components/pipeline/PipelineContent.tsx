@@ -420,7 +420,37 @@ export const PipelineContent = React.memo(function PipelineContent({
         (record['priority'] && record.priority.toLowerCase() === priorityFilter.toLowerCase()) ||
         (!record['priority'] && priorityFilter === 'none'); // Allow filtering for records without priority
 
-      return matchesSearch && matchesVertical && matchesStatus && matchesPriority;
+      // Company Size filter - handle both numeric employeeCount and string size fields
+      const matchesCompanySize = companySizeFilter === 'all' || (() => {
+        // Try numeric employeeCount first
+        const employeeCount = record.employeeCount || record.company?.employeeCount || 0;
+        const empCount = typeof employeeCount === 'string' ? parseInt(employeeCount, 10) : employeeCount;
+        
+        // If we have employeeCount, use it
+        if (empCount > 0) {
+          switch (companySizeFilter) {
+            case 'startup': return empCount >= 1 && empCount <= 10;
+            case 'small': return empCount >= 11 && empCount <= 50;
+            case 'medium': return empCount >= 51 && empCount <= 200;
+            case 'large': return empCount >= 201 && empCount <= 1000;
+            case 'enterprise': return empCount > 1000;
+            default: return true;
+          }
+        }
+        
+        // Fallback: Try to match company.size string
+        const companySize = record.company?.size?.toLowerCase() || '';
+        switch (companySizeFilter) {
+          case 'startup': return companySize.includes('1-10') || companySize.includes('<10');
+          case 'small': return companySize.includes('11-50') || companySize.includes('1-50');
+          case 'medium': return companySize.includes('51-200') || companySize.includes('50-200');
+          case 'large': return companySize.includes('201-1000') || companySize.includes('200-1000');
+          case 'enterprise': return companySize.includes('1000+') || companySize.includes('5000+') || companySize.includes('10000+');
+          default: return true;
+        }
+      })();
+
+      return matchesSearch && matchesVertical && matchesStatus && matchesPriority && matchesCompanySize;
     });
 
     // Apply smart ranking or sorting
@@ -466,7 +496,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     }
 
     return filtered;
-  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, sortField, sortDirection, section]);
+  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, companySizeFilter, sortField, sortDirection, section]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {

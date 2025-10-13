@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
 // GET /api/v1/companies/[id] - Get a specific company
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -27,7 +27,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     const company = await prisma.companies.findUnique({
       where: { 
@@ -114,7 +114,7 @@ export async function GET(
 // PUT /api/v1/companies/[id] - Update a company (full replacement)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -126,7 +126,7 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if company exists
@@ -205,7 +205,7 @@ export async function PUT(
 // PATCH /api/v1/companies/[id] - Partially update a company
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -217,7 +217,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if company exists
@@ -245,7 +245,7 @@ export async function PATCH(
       'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 
       'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate',
       'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 
-      'opportunityStage', 'acquisitionDate'
+      'opportunityStage', 'acquisitionDate', 'competitors'
     ];
 
     // Filter body to only allowed fields
@@ -344,7 +344,7 @@ export async function PATCH(
 // DELETE /api/v1/companies/[id] - Delete a company (soft delete by default, hard delete with ?mode=hard)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -356,7 +356,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
     

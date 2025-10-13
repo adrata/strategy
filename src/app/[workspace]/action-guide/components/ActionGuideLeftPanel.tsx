@@ -13,11 +13,13 @@ import { useActionGuide } from "../layout";
 import { ActionGuideSection, ActionGuidePage } from "../types/action-guide";
 import { actionGuideContent } from "../content/actionGuideContent";
 import { useUnifiedAuth } from "@/platform/auth";
+import { useProfilePopup } from "@/platform/ui/components/ProfilePopupContext";
 
 export function ActionGuideLeftPanel() {
   const { selectedPage, setSelectedPage, activeSection, setActiveSection } = useActionGuide();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['getting-started']));
   const { user: authUser } = useUnifiedAuth();
+  const { isProfileOpen, setIsProfileOpen, setProfileAnchor } = useProfilePopup();
 
   const handleSectionClick = (section: string) => {
     setActiveSection(section);
@@ -194,7 +196,16 @@ export function ActionGuideLeftPanel() {
 
       {/* Fixed Bottom Section - User Info */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
-        <div className="w-full flex items-center gap-3 p-2 rounded-lg">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setProfileAnchor(e.currentTarget);
+            setIsProfileOpen(!isProfileOpen);
+          }}
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          title="Profile"
+        >
           <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-[var(--foreground)]">
               {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
@@ -206,7 +217,7 @@ export function ActionGuideLeftPanel() {
             </div>
             <div className="text-xs text-[var(--muted)]">Action Guide</div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );

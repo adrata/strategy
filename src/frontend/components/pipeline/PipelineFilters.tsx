@@ -585,7 +585,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
         {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
         {isDropdownOpen && (
-          <div className="absolute z-[100] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+          <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-[var(--foreground)]">Filter By</h3>
@@ -703,7 +703,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
                 {/* Sort Dropdown Menu - Match Filter styling */}
                 {isSortDropdownOpen && (
-                  <div className="absolute z-[100] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                  <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-[var(--foreground)]">Sort By</h3>
@@ -796,7 +796,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
                 {/* Columns Dropdown Menu - Match Filter/Sort styling */}
                 {isColumnsDropdownOpen && (
-                  <div className="absolute z-[100] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                  <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-[var(--foreground)]">Show Columns</h3>

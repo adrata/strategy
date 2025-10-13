@@ -209,6 +209,7 @@ export const saveBuyerGroupStep: PipelineStep<
             where: { id: existingPerson.id },
             data: {
               buyerGroupRole: member.role,
+              isBuyerGroupMember: true, // Always set to true when assigning a role
               influenceScore: member.influenceScore || member.confidence || 0,
               updatedAt: new Date()
             }
@@ -228,6 +229,7 @@ export const saveBuyerGroupStep: PipelineStep<
                 phone: member.phone || null,
                 linkedinUrl: member.linkedin || null,
                 buyerGroupRole: member.role,
+                isBuyerGroupMember: true, // Always set to true when creating with a role
                 influenceScore: member.influenceScore || member.confidence || 0,
                 status: 'PROSPECT',
                 createdAt: new Date(),

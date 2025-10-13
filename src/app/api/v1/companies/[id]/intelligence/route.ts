@@ -27,7 +27,7 @@ interface CompanyIntelligence {
 // GET /api/v1/companies/[id]/intelligence - Get company intelligence
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authentication check
@@ -39,7 +39,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Get company from database
     const company = await prisma.companies.findUnique({
@@ -137,7 +137,7 @@ export async function GET(
 // POST /api/v1/companies/[id]/intelligence - Force regenerate intelligence
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Authentication check
@@ -149,7 +149,7 @@ export async function POST(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const forceRegenerate = body.forceRegenerate || false;
 

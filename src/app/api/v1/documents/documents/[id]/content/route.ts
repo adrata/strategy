@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,7 +19,7 @@ export async function GET(
 
     const document = await prisma.atriumDocument.findUnique({
       where: {
-        id: params.id,
+        id: (await params).id,
         status: { not: 'deleted' },
       },
       select: {
@@ -56,7 +56,7 @@ export async function GET(
     // Log content access
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'content_accessed',
         description: `Accessed content of document "${document.title}"`,
@@ -89,7 +89,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -102,7 +102,7 @@ export async function PUT(
 
     // Get existing document to check permissions
     const existingDocument = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -122,7 +122,7 @@ export async function PUT(
     if (createVersion) {
       await prisma.atriumVersion.create({
         data: {
-          documentId: params.id,
+          documentId: (await params).id,
           version: existingDocument.version,
           content: existingDocument.content,
           fileUrl: existingDocument.fileUrl,
@@ -145,7 +145,7 @@ export async function PUT(
     updateData.version = (currentVersion + 0.1).toFixed(1);
 
     const document = await prisma.atriumDocument.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: updateData,
       select: {
         id: true,
@@ -162,7 +162,7 @@ export async function PUT(
     // Log content update
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'content_updated',
         description: `Updated content of document "${document.title}"`,

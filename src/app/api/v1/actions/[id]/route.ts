@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
 // GET /api/v1/actions/[id] - Get a specific action
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -27,7 +27,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     const action = await prisma.actions.findUnique({
       where: { 
@@ -97,7 +97,7 @@ export async function GET(
 // PUT /api/v1/actions/[id] - Update an action (full replacement)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -109,7 +109,7 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if action exists
@@ -184,7 +184,7 @@ export async function PUT(
 // PATCH /api/v1/actions/[id] - Partially update an action
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -196,7 +196,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     // Check if action exists
@@ -271,7 +271,7 @@ export async function PATCH(
 // DELETE /api/v1/actions/[id] - Delete an action
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple authentication check
@@ -283,7 +283,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 

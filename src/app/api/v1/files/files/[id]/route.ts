@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth-options';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function GET(
 
     const file = await prisma.encodeFile.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         project: {
           userId: session.user.id,
         },
@@ -35,7 +35,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -48,7 +48,7 @@ export async function PUT(
 
     const file = await prisma.encodeFile.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         project: {
           userId: session.user.id,
         },
@@ -61,7 +61,7 @@ export async function PUT(
 
     const updatedFile = await prisma.encodeFile.update({
       where: {
-        id: params.id,
+        id: (await params).id,
       },
       data: {
         ...(name && { name }),
@@ -79,7 +79,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -89,7 +89,7 @@ export async function DELETE(
 
     const file = await prisma.encodeFile.findFirst({
       where: {
-        id: params.id,
+        id: (await params).id,
         project: {
           userId: session.user.id,
         },
@@ -102,7 +102,7 @@ export async function DELETE(
 
     await prisma.encodeFile.delete({
       where: {
-        id: params.id,
+        id: (await params).id,
       },
     });
 

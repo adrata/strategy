@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,7 +18,7 @@ export async function GET(
     }
 
     const folder = await prisma.atriumFolder.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         owner: {
           select: {
@@ -114,7 +114,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -133,7 +133,7 @@ export async function PATCH(
 
     // Get existing folder to check permissions
     const existingFolder = await prisma.atriumFolder.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingFolder) {
@@ -162,7 +162,7 @@ export async function PATCH(
       }
 
       // Check for circular reference
-      if (await wouldCreateCircularReference(params.id, parentId)) {
+      if (await wouldCreateCircularReference((await params).id, parentId)) {
         return NextResponse.json(
           { error: 'Cannot move folder into its own subfolder' },
           { status: 400 }
@@ -176,7 +176,7 @@ export async function PATCH(
             name,
             parentId,
             workspaceId: existingFolder.workspaceId,
-            id: { not: params.id },
+            id: { not: (await params).id },
           },
         });
 
@@ -199,7 +199,7 @@ export async function PATCH(
 
     // Update folder
     const folder = await prisma.atriumFolder.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: updateData,
       include: {
         owner: {
@@ -244,7 +244,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -254,7 +254,7 @@ export async function DELETE(
 
     // Get existing folder to check permissions
     const existingFolder = await prisma.atriumFolder.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         _count: {
           select: {
@@ -289,7 +289,7 @@ export async function DELETE(
 
     // Delete folder
     await prisma.atriumFolder.delete({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     return NextResponse.json({ message: 'Folder deleted successfully' });

@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,7 +19,7 @@ export async function GET(
 
     const document = await prisma.atriumDocument.findUnique({
       where: {
-        id: params.id,
+        id: (await params).id,
         status: { not: 'deleted' },
       },
       include: {
@@ -114,7 +114,7 @@ export async function GET(
 
     // Update view count and last accessed
     await prisma.atriumDocument.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         viewCount: { increment: 1 },
         lastAccessedAt: new Date(),
@@ -124,7 +124,7 @@ export async function GET(
     // Log view activity
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'viewed',
         description: `Viewed document "${document.title}"`,
@@ -151,7 +151,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -173,7 +173,7 @@ export async function PATCH(
 
     // Get existing document to check permissions
     const existingDocument = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -202,7 +202,7 @@ export async function PATCH(
 
     // Update document
     const document = await prisma.atriumDocument.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: updateData,
       include: {
         owner: {
@@ -230,7 +230,7 @@ export async function PATCH(
     // Log update activity
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'updated',
         description: `Updated document "${document.title}"`,
@@ -256,7 +256,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -266,7 +266,7 @@ export async function DELETE(
 
     // Get existing document to check permissions
     const existingDocument = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -284,7 +284,7 @@ export async function DELETE(
 
     // Soft delete (update status to deleted)
     const document = await prisma.atriumDocument.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         status: 'deleted',
         archivedAt: new Date(),
@@ -294,7 +294,7 @@ export async function DELETE(
     // Log delete activity
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'deleted',
         description: `Deleted document "${document.title}"`,

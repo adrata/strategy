@@ -10,7 +10,7 @@ import { randomBytes } from 'crypto';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -34,7 +34,7 @@ export async function POST(
 
     // Get existing document to check permissions
     const document = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -57,7 +57,7 @@ export async function POST(
     // Create share
     const share = await prisma.atriumShare.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         shareType,
         permission,
         shareToken,
@@ -76,7 +76,7 @@ export async function POST(
     // Log share creation
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'shared',
         description: `Created ${shareType} share link for document "${document.title}"`,
@@ -106,7 +106,7 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -116,7 +116,7 @@ export async function GET(
 
     // Get existing document to check permissions
     const document = await prisma.atriumDocument.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         shares: true,
       },
@@ -135,7 +135,7 @@ export async function GET(
     // Get all active shares
     const shares = await prisma.atriumShare.findMany({
       where: {
-        documentId: params.id,
+        documentId: (await params).id,
         OR: [
           { expiresAt: null },
           { expiresAt: { gt: new Date() } },
@@ -162,7 +162,7 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -189,7 +189,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Share not found' }, { status: 404 });
     }
 
-    if (share.documentId !== params.id) {
+    if (share.documentId !== (await params).id) {
       return NextResponse.json({ error: 'Share does not belong to this document' }, { status: 400 });
     }
 
@@ -207,7 +207,7 @@ export async function DELETE(
     // Log share revocation
     await prisma.atriumActivity.create({
       data: {
-        documentId: params.id,
+        documentId: (await params).id,
         userId: session.user.id,
         activityType: 'share_revoked',
         description: `Revoked share link for document "${share.document.title}"`,

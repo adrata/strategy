@@ -275,7 +275,9 @@ export async function GET(request: NextRequest) {
             name: person.company.name,
             industry: person.company.industry || '',
             size: person.company.size || '',
-            globalRank: person.company.globalRank || 0
+            globalRank: person.company.globalRank || 0,
+            hqState: person.company.hqState || '',
+            state: person.company.state || ''
           } : null,
           tags: ['speedrun'], // Add speedrun tag for consistency
           // Add main-seller and co-sellers data

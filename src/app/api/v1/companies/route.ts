@@ -148,7 +148,8 @@ export async function GET(request: NextRequest) {
             opportunityAmount: true,
             opportunityProbability: true,
             expectedCloseDate: true,
-            actualCloseDate: true
+            actualCloseDate: true,
+            competitors: true
           }
         }),
         prisma.companies.count({ where }),
