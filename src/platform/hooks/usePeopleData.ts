@@ -58,7 +58,7 @@ export function usePeopleData(): UsePeopleDataReturn {
       const transformedPeople: Person[] = (data || []).map((person: any) => ({
         id: person.id,
         company: person.company?.name || person.companyName || '-',
-        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || '-',
         title: person.title || person.jobTitle || '-',
         email: person.email || '-',
         lastAction: person.lastAction || '-',

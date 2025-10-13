@@ -91,7 +91,7 @@ function getCleanPersonName(record: PipelineRecord): string {
     return record.name;
   }
   
-  return 'Unknown';
+  return '-';
 }
 
 // -------- Main Component --------
@@ -236,7 +236,7 @@ export function TableRow({
               case 'state':
                 return (
                   <td key="state" className={textClasses}>
-                    <div className="truncate max-w-32">{record['state'] || record['location'] || 'State'}</div>
+                    <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
                   </td>
                 );
               case 'title':

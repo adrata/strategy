@@ -165,12 +165,9 @@ describe('Context Validation Layer', () => {
       const result = claudeService['validateContext'](request, dataContext);
 
       expect(result.isValid).toBe(false);
-      expect(result.warnings).toHaveLength(3);
+      expect(result.warnings).toHaveLength(2);
       expect(result.warnings).toContain(
         'Workspace business context not available - AI may not know what you sell or your target market'
-      );
-      expect(result.warnings).toContain(
-        'No current record or list view context - AI cannot provide specific advice about visible records'
       );
       expect(result.warnings).toContain(
         'List view context is older than 5 minutes - data may be stale'

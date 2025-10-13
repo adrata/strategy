@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
-
+import { calculateLastActionTiming, calculateNextActionTiming } from '@/platform/utils/actionUtils';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 // 🚀 PERFORMANCE: Ultra-aggressive caching for section data
@@ -375,6 +375,10 @@ export async function GET(request: NextRequest) {
                                     coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
+          // Calculate timing using shared utilities (matches speedrun pattern)
+          const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
+          const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+          
           return {
             id: person.id,
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
@@ -384,7 +388,11 @@ export async function GET(request: NextRequest) {
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
             lastAction: person.lastAction || 'No action taken',
+            lastActionDate: person.lastActionDate,
+            lastActionTime: lastActionTime, // NEW: Timing text
             nextAction: person.nextAction || 'No action planned',
+            nextActionDate: person.nextActionDate,
+            nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,
             updatedAt: person.updatedAt
           };
@@ -485,6 +493,10 @@ export async function GET(request: NextRequest) {
                                     coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
+          // Calculate timing using shared utilities (matches speedrun pattern)
+          const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
+          const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+          
           return {
             id: person.id,
             rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
@@ -494,7 +506,11 @@ export async function GET(request: NextRequest) {
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
             lastAction: person.lastAction || 'No action taken',
+            lastActionDate: person.lastActionDate,
+            lastActionTime: lastActionTime, // NEW: Timing text
             nextAction: person.nextAction || 'No action planned',
+            nextActionDate: person.nextActionDate,
+            nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,
             updatedAt: person.updatedAt
           };
@@ -618,17 +634,60 @@ export async function GET(request: NextRequest) {
           return true;
         });
         
-        sectionData = deduplicatedCompanies.map((company, index) => ({
-          id: company.id,
-          rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering and deduplication
-          name: company.name,
-          industry: company.industry || 'Unknown',
-          size: company.size || 'Unknown',
-          mainSellerId: company.mainSellerId, // 🆕 FIX: Include mainSellerId for company assignment filtering
-          lastAction: company.lastAction || 'Never',
-          nextAction: company.nextAction || 'No action planned',
-          createdAt: company.createdAt,
-          updatedAt: company.updatedAt
+        // 🚀 COMPANIES AGGREGATION: Aggregate last/next actions from actions table
+        sectionData = await Promise.all(deduplicatedCompanies.map(async (company, index) => {
+          // Find most recent action for this company from actions table
+          const recentAction = await prisma.actions.findFirst({
+            where: {
+              workspaceId,
+              companyId: company.id
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+              subject: true,
+              createdAt: true
+            }
+          });
+
+          // Find next upcoming action for this company
+          const upcomingAction = await prisma.actions.findFirst({
+            where: {
+              workspaceId,
+              companyId: company.id,
+              scheduledAt: { gt: new Date() }
+            },
+            orderBy: { scheduledAt: 'asc' },
+            select: {
+              subject: true,
+              scheduledAt: true
+            }
+          });
+
+          // Calculate timing using shared utilities (matches speedrun pattern)
+          const lastActionTime = calculateLastActionTiming(
+            recentAction?.createdAt || company.lastActionDate, 
+            recentAction?.subject || company.lastAction
+          );
+          const nextActionTiming = calculateNextActionTiming(
+            upcomingAction?.scheduledAt || company.nextActionDate
+          );
+
+          return {
+            id: company.id,
+            rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering and deduplication
+            name: company.name,
+            industry: company.industry || 'Unknown',
+            size: company.size || 'Unknown',
+            mainSellerId: company.mainSellerId, // 🆕 FIX: Include mainSellerId for company assignment filtering
+            lastAction: recentAction?.subject || company.lastAction || 'Never',
+            lastActionDate: recentAction?.createdAt || company.lastActionDate,
+            lastActionTime: lastActionTime, // NEW: Timing text
+            nextAction: upcomingAction?.subject || company.nextAction || 'No action planned',
+            nextActionDate: upcomingAction?.scheduledAt || company.nextActionDate,
+            nextActionTiming: nextActionTiming, // NEW: Timing text
+            createdAt: company.createdAt,
+            updatedAt: company.updatedAt
+          };
         }));
         break;
         
@@ -716,6 +775,10 @@ export async function GET(request: NextRequest) {
               return str.substring(0, maxLength) + '...';
             };
 
+            // Calculate timing using shared utilities (matches speedrun pattern)
+            const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
+            const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+
             return {
               id: person.id,
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1 after filtering
@@ -729,8 +792,10 @@ export async function GET(request: NextRequest) {
               status: safeString(person.status || 'Unknown', 20),
               lastAction: safeString(person.lastAction || 'No action taken', 500),
               lastActionDate: person.lastActionDate || null,
+              lastActionTime: lastActionTime, // NEW: Timing text
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
+              nextActionTiming: nextActionTiming, // NEW: Timing text
               mainSellerId: person.mainSellerId || null,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,

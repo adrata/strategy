@@ -57,7 +57,7 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
   const setListViewContext = (context: ListViewContext) => {
     console.log('📋 [RecordContext] Setting list view context:', {
       section: context.activeSection,
-      recordCount: context.visibleRecords.length,
+      recordCount: context.visibleRecords?.length || 0,
       totalCount: context.totalCount,
       filters: context.appliedFilters
     });

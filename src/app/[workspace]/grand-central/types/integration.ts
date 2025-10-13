@@ -29,6 +29,7 @@ export interface IntegrationProvider {
   icon?: string;
   authType: 'oauth2' | 'api_key' | 'basic';
   isConnected: boolean;
+  isAvailable?: boolean;
   connectionId?: string;
   operations: IntegrationOperation[];
 }

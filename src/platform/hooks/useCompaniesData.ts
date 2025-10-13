@@ -54,7 +54,7 @@ export function useCompaniesData(): UseCompaniesDataReturn {
       // Transform companies data to Company format
       const transformedCompanies: Company[] = (data || []).map((company: any) => ({
         id: company.id,
-        name: company.name || 'Unknown Company',
+        name: company.name || '-',
         industry: company.industry || '-',
         size: company.size || company.employeeCount || '-',
         lastAction: company.lastAction || '-',

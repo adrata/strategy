@@ -102,9 +102,9 @@ export function useData(
     const transformPersonData = (records: any[]) => {
       return records.map(record => ({
         ...record,
-        name: record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown',
+        name: record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || '-',
         // Ensure firstName and lastName are available for display logic
-        firstName: record.firstName || record.fullName?.split(' ')[0] || 'Unknown',
+        firstName: record.firstName || record.fullName?.split(' ')[0] || '-',
         lastName: record.lastName || record.fullName?.split(' ').slice(1).join(' ') || 'Person'
       }));
     };

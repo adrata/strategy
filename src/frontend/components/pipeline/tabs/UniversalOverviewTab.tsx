@@ -86,8 +86,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-'),
     
     // CoreSignal intelligence - use customFields directly
-    influenceLevel: String(record.customFields?.influenceLevel || 'Low'),
-    engagementStrategy: String(record.customFields?.engagementStrategy || 'Standard outreach'),
+    influenceLevel: String(record.customFields?.influenceLevel || '-'),
+    engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     

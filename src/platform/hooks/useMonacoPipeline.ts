@@ -59,7 +59,7 @@ export function useMonacoPipeline(
           name: `Executive ${index + 1}`,
           title: ["CEO", "CTO", "VP Sales", "VP Marketing", "Director"][index],
           tenureMonths: Math.floor(Math.random() * 60) + 6, // 6-66 months
-          companySize: companyData.size || "Unknown",
+          companySize: companyData.size || "-",
         }));
         console.log(
           `✅ Retrieved ${keyPeople.length} key people for ${companyName}`,

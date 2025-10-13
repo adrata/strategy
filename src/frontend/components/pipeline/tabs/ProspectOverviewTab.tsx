@@ -137,29 +137,29 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
-    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || 'Stakeholder',
-    influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || record?.customFields?.influence || 'Medium',
-    engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || record?.customFields?.priority || 'Medium',
+    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || '-',
+    influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || record?.customFields?.influence || '-',
+    engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || record?.customFields?.priority || '-',
     
     // Engagement History (existing fields) - Enhanced mapping
-    lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || 'Never',
-    nextAction: record.nextAction || record?.customFields?.nextAction || 'No action planned',
+    lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || '-',
+    nextAction: record.nextAction || record?.customFields?.nextAction || '-',
     nextActionDate: record.nextActionDate || record?.customFields?.nextActionDate || null,
     
     // Status (existing fields) - Enhanced mapping
-    status: record.status || record?.customFields?.status || 'active',
-    priority: record.priority || record?.customFields?.priority || 'medium',
+    status: record.status || record?.customFields?.status || '-',
+    priority: record.priority || record?.customFields?.priority || '-',
     
     // Notes and Tags (existing fields) - Enhanced mapping
-    notes: record.notes || record?.customFields?.notes || 'No notes available',
+    notes: record.notes || record?.customFields?.notes || '-',
     tags: record.tags || record?.customFields?.tags || [],
     
     // Intelligence and Insights (existing fields) - Enhanced mapping
-    painIntelligence: record.painIntelligence || record?.customFields?.painIntelligence || 'No pain intelligence available',
+    painIntelligence: record.painIntelligence || record?.customFields?.painIntelligence || '-',
     wants: record.wants || record?.customFields?.wants || [],
     needs: record.needs || record?.customFields?.needs || [],
-    psychographicProfile: record.psychographicProfile || record?.customFields?.psychographicProfile || 'No psychographic profile available',
-    communicationStyleRecommendations: record.communicationStyleRecommendations || record?.customFields?.communicationStyleRecommendations || 'No communication style recommendations available'
+    psychographicProfile: record.psychographicProfile || record?.customFields?.psychographicProfile || '-',
+    communicationStyleRecommendations: record.communicationStyleRecommendations || record?.customFields?.communicationStyleRecommendations || '-'
   };
 
   // Debug: Log the final prospectData values for Shannon Hegland
@@ -182,13 +182,13 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
   }
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
-    if (!dateString) return 'Never';
+    if (!dateString) return '-';
     
     const date = new Date(dateString);
     
     // Check if the date is invalid
     if (isNaN(date.getTime())) {
-      return 'Never';
+      return '-';
     }
     
     const now = new Date();
@@ -270,10 +270,10 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     const actions = [];
     
     // Only add the main last action if it exists
-    if (prospectData.lastAction && prospectData.lastAction !== 'No action planned') {
+    if (prospectData.lastAction && prospectData.lastAction !== '-') {
       actions.push({
         action: prospectData.lastAction,
-        date: prospectData.lastContact !== 'Never' ? formatRelativeDate(prospectData.lastContact) : 'Invalid Date'
+        date: prospectData.lastContact !== '-' ? formatRelativeDate(prospectData.lastContact) : '-'
       });
     }
     
@@ -321,7 +321,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                   prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                  prospectData.buyerGroupRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
+                  prospectData.buyerGroupRole === '-' ? 'bg-gray-100 text-gray-800' :
                   'bg-[var(--hover)] text-gray-800'
                 }`}>
                   {prospectData.buyerGroupRole}

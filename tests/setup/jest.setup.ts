@@ -124,16 +124,48 @@ jest.mock('@prisma/client', () => ({
 // Mock AI Context Services
 jest.mock('@/platform/ai/services/AIContextService', () => ({
   AIContextService: {
-    buildContext: jest.fn().mockResolvedValue({
-      userContext: 'Mock user context',
-      applicationContext: 'Mock application context',
-      dataContext: 'Mock data context',
-      recordContext: 'Mock record context',
-      listViewContext: 'Mock list view context',
-      systemContext: 'Mock system context',
-      documentContext: 'Mock document context'
+    buildContext: jest.fn().mockImplementation(async (config) => {
+      // Return different mock responses based on config
+      if (!config.currentRecord) {
+        return {
+          userContext: 'Mock user context',
+          applicationContext: 'Mock application context',
+          dataContext: 'Mock data context',
+          recordContext: 'No current record',
+          listViewContext: config.listViewContext ? 'Mock list view context' : 'No list view context available',
+          systemContext: config.conversationHistory?.length > 0 ? 'Mock system context' : 'No previous conversation',
+          documentContext: config.documentContext ? 'Mock document context' : 'No documents uploaded'
+        };
+      }
+      return {
+        userContext: 'Mock user context',
+        applicationContext: 'Mock application context',
+        dataContext: 'Mock data context',
+        recordContext: 'Mock record context',
+        listViewContext: 'Mock list view context',
+        systemContext: 'Mock system context',
+        documentContext: 'Mock document context'
+      };
     }),
-    combineContext: jest.fn().mockReturnValue('Combined context string')
+    combineContext: jest.fn().mockImplementation((context) => {
+      return `You are an intelligent sales assistant and expert advisor, speaking as the user's business representative.
+
+${context.userContext}
+
+${context.applicationContext}
+
+${context.dataContext}
+
+${context.recordContext}
+
+${context.listViewContext}
+
+${context.systemContext}
+
+${context.documentContext}
+
+Please provide helpful, specific, and actionable advice based on the context provided.`;
+    })
   }
 }));
 
@@ -159,15 +191,31 @@ jest.mock('@/platform/ai/services/EnhancedWorkspaceContextService', () => ({
 }));
 
 jest.mock('@/platform/services/ClaudeAIService', () => ({
-  ClaudeAIService: {
+  ClaudeAIService: jest.fn().mockImplementation(() => ({
     generateChatResponse: jest.fn().mockResolvedValue({
       success: true,
       response: 'Mock AI response',
       confidence: 0.9,
       model: 'claude-3-sonnet',
       tokensUsed: 1500
+    }),
+    validateContext: jest.fn().mockImplementation((request, dataContext) => {
+      const warnings = [];
+      if (!dataContext?.workspaceContext) {
+        warnings.push('Workspace business context not available - AI may not know what you sell or your target market');
+      }
+      if (!request.currentRecord && (!request.listViewContext || !request.listViewContext.visibleRecords)) {
+        warnings.push('No current record or list view context - AI cannot provide specific advice about visible records');
+      }
+      if (request.listViewContext && request.listViewContext.lastUpdated) {
+        const ageMinutes = (Date.now() - request.listViewContext.lastUpdated.getTime()) / (1000 * 60);
+        if (ageMinutes > 5) {
+          warnings.push('List view context is older than 5 minutes - data may be stale');
+        }
+      }
+      return { isValid: warnings.length === 0, warnings };
     })
-  }
+  }))
 }));
 
 jest.mock('@/platform/services/OpenRouterService', () => ({
@@ -182,19 +230,7 @@ jest.mock('@/platform/services/OpenRouterService', () => ({
   }
 }));
 
-// Mock RecordContextProvider
-jest.mock('@/platform/ui/context/RecordContextProvider', () => ({
-  RecordContextProvider: ({ children }: { children: React.ReactNode }) => children,
-  useRecordContext: jest.fn().mockReturnValue({
-    currentRecord: null,
-    recordType: null,
-    listViewContext: null,
-    setCurrentRecord: jest.fn(),
-    clearCurrentRecord: jest.fn(),
-    setListViewContext: jest.fn(),
-    clearListViewContext: jest.fn()
-  })
-}));
+// Note: RecordContextProvider is not mocked to allow real component testing
 
 // Mock environment variables for tests
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';

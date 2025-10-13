@@ -4,6 +4,7 @@
  * Helper functions for AI context testing
  */
 
+import React from 'react';
 import { renderHook, act, RenderHookResult } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { 
@@ -175,9 +176,9 @@ export const mockFetchError = (error: string = 'Network error') => {
 export const testRecordContextProvider = () => {
   const { RecordContextProvider, useRecordContext } = require('@/platform/ui/context/RecordContextProvider');
   
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <RecordContextProvider>{children}</RecordContextProvider>
-  );
+  const wrapper = ({ children }: { children: React.ReactNode }) => {
+    return React.createElement(RecordContextProvider, {}, children);
+  };
   
   return renderHook(() => useRecordContext(), { wrapper });
 };

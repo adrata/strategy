@@ -5,6 +5,8 @@ import { useGrandCentral } from "./layout";
 import { useConnections } from "./hooks/useConnections";
 import { IntegrationLibrary } from "./components/IntegrationLibrary";
 import { ConnectionDetail } from "./components/ConnectionDetail";
+import { ConnectionActions } from "./components/ConnectionActions";
+import { EmailSyncStats } from "./components/EmailSyncStats";
 import { StandardHeader } from "@/platform/ui/components/layout/StandardHeader";
 import { useNangoAuth } from "./hooks/useNangoAuth";
 import { 
@@ -33,6 +35,7 @@ export default function GrandCentralPage() {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name');
+  const [selectedConnectionForActions, setSelectedConnectionForActions] = useState<any>(null);
   
 
 
@@ -45,6 +48,47 @@ export default function GrandCentralPage() {
   const handleCloseConnectionDetail = useCallback(() => {
     setSelectedConnection(null);
   }, []);
+
+  const handleSync = useCallback(async (connectionId: string) => {
+    try {
+      const response = await fetch(`/api/grand-central/sync/${connectionId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Sync failed');
+      }
+
+      const result = await response.json();
+      console.log('Sync result:', result);
+      
+      // Refresh connections to update last sync time
+      refreshConnections();
+    } catch (error) {
+      console.error('Sync error:', error);
+      // You could add toast notification here
+    }
+  }, [refreshConnections]);
+
+  const handleDisconnect = useCallback(async (connectionId: string) => {
+    try {
+      // This would need to be implemented - for now just refresh
+      console.log('Disconnect connection:', connectionId);
+      refreshConnections();
+    } catch (error) {
+      console.error('Disconnect error:', error);
+    }
+  }, [refreshConnections]);
+
+  const handleConfigure = useCallback((connectionId: string) => {
+    const connection = connections.find(c => c.id === connectionId);
+    if (connection) {
+      setSelectedConnection(connection);
+    }
+  }, [connections]);
 
 
   // Filter connections based on search and category
@@ -211,6 +255,9 @@ export default function GrandCentralPage() {
             {/* Integration Library - Always Show */}
             {!isLoading && !error && (
               <div className="space-y-6">
+                {/* Email Statistics */}
+                <EmailSyncStats workspaceId={connections[0]?.workspaceId || ''} />
+
                 {/* Connected Integrations Section */}
                 {filteredConnections.length > 0 && (
                   <div className="space-y-3">
@@ -220,8 +267,7 @@ export default function GrandCentralPage() {
                     {filteredConnections.map((connection) => (
                       <div
                         key={connection.id}
-                        onClick={() => handleConnectionClick(connection)}
-                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer"
+                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
@@ -251,10 +297,14 @@ export default function GrandCentralPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleConnectionClick(connection);
-                              }}
+                              onClick={() => setSelectedConnectionForActions(connection)}
+                              className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-[var(--hover)] rounded hover:bg-[var(--loading-bg)] transition-colors"
+                            >
+                              <Cog6ToothIcon className="w-3 h-3 inline mr-1" />
+                              Actions
+                            </button>
+                            <button 
+                              onClick={() => handleConnectionClick(connection)}
                               className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-[var(--hover)] rounded hover:bg-[var(--loading-bg)] transition-colors"
                             >
                               <Cog6ToothIcon className="w-3 h-3 inline mr-1" />
@@ -305,6 +355,41 @@ export default function GrandCentralPage() {
           connection={selectedConnection}
           onClose={handleCloseConnectionDetail}
         />
+      )}
+
+      {/* Connection Actions Modal */}
+      {selectedConnectionForActions && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--background)] rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="p-6 border-b border-[var(--border)]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-[var(--foreground)]">Connection Actions</h2>
+                  <p className="text-[var(--muted)] mt-1">{selectedConnectionForActions.provider}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedConnectionForActions(null)}
+                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <ConnectionActions
+                connection={selectedConnectionForActions}
+                onSync={handleSync}
+                onDisconnect={handleDisconnect}
+                onConfigure={handleConfigure}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

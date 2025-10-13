@@ -210,9 +210,24 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
+                              <div className="w-6 h-6 flex items-center justify-center rounded-lg bg-gray-100">
+                                {provider.id === 'microsoft-outlook' && (
+                                  <span className="text-xs font-bold text-blue-600">O</span>
+                                )}
+                                {provider.id === 'google-workspace' && (
+                                  <span className="text-xs font-bold text-red-600">G</span>
+                                )}
+                                {!['microsoft-outlook', 'google-workspace'].includes(provider.id) && (
+                                  <span className="text-xs font-bold text-gray-600">
+                                    {provider.name.charAt(0)}
+                                  </span>
+                                )}
+                              </div>
                               <h4 className="font-medium text-[var(--foreground)]">{provider.name}</h4>
                               {provider.isConnected ? (
                                 <CheckCircleIcon className="w-4 h-4 text-green-600" />
+                              ) : provider.isAvailable ? (
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                               ) : (
                                 <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
                               )}
@@ -223,18 +238,22 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
                               <div className="text-xs text-green-600 font-medium">
                                 ✓ Connected
                               </div>
-                            ) : (
+                            ) : provider.isAvailable ? (
                               <button
                                 onClick={() => handleConnect(provider)}
-                                disabled={isConnecting || !provider.isAvailable}
+                                disabled={isConnecting}
                                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                                  isConnecting || !provider.isAvailable
+                                  isConnecting
                                     ? 'bg-[var(--hover)] text-[var(--muted)] cursor-not-allowed'
                                     : 'bg-blue-500 text-white hover:bg-blue-600'
                                 }`}
                               >
                                 {isConnecting ? 'Connecting...' : 'Connect'}
                               </button>
+                            ) : (
+                              <div className="text-xs text-gray-500 font-medium">
+                                Coming Soon
+                              </div>
                             )}
                           </div>
                         </div>

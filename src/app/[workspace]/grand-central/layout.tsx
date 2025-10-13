@@ -53,28 +53,6 @@ export default function GrandCentralLayout({ children }: GrandCentralLayoutProps
   const { user: authUser } = useUnifiedAuth();
   const router = useRouter();
 
-  // Access control - only admins can access Grand Central
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
-  const isAdminUser = ADMIN_EMAILS.includes(authUser?.email || '');
-  
-  useEffect(() => {
-    if (authUser?.email && !isAdminUser) {
-      console.log('🚫 Grand Central: Access denied for', authUser.email, '- redirecting to dashboard');
-      router.push('/dashboard');
-    }
-  }, [authUser?.email, router, isAdminUser]);
-
-  // Don't render if not authorized
-  if (authUser?.email && !isAdminUser) {
-    return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Restricted</h2>
-          <p className="text-[var(--muted)]">This feature is currently in development.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -166,8 +144,13 @@ function GrandCentralRightPanel() {
         </div>
 
         {/* Connection Details */}
-        <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+        <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+          {/* Basic Info */}
           <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+              Connection Details
+            </h3>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Status
@@ -218,6 +201,116 @@ function GrandCentralRightPanel() {
                 />
               </div>
             )}
+          </div>
+
+          {/* Email Settings (if email provider) */}
+          {['outlook', 'gmail'].includes(selectedConnection.provider) && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+                Email Settings
+              </h3>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sync Frequency
+                </label>
+                <select className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="5">Every 5 minutes</option>
+                  <option value="10">Every 10 minutes</option>
+                  <option value="15">Every 15 minutes</option>
+                  <option value="manual">Manual only</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Auto-linking
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-[var(--foreground)]">Link emails to people and companies</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Folders
+                </label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-[var(--foreground)]">Inbox</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-[var(--foreground)]">Sent</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-[var(--foreground)]">All folders</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Webhook Settings */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+              Webhook Settings
+            </h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Webhook URL
+              </label>
+              <input
+                type="text"
+                value={`${window.location.origin}/api/webhooks/nango/email`}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)] font-mono text-sm"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Webhook Status
+              </label>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-green-600 bg-green-100">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                Active
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+              Actions
+            </h3>
+            
+            <div className="grid grid-cols-2 gap-2">
+              <button className="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">
+                Test Connection
+              </button>
+              <button className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--hover)] transition-colors">
+                View Logs
+              </button>
+            </div>
           </div>
         </div>
       </div>

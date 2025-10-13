@@ -83,8 +83,8 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     location: String(coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || '-'),
     
     // CoreSignal intelligence - use customFields directly
-    influenceLevel: String(record.customFields?.influenceLevel || 'Low'),
-    engagementStrategy: String(record.customFields?.engagementStrategy || 'Standard outreach'),
+    influenceLevel: String(record.customFields?.influenceLevel || '-'),
+    engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     

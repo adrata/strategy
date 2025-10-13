@@ -417,10 +417,10 @@ export function PipelineTable({
                         break;
                       case 'person':
                       case 'name':
-                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || 'Person';
+                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || '-';
                         break;
                       case 'state':
-                        cellContent = record['state'] || record['status'] || record['location'] || 'State';
+                        cellContent = record['state'] || record['status'] || record['location'] || '-';
                         break;
                       case 'title':
                         const title = record['title'] || 

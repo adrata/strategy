@@ -191,8 +191,16 @@ class TopCompanyComprehensiveEnrichment {
   }
 
   isAlreadyEnriched(company) {
-    // Check if company has recent enrichment data
-    return company.technologiesUsed && company.technologiesUsed.length > 0;
+    // Check if company has AI-generated intelligence fields (the most reliable indicator)
+    const hasAIIntelligence = company.companyIntelligence || 
+                             company.businessChallenges?.length > 0 || 
+                             company.buyerGroupInsights;
+    
+    // Check enrichment timestamp
+    const hasRecentEnrichment = company.lastVerified && 
+                               (new Date() - new Date(company.lastVerified)) < 30 * 24 * 60 * 60 * 1000; // 30 days
+    
+    return hasAIIntelligence && hasRecentEnrichment;
   }
 
   async enrichWithCoresignal(company) {
@@ -309,7 +317,7 @@ Make this highly specific to TOP's actual business model and the target company'
 `;
 
       const response = await this.anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241201",
+        model: "claude-sonnet-4-5-20250929",
         max_tokens: 4000,
         messages: [{ role: "user", content: prompt }]
       });
@@ -425,9 +433,9 @@ Make this highly specific to TOP's actual business model and the target company'
         companyId: company.id,
         companyName: company.name,
         action: 'enrichment_success',
-        coresignalFields: Object.keys(coresignalMapped).length,
-        aiFields: Object.keys(aiIntelligence).length,
-        totalFields: Object.keys(updateData).length
+        coresignalFields: coresignalMapped ? Object.keys(coresignalMapped).length : 0,
+        aiFields: aiIntelligence ? Object.keys(aiIntelligence).length : 0,
+        totalFields: updateData ? Object.keys(updateData).length : 0
       });
 
     } catch (error) {

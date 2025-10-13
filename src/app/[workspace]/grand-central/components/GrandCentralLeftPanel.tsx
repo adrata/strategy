@@ -5,6 +5,7 @@ import { useGrandCentral } from "../layout";
 import { useConnections } from "../hooks/useConnections";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { IntegrationLibrary } from "./IntegrationLibrary";
 import { 
   LinkIcon, 
   CloudIcon, 
@@ -28,6 +29,7 @@ export function GrandCentralLeftPanel() {
   const { connections, isLoading } = useConnections();
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();
+  const [showLibrary, setShowLibrary] = useState(false);
 
   const [stats, setStats] = useState({
     totalConnections: 0,
@@ -150,7 +152,10 @@ export function GrandCentralLeftPanel() {
 
         {/* Quick Actions */}
         <div className="mt-4 space-y-1">
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-gray-700 transition-colors">
+          <button 
+            onClick={() => setShowLibrary(true)}
+            className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-gray-700 transition-colors"
+          >
             <div className="flex items-center gap-2">
               <PlusIcon className="w-4 h-4" />
               <span className="font-medium text-sm">Add Integration</span>
@@ -256,6 +261,12 @@ export function GrandCentralLeftPanel() {
           </div>
         </button>
       </div>
+
+      {/* Integration Library Modal */}
+      <IntegrationLibrary 
+        isOpen={showLibrary} 
+        onClose={() => setShowLibrary(false)} 
+      />
     </div>
   );
 }

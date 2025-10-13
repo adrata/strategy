@@ -21,6 +21,48 @@ export type HealthData = {
   text: string;
 };
 
+// -------- Shared Timing Utilities --------
+/**
+ * Calculate last action timing text (matches speedrun pattern)
+ * Returns human-readable timing like "Today", "Yesterday", "3 days ago", etc.
+ */
+export function calculateLastActionTiming(lastActionDate?: string | Date, lastAction?: string): string {
+  if (!lastActionDate || !lastAction || lastAction === 'No action taken') {
+    return 'Never';
+  }
+  
+  const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysSince === 0) return 'Today';
+  else if (daysSince === 1) return 'Yesterday';
+  else if (daysSince <= 7) return `${daysSince} days ago`;
+  else if (daysSince <= 30) return `${Math.floor(daysSince / 7)} weeks ago`;
+  else return `${Math.floor(daysSince / 30)} months ago`;
+}
+
+/**
+ * Calculate next action timing text (matches speedrun pattern)
+ * Returns human-readable timing like "Today", "Tomorrow", "This week", etc.
+ */
+export function calculateNextActionTiming(nextActionDate?: string | Date): string {
+  if (!nextActionDate) {
+    return 'No date set';
+  }
+  
+  const now = new Date();
+  const actionDate = new Date(nextActionDate);
+  const diffMs = actionDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) return 'Overdue';
+  else if (diffDays === 0) return 'Today';
+  else if (diffDays === 1) return 'Tomorrow';
+  else if (diffDays <= 7) return 'This week';
+  else if (diffDays <= 14) return 'Next week';
+  else if (diffDays <= 30) return 'This month';
+  else return 'Future';
+}
+
 // -------- Last Action Functions --------
 export function getLastContactTime(record: any): string {
   if (!record?.lastContactDate) {

@@ -245,8 +245,17 @@ class TopPeopleComprehensiveEnrichment {
   }
 
   isAlreadyEnriched(person) {
-    // Check if person has recent enrichment data
-    return person.technicalSkills && person.technicalSkills.length > 0;
+    // Check if person has AI-generated buyer group intelligence (the most reliable indicator)
+    const hasAIIntelligence = person.buyerGroupRole || 
+                             person.decisionPower > 0 || 
+                             person.influenceLevel ||
+                             person.buyerGroupInsights;
+    
+    // Check enrichment timestamp
+    const hasRecentEnrichment = person.lastEnriched && 
+                               (new Date() - new Date(person.lastEnriched)) < 30 * 24 * 60 * 60 * 1000; // 30 days
+    
+    return hasAIIntelligence && hasRecentEnrichment;
   }
 
   async enrichWithCoresignal(person) {
@@ -410,7 +419,7 @@ Make this highly specific to TOP's actual business model and this person's real 
 `;
 
       const response = await this.anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241201",
+        model: "claude-sonnet-4-5-20250929",
         max_tokens: 3000,
         messages: [{ role: "user", content: prompt }]
       });

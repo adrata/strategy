@@ -71,7 +71,7 @@ export function useSpeedrunData(limit: number = DEFAULT_SPEEDRUN_LIMIT): UseSpee
       // Transform people data to SpeedrunPerson format
       const transformedPeople: SpeedrunPerson[] = data.map((person: any, index: number) => ({
         id: person.id,
-        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
+        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || '-',
         company: person.company?.name || person.companyName || '-',
         title: person.title || person.jobTitle || '-',
         email: person.email || '-',

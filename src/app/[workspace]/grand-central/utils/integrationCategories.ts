@@ -26,6 +26,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'CRM',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [
           {
             id: 'create_contact',
@@ -65,6 +66,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'CRM',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [
           {
             id: 'create_contact',
@@ -89,6 +91,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'CRM',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -104,6 +107,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Communication',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [
           {
             id: 'send_message',
@@ -128,6 +132,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Communication',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -137,6 +142,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Communication',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -146,6 +152,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Communication',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [
           {
             id: 'create_meeting',
@@ -283,6 +290,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Marketing',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -292,6 +300,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Marketing',
         authType: 'api_key',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -307,6 +316,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Productivity',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: true,
         operations: [
           {
             id: 'send_email',
@@ -441,6 +451,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Productivity',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: true,
         operations: [
           {
             id: 'send_email',
@@ -574,6 +585,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Productivity',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -583,6 +595,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Productivity',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -598,6 +611,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Finance',
         authType: 'api_key',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -607,6 +621,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Finance',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -622,6 +637,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'E-commerce',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -631,6 +647,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'E-commerce',
         authType: 'api_key',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -646,6 +663,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Support',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -655,6 +673,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Support',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],
@@ -670,6 +689,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Analytics',
         authType: 'oauth2',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
       {
@@ -679,6 +699,7 @@ export const integrationCategories: IntegrationCategory[] = [
         category: 'Analytics',
         authType: 'api_key',
         isConnected: false,
+        isAvailable: false,
         operations: [],
       },
     ],

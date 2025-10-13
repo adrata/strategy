@@ -1,0 +1,2294 @@
+{
+  "workspace": {
+    "id": "01K75ZD7DWHG1XF16HAF2YVKCK",
+    "name": "TOP Engineering Plus",
+    "slug": "top-engineering-plus",
+    "timezone": "America/Chicago",
+    "description": "TOP Engineering Plus workspace for engineering talent management and conference tracking",
+    "createdAt": "2025-10-10T02:32:41.137Z",
+    "updatedAt": "2025-10-10T02:32:41.137Z",
+    "isActive": true,
+    "deletedAt": null,
+    "businessModel": "Engineering Consulting",
+    "competitiveAdvantages": [
+      "Decades of utility communications experience",
+      "Technology + Operations + People focus",
+      "Proven complex-to-simple methodology"
+    ],
+    "idealCustomerProfile": "Electric utilities, municipalities, and infrastructure organizations needing communications engineering expertise and process optimization.",
+    "industry": "Communications Engineering",
+    "productPortfolio": [
+      "Strategic Plan Review",
+      "Gap Analysis",
+      "Process Mapping",
+      "Technology Deployment",
+      "Infrastructure Modernization"
+    ],
+    "salesMethodology": "Strategic consultation with gap analysis, stakeholder engagement, and process alignment focus.",
+    "serviceOfferings": [
+      "Communications Engineering",
+      "Critical Infrastructure Engineering",
+      "Broadband Deployment",
+      "Process Optimization",
+      "Change Management"
+    ],
+    "targetCompanySize": [
+      "Mid-size (100-1000 employees)",
+      "Large (1000+ employees)",
+      "Enterprise (5000+ employees)"
+    ],
+    "targetIndustries": [
+      "Electric Utilities",
+      "Municipalities",
+      "Infrastructure Organizations",
+      "Broadband Providers"
+    ],
+    "valuePropositions": [
+      "Technology, Operations, and People integration",
+      "Turning complex challenges into simple solutions",
+      "Decades of experience in critical infrastructure"
+    ]
+  },
+  "stats": {
+    "total": 512,
+    "processed": 512,
+    "enriched": 248,
+    "failed": 0,
+    "skipped": 264
+  },
+  "auditLog": [
+    {
+      "timestamp": "2025-10-13T11:25:27.370Z",
+      "companyId": "01K7DW2BC59FVQT1YRSSR062HB",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:28.023Z",
+      "companyId": "01K7DW2B662Q4J02HJP29F1H1C",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:28.305Z",
+      "companyId": "01K7DW2BJ4JRFB6MAEDR3AFX3P",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:28.504Z",
+      "companyId": "01K7DW2BR5M5Y0WB090NY289V4",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:28.819Z",
+      "companyId": "01K7DW2B35H3FS622AXNYXQMYN",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:28.895Z",
+      "companyId": "01K7DW2BN6GDJG50TAGPSQE6Z5",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:29.068Z",
+      "companyId": "01K7DW2B96149M0GA4NWQKPJDA",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:29.283Z",
+      "companyId": "01K7DW2BF6ARHHCRGFPB5W229Y",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.150Z",
+      "companyId": "01K7DW2CK0FREMRGY4AG4CRWNB",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.440Z",
+      "companyId": "01K7DW2CA38GS1DEV8Q806FQ17",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.560Z",
+      "companyId": "01K7DW2C406RY6VW0CG4S4E7NT",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.614Z",
+      "companyId": "01K7DW2BY2G816BB3GZ2YDY7EH",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.736Z",
+      "companyId": "01K7DW2C732KZJCTSYQ8SRF7EP",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.738Z",
+      "companyId": "01K7DW2CD0M3EMT16RJT12WCX7",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.751Z",
+      "companyId": "01K7DW2CFYD1V2DG1YWGV9J1EG",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:44.974Z",
+      "companyId": "01K7DW2BV410W1Y4EKKDFD8DW8",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:45.069Z",
+      "companyId": "01K7DW2CNZCS9B08S7YTHZJ2DT",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:45.153Z",
+      "companyId": "01K7DW2C12VPRK2WT4DSK9QW2K",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:25:59.653Z",
+      "companyId": "01K7DW2DKTRMTWEHAYJ6K1QR8N",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:00.081Z",
+      "companyId": "01K7DW2D7Z940F31H8GXREMMJA",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:00.454Z",
+      "companyId": "01K7DW2DGVG34N1FWWY6GCCB3G",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.079Z",
+      "companyId": "01K7DW2DDX9RZGKGWB0R43P9ZZ",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.217Z",
+      "companyId": "01K7DW2DAYA62DR7D2XPG6Z1JB",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.259Z",
+      "companyId": "01K7DW2D1ZRWTSWX2YG0R5N8P8",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.571Z",
+      "companyId": "01K7DW2CVYWEBBR9YDVP2D4Z32",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.617Z",
+      "companyId": "01K7DW2CRXD6RJ0ZMF23AT7B88",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.750Z",
+      "companyId": "01K7DW2D4Y6C9SJZ58MR2JCSWH",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:01.931Z",
+      "companyId": "01K7DW2CYXNAZ11SF1TPSS7Y4R",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.195Z",
+      "companyId": "01K7DW2EHH57P75YFS8N4SAXFA",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.372Z",
+      "companyId": "01K7DW2EBPGSQQQRT8SSH41R93",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.491Z",
+      "companyId": "01K7DW2E8PT9P608BD3R1AXN7R",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.496Z",
+      "companyId": "01K7DW2E5VS7M1G8X12BP9GZP4",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.597Z",
+      "companyId": "01K7DW2EENW5BMEF3W29SQY58E",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.785Z",
+      "companyId": "01K7DW2DWRNNSWCRJSZM54JEDN",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:17.811Z",
+      "companyId": "01K7DW2DSVV16R3F8ZBDBZ1MEN",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:18.074Z",
+      "companyId": "01K7DW2DZRKE2JFQQY1FKCKWQ0",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:18.195Z",
+      "companyId": "01K7DW2DPYGPDZAQFB1NB820DP",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:18.586Z",
+      "companyId": "01K7DW2E2WKN8PXR6MCJN5PJAK",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:33.482Z",
+      "companyId": "01K7DW2FQ9BV2DWKQGQZ9D1S7Q",
+      "companyName": "Tucson Electric Power Co",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:33.612Z",
+      "companyId": "01K7DW2GBV0NMTDDP6APC0M3D2",
+      "companyName": "Actelant",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:33.838Z",
+      "companyId": "01K7DW2GF4PDAZ7WDMTSVTGHV3",
+      "companyName": "Nokia of America Corporation",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:33.877Z",
+      "companyId": "01K7DW2G5Q1M0ZMQC5XQJST327",
+      "companyName": "Pecan Creek Construction",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:34.292Z",
+      "companyId": "01K7DW2EN0CFPMGTG6TDDRH31R",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:34.294Z",
+      "companyId": "01K7DW2FKSQS22HC39ZHZRQHAH",
+      "companyName": "Yuba County Water Agency",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:34.390Z",
+      "companyId": "01K7DW2EQYS9BNPYDMA4B28S5A",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:34.683Z",
+      "companyId": "01K7DW2EV12NWRWXV6CZ0B20X9",
+      "companyName": "Unassigned Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:49.978Z",
+      "companyId": "01K7DW2M21SCBSA3T6VFFSREJM",
+      "companyName": "5Bars Services",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:50.408Z",
+      "companyId": "01K7DW2JD670SR2SGJXYS9Z9X7",
+      "companyName": "Holiday In Dixie Festival",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:50.452Z",
+      "companyId": "01K7DW2GNDC9KM9PKVFB16V45C",
+      "companyName": "PSEG-LI",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:51.724Z",
+      "companyId": "01K7DW2KZ1CYP1CJXBST7XJRXV",
+      "companyName": "AVANGRID",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:26:52.421Z",
+      "companyId": "01K7DW2M599GF480RN7FRNDRMQ",
+      "companyName": "AVISTA CORP. CREDIT UNION",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:07.068Z",
+      "companyId": "01K7DW2MVX9E2C01ESNWW66Q4B",
+      "companyName": "Upper Gunnison River Water",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:07.356Z",
+      "companyId": "01K7DW2N2TMPA36XPKM284TJN7",
+      "companyName": "Otero County Electric Cooperative, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:07.773Z",
+      "companyId": "01K7DW2MZ2JZ43BSCDXEAM7PRV",
+      "companyName": "Big Picture Marketing",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:07.895Z",
+      "companyId": "01K7DW2NG8GXCH25AW5QTTXSP7",
+      "companyName": "Bernadette Gillespie LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:08.610Z",
+      "companyId": "01K7DW2NCSRVRZD49V2PKYMQ62",
+      "companyName": "Lockard Creative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:08.808Z",
+      "companyId": "01K7DW2NKKXRYMP60NNCAXVAKF",
+      "companyName": "UTILITY TELECOM CONSULTING GROUP, INC.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:09.631Z",
+      "companyId": "01K7DW2MJ570HQQDT4NBMQXSJE",
+      "companyName": "SRP Communications Engineering",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:09.824Z",
+      "companyId": "01K7DW2MEW13XXYA9HHCP6JKC0",
+      "companyName": "BOTTOM LINE INNOVATION ASSOCIATES, INC.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:24.509Z",
+      "companyId": "01K7DW2QX3DJSAKQXN2NTQ3NPQ",
+      "companyName": "WESCO Environmental, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:24.517Z",
+      "companyId": "01K7DW2NXQ291C29PT48JDF10B",
+      "companyName": "Website Design & Web Development",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:25.211Z",
+      "companyId": "01K7DW2R0JKT4618T400K67D4Z",
+      "companyName": "Smarter Lower Bills",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:26.078Z",
+      "companyId": "01K7DW2P1DWMT9VV12ZHFRXM38",
+      "companyName": "Comtest Wireless Limited",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:26.418Z",
+      "companyId": "01K7DW2NT7DA8N513HYQ7ZBT1R",
+      "companyName": "Belden Plastics",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:41.503Z",
+      "companyId": "01K7DW2V1P9SZS2TF6YR6HPMYQ",
+      "companyName": "Bows, Blings & Things of Georgia",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:43.237Z",
+      "companyId": "01K7DW2SZHVC3N45JWDSHBA0FF",
+      "companyName": "Owen Electric Company, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:43.409Z",
+      "companyId": "01K7DW2TBSK2C5F2WJ75P1CGBR",
+      "companyName": "SC Meeker Studios",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:57.518Z",
+      "companyId": "01K7DW2VEX2P6V2RNSFK9HRPXC",
+      "companyName": "Duke Energy Corporation",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:58.321Z",
+      "companyId": "01K7DW2VJ2A7W11F0THDF2C8QR",
+      "companyName": "San Francisco Energy Cooperative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:27:58.510Z",
+      "companyId": "01K7DW2VP44MHZBX0NYJC7ARX3",
+      "companyName": "Burbank Animation Studios",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:05.523Z",
+      "companyId": "01K7DW2Y6T66931SAT48AHZWMR",
+      "companyName": "Big Brothers Big Sisters of Fond du Lac County",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:13.399Z",
+      "companyId": "01K7DW2YJXWE0M6BP25PACMD7Y",
+      "companyName": "PEACE RIVER ELECTRIC COOPERATIVE, INC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:14.104Z",
+      "companyId": "01K7DW302P39BSTJPJ1VMNTPJV",
+      "companyName": "Bourbon Public Library",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:14.296Z",
+      "companyId": "01K7DW2ZC2AGWS8ZBT2KCSEAKG",
+      "companyName": "JEA/Hydrotech Engineering, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:14.351Z",
+      "companyId": "01K7DW2YP0TCZGDXF711K5YZJ4",
+      "companyName": "N. W. Electric Power Cooperative, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:14.569Z",
+      "companyId": "01K7DW305ZXRAWXJN3CDBJRBCN",
+      "companyName": "Hoosier Energy Rural Electric Cooperative, Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:14.918Z",
+      "companyId": "01K7DW2ZZ7VQ8CVEWPS1SFBGCT",
+      "companyName": "KB Worldwide Technology Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:31.524Z",
+      "companyId": "01K7DW32APEHJKC51EPTZP7D2C",
+      "companyName": "KS Electric & Consultants Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:31.663Z",
+      "companyId": "01K7DW324B85MYK50PXHY2E02X",
+      "companyName": "Business Startup Grant",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:31.905Z",
+      "companyId": "01K7DW327HNV9V6WJ1AYCSS4KR",
+      "companyName": "Harry Halff Fine Art",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:33.187Z",
+      "companyId": "01K7DW31MTQ1WB81VVGKEWX9M3",
+      "companyName": "ADCOMM Engineering LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:47.753Z",
+      "companyId": "01K7DW330249SBGMKPWW078RX8",
+      "companyName": "Bistro Dakota Inn",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:48.650Z",
+      "companyId": "01K7DW3337WR9DTWE6BCTBG9W8",
+      "companyName": "上海空间电源研究所",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:48.903Z",
+      "companyId": "01K7DW32J2ABSTS3F7JVCDS59T",
+      "companyName": "ArchComm LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:49.081Z",
+      "companyId": "01K7DW32NE4WDGB2FV49RN8YB6",
+      "companyName": "Gensburg & Atwell",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:49.198Z",
+      "companyId": "01K7DW32EHFT403027RE6YGVQ0",
+      "companyName": "SZe Schneider & Zirr Engineering GmbH",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:28:49.742Z",
+      "companyId": "01K7DW33X55TG4CM52D2CXPB26",
+      "companyName": "Hotel Casa de Guadalupe",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:05.555Z",
+      "companyId": "01K7DW36CEPBB0CKJ3FF1BNMYA",
+      "companyName": "Gillespie, Prudhon & Associates, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:05.644Z",
+      "companyId": "01K7DW35KRFEVJ77T2VKBQ3TPJ",
+      "companyName": "Forsk Coding School",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:06.001Z",
+      "companyId": "01K7DW36SBAZYP34D01ZVTZW33",
+      "companyName": "Digital Plus Solutions",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:06.012Z",
+      "companyId": "01K7DW35WX5VBMP5CVZ0R0NF7V",
+      "companyName": "Data Comm For Business",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:21.042Z",
+      "companyId": "01K7DW38Z16BY4MRF8HKYC9C7G",
+      "companyName": "HYDRO PNEO VAC TECHNOLOGIES - India",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:21.807Z",
+      "companyId": "01K7DW394V40T064CGEWFZ5TCB",
+      "companyName": "GREAT RIVER ENERGY",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:22.211Z",
+      "companyId": "01K7DW388BY3RPNC41HNABDP25",
+      "companyName": "Delgado Electric Inc. - Tampa, FL",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:22.351Z",
+      "companyId": "01K7DW38VY9STKNNMFEEPF7FVD",
+      "companyName": "Smarter Lower Bills",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:22.507Z",
+      "companyId": "01K7DW375W3SMJGK8PR1DH63XW",
+      "companyName": "Blue Ribbon Luxury",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:38.273Z",
+      "companyId": "01K7DW3A03HA72BDJBB8WGSBG4",
+      "companyName": "Brazos Walking Sticks",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:29:54.227Z",
+      "companyId": "01K7DW3ENEBT955P77X5C3D2T4",
+      "companyName": "G Force Fiber Optics",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:10.049Z",
+      "companyId": "01K7DW3FWWQK2KDFVACGK4EKRQ",
+      "companyName": "Btel Transportes E Mudancas",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:10.323Z",
+      "companyId": "01K7DW3G2Z5K5KQ6MRFYRBFKAE",
+      "companyName": "Penasco Valley Telephone",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:10.410Z",
+      "companyId": "01K7DW3F6S0FCCDGNXYCHK10G3",
+      "companyName": "TSTCI",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:10.839Z",
+      "companyId": "01K7DW3GK9NEWGN846MBZWYKFP",
+      "companyName": "Dell Telephone Cooperative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:11.324Z",
+      "companyId": "01K7DW3FZY6053JE666JQ29NXK",
+      "companyName": "BWI National Health Promotion Training Institute",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:25.848Z",
+      "companyId": "01K7DW3HX8DDBX9EN81ZXP3WMD",
+      "companyName": "Boys & Girls Clubs of the Mississippi Delta",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:26.217Z",
+      "companyId": "01K7DW3HPV5QDJEJ8PSVGEG928",
+      "companyName": "Careers at TAK Communications, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:26.628Z",
+      "companyId": "01K7DW3HCJPHSYE1VYBP7NJS9B",
+      "companyName": "USA Digital Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:26.744Z",
+      "companyId": "01K7DW3HSY5635VM5MWH4Z8F4R",
+      "companyName": "WEBB GLOBAL TRANSFER, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:27.102Z",
+      "companyId": "01K7DW3HKGV2KEPBB0CQPJTPSG",
+      "companyName": "High Plateau Truss Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:27.386Z",
+      "companyId": "01K7DW3H63CD6ZM2NJBJMWP528",
+      "companyName": "Eastwind Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:27.407Z",
+      "companyId": "01K7DW3H9FJYEG1WR2AAZFMB2T",
+      "companyName": "Optical Construction & Design, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:42.602Z",
+      "companyId": "01K7DW3KDYYJXXA2EM1WYPDY9A",
+      "companyName": "APPROVE INFOWAYS - India",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:42.623Z",
+      "companyId": "01K7DW3JYXS9X73MAYFBAPGGYC",
+      "companyName": "Stratis Cloud Career Coaching",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:43.058Z",
+      "companyId": "01K7DW3KT9PDTCJB7T7YE9RSGE",
+      "companyName": "COMSTAR SERVICES LIMITED",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:43.079Z",
+      "companyId": "01K7DW3KXQH3GV88WT27SRB42Y",
+      "companyName": "Pem-Tex, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:43.678Z",
+      "companyId": "01K7DW3M0ZDMXEA3GP2XPS713J",
+      "companyName": "Chevron Construction Services Ltd.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:43.882Z",
+      "companyId": "01K7DW3JGZ4NVHYR5BB0EDBXFF",
+      "companyName": "Direct Source Equipment",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:59.086Z",
+      "companyId": "01K7DW3MMNCENSSEN56V8N78JX",
+      "companyName": "PlumbingSupply Group, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:59.478Z",
+      "companyId": "01K7DW3NHC0QYFT5EM7K22JN0J",
+      "companyName": "Bacliff Municipal Utility Dist",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:30:59.616Z",
+      "companyId": "01K7DW3M4G2V8RC63F20CM5RRJ",
+      "companyName": "MOGYVER COMMUNICATIONS",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:00.102Z",
+      "companyId": "01K7DW3MYKGRM02HRY6FY8RZAW",
+      "companyName": "PGTELCO",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:00.213Z",
+      "companyId": "01K7DW3MQNQYMA29Z3K0HWQST7",
+      "companyName": "Rockwell Tech",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:14.244Z",
+      "companyId": "01K7DW3PJYGPDVG940C0RNA69J",
+      "companyName": "ELGi",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:14.500Z",
+      "companyId": "01K7DW3Q86SS95BSNPC50GAE33",
+      "companyName": "The Light Connection - Prod Sol",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:14.980Z",
+      "companyId": "01K7DW3RDPE5TV9Q7Q46EAXSG3",
+      "companyName": "Cenmex",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:15.967Z",
+      "companyId": "01K7DW3RH6W0ZMFBEY99GEH3JP",
+      "companyName": "Mid Plains Rural Telephone",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:16.095Z",
+      "companyId": "01K7DW3NX9PJN6S1CZVQ75DGCQ",
+      "companyName": "Pem-Tex,LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:16.908Z",
+      "companyId": "01K7DW3P0JAKXYAY87ANHDP9YK",
+      "companyName": "Blackberry&Cross (BBCross)",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:17.229Z",
+      "companyId": "01K7DW3SA7DHNCNZ49A4TD7G1D",
+      "companyName": "Texas Lone Star Network Llc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:31.601Z",
+      "companyId": "01K7DW3VG3D3Y63XFNS72C9H22",
+      "companyName": "HP COMMUNICATIONS AND SECURITY",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:32.371Z",
+      "companyId": "01K7DW3VA1HNM8RNYQG3EF9Y0S",
+      "companyName": "RR Ditching Service Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:32.722Z",
+      "companyId": "01K7DW3W2DZ82DFTRJ78HEBCTE",
+      "companyName": "Bee Culture Magazine, Pub by the A.I. Root Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:33.243Z",
+      "companyId": "01K7DW3VD11X7A8ZTBBEPX2MRN",
+      "companyName": "RnR Integration",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:33.448Z",
+      "companyId": "01K7DW3SK8J0X5BBC11FP26ZQB",
+      "companyName": "Corning Photography",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:34.660Z",
+      "companyId": "01K7DW3V3Y2HM9P8J43RPDAWF4",
+      "companyName": "Al Watan Arabic Newspaper",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:49.516Z",
+      "companyId": "01K7DW3YGQE5V42DR1YKD8CHEX",
+      "companyName": "McKnight Utilities",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:49.892Z",
+      "companyId": "01K7DW3Y6ZJFWXEE0CMXQSRZ9F",
+      "companyName": "BridgeGap Global Management",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:50.051Z",
+      "companyId": "01K7DW3Z6FYSQ43K9JQ0HZ3ZVH",
+      "companyName": "DZS",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:50.077Z",
+      "companyId": "01K7DW3ZDEZB0N8FKH0FJ78CAV",
+      "companyName": "Coast to Coast Communications Ltd.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:31:51.589Z",
+      "companyId": "01K7DW3ZM3Z83QM70JW2SN7FMW",
+      "companyName": "Ditch Witch of Central Texas",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:05.553Z",
+      "companyId": "01K7DW414HXSWSDCFNAD55G6P8",
+      "companyName": "United Technologies Services, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:06.242Z",
+      "companyId": "01K7DW4214SCGSQHT3B1GVT4S9",
+      "companyName": "Techline Studio/Furniture at Work, Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:09.915Z",
+      "companyId": "01K7DW41GKWD7740K9GY33FXVV",
+      "companyName": "LTS Managed Technical Services, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:25.136Z",
+      "companyId": "01K7DW43H7MH0W91VT9GGX3YV5",
+      "companyName": "Utility Sales Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:25.229Z",
+      "companyId": "01K7DW446XHXP9WERDWY0Z8ZK9",
+      "companyName": "HYPOS Hydrogen Power Storage & Solutions e.V.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:25.473Z",
+      "companyId": "01K7DW45CR0ZBJDQCDYY683YRY",
+      "companyName": "Hunt Communications Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:26.058Z",
+      "companyId": "01K7DW42V40BHD7SGJKWJ9CHMB",
+      "companyName": "Bell Commercial Construction",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:40.968Z",
+      "companyId": "01K7DW4691SN59WKZ37553C2FX",
+      "companyName": "Trident Solutions LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:41.395Z",
+      "companyId": "01K7DW46NKV7DK2HCMHF31WJHP",
+      "companyName": "ITC Employees Housing Co-operative Society Ltd",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:41.864Z",
+      "companyId": "01K7DW45K8Y51H0DXNGY6EKZPW",
+      "companyName": "Ditch Witch of Houston",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:42.534Z",
+      "companyId": "01K7DW45PC7C9J477PXXXXHNGK",
+      "companyName": "SIKON NWS",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:43.357Z",
+      "companyId": "01K7DW45FX59T4MASADJ29GFKQ",
+      "companyName": "OmniCable",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:58.407Z",
+      "companyId": "01K7DW48YP5Z40MDWVR4B638DX",
+      "companyName": "GAC Environmental Ltd",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:58.811Z",
+      "companyId": "01K7DW49YWYTZHVXXF89X6JA08",
+      "companyName": "Derrel Allen Will Astound You",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:59.330Z",
+      "companyId": "01K7DW49NBVREDNR22DN7KC5C7",
+      "companyName": "BridgeGap Global Management",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:32:59.516Z",
+      "companyId": "01K7DW48N50K772W5GHE2QVSV0",
+      "companyName": "Champion Precast Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:14.803Z",
+      "companyId": "01K7DW4B9YSY8597NDMKDEZ4GE",
+      "companyName": "Wes Tex Telephone Co-Op",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:15.077Z",
+      "companyId": "01K7DW4BT4YQPYC0N3FZZJCAN1",
+      "companyName": "Omni Fashions BD",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:15.320Z",
+      "companyId": "01K7DW4C7HN1J4JEF1G5R6SZM3",
+      "companyName": "Industry Telephone Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:15.606Z",
+      "companyId": "01K7DW4BQ1JHMXZ7JRPT5T2EFT",
+      "companyName": "Btel Transportes E Mudancas",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:15.952Z",
+      "companyId": "01K7DW4B0P1G6Q1G28JPXMP8Q1",
+      "companyName": "Domestic Power USA",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:31.051Z",
+      "companyId": "01K7DW4CQZWQVANJAG72RT9656",
+      "companyName": "DAVIS CABLE TECHNOLOGIES",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:31.235Z",
+      "companyId": "01K7DW4CZ3WK5JH3X50KT91BQG",
+      "companyName": "Just Right Engineering",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:32.455Z",
+      "companyId": "01K7DW4DDBPMXKEY14CJ0M7S33",
+      "companyName": "Town Of Salina",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:32.633Z",
+      "companyId": "01K7DW4CVDWW6Y6YC64QW0WP6C",
+      "companyName": "ANTS-Technology, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:32.644Z",
+      "companyId": "01K7DW4ENJWJNPPJ31B0SCDQBT",
+      "companyName": "A B S Telecom Comercio Equipamentos E Servicos De Telefonia",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:47.553Z",
+      "companyId": "01K7DW4GTYRH864TT9ED4C1T7F",
+      "companyName": "Telcon Services",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:47.648Z",
+      "companyId": "01K7DW4FQCKW8SSAYYCBJMBYGT",
+      "companyName": "Brazos WiFi",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:47.899Z",
+      "companyId": "01K7DW4FM0PJ27THRY3BPS5R11",
+      "companyName": "THE PERITI EGYPT",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:48.420Z",
+      "companyId": "01K7DW4GE5PNRQVTKD8B0P5SA5",
+      "companyName": "Tel Rep Marketing, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:33:48.672Z",
+      "companyId": "01K7DW4ERZR5RPCAZTQYFDMYD9",
+      "companyName": "Big Easy Cajun",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:03.336Z",
+      "companyId": "01K7DW4JF2N670VR0EECZF9DCA",
+      "companyName": "Skope Broadband & Communications LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:04.123Z",
+      "companyId": "01K7DW4JS1R2DT2CVYWN880BGK",
+      "companyName": "Totah Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:04.645Z",
+      "companyId": "01K7DW4JJ5NEM8PZWJYPCBMKP1",
+      "companyName": "ZipLink Systems",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:19.714Z",
+      "companyId": "01K7DW4MT8ZN1FNR6VWBQMD9Z8",
+      "companyName": "High Country Fusion",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:19.751Z",
+      "companyId": "01K7DW4JVZKTQZQ9XQZC6VJA1G",
+      "companyName": "Brazos Cellular Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:20.764Z",
+      "companyId": "01K7DW4KKS7V9QHMJE9VM9NNV6",
+      "companyName": "Ewing-Foley Electrical Division",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:21.129Z",
+      "companyId": "01K7DW4K8QCTZEK1P7H1ZAYRXD",
+      "companyName": "Selrico Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:36.334Z",
+      "companyId": "01K7DW4N3RVGYFWASYKQ4K7DD5",
+      "companyName": "Bird Comm",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:36.396Z",
+      "companyId": "01K7DW4PZA6HDGKZ64VEPNPPXM",
+      "companyName": "Nortex Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:37.892Z",
+      "companyId": "01K7DW4N734X825AEYNGKQ6M2A",
+      "companyName": "Swyft Connect",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:53.715Z",
+      "companyId": "01K7DW4QP70AV5VZQVRXZ6M69Q",
+      "companyName": "L & B Underground Services, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:53.868Z",
+      "companyId": "01K7DW4QSA0BXSVZFXTJ9VS4ZT",
+      "companyName": "CIMTEL Tecnologia em Automação",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:53.966Z",
+      "companyId": "01K7DW4QZT6WJ789KGD1548T1X",
+      "companyName": "Taylor Telecom",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:54.477Z",
+      "companyId": "01K7DW4R2XD0BY3S9CT61T02TH",
+      "companyName": "Splicers Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:34:54.664Z",
+      "companyId": "01K7DW4QWD6EZ9J4NCBW96A8DR",
+      "companyName": "Sendera Colima",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:09.219Z",
+      "companyId": "01K7DW4SW2EQH8V76X5219C55Y",
+      "companyName": "Big Five for Life International",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:10.747Z",
+      "companyId": "01K7DW4TE8A3ZRQRG57VFFZJNR",
+      "companyName": "Pem-Tex LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:10.918Z",
+      "companyId": "01K7DW4RQ66VMR11TVT4B768GX",
+      "companyName": "Poka Lambro",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:25.832Z",
+      "companyId": "01K7DW4YGXQ4JBVBN5EKBAR86W",
+      "companyName": "Midwest Propane",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:26.053Z",
+      "companyId": "01K7DW4W8ZQ0XG80766K7K7MD3",
+      "companyName": "BWI National Health Promotion Training Institute",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:26.764Z",
+      "companyId": "01K7DW4XEC8PN47H494GAPA0ZK",
+      "companyName": "M & A Electric Power Cooperative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:42.500Z",
+      "companyId": "01K7DW50N44G3SJ9XGVF609MQP",
+      "companyName": "Wiregrass Electric Cooperative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:42.724Z",
+      "companyId": "01K7DW50RJ7C8Z0RC51CYRYCT3",
+      "companyName": "WGL Of Virginia Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:43.272Z",
+      "companyId": "01K7DW515JN1N3Q1468Z7ME154",
+      "companyName": "Utilities Board of the City of Andalusia",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:43.374Z",
+      "companyId": "01K7DW50HPE45ZB36HSFKF4KK6",
+      "companyName": "Kck Institute - India",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:58.463Z",
+      "companyId": "01K7DW51NRZ5XM45HA1JKHTJ1Q",
+      "companyName": "Southern Rivers Energy",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:58.885Z",
+      "companyId": "01K7DW51JD4GYME1DRA3PVWKMT",
+      "companyName": "TALLAPOOSA RIVER ELECTRIC COOPERATIVE INC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:58.885Z",
+      "companyId": "01K7DW52N28RQX7E5NVFVDSYJC",
+      "companyName": "Satilla Temps",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:59.448Z",
+      "companyId": "01K7DW52BD10HDWF2ZNVAJ58XD",
+      "companyName": "Slash Pine EMC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:35:59.968Z",
+      "companyId": "01K7DW518HWYWBV12MSADDTF2Z",
+      "companyName": "Tri County Door Service",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:14.703Z",
+      "companyId": "01K7DW52VDM4AGFZXZ2WP76BXG",
+      "companyName": "Rayle Smart Home",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:14.884Z",
+      "companyId": "01K7DW531K917NA1M5V5HSNWZF",
+      "companyName": "Planters Electric Membership",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:16.202Z",
+      "companyId": "01K7DW54E0S9J9Y58SX79FSZ1N",
+      "companyName": "Mitchell Electric Membership",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:31.699Z",
+      "companyId": "01K7DW54HNQQ96TGJ53AYHCVN5",
+      "companyName": "Precision Electric",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:31.926Z",
+      "companyId": "01K7DW54NCHCCKKV42PGT31M5M",
+      "companyName": "Joe Namath Foundation",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:31.929Z",
+      "companyId": "01K7DW55CQES39Q33TMX0K47J9",
+      "companyName": "Holston Electric Cooperative, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:32.499Z",
+      "companyId": "01K7DW55GAYH95ET3AZV8VH598",
+      "companyName": "HART ELECTRIC MEMBERSHIP CORPORATIO",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:32.809Z",
+      "companyId": "01K7DW54RQHDT1NCM3GHPT79A2",
+      "companyName": "Hind Jea Band - India",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:47.662Z",
+      "companyId": "01K7DW57VRPRE9KRTRJF8S126R",
+      "companyName": "Vite Diverse ONLUS",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:48.179Z",
+      "companyId": "01K7DW56DVQAH4G4G82RHSTEW4",
+      "companyName": "Pooled Inventory Management",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:48.511Z",
+      "companyId": "01K7DW56TQSDYJC6T69X0HR2N2",
+      "companyName": "Balloon Excelsior Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:36:48.792Z",
+      "companyId": "01K7DW571FVG9053N8S9SB77E4",
+      "companyName": "Edisto Electric Cooperative, Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:03.329Z",
+      "companyId": "01K7DW59T8KPCE2S9NDNFFBQMC",
+      "companyName": "Blue Moon Landscaping",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:03.537Z",
+      "companyId": "01K7DW58WH3RR65PF5MMKGVVEA",
+      "companyName": "Colquitt Electric Membership",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:03.723Z",
+      "companyId": "01K7DW59Q4ZZ0H0RX0CEWWM530",
+      "companyName": "Blue Ridge Electric Membership Corporation",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:03.884Z",
+      "companyId": "01K7DW593V9202KXTNE4EMV8K0",
+      "companyName": "Bright Angel Coastal Consultants",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:18.079Z",
+      "companyId": "01K7DW5BSYRRT5830ZSXFASFA8",
+      "companyName": "Santee Cooper Credit Union",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:18.882Z",
+      "companyId": "01K7DW5AXZ4R5YDE4ZYB6A7BP9",
+      "companyName": "Central Lincoln People's Utility District",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:20.792Z",
+      "companyId": "01K7DW5AAT0T8A6YNXJ2WADK6R",
+      "companyName": "The Altamaha Electric Membership Corporation",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:37.749Z",
+      "companyId": "01K7DW5DSBDFHK1S2XZSV923Y5",
+      "companyName": "NTEST INC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:52.182Z",
+      "companyId": "01K7DW5GD73BSASZNCWHYTYQJN",
+      "companyName": "Washoe Metal Fabricating",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:53.570Z",
+      "companyId": "01K7DW5J2T2QD1YXKG4JEJP0WP",
+      "companyName": "Driver Mansion Inn",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:53.698Z",
+      "companyId": "01K7DW5G0RGV9W0MXRXK244APM",
+      "companyName": "Wells Rural Electric Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:54.185Z",
+      "companyId": "01K7DW5G46FMHAKNTCZ06DTG5P",
+      "companyName": "Healthcare Leaders Association of Nevada (HLA NV)",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:37:55.115Z",
+      "companyId": "01K7DW5FE7V2HR45TZK0PCWJ42",
+      "companyName": "Basin Electric Power Cooperative",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:09.599Z",
+      "companyId": "01K7DW5N3TXNFN59S0GVGSNQPD",
+      "companyName": "Chelan Digital Llc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:10.561Z",
+      "companyId": "01K7DW5KSDWY6QC800WDHHE2SW",
+      "companyName": "Chelan Digital Llc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:10.587Z",
+      "companyId": "01K7DW5J9FXVVY77S2JBVKBQA8",
+      "companyName": "Zappass NV - Alien Energy Management - Alien Mobility",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:10.607Z",
+      "companyId": "01K7DW5MWNYH4TZXKMT3ENWX0J",
+      "companyName": "Consumers Power Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:11.479Z",
+      "companyId": "01K7DW5KFJVJZ0T154G0C0TFE8",
+      "companyName": "Portland General Electric Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:11.783Z",
+      "companyId": "01K7DW5MZYV5N45J1RERXS0Y1F",
+      "companyName": "PUGET SOUND ENERGY FOUNDATION",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:27.867Z",
+      "companyId": "01K7DW5NAAG6W6GC10ZSG3WHX5",
+      "companyName": "Garland Light & Power Company",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:28.350Z",
+      "companyId": "01K7DW5QNY11M5JWBPBXQQJ67T",
+      "companyName": "Ubiik Mimomax",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:43.189Z",
+      "companyId": "01K7DW5REV3SE5QEY0C9YMKAXB",
+      "companyName": "Talley Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:43.191Z",
+      "companyId": "01K7DW5TTQRD8ZADDETHXAJ7W5",
+      "companyName": "Ribbon Communications",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:43.510Z",
+      "companyId": "01K7DW5RHTES6FZXXAFR0MDV19",
+      "companyName": "Eastex Dental Academy-Longview",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:43.603Z",
+      "companyId": "01K7DW5S3WKXBXRS5HQPJVJNMD",
+      "companyName": "Hamilton Industries Ltd - India",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:44.164Z",
+      "companyId": "01K7DW5TXP2YG5CFFAKGJJBMZJ",
+      "companyName": "Tachus Technologies Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:59.048Z",
+      "companyId": "01K7DW5YVSZPE2F7HGZZEAX2YT",
+      "companyName": "Optical Construction & Design  (OC&D)",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:59.224Z",
+      "companyId": "01K7DW5X825VQEK5HTVJVMNHZK",
+      "companyName": "Atlas Design Services",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:38:59.708Z",
+      "companyId": "01K7DW5VHPTY3GEGAZ8DQ02DPK",
+      "companyName": "Coleman County Telephone Coop. Inc.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:00.077Z",
+      "companyId": "01K7DW5WH8G5ZJ2VD2J2VTAG1F",
+      "companyName": "Australasian College of Road Safety (ACRS)",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:01.226Z",
+      "companyId": "01K7DW5YD4FJNSAXG7W6VYVQ7S",
+      "companyName": "Network Connections Group USA LLC | Our Engraved Labels and Cable Labels are in a different class.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:16.165Z",
+      "companyId": "01K7DW5Z5PS2FV4J1WTVXKRDP3",
+      "companyName": "AHC - Allman Horrocks Consulting Ltd.",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:16.377Z",
+      "companyId": "01K7DW5ZBNXJW4F7DJ34RDA78J",
+      "companyName": "Polarity Networks LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:16.951Z",
+      "companyId": "01K7DW60PJED2GTZ3K9YJGQ5A6",
+      "companyName": "Fiberlight",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:17.468Z",
+      "companyId": "01K7DW5Z8N1B9A2MX4AXKKHTTZ",
+      "companyName": "JDTC Inc",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    },
+    {
+      "timestamp": "2025-10-13T11:39:33.925Z",
+      "companyId": "01K7DW60SK3PN0YJ1QD51BT6MT",
+      "companyName": "AirWay Technologies, LLC",
+      "action": "enrichment_success",
+      "coresignalFields": 36,
+      "aiFields": 13,
+      "totalFields": 51
+    }
+  ],
+  "timestamp": "2025-10-13T11:39:33.925Z"
+}

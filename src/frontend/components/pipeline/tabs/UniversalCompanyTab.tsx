@@ -37,7 +37,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
     size: record.size || record.employeeCount || '-',
     revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : '-',
     location: record.city && record.state ? `${record.city}, ${record.state}` : record.address || '-',
-    website: record.website || 'No website',
+    website: record.website || '-',
     linkedin: record?.customFields?.linkedinUrl || 
               record?.customFields?.linkedin || 
               record?.linkedinUrl || 

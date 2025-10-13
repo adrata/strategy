@@ -292,11 +292,12 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           "./atrium", 
           "./particle",
           "./tower",
-          "./grand-central",
           "./olympus",
           "./encode",
           "./database"
-        ] : [])
+        ] : []),
+        // Grand Central - available for all users
+        "./grand-central"
       ];
 
       const isAllowedRoute = allowedDesktopRoutes.some(

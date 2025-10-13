@@ -59,13 +59,13 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       // Transform companies data to Opportunity format
       const transformedOpportunities: Opportunity[] = (data || []).map((company: any) => ({
         id: company.id,
-        name: company.name || 'Unknown Company',
-        company: company.name || 'Unknown Company',
+        name: company.name || '-',
+        company: company.name || '-',
         status: company.status || 'OPPORTUNITY',
         lastAction: company.lastAction || '-',
         nextAction: company.nextAction || '-',
         amount: company.amount || company.dealValue || 0,
-        stage: company.stage || company.dealStage || 'Qualification',
+        stage: company.stage || company.dealStage || '-',
         companyId: company.id,
         industry: company.industry || '-',
         size: company.size || company.employeeCount || '-',
