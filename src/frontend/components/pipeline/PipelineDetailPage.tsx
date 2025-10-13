@@ -37,6 +37,10 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
   const [previousRecord, setPreviousRecord] = useState<any>(null);
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
+  const [isProspectsVisible, setIsProspectsVisible] = useState(true);
+  const [isLeadsVisible, setIsLeadsVisible] = useState(true);
+  const [isCustomersVisible, setIsCustomersVisible] = useState(false);
+  const [isPartnersVisible, setIsPartnersVisible] = useState(true);
   const [isLeftPanelVisible, setIsLeftPanelVisible] = useState(true);
   const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
   const [directRecordLoading, setDirectRecordLoading] = useState(false);
