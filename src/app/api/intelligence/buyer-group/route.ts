@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
         company: true
       },
       orderBy: {
-        buyerGroupConfidence: 'desc'
+        influenceScore: 'desc'
       }
     });
 
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
           email: member.email,
           phone: member.phone,
           linkedin: member.linkedinUrl,
-          confidence: member.buyerGroupConfidence,
+          confidence: member.influenceScore,
           influenceScore: member.influenceScore
         });
       }
@@ -239,7 +239,7 @@ export async function GET(request: NextRequest) {
         email: member.email,
         phone: member.phone,
         linkedin: member.linkedinUrl,
-        confidence: member.buyerGroupConfidence,
+        confidence: member.influenceScore,
         influenceScore: member.influenceScore
       })),
       createdAt: buyerGroupMembers[0]?.createdAt,

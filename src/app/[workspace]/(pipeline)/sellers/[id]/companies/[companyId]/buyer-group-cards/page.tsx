@@ -78,7 +78,7 @@ export default function CompanyBuyerGroupCardsPage() {
         console.log('Loading company with ID:', actualCompanyId);
 
         // Load company data
-        const companyResponse = await fetch(`/api/data/section?section=companies&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=1000`);
+        const companyResponse = await fetch(`/api/data/section?section=companies&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=10000`);
         const companyResult = await companyResponse.json();
 
         if (companyResult['success'] && companyResult.data && companyResult.data.data) {
@@ -117,7 +117,7 @@ export default function CompanyBuyerGroupCardsPage() {
         }
 
         // Load buyer group members (people with this company)
-        const peopleResponse = await fetch(`/api/data/section?section=people&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=1000`);
+        const peopleResponse = await fetch(`/api/data/section?section=people&workspaceId=${user?.activeWorkspaceId}&userId=${user?.id}&limit=10000`);
         const peopleResult = await peopleResponse.json();
 
         if (peopleResult['success'] && peopleResult.data && peopleResult.data.data) {

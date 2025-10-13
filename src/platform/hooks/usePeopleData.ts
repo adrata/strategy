@@ -45,7 +45,7 @@ export function usePeopleData(): UsePeopleDataReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/people', { credentials: 'include' });
+      const response = await fetch('/api/v1/people?limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch people: ${response.statusText}`);

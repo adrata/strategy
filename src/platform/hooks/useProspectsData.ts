@@ -48,7 +48,7 @@ export function useProspectsData(): UseProspectsDataReturn {
       }
       setError(null);
 
-      const response = await fetch('/api/v1/people?status=PROSPECT&limit=1000', { credentials: 'include' });
+      const response = await fetch('/api/v1/people?status=PROSPECT&limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch prospects: ${response.statusText}`);

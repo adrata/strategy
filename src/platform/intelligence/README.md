@@ -142,8 +142,7 @@ We use a streamlined approach - buyer group roles are stored directly in the `pe
 ```sql
 people table:
 - buyerGroupRole: 'decision' | 'champion' | 'stakeholder' | 'blocker' | 'introducer'
-- buyerGroupConfidence: 0-100
-- influenceScore: 0-100
+- influenceScore: 0-100 (used for confidence/influence tracking)
 ```
 
 **No separate buyer group tables needed!** This keeps things simple and efficient.

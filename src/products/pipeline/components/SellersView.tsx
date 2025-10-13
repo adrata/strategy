@@ -115,7 +115,7 @@ export function SellersView() {
     setCompaniesLoading(true);
     
     try {
-      const response = await fetch(`/api/data/section?section=companies&workspaceId=${authUser?.activeWorkspaceId}&userId=${authUser?.id}&limit=1000&t=${Date.now()}`);
+      const response = await fetch(`/api/data/section?section=companies&workspaceId=${authUser?.activeWorkspaceId}&userId=${authUser?.id}&limit=10000&t=${Date.now()}`);
       const result = await response.json();
       
       if (result.success && result.data && result.data.data) {

@@ -42,7 +42,7 @@ export function useCompaniesData(): UseCompaniesDataReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/v1/companies', { credentials: 'include' });
+      const response = await fetch('/api/v1/companies?limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch companies: ${response.statusText}`);

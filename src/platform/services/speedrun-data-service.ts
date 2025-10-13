@@ -127,7 +127,7 @@ export class SpeedrunDataService {
         workspaceId: this.workspaceId,
         userId: this.userId,
         userEmail: `user-${this.userId}`, // Placeholder email
-        isDemo: this['workspaceId'] === 'zeropoint' || this['workspaceId'] === 'demo'
+        isDemo: this['workspaceId'] === '01K1VBYX2YERMXBFJ60RC6J194'
       };
       
       console.log(`🎯 SpeedrunDataService [${this.workspaceId}-${this.userId}]: User context:`, {

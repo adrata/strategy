@@ -79,6 +79,10 @@ import { UniversalCompanyTab as ComprehensiveCompanyTab } from './tabs/Universal
 import { HierarchicalBreadcrumb } from './HierarchicalBreadcrumb';
 import { URLFixer } from './URLFixer';
 
+// Import speedrun-specific components for intelligence tab
+import { InsightsTab as SpeedrunInsightsTab } from '@/products/speedrun/components/InsightsTab';
+import { extractProductionInsights } from '@/products/speedrun/utils/monacoExtractors';
+
 export interface UniversalRecordTemplateProps {
   record: any;
   recordType: 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'clients' | 'partners' | 'sellers' | 'deals' | 'speedrun';
@@ -1855,6 +1859,12 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
+              recordType === 'speedrun' ?
+                <SpeedrunInsightsTab 
+                  key={activeTab} 
+                  person={record} 
+                  insightsData={extractProductionInsights(record)} 
+                /> :
               recordType === 'people' ?
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />

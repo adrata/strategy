@@ -844,15 +844,30 @@ export const PipelineView = React.memo(function PipelineView({
       // 🎯 NEW SELLER FILTERS
       // Company Size filter
       const matchesCompanySize = companySizeFilter === 'all' || (() => {
+        // Try numeric employeeCount first
         const employeeCount = record.employeeCount || record.company?.employeeCount || 0;
         const empCount = typeof employeeCount === 'string' ? parseInt(employeeCount, 10) : employeeCount;
         
+        // If we have employeeCount, use it
+        if (empCount > 0) {
+          switch (companySizeFilter) {
+            case 'startup': return empCount >= 1 && empCount <= 10;
+            case 'small': return empCount >= 11 && empCount <= 50;
+            case 'medium': return empCount >= 51 && empCount <= 200;
+            case 'large': return empCount >= 201 && empCount <= 1000;
+            case 'enterprise': return empCount > 1000;
+            default: return true;
+          }
+        }
+        
+        // Fallback: Try to match company.size string
+        const companySize = record.company?.size?.toLowerCase() || '';
         switch (companySizeFilter) {
-          case 'startup': return empCount >= 1 && empCount <= 10;
-          case 'small': return empCount >= 11 && empCount <= 50;
-          case 'medium': return empCount >= 51 && empCount <= 200;
-          case 'large': return empCount >= 201 && empCount <= 1000;
-          case 'enterprise': return empCount > 1000;
+          case 'startup': return companySize.includes('1-10') || companySize.includes('<10');
+          case 'small': return companySize.includes('11-50') || companySize.includes('1-50');
+          case 'medium': return companySize.includes('51-200') || companySize.includes('50-200');
+          case 'large': return companySize.includes('201-1000') || companySize.includes('200-1000');
+          case 'enterprise': return companySize.includes('1000+') || companySize.includes('5000+') || companySize.includes('10000+');
           default: return true;
         }
       })();
@@ -894,8 +909,8 @@ export const PipelineView = React.memo(function PipelineView({
     });
 
     // Apply smart ranking or sorting
-    if (section === 'speedrun') {
-      // For speedrun, sort by rank to show 1, 2, 3, 4, 5... in order
+    if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
+      // For speedrun, default to rank sorting when no custom sort is selected
       filtered = [...filtered].sort((a: any, b: any) => {
         const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);

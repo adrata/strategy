@@ -16,6 +16,7 @@ import { SpeedrunEngineSettingsService } from '@/platform/services/speedrun-engi
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 import { useUnifiedAuth } from '@/platform/auth';
+import { validatePhoneNumber } from '@/platform/utils/phone-validator';
 
 // Helper function to extract company name from email domain
 function extractCompanyFromEmail(email: string): string | null {
@@ -164,7 +165,11 @@ export function useSpeedrunDataLoader() {
           email: item.email || '',
           company: company,
           title: item.title || item.jobTitle || 'Unknown Title',
-        phone: item.phone || item.phoneNumber || '',
+        phone: (() => {
+          const rawPhone = item.phone || item.phoneNumber || '';
+          const validation = validatePhoneNumber(rawPhone);
+          return validation.isValid ? validation.phone : '';
+        })(),
         location: item.location || item.city || '',
         industry: item.industry || determineVerticalFromData(item),
         status: item.status || 'Lead',

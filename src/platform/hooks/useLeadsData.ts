@@ -64,7 +64,7 @@ export function useLeadsData(): UseLeadsDataReturn {
     try {
       
       // Use optimized V1 API: Fetch people with LEAD status
-      const response = await fetch(`/api/v1/people?status=LEAD&limit=1000`, {
+      const response = await fetch(`/api/v1/people?status=LEAD&limit=10000`, {
         credentials: 'include'
       });
 

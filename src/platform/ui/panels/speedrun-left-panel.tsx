@@ -462,6 +462,12 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     if (statusLower === 'opportunity') {
       return "bg-[#EEF2FF] text-[#3730A3] border border-[#A5B4FC]"; // Indigo theme (opportunities)
     }
+    if (statusLower === 'person' || statusLower === 'people') {
+      return "bg-[#F5F3FF] text-[#5B21B6] border border-[#C4B5FD]"; // Violet theme (people)
+    }
+    if (statusLower === 'company' || statusLower === 'companies') {
+      return "bg-[#F8FAFC] text-[#0F172A] border border-[#CBD5E1]"; // Slate theme (companies)
+    }
     
     // Default fallback
     return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";

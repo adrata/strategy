@@ -77,8 +77,7 @@ Buyer group roles are stored directly on the `people` table:
 ```sql
 people:
   - buyerGroupRole: 'decision' | 'champion' | 'stakeholder' | 'blocker' | 'introducer'
-  - buyerGroupConfidence: 0-100
-  - influenceScore: 0-100
+  - influenceScore: 0-100 (used for confidence/influence tracking)
 ```
 
 ## Cost Optimization

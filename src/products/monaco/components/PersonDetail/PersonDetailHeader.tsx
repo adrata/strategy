@@ -16,6 +16,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { Person } from "../../types";
+import { validatePhoneNumber } from "@/platform/utils/phone-validator";
 import { PipelineProgress } from "@/platform/shared/components/ui/PipelineProgress";
 
 interface PersonDetailHeaderProps {
@@ -58,7 +59,7 @@ export function PersonDetailHeader({
     person.email !== "Unknown" && 
     person.email !== "-" && 
     person.email.trim() !== '';
-  const hasPhoneContact = person['phone'] && person.phone !== "Not Available";
+  const hasPhoneContact = person['phone'] && validatePhoneNumber(person.phone).isValid;
   const hasValidTitle = person['title'] && 
     person.title.toLowerCase() !== 'unknown' && 
     person.title.toLowerCase() !== 'unknown title' && 

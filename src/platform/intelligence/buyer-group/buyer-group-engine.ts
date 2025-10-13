@@ -143,8 +143,7 @@ export class BuyerGroupEngine {
             where: { id: existing.id },
             data: {
               buyerGroupRole: member.role,
-              buyerGroupConfidence: member.confidence,
-              influenceScore: member.influenceScore || 0,
+              influenceScore: member.influenceScore || member.confidence || 0,
               updatedAt: new Date(),
             },
           });
@@ -161,8 +160,7 @@ export class BuyerGroupEngine {
               phone: member.phone || null,
               linkedinUrl: member.linkedin || null,
               buyerGroupRole: member.role,
-              buyerGroupConfidence: member.confidence,
-              influenceScore: member.influenceScore || 0,
+              influenceScore: member.influenceScore || member.confidence || 0,
               status: 'PROSPECT',
               createdAt: new Date(),
               updatedAt: new Date(),
@@ -199,7 +197,7 @@ export class BuyerGroupEngine {
         },
       },
       include: { company: true },
-      orderBy: { buyerGroupConfidence: 'desc' },
+      orderBy: { influenceScore: 'desc' },
     });
 
     if (members.length === 0) return null;
@@ -223,7 +221,7 @@ export class BuyerGroupEngine {
           email: member.email || undefined,
           phone: member.phone || undefined,
           linkedin: member.linkedinUrl || undefined,
-          confidence: member.buyerGroupConfidence || 0,
+          confidence: member.influenceScore || 0,
           influenceScore: member.influenceScore || 0,
         });
       }
@@ -237,7 +235,7 @@ export class BuyerGroupEngine {
       totalMembers: members.length,
       cohesionScore: 0, // TODO: Calculate from data
       overallConfidence:
-        members.reduce((sum, m) => sum + (m.buyerGroupConfidence || 0), 0) /
+        members.reduce((sum, m) => sum + (m.influenceScore || 0), 0) /
         members.length,
       roles: roles as any,
       members: roles.decision

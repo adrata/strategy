@@ -860,7 +860,7 @@ Provide ONLY a JSON response:
                 { id: 'buyerGroupIntroducers', title: 'Introducers' },
                 { id: 'buyerGroupSalesStrategy', title: 'Recommended Sales Strategy' },
                 { id: 'buyerGroupComplexity', title: 'Buyer Group Complexity' },
-                { id: 'buyerGroupConfidence', title: 'Buyer Group Confidence' },
+                { id: 'buyerGroupInfluence', title: 'Buyer Group Influence Score' },
                 
                 // Data Quality
                 { id: 'overallConfidence', title: 'Overall Confidence' },
@@ -971,7 +971,7 @@ Provide ONLY a JSON response:
             buyerGroupIntroducers: this.extractBuyerGroupRoles(result.buyerGroupIntelligence, 'Introducer'),
             buyerGroupSalesStrategy: result.buyerGroupIntelligence?.salesStrategy?.primaryApproach || null,
             buyerGroupComplexity: result.buyerGroupIntelligence?.buyerGroup?.complexity || null,
-            buyerGroupConfidence: result.buyerGroupIntelligence?.buyerGroup?.confidence ? `${Math.round(result.buyerGroupIntelligence.buyerGroup.confidence * 100)}%` : null,
+            buyerGroupInfluence: result.buyerGroupIntelligence?.buyerGroup?.influenceScore ? `${Math.round(result.buyerGroupIntelligence.buyerGroup.influenceScore * 100)}%` : null,
             
             // Data Quality
             overallConfidence: `${result.overallConfidence}%`,

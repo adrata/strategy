@@ -226,21 +226,29 @@ export function PipelineTable({
     pageSize,
     section,
     disableSorting: section === 'companies',
-    sampleRanks: paginatedData?.slice(0, 5).map(r => ({ name: r.name, rank: r.rank }))
+    sampleRanks: paginatedData?.slice(0, 5).map(r => ({ name: r.name, rank: (r as any)['rank'] }))
   });
   
   // Action handling
   const {
-    handleEditRecord,
+    handleEdit,
     handleAddAction,
-    handleDeleteRecord,
-    handleReorderRecords,
-    handleColumnSort
+    handleDelete,
+    handleEditSubmit,
+    handleActionSubmit
   } = usePipelineActions({
-    section,
-    workspaceId,
-    onReorderRecords,
-    onColumnSort
+    onRecordUpdate: (record) => {
+      // Handle record update
+      console.log('Record updated:', record);
+    },
+    onRecordDelete: (recordId) => {
+      // Handle record deletion
+      console.log('Record deleted:', recordId);
+    },
+    onActionAdd: (recordId, action) => {
+      // Handle action addition
+      console.log('Action added to record:', recordId, action);
+    }
   });
   
   // Modal state
@@ -301,11 +309,10 @@ export function PipelineTable({
         <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
           <table className="w-full">
             <TableHeader
-              visibleColumns={visibleColumns}
+              headers={headers}
               sortField={sortField}
               sortDirection={sortDirection}
               onColumnSort={onColumnSort}
-              section={section}
             />
             <tbody>
               <tr className="border-b border-[var(--border)] hover:bg-[var(--panel-background)]">
@@ -334,8 +341,7 @@ export function PipelineTable({
             headers={headers}
             sortField={sortField}
             sortDirection={sortDirection}
-            onSort={handleColumnSort}
-            section={section}
+            onColumnSort={onColumnSort}
           />
           
           {/* Table body */}
@@ -345,7 +351,7 @@ export function PipelineTable({
                 recordId: record.id,
                 recordName: record.name || record['fullName'],
                 recordCompany: record['company'],
-                recordRank: record.rank,
+                recordRank: (record as any)['rank'],
                 headersLength: headers.length,
                 visibleColumnsLength: visibleColumns?.length,
                 // Show first 10 keys
@@ -398,7 +404,7 @@ export function PipelineTable({
                         // Handle both string and object company data
                         // For companies section, the record itself IS the company, so use record.name
                         if (section === 'companies') {
-                          const companyName = record.name || record.companyName || '';
+                          const companyName = record.name || (record as any)['companyName'] || '';
                           cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                         } else {
                           // For other sections (leads, prospects, etc.), look for company field
@@ -528,7 +534,7 @@ export function PipelineTable({
                               let statusIcon = '●';
                               
                               if (personStatus && typeof personStatus === 'string' && 
-                                  ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client'].includes(personStatus)) {
+                                  ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'PERSON', 'COMPANY', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client', 'Person', 'Company'].includes(personStatus)) {
                                 // Apply theme colors for lead pipeline status
                                 const statusLower = personStatus.toLowerCase();
                                 if (statusLower === 'lead' || statusLower === 'new') {
@@ -539,6 +545,10 @@ export function PipelineTable({
                                   statusColor = 'bg-indigo-50 text-indigo-700 border border-indigo-200'; // Indigo theme (opportunities)
                                 } else if (statusLower === 'customer' || statusLower === 'client') {
                                   statusColor = 'bg-green-50 text-green-700 border border-green-200'; // Green theme (customers)
+                                } else if (statusLower === 'person' || statusLower === 'people') {
+                                  statusColor = 'bg-violet-50 text-violet-700 border border-violet-200'; // Violet theme (people)
+                                } else if (statusLower === 'company' || statusLower === 'companies') {
+                                  statusColor = 'bg-slate-50 text-slate-700 border border-slate-200'; // Slate theme (companies)
                                 }
                                 statusIcon = '●';
                               } else {

@@ -285,6 +285,36 @@ export async function PATCH(
       },
     });
 
+    // Log data update as an action
+    try {
+      const updatedFields = Object.keys(updateData).filter(key => 
+        updateData[key] !== existingCompany[key]
+      );
+      
+      if (updatedFields.length > 0) {
+        await prisma.actions.create({
+          data: {
+            companyId: id,
+            type: 'data_update',
+            subject: `Updated ${updatedFields.join(', ')}`,
+            description: `Company data fields updated by ${authUser.name || authUser.email}`,
+            status: 'completed',
+            completedAt: new Date(),
+            workspaceId: existingCompany.workspaceId,
+            userId: authUser.id,
+            ownerId: authUser.id,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
+        
+        console.log(`📝 [COMPANIES API] Logged data update action for company ${id}: ${updatedFields.join(', ')}`);
+      }
+    } catch (actionError) {
+      console.error('Failed to log company data update action:', actionError);
+      // Don't fail the main update if action logging fails
+    }
+
     return NextResponse.json({
       success: true,
       data: updatedCompany,

@@ -9,6 +9,7 @@ import { IntelligentStageProgression } from "../IntelligentStageProgression";
 import { useAuth } from "@/platform/hooks/useAuth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { getCategoryColors } from "@/platform/config/color-palette";
+import { getPhoneDisplayValue } from "@/platform/utils/phone-validator";
 
 interface OverviewTabProps {
   person: SpeedrunPerson;
@@ -319,11 +320,7 @@ export function OverviewTab({
                       person.customFields?.monacoEnrichment?.contactInformation
                         ?.phones?.[0]?.number;
                     const phone = monacoPhone || person.phone;
-                    return phone
-                      ? phone.startsWith("+1")
-                        ? phone
-                        : `+1 ${phone.replace(/[\(\)\s-]/g, "")}`
-                      : "";
+                    return getPhoneDisplayValue(phone);
                   })()}
                   field="phone"
                   recordId={person.id?.toString() || ''}

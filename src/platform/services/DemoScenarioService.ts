@@ -330,7 +330,7 @@ export class DemoScenarioService {
         title: person.jobTitle || 'Technology Executive',
         company: person.company || 'Enterprise Company',
         email: person.email || `${person.firstName?.toLowerCase()}.${person.lastName?.toLowerCase()}@${person.company?.toLowerCase().replace(/\s+/g, '')}.com`,
-        phone: person.phone || '+1-555-000-0000',
+        phone: person.phone || null, // No fake phone numbers - will show dash in UI
         linkedin: person.linkedinUrl || `https://linkedin.com/in/${person.firstName?.toLowerCase()}-${person.lastName?.toLowerCase()}`,
         location: [person.city, person.state].filter(Boolean).join(', ') || 'San Francisco, CA',
         department: person.department || 'Technology',
@@ -535,7 +535,7 @@ export class DemoScenarioService {
       jobTitle: title,
       company,
       email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${company.toLowerCase().replace(/\s+/g, '').replace(/'/g, '')}.com`,
-      phone: `+1-555-${String(Math.floor(Math.random() * 900) + 100)}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      phone: null, // No fake phone numbers - will show dash in UI
       estimatedValue: 50000 + (index * 10000),
       vertical,
       department: 'Technology',
@@ -750,7 +750,7 @@ export class DemoScenarioService {
         title: lead.jobTitle || 'Technology Leader', 
         company: lead.company || 'Enterprise Company',
         email: lead.email || `${lead.firstName?.toLowerCase()}.${lead.lastName?.toLowerCase()}@${lead.company?.toLowerCase().replace(/\s+/g, '')}.com`,
-        phone: lead.phone || '+1-555-000-0000',
+        phone: lead.phone || null, // No fake phone numbers - will show dash in UI
         dealSize: this.formatCurrency(lead.estimatedValue || 75000, 'USD'), // Use actual estimated value
         priority: globalIndex < 3 ? 'High Priority' : globalIndex < 6 ? 'Medium Priority' : globalIndex < 12 ? 'Low Priority' : 'Medium Priority',
         stage: ['Discovery', 'Proposal', 'Negotiation', 'Closing'][globalIndex % 4],

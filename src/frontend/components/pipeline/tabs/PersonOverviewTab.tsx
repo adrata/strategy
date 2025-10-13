@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { getPhoneDisplayValue } from '@/platform/utils/phone-validator';
 
 interface PersonOverviewTabProps {
   recordType: string;
@@ -64,7 +65,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
     title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
     email: String(record?.email || coresignalData.primary_professional_email || '-'),
-    phone: String(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone || '-'),
+    phone: getPhoneDisplayValue(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone),
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
     
     // Company info - Database fields first, then CoreSignal fallback

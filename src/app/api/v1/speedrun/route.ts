@@ -170,7 +170,10 @@ export async function GET(request: NextRequest) {
               name: true,
               industry: true,
               size: true,
-              globalRank: true
+              globalRank: true,
+              employeeCount: true,
+              hqState: true,
+              state: true
             }
           }
         }

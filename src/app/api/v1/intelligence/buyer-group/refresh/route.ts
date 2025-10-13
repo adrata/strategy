@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
       },
       data: {
         buyerGroupRole: null,
-        buyerGroupConfidence: null,
         influenceScore: null,
       },
     });

@@ -168,7 +168,6 @@ Buyer group roles are stored directly on the `people` table:
 model people {
   // ... existing fields ...
   buyerGroupRole        BuyerGroupRole?  // decision, champion, stakeholder, blocker, introducer
-  buyerGroupConfidence  Float?           // 0-100
   influenceScore        Float?           // 0-100
   // ... existing fields ...
   

@@ -209,8 +209,7 @@ export const saveBuyerGroupStep: PipelineStep<
             where: { id: existingPerson.id },
             data: {
               buyerGroupRole: member.role,
-              buyerGroupConfidence: member.confidence || 0,
-              influenceScore: member.influenceScore || 0,
+              influenceScore: member.influenceScore || member.confidence || 0,
               updatedAt: new Date()
             }
           });
@@ -229,8 +228,7 @@ export const saveBuyerGroupStep: PipelineStep<
                 phone: member.phone || null,
                 linkedinUrl: member.linkedin || null,
                 buyerGroupRole: member.role,
-                buyerGroupConfidence: member.confidence || 0,
-                influenceScore: member.influenceScore || 0,
+                influenceScore: member.influenceScore || member.confidence || 0,
                 status: 'PROSPECT',
                 createdAt: new Date(),
                 updatedAt: new Date()

@@ -208,7 +208,7 @@ export const instantNavigationUtils = {
       sections.map(async (section) => {
         const cacheKey = `section-${section}-${workspaceId}-${userId}`;
         return unifiedCache.get(cacheKey, async () => {
-          const response = await fetch(`/api/data/section?section=${section}&limit=1000`);
+          const response = await fetch(`/api/data/section?section=${section}&limit=10000`);
           const result = await response.json();
           return result.data?.data || [];
         }, {

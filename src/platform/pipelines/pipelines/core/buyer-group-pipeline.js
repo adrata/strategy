@@ -807,8 +807,7 @@ class BuyerGroupPipeline {
                                     where: { id: existingPerson.id },
                                     data: {
                                         buyerGroupRole: role,
-                                        buyerGroupConfidence: member.confidence || 0,
-                                        influenceScore: member.influenceScore || 0,
+                                        influenceScore: member.influenceScore || member.confidence || 0,
                                         updatedAt: new Date()
                                     }
                                 });
@@ -827,8 +826,7 @@ class BuyerGroupPipeline {
                                         phone: member.phone || null,
                                         linkedinUrl: member.linkedin || null,
                                         buyerGroupRole: role,
-                                        buyerGroupConfidence: member.confidence || 0,
-                                        influenceScore: member.influenceScore || 0,
+                                        influenceScore: member.influenceScore || member.confidence || 0,
                                         status: 'PROSPECT',
                                         createdAt: new Date(),
                                         updatedAt: new Date()

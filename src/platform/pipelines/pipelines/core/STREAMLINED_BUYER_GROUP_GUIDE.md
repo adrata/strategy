@@ -10,8 +10,7 @@ Instead of separate buyer group tables, we simply add buyer group roles directly
 ```sql
 -- Added to people table
 buyerGroupRole    BuyerGroupRole?  -- decision, champion, stakeholder, blocker, introducer
-buyerGroupConfidence Float?        -- 0-100 confidence score
-influenceScore    Float?           -- 0-100 influence score
+influenceScore    Float?           -- 0-100 influence/confidence score
 ```
 
 ### **Benefits**
@@ -51,7 +50,7 @@ AND workspaceId = 'your-workspace-id';
 SELECT * FROM people 
 WHERE companyId = 'company-id' 
 AND buyerGroupRole IS NOT NULL
-ORDER BY buyerGroupConfidence DESC;
+ORDER BY influenceScore DESC;
 ```
 
 ### **Count Buyer Group Members by Role**
@@ -135,7 +134,6 @@ npx prisma migrate deploy
 ### **Schema Update**
 The streamlined schema adds these fields to the `people` table:
 - `buyerGroupRole` - The role in the buying committee
-- `buyerGroupConfidence` - Confidence score (0-100)
 - `influenceScore` - Influence score (0-100)
 
 ## 📋 **Best Practices**
@@ -147,7 +145,7 @@ The streamlined schema adds these fields to the `people` table:
 
 ### **Performance**
 - Index on `buyerGroupRole` for fast queries
-- Use `buyerGroupConfidence` for sorting
+- Use `influenceScore` for sorting
 - Filter by workspace for tenant isolation
 
 ### **Integration**

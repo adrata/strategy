@@ -24,10 +24,10 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
     if (nextAuthToken) {
       console.log("✅ V1 Auth: NextAuth token found for:", nextAuthToken.email);
       return {
-        id: nextAuthToken.sub || nextAuthToken.userId || '',
+        id: nextAuthToken.sub || (nextAuthToken as any)['userId'] || '',
         email: nextAuthToken.email || '',
-        name: nextAuthToken.name,
-        workspaceId: nextAuthToken.workspaceId || "local-workspace",
+        name: nextAuthToken.name || undefined,
+        workspaceId: (nextAuthToken as any)['workspaceId'] || "local-workspace",
       };
     }
 
@@ -91,17 +91,17 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
  */
 function decodeJWT(token: string): any | null {
   try {
-    const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "dev-secret-key-change-in-production";
+    const secret = process.env.NEXTAUTH_SECRET || (process.env as any)['JWT_SECRET'] || "dev-secret-key-change-in-production";
     
     const decoded = jwt.verify(token, secret);
     
-    if (decoded.exp && decoded.exp < Date.now() / 1000) {
+    if (typeof decoded === 'object' && decoded !== null && 'exp' in decoded && (decoded as any).exp < Date.now() / 1000) {
       return null;
     }
     
     return decoded;
   } catch (error) {
-    console.warn("⚠️ V1 JWT verification failed:", error.message);
+    console.warn("⚠️ V1 JWT verification failed:", (error as Error).message);
     return null;
   }
 }

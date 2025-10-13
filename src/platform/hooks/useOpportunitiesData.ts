@@ -47,7 +47,7 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       }
       setError(null);
 
-      const response = await fetch('/api/v1/companies?status=OPPORTUNITY&limit=1000', { credentials: 'include' });
+      const response = await fetch('/api/v1/companies?status=OPPORTUNITY&limit=10000', { credentials: 'include' });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch opportunities: ${response.statusText}`);

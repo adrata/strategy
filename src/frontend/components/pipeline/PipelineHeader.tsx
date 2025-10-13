@@ -1039,7 +1039,14 @@ export function PipelineHeader({
                               sectionInfo.actionButton
                             }
                           </span>
-                          <span className="xs:hidden">Add</span>
+                          <span className="xs:hidden">
+                            {section === 'leads' ? 'Add Lead' : 
+                             section === 'prospects' ? 'Add Prospect' :
+                             section === 'opportunities' ? 'Add Opportunity' :
+                             section === 'companies' ? 'Add Company' :
+                             section === 'people' ? 'Add Person' :
+                             'Add'}
+                          </span>
                         </button>
                       )}
                       {(sectionInfo as any).secondaryActionButton && (
@@ -1075,7 +1082,7 @@ export function PipelineHeader({
                             {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                           </span>
                           <span className="xs:hidden">
-                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : 'Add'}
+                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : 'Add Action'}
                           </span>
                         </button>
                       )}
