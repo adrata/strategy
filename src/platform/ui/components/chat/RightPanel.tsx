@@ -702,6 +702,185 @@ export function RightPanel() {
     }
   }, []); // Only on mount
 
+  // Excel import handling with AI analysis
+  const handleExcelImport = async (file: File, parsedDoc: any, tableCount: number, rowCount: number) => {
+    try {
+      // Show initial processing message
+      chat.addAssistantMessage(
+        `📊 **Analyzing Excel file: ${file.name}**
+
+**Initial Analysis:**
+• File type: ${parsedDoc.fileType.toUpperCase()}
+• Size: ${formatFileSize(parsedDoc.fileSize)}
+• Tables found: ${tableCount}
+• Data rows: ${rowCount - 1} (excluding headers)
+
+🤖 **AI is analyzing the data structure and preparing import recommendations...**`,
+        activeSubApp
+      );
+
+      // Extract Excel data for AI analysis
+      const excelData = {
+        fileName: file.name,
+        fileSize: file.size,
+        tables: parsedDoc.content.tables,
+        sheets: parsedDoc.structure?.sheets || ['Sheet1'],
+        headers: parsedDoc.content.tables[0]?.[0] || [],
+        sampleData: parsedDoc.content.tables[0]?.slice(1, 6) || [], // First 5 rows
+        totalRows: rowCount - 1
+      };
+
+      // Send to AI for analysis
+      const aiResponse = await processMessageWithQueue(
+        `I've uploaded an Excel file with lead data. Please analyze it and help me import the contacts with appropriate status and connection points. Here's the data structure:
+
+File: ${file.name}
+Headers: ${excelData.headers.join(', ')}
+Sample data: ${JSON.stringify(excelData.sampleData, null, 2)}
+
+Please provide:
+1. Import type detection (people, companies, or mixed)
+2. Column mapping suggestions
+3. Status recommendations for each contact
+4. Connection point opportunities
+5. Data quality assessment
+6. Import confidence score
+7. Next action recommendations
+
+I want to import this data into my CRM with the right status and create appropriate connection points.`,
+        activeSubApp,
+        'general',
+        currentRecord,
+        listViewContext
+      );
+
+      // After AI analysis, show import options
+      setTimeout(() => {
+        chat.addAssistantMessage(
+          `🎯 **Ready to Import Excel Data**
+
+Based on the AI analysis, I can now import your Excel data with intelligent processing:
+
+**Import Options:**
+• Smart column mapping
+• Automatic status assignment (LEAD/PROSPECT/CUSTOMER)
+• Company creation and linking
+• Connection point generation
+• Duplicate detection and handling
+
+**To proceed with import, say:**
+"Import the Excel data" or "Start the import process"
+
+**To customize import settings, say:**
+"Show import options" or "Configure the import"
+
+The AI has analyzed your data and is ready to create the most valuable import for your sales pipeline.`,
+          activeSubApp
+        );
+      }, 2000);
+
+    } catch (error) {
+      console.error('❌ [EXCEL IMPORT] Error:', error);
+      chat.addAssistantMessage(
+        `❌ **Error processing Excel file**
+
+I encountered an issue analyzing your Excel file: ${error instanceof Error ? error.message : 'Unknown error'}
+
+Please try:
+• Ensuring the file is a valid Excel format (.xlsx or .xls)
+• Checking that the file contains data in the first sheet
+• Trying with a smaller file if this one is very large
+
+You can also try uploading the file again or contact support if the issue persists.`,
+        activeSubApp
+      );
+    }
+  };
+
+  // Execute Excel import with AI recommendations
+  const executeExcelImport = async (file: File, importOptions: any = {}) => {
+    try {
+      // Show import progress
+      chat.addAssistantMessage(
+        `🚀 **Starting Excel Import Process**
+
+**Import Settings:**
+• File: ${file.name}
+• Auto-create companies: ${importOptions.autoCreateCompanies !== false ? 'Yes' : 'No'}
+• Create connection points: ${importOptions.createConnectionPoints !== false ? 'Yes' : 'No'}
+• Skip duplicates: ${importOptions.skipDuplicates !== false ? 'Yes' : 'No'}
+
+**Processing...** This may take a moment for large files.`,
+        activeSubApp
+      );
+
+      // Prepare form data for API call
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('workspaceId', workspaceId || '');
+      formData.append('userId', userId || '');
+      formData.append('userIntent', 'Import leads from Excel with AI analysis');
+      formData.append('importOptions', JSON.stringify(importOptions));
+
+      // Call Excel import API
+      const response = await fetch('/api/v1/data/import-excel', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const { results } = result;
+        
+        // Show success message with detailed results
+        chat.addAssistantMessage(
+          `✅ **Excel Import Completed Successfully!**
+
+**Import Summary:**
+• Total records processed: ${results.totalRecords}
+• People created: ${results.createdPeople?.length || 0}
+• Companies created: ${results.createdCompanies?.length || 0}
+• Connection points created: ${results.createdActions?.length || 0}
+• Records skipped: ${results.skippedRecords}
+• Errors: ${results.errors?.length || 0}
+
+**Import Type:** ${results.importType}
+**Confidence Score:** ${results.confidence}%
+
+**Column Mapping Applied:**
+${Object.entries(results.columnMapping || {}).map(([header, field]) => `• ${header} → ${field}`).join('\n')}
+
+**Recommendations:**
+${results.recommendations?.map((rec: string) => `• ${rec}`).join('\n') || '• Import completed successfully'}
+
+${results.errors?.length > 0 ? `\n**Errors encountered:**\n${results.errors.slice(0, 5).map((error: any) => `• Row ${error.row}: ${error.error}`).join('\n')}` : ''}
+
+Your leads are now in the system with appropriate status and connection points! You can view them in the People section.`,
+          activeSubApp
+        );
+      } else {
+        throw new Error(result.error || 'Import failed');
+      }
+
+    } catch (error) {
+      console.error('❌ [EXCEL IMPORT] Import error:', error);
+      chat.addAssistantMessage(
+        `❌ **Excel Import Failed**
+
+Error: ${error instanceof Error ? error.message : 'Unknown error'}
+
+Please try:
+• Checking your file format and data structure
+• Ensuring you have proper permissions
+• Contacting support if the issue persists
+
+You can also try uploading the file again or use a different format.`,
+        activeSubApp
+      );
+    }
+  };
+
   // File handling with universal document parsing
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -759,6 +938,21 @@ export function RightPanel() {
         
         // Generate contextual response based on file type and content
         let responseMessage = '';
+        
+        // Check if this is an Excel file for import processing
+        const isExcelFile = file.name.toLowerCase().endsWith('.xlsx') || 
+                           file.name.toLowerCase().endsWith('.xls') ||
+                           file.type.includes('spreadsheet') ||
+                           file.type.includes('excel');
+        
+        if (isExcelFile && parsedDoc['content']['tables'] && parsedDoc.content.tables.length > 0) {
+          const tableCount = parsedDoc.content.tables.length;
+          const rowCount = parsedDoc.content['tables'][0]?.length || 0;
+          
+          // Trigger Excel import analysis
+          await handleExcelImport(file, parsedDoc, tableCount, rowCount);
+          return; // Early return to avoid duplicate processing
+        }
         
         if (parsedDoc['content']['tables'] && parsedDoc.content.tables.length > 0) {
           const tableCount = parsedDoc.content.tables.length;
@@ -906,6 +1100,52 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           ? { ...conv, messages: [...conv.messages, typingMessage] }
           : conv
       ));
+
+      // Check for Excel import request
+      const isExcelImportRequest = input.toLowerCase().includes('import the excel data') || 
+                                  input.toLowerCase().includes('start the import process') ||
+                                  input.toLowerCase().includes('import excel') ||
+                                  input.toLowerCase().includes('import the data');
+      
+      if (isExcelImportRequest) {
+        // Find the most recent Excel file in context
+        const excelFile = contextFiles.find(file => 
+          file.name.toLowerCase().endsWith('.xlsx') || 
+          file.name.toLowerCase().endsWith('.xls')
+        );
+        
+        if (excelFile) {
+          // Get the actual file from the file input or recreate it
+          const fileInput = fileInputRef.current;
+          if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            const file = Array.from(fileInput.files).find(f => f.name === excelFile.name);
+            if (file) {
+              // Execute the import
+              await executeExcelImport(file, {
+                autoCreateCompanies: true,
+                createConnectionPoints: true,
+                skipDuplicates: true
+              });
+              return;
+            }
+          }
+        }
+        
+        // If no Excel file found, show error
+        chat.addAssistantMessage(
+          `❌ **No Excel file found for import**
+
+I couldn't find an Excel file to import. Please:
+
+1. Drag and drop an Excel file (.xlsx or .xls) into the chat area
+2. Wait for the AI analysis to complete
+3. Then say "Import the Excel data" or "Start the import process"
+
+Make sure the file contains contact/lead data with headers like Name, Email, Company, etc.`,
+          activeSubApp
+        );
+        return;
+      }
 
       // Check for deep value report generation request
       const isReportRequest = input.toLowerCase().includes('deep value report') || 

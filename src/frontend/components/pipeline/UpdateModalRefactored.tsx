@@ -19,6 +19,8 @@ import {
   TagIcon
 } from '@heroicons/react/24/solid';
 import { getTabsForRecordType, getTabComponent, getTabConfig } from './config/tab-registry';
+import { CompanySelector } from './CompanySelector';
+import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -61,7 +63,54 @@ export function UpdateModalRefactored({
   // Update form data when record changes
   useEffect(() => {
     if (record) {
-      setFormData(record);
+      setFormData({
+        // Basic info
+        name: formatFieldValue(record.fullName || record.name, ''),
+        firstName: formatFieldValue(record.firstName, ''),
+        lastName: formatFieldValue(record.lastName, ''),
+        email: formatFieldValue(record.email || record.workEmail, ''),
+        phone: formatFieldValue(record.phone || record.mobilePhone || record.workPhone, ''),
+        
+        // Company info - handle both string and object formats
+        company: record.company || record.companyName || '',
+        companyDomain: formatFieldValue(record.companyDomain, ''),
+        industry: formatFieldValue(record.industry, ''),
+        vertical: formatFieldValue(record.vertical, ''),
+        companySize: formatFieldValue(record.companySize, ''),
+        
+        // Job info
+        jobTitle: formatFieldValue(record.jobTitle || record.title, ''),
+        department: formatFieldValue(record.department, ''),
+        
+        // Contact details
+        linkedinUrl: formatFieldValue(record.linkedinUrl, ''),
+        address: formatFieldValue(record.address, ''),
+        city: formatFieldValue(record.city, ''),
+        state: formatFieldValue(record.state, ''),
+        country: formatFieldValue(record.country, ''),
+        postalCode: formatFieldValue(record.postalCode, ''),
+        
+        // Status and priority
+        status: record.status || 'new',
+        priority: record.priority || 'medium',
+        relationship: formatFieldValue(record.relationship, ''),
+        
+        // Opportunity fields
+        estimatedValue: formatFieldValue(record.estimatedValue, ''),
+        currency: record.currency || 'USD',
+        expectedCloseDate: formatDateValue(record.expectedCloseDate),
+        stage: formatFieldValue(record.stage || record.currentStage, ''),
+        probability: formatFieldValue(record.probability, ''),
+        
+        // Activity fields
+        nextAction: formatFieldValue(record.nextAction, ''),
+        nextActionDate: formatDateValue(record.nextActionDate),
+        lastActionDate: formatDateValue(record.lastActionDate),
+        
+        // Notes
+        notes: formatFieldValue(record.notes || record.description, ''),
+        tags: record.tags || []
+      });
     }
   }, [record]);
 

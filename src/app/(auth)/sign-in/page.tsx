@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUnifiedAuth } from "@/platform/auth";
+import { Alert, AlertDescription } from "@/platform/shared/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -196,13 +198,13 @@ export default function SignInPage() {
         console.error("❌ [SIGN-IN PAGE] Authentication failed:", result.error);
         setError(
           result.error ||
-            "Authentication failed. Please check your credentials.",
+            "Invalid email or password. Please check your credentials and try again.",
         );
         setIsLoading(false); // Only reset loading state on error
       }
     } catch (error) {
       console.error("❌ [SIGN-IN PAGE] Unexpected error:", error);
-      setError("An unexpected error occurred. Please try again.");
+      setError("An unexpected error occurred. Please try again or contact support if the problem persists.");
       setIsLoading(false); // Only reset loading state on error
     }
   };
@@ -215,9 +217,12 @@ export default function SignInPage() {
         </h1>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
+          <Alert className="mb-4 bg-white border-l-4 border-l-red-500 shadow-sm">
+            <AlertCircle className="h-4 w-4 text-red-500" />
+            <AlertDescription className="text-gray-800">
+              {error}
+            </AlertDescription>
+          </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>

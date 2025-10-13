@@ -7,6 +7,8 @@ import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { CompanySelector } from './CompanySelector';
+import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { TrashIcon, CameraIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from './InlineEditField';
@@ -2420,32 +2422,39 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                         <input
                           type="text"
-                          defaultValue={record?.name || record?.fullName || ''}
+                          defaultValue={formatFieldValue(record?.name || record?.fullName, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.name || record?.fullName) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                         <input
                           type="text"
-                          defaultValue={record?.title || record?.jobTitle || ''}
+                          defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                        <input
-                          type="text"
-                          defaultValue={record?.company || record?.companyName || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        <CompanySelector
+                          value={record?.company || record?.companyName || ''}
+                          onChange={(company) => {
+                            // Handle company selection - this would need to be connected to form state
+                            console.log('Company selected:', company);
+                          }}
+                          placeholder="Search or add company..."
+                          className="w-full"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                         <input
                           type="text"
-                          defaultValue={record?.department || ''}
+                          defaultValue={formatFieldValue(record?.department, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.department) ? '' : '-'}
                         />
                       </div>
                     </div>
@@ -2591,8 +2600,9 @@ export function UniversalRecordTemplate({
                           type="number"
                           min="0"
                           max="100"
-                          defaultValue={record?.engagementScore || 0}
+                          defaultValue={record?.engagementScore || ''}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={record?.engagementScore ? '' : '-'}
                         />
                       </div>
                       <div>
@@ -2601,8 +2611,9 @@ export function UniversalRecordTemplate({
                           type="number"
                           min="0"
                           max="100"
-                          defaultValue={record?.influenceScore || 0}
+                          defaultValue={record?.influenceScore || ''}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={record?.influenceScore ? '' : '-'}
                         />
                       </div>
                       <div>
@@ -2611,8 +2622,9 @@ export function UniversalRecordTemplate({
                           type="number"
                           min="0"
                           max="100"
-                          defaultValue={record?.decisionPowerScore || 0}
+                          defaultValue={record?.decisionPowerScore || ''}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={record?.decisionPowerScore ? '' : '-'}
                         />
                       </div>
                       <div>
@@ -2641,32 +2653,39 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
                         <input
                           type="text"
-                          defaultValue={record?.title || record?.jobTitle || ''}
+                          defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                        <input
-                          type="text"
-                          defaultValue={record?.company || record?.companyName || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        <CompanySelector
+                          value={record?.company || record?.companyName || ''}
+                          onChange={(company) => {
+                            // Handle company selection - this would need to be connected to form state
+                            console.log('Company selected:', company);
+                          }}
+                          placeholder="Search or add company..."
+                          className="w-full"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                         <input
                           type="text"
-                          defaultValue={record?.department || ''}
+                          defaultValue={formatFieldValue(record?.department, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.department) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
                         <input
                           type="text"
-                          defaultValue={record?.industry || ''}
+                          defaultValue={formatFieldValue(record?.industry, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.industry) ? '' : '-'}
                         />
                       </div>
                     </div>
@@ -2684,6 +2703,7 @@ export function UniversalRecordTemplate({
                           max="50"
                           defaultValue={record?.yearsExperience || ''}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={record?.yearsExperience ? '' : '-'}
                         />
                       </div>
                       <div>
@@ -2692,7 +2712,7 @@ export function UniversalRecordTemplate({
                           defaultValue={record?.educationLevel || ''}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="">Select Education</option>
+                          <option value="">{record?.educationLevel ? '' : '-'}</option>
                           <option value="high-school">High School</option>
                           <option value="associate">Associate</option>
                           <option value="bachelor">Bachelor's</option>
@@ -2704,18 +2724,18 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
                         <input
                           type="text"
-                          defaultValue={record?.skills || ''}
+                          defaultValue={formatFieldValue(record?.skills, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Comma-separated skills"
+                          placeholder={formatFieldValue(record?.skills) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Certifications</label>
                         <input
                           type="text"
-                          defaultValue={record?.certifications || ''}
+                          defaultValue={formatFieldValue(record?.certifications, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Comma-separated certifications"
+                          placeholder={formatFieldValue(record?.certifications) ? '' : '-'}
                         />
                       </div>
                     </div>
@@ -2733,32 +2753,36 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                         <input
                           type="email"
-                          defaultValue={record?.email || ''}
+                          defaultValue={formatFieldValue(record?.email, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.email) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                         <input
                           type="tel"
-                          defaultValue={record?.phone || ''}
+                          defaultValue={formatFieldValue(record?.phone, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.phone) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
                         <input
                           type="url"
-                          defaultValue={record?.linkedinUrl || record?.linkedin || ''}
+                          defaultValue={formatFieldValue(record?.linkedinUrl || record?.linkedin, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.linkedinUrl || record?.linkedin) ? '' : '-'}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
                         <input
                           type="text"
-                          defaultValue={record?.location || record?.city || ''}
+                          defaultValue={formatFieldValue(record?.location || record?.city, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.location || record?.city) ? '' : '-'}
                         />
                       </div>
                     </div>
@@ -2788,8 +2812,9 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Next Action</label>
                         <input
                           type="text"
-                          defaultValue={record?.nextAction || ''}
+                          defaultValue={formatFieldValue(record?.nextAction, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={formatFieldValue(record?.nextAction) ? '' : '-'}
                         />
                       </div>
                       <div>
@@ -2816,9 +2841,9 @@ export function UniversalRecordTemplate({
                     <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                     <textarea
                       rows={8}
-                      defaultValue={record?.notes || ''}
+                      defaultValue={formatFieldValue(record?.notes, '')}
                       className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                      placeholder="Add your notes here..."
+                      placeholder={formatFieldValue(record?.notes) ? '' : '-'}
                     />
                   </div>
 
@@ -2827,9 +2852,9 @@ export function UniversalRecordTemplate({
                     <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
                     <input
                       type="text"
-                      defaultValue={record?.tags?.join(', ') || ''}
+                      defaultValue={formatArrayValue(record?.tags, '')}
                       className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Comma-separated tags"
+                      placeholder={formatArrayValue(record?.tags) ? '' : '-'}
                     />
                   </div>
 
@@ -2838,9 +2863,9 @@ export function UniversalRecordTemplate({
                     <label className="block text-sm font-medium text-gray-700 mb-1">Value Driver</label>
                     <input
                       type="text"
-                      defaultValue={record?.valueDriver || ''}
+                      defaultValue={formatFieldValue(record?.valueDriver, '')}
                       className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="What drives value for this contact"
+                      placeholder={formatFieldValue(record?.valueDriver) ? '' : '-'}
                     />
                   </div>
                 </div>

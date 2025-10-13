@@ -57,48 +57,46 @@ SuspenseLoading['displayName'] = "SuspenseLoading";
 
 function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isPathnameReady, setIsPathnameReady] = React.useState(false);
+  const [isWebsite, setIsWebsite] = React.useState(false);
   
-  // 🔧 FIX: Wait for pathname to be available to prevent black screen flash
+  // 🔧 FIX: Calculate isWebsite only on client to prevent hydration mismatch
   React.useEffect(() => {
     if (pathname) {
-      setIsPathnameReady(true);
+      const websiteCheck = (
+        pathname === "/" ||
+        pathname.startsWith("/website") ||
+        pathname.startsWith("/about") ||
+        pathname.startsWith("/pricing") ||
+        pathname.startsWith("/contact") ||
+        pathname.startsWith("/company") ||
+        pathname.startsWith("/demo") ||
+        pathname.startsWith("/terms") ||
+        pathname.startsWith("/privacy") ||
+        pathname.startsWith("/cookies") ||
+        pathname.startsWith("/auth") ||
+        pathname.startsWith("/platform") ||
+        pathname.startsWith("/monaco") ||
+        pathname.startsWith("/reports") ||
+        pathname.startsWith("/help") ||
+        pathname.startsWith("/support") ||
+        pathname.startsWith("/careers") ||
+        pathname.startsWith("/research") ||
+        pathname.startsWith("/find-your-buyer-group") ||
+        pathname.startsWith("/alternatives") ||
+        pathname.startsWith("/onboarding") ||
+        pathname.startsWith("/documentation") ||
+        pathname.startsWith("/help-center") ||
+        pathname.startsWith("/system-status") ||
+        pathname.startsWith("/paper") ||
+        pathname.startsWith("/oasis") ||
+        pathname.startsWith("/tower") ||
+        pathname.startsWith("/academy") ||
+        pathname.startsWith("/battleground") ||
+        pathname.startsWith("/win")
+      );
+      setIsWebsite(websiteCheck);
     }
   }, [pathname]);
-  
-  // 🔧 FIX: Handle undefined pathname during reload to prevent black screen flash
-  const isWebsite = isPathnameReady && pathname ? (
-    pathname === "/" ||
-    pathname.startsWith("/website") ||
-    pathname.startsWith("/about") ||
-    pathname.startsWith("/pricing") ||
-    pathname.startsWith("/contact") ||
-    pathname.startsWith("/company") ||
-    pathname.startsWith("/demo") ||
-    pathname.startsWith("/terms") ||
-    pathname.startsWith("/privacy") ||
-    pathname.startsWith("/cookies") ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/platform") ||
-    pathname.startsWith("/monaco") ||
-    pathname.startsWith("/reports") ||
-    pathname.startsWith("/help") ||
-    pathname.startsWith("/support") ||
-    pathname.startsWith("/careers") ||
-    pathname.startsWith("/research") ||
-    pathname.startsWith("/find-your-buyer-group") ||
-    pathname.startsWith("/alternatives") ||
-    pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/documentation") ||
-    pathname.startsWith("/help-center") ||
-    pathname.startsWith("/system-status") ||
-    pathname.startsWith("/paper") ||
-    pathname.startsWith("/oasis") ||
-    pathname.startsWith("/tower") ||
-    pathname.startsWith("/academy") ||
-    pathname.startsWith("/battleground") ||
-    pathname.startsWith("/win")
-  ) : false; // Default to false when pathname is not ready (during reload)
 
   // 🔔 Initialize notification service for dock badge functionality
   useEffect(() => {

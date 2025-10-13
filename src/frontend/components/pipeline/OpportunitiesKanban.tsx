@@ -483,8 +483,52 @@ function getProgressColor(progress: number): string {
   return 'bg-gray-400';
 }
 
+// Helper function to calculate timing from nextActionDate
+function getTimingFromDate(nextActionDate?: string): string {
+  if (!nextActionDate) return 'TBD';
+  
+  const actionDate = new Date(nextActionDate);
+  const now = new Date();
+  const daysDiff = Math.ceil((actionDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff < 0) return 'Overdue';
+  if (daysDiff === 0) return 'Today';
+  if (daysDiff === 1) return 'Tomorrow';
+  if (daysDiff <= 7) return 'This Week';
+  if (daysDiff <= 14) return 'Next Week';
+  if (daysDiff <= 30) return 'This Month';
+  return 'Next Month';
+}
+
+// Helper function to get timing color based on nextActionDate
+function getTimingColor(nextActionDate?: string): string {
+  if (!nextActionDate) return 'bg-[var(--hover)] text-gray-800';
+  
+  const actionDate = new Date(nextActionDate);
+  const now = new Date();
+  const daysDiff = Math.ceil((actionDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysDiff < 0) return 'bg-red-100 text-red-800'; // Overdue
+  if (daysDiff === 0) return 'bg-green-100 text-green-800'; // Today
+  if (daysDiff <= 1) return 'bg-yellow-100 text-yellow-800'; // Tomorrow
+  if (daysDiff <= 7) return 'bg-blue-100 text-blue-800'; // This Week
+  if (daysDiff <= 14) return 'bg-purple-100 text-purple-800'; // Next Week
+  return 'bg-[var(--hover)] text-gray-800'; // Default
+}
+
 // Get Next Action for opportunities with proper pill formatting
 function getOpportunityNextAction(opportunity: any): { timing: string; timingColor: string; action: string } {
+  // PRIORITY 1: Use actual nextAction from database if available
+  const actualNextAction = opportunity.nextAction;
+  if (actualNextAction && actualNextAction !== '-' && actualNextAction.trim() !== '') {
+    return {
+      timing: getTimingFromDate(opportunity.nextActionDate),
+      timingColor: getTimingColor(opportunity.nextActionDate),
+      action: actualNextAction
+    };
+  }
+  
+  // FALLBACK: Only use stage-based template when no real data exists
   const stage = opportunity.stage?.toLowerCase().replace(/\s+/g, '-') || '';
   const amount = opportunity.revenue || 0;
   const closeDate = opportunity.expectedCloseDate;

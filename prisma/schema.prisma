@@ -192,7 +192,7 @@ model auth_sessions {
   @@index([workspaceId])
 }
 
-/// Password reset functionality
+/// Password reset and invitation functionality
 model reset_tokens {
   id        String   @id @default(ulid())
   token     String   @unique
@@ -200,6 +200,7 @@ model reset_tokens {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
+  metadata  Json?
   user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
@@ -306,6 +307,10 @@ model companies {
   twitterFollowers       Int?
   twitterUrl             String?          @db.VarChar(500)
   youtubeUrl             String?          @db.VarChar(500)
+  nextActionPriority     String?          @db.VarChar(20)
+  nextActionReasoning    String?
+  nextActionType         String?          @db.VarChar(50)
+  nextActionUpdatedAt    DateTime?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -434,16 +439,17 @@ model people {
   totalExperience      Int?
   yearsAtCompany       Int?
   yearsInRole          Int?
-  
-  // Additional missing fields
-  relationshipWarmth   String?             @db.VarChar(50)
-  decisionPowerScore   Int?                @default(0)
-  yearsExperience      Int?
-  educationLevel       String?             @db.VarChar(100)
-  skills               String?             @db.Text
-  valueDriver          String?             @db.Text
   bestContactTime      String?             @db.VarChar(50)
-  
+  decisionPowerScore   Int?                @default(0)
+  educationLevel       String?             @db.VarChar(100)
+  relationshipWarmth   String?             @db.VarChar(50)
+  skills               String?
+  valueDriver          String?
+  yearsExperience      Int?
+  nextActionPriority   String?             @db.VarChar(20)
+  nextActionReasoning  String?
+  nextActionType       String?             @db.VarChar(50)
+  nextActionUpdatedAt  DateTime?
   actions              actions[]
   company              companies?          @relation(fields: [companyId], references: [id])
   mainSeller           users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])

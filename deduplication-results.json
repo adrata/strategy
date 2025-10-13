@@ -1,0 +1,3606 @@
+{
+  "processed": 399,
+  "merged": 399,
+  "skipped": 0,
+  "errors": [],
+  "mergedCompanies": [
+    {
+      "primaryId": "01K46BXPHWDH5EG940YJ8151JW",
+      "primaryName": "Liberty Title & Escrow Co., LLC",
+      "secondaryId": "01K46C2SVPHG4KM7JVDAEGJB03",
+      "secondaryName": "Liberty Title & Escrow Co., LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D24R7PSHNMN0NYQY6B26F",
+      "primaryName": "Independence Title, Inc.",
+      "secondaryId": "01K46CAGF85WQE2SV2NPBAE682",
+      "secondaryName": "Independence Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D26TK9VAJ8J1KM15C9BQX",
+      "primaryName": "Premier Title Company, Ltd",
+      "secondaryId": "01K46C8BK212F28KDVVGT1JEF5",
+      "secondaryName": "Premier Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D26TK9VAJ8J1KM15C9BQX",
+      "primaryName": "Premier Title Company, Ltd",
+      "secondaryId": "01K46CDCJV986WWC71ADTC58CZ",
+      "secondaryName": "Premier Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D02E22WBXZKYWJJ6YW1K2",
+      "primaryName": "Brightline Title, LLC",
+      "secondaryId": "01K4JPQ653E6YHVZTVXEQMGTSP",
+      "secondaryName": "Brightline Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46CZTQ2VGWEZBEDZSQ0P7A4",
+      "primaryName": "TITLE PARTNERS OF FLORIDA, INC.",
+      "secondaryId": "01K46D0JPK653GCSABRJ1DF7NG",
+      "secondaryName": "TITLE PARTNERS OF FLORIDA, INC.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1B0Y8ADH1HS7CCRXD41D",
+      "primaryName": "Dominion Title Company",
+      "secondaryId": "01K46CWHYW59Z7R46923G85QVM",
+      "secondaryName": "Dominion Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1DWH6CVXXCS5F7R05ZNG",
+      "primaryName": "Capital Abstract & Title Co., LLC",
+      "secondaryId": "01K46C9A5R51Q35HD8BT2SWYY9",
+      "secondaryName": "Capital Abstract & Title Co., LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYVBFQV2NQRA2PKF4XY5Q",
+      "primaryName": "Advantage Title Services, Inc.",
+      "secondaryId": "01K46CK2BERT78FY42K40M0EMH",
+      "secondaryName": "Advantage Title Services",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY8CZ3H8H3AYW25N10T3K",
+      "primaryName": "AMS Title Agency & Escrow, LLC",
+      "secondaryId": "01K4JPQ4063CFYJ7Z99WFJ0J8G",
+      "secondaryName": "AMS Title Agency & Escrow, LLC",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46BZ4TJK8MSGGTTF5RPC6G6",
+      "primaryName": "The Title Team LLC",
+      "secondaryId": "01K46C0F55NS7Y4MV8GHBMBR80",
+      "secondaryName": "The Title Team LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZSBR63G80T6J669RW6K0",
+      "primaryName": "All American Title Company Inc.",
+      "secondaryId": "01K46C5NTN3J35Y1ZETYH0BA28",
+      "secondaryName": "All American Title Company Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0JQYGXD4CPD3B9SD7G77",
+      "primaryName": "First Choice Title & Escrow LLC",
+      "secondaryId": "01K46CFPEXB7KG113GNB8D6DQC",
+      "secondaryName": "First Choice Title & Escrow",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0Q74E0CVQT0Q56V3GJFH",
+      "primaryName": "Heritage Title & Escrow, LLC",
+      "secondaryId": "01K46C29CSE3ESP5S7C7DKN88S",
+      "secondaryName": "Heritage Title & Escrow",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1FPQY4M3GAVJWV77TK4G",
+      "primaryName": "Cosmopolitan Title Agency, LLC",
+      "secondaryId": "01K46C7V9S57K8WXGG6YSK2JBM",
+      "secondaryName": "Cosmopolitan Title Agency, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1MRT871KNNQ3GXRBXY57",
+      "primaryName": "Lakeland Title, LLC",
+      "secondaryId": "01K46CWQ0KBVM0CWJFY9S38RXY",
+      "secondaryName": "Lakeland Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C28S35REMV9T8SZZ1D8QS",
+      "primaryName": "Sutton Land Title Agency LLC",
+      "secondaryId": "01K46C3XR1KQSQ9RQJHAF5HYQY",
+      "secondaryName": "Sutton Land Title Agency",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2HJ66F7R720D3EESBD5N",
+      "primaryName": "Landmark Title Inc",
+      "secondaryId": "01K46C2KJNFZP5H30A48V0761J",
+      "secondaryName": "Landmark Title Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2JYTZPRME6GRNCT0BWD3",
+      "primaryName": "Landmark Title, Inc.",
+      "secondaryId": "01K46C2KJNFZP5H30A48V0761J",
+      "secondaryName": "Landmark Title Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2H8AJCE5460G3KGT37J0",
+      "primaryName": "Landmark Title, LLC",
+      "secondaryId": "01K46C2KJNFZP5H30A48V0761J",
+      "secondaryName": "Landmark Title Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2JYTZPRME6GRNCT0BWD3",
+      "primaryName": "Landmark Title, Inc.",
+      "secondaryId": "01K46C2HJ66F7R720D3EESBD5N",
+      "secondaryName": "Landmark Title Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2H8AJCE5460G3KGT37J0",
+      "primaryName": "Landmark Title, LLC",
+      "secondaryId": "01K46C2HJ66F7R720D3EESBD5N",
+      "secondaryName": "Landmark Title Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2H8AJCE5460G3KGT37J0",
+      "primaryName": "Landmark Title, Inc.",
+      "secondaryId": "01K46C2JYTZPRME6GRNCT0BWD3",
+      "secondaryName": "Landmark Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2ZR0X9C6MRZF194FAEKN",
+      "primaryName": "Priority Title Company",
+      "secondaryId": "01K46C37QG75J0Z8FK9GHWQ1T3",
+      "secondaryName": "Priority Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C314D247ZE7YBJQ80FNGF",
+      "primaryName": "Title Partners, LLC",
+      "secondaryId": "01K46C7X7HNASD5MEN2RT1V055",
+      "secondaryName": "Title Partners, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2YT6MF5GRAJG0QMHYYPD",
+      "primaryName": "True Title Company, LLC",
+      "secondaryId": "01K46CDAPP7NW1JFR4XXQWAXH9",
+      "secondaryName": "True Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2YT6MF5GRAJG0QMHYYPD",
+      "primaryName": "True Title Company, LLC",
+      "secondaryId": "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+      "secondaryName": "True Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2YT6MF5GRAJG0QMHYYPD",
+      "primaryName": "True Title Company, LLC",
+      "secondaryId": "01K46CJ45YQ4G1JPASWT3PNANV",
+      "secondaryName": "True Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3B4ENWM7HJXEH1MG035F",
+      "primaryName": "Title Resources, Inc",
+      "secondaryId": "01K46CGSFXSSYVJEMC9F5HFH8T",
+      "secondaryName": "Title Resources LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3WG11J5P8J7S5KR1SNDA",
+      "primaryName": "Austin Title Company",
+      "secondaryId": "01K46CBATJVA96E4BHHDE97VR7",
+      "secondaryName": "Austin Title Co",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4AE3HZRC0R0EJX1NQJ49",
+      "primaryName": "Meridian Title Corporation",
+      "secondaryId": "01K46CSSYP5HR9PBY23B4WB8PN",
+      "secondaryName": "Meridian Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C47JV0RW5K03R6E6YSZXD",
+      "primaryName": "Progressive Title Corporation",
+      "secondaryId": "01K46C8NX78CBY5K2E0HG2A4EP",
+      "secondaryName": "Progressive Title Corporation",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4RHNC9A6BTNT2RYVND0G",
+      "primaryName": "Star Title Agency LLC",
+      "secondaryId": "01K46C9HFTPVEZAS5Q1HETD9Y2",
+      "secondaryName": "Star Title Agency",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4PNM1T0X3QJQBCVEJ32D",
+      "primaryName": "Trademark Title Inc.",
+      "secondaryId": "01K46C9FH6GNXGYGKD33KBBH4Q",
+      "secondaryName": "Trademark Title Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4BP3W5CVYWZ70STD3SF4",
+      "primaryName": "Heritage Title, Ltd",
+      "secondaryId": "01K46CDKJ6MP9RY491R2337BQV",
+      "secondaryName": "Heritage Title, Ltd",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4BP3W5CVYWZ70STD3SF4",
+      "primaryName": "Heritage Title, Ltd",
+      "secondaryId": "01K46CDWXPMZG35RWP9NR5XR40",
+      "secondaryName": "Heritage Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4R7PDRM03BP98DMT8ZHG",
+      "primaryName": "Southern Title, Inc.",
+      "secondaryId": "01K46CWF0JMKWFV5M2Q3BC1X82",
+      "secondaryName": "Southern Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4D7H7ZDNM9EXSDGQNCNN",
+      "primaryName": "Advantage Title, LLC",
+      "secondaryId": "01K46CS1GPNJ7316R8E81QX42V",
+      "secondaryName": "Advantage Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4WET855FYKRXAA0K912J",
+      "primaryName": "Texas Secure Title Company",
+      "secondaryId": "01K46CG4RKZQJBSAZTXT8477M0",
+      "secondaryName": "Texas Secure Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4YATSPZXWFPETJMHPP18",
+      "primaryName": "Springdale Title, LLC",
+      "secondaryId": "01K46C84YSY70GXHEJ2WF5G7FQ",
+      "secondaryName": "Springdale Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C52TCVR2WXZJWD46C2H08",
+      "primaryName": "Capstone Title LLC",
+      "secondaryId": "01K46CNM5JQDJAGB33ACRPZDWE",
+      "secondaryName": "Capstone Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5K9S68PM7K9WS8GJ1QHC",
+      "primaryName": "Land Services USA, Inc.",
+      "secondaryId": "01K46CCFV8X94FDWJ4W3GJBH2W",
+      "secondaryName": "Land Services USA, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C62M05VXJ37VCC6JG2ET5",
+      "primaryName": "Frontier Title Company, LLC",
+      "secondaryId": "01K46CEY3F5FDBWK0XGWZQTAPR",
+      "secondaryName": "Frontier Title Company, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C64FVFJ1S7METN27X8KMJ",
+      "primaryName": "Crown Title Corporation",
+      "secondaryId": "01K46CX0VVG27S6PPMJQ76YVWR",
+      "secondaryName": "CROWN TITLE, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C680KKYWWGRWV38XMCPZQ",
+      "primaryName": "M&M Title Co.",
+      "secondaryId": "01K46CX8HFK3W9RZYSK2A35D0T",
+      "secondaryName": "M&M Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6FYG2K93FQHVNWEHD5YD",
+      "primaryName": "Quality Title Inc",
+      "secondaryId": "01K46CNBQXWZT7HFXRJ5MGKNFQ",
+      "secondaryName": "Quality Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6WMJKXW8FBXP3FEYW3NB",
+      "primaryName": "Cypress Title Corporation",
+      "secondaryId": "01K46C7XVY0GVCA29KGHPNNBRG",
+      "secondaryName": "Cypress Title LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7GS3QGDMM9X29Z9TP43R",
+      "primaryName": "Accurate Title Company",
+      "secondaryId": "01K46CDBMRNSME1P1W7BFSB7WG",
+      "secondaryName": "Accurate Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7Q034HPS51SWWD6YZ2CZ",
+      "primaryName": "Monarch Title of Texas",
+      "secondaryId": "01K46CGT5R6GBGRYHV3EDVR8ER",
+      "secondaryName": "MONARCH TITLE OF TEXAS",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C803GBHAD8VFF67WKM4XK",
+      "primaryName": "Title One Agency, Inc.",
+      "secondaryId": "01K46CD0QH5XEVYB107GK05VQC",
+      "secondaryName": "Title One Agency",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C883F5ZPR18AY9E3J9V3Z",
+      "primaryName": "Resource Title National Agency, Inc",
+      "secondaryId": "01K46CHBZ9JX15Y4GWKZTBTNFA",
+      "secondaryName": "Resource Title National Agency, Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8PH232CW0N3SF6M89DQK",
+      "primaryName": "Midwest Title LLC",
+      "secondaryId": "01K46CGW4W4EGHA1B8XG9AHXSP",
+      "secondaryName": "Midwest Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8BK212F28KDVVGT1JEF5",
+      "primaryName": "Premier Title, Inc.",
+      "secondaryId": "01K46CDCJV986WWC71ADTC58CZ",
+      "secondaryName": "Premier Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C95CEWMQVZGT3REQTQRT9",
+      "primaryName": "Assurance Title LLC",
+      "secondaryId": "01K46CX8TN5684N3AR4FQ3A62D",
+      "secondaryName": "Assurance Title Co",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8SS0ZKDFR3F0RYV3N139",
+      "primaryName": "Sentinel Title Company",
+      "secondaryId": "01K46CN0VT5PGSQD54640GG93M",
+      "secondaryName": "Sentinel Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9G58MG5G63REW8AC42DD",
+      "primaryName": "Monarch Title Company, Inc.",
+      "secondaryId": "01K46CA2WE9T6CPQ1QNVDN06M6",
+      "secondaryName": "Monarch Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CA0P0SM9DSA2X84X9DHJD",
+      "primaryName": "Kingdom Title Solutions, Inc.",
+      "secondaryId": "01K46CB6NCXBPDQCZN3Y0SXY0J",
+      "secondaryName": "Kingdom Title Solutions",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CA4RXTWJ45MDZ076ZHGDE",
+      "primaryName": "Millennial Title Company",
+      "secondaryId": "01K46CVNW8D1T8BJD46Y5Y001R",
+      "secondaryName": "Millennial Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9YQ5M9PZ15952ZXBWT31",
+      "primaryName": "Attorneys Title Group, LLC",
+      "secondaryId": "01K46CEDF6BYSGJG2X7E12NE4P",
+      "secondaryName": "Attorneys Title Group, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CA7REYMQ1KRJ1HNQAZKFJ",
+      "primaryName": "Us Title Llc",
+      "secondaryId": "01K46CXCG36RSXE1RY4MWMPHBK",
+      "secondaryName": "Us Title Llc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CB1YNDHNJ2N5HSXKTEPQ1",
+      "primaryName": "Prominent Title Agency, LLC",
+      "secondaryId": "01K46CEG12B7RAT2FBXAMM8XQ2",
+      "secondaryName": "Prominent Title Agency",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CB53EZ3PKD2XWK1BYRR8W",
+      "primaryName": "Executive Title LLC",
+      "secondaryId": "01K46CR5RGMG32R13PT2VT6DFF",
+      "secondaryName": "Executive Title LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CB8YFGBHR8TB3T2T18NF5",
+      "primaryName": "Vista Title Company",
+      "secondaryId": "01K46CPKYMTDPJXQR1RAVAE16P",
+      "secondaryName": "Vista Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBRS868XQQB442RF9HS13",
+      "primaryName": "Preferred Title, LLC",
+      "secondaryId": "01K46CKQS431XYEH9HGNGPWW3V",
+      "secondaryName": "Preferred Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCXWS35BNPYG0GTDFH8YS",
+      "primaryName": "Trust Title Company",
+      "secondaryId": "01K46CN6V8H2PT8QF7KNN4DZ2R",
+      "secondaryName": "Trust Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDKJ6MP9RY491R2337BQV",
+      "primaryName": "Heritage Title, Ltd",
+      "secondaryId": "01K46CDWXPMZG35RWP9NR5XR40",
+      "secondaryName": "Heritage Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDAPP7NW1JFR4XXQWAXH9",
+      "primaryName": "True Title, Inc.",
+      "secondaryId": "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+      "secondaryName": "True Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDAPP7NW1JFR4XXQWAXH9",
+      "primaryName": "True Title, Inc.",
+      "secondaryId": "01K46CJ45YQ4G1JPASWT3PNANV",
+      "secondaryName": "True Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDYFQQ3C24KDXPA2T5NPC",
+      "primaryName": "Lone Star Abstract & Title Co., Inc.",
+      "secondaryId": "01K46CS36AVF1P00BQEG620BY3",
+      "secondaryName": "Lone Star Abstract & Title Co Inc",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CE73D4671AJWJ16WRDE4D",
+      "primaryName": "Hogan Land Title Company",
+      "secondaryId": "01K46CMVSK1PTA8NK2PZMPFDBQ",
+      "secondaryName": "Hogan Land Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CEBTF71ZED8XVVGS8YD12",
+      "primaryName": "Abstract Associates of Lancaster, Inc.",
+      "secondaryId": "01K46CHY45F4M40PXW0JG40QY3",
+      "secondaryName": "Abstract Associates Of Lancaster, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CFVTQN33YQZZHK05BN6YW",
+      "primaryName": "Bosse Title Corp",
+      "secondaryId": "01K46CW9PH3W8RA7X0APXMBTZ5",
+      "secondaryName": "Bosse Title Corp",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CFTJHD7ZVR1B6CPCS73MH",
+      "primaryName": "Lawyer's Title of Amarillo",
+      "secondaryId": "01K46CK9RBRWAE0CNV8PVZT0PV",
+      "secondaryName": "Lawyers Title of Amarillo",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGCCW65FC5RQAEF7AQEH7",
+      "primaryName": "Clear Title, LLC",
+      "secondaryId": "01K46CMH3N0SEP1AA5T8W5FEMH",
+      "secondaryName": "Clear Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGCCW65FC5RQAEF7AQEH7",
+      "primaryName": "Clear Title, LLC",
+      "secondaryId": "01K46CQS43A04PF411XB0E18ES",
+      "secondaryName": "Clear Title Co",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46CH6FPCH72XXP01AKPY4DA",
+      "primaryName": "Columbia Title Company",
+      "secondaryId": "01K46CJYS0VWJ1GWQY139N8SMD",
+      "secondaryName": "Columbia Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CHETAF5XE6TAYTH4WNGQ1",
+      "primaryName": "Freedom Title Corporation",
+      "secondaryId": "01K46CNVRXNDW0TBFEKFB29KTN",
+      "secondaryName": "Freedom Title Corporation",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CHETAF5XE6TAYTH4WNGQ1",
+      "primaryName": "Freedom Title Corporation",
+      "secondaryId": "01K46CWDVM4KVAMD7YF80DVA71",
+      "secondaryName": "Freedom Title Co., Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJ2W8TJ249Y2HSAK21WF8",
+      "primaryName": "Northern Title Agency, Inc.",
+      "secondaryId": "01K46CNMSCQG8FTQH89DX55M16",
+      "secondaryName": "Northern Title Agency",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJ0BEGGNQME8ZWS3R82NP",
+      "primaryName": "Superior Title Company, Inc.",
+      "secondaryId": "01K46CREFC0CVP02HX5P64QKJP",
+      "secondaryName": "Superior Title LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJ45YQ4G1JPASWT3PNANV",
+      "primaryName": "True Title, Inc.",
+      "secondaryId": "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+      "secondaryName": "True Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJ9J8ZCXB9DNEXH633B9Q",
+      "primaryName": "Country Home Real Estate, Inc",
+      "secondaryId": "01K46CX2ZRKQCYF46PEEE6MH30",
+      "secondaryName": "Country Home Real Estate",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJNM829HQ52H90NY2D794",
+      "primaryName": "Gulf Coast Title, Inc.",
+      "secondaryId": "01K46CS45HM3N87YSN1X50Z7Y5",
+      "secondaryName": "Gulf Coast Title, LLC.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CKYB22H0DAMVAYRZE87HY",
+      "primaryName": "Colonial Title Inc",
+      "secondaryId": "01K46CMQ2VW9AC1EATGBN0HMQK",
+      "secondaryName": "Colonial Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CMH3N0SEP1AA5T8W5FEMH",
+      "primaryName": "Clear Title Co",
+      "secondaryId": "01K46CQS43A04PF411XB0E18ES",
+      "secondaryName": "Clear Title Co",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CMA26P7VTYE4JAFFD8MY9",
+      "primaryName": "Hometown Title, LLC",
+      "secondaryId": "01K46CNZSNV5AKK9CG3TE425HW",
+      "secondaryName": "Hometown Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CMA26P7VTYE4JAFFD8MY9",
+      "primaryName": "Hometown Title, Inc.",
+      "secondaryId": "01K46CX0JNVF297G5BHD1DEB0T",
+      "secondaryName": "Hometown Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNF50E7W4X0CF92CH3CXM",
+      "primaryName": "Titleworks Inc.",
+      "secondaryId": "01K46CZ1AQPR8233D82JGDE2SD",
+      "secondaryName": "TitleWorks",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNFRRNJTW4440JQMCMEMK",
+      "primaryName": "Lighthouse Title Co.",
+      "secondaryId": "01K46CYZ6YQTF8M0YVAJXRF9Z2",
+      "secondaryName": "Lighthouse Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNYW2GKPZDQV2R8HXF6QW",
+      "primaryName": "Admiral Title, Inc.",
+      "secondaryId": "01K46CR9TGKDE3A1SM89MMC373",
+      "secondaryName": "Admiral Title, LLC",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CP1Q1TP2CEYG8RYG2C1A0",
+      "primaryName": "Gateway Title Inc.",
+      "secondaryId": "01K46CWAVTQY4F35HS29RE1RH3",
+      "secondaryName": "Gateway Title Company",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNVRXNDW0TBFEKFB29KTN",
+      "primaryName": "Freedom Title Corporation",
+      "secondaryId": "01K46CWDVM4KVAMD7YF80DVA71",
+      "secondaryName": "Freedom Title Co., Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNZSNV5AKK9CG3TE425HW",
+      "primaryName": "Hometown Title, Inc.",
+      "secondaryId": "01K46CX0JNVF297G5BHD1DEB0T",
+      "secondaryName": "Hometown Title, Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CP8VXNTT32QHHAG7A45KE",
+      "primaryName": "Lake Title LLC",
+      "secondaryId": "01K46CYWX8APCCZMJ3B2F162MS",
+      "secondaryName": "Lake Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CQJ2DSMDHTB0J95NSNMH2",
+      "primaryName": "Trinity Abstract & Title Company",
+      "secondaryId": "01K46CRG2W99Q84WKV4SVPM5MV",
+      "secondaryName": "Trinity Abstract & Title Co.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CR0N7XK7R3G92T3DSSWG9",
+      "primaryName": "Independence Search & Abstract Co. Inc.",
+      "secondaryId": "01K46C2ERWX059AYN5YR67THM6",
+      "secondaryName": "Independence Search & Abstract Co. Inc.",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRB2DEZ3BTQAH1JG631S9",
+      "primaryName": "IN Title Company",
+      "secondaryId": "01K46CZP7SC9XZJ7AXDD0P7T35",
+      "secondaryName": "In Title",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "primaryName": "Company YAHSPQN5",
+      "secondaryId": "01K7ERXG32ECJM7KB8ZBPJMBVA",
+      "secondaryName": "Company YAHSPQN5",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "primaryName": "Company YAHSPQN5",
+      "secondaryId": "01K7ERXJK7NHVYND3MAX2X8NG4",
+      "secondaryName": "Company YAHSPQN5",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "primaryName": "Company BR9V40HP",
+      "secondaryId": "01K7ERWRM10MX2XMZWKTQQA160",
+      "secondaryName": "Company BR9V40HP",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "primaryName": "Company BR9V40HP",
+      "secondaryId": "01K7ERWRT7JZYZY9VFK3ESAX4X",
+      "secondaryName": "Company BR9V40HP",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K7ERWRM10MX2XMZWKTQQA160",
+      "primaryName": "Company BR9V40HP",
+      "secondaryId": "01K7ERWRT7JZYZY9VFK3ESAX4X",
+      "secondaryName": "Company BR9V40HP",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K7ERXG32ECJM7KB8ZBPJMBVA",
+      "primaryName": "Company YAHSPQN5",
+      "secondaryId": "01K7ERXJK7NHVYND3MAX2X8NG4",
+      "secondaryName": "Company YAHSPQN5",
+      "similarity": 1,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K7ERXGNS16HNH9QV7CKNA12P",
+      "primaryName": "Company JQMQ91P9",
+      "secondaryId": "01K7ERXKFCRSS6J5B8W1NPCF15",
+      "secondaryName": "Company JQMQ91P9",
+      "similarity": 1,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46CMQESRM61D4HDMPATAX4R",
+      "primaryName": "Better Homes and Gardens Real Estate, The Masiello Group",
+      "secondaryId": "01K46CT0BF8WVSJVEG6EGHGZ66",
+      "secondaryName": "Better Homes and Gardens Real Estate, The Masiello Group",
+      "similarity": 0.982,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1Z12QQ7TSB9H7KEXMYQS",
+      "primaryName": "Berkshire Hathaway Home Services Florida Realty",
+      "secondaryId": "01K46D1ZKWVQHACWBAMMW19EJV",
+      "secondaryName": "Berkshire Hathaway HomeServices Florida Realty",
+      "similarity": 0.979,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46CAFDPWQ6Y6QEDB3FYZ1X6",
+      "primaryName": "Howard Hanna Real Estate Services",
+      "secondaryId": "01K46CBC2F42V8E41WY8VSDFWM",
+      "secondaryName": "Howard Hanna Real Estate Services",
+      "similarity": 0.97,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CB4EX0E3YPG9A6PMC363E",
+      "primaryName": "Abstract & Title Company of Mesa County",
+      "secondaryId": "01K46CS5DWR941PN7NNKKQM6YQ",
+      "secondaryName": "Abstract & Title of Mesa County",
+      "similarity": 0.968,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDZDWX793F0QQB08SB3RS",
+      "primaryName": "WEST TEXAS ABSTRACT & TITLE CO. LLC",
+      "secondaryId": "01K46CGVTTJQ5VN8V5866ARB2H",
+      "secondaryName": "WEST TEXAS ABSTRACT & TITLE CO. LLC",
+      "similarity": 0.963,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CEM6S71CC9RAJQQ7X69Q5",
+      "primaryName": "Western Title Company - Lubbock",
+      "secondaryId": "01K46CPDB1PV2KFX6K039BY3PQ",
+      "secondaryName": "Western Title Company Lubbock",
+      "similarity": 0.957,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYPB55XPVWKH4CPWC6E9T",
+      "primaryName": "Comfortable Closings",
+      "secondaryId": "01K7ERX594KQ5SRSE3D6ZFQ6X1",
+      "secondaryName": "Comfortableclosings",
+      "similarity": 0.95,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "primaryName": "AMT Title Services",
+      "secondaryId": "01K46BY9JF8EMATAA7NCC3NPHG",
+      "secondaryName": "AVT Title Services",
+      "similarity": 0.944,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CR342GK4EYKHAYQ7PDZZX",
+      "primaryName": "Professional Title",
+      "secondaryId": "01K7ERWV8WM8Y0J0NXBDGDY4PJ",
+      "secondaryName": "Professionaltitle",
+      "similarity": 0.944,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "AC TITLE SERVICES, LLC",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.941,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1943DYFGCF6T11WVKXAK",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46CPWGHQGVDZE3GSCKCEYYW",
+      "secondaryName": "T.M. Title Services, Inc.",
+      "similarity": 0.941,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGDAVTMBNZP8Z5GKSJ1WS",
+      "primaryName": "Cbus Title Agency",
+      "secondaryId": "01K46CGYASW6MZ0HFB0WZFFP0F",
+      "secondaryName": "CBS Title Agency",
+      "similarity": 0.941,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7522S6A8FQZKYD17N34C",
+      "primaryName": "Prime Settlement Inc",
+      "secondaryId": "01K46CZT45V0WSX7K7E2ADDE79",
+      "secondaryName": "Prime Settlement Inc",
+      "similarity": 0.938,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D00ZESVCTG2ACMVFBN8GG",
+      "primaryName": "Genstone Realty",
+      "secondaryId": "01K7ERX1ZFHM987XQARFRAK2T0",
+      "secondaryName": "Genstonerealty",
+      "similarity": 0.933,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46D20VBWWJ82ZZJCRGSABRN",
+      "primaryName": "Taylor Morrison",
+      "secondaryId": "01K7ERWS15PA99MBKG6SMJTMBW",
+      "secondaryName": "Taylormorrison",
+      "similarity": 0.933,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46C71AXBN9V1ME65WG0H4V8",
+      "primaryName": "Consumer's Title Company",
+      "secondaryId": "01K46CHZ3ASWZ5SV4Q5DGTKQGM",
+      "secondaryName": "Consumer Title",
+      "similarity": 0.933,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D21FGXZNCYTTCMBNXWJR2",
+      "primaryName": "SETCO SERVICES LLC",
+      "secondaryId": "01K7ERWT41JQH59SBHCJFN7PXB",
+      "secondaryName": "Setcoservices",
+      "similarity": 0.929,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D26TK9VAJ8J1KM15C9BQX",
+      "primaryName": "Premier Title Company, Ltd",
+      "secondaryId": "01K46CFNGW1SNNX3R20KGFZ9YA",
+      "secondaryName": "Premiere Title",
+      "similarity": 0.929,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8BK212F28KDVVGT1JEF5",
+      "primaryName": "Premier Title, Inc.",
+      "secondaryId": "01K46CFNGW1SNNX3R20KGFZ9YA",
+      "secondaryName": "Premiere Title",
+      "similarity": 0.929,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDCJV986WWC71ADTC58CZ",
+      "primaryName": "Premier Title, Inc.",
+      "secondaryId": "01K46CFNGW1SNNX3R20KGFZ9YA",
+      "secondaryName": "Premiere Title",
+      "similarity": 0.929,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K7ERTNX9M2E95Y48X9DV1CG1",
+      "primaryName": "TrustPro Title",
+      "secondaryId": "01K7ERWP4QKZTVDS6N40G5KBDV",
+      "secondaryName": "Trustprotitle",
+      "similarity": 0.929,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C6ECTH8Y9J9ZHNRM2D8B5",
+      "primaryName": "SouthCoast Title and Escrow, Inc.",
+      "secondaryId": "01K46CGKRSHFNZE3BHMR146GFK",
+      "secondaryName": "SouthCoast Title and Escrow, Inc.",
+      "similarity": 0.926,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D2AF8VWANEJQWNTKYWVAT",
+      "primaryName": "HomePro Title, Inc",
+      "secondaryId": "01K7ERX0Y6H79Q9AN25J26WTZE",
+      "secondaryName": "Homeprotitle",
+      "similarity": 0.923,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C2TFHXCHP33WY016KDKXV",
+      "primaryName": "Capitol Title",
+      "secondaryId": "01K46CH06TVPEA693FEMDBVHWV",
+      "secondaryName": "Capital Title",
+      "similarity": 0.923,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CZYNB2SV5GZ6F6KGZ54B6",
+      "primaryName": "Armor Title Company, LLC",
+      "secondaryId": "01K46CG00W921MC2J21DVFE49D",
+      "secondaryName": "Armor Title Company, LLC",
+      "similarity": 0.917,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1ZAFFV23DHKZ2JKCSFFX",
+      "primaryName": "Lennar Title",
+      "secondaryId": "01K7ERX025DAD7J0B6BKSME6HZ",
+      "secondaryName": "Lennartitle",
+      "similarity": 0.917,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D0NB4ZJNP3HM348B84NRY",
+      "primaryName": "Title Xperts LLC",
+      "secondaryId": "01K7ERWPV8YV28YKD8TY0803JS",
+      "secondaryName": "Titlexperts",
+      "similarity": 0.917,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46BZWS0PDXC8GPAWB596ED3",
+      "primaryName": "Simply Title",
+      "secondaryId": "01K46CWX3DGW7W2G9GVSB3N3WW",
+      "secondaryName": "Simple Title",
+      "similarity": 0.917,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CSCB3DR7AKDBZGAABZC68",
+      "primaryName": "Heartland Title Services Inc.",
+      "secondaryId": "01K46CV1QTC89FMPHB2MRMVMR5",
+      "secondaryName": "Eastland Title Services Inc",
+      "similarity": 0.917,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K7ERTR56ADJZT85GSBH8CYZ5",
+      "primaryName": "Canyon Title Company",
+      "secondaryId": "01K7ERX7C6R822THX7C85XJ2F1",
+      "secondaryName": "Canyontitle",
+      "similarity": 0.917,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D2FW2H9QSYPR456JVZWK2",
+      "primaryName": "WORLD PROPERTY VENTURES",
+      "secondaryId": "01K7ERWNDGR7F5C03TC70E3VJW",
+      "secondaryName": "Worldpropertyventures",
+      "similarity": 0.913,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46BYSWTBP25Y7Y7ANMSGD5E",
+      "primaryName": "C4 Real Estate Services, LLC",
+      "secondaryId": "01K46CZKHF1Q08HW8FVNFTGXB6",
+      "secondaryName": "MC Real Estate Services",
+      "similarity": 0.913,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZQZXH5N19Z8BXMK9956B",
+      "primaryName": "Majestic Title Services, Inc.",
+      "secondaryId": "01K46CR8WRJW98XF23S5X869EV",
+      "secondaryName": "Majestic Title Services, Inc.",
+      "similarity": 0.913,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CD1Q5J453EGJ0Q3CQZGY9",
+      "primaryName": "Redstone Title Services, LLC",
+      "secondaryId": "01K46CN6HD8N0D2QYANTXHK84M",
+      "secondaryName": "Keystone Title Services",
+      "similarity": 0.913,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCV2AWHD2AK7HJC59QR81",
+      "primaryName": "Act Settlement Services, LLC",
+      "secondaryId": "01K46CETM8141R6D6XD9D5QFW5",
+      "secondaryName": "ABE Settlement Services",
+      "similarity": 0.913,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D0PMN748ZJC8PA65PMRHD",
+      "primaryName": "Southern Capital Title Company, LLc",
+      "secondaryId": "01K7ERWSG4B06AHGATQW6H9PWD",
+      "secondaryName": "Southerncapitaltitle",
+      "similarity": 0.909,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D0SY433EP53YRA9QG9YQW",
+      "primaryName": "Century Title Services, Inc.",
+      "secondaryId": "01K46CSQCHVDGC2EAYRJKJVKB0",
+      "secondaryName": "Century Title Services, Inc.",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D152DCV04AFPN56YSXYHD",
+      "primaryName": "Ticon Title Company",
+      "secondaryId": "01K46C3ZZE8XBX4RG6WCG0HWR9",
+      "secondaryName": "Ticor Title",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYEX50NMB8MCN25XDHHHY",
+      "primaryName": "Alliance Title & Escrow",
+      "secondaryId": "01K46C5HCKC4N5R5T51PS8E256",
+      "secondaryName": "Alliance Title & Escrow",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5HPPDN5E86D96S2H0YJA",
+      "primaryName": "Midwest Title Services",
+      "secondaryId": "01K46CF2XFCB1VMCV2JMXHRWA9",
+      "secondaryName": "Midwest Title Services",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C83M1ZRTK59PQP2HJVGMK",
+      "primaryName": "BELLA TITLE LLC",
+      "secondaryId": "01K46CJHDXXM4JC27DD5DE4332",
+      "secondaryName": "BELLA TITLE LLC",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCHQCGC862B86DQPZ5W43",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CK5A58PGJ1RHPV31SFVH5",
+      "secondaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CHXT8BF4Y65Q6E0687RDX",
+      "primaryName": "Valley Title and Closing Services, LLC",
+      "secondaryId": "01K46CVJ9V637W0CBHTQHR8Q3H",
+      "secondaryName": "Miller Title and Closing Services",
+      "similarity": 0.909,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1P3CER6H68DKQVQNQ6NF",
+      "primaryName": "Bridge Title and Escrow Services",
+      "secondaryId": "01K46CNXADB3K0TC6PMRNT07A2",
+      "secondaryName": "Bridge Title and Escrow Services",
+      "similarity": 0.906,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1NVHTA3MYXF6R6V5CHWT",
+      "primaryName": "Chicago Title Arizona",
+      "secondaryId": "01K7ERX6NWBNYXA3062Z21SAMS",
+      "secondaryName": "Chicagotitlearizona",
+      "similarity": 0.905,
+      "peopleMoved": 3
+    },
+    {
+      "primaryId": "01K46BZT9JWV07F8TKH5YNQDYW",
+      "primaryName": "Standish Title Agency, Inc.",
+      "secondaryId": "01K46CZ7H5TAD441B06NWGBPFB",
+      "secondaryName": "Standish Title Agency, Inc.",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "primaryName": "Encore Title Services, LLC",
+      "secondaryId": "01K46CGCPX82TXPV8CRGV64F7W",
+      "secondaryName": "Core Title Services, LLC",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2FPPBEEBWVPKYA8Q492J",
+      "primaryName": "First Integrity Title Company",
+      "secondaryId": "01K7ERXHS3A3NWDV532EMSM02T",
+      "secondaryName": "Firstintegritytitle",
+      "similarity": 0.905,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C83A7H0XWA04XP73MYHTF",
+      "primaryName": "Reliance Title Agency, LLC",
+      "secondaryId": "01K46C7YFWRVRHE3ZTEHMCWJFC",
+      "secondaryName": "Reliance Title Agency, LLC",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBTN50PTRSJM793EXRT9X",
+      "primaryName": "Green Escrow Services, Inc.",
+      "secondaryId": "01K46CS0HSRTNEZZRGHVMNTE0F",
+      "secondaryName": "Arden Escrow Services",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCQV7FH6RZK2MWG3A1BN8",
+      "primaryName": "Exacta Land Surveyors LLC",
+      "secondaryId": "01K46CQCZH4Y83A35YK7XNXVZT",
+      "secondaryName": "Exacta Land Surveys",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CEFB77H6J6YN08MHZ029R",
+      "primaryName": "Realty Title Services",
+      "secondaryId": "01K46CNZFT2Z518FJ09EGD85DF",
+      "secondaryName": "Real Title Services",
+      "similarity": 0.905,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCMNWYTK290GC2FGNZS3F",
+      "primaryName": "Berkshire Hathaway HomeServices Michigan Real Estate",
+      "secondaryId": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+      "secondaryName": "Berkshire Hathaway HomeServices Vision Real Estate",
+      "similarity": 0.904,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYWTD7944JPVJEGDB5EYV",
+      "primaryName": "All Real Estate Title Solutions, Inc.",
+      "secondaryId": "01K46C4KT2PT6JHF1MCC9Q4752",
+      "secondaryName": "MC Real Estate Title Solutions",
+      "similarity": 0.903,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8Y0AHERS50K7ECKF4WM1",
+      "primaryName": "HomeSale Settlement Services MD",
+      "secondaryId": "01K46CVQ1EPHDG9MPTDBYKF4KE",
+      "secondaryName": "HomeSale Settlement Services MD",
+      "similarity": 0.903,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYF6G1Y08XJ7DSX4C5T6E",
+      "primaryName": "TitleMark LLC",
+      "secondaryId": "01K46CHACVH2Y4NGMND05DW08Y",
+      "secondaryName": "Title Mark",
+      "similarity": 0.9,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2W127NQHPQW043J1HYTH",
+      "primaryName": "Capital Title Insurance Agency",
+      "secondaryId": "01K46CD5BA0WNPDTG20TR1NZ1E",
+      "secondaryName": "Vital Title Insurance Agency",
+      "similarity": 0.9,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CACQDZ7XMHV8JTXYH374T",
+      "primaryName": "Land Title Guarantee Company",
+      "secondaryId": "01K46CSNV50DJBXNH28X9VPT55",
+      "secondaryName": "Land Title Guaranty",
+      "similarity": 0.9,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CK2NPGNWDE1H54Q5D5JM9",
+      "primaryName": "Village Title Agency, Inc",
+      "secondaryId": "01K46CZQP25TG52VV4TXB0XQ6C",
+      "secondaryName": "Vintage Title Agency",
+      "similarity": 0.9,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRDVK18QTDW52C4M80944",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CWR5TTYTZE7X9HX2K71JX",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.9,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CPKAJ8KG70R656G3QDFBP",
+      "primaryName": "Benton County Abstract & Title Co.",
+      "secondaryId": "01K46CPZQF51MB050SQS9W9GDP",
+      "secondaryName": "Benton County Abstract & Title Co.",
+      "similarity": 0.897,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CWF9SM6Q3WV0J2NW82M1Z",
+      "primaryName": "Title Services of Blue Valley",
+      "secondaryId": "01K7ERTPBRB9A2376H4THWE4F9",
+      "secondaryName": "Title Services Of The Valley",
+      "similarity": 0.897,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46BXTETZS2CQ5GHJMTHC8DV",
+      "primaryName": "Janus Title Agency, LLC",
+      "secondaryId": "01K46C994XNB2GMKP9CDPS6S42",
+      "secondaryName": "Janus Title Agency, LLC",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1463ER6V47RA6CQPRSA6",
+      "primaryName": "Vital Title & Escrow",
+      "secondaryId": "01K46C4CKV2XPNQTFBD4RYKA6Y",
+      "secondaryName": "Vista Title & Escrow",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZNG4EYGCRWVJYJDW1SYD",
+      "primaryName": "Entrust Title Group",
+      "secondaryId": "01K46CDPFSB2R5TRCZNZE11NBJ",
+      "secondaryName": "Entrust Title Group",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "primaryName": "Acme Title Services LLC",
+      "secondaryId": "01K46CQH4A8TD8GCV50XBF272M",
+      "secondaryName": "Acme Title Services LLC",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C52FM7ZSENEGVBZ5C1W83",
+      "primaryName": "Icon Title Agency LLC",
+      "secondaryId": "01K46CD94GKYF38GZ1AAXPX7VR",
+      "secondaryName": "Icon Title Agency LLC",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C52FM7ZSENEGVBZ5C1W83",
+      "primaryName": "Icon Title Agency LLC",
+      "secondaryId": "01K46CQRD7RA6E20HRRHE4RMM2",
+      "secondaryName": "Sonic Title Agency",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C50K74T87TTBZ3CYS10E4",
+      "primaryName": "Team Title Services",
+      "secondaryId": "01K46CNZFT2Z518FJ09EGD85DF",
+      "secondaryName": "Real Title Services",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C50K74T87TTBZ3CYS10E4",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46CPWGHQGVDZE3GSCKCEYYW",
+      "secondaryName": "T.M. Title Services, Inc.",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5KKSFXX4F06JS96RC23S",
+      "primaryName": "RL Title and Escrow, Inc.",
+      "secondaryId": "01K46CWHNKG1K93N0YKBJ56DVT",
+      "secondaryName": "RL Title and Escrow, Inc.",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7EWRR0HW62QFGDTYCPW2",
+      "primaryName": "Access Title Agency",
+      "secondaryId": "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+      "secondaryName": "ACES Title Agency",
+      "similarity": 0.895,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46CQH4A8TD8GCV50XBF272M",
+      "primaryName": "Acme Title Services LLC",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.895,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K4JPQ5JCS7TQ0KT14C93YFWB",
+      "primaryName": "BHHS Florida Realty",
+      "secondaryId": "01K7ERX8WMPRNNKMWXZ7RA5XGM",
+      "secondaryName": "Bhhsfloridarealty",
+      "similarity": 0.895,
+      "peopleMoved": 4
+    },
+    {
+      "primaryId": "01K46C2G0Q3T126P5BWBR48A77",
+      "primaryName": "Union Title Insurance Agency, LLC",
+      "secondaryId": "01K46CRR7GP9G0TH5TZXKERC2C",
+      "secondaryName": "Union Title Insurance Agency, LLC",
+      "similarity": 0.893,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CE7DB79B2DPVK0CHC591T",
+      "primaryName": "Edina Realty 50th and France",
+      "secondaryId": "01K46CH3BVYF48BRTV3CEAW44G",
+      "secondaryName": "Edina Realty 50th and France",
+      "similarity": 0.893,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYDDWNBAMR3PS5RRY95V6",
+      "primaryName": "The Closing Signing Service",
+      "secondaryId": "01K7ERXAH7SKMBH437HZ70XM7Q",
+      "secondaryName": "Theclosingsigningservice",
+      "similarity": 0.889,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46BYK47M0XCQQ9RH5CNQC2D",
+      "primaryName": "Next Deal",
+      "secondaryId": "01K46BZ183A3B5MKQFJ30D2691",
+      "secondaryName": "Next Deal",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "Acme Title Services LLC",
+      "secondaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "secondaryName": "Acme Title Services LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "Acme Title Services LLC",
+      "secondaryId": "01K46BY9JF8EMATAA7NCC3NPHG",
+      "secondaryName": "AVT Title Services",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CRDVK18QTDW52C4M80944",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY994DEFVR6EQ8HSSM9C0",
+      "primaryName": "ATR Title, LLC",
+      "secondaryId": "01K46C0QH1RKDRWFCACNA4RWMC",
+      "secondaryName": "RTR TITLE",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZRBYA920M83AYYWN9QBM",
+      "primaryName": "FL Title & Escrow Co",
+      "secondaryId": "01K46CQWHVWPER5XBSEE1M37TR",
+      "secondaryName": "Flow Title & Escrow",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1943DYFGCF6T11WVKXAK",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "secondaryName": "Acme Title Services LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4B23DY7BWQ0HDDFXBK5H",
+      "primaryName": "RGS Title, LLC",
+      "secondaryId": "01K46CHSDT8Z5M136W0JP82FHX",
+      "secondaryName": "RG Title",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46CPWGHQGVDZE3GSCKCEYYW",
+      "secondaryName": "T.M. Title Services, Inc.",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46CRDVK18QTDW52C4M80944",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C486NEKWSAPE13QBTT6T9",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8KP22AX35AG6MF3ZF2ST",
+      "primaryName": "CHB Title, LLC",
+      "secondaryId": "01K46CMSY7PPF1AZAZR6WFGQA8",
+      "secondaryName": "CHB Title, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C92FESHCW5HHDKNZM0D0T",
+      "primaryName": "Benton County Abstract & Title Co.",
+      "secondaryId": "01K46CPKAJ8KG70R656G3QDFBP",
+      "secondaryName": "Benton County Abstract & Title Co.",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9R4TNFQ1K7BZ0M7XEAT9",
+      "primaryName": "Fidelity National Title - National Commercial Services | New York",
+      "secondaryId": "01K46CXFSJ8GNBVTE62EPNKP16",
+      "secondaryName": "Fidelity National Title - National Commercial Services | DC & VA",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY9JF8EMATAA7NCC3NPHG",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CRDVK18QTDW52C4M80944",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY9JF8EMATAA7NCC3NPHG",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CAZ2X67SRDBG01HMT3Q63",
+      "primaryName": "USA National Title",
+      "secondaryId": "01K46BY1W9MAA25D5E2F04RS11",
+      "secondaryName": "1st National Title",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBV9CNJCKJ53TPNAZ2SGQ",
+      "primaryName": "CF Escrow, Inc.",
+      "secondaryId": "01K46CZ1XATNXZTTZC8E194ZF0",
+      "secondaryName": "CF Escrow, Inc.",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CQ3F6G5F0MQA9F235NZ9K",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CRDVK18QTDW52C4M80944",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRDVK18QTDW52C4M80944",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CSTW9KKQWQFRYKNV03Y7C",
+      "primaryName": "North Hills Escrow Corp.",
+      "secondaryId": "01K46CYW1CJD2PMH1H36TF9P4V",
+      "secondaryName": "North Hills Escrow Corp.",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CWFK3SDWMDX0KN26RGT2R",
+      "primaryName": "Hayes Title Agency",
+      "secondaryId": "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+      "secondaryName": "ACES Title Agency",
+      "similarity": 0.889,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K4JPQ4JX3YZ30AA6X7QRHRNN",
+      "primaryName": "Sky Title, LLC",
+      "secondaryId": "01K7ERXB9E1TQ5MGBG4VKHKQ00",
+      "secondaryName": "Skytitle",
+      "similarity": 0.889,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D29VHYADPR7Z2Q2D8R26K",
+      "primaryName": "Title & Abstract Agency of America, Inc.",
+      "secondaryId": "01K7ERTPKQKWGMANQPPP9S4Y1X",
+      "secondaryName": "Title and abstract agency of americ",
+      "similarity": 0.886,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C34X5TJ52CBN11FP3GYNR",
+      "primaryName": "Coldwell Banker Sneller Real Estate",
+      "secondaryId": "01K46CCW0N2XGS3V8EDBGPY1R2",
+      "secondaryName": "Coldwell Banker Sneller Real Estate",
+      "similarity": 0.886,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3575HMG3KB5F40R56VYV",
+      "primaryName": "Legacy Settlement Services, LLC",
+      "secondaryId": "01K46CWWGVVP5D12ZPGBY2G9RG",
+      "secondaryName": "Leap Settlement Services",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCM9WKMBREBD2QBSKSAEP",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CCHQCGC862B86DQPZ5W43",
+      "secondaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCM9WKMBREBD2QBSKSAEP",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+      "secondaryName": "Berkshire Hathaway HomeServices Vision Real Estate",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCM9WKMBREBD2QBSKSAEP",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CQ8W3AB0THNGAP6NMRJV2",
+      "secondaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDY5PKVB2AVQF7BWWHHFV",
+      "primaryName": "Keymax Settlement Services, LLC",
+      "secondaryId": "01K46CSPRTKAAMB41QX8BHA5F9",
+      "secondaryName": "Key Settlement Services",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CFV6KN1QSPWDGBJ4QDYQ0",
+      "primaryName": "All Real Estate Solutions, LLC.",
+      "secondaryId": "01K46CHEGCT69WE5ZHZHDX2EWJ",
+      "secondaryName": "All Real Estate Solutions, LLC.",
+      "similarity": 0.885,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BXXP67DA3TBC16CJKWJ5N",
+      "primaryName": "Navi Title Agency",
+      "secondaryId": "01K46CD3PVZ3AESF4GYJQXMSPH",
+      "secondaryName": "Nova Title Agency",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY9VTK0FN51MF5G4J40JY",
+      "primaryName": "Park Square Homes",
+      "secondaryId": "01K7ERWXKHPYV417MVDPRY4SKS",
+      "secondaryName": "Parksquarehomes",
+      "similarity": 0.882,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46C1943DYFGCF6T11WVKXAK",
+      "secondaryName": "T.M. Title Services, Inc.",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY54PHF8ABXXHB253MR62",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CPWGHQGVDZE3GSCKCEYYW",
+      "secondaryName": "T.M. Title Services, Inc.",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D0XWAPERK5WXETRBZA0QR",
+      "primaryName": "Old Florida Title",
+      "secondaryId": "01K46BZH1R2HY08G56JCY3DBVS",
+      "secondaryName": "All Florida Title",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZD0SJ9750364SMKN23JG",
+      "primaryName": "Mid-American Title Company",
+      "secondaryId": "01K46CM09DVHZFVZZCATJYW6F8",
+      "secondaryName": "Mid-American Title Company",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZRBYA920M83AYYWN9QBM",
+      "primaryName": "C.L.A. Title & Escrow",
+      "secondaryId": "01K46C4G8750D4P99004TB53MW",
+      "secondaryName": "C.L.A. Title & Escrow",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C06EDG6P20TT6QVDHW8BT",
+      "primaryName": "Star Title Agency LLC",
+      "secondaryId": "01K46C4RHNC9A6BTNT2RYVND0G",
+      "secondaryName": "Star Title Agency LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C06EDG6P20TT6QVDHW8BT",
+      "primaryName": "Star Title Agency LLC",
+      "secondaryId": "01K46C9HFTPVEZAS5Q1HETD9Y2",
+      "secondaryName": "Star Title Agency",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C06EDG6P20TT6QVDHW8BT",
+      "primaryName": "ASAP Title Agency, LLC",
+      "secondaryId": "01K46BY8ZRVZBK8GC40QABQ7GK",
+      "secondaryName": "ASAP Title Agency, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1943DYFGCF6T11WVKXAK",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4Q9F1250CWSVDE5717DF",
+      "primaryName": "NRG Land Services, LLC",
+      "secondaryId": "01K46CCC2VD1F609KD70JVH5FG",
+      "secondaryName": "NRG Land Services, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCC2VD1F609KD70JVH5FG",
+      "primaryName": "NRG Land Services, LLC",
+      "secondaryId": "01K46CQFJM0WDKDWYCHGDDHW00",
+      "secondaryName": "NSI Land Services, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CD6A84VQ3Y174SKGAQWDN",
+      "primaryName": "Traditional Title Company, LLC",
+      "secondaryId": "01K46CM774RRJTMW85HA8NENHD",
+      "secondaryName": "Traditional Title Company, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGYASW6MZ0HFB0WZFFP0F",
+      "primaryName": "ACES Title Agency",
+      "secondaryId": "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+      "secondaryName": "ACES Title Agency",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CPWGHQGVDZE3GSCKCEYYW",
+      "primaryName": "T.M. Title Services, Inc.",
+      "secondaryId": "01K46BY6A7J2FJHTCJ30HQWQ11",
+      "secondaryName": "AC TITLE SERVICES, LLC",
+      "similarity": 0.882,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K4JPQB6AF36C0Q2CQD69WRA8",
+      "primaryName": "The Closing Agent, Inc.",
+      "secondaryId": "01K7ERWRDQ0WJ6RA7Z51N1FH3Y",
+      "secondaryName": "Theclosingagent",
+      "similarity": 0.882,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46C3P77AWJ6PYVVEP0MRGEM",
+      "primaryName": "All Real Estate Solutions, LLC.",
+      "secondaryId": "01K46CHEGCT69WE5ZHZHDX2EWJ",
+      "secondaryName": "All Real Estate Solutions, LLC.",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3P77AWJ6PYVVEP0MRGEM",
+      "primaryName": "All Real Estate Solutions, LLC.",
+      "secondaryId": "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+      "secondaryName": "HER Real Estate Solutions",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCHQCGC862B86DQPZ5W43",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+      "secondaryName": "Berkshire Hathaway HomeServices Vision Real Estate",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCHQCGC862B86DQPZ5W43",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CKNG2PDPR4HDXSRKXPJZJ",
+      "secondaryName": "Berkshire Hathaway HomeServices Crest Real Estate",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+      "primaryName": "Berkshire Hathaway HomeServices Vision Real Estate",
+      "secondaryId": "01K46CKNG2PDPR4HDXSRKXPJZJ",
+      "secondaryName": "Berkshire Hathaway HomeServices Crest Real Estate",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CHEGCT69WE5ZHZHDX2EWJ",
+      "primaryName": "All Real Estate Solutions, LLC.",
+      "secondaryId": "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+      "secondaryName": "HER Real Estate Solutions",
+      "similarity": 0.88,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY102M17PNV3P004BS73F",
+      "primaryName": "REAL RES",
+      "secondaryId": "01K7ERXC1AR5JPKF3S7K1NJNZE",
+      "secondaryName": "Realres",
+      "similarity": 0.875,
+      "peopleMoved": 2
+    },
+    {
+      "primaryId": "01K46D1ZKWVQHACWBAMMW19EJV",
+      "primaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "secondaryId": "01K46C6CV7Q0A3A5D9B8JPNPNP",
+      "secondaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1BWW2PT4M2YS0VGFAH4G",
+      "primaryName": "Trinity Abstract & Title Company",
+      "secondaryId": "01K46CQJ2DSMDHTB0J95NSNMH2",
+      "secondaryName": "Trinity Abstract & Title Company",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1BWW2PT4M2YS0VGFAH4G",
+      "primaryName": "Trinity Abstract & Title Company",
+      "secondaryId": "01K46CRG2W99Q84WKV4SVPM5MV",
+      "secondaryName": "Trinity Abstract & Title Co.",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZB0AADV6M8AJVMXKETZK",
+      "primaryName": "Magic City Title",
+      "secondaryId": "01K46CHMPP6SV79JK3XF42D3SY",
+      "secondaryName": "Music City Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0J42D1BDAPK23FJJBXQ4",
+      "primaryName": "JGE Realty Group",
+      "secondaryId": "01K46CW2BQG9KR0VXRVDA95BDT",
+      "secondaryName": "JDR Realty Group",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0P5FNYGN9W95DP6RZB03",
+      "primaryName": "G&G Title Agency Inc.",
+      "secondaryId": "01K46CFJA88CSY09SAVF0HCGA9",
+      "secondaryName": "DRG Title Agency",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0S31HP8CGB6ZBZZ0S3AF",
+      "primaryName": "Providence Title",
+      "secondaryId": "01K46CEX4GF1FCM1MBVANQRR4W",
+      "secondaryName": "Providence Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2S5C4G341X5Y5EWR7SWA",
+      "primaryName": "Midland Title and Escrow, Ltd.",
+      "secondaryId": "01K46C62XW3GVPX18T38SGSZSH",
+      "secondaryName": "Land Title and Escrow Company",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2S5C4G341X5Y5EWR7SWA",
+      "primaryName": "Midland Title and Escrow, Ltd.",
+      "secondaryId": "01K46CJ0NEY7H10BVBTNCSS509",
+      "secondaryName": "Midland Title & Escrow",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2K8P8F55VDWZSYY88S2P",
+      "primaryName": "Landmark Title Services, Inc.",
+      "secondaryId": "01K46CW58EAMN0W3E52HYV0KE7",
+      "secondaryName": "Landguard Title Services",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3BECMEBYN18ZWX66XDW7",
+      "primaryName": "Universal Field Services, Inc.",
+      "secondaryId": "01K46CFTWGJGR64T0WWATF4GZY",
+      "secondaryName": "Universal Title Services, LLC",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C49TC3Y0C9FJ3HB6TQETA",
+      "primaryName": "Alliance Title Corporation",
+      "secondaryId": "01K46CCZSQS39GSRW04SC3RF2D",
+      "secondaryName": "Alliance Title Corporation",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C4YYWMMXNPN9ZHHVV1QBD",
+      "primaryName": "PIQ NATIONAL SETTLEMENT SERVICES INC.",
+      "secondaryId": "01K46CD86JF1EDFJX2AFYX891W",
+      "secondaryName": "PIQ NATIONAL SETTLEMENT SERVICES INC.",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C680KKYWWGRWV38XMCPZQ",
+      "primaryName": "M&M Title Co.",
+      "secondaryId": "01K46C9CQMYQTDN2071ENSHWJW",
+      "secondaryName": "FM Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C680KKYWWGRWV38XMCPZQ",
+      "primaryName": "PM Title, LLC",
+      "secondaryId": "01K46CEXEK1D7RMCCS4FY2733J",
+      "secondaryName": "PM Title, LLC",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C680KKYWWGRWV38XMCPZQ",
+      "primaryName": "PM Title, LLC",
+      "secondaryId": "01K46CGQVNGXNBM1EWFZPB4DDZ",
+      "secondaryName": "ME Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5X72VKQTEQC2AWP1XPD7",
+      "primaryName": "Home Real Estate",
+      "secondaryId": "01K46CXBXJCSPVJQ05E6NDXD0H",
+      "secondaryName": "HCM Real Estate",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6S6PKJK4W73JKQ37W929",
+      "primaryName": "Capital Title & Escrow, LLC",
+      "secondaryId": "01K46CCX8RYAQADD0H501M49W4",
+      "secondaryName": "Capital Title & Escrow, LLC",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7N435CJWRRRQPTYZX5F9",
+      "primaryName": "Home Title Group, Inc.",
+      "secondaryId": "01K46CCWYSHYB3T3RKB9S2MGNZ",
+      "secondaryName": "Home Title Group, Inc.",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C81R2DRNJDW0XSYJ49B7H",
+      "primaryName": "Legal Land Title Company",
+      "secondaryId": "01K46CFHC5PKKR5MZ5PK6GG31H",
+      "secondaryName": "Legal Land Title Company",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8KP22AX35AG6MF3ZF2ST",
+      "primaryName": "CHB Title, LLC",
+      "secondaryId": "01K46CFBBSWPJAW50DZ2RQH93A",
+      "secondaryName": "DB Title, LLC",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9CQMYQTDN2071ENSHWJW",
+      "primaryName": "PM Title, LLC",
+      "secondaryId": "01K46CEXEK1D7RMCCS4FY2733J",
+      "secondaryName": "PM Title, LLC",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9CQMYQTDN2071ENSHWJW",
+      "primaryName": "PM Title, LLC",
+      "secondaryId": "01K46CX8HFK3W9RZYSK2A35D0T",
+      "secondaryName": "M&M Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CEXEK1D7RMCCS4FY2733J",
+      "primaryName": "PM Title, LLC",
+      "secondaryId": "01K46CX8HFK3W9RZYSK2A35D0T",
+      "secondaryName": "M&M Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CFWGZVY826V65YKZ0RSSM",
+      "primaryName": "Palm West Escrow",
+      "secondaryId": "01K46CV1592NZ0VRW0PVFRS9EF",
+      "secondaryName": "Palm West Escrow",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGQVNGXNBM1EWFZPB4DDZ",
+      "primaryName": "M&M Title",
+      "secondaryId": "01K46CX8HFK3W9RZYSK2A35D0T",
+      "secondaryName": "M&M Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CMV5VG50566TNHD45C7J5",
+      "primaryName": "Pennington Title",
+      "secondaryId": "01K46CVSPDZ1Z9J2TNCW0JX6NS",
+      "secondaryName": "Kensington Title",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CSPRTKAAMB41QX8BHA5F9",
+      "primaryName": "Leap Settlement Services",
+      "secondaryId": "01K46CWWGVVP5D12ZPGBY2G9RG",
+      "secondaryName": "Leap Settlement Services",
+      "similarity": 0.875,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CQ6BPY7SJ284SZP8D6YKG",
+      "primaryName": "CHASE TITLE AND ESCROW SERVICES, LLC",
+      "secondaryId": "01K46CWG5QFCG5WP1J4S5WKRZQ",
+      "secondaryName": "CHASE TITLE AND ESCROW SERVICES, LLC",
+      "similarity": 0.871,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D17D75CGQ36RT4CKEVM24",
+      "primaryName": "Capital Title Solutions",
+      "secondaryId": "01K46D1J496KMZNZD0THZFW1BZ",
+      "secondaryName": "Digital Title Solutions",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1T1CN7774EZBCR6EWCRR",
+      "primaryName": "Legacy Title & Escrow, LLC",
+      "secondaryId": "01K46CJRTTJBSG5T856XVC090D",
+      "secondaryName": "Legacy Title & Escrow, LLC",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C54DKH9N102N619SRD1FK",
+      "primaryName": "H&H Settlement Services, LLC",
+      "secondaryId": "01K46CCV2AWHD2AK7HJC59QR81",
+      "secondaryName": "Act Settlement Services, LLC",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C54DKH9N102N619SRD1FK",
+      "primaryName": "H&H Settlement Services, LLC",
+      "secondaryId": "01K46CETM8141R6D6XD9D5QFW5",
+      "secondaryName": "ABE Settlement Services",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C54DKH9N102N619SRD1FK",
+      "primaryName": "H&H Settlement Services, LLC",
+      "secondaryId": "01K46CSPRTKAAMB41QX8BHA5F9",
+      "secondaryName": "Leap Settlement Services",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCV2AWHD2AK7HJC59QR81",
+      "primaryName": "Act Settlement Services, LLC",
+      "secondaryId": "01K46CSPRTKAAMB41QX8BHA5F9",
+      "secondaryName": "Leap Settlement Services",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CETM8141R6D6XD9D5QFW5",
+      "primaryName": "Leap Settlement Services",
+      "secondaryId": "01K46CSPRTKAAMB41QX8BHA5F9",
+      "secondaryName": "Leap Settlement Services",
+      "similarity": 0.87,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0S31HP8CGB6ZBZZ0S3AF",
+      "primaryName": "Providence Title",
+      "secondaryId": "01K46CD9REEX5TP8NJHPEEREDP",
+      "secondaryName": "Prominent Title",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C13HK1FV1E6MDRG7XTSAQ",
+      "primaryName": "EASTLAND TITLE COMPANY",
+      "secondaryId": "01K46CGXPSJ1EQ6KJYVC0RMG71",
+      "secondaryName": "EASTLAND TITLE COMPANY",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C13VFWVNCTKETN7VFT109",
+      "primaryName": "Northeast Title Company",
+      "secondaryId": "01K46CRARGFVTBNN5GHJS9EXEH",
+      "secondaryName": "Northeast Title Company",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1AC0YMH71C0Y44X8T8KH",
+      "primaryName": "Legal Land Title Company",
+      "secondaryId": "01K46C81R2DRNJDW0XSYJ49B7H",
+      "secondaryName": "Legal Land Title Company",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY7677ZH3P4RKNFXFG4D1",
+      "primaryName": "Ark Title Group, LLC",
+      "secondaryId": "01K46C8AA0X63P82RKMXM3RWKP",
+      "secondaryName": "Ark Title Group, LLC",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C41MYD7HBRQWYKGY7SAC0",
+      "primaryName": "Northeast Title Company",
+      "secondaryId": "01K46CRARGFVTBNN5GHJS9EXEH",
+      "secondaryName": "Northeast Title Company",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C45PE8GBSK7HX56TF9VTF",
+      "primaryName": "eTITLE Agency, Inc.",
+      "secondaryId": "01K46C60E9TKV5FGJG5NBCYCRA",
+      "secondaryName": "WebTitle Agency",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C45PE8GBSK7HX56TF9VTF",
+      "primaryName": "BesTitle Agency, Inc.",
+      "secondaryId": "01K46CCS33D723EJA7P7HH2QNB",
+      "secondaryName": "BesTitle Agency, Inc.",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5ETF41XKMT84E3ZHPQJR",
+      "primaryName": "Title Guarantee",
+      "secondaryId": "01K46CE01V40EQ5PTEQXZP5BS3",
+      "secondaryName": "Title Guarantee",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C60E9TKV5FGJG5NBCYCRA",
+      "primaryName": "BesTitle Agency, Inc.",
+      "secondaryId": "01K46CCS33D723EJA7P7HH2QNB",
+      "secondaryName": "BesTitle Agency, Inc.",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8AA0X63P82RKMXM3RWKP",
+      "primaryName": "Ark Title Group, LLC",
+      "secondaryId": "01K46CEJAGKWVT4F9XJABFEWBN",
+      "secondaryName": "BR Title Group",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8AA0X63P82RKMXM3RWKP",
+      "primaryName": "PRO TITLE GROUP, INC.",
+      "secondaryId": "01K46CH0TVVYFGCHAB831HV3H7",
+      "secondaryName": "PRO TITLE GROUP, INC.",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CEJAGKWVT4F9XJABFEWBN",
+      "primaryName": "PRO TITLE GROUP, INC.",
+      "secondaryId": "01K46CH0TVVYFGCHAB831HV3H7",
+      "secondaryName": "PRO TITLE GROUP, INC.",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CFMJR1V49RAE14Y56XR4H",
+      "primaryName": "Wasatch Title Insurance Agency, LLC",
+      "secondaryId": "01K46CQQFHXQMX2CBH311VA8ST",
+      "secondaryName": "COACH TITLE INSURANCE AGENCY",
+      "similarity": 0.867,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCM9WKMBREBD2QBSKSAEP",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CCMNWYTK290GC2FGNZS3F",
+      "secondaryName": "Berkshire Hathaway HomeServices Michigan Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCMNWYTK290GC2FGNZS3F",
+      "primaryName": "Berkshire Hathaway HomeServices Michigan Real Estate",
+      "secondaryId": "01K46CKNG2PDPR4HDXSRKXPJZJ",
+      "secondaryName": "Berkshire Hathaway HomeServices Crest Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCMNWYTK290GC2FGNZS3F",
+      "primaryName": "Berkshire Hathaway HomeServices Michigan Real Estate",
+      "secondaryId": "01K46CQ8W3AB0THNGAP6NMRJV2",
+      "secondaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCHQCGC862B86DQPZ5W43",
+      "primaryName": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+      "secondaryId": "01K46CQ8W3AB0THNGAP6NMRJV2",
+      "secondaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+      "primaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "secondaryId": "01K46CQ8W3AB0THNGAP6NMRJV2",
+      "secondaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CKNG2PDPR4HDXSRKXPJZJ",
+      "primaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "secondaryId": "01K46CQ8W3AB0THNGAP6NMRJV2",
+      "secondaryName": "Berkshire Hathaway HomeServices Heritage Real Estate",
+      "similarity": 0.865,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1Y5058ZQC53P3CVMFHV1",
+      "primaryName": "Anclote Title Services, Inc",
+      "secondaryId": "01K46C1WYDKEW3HEDB6BQ6GCWC",
+      "secondaryName": "Anclote Title Services, Inc",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D238XFXV7RBGMZX5SJPB9",
+      "primaryName": "Global Title Solutions",
+      "secondaryId": "01K46C64SSXZH23RNMF6NK8EBK",
+      "secondaryName": "Global Title Solutions",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BXP8BQF1368ZW4HPQS8J4",
+      "primaryName": "Cadence Title Services",
+      "secondaryId": "01K46C6Q6Q1CHS691SPDEM241Q",
+      "secondaryName": "Avenue Title Services",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D2DG98D05VPP7HV6XW4CX",
+      "primaryName": "Access Title Agency FL",
+      "secondaryId": "01K46C7EWRR0HW62QFGDTYCPW2",
+      "secondaryName": "Access Title Agency",
+      "similarity": 0.864,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D0SY433EP53YRA9QG9YQW",
+      "primaryName": "Century Title Services, Inc.",
+      "secondaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "secondaryName": "Encore Title Services, LLC",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D0SY433EP53YRA9QG9YQW",
+      "primaryName": "Century Title Services, Inc.",
+      "secondaryId": "01K46C6Q6Q1CHS691SPDEM241Q",
+      "secondaryName": "Avenue Title Services",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1HTY99QY8BKP2CR4ETQ0",
+      "primaryName": "Esquire Title Services, Inc.",
+      "secondaryId": "01K46C0T1FN9AQAV3D4S29ECM3",
+      "secondaryName": "Esquire Title Services, Inc.",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZ1TTMQ0GZ0GR934565MT",
+      "primaryName": "ELITE TITLE SOLUTIONS,LLC",
+      "secondaryId": "01K46CPREBT3M03P70CVE35HRJ",
+      "secondaryName": "ELITE TITLE SOLUTIONS,LLC",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0Q74E0CVQT0Q56V3GJFH",
+      "primaryName": "Heritage Title & Escrow, LLC",
+      "secondaryId": "01K46CEMGV6REXRW2ADBE73Z9C",
+      "secondaryName": "Veritas Title & Escrow",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1WYDKEW3HEDB6BQ6GCWC",
+      "primaryName": "Anclote Title Services, Inc",
+      "secondaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "secondaryName": "Encore Title Services, LLC",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C29CSE3ESP5S7C7DKN88S",
+      "primaryName": "Heritage Title & Escrow",
+      "secondaryId": "01K46CEMGV6REXRW2ADBE73Z9C",
+      "secondaryName": "Veritas Title & Escrow",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5HCKC4N5R5T51PS8E256",
+      "primaryName": "Alliance Title & Escrow",
+      "secondaryId": "01K46CXRNVTQBP2TH6733AQV8D",
+      "secondaryName": "Alpine Title & Escrow",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5TWEJH8TDJRWH761ZS0N",
+      "primaryName": "First Title and Escrow Company, Inc.",
+      "secondaryId": "01K46CN57NDZZQF3VJ8PW9P5V8",
+      "secondaryName": "First Title and Escrow Company, Inc.",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C94R59AEMK4SVYW8S97ZF",
+      "primaryName": "Highland Title + Escrow",
+      "secondaryId": "01K46CJ0NEY7H10BVBTNCSS509",
+      "secondaryName": "Midland Title & Escrow",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C94R59AEMK4SVYW8S97ZF",
+      "primaryName": "Homeland Title & Escrow, Ltd.",
+      "secondaryId": "01K46CN4KT6NTJ55TE5GKGVF12",
+      "secondaryName": "Homeland Title & Escrow, Ltd.",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CCSQKDFPYNFWJ7QQV0MN0",
+      "primaryName": "Paramount Title Agency",
+      "secondaryId": "01K46CGYYQAD177Z9R4E76FR6Q",
+      "secondaryName": "Fairmount Title Agency",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CP38K4YMKX46XP9WQ5Q9Q",
+      "primaryName": "Stellar Title Services LLC",
+      "secondaryId": "01K46CSX1VH763FT276DPX3BBF",
+      "secondaryName": "Stellar Title Services LLC",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CR18XBYAD164XCXW576TM",
+      "primaryName": "Jefferson County Title Corp",
+      "secondaryId": "01K46CVGJFYK3Z0PY1QNHV28EY",
+      "secondaryName": "Henderson County Title",
+      "similarity": 0.864,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYFFZF33K2KG03YADMQFN",
+      "primaryName": "Scarab Title & Escrow Services, LLC.",
+      "secondaryId": "01K46CN15PTEWHS933HHC9GZ0G",
+      "secondaryName": "Sage Title & Escrow Services, Inc.",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1J72TDT3KBTSPD0RKYVK",
+      "primaryName": "Speedy Title & Escrow Services, LLC",
+      "secondaryId": "01K46CM9R6QM0FDGDNPJG3FGP8",
+      "secondaryName": "Speedy Title & Escrow Services, LLC",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1P3CER6H68DKQVQNQ6NF",
+      "primaryName": "Sage Title & Escrow Services, Inc.",
+      "secondaryId": "01K46CN15PTEWHS933HHC9GZ0G",
+      "secondaryName": "Sage Title & Escrow Services, Inc.",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C92FESHCW5HHDKNZM0D0T",
+      "primaryName": "Carver County Abstract & Title Co., Inc.",
+      "secondaryId": "01K46CJJ1XP52EZ96J64G51TKN",
+      "secondaryName": "Carver County Abstract & Title Co., Inc.",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8XKFJYTES4G135K4J45G",
+      "primaryName": "EDCO Title & Closing Services, Inc.",
+      "secondaryId": "01K46CDFPYM9BQQCDA7AVKZHTX",
+      "secondaryName": "Elite Title & Closing Services, LLC",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8XKFJYTES4G135K4J45G",
+      "primaryName": "EDCO Title & Closing Services, Inc.",
+      "secondaryId": "01K46CX4RY8KRXTCWWHB6GBZ5Y",
+      "secondaryName": "Local Title & Closing Services",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDFPYM9BQQCDA7AVKZHTX",
+      "primaryName": "Elite Title & Closing Services, LLC",
+      "secondaryId": "01K46CFC05AQ8F8VNNDD0YK9N2",
+      "secondaryName": "PRISM Title & Closing Services",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CDFPYM9BQQCDA7AVKZHTX",
+      "primaryName": "Elite Title & Closing Services, LLC",
+      "secondaryId": "01K46CGC2R5BZTB4YYDRDVMNG8",
+      "secondaryName": "Land Title & Closing Services, LLC",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGC2R5BZTB4YYDRDVMNG8",
+      "primaryName": "Land Title & Closing Services, LLC",
+      "secondaryId": "01K46CX4RY8KRXTCWWHB6GBZ5Y",
+      "secondaryName": "Local Title & Closing Services",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CM9R6QM0FDGDNPJG3FGP8",
+      "primaryName": "Speedy Title & Escrow Services, LLC",
+      "secondaryId": "01K46CN15PTEWHS933HHC9GZ0G",
+      "secondaryName": "Sage Title & Escrow Services, Inc.",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CPKAJ8KG70R656G3QDFBP",
+      "primaryName": "Reagan County Abstract & Title Company",
+      "secondaryId": "01K46CR4QFE111HCJ38B4MGAZW",
+      "secondaryName": "Reagan County Abstract & Title Company",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CPZQF51MB050SQS9W9GDP",
+      "primaryName": "Reagan County Abstract & Title Company",
+      "secondaryId": "01K46CR4QFE111HCJ38B4MGAZW",
+      "secondaryName": "Reagan County Abstract & Title Company",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CT4TFK0WC7BD435ZK88TM",
+      "primaryName": "Allegiance Title of Tennessee, LLC",
+      "secondaryId": "01K46CWS0AVJ3TR8RNX7XPVXHM",
+      "secondaryName": "Allegiance Title of Tennessee, LLC",
+      "similarity": 0.862,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BXR202TEN4X4K375PF7PQ",
+      "primaryName": "Global American Title Agency",
+      "secondaryId": "01K46CAZPY5BSCCRE30SZTSJMK",
+      "secondaryName": "Global American Title Agency",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1Y5058ZQC53P3CVMFHV1",
+      "primaryName": "Anclote Title Services, Inc",
+      "secondaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "secondaryName": "Encore Title Services, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D2A4VSH2AX48N6V291Q6K",
+      "primaryName": "Land Title and Escrow Company",
+      "secondaryId": "01K46C62XW3GVPX18T38SGSZSH",
+      "secondaryName": "Land Title and Escrow Company",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D2A4VSH2AX48N6V291Q6K",
+      "primaryName": "Land Title and Escrow Company",
+      "secondaryId": "01K7ERWZSA6GPJ5T44T7AWNKVS",
+      "secondaryName": "Lutztitleandescrow",
+      "similarity": 0.857,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46BYG4FAQC11WNQRZTRQ9NG",
+      "primaryName": "Citadel Title & Escrow Company, LLC",
+      "secondaryId": "01K46D1463ER6V47RA6CQPRSA6",
+      "secondaryName": "Vital Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1463ER6V47RA6CQPRSA6",
+      "primaryName": "Capital Title & Escrow, LLC",
+      "secondaryId": "01K46CCX8RYAQADD0H501M49W4",
+      "secondaryName": "Capital Title & Escrow, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1463ER6V47RA6CQPRSA6",
+      "primaryName": "Capital Title & Escrow, LLC",
+      "secondaryId": "01K46CEMGV6REXRW2ADBE73Z9C",
+      "secondaryName": "Veritas Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1HTY99QY8BKP2CR4ETQ0",
+      "primaryName": "Esquire Title Services, Inc.",
+      "secondaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "secondaryName": "Encore Title Services, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1HTY99QY8BKP2CR4ETQ0",
+      "primaryName": "Esquire Title Services, Inc.",
+      "secondaryId": "01K46CYXFK11D6RPJEGV3TEV13",
+      "secondaryName": "Elite Title Services LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYEX50NMB8MCN25XDHHHY",
+      "primaryName": "Alliance Title & Escrow",
+      "secondaryId": "01K46C30RKJRBDCC370H2AFBZW",
+      "secondaryName": "Allied Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYEX50NMB8MCN25XDHHHY",
+      "primaryName": "Alliance Title & Escrow",
+      "secondaryId": "01K46CXRNVTQBP2TH6733AQV8D",
+      "secondaryName": "Alpine Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZHBMFVP3FR4SDN6MCHR3",
+      "primaryName": "Prosperity Land Title",
+      "secondaryId": "01K46CBRF86ZVSS5WG65WZ68ZA",
+      "secondaryName": "Prosperity One Title",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZWF24W6CXGAH15GPMP2Y",
+      "primaryName": "ORION TITLE & ESCROW LLC",
+      "secondaryId": "01K46C2BJ7E3VQDHS4ANXC1KXE",
+      "secondaryName": "Arizona Title & Escrow Company",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0HT6XBXXY5XKM48V75R9",
+      "primaryName": "Encore Title Services, LLC",
+      "secondaryId": "01K46C26GNX6EZM690DD4MRM6W",
+      "secondaryName": "Encore Title Services, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0ZEWGCFY5VWNF9WAJ70F",
+      "primaryName": "Write On Title, LLC",
+      "secondaryId": "01K46C29PQJZKQBVACCAGC7AY4",
+      "secondaryName": "Write On Time, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1XWE4ND34DCJGW1QGDY8",
+      "primaryName": "NEW DOOR TITLE",
+      "secondaryId": "01K46C7BDWQ4CN5GFAW6X73XMA",
+      "secondaryName": "Red Door Title",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2BJ7E3VQDHS4ANXC1KXE",
+      "primaryName": "Arizona Title & Escrow Company",
+      "secondaryId": "01K46C3RCPZH7NR7MEEE4MT8J4",
+      "secondaryName": "Ancona Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2PZWRC8WQ7DNKGJPF8ZT",
+      "primaryName": "Chicago Title Houston",
+      "secondaryId": "01K46C4QXRYV366YEMMF64K82S",
+      "secondaryName": "Chicago Title Austin",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2G0Q3T126P5BWBR48A77",
+      "primaryName": "Union Title Insurance Agency, LLC",
+      "secondaryId": "01K46CD5BA0WNPDTG20TR1NZ1E",
+      "secondaryName": "Vital Title Insurance Agency",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2T5KHNWVW4C24FE9HF4W",
+      "primaryName": "Western Title & Escrow Company",
+      "secondaryId": "01K46C7FV72QAP592MC2246KXK",
+      "secondaryName": "Masters Title & Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C55BZPG4SZTVFA5009AQK",
+      "primaryName": "Berkshire Hathaway HomeServices Snyder & Company, Realtors",
+      "secondaryId": "01K46CFW4Z8R0X3E92X3M1H69Z",
+      "secondaryName": "Berkshire Hathaway HomeServices Healy Realtors",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5HPPDN5E86D96S2H0YJA",
+      "primaryName": "Midwest Title Services",
+      "secondaryId": "01K46CGBRSPWM8BF77Y289DK3R",
+      "secondaryName": "BEST Title Services",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5KKSFXX4F06JS96RC23S",
+      "primaryName": "RL Title and Escrow, Inc.",
+      "secondaryId": "01K46CS986610KTTQ8AXD4EH4J",
+      "secondaryName": "Acme Title and Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6Q6Q1CHS691SPDEM241Q",
+      "primaryName": "Avenue Title Services",
+      "secondaryId": "01K46CKVT6DMCSQXBGPGWAJVRN",
+      "secondaryName": "Raven Title Services",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7YFWRVRHE3ZTEHMCWJFC",
+      "primaryName": "Reliance Title Agency, LLC",
+      "secondaryId": "01K46CPSC4AXW31EQMSDSGP28A",
+      "secondaryName": "Balance Title Agency",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C86GPE90A42CCHXS5NGJK",
+      "primaryName": "American Trust Escrow",
+      "secondaryId": "01K46CXDYDFE7PH1PWF4XE4D5N",
+      "secondaryName": "American Plus Escrow",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8DVX3R5DRFSQ6H76T94X",
+      "primaryName": "Landwood Title Company",
+      "secondaryId": "01K46CENT1VB61M855112831PS",
+      "secondaryName": "Landwood Title Company",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8XKFJYTES4G135K4J45G",
+      "primaryName": "EDCO Title & Closing Services, Inc.",
+      "secondaryId": "01K46CGC2R5BZTB4YYDRDVMNG8",
+      "secondaryName": "Land Title & Closing Services, LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C8XKFJYTES4G135K4J45G",
+      "primaryName": "EDCO Title & Closing Services, Inc.",
+      "secondaryId": "01K46CR9GKZ4B5VGDNJCCSQP5A",
+      "secondaryName": "Key Title & Closing Services LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C9XRYV1KP1HMEXVTNYEVF",
+      "primaryName": "Title One Utah",
+      "secondaryId": "01K46CMF5FS0ECQDYG2AM39Z73",
+      "secondaryName": "Title One USA",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBGFFGD3D8KGKPX2SFRQC",
+      "primaryName": "PRO TITLE GROUP, INC.",
+      "secondaryId": "01K46CEJAGKWVT4F9XJABFEWBN",
+      "secondaryName": "PRO TITLE GROUP, INC.",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGGWKRV45DZWA6XX3ZQS4",
+      "primaryName": "CU Title Insurance Agency, LLC",
+      "secondaryId": "01K46CQQFHXQMX2CBH311VA8ST",
+      "secondaryName": "COACH TITLE INSURANCE AGENCY",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CGC2R5BZTB4YYDRDVMNG8",
+      "primaryName": "Land Title & Closing Services, LLC",
+      "secondaryId": "01K46CR9GKZ4B5VGDNJCCSQP5A",
+      "secondaryName": "Key Title & Closing Services LLC",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CH31T158GS5HF99DHKYBT",
+      "primaryName": "Ridge Abstract Corp.",
+      "secondaryId": "01K46CRJW9P3PJWNYHBVDCNMR0",
+      "secondaryName": "Rise Abstract",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CT28RDV8DKZGNYWYSE2J6",
+      "primaryName": "Rhodes Real Estate Solutions, LLC",
+      "secondaryId": "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+      "secondaryName": "HER Real Estate Solutions",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CW1FXPGFV7280XHTQWVA8",
+      "primaryName": "Atlas Abstract & Title, Inc.",
+      "secondaryId": "01K46CXG2VZ55F2WWZF75RP3X1",
+      "secondaryName": "Alma Abstract & Title",
+      "similarity": 0.857,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K4JPQCD5ZSHY4835PZVNGYTK",
+      "primaryName": "The TRES Group",
+      "secondaryId": "01K7ERWQHGCGCE44GFS555G6QA",
+      "secondaryName": "Thetresgroup",
+      "similarity": 0.857,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D1Z12QQ7TSB9H7KEXMYQS",
+      "primaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "secondaryId": "01K46C6CV7Q0A3A5D9B8JPNPNP",
+      "secondaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "similarity": 0.854,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D108T7048Y3G1J704T8JZ",
+      "primaryName": "Sage Title & Escrow Services, Inc.",
+      "secondaryId": "01K46CN15PTEWHS933HHC9GZ0G",
+      "secondaryName": "Sage Title & Escrow Services, Inc.",
+      "similarity": 0.852,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C2G0Q3T126P5BWBR48A77",
+      "primaryName": "Union Title Insurance Agency, LLC",
+      "secondaryId": "01K46CGGWKRV45DZWA6XX3ZQS4",
+      "secondaryName": "CU Title Insurance Agency, LLC",
+      "similarity": 0.852,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C478YE190DPVJADTS0BZG",
+      "primaryName": "Fidelity National Title Ins. Co.",
+      "secondaryId": "01K46C4F7FDKXE181T8QE1067A",
+      "secondaryName": "Fidelity National Title",
+      "similarity": 0.852,
+      "peopleMoved": 3
+    },
+    {
+      "primaryId": "01K46D1ZKWVQHACWBAMMW19EJV",
+      "primaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "secondaryId": "01K46C6YGPJEA6N5XF8DXA3CTF",
+      "secondaryName": "Berkshire Hathaway HomeServices Stouffer Realty",
+      "similarity": 0.851,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D1ZKWVQHACWBAMMW19EJV",
+      "primaryName": "Berkshire Hathaway HomeServices Carolinas Realty",
+      "secondaryId": "01K46CBYVKEFANHW5BVTQSHJX9",
+      "secondaryName": "Berkshire Hathaway HomeServices Homesale Realty",
+      "similarity": 0.851,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6YGPJEA6N5XF8DXA3CTF",
+      "primaryName": "Berkshire Hathaway HomeServices Stouffer Realty",
+      "secondaryId": "01K46CCJNSTX96PJNH3SPR711M",
+      "secondaryName": "Berkshire Hathaway HomeServices RW Towne Realty",
+      "similarity": 0.851,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBYVKEFANHW5BVTQSHJX9",
+      "primaryName": "Berkshire Hathaway HomeServices Homesale Realty",
+      "secondaryId": "01K46CCJNSTX96PJNH3SPR711M",
+      "secondaryName": "Berkshire Hathaway HomeServices RW Towne Realty",
+      "similarity": 0.851,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBYVKEFANHW5BVTQSHJX9",
+      "primaryName": "Berkshire Hathaway HomeServices Homesale Realty",
+      "secondaryId": "01K46CFW4Z8R0X3E92X3M1H69Z",
+      "secondaryName": "Berkshire Hathaway HomeServices Healy Realtors",
+      "similarity": 0.851,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46D22381ZGQGCTJ6DM5JE85",
+      "primaryName": "New Dawn Title Group",
+      "secondaryId": "01K7ERXHDXE4J28801SR44X45K",
+      "secondaryName": "Newdawntitlegroup",
+      "similarity": 0.85,
+      "peopleMoved": 1
+    },
+    {
+      "primaryId": "01K46D0RRMBN2WE4EAP4VAZGGE",
+      "primaryName": "Members Title Agency, LLC",
+      "secondaryId": "01K46CFDZM7X56ACNSXT3Q617G",
+      "secondaryName": "Leaders Title Agency",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BYQT5FVMP9CTCKPPQHEH5",
+      "primaryName": "Acer Title & Escrow, LLC",
+      "secondaryId": "01K46CD9EJDWJNRX5B7YG0RYXA",
+      "secondaryName": "Acer Title & Escrow, LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BZRQTNG04E2ZJFC8M1MMP",
+      "primaryName": "Elite Title Services LLC",
+      "secondaryId": "01K46CYXFK11D6RPJEGV3TEV13",
+      "secondaryName": "Elite Title Services LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0HT6XBXXY5XKM48V75R9",
+      "primaryName": "Encore Title Services, LLC",
+      "secondaryId": "01K46CGCPX82TXPV8CRGV64F7W",
+      "secondaryName": "Core Title Services, LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0HT6XBXXY5XKM48V75R9",
+      "primaryName": "Encore Title Services, LLC",
+      "secondaryId": "01K46CYXFK11D6RPJEGV3TEV13",
+      "secondaryName": "Elite Title Services LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0TZPT1RG57Q5QJAH5G60",
+      "primaryName": "Land Title Services, Inc.",
+      "secondaryId": "01K46CAY4MMS0YVVAHPA6S0SMK",
+      "secondaryName": "Land Title Services, Inc.",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C0TZPT1RG57Q5QJAH5G60",
+      "primaryName": "Land Title Services, Inc.",
+      "secondaryId": "01K46CKVT6DMCSQXBGPGWAJVRN",
+      "secondaryName": "Raven Title Services",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C1HX11CE8KQ9FD4SASKRE",
+      "primaryName": "First Title and Escrow Company, Inc.",
+      "secondaryId": "01K46C5TWEJH8TDJRWH761ZS0N",
+      "secondaryName": "First Title and Escrow Company, Inc.",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C30RKJRBDCC370H2AFBZW",
+      "primaryName": "Allied Title & Escrow",
+      "secondaryId": "01K46CXRNVTQBP2TH6733AQV8D",
+      "secondaryName": "Alpine Title & Escrow",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C3TMK9TEG2507EYDBPD2D",
+      "primaryName": "Libra Title Agency, LLC",
+      "secondaryId": "01K46CH14VXBSS1QTRTJYYJ6G0",
+      "secondaryName": "Libra Title Agency, LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C444V07ZKFEN9MWH8G3X5",
+      "primaryName": "Pacific Coast Title Company",
+      "secondaryId": "01K46CR26E1PT5CZQQJNVNHV2G",
+      "secondaryName": "Pacific County Title",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C570940QNPB8W0ASCZ0BW",
+      "primaryName": "Titan Title & Closing, LLC",
+      "secondaryId": "01K46CJ5SJRP856YRXH60DWZMY",
+      "secondaryName": "Titan Title & Closing, LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C5MW8R8BFTMMT8KPRVPVZ",
+      "primaryName": "State Title Partners",
+      "secondaryId": "01K46CNQ10R4C68KSC335SH124",
+      "secondaryName": "State Title Partners",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C6T4GKN1GCD6PCFDJN1G9",
+      "primaryName": "First National Title Company",
+      "secondaryId": "01K46BY1W9MAA25D5E2F04RS11",
+      "secondaryName": "1st National Title",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46C7039S1Z0Y45GXR35KQJZ",
+      "primaryName": "Core Lender Services, Inc.",
+      "secondaryId": "01K46CXKDDP968K1Q5Y2K2NB67",
+      "secondaryName": "Core Lender Services, Inc.",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46BY9JF8EMATAA7NCC3NPHG",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CKVT6DMCSQXBGPGWAJVRN",
+      "secondaryName": "Raven Title Services",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CBCCKWKACZ9WYRWSMZBWT",
+      "primaryName": "Marble Title & Escrow",
+      "secondaryId": "01K46CD8GGX0GTJ8JJ24EJZKV8",
+      "secondaryName": "Noble Title & Escrow",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CD9EJDWJNRX5B7YG0RYXA",
+      "primaryName": "Acer Title & Escrow, LLC",
+      "secondaryId": "01K46CP8J2KYAJM1P4B3CCY2RM",
+      "secondaryName": "Access Title & Escrow",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CG6YCVW181KHMV42CY2G3",
+      "primaryName": "MSC Closing Services",
+      "secondaryId": "01K46CGP9FEE17SVDW1DMZ9CAT",
+      "secondaryName": "MSC Closing Services",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CH0GX7CNRQ4GCHBTJG0XZ",
+      "primaryName": "Revere Title Agency, Inc.",
+      "secondaryId": "01K46CMXRNA792WTJ5Z50GSHHK",
+      "secondaryName": "Revere Title Agency, Inc.",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CJB5DJRA2TA3WC2VJ4EZW",
+      "primaryName": "COLONIAL TITLE GROUP, INC.",
+      "secondaryId": "01K46CYZG81PJ3686SS8D0RM7X",
+      "secondaryName": "COLONIAL TITLE GROUP, INC.",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CNZFT2Z518FJ09EGD85DF",
+      "primaryName": "Zelle Title Services",
+      "secondaryId": "01K46CRD7X0C5PJD1ET9X2FJTY",
+      "secondaryName": "Zelle Title Services",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CP6CW23B5P042PHNE2MQR",
+      "primaryName": "Venture Title Agency, LLC",
+      "secondaryId": "01K46CZQP25TG52VV4TXB0XQ6C",
+      "secondaryName": "Vintage Title Agency",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CR1JQ5N8HH03DWW7CQX0T",
+      "primaryName": "Aspen Title & Escrow LLC",
+      "secondaryId": "01K46CT2JRXHB141Z6657RG1X4",
+      "secondaryName": "Osprey Title & Escrow",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CR1JQ5N8HH03DWW7CQX0T",
+      "primaryName": "Aspen Title & Escrow LLC",
+      "secondaryId": "01K46CXRNVTQBP2TH6733AQV8D",
+      "secondaryName": "Alpine Title & Escrow",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRDVK18QTDW52C4M80944",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CRD7X0C5PJD1ET9X2FJTY",
+      "secondaryName": "Zelle Title Services",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRD7X0C5PJD1ET9X2FJTY",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CWR5TTYTZE7X9HX2K71JX",
+      "secondaryName": "Gallo Title Services, LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CRD7X0C5PJD1ET9X2FJTY",
+      "primaryName": "Gallo Title Services, LLC",
+      "secondaryId": "01K46CYXFK11D6RPJEGV3TEV13",
+      "secondaryName": "Elite Title Services LLC",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    },
+    {
+      "primaryId": "01K46CXG2VZ55F2WWZF75RP3X1",
+      "primaryName": "Home Abstract & Title Company",
+      "secondaryId": "01K46CZ3ZT6JZW2KFCJ7P1WY6X",
+      "secondaryName": "Home Abstract & Title Company",
+      "similarity": 0.85,
+      "peopleMoved": 0
+    }
+  ],
+  "deletedCompanies": [
+    "01K46C2SVPHG4KM7JVDAEGJB03",
+    "01K46CAGF85WQE2SV2NPBAE682",
+    "01K46C8BK212F28KDVVGT1JEF5",
+    "01K46CDCJV986WWC71ADTC58CZ",
+    "01K4JPQ653E6YHVZTVXEQMGTSP",
+    "01K46D0JPK653GCSABRJ1DF7NG",
+    "01K46CWHYW59Z7R46923G85QVM",
+    "01K46C9A5R51Q35HD8BT2SWYY9",
+    "01K46CK2BERT78FY42K40M0EMH",
+    "01K4JPQ4063CFYJ7Z99WFJ0J8G",
+    "01K46C0F55NS7Y4MV8GHBMBR80",
+    "01K46C5NTN3J35Y1ZETYH0BA28",
+    "01K46CFPEXB7KG113GNB8D6DQC",
+    "01K46C29CSE3ESP5S7C7DKN88S",
+    "01K46C7V9S57K8WXGG6YSK2JBM",
+    "01K46CWQ0KBVM0CWJFY9S38RXY",
+    "01K46C3XR1KQSQ9RQJHAF5HYQY",
+    "01K46C2KJNFZP5H30A48V0761J",
+    "01K46C2KJNFZP5H30A48V0761J",
+    "01K46C2KJNFZP5H30A48V0761J",
+    "01K46C2HJ66F7R720D3EESBD5N",
+    "01K46C2HJ66F7R720D3EESBD5N",
+    "01K46C2JYTZPRME6GRNCT0BWD3",
+    "01K46C37QG75J0Z8FK9GHWQ1T3",
+    "01K46C7X7HNASD5MEN2RT1V055",
+    "01K46CDAPP7NW1JFR4XXQWAXH9",
+    "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+    "01K46CJ45YQ4G1JPASWT3PNANV",
+    "01K46CGSFXSSYVJEMC9F5HFH8T",
+    "01K46CBATJVA96E4BHHDE97VR7",
+    "01K46CSSYP5HR9PBY23B4WB8PN",
+    "01K46C8NX78CBY5K2E0HG2A4EP",
+    "01K46C9HFTPVEZAS5Q1HETD9Y2",
+    "01K46C9FH6GNXGYGKD33KBBH4Q",
+    "01K46CDKJ6MP9RY491R2337BQV",
+    "01K46CDWXPMZG35RWP9NR5XR40",
+    "01K46CWF0JMKWFV5M2Q3BC1X82",
+    "01K46CS1GPNJ7316R8E81QX42V",
+    "01K46CG4RKZQJBSAZTXT8477M0",
+    "01K46C84YSY70GXHEJ2WF5G7FQ",
+    "01K46CNM5JQDJAGB33ACRPZDWE",
+    "01K46CCFV8X94FDWJ4W3GJBH2W",
+    "01K46CEY3F5FDBWK0XGWZQTAPR",
+    "01K46CX0VVG27S6PPMJQ76YVWR",
+    "01K46CX8HFK3W9RZYSK2A35D0T",
+    "01K46CNBQXWZT7HFXRJ5MGKNFQ",
+    "01K46C7XVY0GVCA29KGHPNNBRG",
+    "01K46CDBMRNSME1P1W7BFSB7WG",
+    "01K46CGT5R6GBGRYHV3EDVR8ER",
+    "01K46CD0QH5XEVYB107GK05VQC",
+    "01K46CHBZ9JX15Y4GWKZTBTNFA",
+    "01K46CGW4W4EGHA1B8XG9AHXSP",
+    "01K46CDCJV986WWC71ADTC58CZ",
+    "01K46CX8TN5684N3AR4FQ3A62D",
+    "01K46CN0VT5PGSQD54640GG93M",
+    "01K46CA2WE9T6CPQ1QNVDN06M6",
+    "01K46CB6NCXBPDQCZN3Y0SXY0J",
+    "01K46CVNW8D1T8BJD46Y5Y001R",
+    "01K46CEDF6BYSGJG2X7E12NE4P",
+    "01K46CXCG36RSXE1RY4MWMPHBK",
+    "01K46CEG12B7RAT2FBXAMM8XQ2",
+    "01K46CR5RGMG32R13PT2VT6DFF",
+    "01K46CPKYMTDPJXQR1RAVAE16P",
+    "01K46CKQS431XYEH9HGNGPWW3V",
+    "01K46CN6V8H2PT8QF7KNN4DZ2R",
+    "01K46CDWXPMZG35RWP9NR5XR40",
+    "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+    "01K46CJ45YQ4G1JPASWT3PNANV",
+    "01K46CS36AVF1P00BQEG620BY3",
+    "01K46CMVSK1PTA8NK2PZMPFDBQ",
+    "01K46CHY45F4M40PXW0JG40QY3",
+    "01K46CW9PH3W8RA7X0APXMBTZ5",
+    "01K46CK9RBRWAE0CNV8PVZT0PV",
+    "01K46CMH3N0SEP1AA5T8W5FEMH",
+    "01K46CQS43A04PF411XB0E18ES",
+    "01K46CJYS0VWJ1GWQY139N8SMD",
+    "01K46CNVRXNDW0TBFEKFB29KTN",
+    "01K46CWDVM4KVAMD7YF80DVA71",
+    "01K46CNMSCQG8FTQH89DX55M16",
+    "01K46CREFC0CVP02HX5P64QKJP",
+    "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+    "01K46CX2ZRKQCYF46PEEE6MH30",
+    "01K46CS45HM3N87YSN1X50Z7Y5",
+    "01K46CMQ2VW9AC1EATGBN0HMQK",
+    "01K46CQS43A04PF411XB0E18ES",
+    "01K46CNZSNV5AKK9CG3TE425HW",
+    "01K46CX0JNVF297G5BHD1DEB0T",
+    "01K46CZ1AQPR8233D82JGDE2SD",
+    "01K46CYZ6YQTF8M0YVAJXRF9Z2",
+    "01K46CR9TGKDE3A1SM89MMC373",
+    "01K46CWAVTQY4F35HS29RE1RH3",
+    "01K46CWDVM4KVAMD7YF80DVA71",
+    "01K46CX0JNVF297G5BHD1DEB0T",
+    "01K46CYWX8APCCZMJ3B2F162MS",
+    "01K46CRG2W99Q84WKV4SVPM5MV",
+    "01K46C2ERWX059AYN5YR67THM6",
+    "01K46CZP7SC9XZJ7AXDD0P7T35",
+    "01K7ERXG32ECJM7KB8ZBPJMBVA",
+    "01K7ERXJK7NHVYND3MAX2X8NG4",
+    "01K7ERWRM10MX2XMZWKTQQA160",
+    "01K7ERWRT7JZYZY9VFK3ESAX4X",
+    "01K7ERWRT7JZYZY9VFK3ESAX4X",
+    "01K7ERXJK7NHVYND3MAX2X8NG4",
+    "01K7ERXKFCRSS6J5B8W1NPCF15",
+    "01K46CT0BF8WVSJVEG6EGHGZ66",
+    "01K46D1ZKWVQHACWBAMMW19EJV",
+    "01K46CBC2F42V8E41WY8VSDFWM",
+    "01K46CS5DWR941PN7NNKKQM6YQ",
+    "01K46CGVTTJQ5VN8V5866ARB2H",
+    "01K46CPDB1PV2KFX6K039BY3PQ",
+    "01K7ERX594KQ5SRSE3D6ZFQ6X1",
+    "01K46BY9JF8EMATAA7NCC3NPHG",
+    "01K7ERWV8WM8Y0J0NXBDGDY4PJ",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K46CPWGHQGVDZE3GSCKCEYYW",
+    "01K46CGYASW6MZ0HFB0WZFFP0F",
+    "01K46CZT45V0WSX7K7E2ADDE79",
+    "01K7ERX1ZFHM987XQARFRAK2T0",
+    "01K7ERWS15PA99MBKG6SMJTMBW",
+    "01K46CHZ3ASWZ5SV4Q5DGTKQGM",
+    "01K7ERWT41JQH59SBHCJFN7PXB",
+    "01K46CFNGW1SNNX3R20KGFZ9YA",
+    "01K46CFNGW1SNNX3R20KGFZ9YA",
+    "01K46CFNGW1SNNX3R20KGFZ9YA",
+    "01K7ERWP4QKZTVDS6N40G5KBDV",
+    "01K46CGKRSHFNZE3BHMR146GFK",
+    "01K7ERX0Y6H79Q9AN25J26WTZE",
+    "01K46CH06TVPEA693FEMDBVHWV",
+    "01K46CG00W921MC2J21DVFE49D",
+    "01K7ERX025DAD7J0B6BKSME6HZ",
+    "01K7ERWPV8YV28YKD8TY0803JS",
+    "01K46CWX3DGW7W2G9GVSB3N3WW",
+    "01K46CV1QTC89FMPHB2MRMVMR5",
+    "01K7ERX7C6R822THX7C85XJ2F1",
+    "01K7ERWNDGR7F5C03TC70E3VJW",
+    "01K46CZKHF1Q08HW8FVNFTGXB6",
+    "01K46CR8WRJW98XF23S5X869EV",
+    "01K46CN6HD8N0D2QYANTXHK84M",
+    "01K46CETM8141R6D6XD9D5QFW5",
+    "01K7ERWSG4B06AHGATQW6H9PWD",
+    "01K46CSQCHVDGC2EAYRJKJVKB0",
+    "01K46C3ZZE8XBX4RG6WCG0HWR9",
+    "01K46C5HCKC4N5R5T51PS8E256",
+    "01K46CF2XFCB1VMCV2JMXHRWA9",
+    "01K46CJHDXXM4JC27DD5DE4332",
+    "01K46CK5A58PGJ1RHPV31SFVH5",
+    "01K46CVJ9V637W0CBHTQHR8Q3H",
+    "01K46CNXADB3K0TC6PMRNT07A2",
+    "01K7ERX6NWBNYXA3062Z21SAMS",
+    "01K46CZ7H5TAD441B06NWGBPFB",
+    "01K46CGCPX82TXPV8CRGV64F7W",
+    "01K7ERXHS3A3NWDV532EMSM02T",
+    "01K46C7YFWRVRHE3ZTEHMCWJFC",
+    "01K46CS0HSRTNEZZRGHVMNTE0F",
+    "01K46CQCZH4Y83A35YK7XNXVZT",
+    "01K46CNZFT2Z518FJ09EGD85DF",
+    "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+    "01K46C4KT2PT6JHF1MCC9Q4752",
+    "01K46CVQ1EPHDG9MPTDBYKF4KE",
+    "01K46CHACVH2Y4NGMND05DW08Y",
+    "01K46CD5BA0WNPDTG20TR1NZ1E",
+    "01K46CSNV50DJBXNH28X9VPT55",
+    "01K46CZQP25TG52VV4TXB0XQ6C",
+    "01K46CWR5TTYTZE7X9HX2K71JX",
+    "01K46CPZQF51MB050SQS9W9GDP",
+    "01K7ERTPBRB9A2376H4THWE4F9",
+    "01K46C994XNB2GMKP9CDPS6S42",
+    "01K46C4CKV2XPNQTFBD4RYKA6Y",
+    "01K46CDPFSB2R5TRCZNZE11NBJ",
+    "01K46CQH4A8TD8GCV50XBF272M",
+    "01K46CD94GKYF38GZ1AAXPX7VR",
+    "01K46CQRD7RA6E20HRRHE4RMM2",
+    "01K46CNZFT2Z518FJ09EGD85DF",
+    "01K46CPWGHQGVDZE3GSCKCEYYW",
+    "01K46CWHNKG1K93N0YKBJ56DVT",
+    "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K7ERX8WMPRNNKMWXZ7RA5XGM",
+    "01K46CRR7GP9G0TH5TZXKERC2C",
+    "01K46CH3BVYF48BRTV3CEAW44G",
+    "01K7ERXAH7SKMBH437HZ70XM7Q",
+    "01K46BZ183A3B5MKQFJ30D2691",
+    "01K46C486NEKWSAPE13QBTT6T9",
+    "01K46BY9JF8EMATAA7NCC3NPHG",
+    "01K46CRDVK18QTDW52C4M80944",
+    "01K46C0QH1RKDRWFCACNA4RWMC",
+    "01K46CQWHVWPER5XBSEE1M37TR",
+    "01K46C486NEKWSAPE13QBTT6T9",
+    "01K46CHSDT8Z5M136W0JP82FHX",
+    "01K46CPWGHQGVDZE3GSCKCEYYW",
+    "01K46CRDVK18QTDW52C4M80944",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K46CMSY7PPF1AZAZR6WFGQA8",
+    "01K46CPKAJ8KG70R656G3QDFBP",
+    "01K46CXFSJ8GNBVTE62EPNKP16",
+    "01K46CRDVK18QTDW52C4M80944",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K46BY1W9MAA25D5E2F04RS11",
+    "01K46CZ1XATNXZTTZC8E194ZF0",
+    "01K46CRDVK18QTDW52C4M80944",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K46CYW1CJD2PMH1H36TF9P4V",
+    "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+    "01K7ERXB9E1TQ5MGBG4VKHKQ00",
+    "01K7ERTPKQKWGMANQPPP9S4Y1X",
+    "01K46CCW0N2XGS3V8EDBGPY1R2",
+    "01K46CWWGVVP5D12ZPGBY2G9RG",
+    "01K46CCHQCGC862B86DQPZ5W43",
+    "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+    "01K46CQ8W3AB0THNGAP6NMRJV2",
+    "01K46CSPRTKAAMB41QX8BHA5F9",
+    "01K46CHEGCT69WE5ZHZHDX2EWJ",
+    "01K46CD3PVZ3AESF4GYJQXMSPH",
+    "01K7ERWXKHPYV417MVDPRY4SKS",
+    "01K46C1943DYFGCF6T11WVKXAK",
+    "01K46CPWGHQGVDZE3GSCKCEYYW",
+    "01K46BZH1R2HY08G56JCY3DBVS",
+    "01K46CM09DVHZFVZZCATJYW6F8",
+    "01K46C4G8750D4P99004TB53MW",
+    "01K46C4RHNC9A6BTNT2RYVND0G",
+    "01K46C9HFTPVEZAS5Q1HETD9Y2",
+    "01K46BY8ZRVZBK8GC40QABQ7GK",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K46CCC2VD1F609KD70JVH5FG",
+    "01K46CQFJM0WDKDWYCHGDDHW00",
+    "01K46CM774RRJTMW85HA8NENHD",
+    "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+    "01K46BY6A7J2FJHTCJ30HQWQ11",
+    "01K7ERWRDQ0WJ6RA7Z51N1FH3Y",
+    "01K46CHEGCT69WE5ZHZHDX2EWJ",
+    "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+    "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+    "01K46CKNG2PDPR4HDXSRKXPJZJ",
+    "01K46CKNG2PDPR4HDXSRKXPJZJ",
+    "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+    "01K7ERXC1AR5JPKF3S7K1NJNZE",
+    "01K46C6CV7Q0A3A5D9B8JPNPNP",
+    "01K46CQJ2DSMDHTB0J95NSNMH2",
+    "01K46CRG2W99Q84WKV4SVPM5MV",
+    "01K46CHMPP6SV79JK3XF42D3SY",
+    "01K46CW2BQG9KR0VXRVDA95BDT",
+    "01K46CFJA88CSY09SAVF0HCGA9",
+    "01K46CEX4GF1FCM1MBVANQRR4W",
+    "01K46C62XW3GVPX18T38SGSZSH",
+    "01K46CJ0NEY7H10BVBTNCSS509",
+    "01K46CW58EAMN0W3E52HYV0KE7",
+    "01K46CFTWGJGR64T0WWATF4GZY",
+    "01K46CCZSQS39GSRW04SC3RF2D",
+    "01K46CD86JF1EDFJX2AFYX891W",
+    "01K46C9CQMYQTDN2071ENSHWJW",
+    "01K46CEXEK1D7RMCCS4FY2733J",
+    "01K46CGQVNGXNBM1EWFZPB4DDZ",
+    "01K46CXBXJCSPVJQ05E6NDXD0H",
+    "01K46CCX8RYAQADD0H501M49W4",
+    "01K46CCWYSHYB3T3RKB9S2MGNZ",
+    "01K46CFHC5PKKR5MZ5PK6GG31H",
+    "01K46CFBBSWPJAW50DZ2RQH93A",
+    "01K46CEXEK1D7RMCCS4FY2733J",
+    "01K46CX8HFK3W9RZYSK2A35D0T",
+    "01K46CX8HFK3W9RZYSK2A35D0T",
+    "01K46CV1592NZ0VRW0PVFRS9EF",
+    "01K46CX8HFK3W9RZYSK2A35D0T",
+    "01K46CVSPDZ1Z9J2TNCW0JX6NS",
+    "01K46CWWGVVP5D12ZPGBY2G9RG",
+    "01K46CWG5QFCG5WP1J4S5WKRZQ",
+    "01K46D1J496KMZNZD0THZFW1BZ",
+    "01K46CJRTTJBSG5T856XVC090D",
+    "01K46CCV2AWHD2AK7HJC59QR81",
+    "01K46CETM8141R6D6XD9D5QFW5",
+    "01K46CSPRTKAAMB41QX8BHA5F9",
+    "01K46CSPRTKAAMB41QX8BHA5F9",
+    "01K46CSPRTKAAMB41QX8BHA5F9",
+    "01K46CD9REEX5TP8NJHPEEREDP",
+    "01K46CGXPSJ1EQ6KJYVC0RMG71",
+    "01K46CRARGFVTBNN5GHJS9EXEH",
+    "01K46C81R2DRNJDW0XSYJ49B7H",
+    "01K46C8AA0X63P82RKMXM3RWKP",
+    "01K46CRARGFVTBNN5GHJS9EXEH",
+    "01K46C60E9TKV5FGJG5NBCYCRA",
+    "01K46CCS33D723EJA7P7HH2QNB",
+    "01K46CE01V40EQ5PTEQXZP5BS3",
+    "01K46CCS33D723EJA7P7HH2QNB",
+    "01K46CEJAGKWVT4F9XJABFEWBN",
+    "01K46CH0TVVYFGCHAB831HV3H7",
+    "01K46CH0TVVYFGCHAB831HV3H7",
+    "01K46CQQFHXQMX2CBH311VA8ST",
+    "01K46CCMNWYTK290GC2FGNZS3F",
+    "01K46CKNG2PDPR4HDXSRKXPJZJ",
+    "01K46CQ8W3AB0THNGAP6NMRJV2",
+    "01K46CQ8W3AB0THNGAP6NMRJV2",
+    "01K46CQ8W3AB0THNGAP6NMRJV2",
+    "01K46CQ8W3AB0THNGAP6NMRJV2",
+    "01K46C1WYDKEW3HEDB6BQ6GCWC",
+    "01K46C64SSXZH23RNMF6NK8EBK",
+    "01K46C6Q6Q1CHS691SPDEM241Q",
+    "01K46C7EWRR0HW62QFGDTYCPW2",
+    "01K46C26GNX6EZM690DD4MRM6W",
+    "01K46C6Q6Q1CHS691SPDEM241Q",
+    "01K46C0T1FN9AQAV3D4S29ECM3",
+    "01K46CPREBT3M03P70CVE35HRJ",
+    "01K46CEMGV6REXRW2ADBE73Z9C",
+    "01K46C26GNX6EZM690DD4MRM6W",
+    "01K46CEMGV6REXRW2ADBE73Z9C",
+    "01K46CXRNVTQBP2TH6733AQV8D",
+    "01K46CN57NDZZQF3VJ8PW9P5V8",
+    "01K46CJ0NEY7H10BVBTNCSS509",
+    "01K46CN4KT6NTJ55TE5GKGVF12",
+    "01K46CGYYQAD177Z9R4E76FR6Q",
+    "01K46CSX1VH763FT276DPX3BBF",
+    "01K46CVGJFYK3Z0PY1QNHV28EY",
+    "01K46CN15PTEWHS933HHC9GZ0G",
+    "01K46CM9R6QM0FDGDNPJG3FGP8",
+    "01K46CN15PTEWHS933HHC9GZ0G",
+    "01K46CJJ1XP52EZ96J64G51TKN",
+    "01K46CDFPYM9BQQCDA7AVKZHTX",
+    "01K46CX4RY8KRXTCWWHB6GBZ5Y",
+    "01K46CFC05AQ8F8VNNDD0YK9N2",
+    "01K46CGC2R5BZTB4YYDRDVMNG8",
+    "01K46CX4RY8KRXTCWWHB6GBZ5Y",
+    "01K46CN15PTEWHS933HHC9GZ0G",
+    "01K46CR4QFE111HCJ38B4MGAZW",
+    "01K46CR4QFE111HCJ38B4MGAZW",
+    "01K46CWS0AVJ3TR8RNX7XPVXHM",
+    "01K46CAZPY5BSCCRE30SZTSJMK",
+    "01K46C26GNX6EZM690DD4MRM6W",
+    "01K46C62XW3GVPX18T38SGSZSH",
+    "01K7ERWZSA6GPJ5T44T7AWNKVS",
+    "01K46D1463ER6V47RA6CQPRSA6",
+    "01K46CCX8RYAQADD0H501M49W4",
+    "01K46CEMGV6REXRW2ADBE73Z9C",
+    "01K46C26GNX6EZM690DD4MRM6W",
+    "01K46CYXFK11D6RPJEGV3TEV13",
+    "01K46C30RKJRBDCC370H2AFBZW",
+    "01K46CXRNVTQBP2TH6733AQV8D",
+    "01K46CBRF86ZVSS5WG65WZ68ZA",
+    "01K46C2BJ7E3VQDHS4ANXC1KXE",
+    "01K46C26GNX6EZM690DD4MRM6W",
+    "01K46C29PQJZKQBVACCAGC7AY4",
+    "01K46C7BDWQ4CN5GFAW6X73XMA",
+    "01K46C3RCPZH7NR7MEEE4MT8J4",
+    "01K46C4QXRYV366YEMMF64K82S",
+    "01K46CD5BA0WNPDTG20TR1NZ1E",
+    "01K46C7FV72QAP592MC2246KXK",
+    "01K46CFW4Z8R0X3E92X3M1H69Z",
+    "01K46CGBRSPWM8BF77Y289DK3R",
+    "01K46CS986610KTTQ8AXD4EH4J",
+    "01K46CKVT6DMCSQXBGPGWAJVRN",
+    "01K46CPSC4AXW31EQMSDSGP28A",
+    "01K46CXDYDFE7PH1PWF4XE4D5N",
+    "01K46CENT1VB61M855112831PS",
+    "01K46CGC2R5BZTB4YYDRDVMNG8",
+    "01K46CR9GKZ4B5VGDNJCCSQP5A",
+    "01K46CMF5FS0ECQDYG2AM39Z73",
+    "01K46CEJAGKWVT4F9XJABFEWBN",
+    "01K46CQQFHXQMX2CBH311VA8ST",
+    "01K46CR9GKZ4B5VGDNJCCSQP5A",
+    "01K46CRJW9P3PJWNYHBVDCNMR0",
+    "01K46BXVY3K3KJ0QJ0DTW3ZKNN",
+    "01K46CXG2VZ55F2WWZF75RP3X1",
+    "01K7ERWQHGCGCE44GFS555G6QA",
+    "01K46C6CV7Q0A3A5D9B8JPNPNP",
+    "01K46CN15PTEWHS933HHC9GZ0G",
+    "01K46CGGWKRV45DZWA6XX3ZQS4",
+    "01K46C4F7FDKXE181T8QE1067A",
+    "01K46C6YGPJEA6N5XF8DXA3CTF",
+    "01K46CBYVKEFANHW5BVTQSHJX9",
+    "01K46CCJNSTX96PJNH3SPR711M",
+    "01K46CCJNSTX96PJNH3SPR711M",
+    "01K46CFW4Z8R0X3E92X3M1H69Z",
+    "01K7ERXHDXE4J28801SR44X45K",
+    "01K46CFDZM7X56ACNSXT3Q617G",
+    "01K46CD9EJDWJNRX5B7YG0RYXA",
+    "01K46CYXFK11D6RPJEGV3TEV13",
+    "01K46CGCPX82TXPV8CRGV64F7W",
+    "01K46CYXFK11D6RPJEGV3TEV13",
+    "01K46CAY4MMS0YVVAHPA6S0SMK",
+    "01K46CKVT6DMCSQXBGPGWAJVRN",
+    "01K46C5TWEJH8TDJRWH761ZS0N",
+    "01K46CXRNVTQBP2TH6733AQV8D",
+    "01K46CH14VXBSS1QTRTJYYJ6G0",
+    "01K46CR26E1PT5CZQQJNVNHV2G",
+    "01K46CJ5SJRP856YRXH60DWZMY",
+    "01K46CNQ10R4C68KSC335SH124",
+    "01K46BY1W9MAA25D5E2F04RS11",
+    "01K46CXKDDP968K1Q5Y2K2NB67",
+    "01K46CKVT6DMCSQXBGPGWAJVRN",
+    "01K46CD8GGX0GTJ8JJ24EJZKV8",
+    "01K46CP8J2KYAJM1P4B3CCY2RM",
+    "01K46CGP9FEE17SVDW1DMZ9CAT",
+    "01K46CMXRNA792WTJ5Z50GSHHK",
+    "01K46CYZG81PJ3686SS8D0RM7X",
+    "01K46CRD7X0C5PJD1ET9X2FJTY",
+    "01K46CZQP25TG52VV4TXB0XQ6C",
+    "01K46CT2JRXHB141Z6657RG1X4",
+    "01K46CXRNVTQBP2TH6733AQV8D",
+    "01K46CRD7X0C5PJD1ET9X2FJTY",
+    "01K46CWR5TTYTZE7X9HX2K71JX",
+    "01K46CYXFK11D6RPJEGV3TEV13",
+    "01K46CZ3ZT6JZW2KFCJ7P1WY6X"
+  ],
+  "beforeCount": 3793,
+  "afterCount": 3487,
+  "reduction": 306,
+  "reductionPercentage": 8.067492749802268,
+  "completedAt": "2025-10-13T12:51:50.594Z"
+}

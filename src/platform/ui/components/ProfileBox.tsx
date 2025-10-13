@@ -19,12 +19,14 @@ import {
   AcademicCapIcon,
   CogIcon,
   DevicePhoneMobileIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 // import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher"; // Removed - no longer using demo scenarios popup
 import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
 import { useSettingsPopup } from "./SettingsPopupContext";
+import { AdminPanel } from "./AdminPanel";
 
 // Theme keys that should be preserved during sign-out to prevent theme flash
 const THEME_KEYS_TO_PRESERVE = [
@@ -119,6 +121,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const [activeTab, setActiveTab] = useState<"main" | "docs">("main");
   // const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false); // Removed - no longer using demo scenarios popup
   const [isGrandCentralOpen, setIsGrandCentralOpen] = useState(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
 
@@ -286,6 +289,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         "/highway",
         "/optimization",
         "/docs/", // Allow all docs routes
+        "./action-guide", // Allow action guide routes
         // Workspace apps - only for admin users
         ...(isAdminUser ? [
           "./stacks",
@@ -564,8 +568,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
       {/* Profile Content - no tabs */}
       <div className="pl-4 pr-2 pt-2 pb-2">
-        {/* Download Button - Show only for web users */}
-        {!isDesktop && (
+        {/* Download Button - Show only for web users and admin users */}
+        {!isDesktop && isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
             onClick={handleDownloadDesktopApp}
@@ -696,25 +700,6 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
               Tower
             </div>
 
-            {/* Grand Central */}
-            <div
-              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-              onClick={() => {
-                console.log("🚉 Grand Central clicked - navigating to grand-central");
-                setIsProfileOpen(false);
-                handleNavigation("./grand-central");
-              }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e['key'] === "Enter") {
-                  setIsProfileOpen(false);
-                  handleNavigation("./grand-central");
-                }
-              }}
-            >
-              Grand Central
-            </div>
 
             {/* Olympus */}
             <div
@@ -973,6 +958,31 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         >
           Settings
         </div>
+
+        {/* 3. Admin Panel - Show only for admin users */}
+        {isAdminUser && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
+            onClick={() => {
+              console.log('👥 ProfileBox: Admin clicked, opening admin panel');
+              setIsProfileOpen(false);
+              
+              // Open admin panel after profile closes
+              setTimeout(() => {
+                console.log('👥 ProfileBox: Opening admin panel');
+                setIsAdminPanelOpen(true);
+              }, 100);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) =>
+              e['key'] === "Enter" && setIsProfileOpen(false)
+            }
+          >
+            <UserGroupIcon className="h-4 w-4 mr-2" />
+            Admin
+          </div>
+        )}
         
         {/* 3. Workspaces Section - Show for users with multiple workspaces */}
         {authUser?.workspaces && authUser.workspaces.length > 1 && (
@@ -987,10 +997,38 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* Note: Olympus, Tower, and Grand Central are now available in the main navigation 
-             under WORKSPACE APPS section, so they have been removed from here to avoid redundancy */}
+        {/* 4. Action Guide - Available for all users */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => handleNavigation("./action-guide")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e['key'] === "Enter" && handleNavigation("./action-guide")}
+        >
+          Action Guide
+        </div>
         
-        {/* 4. Speedrun Engine Configuration - Available for all users */}
+        {/* 5. Grand Central - Available for all users */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => {
+            console.log("🚉 Grand Central clicked - navigating to grand-central");
+            setIsProfileOpen(false);
+            handleNavigation("./grand-central");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              handleNavigation("./grand-central");
+            }
+          }}
+        >
+          Grand Central
+        </div>
+        
+        {/* 6. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
@@ -1010,7 +1048,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 5. Sign Out */}
+        {/* 7. Sign Out */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={handleSignOut}
@@ -1030,6 +1068,11 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         onClose={() => setIsGrandCentralOpen(false)}
       />
 
+      {/* Admin Panel */}
+      <AdminPanel
+        isOpen={isAdminPanelOpen}
+        onClose={() => setIsAdminPanelOpen(false)}
+      />
 
     </div>
   );

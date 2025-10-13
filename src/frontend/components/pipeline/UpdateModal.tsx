@@ -17,6 +17,8 @@ import {
   BuildingOfficeIcon,
   TagIcon
 } from '@heroicons/react/24/solid';
+import { CompanySelector } from './CompanySelector';
+import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -269,50 +271,50 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     if (isOpen && record) {
       setFormData({
         // Basic info
-        name: record.fullName || record.name || '',
-        firstName: record.firstName || '',
-        lastName: record.lastName || '',
-        email: record.email || record.workEmail || '',
-        phone: record.phone || record.mobilePhone || record.workPhone || '',
+        name: formatFieldValue(record.fullName || record.name, ''),
+        firstName: formatFieldValue(record.firstName, ''),
+        lastName: formatFieldValue(record.lastName, ''),
+        email: formatFieldValue(record.email || record.workEmail, ''),
+        phone: formatFieldValue(record.phone || record.mobilePhone || record.workPhone, ''),
         
-        // Company info
+        // Company info - handle both string and object formats
         company: record.company || record.companyName || '',
-        companyDomain: record.companyDomain || '',
-        industry: record.industry || '',
-        vertical: record.vertical || '',
-        companySize: record.companySize || '',
+        companyDomain: formatFieldValue(record.companyDomain, ''),
+        industry: formatFieldValue(record.industry, ''),
+        vertical: formatFieldValue(record.vertical, ''),
+        companySize: formatFieldValue(record.companySize, ''),
         
         // Job info
-        jobTitle: record.jobTitle || record.title || '',
-        department: record.department || '',
+        jobTitle: formatFieldValue(record.jobTitle || record.title, ''),
+        department: formatFieldValue(record.department, ''),
         
         // Contact details
-        linkedinUrl: record.linkedinUrl || '',
-        address: record.address || '',
-        city: record.city || '',
-        state: record.state || '',
-        country: record.country || '',
-        postalCode: record.postalCode || '',
+        linkedinUrl: formatFieldValue(record.linkedinUrl, ''),
+        address: formatFieldValue(record.address, ''),
+        city: formatFieldValue(record.city, ''),
+        state: formatFieldValue(record.state, ''),
+        country: formatFieldValue(record.country, ''),
+        postalCode: formatFieldValue(record.postalCode, ''),
         
         // Status and priority
         status: record.status || 'new',
         priority: record.priority || 'medium',
-        relationship: record.relationship || '',
+        relationship: formatFieldValue(record.relationship, ''),
         
         // Opportunity fields
-        estimatedValue: record.estimatedValue || '',
+        estimatedValue: formatFieldValue(record.estimatedValue, ''),
         currency: record.currency || 'USD',
-        expectedCloseDate: record.expectedCloseDate || '',
-        stage: record.stage || record.currentStage || '',
-        probability: record.probability || '',
+        expectedCloseDate: formatDateValue(record.expectedCloseDate),
+        stage: formatFieldValue(record.stage || record.currentStage, ''),
+        probability: formatFieldValue(record.probability, ''),
         
         // Activity fields
-        nextAction: record.nextAction || '',
-        nextActionDate: record.nextActionDate || '',
-        lastActionDate: record.lastActionDate || '',
+        nextAction: formatFieldValue(record.nextAction, ''),
+        nextActionDate: formatDateValue(record.nextActionDate),
+        lastActionDate: formatDateValue(record.lastActionDate),
         
         // Notes
-        notes: record.notes || record.description || '',
+        notes: formatFieldValue(record.notes || record.description, ''),
         tags: record.tags || []
       });
       
@@ -763,7 +765,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.name || ''}
             onChange={(e) => handleInputChange('name', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter full name"
+            placeholder={formData.name ? '' : 'Enter full name'}
             required
           />
         </div>
@@ -776,7 +778,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.jobTitle || ''}
             onChange={(e) => handleInputChange('jobTitle', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter job title"
+            placeholder={formData.jobTitle ? '' : '-'}
           />
         </div>
       </div>
@@ -791,7 +793,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.email || ''}
             onChange={(e) => handleInputChange('email', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter email address"
+            placeholder={formData.email ? '' : '-'}
           />
         </div>
         <div>
@@ -803,7 +805,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.phone || ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter phone number"
+            placeholder={formData.phone ? '' : '-'}
           />
         </div>
       </div>
@@ -847,12 +849,19 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Company
           </label>
-          <input
-            type="text"
-            value={formData.company || ''}
-            onChange={(e) => handleInputChange('company', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter company name"
+          <CompanySelector
+            value={formData.company}
+            onChange={(company) => {
+              if (company) {
+                handleInputChange('company', company.name);
+                handleInputChange('companyDomain', company.domain || '');
+              } else {
+                handleInputChange('company', '');
+                handleInputChange('companyDomain', '');
+              }
+            }}
+            placeholder="Search or add company..."
+            className="w-full"
           />
         </div>
         <div>
@@ -864,7 +873,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             onChange={(e) => handleInputChange('relationship', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="">Select relationship</option>
+            <option value="">{formData.relationship ? '' : '-'}</option>
             <option value="champion">Champion</option>
             <option value="decision_maker">Decision Maker</option>
             <option value="influencer">Influencer</option>
@@ -1058,7 +1067,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.company || ''}
             onChange={(e) => handleInputChange('company', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter company name"
+            placeholder={formData.company ? '' : '-'}
           />
         </div>
         <div>
@@ -1070,7 +1079,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.companyDomain || ''}
             onChange={(e) => handleInputChange('companyDomain', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter domain"
+            placeholder={formData.companyDomain ? '' : '-'}
           />
         </div>
       </div>
@@ -1085,7 +1094,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.industry || ''}
             onChange={(e) => handleInputChange('industry', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter industry"
+            placeholder={formData.industry ? '' : '-'}
           />
         </div>
         <div>
@@ -1097,7 +1106,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             onChange={(e) => handleInputChange('vertical', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="">Select vertical</option>
+            <option value="">{formData.vertical ? '' : '-'}</option>
             <option value="C Stores">C Stores</option>
             <option value="Grocery Stores">Grocery Stores</option>
             <option value="Corporate Retailers">Corporate Retailers</option>
@@ -1120,7 +1129,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             onChange={(e) => handleInputChange('companySize', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="">Select size</option>
+            <option value="">{formData.companySize ? '' : '-'}</option>
             <option value="1-10">1-10 employees</option>
             <option value="11-50">11-50 employees</option>
             <option value="51-200">51-200 employees</option>
@@ -1138,7 +1147,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.department || ''}
             onChange={(e) => handleInputChange('department', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter department"
+            placeholder={formData.department ? '' : '-'}
           />
         </div>
       </div>
@@ -1152,7 +1161,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Enter LinkedIn profile URL"
+          placeholder={formData.linkedinUrl ? '' : '-'}
         />
       </div>
 
@@ -1166,7 +1175,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter city"
+            placeholder={formData.city ? '' : '-'}
           />
         </div>
         <div>
@@ -1178,7 +1187,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.state || ''}
             onChange={(e) => handleInputChange('state', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter state"
+            placeholder={formData.state ? '' : '-'}
           />
         </div>
         <div>
@@ -1190,7 +1199,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.country || ''}
             onChange={(e) => handleInputChange('country', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter country"
+            placeholder={formData.country ? '' : '-'}
           />
         </div>
       </div>
@@ -1208,7 +1217,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.nextAction || ''}
           onChange={(e) => handleInputChange('nextAction', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="What should happen next?"
+          placeholder={formData.nextAction ? '' : '-'}
         />
       </div>
 
@@ -1315,7 +1324,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           onChange={(e) => handleInputChange('notes', e.target.value)}
           rows={8}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Add any notes or comments about this prospect"
+          placeholder={formData.notes ? '' : '-'}
         />
       </div>
 
@@ -1328,7 +1337,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
           onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Enter tags separated by commas"
+          placeholder={Array.isArray(formData.tags) && formData.tags.length > 0 ? '' : '-'}
         />
       </div>
     </div>

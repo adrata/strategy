@@ -1,0 +1,39 @@
+{
+  "auditDate": "2025-10-13T12:55:43.179Z",
+  "workspace": {
+    "sbi": {
+      "id": "01K5D01YCQJ9TJ7CT4DZDE79T1",
+      "name": "TOP Engineering Plus"
+    },
+    "new": {
+      "id": "01K75ZD7DWHG1XF16HAF2YVKCK",
+      "name": "TOP Engineering Plus"
+    }
+  },
+  "user": {
+    "sbi": {
+      "id": "user_1756911910335_x665hwfx1",
+      "name": "Victoria Leland",
+      "email": "vleland@topengineersplus.com"
+    },
+    "new": {
+      "id": "01K75ZD7NKC33EDSDADF5X0WD7",
+      "name": "Victoria Leland",
+      "email": "vleland@topengineersplus.com"
+    }
+  },
+  "oldDatabase": {
+    "chatMemberships": [],
+    "aiPreferences": []
+  },
+  "newDatabase": {
+    "conversations": []
+  },
+  "summary": {
+    "sbiChatMemberships": 0,
+    "sbiAiPreferences": 0,
+    "newConversations": 0,
+    "newMessages": 0,
+    "migrationNeeded": false
+  }
+}

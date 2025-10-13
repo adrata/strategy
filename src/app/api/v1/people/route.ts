@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
+import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
 const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
@@ -496,6 +497,20 @@ export async function POST(request: NextRequest) {
       console.log(`🗑️ [PEOPLE API] Invalidated cache for pattern: ${cachePattern}`);
     } catch (error) {
       console.warn('⚠️ [PEOPLE API] Cache invalidation failed:', error);
+    }
+
+    // Generate initial next action using AI service
+    try {
+      const nextActionService = new IntelligentNextActionService({
+        workspaceId: context.workspaceId,
+        userId: context.userId
+      });
+      
+      await nextActionService.generateNextAction(person.id, 'person');
+      console.log('✅ [PEOPLE API] Generated initial next action for new person', person.id);
+    } catch (error) {
+      console.error('⚠️ [PEOPLE API] Failed to generate initial next action:', error);
+      // Don't fail the request if next action generation fails
     }
 
     return NextResponse.json({

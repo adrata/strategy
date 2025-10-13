@@ -274,6 +274,81 @@ export class OpenRouterService {
   }
 
   /**
+   * Handle Excel import requests with intelligent analysis
+   */
+  async handleExcelImportRequest(request: OpenRouterRequest, excelData: any): Promise<OpenRouterResponse> {
+    const startTime = Date.now();
+    
+    if (!this.apiKey) {
+      return this.generateFallbackResponse(request, startTime);
+    }
+
+    try {
+      // Use a complex model for Excel analysis
+      const modelId = 'anthropic/claude-sonnet-4.5';
+      const systemPrompt = this.buildExcelImportPrompt(request, excelData);
+      const userMessage = `I've uploaded an Excel file with lead data. Please analyze it and help me import the contacts with appropriate status and connection points. Here's the data structure:\n\n${JSON.stringify(excelData, null, 2)}`;
+
+      const response = await this.callOpenRouter(modelId, {
+        ...request,
+        message: userMessage,
+        systemPrompt
+      }, { score: 80, category: 'complex', factors: ['excel-import'] });
+
+      return response;
+
+    } catch (error) {
+      console.error('❌ [OPENROUTER] Excel import error:', error);
+      return this.generateFallbackResponse(request, startTime);
+    }
+  }
+
+  /**
+   * Build Excel import specific system prompt
+   */
+  private buildExcelImportPrompt(request: OpenRouterRequest, excelData: any): string {
+    return `You are Adrata's Excel import specialist. Your role is to analyze Excel files containing lead/contact data and provide intelligent import recommendations.
+
+📊 EXCEL IMPORT EXPERTISE:
+- Analyze Excel structure and column mapping
+- Determine appropriate person status (LEAD, PROSPECT, CUSTOMER)
+- Identify connection point opportunities
+- Suggest data cleaning and deduplication strategies
+- Recommend import settings and next actions
+
+🎯 STATUS INTELLIGENCE:
+- LEAD: New contacts without engagement history
+- PROSPECT: Contacts with some engagement or warm indicators
+- CUSTOMER: Existing customers or revenue-generating contacts
+
+🔗 CONNECTION POINT GENERATION:
+- Import activity: Always created with timestamp
+- Historical activities: From date/interaction columns
+- Next actions: Based on lead quality and data completeness
+
+📋 ANALYSIS FRAMEWORK:
+1. Examine column headers and data structure
+2. Identify key fields (name, email, company, title, etc.)
+3. Assess data quality and completeness
+4. Determine import type (people, companies, or mixed)
+5. Suggest status assignments based on context
+6. Recommend connection point creation
+7. Provide import confidence score
+
+💡 RESPONSE FORMAT:
+Provide a structured analysis including:
+- Import type detection
+- Column mapping suggestions
+- Status recommendations
+- Connection point opportunities
+- Data quality assessment
+- Import confidence score
+- Next action recommendations
+
+Be specific and actionable in your recommendations. Focus on maximizing the value of the imported data for sales activities.`;
+  }
+
+  /**
    * Analyze query complexity to determine optimal model
    */
   private analyzeQueryComplexity(request: OpenRouterRequest): {

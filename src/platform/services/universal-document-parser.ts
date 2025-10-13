@@ -292,6 +292,41 @@ export class UniversalDocumentParser {
   }
 
   /**
+   * Parse Excel data specifically for import processing
+   */
+  public static async parseExcelData(file: File): Promise<{ tables: any[][], sheets: string[] }> {
+    try {
+      // Dynamic import to avoid bundle bloat
+      const XLSX = await import('xlsx');
+      
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      
+      const sheetNames = workbook.SheetNames;
+      const tables: any[][] = [];
+      
+      // Process all sheets
+      sheetNames.forEach(sheetName => {
+        const worksheet = workbook['Sheets'][sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (jsonData.length > 0) {
+          tables.push(jsonData as any[][]);
+        }
+      });
+      
+      return {
+        tables,
+        sheets: sheetNames
+      };
+      
+    } catch (error) {
+      console.error('Excel parsing error:', error);
+      throw new Error(`Failed to parse Excel file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Parse PDF files - Server-side only
    */
   private static async parsePDF(file: File, options: ParsingOptions): Promise<ParsedDocument> {

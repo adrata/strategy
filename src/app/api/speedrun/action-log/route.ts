@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,6 +65,20 @@ export async function POST(request: NextRequest) {
       workspaceId: actionLog.workspaceId,
       userId: actionLog.userId
     });
+
+    // Generate next action using AI service
+    try {
+      const nextActionService = new IntelligentNextActionService({
+        workspaceId,
+        userId
+      });
+      
+      await nextActionService.updateNextActionOnNewAction(actionLog);
+      console.log('✅ [SPEEDRUN ACTION LOG] Generated next action for person', personId);
+    } catch (error) {
+      console.error('⚠️ [SPEEDRUN ACTION LOG] Failed to generate next action:', error);
+      // Don't fail the request if next action generation fails
+    }
 
     return createSuccessResponse({
       success: true,

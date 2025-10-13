@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
 // Response cache for fast performance
 const responseCache = new Map<string, { data: any, timestamp: number }>();
@@ -277,6 +278,20 @@ export async function POST(request: NextRequest) {
     });
 
     const company = result.company;
+
+    // Generate initial next action using AI service
+    try {
+      const nextActionService = new IntelligentNextActionService({
+        workspaceId: context.workspaceId,
+        userId: context.userId
+      });
+      
+      await nextActionService.generateNextAction(company.id, 'company');
+      console.log('✅ [COMPANIES API] Generated initial next action for new company', company.id);
+    } catch (error) {
+      console.error('⚠️ [COMPANIES API] Failed to generate initial next action:', error);
+      // Don't fail the request if next action generation fails
+    }
 
     return createSuccessResponse(company, {
       message: 'Company created successfully',

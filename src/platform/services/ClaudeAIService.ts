@@ -784,6 +784,8 @@ CURRENT RECORD CONTEXT:
 - Next action recommendations
 - Competitive intelligence
 - Industry insights and trends
+- Excel file import and lead processing
+- Intelligent data mapping and deduplication
 
 📊 SALES EXPERTISE:
 - B2B sales methodologies (Challenger Sale, SPIN Selling, MEDDIC)
@@ -791,6 +793,8 @@ CURRENT RECORD CONTEXT:
 - Lead qualification and nurturing
 - Account-based selling strategies
 - Revenue forecasting and analytics
+- Data import and lead processing workflows
+- Excel file analysis and column mapping
 
 ${contextInfo}
 
@@ -812,6 +816,105 @@ Always aim to help the user:
 5. Make data-driven decisions
 
 Respond as a knowledgeable sales consultant who understands modern B2B sales challenges and opportunities.`;
+  }
+
+  /**
+   * Handle Excel import requests with intelligent analysis
+   */
+  async handleExcelImportRequest(request: ClaudeChatRequest, excelData: any): Promise<ClaudeChatResponse> {
+    const startTime = Date.now();
+    
+    if (!this.anthropic) {
+      return {
+        response: "I can help you import Excel data, but I need to be properly configured first.",
+        confidence: 0.3,
+        model: 'fallback',
+        tokensUsed: 0,
+        processingTime: Date.now() - startTime
+      };
+    }
+
+    try {
+      const systemPrompt = this.buildExcelImportPrompt(request, excelData);
+      const userMessage = `I've uploaded an Excel file with lead data. Please analyze it and help me import the contacts with appropriate status and connection points. Here's the data structure:\n\n${JSON.stringify(excelData, null, 2)}`;
+
+      const response = await this.anthropic.messages.create({
+        model: this.model,
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content: userMessage
+          }
+        ]
+      });
+
+      const responseText = response.content[0].type === 'text' ? response.content[0].text : '';
+
+      return {
+        response: responseText,
+        confidence: 0.9,
+        model: this.model,
+        tokensUsed: response.usage.input_tokens + response.usage.output_tokens,
+        processingTime: Date.now() - startTime
+      };
+
+    } catch (error) {
+      console.error('❌ [CLAUDE AI] Excel import error:', error);
+      return {
+        response: "I encountered an error analyzing your Excel file. Please try again or contact support.",
+        confidence: 0.1,
+        model: this.model,
+        tokensUsed: 0,
+        processingTime: Date.now() - startTime
+      };
+    }
+  }
+
+  /**
+   * Build Excel import specific system prompt
+   */
+  private buildExcelImportPrompt(request: ClaudeChatRequest, excelData: any): string {
+    return `You are Adrata's Excel import specialist. Your role is to analyze Excel files containing lead/contact data and provide intelligent import recommendations.
+
+📊 EXCEL IMPORT EXPERTISE:
+- Analyze Excel structure and column mapping
+- Determine appropriate person status (LEAD, PROSPECT, CUSTOMER)
+- Identify connection point opportunities
+- Suggest data cleaning and deduplication strategies
+- Recommend import settings and next actions
+
+🎯 STATUS INTELLIGENCE:
+- LEAD: New contacts without engagement history
+- PROSPECT: Contacts with some engagement or warm indicators
+- CUSTOMER: Existing customers or revenue-generating contacts
+
+🔗 CONNECTION POINT GENERATION:
+- Import activity: Always created with timestamp
+- Historical activities: From date/interaction columns
+- Next actions: Based on lead quality and data completeness
+
+📋 ANALYSIS FRAMEWORK:
+1. Examine column headers and data structure
+2. Identify key fields (name, email, company, title, etc.)
+3. Assess data quality and completeness
+4. Determine import type (people, companies, or mixed)
+5. Suggest status assignments based on context
+6. Recommend connection point creation
+7. Provide import confidence score
+
+💡 RESPONSE FORMAT:
+Provide a structured analysis including:
+- Import type detection
+- Column mapping suggestions
+- Status recommendations
+- Connection point opportunities
+- Data quality assessment
+- Import confidence score
+- Next action recommendations
+
+Be specific and actionable in your recommendations. Focus on maximizing the value of the imported data for sales activities.`;
   }
 
   /**

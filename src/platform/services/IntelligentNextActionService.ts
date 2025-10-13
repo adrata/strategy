@@ -18,6 +18,7 @@ export interface ActionContext {
   leadId?: string;
   opportunityId?: string;
   prospectId?: string;
+  globalRank?: number | null;
   recentActions: Array<{
     type: string;
     subject: string;
@@ -100,6 +101,8 @@ export class IntelligentNextActionService {
 
       // Get entity information
       let entityInfo;
+      let globalRank: number | null = null;
+      
       if (entityType === 'person') {
         const person = await prisma.people.findUnique({
           where: { id: entityId },
@@ -108,6 +111,7 @@ export class IntelligentNextActionService {
             jobTitle: true,
             companyId: true,
             lastContactDate: true,
+            globalRank: true,
             company: {
               select: {
                 name: true,
@@ -119,6 +123,7 @@ export class IntelligentNextActionService {
 
         if (!person) return null;
 
+        globalRank = person.globalRank;
         entityInfo = {
           name: person.fullName,
           title: person.jobTitle || undefined,
@@ -132,12 +137,14 @@ export class IntelligentNextActionService {
           select: {
             name: true,
             industry: true,
-            lastContactDate: true
+            lastContactDate: true,
+            globalRank: true
           }
         });
 
         if (!company) return null;
 
+        globalRank = company.globalRank;
         entityInfo = {
           name: company.name,
           industry: company.industry || undefined,
@@ -148,6 +155,7 @@ export class IntelligentNextActionService {
       return {
         personId: entityType === 'person' ? entityId : undefined,
         companyId: entityType === 'company' ? entityId : undefined,
+        globalRank,
         recentActions: recentActions.map(action => ({
           type: action.type,
           subject: action.subject,
@@ -278,6 +286,48 @@ Focus on the most strategic next move that will advance the relationship toward 
   }
 
   /**
+   * Calculate next action date based on global rank and last action
+   */
+  private calculateRankBasedDate(globalRank: number | null, lastActionDate: Date | null): Date {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    // Check if last action was today - if so, push to tomorrow minimum
+    const lastActionToday = lastActionDate && 
+      lastActionDate.getFullYear() === now.getFullYear() &&
+      lastActionDate.getMonth() === now.getMonth() &&
+      lastActionDate.getDate() === now.getDate();
+    
+    let targetDate: Date;
+    
+    // Rank-based date calculation
+    if (!globalRank || globalRank <= 50) {
+      // Top 50: TODAY (or tomorrow if action already today)
+      targetDate = lastActionToday ? new Date(today.getTime() + 24 * 60 * 60 * 1000) : today;
+    } else if (globalRank <= 200) {
+      // High priority (51-200): THIS WEEK (3-7 days)
+      const daysOut = lastActionToday ? 3 : 2;
+      targetDate = new Date(today.getTime() + daysOut * 24 * 60 * 60 * 1000);
+    } else if (globalRank <= 500) {
+      // Medium priority (201-500): NEXT WEEK (7-14 days)
+      targetDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    } else {
+      // Lower priority (500+): THIS MONTH (14-30 days)
+      targetDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+    }
+    
+    // Push weekend dates to Monday
+    const dayOfWeek = targetDate.getDay();
+    if (dayOfWeek === 0) { // Sunday
+      targetDate = new Date(targetDate.getTime() + 24 * 60 * 60 * 1000); // Move to Monday
+    } else if (dayOfWeek === 6) { // Saturday
+      targetDate = new Date(targetDate.getTime() + 2 * 24 * 60 * 60 * 1000); // Move to Monday
+    }
+    
+    return targetDate;
+  }
+
+  /**
    * Parse Claude's response into NextActionRecommendation
    */
   private parseClaudeResponse(content: string, context: ActionContext): NextActionRecommendation | null {
@@ -290,8 +340,12 @@ Focus on the most strategic next move that will advance the relationship toward 
 
       const parsed = JSON.parse(jsonMatch[0]);
       
-      const daysFromNow = parsed.daysFromNow || 2;
-      const nextDate = new Date(Date.now() + (daysFromNow * 24 * 60 * 60 * 1000));
+      // Get globalRank from context if available
+      const globalRank = (context as any).globalRank || null;
+      const lastActionDate = context.entityInfo.lastContactDate || null;
+      
+      // Use rank-based date calculation instead of AI's suggestion
+      const nextDate = this.calculateRankBasedDate(globalRank, lastActionDate);
 
       // Enhanced reasoning with expected outcome and follow-up strategy
       const enhancedReasoning = `${parsed.reasoning}${parsed.expectedOutcome ? ` Expected outcome: ${parsed.expectedOutcome}.` : ''}${parsed.followUpStrategy ? ` Follow-up strategy: ${parsed.followUpStrategy}.` : ''}`;
@@ -319,13 +373,19 @@ Focus on the most strategic next move that will advance the relationship toward 
     const recentActions = context.recentActions;
     const lastAction = recentActions[0];
     
+    // Calculate date using rank-based logic
+    const nextDate = this.calculateRankBasedDate(
+      context.globalRank || null,
+      context.entityInfo.lastContactDate || null
+    );
+    
     if (!lastAction) {
       // No previous actions, start with LinkedIn connection
       return {
         action: 'Send LinkedIn connection request',
-        date: new Date(Date.now() + (24 * 60 * 60 * 1000)), // Tomorrow
+        date: nextDate,
         reasoning: 'First contact - LinkedIn connection request is the best starting point',
-        priority: 'high',
+        priority: context.globalRank && context.globalRank <= 50 ? 'high' : 'medium',
         type: 'linkedin_connection_request',
         context: `Initial outreach to ${context.entityInfo.name}`,
         updatedAt: new Date()
@@ -337,50 +397,45 @@ Focus on the most strategic next move that will advance the relationship toward 
     const lastActionIndex = actionCycle.indexOf(lastAction.type);
     
     let nextActionType: string;
-    let daysFromNow: number;
     let reasoning: string;
 
     if (lastActionIndex === -1) {
       // Unknown action type, default to email
       nextActionType = 'email_conversation';
-      daysFromNow = 3;
       reasoning = 'Follow up with email after previous action';
     } else {
       // Cycle to next action
       const nextIndex = (lastActionIndex + 1) % actionCycle.length;
       nextActionType = actionCycle[nextIndex];
       
-      // Smart timing based on action type
+      // Smart reasoning based on action type
       switch (nextActionType) {
         case 'linkedin_connection_request':
-          daysFromNow = 2;
           reasoning = 'LinkedIn connection request - professional networking approach';
           break;
         case 'email_conversation':
-          daysFromNow = 3;
           reasoning = 'Follow-up email to continue conversation';
           break;
         case 'phone_call':
-          daysFromNow = 5;
           reasoning = 'Phone call for more personal engagement';
           break;
         case 'linkedin_inmail':
-          daysFromNow = 7;
           reasoning = 'LinkedIn InMail for high-value prospect';
           break;
         default:
-          daysFromNow = 3;
           reasoning = 'Standard follow-up action';
       }
     }
 
-    const nextDate = new Date(Date.now() + (daysFromNow * 24 * 60 * 60 * 1000));
+    // Determine priority based on rank
+    const priority = context.globalRank && context.globalRank <= 50 ? 'high' : 
+                    context.globalRank && context.globalRank <= 200 ? 'medium' : 'low';
 
     return {
       action: this.getActionDescription(nextActionType),
       date: nextDate,
       reasoning,
-      priority: 'medium',
+      priority,
       type: nextActionType as any,
       context: `Strategic follow-up for ${context.entityInfo.name}`,
       updatedAt: new Date()
