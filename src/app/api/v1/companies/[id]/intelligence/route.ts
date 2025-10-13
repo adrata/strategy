@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { getV1AuthUser } from '../../../auth';
-
-const prisma = new PrismaClient();
 
 /**
  * Company Intelligence API v1
@@ -17,7 +15,11 @@ interface CompanyIntelligence {
   description: string;
   strategicWants: string[];
   criticalNeeds: string[];
-  businessUnits: string[];
+  businessUnits: Array<{
+    name: string;
+    functions: string[];
+    color: string;
+  }>;
   strategicIntelligence: string;
   adrataStrategy: string;
   generatedAt?: string;
@@ -33,6 +35,7 @@ export async function GET(
     // Authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
+      console.log('❌ [INTELLIGENCE API] Authentication required');
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
@@ -40,6 +43,7 @@ export async function GET(
     }
 
     const { id } = await params;
+    console.log(`📊 [INTELLIGENCE API] Fetching intelligence for company ID: ${id}`);
 
     // Get company from database
     const company = await prisma.companies.findUnique({
@@ -47,7 +51,19 @@ export async function GET(
         id,
         deletedAt: null // Only show non-deleted records
       },
-      include: {
+      select: {
+        // Base company fields
+        id: true,
+        name: true,
+        description: true,
+        industry: true,
+        size: true,
+        employeeCount: true,
+        revenue: true,
+        customFields: true,
+        competitors: true, // Include competitors field
+        workspaceId: true,
+        // Relations
         people: {
           where: { deletedAt: null },
           select: {
@@ -79,16 +95,19 @@ export async function GET(
     });
 
     if (!company) {
+      console.log(`❌ [INTELLIGENCE API] Company not found with ID: ${id}`);
       return NextResponse.json(
         { success: false, error: 'Company not found' },
         { status: 404 }
       );
     }
 
+    console.log(`✅ [INTELLIGENCE API] Found company: ${company.name}`);
+
     // Check for cached intelligence first
     const cachedIntelligence = company.customFields as any;
     if (cachedIntelligence?.intelligence) {
-      console.log('✅ Using cached intelligence data for company:', company.name);
+      console.log(`✅ [INTELLIGENCE API] Using cached intelligence data for company: ${company.name}`);
       return NextResponse.json({
         success: true,
         intelligence: cachedIntelligence.intelligence,
@@ -97,6 +116,7 @@ export async function GET(
       });
     }
 
+    console.log(`🔄 [INTELLIGENCE API] Generating new intelligence for company: ${company.name}`);
     // Generate new intelligence
     const intelligence = await generateCompanyIntelligence(company);
 
@@ -112,12 +132,13 @@ export async function GET(
           updatedAt: new Date(),
         },
       });
-      console.log('✅ Cached intelligence for company:', company.name);
+      console.log(`✅ [INTELLIGENCE API] Cached intelligence for company: ${company.name}`);
     } catch (cacheError) {
-      console.error('⚠️ Failed to cache intelligence:', cacheError);
+      console.error('⚠️ [INTELLIGENCE API] Failed to cache intelligence:', cacheError);
       // Continue without failing the request
     }
 
+    console.log(`✅ [INTELLIGENCE API] Successfully generated intelligence for company: ${company.name}`);
     return NextResponse.json({
       success: true,
       intelligence: intelligence,
@@ -126,9 +147,10 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('❌ Error fetching company intelligence:', error);
+    console.error('❌ [INTELLIGENCE API] Error fetching company intelligence:', error);
+    console.error('❌ [INTELLIGENCE API] Stack trace:', error instanceof Error ? error.stack : 'No stack trace available');
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch company intelligence' },
+      { success: false, error: 'Failed to fetch company intelligence', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -159,7 +181,19 @@ export async function POST(
         id,
         deletedAt: null // Only show non-deleted records
       },
-      include: {
+      select: {
+        // Base company fields
+        id: true,
+        name: true,
+        description: true,
+        industry: true,
+        size: true,
+        employeeCount: true,
+        revenue: true,
+        customFields: true,
+        competitors: true, // Include competitors field
+        workspaceId: true,
+        // Relations
         people: {
           where: { deletedAt: null },
           select: {
@@ -272,7 +306,7 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
     };
 
   } catch (error) {
-    console.error('❌ Error generating company intelligence:', error);
+    console.error('❌ [INTELLIGENCE API] Error generating company intelligence:', error);
     
     // Return fallback intelligence
     return {
@@ -281,7 +315,9 @@ async function generateCompanyIntelligence(company: any, forceRegenerate: boolea
       description: company.description || 'No description available',
       strategicWants: ['AI intelligence generation unavailable'],
       criticalNeeds: ['Please try again or contact support'],
-      businessUnits: [],
+      businessUnits: [
+        { name: 'General', functions: ['Unable to determine business functions'], color: 'bg-gray-50 border-gray-200' }
+      ],
       strategicIntelligence: 'Intelligence generation failed',
       adrataStrategy: 'Unable to generate strategy at this time',
       generatedAt: new Date().toISOString(),
@@ -386,35 +422,35 @@ function generateCriticalNeeds(industry: string, size: string, people: any[]): s
 /**
  * Generate business units based on industry
  */
-function generateBusinessUnits(industry: string): string[] {
+function generateBusinessUnits(industry: string): Array<{name: string; functions: string[]; color: string}> {
   const units = {
     'Technology': [
-      'Engineering',
-      'Product Management',
-      'Sales & Marketing',
-      'Customer Success',
-      'Operations'
+      { name: 'Engineering', functions: ['Software Development', 'Infrastructure', 'Quality Assurance'], color: 'bg-blue-50 border-blue-200' },
+      { name: 'Product Management', functions: ['Product Strategy', 'Roadmap Planning', 'Feature Prioritization'], color: 'bg-purple-50 border-purple-200' },
+      { name: 'Sales & Marketing', functions: ['Lead Generation', 'Customer Acquisition', 'Brand Management'], color: 'bg-green-50 border-green-200' },
+      { name: 'Customer Success', functions: ['Onboarding', 'Support', 'Account Management'], color: 'bg-orange-50 border-orange-200' },
+      { name: 'Operations', functions: ['Business Operations', 'Finance', 'HR'], color: 'bg-gray-50 border-gray-200' }
     ],
     'Healthcare': [
-      'Clinical Operations',
-      'Patient Services',
-      'Administration',
-      'IT & Security',
-      'Compliance'
+      { name: 'Clinical Operations', functions: ['Patient Care', 'Medical Services', 'Treatment Planning'], color: 'bg-blue-50 border-blue-200' },
+      { name: 'Patient Services', functions: ['Admissions', 'Scheduling', 'Patient Relations'], color: 'bg-purple-50 border-purple-200' },
+      { name: 'Administration', functions: ['Management', 'Finance', 'HR'], color: 'bg-green-50 border-green-200' },
+      { name: 'IT & Security', functions: ['Systems Management', 'Data Security', 'Infrastructure'], color: 'bg-orange-50 border-orange-200' },
+      { name: 'Compliance', functions: ['Regulatory Compliance', 'Quality Assurance', 'Risk Management'], color: 'bg-red-50 border-red-200' }
     ],
     'Finance': [
-      'Risk Management',
-      'Customer Relations',
-      'Operations',
-      'Compliance',
-      'Technology'
+      { name: 'Risk Management', functions: ['Risk Assessment', 'Compliance', 'Audit'], color: 'bg-blue-50 border-blue-200' },
+      { name: 'Customer Relations', functions: ['Client Services', 'Account Management', 'Support'], color: 'bg-purple-50 border-purple-200' },
+      { name: 'Operations', functions: ['Trading', 'Settlement', 'Back Office'], color: 'bg-green-50 border-green-200' },
+      { name: 'Compliance', functions: ['Regulatory Compliance', 'Legal', 'Reporting'], color: 'bg-orange-50 border-orange-200' },
+      { name: 'Technology', functions: ['Systems Development', 'Infrastructure', 'Security'], color: 'bg-gray-50 border-gray-200' }
     ],
     'Manufacturing': [
-      'Production',
-      'Quality Control',
-      'Supply Chain',
-      'Engineering',
-      'Sales & Marketing'
+      { name: 'Production', functions: ['Manufacturing', 'Assembly', 'Quality Control'], color: 'bg-blue-50 border-blue-200' },
+      { name: 'Quality Control', functions: ['Testing', 'Inspection', 'Certification'], color: 'bg-purple-50 border-purple-200' },
+      { name: 'Supply Chain', functions: ['Procurement', 'Logistics', 'Inventory'], color: 'bg-green-50 border-green-200' },
+      { name: 'Engineering', functions: ['Design', 'R&D', 'Process Engineering'], color: 'bg-orange-50 border-orange-200' },
+      { name: 'Sales & Marketing', functions: ['Sales', 'Marketing', 'Distribution'], color: 'bg-gray-50 border-gray-200' }
     ]
   };
 

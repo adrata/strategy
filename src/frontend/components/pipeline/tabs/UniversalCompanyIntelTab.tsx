@@ -46,24 +46,35 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
       // Check for cached intelligence first
       const cachedIntelligence = record?.customFields?.intelligence;
       if (cachedIntelligence) {
-        console.log('✅ Using cached intelligence data');
+        console.log('✅ [INTEL TAB] Using cached intelligence data');
         setIntelligence(cachedIntelligence);
         setLoading(false);
         return;
       }
 
+      console.log(`🔄 [INTEL TAB] Fetching intelligence for company ID: ${record.id}`);
       // Generate new intelligence without timeout
       const response = await fetch(`/api/v1/companies/${record.id}/intelligence`);
+      
+      // Check if response is OK before parsing
+      if (!response.ok) {
+        console.error(`❌ [INTEL TAB] API returned status ${response.status}`);
+        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
+      console.log('📊 [INTEL TAB] Received response:', data);
 
       if (data.success) {
+        console.log('✅ [INTEL TAB] Successfully loaded intelligence');
         setIntelligence(data.intelligence);
       } else {
+        console.error('❌ [INTEL TAB] API returned success:false', data);
         setError(data.error || 'Failed to generate intelligence');
       }
     } catch (err) {
-      console.error('Error loading intelligence:', err);
-      setError('Failed to load intelligence');
+      console.error('❌ [INTEL TAB] Error loading intelligence:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load intelligence');
     } finally {
       setLoading(false);
     }
@@ -76,22 +87,32 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
     setError(null);
 
     try {
+      console.log(`🔄 [INTEL TAB] Regenerating intelligence for company ID: ${record.id}`);
       const response = await fetch(`/api/v1/companies/${record.id}/intelligence`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ forceRegenerate: true })
       });
       
+      // Check if response is OK before parsing
+      if (!response.ok) {
+        console.error(`❌ [INTEL TAB] Regenerate API returned status ${response.status}`);
+        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
+      console.log('📊 [INTEL TAB] Regenerate response:', data);
 
       if (data.success) {
+        console.log('✅ [INTEL TAB] Successfully regenerated intelligence');
         setIntelligence(data.intelligence);
       } else {
+        console.error('❌ [INTEL TAB] Regenerate API returned success:false', data);
         setError(data.error || 'Failed to regenerate intelligence');
       }
     } catch (err) {
-      console.error('Error regenerating intelligence:', err);
-      setError('Failed to regenerate intelligence');
+      console.error('❌ [INTEL TAB] Error regenerating intelligence:', err);
+      setError(err instanceof Error ? err.message : 'Failed to regenerate intelligence');
     } finally {
       setLoading(false);
     }
@@ -132,14 +153,13 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
               onClick={() => {
                 setError(null);
                 setIntelligence({
-                  companyName: record.name,
-                  industry: record.industry || 'Unknown',
-                  description: record.description || 'No description available',
-                  strategicWants: ['AI intelligence generation unavailable'],
-                  criticalNeeds: ['Please try again or contact support'],
-                  businessUnits: [],
-                  strategicIntelligence: 'Intelligence generation failed',
-                  adrataStrategy: 'Unable to generate strategy at this time'
+                  strategicWants: ['No strategic wants data available'],
+                  criticalNeeds: ['No critical needs data available'],
+                  businessUnits: [
+                    { name: 'General', functions: ['Unable to determine business functions'], color: 'bg-gray-50 border-gray-200' }
+                  ],
+                  strategicIntelligence: record.description || 'No strategic intelligence available',
+                  adrataStrategy: `For ${record.name}, focus on understanding their business needs and challenges.`
                 });
               }}
               className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"

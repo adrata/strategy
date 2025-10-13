@@ -74,7 +74,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   }, [section]);
   
   // Use centralized profile popup context
-  const { isProfileOpen, setIsProfileOpen, profileAnchor, profilePopupRef } = useProfilePopup();
+  const { isProfileOpen, setIsProfileOpen, profileAnchor, setProfileAnchor, profilePopupRef } = useProfilePopup();
   
   // Load data for navigation - REQUIRED for navigation arrows to work
   const { data: acquisitionData } = useAcquisitionOS();
@@ -408,7 +408,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         response = await fetch(`/api/v1/companies/${recordId}`, {
           credentials: 'include'
         });
-      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities') {
+      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'speedrun') {
         response = await fetch(`/api/v1/people/${recordId}`, {
           credentials: 'include'
         });
@@ -442,7 +442,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       
       if (result['success'] && result.data) {
         // For v1 APIs, the data is directly in result.data
-        if (section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities') {
+        if (section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'speedrun') {
           record = result.data;
         } else {
           // Fallback for unified API response format
@@ -673,7 +673,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     }
   }, [data, selectedRecord, section, navigateToPipelineItem]);
 
-
+  // 🚀 LOADING SKELETON: Show skeleton during navigation transitions for better UX
+  if (loading && !selectedRecord && !previousRecord) {
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <PanelLoader />
+      </div>
+    );
+  }
 
   // Show record details if found (or use previous record as fallback during transitions)
   // 🚫 FALLBACK: Create a basic record if none found to prevent infinite loading
@@ -735,6 +742,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           setSelectedRecord(updatedRecord);
           
           console.log('✅ [PIPELINE] Record updated in UI');
+        }}
+        profilePopupContext={{
+          isProfileOpen,
+          setIsProfileOpen,
+          profileAnchor,
+          setProfileAnchor
         }}
       />
     );

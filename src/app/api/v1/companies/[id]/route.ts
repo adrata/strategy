@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { getV1AuthUser } from '../../auth';
-
-const prisma = new PrismaClient();
 
 /**
  * Individual Company CRUD API v1
@@ -34,7 +32,31 @@ export async function GET(
         id,
         deletedAt: null // Only show non-deleted records
       },
-      include: {
+      select: {
+        // Base company fields
+        id: true,
+        name: true,
+        website: true,
+        description: true,
+        industry: true,
+        size: true,
+        revenue: true,
+        employeeCount: true,
+        status: true,
+        priority: true,
+        tags: true,
+        notes: true,
+        customFields: true,
+        lastAction: true,
+        lastActionDate: true,
+        nextAction: true,
+        nextActionDate: true,
+        globalRank: true,
+        competitors: true, // Include competitors field
+        workspaceId: true,
+        createdAt: true,
+        updatedAt: true,
+        // Relations
         mainSeller: {
           select: {
             id: true,

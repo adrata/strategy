@@ -138,8 +138,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
     buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || '-',
-    influenceLevel: record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.influenceLevel || record?.customFields?.influence || '-',
-    engagementPriority: record?.customFields?.engagementPriority || record?.customFields?.enrichedData?.overview?.engagementPriority || record?.engagementPriority || record?.customFields?.priority || '-',
+    influenceLevel: record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || '-',
+    engagementPriority: record?.priority || record?.customFields?.priority || record?.customFields?.enrichedData?.overview?.priority || '-',
     
     // Engagement History (existing fields) - Enhanced mapping
     lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || '-',

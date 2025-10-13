@@ -137,6 +137,8 @@ export async function GET(request: NextRequest) {
           lastActionDate: true,
           nextAction: true,
           nextActionDate: true,
+          buyerGroupRole: true,
+          isBuyerGroupMember: true,
           mainSellerId: true,
           workspaceId: true,
           createdAt: true,

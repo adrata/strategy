@@ -200,7 +200,7 @@ export function EnhancedEmailPreview({
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-[10000]">
       <div className="bg-[var(--background)] rounded-xl w-[1200px] max-w-[95vw] max-h-[95vh] overflow-y-auto border border-[var(--border)] shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">

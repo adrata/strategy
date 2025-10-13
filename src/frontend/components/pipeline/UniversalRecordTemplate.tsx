@@ -99,6 +99,13 @@ export interface UniversalRecordTemplateProps {
   showDialer?: boolean;
   showReports?: boolean;
   contextualActions?: ContextualAction[];
+  // Profile popup context
+  profilePopupContext?: {
+    isProfileOpen: boolean;
+    setIsProfileOpen: (open: boolean) => void;
+    profileAnchor: HTMLElement | null;
+    setProfileAnchor: (anchor: HTMLElement | null) => void;
+  };
 }
 
 export interface TabConfig {
@@ -237,7 +244,8 @@ export function UniversalRecordTemplate({
   customTabs,
   showDialer = false,
   showReports = false,
-  contextualActions = []
+  contextualActions = [],
+  profilePopupContext
 }: UniversalRecordTemplateProps) {
   const router = useRouter();
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
@@ -269,6 +277,44 @@ export function UniversalRecordTemplate({
   const [deleteConfirmName, setDeleteConfirmName] = useState('');
 
   const tabs = customTabs || getTabsForRecordType(recordType, record);
+  
+  // Handle profile click for popup
+  const handleProfileClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!profilePopupContext) {
+      console.warn('🔍 [PROFILE] ProfilePopupContext not available');
+      return;
+    }
+    
+    console.log('🔘 Profile avatar clicked in record view!', { 
+      isProfileOpen: profilePopupContext.isProfileOpen, 
+      profileAnchor: profilePopupContext.profileAnchor,
+      record: !!record,
+      recordType
+    });
+    
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const avatarElement = event.currentTarget;
+    console.log('🎯 Setting profile anchor:', avatarElement);
+    console.log('🎯 Avatar rect:', avatarElement.getBoundingClientRect());
+    profilePopupContext.setProfileAnchor(avatarElement);
+    
+    const newState = !profilePopupContext.isProfileOpen;
+    console.log('🔄 Toggling profile open state:', profilePopupContext.isProfileOpen, '->', newState);
+    profilePopupContext.setIsProfileOpen(newState);
+    
+    // Additional debugging
+    setTimeout(() => {
+      console.log('🔍 After state change:', { 
+        isProfileOpen: newState, 
+        profileAnchor: avatarElement,
+        shouldRenderPopup: newState && avatarElement,
+        record,
+        recordType
+      });
+    }, 100);
+  };
   
   // Reset active tab when tabs change to ensure valid tab is selected
   useEffect(() => {
@@ -2168,7 +2214,11 @@ export function UniversalRecordTemplate({
           <div className="flex items-center gap-4">
             {/* Minimal Avatar with Rank */}
             <div className="relative group">
-              <div className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-xl flex items-center justify-center overflow-hidden relative">
+              <div 
+                className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors"
+                onClick={handleProfileClick}
+                title="Click to open profile"
+              >
                 {getProfileImageUrl() ? (
                   <img 
                     src={getProfileImageUrl()} 

@@ -55,7 +55,7 @@ export function AutoDialerPopup({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] flex items-center justify-center p-4">
       <div className="relative bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl max-w-lg w-full">
         {/* Header */}
         <div className="relative p-8 text-center border-b border-[var(--border)]">

@@ -10,11 +10,16 @@ import {
 // Helper function to convert Monaco objects to strings
 const convertToString = (item: any): string => {
   if (typeof item === "string") return item;
-  if (typeof item === "object") {
+  if (typeof item === "object" && item !== null) {
     return (
       item.signal ||
       item.description ||
       item.name ||
+      item.text ||
+      item.content ||
+      item.value ||
+      item.title ||
+      item.message ||
       item.motivation ||
       item.driver ||
       item.factor ||
@@ -25,7 +30,7 @@ const convertToString = (item: any): string => {
       item.challenge ||
       item.technology ||
       item.tool ||
-      String(item)
+      JSON.stringify(item) // Better fallback than String(item)
     );
   }
   return String(item);
@@ -117,6 +122,7 @@ export const extractProductionInsights = (
     })(),
     buyingSignals: (opportunityIntel?.signals || [])
       .map(convertToString)
+      .filter(signal => signal && !signal.includes('[object Object]'))
       .concat([
         person.recentActivity || `Recent engagement from ${person.company}`,
         `${person.status || 'Active'} status indicates current engagement level`,
@@ -129,6 +135,7 @@ export const extractProductionInsights = (
       .slice(0, 6),
     objections: (personIntel?.painPoints || [])
       .map(convertToString)
+      .filter(objection => objection && !objection.includes('[object Object]'))
       .concat([
         `${person.company} timeline and implementation planning`,
         person.department ? `${person.department} budget approval requirements` : "Budget allocation considerations",
@@ -139,6 +146,7 @@ export const extractProductionInsights = (
       .slice(0, 4),
     recommendations: (personIntel?.motivations || [])
       .map(convertToString)
+      .filter(recommendation => recommendation && !recommendation.includes('[object Object]'))
       .concat([
         opportunityIntel?.nextBestAction || `Schedule personalized discovery call with ${person.name}`,
         `Share ${person.company} industry-specific case studies`,
@@ -149,7 +157,7 @@ export const extractProductionInsights = (
       .filter(Boolean)
       .slice(0, 5),
     winLoss: `${person.name} represents a ${person.priority?.toLowerCase() || "medium"} priority opportunity. Buyer role: ${buyerAnalysis?.role || "Contact"}. Influence level: ${personIntel?.influence || "Medium"}. Decision power: ${personIntel?.decisionPower || "Moderate"}.`,
-    competitive: `Communication style: ${personIntel?.communicationStyle || "Professional"}. Key decision factors: ${(personIntel?.decisionFactors || []).map(convertToString).filter(Boolean).join(", ") || "ROI, Risk, Timeline"}. Industry: ${monaco?.companyIntelligence?.industry || "Technology"}.`,
+    competitive: `Communication style: ${personIntel?.communicationStyle || "Professional"}. Key decision factors: ${(personIntel?.decisionFactors || []).map(convertToString).filter(factor => factor && !factor.includes('[object Object]')).join(", ") || "ROI, Risk, Timeline"}. Industry: ${monaco?.companyIntelligence?.industry || "Technology"}.`,
   };
 };
 
@@ -171,13 +179,14 @@ export const extractProductionProfile = (person: SpeedrunPerson): ProfileData =>
     motivators:
       (personIntel?.motivations || [])
         .map(convertToString)
+        .filter(motivator => motivator && !motivator.includes('[object Object]'))
         .concat(person.interests)
         .filter(Boolean)
         .join(", ") || "Professional growth, business success",
     values:
       (personIntel?.decisionFactors || [])
         .map(convertToString)
-        .filter(Boolean)
+        .filter(value => value && !value.includes('[object Object]'))
         .join(", ") ||
       "Professional excellence, business growth, operational efficiency",
     social:
@@ -187,12 +196,13 @@ export const extractProductionProfile = (person: SpeedrunPerson): ProfileData =>
     interests:
       (personIntel?.skills || [])
         .map(convertToString)
+        .filter(interest => interest && !interest.includes('[object Object]'))
         .concat(person.interests)
         .filter(Boolean)
         .join(", ") || "Technology, Business",
     role: monaco?.buyerGroupAnalysis?.role || person.relationship || "Contact",
     context: `${person.name} is a ${person.title} at ${person.company} (${personIntel?.department || "Department"}). Seniority: ${personIntel?.seniorityLevel || "Professional"}. ${person.bio}`,
-    tips: `Communication style: ${personIntel?.communicationStyle || "Professional"}. Key motivators: ${(personIntel?.motivations || []).map(convertToString).filter(Boolean).slice(0, 2).join(", ") || "Growth, efficiency"}. Decision power: ${personIntel?.decisionPower || "Moderate"}.`,
+    tips: `Communication style: ${personIntel?.communicationStyle || "Professional"}. Key motivators: ${(personIntel?.motivations || []).map(convertToString).filter(motivator => motivator && !motivator.includes('[object Object]')).slice(0, 2).join(", ") || "Growth, efficiency"}. Decision power: ${personIntel?.decisionPower || "Moderate"}.`,
   };
 };
 
@@ -211,13 +221,13 @@ export const extractProductionCareer = (person: SpeedrunPerson): CareerData => {
       "Professional background in business and industry expertise",
     certifications: (personIntel?.skills || person.interests || [])
       .map(convertToString)
-      .filter(Boolean)
+      .filter(cert => cert && !cert.includes('[object Object]'))
       .slice(0, 3)
       .concat(["Professional Certification"])
       .slice(0, 3),
     skills: (personIntel?.skills || person.interests || [])
       .map(convertToString)
-      .filter(Boolean),
+      .filter(skill => skill && !skill.includes('[object Object]')),
     timeline: enrichedProfile?.experience?.map((exp) => ({
       year: exp.duration || "Recent",
       title: exp.title,
@@ -258,10 +268,10 @@ export const extractProductionWorkspace = (
     mission: `${person.company} is focused on delivering value and driving growth in the ${companyIntel?.industry || "technology"} industry.`,
     techStack: (companyIntel?.techStack || [])
       .map(convertToString)
-      .filter(Boolean)
+      .filter(tech => tech && !tech.includes('[object Object]'))
       .concat(["Modern Business Systems"])
       .slice(0, 5),
-    dayToDay: `${person.name} focuses on ${person.title.toLowerCase()} responsibilities in the ${personIntel?.department || "business"} department. Key areas: ${(personIntel?.skills || []).map(convertToString).filter(Boolean).slice(0, 3).join(", ") || "strategic initiatives"}.`,
+    dayToDay: `${person.name} focuses on ${person.title.toLowerCase()} responsibilities in the ${personIntel?.department || "business"} department. Key areas: ${(personIntel?.skills || []).map(convertToString).filter(skill => skill && !skill.includes('[object Object]')).slice(0, 3).join(", ") || "strategic initiatives"}.`,
     orgChart: [
       {
         name: person.name,

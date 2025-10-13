@@ -87,7 +87,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]">
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg w-full max-w-md mx-4">
         {/* Header */}
         <div className="px-6 py-4 border-b border-[var(--border)]">

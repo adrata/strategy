@@ -196,7 +196,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
           try {
-            const fastResponse = await authFetch(`/api/data/buyer-groups/fast`);
+            const fastResponse = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
             if (fastResponse.ok) {
               const fastResult = await fastResponse.json();
               if (fastResult.success && fastResult.members) {
