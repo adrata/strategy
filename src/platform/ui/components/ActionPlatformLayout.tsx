@@ -30,7 +30,7 @@ import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import { useUnifiedAuth } from "@/platform/auth";
 import { AddModal } from "./AddModal";
-import { SettingsModal } from "./SettingsModal";
+// import { SettingsModal } from "./SettingsModal"; // Deprecated, using SettingsPopup instead
 import { RossWelcomeToast } from "@/platform/ui/components/RossWelcomeToast";
 import { ConditionalSpeedrunProvider } from "./ConditionalSpeedrunProvider";
 import { SpeedrunEngineModal } from "./SpeedrunEngineModal";
@@ -63,7 +63,7 @@ function AcquisitionOSLayoutInner({
   const router = useRouter();
   const { zoom } = useZoom();
   const { isSettingsOpen, setIsSettingsOpen } = useSettingsPopup();
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  // const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // Deprecated
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   const [appPreferences, setAppPreferences] = useState<AppPreference[]>([]);
   const [lastActiveSections, setLastActiveSections] = useState<
@@ -387,7 +387,7 @@ function AcquisitionOSLayoutInner({
                     console.log("🔥 ThinLeftPanel: onAppClick called with slug =", slug);
                     
                     if (slug === "settings") {
-                      setIsSettingsModalOpen(true);
+                      setIsSettingsOpen(true); // Use SettingsPopup instead
                       return;
                     }
 
@@ -573,11 +573,11 @@ function AcquisitionOSLayoutInner({
         {/* Add Modal */}
         <AddModal />
 
-        {/* Settings Modal */}
-        <SettingsModal
+        {/* Settings Modal - Deprecated, using SettingsPopup instead */}
+        {/* <SettingsModal
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
-        />
+        /> */}
 
         {/* Speedrun Engine Modal */}
         <SpeedrunEngineModal

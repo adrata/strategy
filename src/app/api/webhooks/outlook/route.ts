@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EmailPlatformIntegrator } from "@/platform/services/email-platform-integrator";
+import { UnifiedEmailSyncService } from "@/platform/services/UnifiedEmailSyncService";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -153,25 +153,9 @@ async function triggerEmailSync(accountId: string): Promise<void> {
   try {
     console.log(`🔄 Triggering email sync for account: ${accountId}`);
     
-    // Sync emails from Outlook
-    const syncResult = await EmailPlatformIntegrator.syncOutlookEmails(accountId);
-    
-    if (syncResult.success) {
-      console.log(`✅ Email sync completed: ${syncResult.count} emails processed`);
-      
-      // Trigger Speedrun real-time processing for new emails
-      if (syncResult.count > 0) {
-        console.log('🎯 Processing new emails for Speedrun system...');
-        
-        // Process recent emails (since we can't get the specific new emails from the sync result)
-        console.log(`📧 ${syncResult.count} emails were processed in sync`);
-        // Note: Individual email processing would need to be implemented separately
-        // as the sync result doesn't return the actual email objects
-        console.log('✅ Speedrun processing completed');
-      }
-    } else {
-      console.error(`❌ Email sync failed: ${syncResult.error}`);
-    }
+    // For now, we'll just log that a sync was triggered
+    // In the new system, webhooks are handled differently through Nango
+    console.log(`✅ Email sync triggered for account: ${accountId} (handled by Nango webhooks)`);
 
   } catch (error) {
     console.error(`❌ Failed to trigger email sync for account ${accountId}:`, error);

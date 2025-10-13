@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
         timezone: true,
         communicationStyle: true,
         preferredDetailLevel: true,
-        notificationPreferences: true,
         quota: true,
         territory: true,
         dashboardConfig: true
@@ -37,9 +36,18 @@ export async function GET(request: NextRequest) {
       }, { status: 404 });
     }
 
-    // Get workspace-specific profile or use user defaults
-    // const profile = user.profiles?.[0]; // profiles relationship doesn't exist
-    const notificationPrefs = (user.notificationPreferences) as any || {};
+    // Get workspace context for AI
+    const workspace = await prisma.workspaces.findUnique({
+      where: { id: workspaceId },
+      select: {
+        productPortfolio: true,
+        targetIndustries: true,
+        valuePropositions: true,
+        businessModel: true,
+        industry: true
+      }
+    });
+
     const dashboardConfig = user.dashboardConfig as any || {};
 
     const userSettings = {
@@ -51,15 +59,10 @@ export async function GET(request: NextRequest) {
       phoneNumber: user.phoneNumber || '',
       linkedinUrl: user.linkedinUrl || '',
       
-      // Preferences
+      // AI Context Preferences
       timezone: user.timezone || 'America/New_York',
       communicationStyle: user.communicationStyle || 'consultative',
       preferredDetailLevel: user.preferredDetailLevel || 'detailed',
-      
-      // Notifications
-      emailNotifications: notificationPrefs.email ?? true,
-      pushNotifications: notificationPrefs.push ?? true,
-      weeklyReports: notificationPrefs.weeklyReports ?? true,
       
       // Performance Settings
       quota: Number(user.quota) || 1000000,
@@ -67,9 +70,18 @@ export async function GET(request: NextRequest) {
       dailyActivityTarget: dashboardConfig.dailyActivityTarget || 25
     };
 
+    const workspaceContext = {
+      productPortfolio: workspace?.productPortfolio || [],
+      targetIndustries: workspace?.targetIndustries || [],
+      valuePropositions: workspace?.valuePropositions || [],
+      businessModel: workspace?.businessModel || '',
+      industry: workspace?.industry || ''
+    };
+
     return NextResponse.json({
       success: true,
       settings: userSettings,
+      workspaceContext,
       user: {
         id: user.id,
         email: user.email,
@@ -107,19 +119,12 @@ export async function PUT(request: NextRequest) {
         preferredDetailLevel: settings.preferredDetailLevel,
         quota: settings.quota ? String(settings.quota) : null,
         territory: settings.territory,
-        notificationPreferences: {
-          email: settings.emailNotifications,
-          push: settings.pushNotifications,
-          weeklyReports: settings.weeklyReports
-        },
         dashboardConfig: {
           dailyActivityTarget: settings.dailyActivityTarget
         },
         updatedAt: new Date()
       }
     });
-
-    // Note: userProfiles model doesn't exist, user profile data is stored in users model
 
     return NextResponse.json({
       success: true,

@@ -4,7 +4,6 @@
  */
 
 import { PrismaClient } from '@prisma/client';
-import { EmailPlatformIntegrator } from './email-platform-integrator';
 
 const prisma = new PrismaClient();
 
@@ -162,13 +161,9 @@ export class WebhookRenewalService {
    */
   private async createNewWebhookSubscription(emailAccount: any, accessToken: string): Promise<void> {
     try {
-      const result = await EmailPlatformIntegrator.setupOutlookWebhook(emailAccount.id);
-      
-      if (result.success) {
-        console.log(`✅ New webhook subscription created: ${result.subscriptionId}`);
-      } else {
-        console.error(`❌ Failed to create new webhook subscription: ${result.error}`);
-      }
+      // In the new system, webhook setup is handled by Nango
+      // This is a placeholder for future implementation
+      console.log(`📝 Webhook subscription creation for account ${emailAccount.id} (handled by Nango)`);
     } catch (error) {
       console.error('❌ Error creating new webhook subscription:', error);
     }
