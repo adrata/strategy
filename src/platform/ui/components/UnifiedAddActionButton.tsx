@@ -107,7 +107,7 @@ export function UnifiedAddActionButton({
           }}
         >
           <PlusIcon className="w-4 h-4" />
-          Add Action ({getCommonShortcut('SUBMIT')})
+          {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
           <ChevronDownIcon className="w-4 h-4" />
         </button>
 
@@ -122,7 +122,7 @@ export function UnifiedAddActionButton({
             >
               <BoltIcon className="w-4 h-4 text-[var(--muted)] flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)]">Add Action</div>
+                <div className="text-sm font-medium text-[var(--foreground)]">{section === 'speedrun' ? 'Add' : 'Add Action'}</div>
                 <div className="text-sm text-[var(--muted)]">Record activity with contact</div>
               </div>
             </button>
@@ -160,7 +160,7 @@ export function UnifiedAddActionButton({
       }}
     >
       <PlusIcon className="w-4 h-4" />
-      Add Action ({getCommonShortcut('SUBMIT')})
+      {section === 'speedrun' ? `Add (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
     </button>
   );
 }

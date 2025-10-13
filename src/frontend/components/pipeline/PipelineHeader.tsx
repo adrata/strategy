@@ -1061,7 +1061,7 @@ export function PipelineHeader({
                               : 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--hover)]'
                           }`}
                         >
-                          {section === 'speedrun' ? `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
+                          {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                         </button>
                       )}
                     </>
