@@ -149,7 +149,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     setVisibleColumns(getDefaultVisibleColumns(section));
     // Reset sort to default for new section
     if (section === 'prospects') {
-      setSortField('lastContactDate');
+      setSortField('lastActionDate');
       setSortDirection('asc'); // Oldest first
     } else {
       setSortField('rank');

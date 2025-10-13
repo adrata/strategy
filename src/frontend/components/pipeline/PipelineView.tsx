@@ -151,7 +151,7 @@ export const PipelineView = React.memo(function PipelineView({
     setVisibleColumns(getDefaultVisibleColumns(section));
     // Reset sort to default for new section
     if (section === 'prospects') {
-      setSortField('lastContactDate');
+      setSortField('lastActionDate');
       setSortDirection('asc'); // Oldest first
     } else {
       setSortField('rank');
@@ -1243,7 +1243,7 @@ export const PipelineView = React.memo(function PipelineView({
         'Industry': 'industry',
         'Email': 'email',
         'Phone': 'phone',
-        'Last Action': 'lastContactDate',
+        'Last Action': 'lastActionDate',
         'Next Action': 'nextAction'
       };
 
@@ -1251,15 +1251,15 @@ export const PipelineView = React.memo(function PipelineView({
       if (section === 'speedrun') {
         return {
           ...baseMap,
-          'Last Action': 'lastContact', // Speedrun uses 'lastContact' not 'lastContactDate'
+          'Last Action': 'lastActionDate', // Speedrun uses 'lastActionDate'
           'Advice': 'nextAction',
         };
       } else if (section === 'opportunities') {
         return {
           ...baseMap,
-          'Amount': 'amount',
-          'Stage': 'stage',
-          'Last Action': 'lastContactDate',
+          'Amount': 'company.opportunityAmount',
+          'Stage': 'company.opportunityStage',
+          'Last Action': 'lastActionDate',
         };
       } else {
         return {

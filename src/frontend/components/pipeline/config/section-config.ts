@@ -29,12 +29,12 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'leads',
     label: 'Leads',
     dataSource: 'leads',
-    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
-    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
+    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastActionDate', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
-      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'lastActionDate', label: 'Last Action Date' },
       { value: 'createdAt', label: 'Created Date' },
       { value: 'priority', label: 'Priority' }
     ],
@@ -79,12 +79,12 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'prospects',
     label: 'Prospects',
     dataSource: 'prospects',
-    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
-    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
+    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastActionDate', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
-      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'lastActionDate', label: 'Last Action Date' },
       { value: 'createdAt', label: 'Created Date' },
       { value: 'priority', label: 'Priority' }
     ],
@@ -126,8 +126,8 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'opportunities',
     label: 'Opportunities',
     dataSource: 'opportunities',
-    defaultColumns: ['name', 'stage', 'amount', 'company', 'owner', 'closeDate', 'probability', 'status'],
-    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastContacted'],
+    defaultColumns: ['name', 'stage', 'amount', 'company', 'mainSeller', 'closeDate', 'probability', 'status'],
+    availableFilters: ['search', 'vertical', 'status', 'revenue', 'lastActionDate'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'amount', label: 'Amount' },
@@ -158,14 +158,14 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'companies',
     label: 'Companies',
     dataSource: 'companies',
-    defaultColumns: ['name', 'industry', 'size', 'location', 'website', 'revenue', 'employees', 'status'],
+    defaultColumns: ['name', 'industry', 'size', 'address', 'website', 'revenue', 'employeeCount', 'status'],
     availableFilters: ['search', 'vertical', 'status', 'revenue', 'companySize', 'location', 'technology'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'industry', label: 'Industry' },
       { value: 'size', label: 'Size' },
       { value: 'revenue', label: 'Revenue' },
-      { value: 'employees', label: 'Employees' },
+      { value: 'employeeCount', label: 'Employee Count' },
       { value: 'createdAt', label: 'Created Date' }
     ],
     statusOptions: [
@@ -248,11 +248,11 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     label: 'Speedrun',
     dataSource: 'speedrunItems',
     defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
-    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastContacted', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
-      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'lastActionDate', label: 'Last Action Date' },
       { value: 'createdAt', label: 'Created Date' },
       { value: 'priority', label: 'Priority' }
     ],
@@ -303,7 +303,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
       { value: 'totalValue', label: 'Total Value' },
-      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'lastActionDate', label: 'Last Action Date' },
       { value: 'createdAt', label: 'Created Date' }
     ],
     statusOptions: [
@@ -333,7 +333,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },
       { value: 'type', label: 'Type' },
-      { value: 'lastContacted', label: 'Last Contacted' },
+      { value: 'lastActionDate', label: 'Last Action Date' },
       { value: 'createdAt', label: 'Created Date' }
     ],
     statusOptions: [

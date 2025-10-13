@@ -2,23 +2,35 @@
 
 ## Overview
 
-This directory contains comprehensive tests for the Adrata authentication system, including unit tests, integration tests, and end-to-end tests.
+This directory contains comprehensive tests for the Adrata platform, including authentication system tests, table functionality tests, and end-to-end tests.
 
 ## Test Structure
 
 ```
 tests/
 ├── unit/                    # Unit tests for individual components and utilities
-│   └── auth/
-│       ├── sign-in-component.test.tsx    # Sign-in page component tests
-│       └── auth-utilities.test.ts        # Authentication utility tests
+│   ├── auth/
+│   │   ├── sign-in-component.test.tsx    # Sign-in page component tests
+│   │   └── auth-utilities.test.ts        # Authentication utility tests
+│   └── tables/
+│       ├── column-mapping.test.ts        # Column mapping and configuration tests
+│       ├── filter-builder.test.ts        # Filter construction and validation tests
+│       └── sort-mapping.test.ts          # Sort field mapping and validation tests
 ├── integration/             # Integration tests for API flows
-│   └── auth/
-│       ├── sign-in-flow.test.ts          # Complete sign-in API flow tests
-│       └── session-management.test.ts    # Session persistence and security tests
+│   ├── auth/
+│   │   ├── sign-in-flow.test.ts          # Complete sign-in API flow tests
+│   │   └── session-management.test.ts    # Session persistence and security tests
+│   └── api/
+│       ├── people.test.ts                # People API endpoint tests
+│       ├── companies.test.ts             # Companies API endpoint tests
+│       └── speedrun.test.ts              # Speedrun API endpoint tests
 ├── e2e/                     # End-to-end tests for complete user journeys
-│   └── auth/
-│       └── sign-in.spec.ts               # Full sign-in user journey tests
+│   ├── auth/
+│   │   └── sign-in.spec.ts               # Full sign-in user journey tests
+│   └── tables/
+│       ├── speedrun-table.spec.ts        # Speedrun table E2E tests
+│       ├── leads-table.spec.ts           # Leads table E2E tests
+│       └── all-tables.spec.ts            # Comprehensive table E2E tests
 ├── setup/                   # Test configuration and setup
 │   └── jest.setup.ts                     # Global Jest configuration
 └── utils/                   # Test helper utilities
@@ -38,8 +50,13 @@ npm run test tests/unit/
 # Run only integration tests
 npm run test tests/integration/
 
+# Run table-specific tests
+npm run test tests/unit/tables/
+npm run test tests/integration/api/
+
 # Run specific test file
 npm run test tests/unit/auth/sign-in-component.test.tsx
+npm run test tests/unit/tables/column-mapping.test.ts
 
 # Run tests with coverage
 npm run test:coverage
@@ -55,6 +72,9 @@ npm run test:e2e:auth:headed
 
 # Run E2E tests with Playwright UI
 npm run test:e2e:auth:ui
+
+# Run table E2E tests
+npm run test:e2e tests/e2e/tables/
 ```
 
 ## Test Categories
@@ -62,15 +82,18 @@ npm run test:e2e:auth:ui
 ### Unit Tests
 - **Component Tests**: Test individual React components in isolation
 - **Utility Tests**: Test helper functions and utilities
+- **Table Tests**: Test column mapping, filter building, and sort mapping logic
 - **Mocking**: Extensive use of mocks to isolate units under test
 
 ### Integration Tests
 - **API Tests**: Test complete API endpoints with mocked database
+- **Table API Tests**: Test people, companies, and speedrun API endpoints
 - **Flow Tests**: Test multi-step authentication flows
 - **Session Tests**: Test session management and persistence
 
 ### End-to-End Tests
 - **User Journey Tests**: Test complete user workflows
+- **Table Tests**: Test table rendering, sorting, filtering, and data accuracy
 - **Browser Tests**: Test in real browser environment
 - **Cross-browser Tests**: Test across different browsers
 
@@ -103,6 +126,16 @@ npm run test:e2e:auth:ui
 - ✅ **Verification that Command+Enter and Ctrl+Enter do NOT trigger form submission**
 - ✅ Normal Enter key functionality
 - ✅ Tab navigation
+
+### Table Functionality
+- ✅ Column rendering and configuration
+- ✅ Sorting by all sortable columns
+- ✅ Filtering by status, priority, company, industry
+- ✅ Search across multiple fields
+- ✅ Pagination and data loading
+- ✅ Record selection and detail views
+- ✅ Data accuracy against API responses
+- ✅ Loading and error states
 
 ## Mocking Strategy
 
@@ -212,6 +245,13 @@ Tests are configured to run in CI with:
 - Failure notifications
 - Performance monitoring
 
+## Additional Documentation
+
+- **[Table Testing Guide](../docs/table-testing-guide.md)**: Comprehensive guide for testing table functionality
+- **[Field Mapping Reference](../docs/table-field-mapping.md)**: Database field to UI column mapping reference
+- **[API Validation Report](../docs/api-validation-report.md)**: V1 API endpoint validation results
+- **[Column Configuration Audit](../docs/column-config-audit-report.md)**: Column configuration issues and fixes
+
 ## Contributing
 
 When adding new tests:
@@ -220,3 +260,4 @@ When adding new tests:
 3. Include both positive and negative test cases
 4. Update this documentation if needed
 5. Ensure tests pass in CI environment
+6. For table tests, refer to the Table Testing Guide for detailed patterns

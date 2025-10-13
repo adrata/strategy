@@ -40,6 +40,10 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columns: ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
       columnOrder: ['name', 'company', 'title', 'email', 'lastAction', 'nextAction']
     },
+    opportunities: {
+      columns: ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'],
+      columnOrder: ['rank', 'name', 'company', 'amount', 'stage', 'probability', 'closeDate', 'lastAction']
+    },
     sellers: {
       columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action'],
       columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']

@@ -629,4 +629,325 @@ describe('People API', () => {
       validateApiResponse.error(data, 404);
     });
   });
+
+  describe('Filtering and Sorting', () => {
+    it('should filter people by status', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'LEAD' }),
+        createTestPerson({ status: 'PROSPECT' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?status=LEAD');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'LEAD',
+          }),
+        })
+      );
+    });
+
+    it('should filter people by priority', async () => {
+      const mockPeople = [
+        createTestPerson({ priority: 'HIGH' }),
+        createTestPerson({ priority: 'MEDIUM' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?priority=HIGH');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            priority: 'HIGH',
+          }),
+        })
+      );
+    });
+
+    it('should filter people by companyId', async () => {
+      const mockPeople = [
+        createTestPerson({ companyId: 'company-123' }),
+        createTestPerson({ companyId: 'company-456' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?companyId=company-123');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            companyId: 'company-123',
+          }),
+        })
+      );
+    });
+
+    it('should filter people by section (leads)', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'LEAD' }),
+        createTestPerson({ status: 'LEAD' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?section=leads');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'LEAD',
+          }),
+        })
+      );
+    });
+
+    it('should filter people by section (prospects)', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'PROSPECT' }),
+        createTestPerson({ status: 'PROSPECT' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?section=prospects');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'PROSPECT',
+          }),
+        })
+      );
+    });
+
+    it('should filter people by section (opportunities)', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'OPPORTUNITY' }),
+        createTestPerson({ status: 'OPPORTUNITY' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?section=opportunities');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'OPPORTUNITY',
+          }),
+        })
+      );
+    });
+
+    it('should combine multiple filters correctly', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'LEAD', priority: 'HIGH', companyId: 'company-123' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(1);
+
+      const request = new Request('http://localhost:3000/api/v1/people?status=LEAD&priority=HIGH&companyId=company-123');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(1);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'LEAD',
+            priority: 'HIGH',
+            companyId: 'company-123',
+          }),
+        })
+      );
+    });
+
+    it('should search across multiple fields', async () => {
+      const mockPeople = [
+        createTestPerson({ firstName: 'John', lastName: 'Doe', email: 'john@example.com' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(1);
+
+      const request = new Request('http://localhost:3000/api/v1/people?search=john');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(1);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: expect.arrayContaining([
+              expect.objectContaining({ firstName: expect.objectContaining({ contains: 'john', mode: 'insensitive' }) }),
+              expect.objectContaining({ lastName: expect.objectContaining({ contains: 'john', mode: 'insensitive' }) }),
+              expect.objectContaining({ fullName: expect.objectContaining({ contains: 'john', mode: 'insensitive' }) }),
+              expect.objectContaining({ email: expect.objectContaining({ contains: 'john', mode: 'insensitive' }) }),
+            ]),
+          }),
+        })
+      );
+    });
+
+    it('should sort by globalRank ascending', async () => {
+      const mockPeople = [
+        createTestPerson({ globalRank: 1 }),
+        createTestPerson({ globalRank: 2 }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?sortBy=globalRank&sortOrder=asc');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { globalRank: 'asc' },
+        })
+      );
+    });
+
+    it('should sort by fullName ascending', async () => {
+      const mockPeople = [
+        createTestPerson({ fullName: 'Alice Smith' }),
+        createTestPerson({ fullName: 'Bob Johnson' }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?sortBy=fullName&sortOrder=asc');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { fullName: 'asc' },
+        })
+      );
+    });
+
+    it('should sort by lastActionDate descending', async () => {
+      const mockPeople = [
+        createTestPerson({ lastActionDate: new Date('2024-01-02') }),
+        createTestPerson({ lastActionDate: new Date('2024-01-01') }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?sortBy=lastActionDate&sortOrder=desc');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { lastActionDate: 'desc' },
+        })
+      );
+    });
+
+    it('should handle pagination with filters and sorting', async () => {
+      const mockPeople = [
+        createTestPerson({ status: 'LEAD', globalRank: 1 }),
+        createTestPerson({ status: 'LEAD', globalRank: 2 }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(2);
+
+      const request = new Request('http://localhost:3000/api/v1/people?status=LEAD&sortBy=globalRank&sortOrder=asc&page=1&limit=10');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(2);
+      expect(mockPrisma.people.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'LEAD',
+          }),
+          orderBy: { globalRank: 'asc' },
+          skip: 0,
+          take: 10,
+        })
+      );
+    });
+
+    it('should handle edge cases with null values', async () => {
+      const mockPeople = [
+        createTestPerson({ globalRank: null, lastActionDate: null }),
+      ];
+      
+      mockPrisma.people.findMany.mockResolvedValue(mockPeople);
+      mockPrisma.people.count.mockResolvedValue(1);
+
+      const request = new Request('http://localhost:3000/api/v1/people?sortBy=globalRank&sortOrder=asc');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(1);
+    });
+
+    it('should handle empty search results', async () => {
+      mockPrisma.people.findMany.mockResolvedValue([]);
+      mockPrisma.people.count.mockResolvedValue(0);
+
+      const request = new Request('http://localhost:3000/api/v1/people?search=nonexistent');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.people).toHaveLength(0);
+      expect(data.meta.total).toBe(0);
+    });
+  });
 });

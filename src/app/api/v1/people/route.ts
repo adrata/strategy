@@ -42,8 +42,30 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
     const companyId = searchParams.get('companyId') || '';
+    const vertical = searchParams.get('vertical') || '';
+    const revenue = searchParams.get('revenue') || '';
+    const timezone = searchParams.get('timezone') || '';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    // Validate sort field
+    const validSortFields = ['globalRank', 'fullName', 'firstName', 'lastName', 'email', 'jobTitle', 'lastActionDate', 'createdAt', 'status', 'priority'];
+    const sortFieldMapping: Record<string, string> = {
+      'rank': 'globalRank',
+      'name': 'fullName',
+      'title': 'jobTitle',
+      'lastAction': 'lastActionDate',
+      'company': 'company.name'
+    };
+    
+    const mappedSortField = sortFieldMapping[sortBy] || sortBy;
+    if (!validSortFields.includes(mappedSortField)) {
+      return NextResponse.json({
+        success: false,
+        error: `Invalid sort field: ${sortBy}`,
+        code: 'INVALID_SORT_FIELD'
+      }, { status: 400 });
+    }
     const countsOnly = searchParams.get('counts') === 'true';
     const section = searchParams.get('section') || ''; // 🚀 NEW: Section parameter for pre-filtered results
     const cursor = searchParams.get('cursor') || ''; // 🚀 NEW: Cursor-based pagination
@@ -135,6 +157,23 @@ export async function GET(request: NextRequest) {
         where.companyId = companyId;
       }
 
+      // Vertical filtering
+      if (vertical) {
+        where.vertical = { contains: vertical, mode: 'insensitive' };
+      }
+
+      // Revenue filtering (via company relation)
+      if (revenue) {
+        where.company = {
+          revenue: { contains: revenue, mode: 'insensitive' }
+        };
+      }
+
+      // Timezone filtering
+      if (timezone) {
+        where.timezone = { contains: timezone, mode: 'insensitive' };
+      }
+
       // 🚀 PERFORMANCE: If counts only, just return counts by status
       if (countsOnly) {
         const statusCounts = await prisma.people.groupBy({
@@ -165,7 +204,7 @@ export async function GET(request: NextRequest) {
         prisma.people.findMany({
           where,
           orderBy: { 
-            [sortBy === 'rank' ? 'globalRank' : sortBy]: sortOrder 
+            [mappedSortField]: sortOrder 
           },
           skip: offset,
           take: limit,
@@ -175,7 +214,11 @@ export async function GET(request: NextRequest) {
             firstName: true,
             lastName: true,
             email: true,
+            jobTitle: true,
+            phone: true,
+            department: true,
             status: true,
+            priority: true,
             globalRank: true,
             lastAction: true,
             nextAction: true,
