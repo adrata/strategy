@@ -14,25 +14,16 @@
 
 const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL
-    }
-  }
-});
-
 class FakePhoneCleanup {
   constructor() {
     this.dryRun = process.argv.includes('--dry-run');
+    this.prisma = new PrismaClient();
     this.stats = {
       totalWorkspaces: 0,
       demoWorkspaces: 0,
       productionWorkspaces: 0,
-      leadsUpdated: 0,
       peopleUpdated: 0,
       companiesUpdated: 0,
-      prospectsUpdated: 0,
       errors: []
     };
   }
@@ -91,10 +82,6 @@ class FakePhoneCleanup {
     try {
       console.log(`  🔍 Cleaning workspace: ${workspace.name}`);
       
-      // Clean leads
-      const leadsUpdated = await this.cleanupTable('leads', workspace.id);
-      this.stats.leadsUpdated += leadsUpdated;
-      
       // Clean people
       const peopleUpdated = await this.cleanupTable('people', workspace.id);
       this.stats.peopleUpdated += peopleUpdated;
@@ -103,11 +90,7 @@ class FakePhoneCleanup {
       const companiesUpdated = await this.cleanupTable('companies', workspace.id);
       this.stats.companiesUpdated += companiesUpdated;
       
-      // Clean prospects
-      const prospectsUpdated = await this.cleanupTable('prospects', workspace.id);
-      this.stats.prospectsUpdated += prospectsUpdated;
-      
-      console.log(`  ✅ Updated: ${leadsUpdated} leads, ${peopleUpdated} people, ${companiesUpdated} companies, ${prospectsUpdated} prospects`);
+      console.log(`  ✅ Updated: ${peopleUpdated} people, ${companiesUpdated} companies`);
       
     } catch (error) {
       console.error(`  ❌ Error cleaning workspace ${workspace.name}:`, error.message);
@@ -129,11 +112,12 @@ class FakePhoneCleanup {
 
       for (const pattern of fakePhonePatterns) {
         // Use raw SQL to find records with fake phone patterns
+        const nameColumn = tableName === 'people' ? 'fullName' : 'name';
         const query = `
-          SELECT id, phone, full_name, name 
+          SELECT id, phone, "${nameColumn}" as name 
           FROM ${tableName} 
-          WHERE workspace_id = $1 
-            AND deleted_at IS NULL 
+          WHERE "workspaceId" = $1 
+            AND "deletedAt" IS NULL 
             AND phone LIKE $2
         `;
         
@@ -146,9 +130,9 @@ class FakePhoneCleanup {
             // Update phone to null
             const updateQuery = `
               UPDATE ${tableName} 
-              SET phone = NULL, updated_at = NOW()
-              WHERE workspace_id = $1 
-                AND deleted_at IS NULL 
+              SET phone = NULL, "updatedAt" = NOW()
+              WHERE "workspaceId" = $1 
+                AND "deletedAt" IS NULL 
                 AND phone LIKE $2
             `;
             
@@ -178,10 +162,8 @@ class FakePhoneCleanup {
     console.log(`Total workspaces: ${this.stats.totalWorkspaces}`);
     console.log(`Demo workspaces (skipped): ${this.stats.demoWorkspaces}`);
     console.log(`Production workspaces (cleaned): ${this.stats.productionWorkspaces}`);
-    console.log(`Leads updated: ${this.stats.leadsUpdated}`);
     console.log(`People updated: ${this.stats.peopleUpdated}`);
     console.log(`Companies updated: ${this.stats.companiesUpdated}`);
-    console.log(`Prospects updated: ${this.stats.prospectsUpdated}`);
     
     if (this.stats.errors.length > 0) {
       console.log(`\n❌ Errors: ${this.stats.errors.length}`);
