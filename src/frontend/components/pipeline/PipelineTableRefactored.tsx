@@ -55,6 +55,7 @@ const DEFAULT_PAGE_SIZE = 100; // Show more data by default
 function getLastActionTiming(record: PipelineRecord) {
   // 🚀 SPEEDRUN LOGIC: Use the API's lastActionTime field directly
   const lastActionTime = record['lastActionTime'];
+  
   if (lastActionTime) {
     // Color coding for Speedrun timing
     if (lastActionTime === 'Never') {
@@ -63,6 +64,12 @@ function getLastActionTiming(record: PipelineRecord) {
       return { text: lastActionTime, color: 'bg-green-100 text-green-800' };
     } else if (lastActionTime === 'Yesterday') {
       return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
+    } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 3) {
+      return { text: lastActionTime, color: 'bg-blue-100 text-blue-800' };
+    } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 7) {
+      return { text: lastActionTime, color: 'bg-yellow-100 text-yellow-800' };
+    } else if (lastActionTime.includes('weeks ago') || lastActionTime.includes('months ago')) {
+      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     } else {
       return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
     }
@@ -77,12 +84,25 @@ function getLastActionTiming(record: PipelineRecord) {
 function getNextActionTiming(record: PipelineRecord) {
   // 🚀 SPEEDRUN LOGIC: Use the API's nextActionTiming field directly
   const nextActionTiming = record['nextActionTiming'];
+  
   if (nextActionTiming) {
     // Color coding for Speedrun timing
-    if (nextActionTiming === 'Now') {
+    if (nextActionTiming === 'Overdue') {
       return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
     } else if (nextActionTiming === 'Today') {
+      return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
+    } else if (nextActionTiming === 'Tomorrow') {
       return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' };
+    } else if (nextActionTiming === 'This week') {
+      return { text: nextActionTiming, color: 'bg-green-100 text-green-800' };
+    } else if (nextActionTiming === 'Next week') {
+      return { text: nextActionTiming, color: 'bg-green-100 text-green-800' };
+    } else if (nextActionTiming === 'This month') {
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+    } else if (nextActionTiming === 'Future') {
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+    } else if (nextActionTiming === 'No date set') {
+      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     }
@@ -99,21 +119,24 @@ function getNextActionTiming(record: PipelineRecord) {
   const diffMs = actionDate.getTime() - now.getTime();
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   
+  let result;
   if (diffDays < 0) {
-    return { text: 'Overdue', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Overdue', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays === 0) {
-    return { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays === 1) {
-    return { text: 'Tomorrow', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Tomorrow', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 7) {
-    return { text: 'This week', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'This week', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 14) {
-    return { text: 'Next week', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Next week', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays <= 30) {
-    return { text: 'This month', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'This month', color: 'bg-[var(--hover)] text-gray-800' };
   } else {
-    return { text: 'Future', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Future', color: 'bg-[var(--hover)] text-gray-800' };
   }
+  
+  return result;
 }
 
 // -------- Helper Functions --------
@@ -309,7 +332,13 @@ export function PipelineTable({
                 headersLength: headers.length,
                 visibleColumnsLength: visibleColumns?.length,
                 // Show first 10 keys
-                recordKeys: Object.keys(record).slice(0, 10)
+                recordKeys: Object.keys(record).slice(0, 10),
+                // DEBUG: Check headers and action fields
+                headers: headers,
+                headersString: headers.join(', '),
+                lastActionTime: record['lastActionTime'],
+                nextActionTiming: record['nextActionTiming'],
+                section: section
               });
               
               // Simple table row for debugging
@@ -321,6 +350,9 @@ export function PipelineTable({
                   >
                   {headers.map((header, headerIndex) => {
                     let cellContent = '';
+                    
+                    // DEBUG: Log header processing
+                    console.log(`🔍 [HEADER PROCESSING] Header ${headerIndex}: "${header}" (lowercase: "${header.toLowerCase()}")`);
                     
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
@@ -448,28 +480,26 @@ export function PipelineTable({
                     
                     return (
                       <td key={headerIndex} className="px-6 py-3 text-sm text-[var(--foreground)]">
-                        {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
-                          <div className="flex items-center gap-2">
-                            {(() => {
-                              const timing = header.toLowerCase() === 'last action' 
-                                ? getLastActionTiming(record)
-                                : getNextActionTiming(record);
-                              return (
-                                <>
-                                  <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                                    {timing.text}
-                                  </span>
-                                  <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                    {cellContent}
-                                  </span>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        ) : header.toLowerCase() === 'status' ? (
-                          <div className="flex items-center gap-2">
-                            {(() => {
-                              // Check if this is a lead/person status (LEAD, PROSPECT, OPPORTUNITY, etc.)
+                        {(() => {
+                          // Handle both camelCase and spaced versions of headers
+                          const headerLower = header.toLowerCase();
+                          const isLastAction = headerLower === 'last action' || headerLower === 'lastaction';
+                          const isNextAction = headerLower === 'next action' || headerLower === 'nextaction';
+                          const isStatus = headerLower === 'status';
+                          const shouldShowPill = isLastAction || isNextAction || isStatus;
+                          
+                          console.log(`🔍 [PILL CHECK] Header: "${header}", lowercase: "${headerLower}", isLastAction: ${isLastAction}, isNextAction: ${isNextAction}, isStatus: ${isStatus}, shouldShowPill: ${shouldShowPill}`);
+                          console.log(`🔍 [PILL CHECK] cellContent: "${cellContent}", record status: "${record['status']}", lastActionTime: "${record['lastActionTime']}", nextActionTiming: "${record['nextActionTiming']}"`);
+                          
+                          if (shouldShowPill) {
+                            let pillData: { text: string; color: string; icon?: string };
+                            
+                            if (isLastAction) {
+                              pillData = getLastActionTiming(record);
+                            } else if (isNextAction) {
+                              pillData = getNextActionTiming(record);
+                            } else if (isStatus) {
+                              // Status pill styling - reverted to previous implementation
                               const personStatus = record['status'];
                               let statusColor = 'bg-[var(--hover)] text-gray-800';
                               let statusIcon = '●';
@@ -518,21 +548,42 @@ export function PipelineTable({
                                 }
                               }
                               
-                              return (
-                                <>
-                                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
-                                    <span className="text-xs">{statusIcon}</span>
-                                    {cellContent}
+                              pillData = { text: cellContent, color: statusColor, icon: statusIcon };
+                            } else {
+                              // Fallback - should never happen but satisfies TypeScript
+                              pillData = { text: cellContent, color: 'bg-[var(--hover)] text-gray-800', icon: '●' };
+                            }
+                            
+                            console.log(`🔍 [PILL RENDERING] Pill data for ${header}:`, pillData);
+                            
+                            return (
+                              <div className="flex items-center gap-2">
+                                {isStatus ? (
+                                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${pillData.color}`}>
+                                    <span className="text-xs">{pillData.icon}</span>
+                                    {pillData.text}
                                   </span>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        ) : (
-                          <div className="text-sm text-[var(--foreground)] truncate">
-                            {cellContent}
-                          </div>
-                        )}
+                                ) : (
+                                  <>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${pillData.color}`}>
+                                      {pillData.text}
+                                    </span>
+                                    <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                      {cellContent}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          }
+                          
+                          // Default rendering for non-pill columns
+                          return (
+                            <div className="text-sm text-[var(--foreground)] truncate">
+                              {cellContent}
+                            </div>
+                          );
+                        })()}
                       </td>
                     );
                   })}
